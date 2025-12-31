@@ -36,7 +36,7 @@ nav {
     position: fixed; top: 0; width: 100%; padding: 30px 60px;
     display: flex; justify-content: space-between; align-items: center; z-index: 1000;
 }
-.nav-logo-img { height: 60px; }
+.nav-logo-img { height: 60px; border: 1px solid var(--red-smile); padding: 10px; }
 
 .nav-links a {
     text-decoration: none; color: #fff; font-size: 10px; letter-spacing: 4px;
