@@ -36,7 +36,7 @@ nav {
     position: fixed; top: 0; width: 100%; padding: 30px 60px;
     display: flex; justify-content: space-between; align-items: center; z-index: 1000;
 }
-.nav-logo-img { height: 60px; filter: invert(1); }
+.nav-logo-img { height: 60px; }
 
 .nav-links a {
     text-decoration: none; color: #fff; font-size: 10px; letter-spacing: 4px;
@@ -90,7 +90,7 @@ nav {
 
 /* --- FOOTER --- */
 footer { padding: 100px 10%; text-align: center; border-top: 1px solid #111; }
-.footer-logo-img { width: 180px; filter: invert(1); opacity: 0.2; margin-bottom: 40px; }
+.footer-logo-img { width: 180px; margin-bottom: 40px; border: 1px solid var(--red-smile); padding: 20px; }
 
 /* --- ANIMATIONS --- */
 .reveal { opacity: 0; transform: translateY(50px); transition: 1.5s var(--transition); }

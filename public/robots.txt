@@ -1,8 +1,8 @@
-# robots.txt for Prudentia Psychological Services
-# https://prudentiaps.com
+# robots.txt for 27 Pictures
+# https://twentyseven.pictures
 
 User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://prudentiaps.com/sitemap.xml
+Sitemap: https://twentyseven.pictures/sitemap.xml
