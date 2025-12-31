@@ -95,7 +95,139 @@ nav {
 footer { padding: 100px 10%; text-align: center; border-top: 1px solid #111; }
 .footer-logo-img { width: 180px; margin-bottom: 40px; border: 1px solid var(--red-smile); padding: 20px; }
 
+/* --- HERO --- */
+.hero-section { align-items: center; text-align: center; }
+.hero-title { font-size: 12vw; font-style: italic; }
+.hero-tagline { letter-spacing: 15px; text-transform: uppercase; font-size: 0.7rem; color: var(--silver); margin-top: 20px; }
+
+/* --- DARKROOM --- */
+.darkroom-section { background: #000; }
+.cta-link { color: var(--red-smile); text-decoration: none; border-bottom: 1px solid var(--red-smile); padding-bottom: 5px; font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; }
+
+/* --- EDITORIAL --- */
+.neural-tag { color: var(--silver); letter-spacing: 5px; }
+
+/* --- CONTACT --- */
+.contact-section { height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.contact-title { font-size: 5vw; }
+.contact-btn { color: #fff; text-decoration: none; font-size: 1.2rem; border: 1px solid #fff; padding: 20px 60px; margin-top: 40px; }
+
+/* --- FOOTER TEXT --- */
+.footer-text { color: var(--silver); font-size: 10px; letter-spacing: 5px; margin-top: 10px; }
+
 /* --- ANIMATIONS --- */
 .reveal { opacity: 0; transform: translateY(50px); transition: 1.5s var(--transition); }
 .reveal.active { opacity: 1; transform: translateY(0); }
 .magnetic { transition: transform 0.3s var(--transition); display: inline-block; }
+
+/* --- BURGER MENU --- */
+.burger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+}
+.burger-line {
+    width: 100%;
+    height: 2px;
+    background: #fff;
+    transition: 0.3s var(--transition);
+}
+.burger-btn.active .burger-line:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+.burger-btn.active .burger-line:nth-child(2) { opacity: 0; }
+.burger-btn.active .burger-line:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+/* --- MOBILE MENU OVERLAY --- */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.5s var(--transition);
+}
+.mobile-menu.active {
+    opacity: 1;
+    visibility: visible;
+}
+.mobile-menu-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: 0.3s;
+}
+.mobile-menu-link:hover {
+    color: var(--red-smile);
+}
+
+/* --- MOBILE RESPONSIVE --- */
+@media (max-width: 768px) {
+    /* Disable custom cursor on touch devices */
+    * { cursor: auto; }
+    #cursor { display: none; }
+
+    /* Navigation */
+    nav { padding: 15px 20px; }
+    .nav-logo-img { height: 40px; padding: 6px; }
+    .burger-btn { display: flex; }
+
+    /* Sections */
+    .section { padding: 100px 5%; min-height: auto; }
+
+    /* Hero */
+    .hero-section { min-height: 100vh; }
+    .hero-title { font-size: 14vw; }
+    .hero-tagline { letter-spacing: 5px; font-size: 0.6rem; }
+
+    /* Horror / Darkroom */
+    .horror-container { grid-template-columns: 1fr; gap: 40px; }
+    .horror-text h2 { font-size: 15vw; }
+    .clown-hero-frame { height: 60vh; border-left: none; border-top: 1px solid var(--red-smile); }
+
+    /* Editorial */
+    .editorial-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .editorial-header h2 { font-size: 10vw; }
+    .editorial-content { grid-template-columns: 1fr; gap: 50px; }
+    .editorial-body h3 { font-size: 1.8rem; }
+    .editorial-body { font-size: 1rem; }
+    .cosplay-editorial { padding-bottom: 80px; }
+
+    /* Assembly */
+    .assembly { grid-template-columns: 1fr; gap: 40px; padding: 60px 5%; }
+
+    /* Contact */
+    .contact-section { height: auto; padding: 80px 5%; }
+    .contact-title { font-size: 10vw; }
+    .contact-btn { padding: 15px 40px; font-size: 1rem; }
+
+    /* Footer */
+    footer { padding: 60px 5%; display: flex; flex-direction: column; align-items: center; }
+    .footer-logo-img { width: 120px; padding: 15px; }
+    .footer-text { letter-spacing: 2px; text-align: center; }
+}
+
+@media (max-width: 480px) {
+    .hero-title { font-size: 15vw; }
+    .horror-text h2 { font-size: 14vw; }
+    .editorial-header h2 { font-size: 10vw; }
+    .contact-title { font-size: 10vw; }
+    .contact-btn { padding: 12px 30px; font-size: 0.9rem; }
+}
