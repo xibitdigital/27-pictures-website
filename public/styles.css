@@ -31,10 +31,26 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
     transition: transform 0.1s linear;
 }
 
+/* --- SCREEN READER ONLY (Accessibility) --- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* --- NAVIGATION --- */
-nav {
-    position: fixed; top: 0; width: 100%; padding: 30px 60px;
-    display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+body > header {
+    position: fixed; top: 0; width: 100%; z-index: 1000;
+}
+body > header nav {
+    width: 100%; padding: 30px 60px;
+    display: flex; justify-content: space-between; align-items: center;
 }
 .nav-logo-img { height: 60px; border: 1px solid var(--red-smile); padding: 10px; }
 
@@ -88,11 +104,11 @@ nav {
 
 /* --- ASSEMBLY (VFX & PIPELINE) --- */
 .assembly { padding: 100px 10%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; background: #050505; border-top: 1px solid #111; }
-.assembly-box h4 { font-family: 'Playfair Display'; font-size: 1.8rem; margin-bottom: 20px; color: var(--red-smile); }
+.assembly-box h3 { font-family: 'Playfair Display'; font-size: 1.8rem; margin-bottom: 20px; color: var(--red-smile); }
 .assembly-box p { font-size: 0.9rem; line-height: 1.7; color: var(--silver); }
 
 /* --- FOOTER --- */
-footer { padding: 100px 10%; text-align: center; border-top: 1px solid #111; display: flex; flex-direction: column; align-items: center; }
+footer { padding: 80px 10%; text-align: center; border-top: 1px solid #111; display: flex; flex-direction: column; align-items: center; }
 .footer-logo-img { width: 180px; margin-bottom: 40px; border: 1px solid var(--red-smile); padding: 20px; }
 
 /* --- HERO --- */
@@ -108,7 +124,7 @@ footer { padding: 100px 10%; text-align: center; border-top: 1px solid #111; dis
 .neural-tag { color: var(--silver); letter-spacing: 5px; }
 
 /* --- CONTACT --- */
-.contact-section { height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.contact-section { height: 50vh; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding-bottom: 60px; }
 .contact-title { font-size: 5vw; }
 .contact-btn { color: #fff; text-decoration: none; font-size: 1.2rem; border: 1px solid #fff; padding: 20px 60px; margin-top: 40px; }
 
