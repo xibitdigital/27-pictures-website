@@ -80,6 +80,9 @@ nav {
 /* Logo 27 font */
 .logo-27 { font-family: 'Luminari', 'Apple Chancery', 'Brush Script MT', cursive; font-style: normal; }
 
+/* Title font - easy to swap */
+.title-font { font-family: 'Luminari', 'Apple Chancery', 'Brush Script MT', cursive; }
+
 .featured-side-frame { height: 500px; background: #111; margin-top: 50px; overflow: hidden; position: relative; }
 .featured-side-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
 
