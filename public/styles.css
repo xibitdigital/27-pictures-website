@@ -92,7 +92,7 @@ nav {
 .assembly-box p { font-size: 0.9rem; line-height: 1.7; color: var(--silver); }
 
 /* --- FOOTER --- */
-footer { padding: 100px 10%; text-align: center; border-top: 1px solid #111; }
+footer { padding: 100px 10%; text-align: center; border-top: 1px solid #111; display: flex; flex-direction: column; align-items: center; }
 .footer-logo-img { width: 180px; margin-bottom: 40px; border: 1px solid var(--red-smile); padding: 20px; }
 
 /* --- HERO --- */

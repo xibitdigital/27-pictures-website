@@ -8,3 +8,7 @@ install: ## Install dependencies for pre-commit
 .PHONY: local-ci
 local-ci:
 	pre-commit run --all-files
+
+.PHONY: serve
+serve: ## Start local development server
+	npx serve public -p 3000
