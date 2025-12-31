@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>27 PICTURES | High-Fidelity Horror & Neural Cosplay</title>
+    
+    <!-- Premium Editorial Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Industry Standard Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #030303;
+            --text: #ffffff;
+            --red-smile: #b30000;
+            --silver: #888;
+            --transition: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+        /* --- PRELOADER --- */
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 11000;
+            display: flex; justify-content: center; align-items: center;
+            transition: 1.5s var(--transition);
+        }
+        .loader-logo { width: 150px; opacity: 0; transform: scale(0.9); transition: 1s; }
+
+        /* --- STUDIO POST-PRODUCTION OVERLAYS --- */
+        #grain {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_filmgrain.png');
+            opacity: 0.06; pointer-events: none; z-index: 9999; animation: grain 0.8s steps(10) infinite;
+        }
+        @keyframes grain { 0%, 100% { transform:translate(0, 0) } 20% { transform:translate(-2%, 2%) } }
+
+        #cursor {
+            position: fixed; width: 10px; height: 10px; background: #fff; border-radius: 50%;
+            pointer-events: none; z-index: 10000; mix-blend-mode: difference;
+            transition: transform 0.1s linear;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 30px 60px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+        /* Update this with your logo path */
+        .nav-logo-img { height: 60px; filter: invert(1); } 
+        
+        .nav-links a { 
+            text-decoration: none; color: #fff; font-size: 10px; letter-spacing: 4px; 
+            text-transform: uppercase; margin-left: 40px; font-weight: 700;
+        }
+
+        /* --- SECTIONS --- */
+        .section { min-height: 100vh; padding: 150px 10%; display: flex; flex-direction: column; justify-content: center; }
+        .section-tag { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--red-smile); margin-bottom: 20px; }
+        
+        /* --- HORROR: THE RED SMILE --- */
+        .horror-container { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
+        .horror-text h2 { font-family: 'Playfair Display'; font-size: 7vw; line-height: 0.9; margin-bottom: 30px; }
+        .horror-text p { font-size: 1.1rem; line-height: 1.8; color: var(--silver); max-width: 500px; margin-bottom: 40px; }
+        
+        .clown-hero-frame { 
+            height: 85vh; background: #111; overflow: hidden; position: relative; 
+            border-left: 1px solid var(--red-smile);
+        }
+        .clown-hero-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; filter: contrast(1.3) grayscale(0.2); transition: 2s var(--transition); }
+        .clown-hero-frame:hover img { transform: scale(1.05); opacity: 0.9; filter: contrast(1.5) grayscale(0); }
+        
+        /* --- BEYOND THE MASK (EDITORIAL) --- */
+        .cosplay-editorial { background: #000; border-top: 1px solid #111; padding-bottom: 150px; }
+        .editorial-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 80px; }
+        .editorial-header h2 { font-family: 'Playfair Display'; font-size: 6vw; font-style: italic; }
+        
+        .editorial-content { display: grid; grid-template-columns: 1.2fr 1fr; gap: 100px; }
+        .editorial-body { font-size: 1.2rem; line-height: 2; color: #ccc; }
+        .editorial-body h3 { font-family: 'Playfair Display'; font-size: 2.5rem; color: #fff; margin-bottom: 30px; }
+        .editorial-body p { margin-bottom: 30px; }
+
+        .tech-list { list-style: none; margin-top: 50px; }
+        .tech-list li { 
+            padding: 20px 0; border-top: 1px solid #222; 
+            display: flex; justify-content: space-between; font-size: 0.75rem; 
+            letter-spacing: 3px; text-transform: uppercase; 
+        }
+        .tech-list li span { color: var(--red-smile); font-weight: 900; }
+
+        .featured-side-frame { height: 500px; background: #111; margin-top: 50px; overflow: hidden; position: relative; }
+        .featured-side-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+
+        /* --- ASSEMBLY (VFX & PIPELINE) --- */
+        .assembly { padding: 100px 10%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; background: #050505; border-top: 1px solid #111; }
+        .assembly-box h4 { font-family: 'Playfair Display'; font-size: 1.8rem; margin-bottom: 20px; color: var(--red-smile); }
+        .assembly-box p { font-size: 0.9rem; line-height: 1.7; color: var(--silver); }
+
+        /* --- FOOTER --- */
+        footer { padding: 100px 10%; text-align: center; border-top: 1px solid #111; }
+        .footer-logo-img { width: 180px; filter: invert(1); opacity: 0.2; margin-bottom: 40px; }
+
+        /* --- ANIMATIONS --- */
+        .reveal { opacity: 0; transform: translateY(50px); transition: 1.5s var(--transition); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .magnetic { transition: transform 0.3s var(--transition); display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <img src="logo.jpeg" class="loader-logo" id="loaderLogo" alt="27 Logo">
+    </div>
+
+    <div id="grain"></div>
+    <div id="cursor"></div>
+
+    <nav>
+        <a href="#" class="magnetic">
+            <!-- REPLACE THIS SRC WITH YOUR LOGO FILENAME -->
+            <img src="logo.jpeg" class="nav-logo-img" alt="27 Pictures">
+        </a>
+        <div class="nav-links">
+            <a href="#darkroom" class="magnetic">The Darkroom</a>
+            <a href="#beyond" class="magnetic">Beyond the Mask</a>
+            <a href="#assembly" class="magnetic">Process</a>
+            <a href="#contact" class="magnetic">Inquire</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- HERO -->
+        <section class="section" style="align-items: center; text-align: center;">
+            <h1 class="reveal" style="font-family: 'Playfair Display'; font-size: 12vw; font-style: italic;">27 PICTURES</h1>
+            <p class="reveal" style="letter-spacing: 15px; text-transform: uppercase; font-size: 0.7rem; color: var(--silver); margin-top: 20px;">Cinema. Horror. Neural Synthesis.</p>
+        </section>
+
+        <!-- SECTION 1: THE DARKROOM (THE RED SMILE) -->
+        <section id="darkroom" class="section" style="background: #000;">
+            <span class="section-tag reveal">Archive 01: The Red Smile</span>
+            <div class="horror-container">
+                <div class="horror-text reveal">
+                    <h2>THE<br>RED SMILE</h2>
+                    <p>
+                        Specializing in visceral, psychological short-form horror. Our flagship series, "The Red Smile," explores the distortion of the human psyche through a cinematic lens. We prioritize atmosphere over jump-scares, utilizing deep-shadow cinematography and discordant soundscapes.
+                    </p>
+                    <a href="#" class="magnetic" style="color: var(--red-smile); text-decoration: none; border-bottom: 1px solid var(--red-smile); padding-bottom: 5px; font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase;">View Narrative Reel</a>
+                </div>
+                <div class="clown-hero-frame reveal">
+                    <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&q=80" alt="The Red Smile - Cinematic Clown Portrait">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: BEYOND THE MASK (EDITORIAL) -->
+        <section id="beyond" class="section cosplay-editorial">
+            <div class="editorial-header reveal">
+                <h2>BEYOND THE MASK</h2>
+                <p style="color: var(--silver); letter-spacing: 5px;">[ NEURAL COSMOLOGY ]</p>
+            </div>
+
+            <div class="editorial-content">
+                <div class="editorial-body reveal">
+                    <h3>The Neural Evolution</h3>
+                    <p>
+                        At 27 Pictures, we have redefined the limits of Cosplay production. We treat every character as a narrative centerpiece, using high-bitrate 4K RAW cinematography as the foundation for digital transformation.
+                    </p>
+                    <p>
+                        Our specialized workflow utilizes proprietary Neural Synthesis and Generative AI to bridge the gap between costume and character. Through AI-augmented environment mapping and texture diffusion, we create hyper-realistic visuals that surpass traditional photography.
+                    </p>
+                    <p>
+                        Every "Beyond the Mask" production is an assembly of artistic precision and artificial intelligence, ensuring that the final frame looks less like a photograph and more like a cinematic reality.
+                    </p>
+                </div>
+                
+                <div class="reveal">
+                    <ul class="tech-list">
+                        <li>Neural Texture Synthesis <span>[ ACTIVE ]</span></li>
+                        <li>Environment Generative Lab <span>[ RENDERED ]</span></li>
+                        <li>High-Fidelity AI Upscaling <span>[ 8K NATIVE ]</span></li>
+                        <li>Digital Character Compositing <span>[ VFX 2.0 ]</span></li>
+                        <li>Neural Lighting Reconstruction <span>[ LOG-C ]</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: THE ASSEMBLY (TECHNICAL PIPELINE) -->
+        <section id="assembly" class="assembly">
+            <div class="assembly-box reveal">
+                <h4>VFX ASSEMBLY</h4>
+                <p>Full-pipeline digital compositing, integrating live-action footage with supernatural effects and neural-generated environments.</p>
+            </div>
+            <div class="assembly-box reveal">
+                <h4>SONIC LANDSCAPES</h4>
+                <p>Bespoke music scoring and foley design. We believe audio is 50% of the cinema experience, crafting custom scores for every production.</p>
+            </div>
+            <div class="assembly-box reveal">
+                <h4>POST-PROCESSING</h4>
+                <p>Meticulous color grading and 4K assembly. Every frame is treated with a director's eye for lighting and narrative weight.</p>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" style="height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <h2 class="reveal" style="font-family: 'Playfair Display'; font-size: 5vw;">Initiate Production.</h2>
+            <a href="mailto:info@twentyseven.pictures" class="magnetic reveal" style="color: #fff; text-decoration: none; font-size: 1.2rem; border: 1px solid #fff; padding: 20px 60px; margin-top: 40px;">Contact Studio</a>
+        </section>
+    </main>
+
+    <footer>
+        <img src="logo.jpeg" class="footer-logo-img" alt="27 Pictures">
+        <p style="color: #333; font-size: 10px; letter-spacing: 5px; margin-top: 10px;">EST. 2025 | HIGH-FIDELITY HORROR & COSPLAY ASSEMBLY</p>
+    </footer>
+
+    <script>
+        // 1. PRELOADER LOGIC
+        window.addEventListener('load', () => {
+            const logo = document.getElementById('loaderLogo');
+            logo.style.opacity = '1';
+            logo.style.transform = 'scale(1)';
+            
+            setTimeout(() => {
+                document.getElementById('loader').style.transform = 'translateY(-100%)';
+            }, 1800);
+        });
+
+        // 2. SMOOTH SCROLL
+        const lenis = new Lenis();
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // 3. CURSOR
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+        });
+
+        // 4. MAGNETICS
+        const magnets = document.querySelectorAll('.magnetic');
+        magnets.forEach((m) => {
+            m.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                this.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            m.addEventListener('mouseleave', function() {
+                this.style.transform = `translate(0px, 0px)`;
+            });
+        });
+
+        // 5. REVEAL
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

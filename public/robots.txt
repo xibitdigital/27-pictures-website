@@ -1,0 +1,8 @@
+# robots.txt for Prudentia Psychological Services
+# https://prudentiaps.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://prudentiaps.com/sitemap.xml
