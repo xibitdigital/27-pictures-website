@@ -17,13 +17,7 @@ function raf(time) {
 }
 requestAnimationFrame(raf);
 
-// 3. CURSOR
-const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', (e) => {
-    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-});
-
-// 4. MAGNETICS
+// 3. MAGNETICS
 const magnets = document.querySelectorAll('.magnetic');
 magnets.forEach((m) => {
     m.addEventListener('mousemove', function(e) {
@@ -63,3 +57,45 @@ mobileLinks.forEach(link => {
         document.body.style.overflow = '';
     });
 });
+
+// 7. CONTACT FORM VALIDATION
+const contactForm = document.querySelector('.contact-form');
+contactForm?.addEventListener('submit', (e) => {
+    const email = document.getElementById('email');
+    const message = document.getElementById('message');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Clear previous errors
+    clearErrors();
+
+    let isValid = true;
+
+    // Email validation
+    if (!emailRegex.test(email.value.trim())) {
+        showError(email, 'Please enter a valid email address');
+        isValid = false;
+    }
+
+    // Message validation
+    if (message.value.trim() === '') {
+        showError(message, 'Please enter a message');
+        isValid = false;
+    }
+
+    if (!isValid) {
+        e.preventDefault();
+    }
+});
+
+function showError(input, message) {
+    input.classList.add('input-error');
+    const error = document.createElement('span');
+    error.className = 'error-message';
+    error.textContent = message;
+    input.parentElement.appendChild(error);
+}
+
+function clearErrors() {
+    document.querySelectorAll('.error-message').forEach(el => el.remove());
+    document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+}
