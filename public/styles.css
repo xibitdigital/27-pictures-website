@@ -152,6 +152,10 @@ footer { padding: 80px 10%; text-align: center; border-top: 1px solid var(--bg-c
 .contact-form textarea { resize: vertical; min-height: 150px; }
 .contact-form .input-error { border-color: var(--red-smile); }
 .error-message { color: var(--red-smile); font-size: 0.8rem; text-align: left; margin-top: 8px; display: block; }
+.form-message { padding: 15px 20px; margin-top: 20px; font-size: 0.9rem; letter-spacing: 1px; }
+.form-message--success { border: 1px solid #4caf50; color: #4caf50; }
+.form-message--error { border: 1px solid var(--red-smile); color: var(--red-smile); }
+.contact-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* --- FOOTER TEXT --- */
 .footer-text { color: var(--silver); font-size: 10px; letter-spacing: 5px; margin-top: 10px; }
