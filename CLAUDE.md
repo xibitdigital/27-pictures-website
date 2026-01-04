@@ -46,24 +46,96 @@
 
 ```
 27-pictures-website/
-├── public/              # Static site files (deployed)
+├── public/                  # Static site files (deployed to Cloudflare Pages)
 │   ├── index.html
 │   ├── styles.css
-│   └── script.js
-├── worker/              # Cloudflare Worker (contact form)
+│   ├── script.js
+│   ├── logo.png
+│   ├── logoWhite.png
+│   ├── logoBlue.png
+│   ├── the-red-smile.jpg
+│   ├── animatedLogo.mp4
+│   ├── sitemap.xml
+│   └── robots.txt
+├── worker/                  # Cloudflare Worker (contact form API)
 │   ├── src/index.js
 │   ├── wrangler.toml
 │   └── package.json
-└── CLAUDE.md            # This file
+├── .github/workflows/       # GitHub Actions (legacy GitHub Pages)
+│   └── deploy.yml
+├── CLAUDE.md                # This file
+└── .gitignore
 ```
-
-## Contact Form
-
-The contact form uses a Cloudflare Worker with MailChannels for email delivery.
-- Worker URL must be configured in `public/index.html` form action
-- CORS is configured for `https://twentyseven.pictures`
 
 ## Deployment
 
-- **Website**: Cloudflare Pages (from `public/` directory)
-- **Worker**: Deploy via `cd worker && npm run deploy`
+### Website (Cloudflare Pages)
+
+Deploy the `public/` folder:
+
+```bash
+npx wrangler pages deploy public --project-name=twentyseven-pictures --commit-dirty=true
+```
+
+**Custom domain:** `twentyseven.pictures` (configured once in Cloudflare dashboard)
+
+### Contact Form Worker
+
+Deploy the Cloudflare Worker:
+
+```bash
+cd worker
+npm install
+npx wrangler deploy
+```
+
+**Worker URL:** `https://contact-form.sangalli-marco.workers.dev`
+
+## Contact Form
+
+### Architecture
+
+- **Frontend:** AJAX form submission (stays on page)
+- **Backend:** Cloudflare Worker
+- **Email Service:** Resend API
+- **CORS:** Only allows `https://twentyseven.pictures`
+
+### Worker Configuration
+
+Environment variables in `worker/wrangler.toml`:
+
+```toml
+[vars]
+TO_EMAIL = "sangalli.marco@gmail.com"
+FROM_EMAIL = "noreply@twentyseven.pictures"
+FROM_NAME = "27 Pictures Contact Form"
+```
+
+### Secrets
+
+The Resend API key is stored as a secret:
+
+```bash
+npx wrangler secret put RESEND_API_KEY
+```
+
+### Resend Setup
+
+1. Domain `twentyseven.pictures` verified at https://resend.com/domains
+2. API key created at https://resend.com/api-keys
+
+## Email Routing
+
+To receive emails at `info@twentyseven.pictures`:
+
+1. Cloudflare Dashboard → Email → Email Routing
+2. Add route: `info` → forward to personal email
+3. Add MX records if prompted
+
+## Git Workflow
+
+- **Main branch:** `main`
+- **Remote:** `git@github.com:xibitdigital/27-pictures-website.git`
+- **Contributors:**
+  - Marco Sangalli (sangalli.marco@gmail.com)
+  - Daniele Sangalli (daniele@xibitdigital.com)
