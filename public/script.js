@@ -39,21 +39,6 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// 5b. COSPLAY SECTION BACKGROUND
-const cosplaySection = document.querySelector('.cosplay-section');
-if (cosplaySection) {
-    const cosplayObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('in-view');
-            } else {
-                entry.target.classList.remove('in-view');
-            }
-        });
-    }, { threshold: 0.3 });
-    cosplayObserver.observe(cosplaySection);
-}
-
 // 6. MOBILE MENU TOGGLE
 const burgerBtn = document.getElementById('burgerBtn');
 const mobileMenu = document.getElementById('mobileMenu');
