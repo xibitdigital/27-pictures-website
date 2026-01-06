@@ -14,6 +14,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+h1, h2, h3, h4, h5 { font-family: 'Playfair Display', serif; }
 
 /* --- PRELOADER --- */
 #loader {
@@ -66,7 +67,7 @@ body > header nav {
 
 /* --- HORROR: THE RED SMILE --- */
 .horror-container { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
-.horror-text h2 { font-family: 'Playfair Display'; font-size: 7vw; line-height: 0.9; margin-bottom: 30px; }
+.horror-text h2 { font-size: 7vw; line-height: 0.9; margin-bottom: 30px; }
 .horror-text p { font-size: 1.1rem; line-height: 1.8; color: var(--silver); max-width: 500px; margin-bottom: 40px; }
 
 .clown-hero-frame {
@@ -79,11 +80,11 @@ body > header nav {
 /* --- BEYOND THE MASK (EDITORIAL) --- */
 .cosplay-editorial { background: var(--bg-dark); border-top: 1px solid var(--bg-card); padding-bottom: 150px; }
 .editorial-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 80px; }
-.editorial-header h2 { font-family: 'Playfair Display'; font-size: 6vw; font-style: italic; }
+.editorial-header h2 { font-size: 6vw; font-style: italic; }
 
 .editorial-content { display: grid; grid-template-columns: 1.2fr 1fr; gap: 100px; }
 .editorial-body { font-size: 1.2rem; line-height: 2; color: var(--text-muted); }
-.editorial-body h3 { font-family: 'Playfair Display'; font-size: 2.5rem; color: var(--text); margin-bottom: 30px; }
+.editorial-body h3 { font-size: 2.5rem; color: var(--text); margin-bottom: 30px; }
 .editorial-body p { margin-bottom: 30px; }
 
 .tech-list { list-style: none; margin-top: 50px; }
@@ -105,7 +106,7 @@ body > header nav {
 
 /* --- ASSEMBLY (VFX & PIPELINE) --- */
 .assembly { padding: 100px 10%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; background: var(--bg-assembly); border-top: 1px solid var(--bg-card); }
-.assembly-box h3 { font-family: 'Playfair Display'; font-size: 1.8rem; margin-bottom: 20px; color: var(--red-smile); }
+.assembly-box h3 { font-size: 1.8rem; margin-bottom: 20px; color: var(--red-smile); }
 .assembly-box p { font-size: 0.9rem; line-height: 1.7; color: var(--silver); }
 
 /* --- FOOTER --- */

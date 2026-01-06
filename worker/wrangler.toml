@@ -3,6 +3,6 @@ main = "src/index.js"
 compatibility_date = "2024-01-01"
 
 [vars]
-TO_EMAIL = "sangalli.marco@gmail.com"
+TO_EMAIL = "27pictures@proton.me"
 FROM_EMAIL = "noreply@twentyseven.pictures"
 FROM_NAME = "27 Pictures Contact Form"
