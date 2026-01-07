@@ -109,7 +109,7 @@ contactForm?.addEventListener('submit', async (e) => {
         showFormMessage('An error occurred. Please try again.', 'error');
     } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Send Message';
+        submitBtn.textContent = 'Send Inquiry';
     }
 });
 

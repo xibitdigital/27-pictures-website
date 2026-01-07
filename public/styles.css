@@ -79,11 +79,13 @@ body > header nav {
 
 /* --- COSPLAY --- */
 .cosplay-section { background: linear-gradient(180deg, #1a0000 0%, #3d0000 50%, #1a0000 100%); border-top: 1px solid var(--bg-card); }
+.video-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-left: 1px solid var(--red-smile); }
+.video-frame iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
 /* --- BEYOND THE MASK (EDITORIAL) --- */
 .cosplay-editorial { background: var(--bg-dark); border-top: 1px solid var(--bg-card); padding-bottom: 150px; }
-.editorial-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 80px; }
-.editorial-header h2 { font-size: 6vw; font-style: italic; }
+.editorial-header { margin-bottom: 80px; }
+.editorial-header h2 { font-size: 7vw; line-height: 0.9; }
 
 .editorial-content { display: grid; grid-template-columns: 1.2fr 1fr; gap: 100px; }
 .editorial-body { font-size: 1.2rem; line-height: 2; color: var(--text-muted); }
@@ -99,7 +101,7 @@ body > header nav {
 .tech-list li span { color: var(--red-smile); font-weight: 900; }
 
 /* Logo 27 font */
-.logo-27 { font-family: 'Luminari', 'Apple Chancery', 'Brush Script MT', cursive; font-style: normal; }
+.logo-27 { font-family: 'Luminari', 'Apple Chancery', 'Brush Script MT', cursive; font-style: normal; font-size: 1.3em; font-weight: 900; }
 
 /* Title font - easy to swap */
 .title-font { font-family: 'Luminari', 'Apple Chancery', 'Brush Script MT', cursive; }
@@ -118,7 +120,7 @@ footer { padding: 80px 10%; text-align: center; border-top: 1px solid var(--bg-c
 
 /* --- HERO --- */
 .hero-section { align-items: center; text-align: center; }
-.hero-title { font-size: 12vw; font-style: italic; }
+.hero-title { font-size: 12vw; }
 .hero-tagline { letter-spacing: 15px; text-transform: uppercase; font-size: 0.7rem; color: var(--silver); margin-top: 20px; }
 
 /* --- DARKROOM --- */
@@ -246,9 +248,9 @@ footer { padding: 80px 10%; text-align: center; border-top: 1px solid var(--bg-c
     .horror-container { grid-template-columns: 1fr; gap: 40px; }
     .horror-text h2 { font-size: 15vw; }
     .clown-hero-frame { height: 60vh; border-left: none; border-top: 1px solid var(--red-smile); }
+    .video-frame { border-left: none; border-top: 1px solid var(--red-smile); }
 
     /* Editorial */
-    .editorial-header { flex-direction: column; align-items: flex-start; gap: 10px; }
     .editorial-header h2 { font-size: 10vw; }
     .editorial-content { grid-template-columns: 1fr; gap: 50px; }
     .editorial-body h3 { font-size: 1.8rem; }
