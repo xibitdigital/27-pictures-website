@@ -1,5 +1,13 @@
 # Claude Code Instructions
 
+## Code Formatting
+
+**Always format files with Prettier** after making changes:
+
+```bash
+npx prettier --write public/styles.css public/index.html public/script.js
+```
+
 ## CSS Guidelines
 
 **Never hardcode colors.** Always use CSS custom properties defined in `:root`.
