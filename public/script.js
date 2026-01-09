@@ -61,7 +61,18 @@ mobileLinks.forEach((link) => {
   });
 });
 
-// 7. CONTACT FORM SUBMISSION
+// 7. TURNSTILE CAPTCHA CALLBACKS
+let turnstileToken = null;
+
+window.onTurnstileSuccess = function (token) {
+  turnstileToken = token;
+};
+
+window.onTurnstileExpired = function () {
+  turnstileToken = null;
+};
+
+// 8. CONTACT FORM SUBMISSION
 const contactForm = document.querySelector(".contact-form");
 contactForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -89,6 +100,12 @@ contactForm?.addEventListener("submit", async (e) => {
     isValid = false;
   }
 
+  // Turnstile validation
+  if (!turnstileToken) {
+    showFormMessage("Please complete the verification", "error");
+    isValid = false;
+  }
+
   if (!isValid) return;
 
   // Submit form via fetch
@@ -104,6 +121,11 @@ contactForm?.addEventListener("submit", async (e) => {
     if (response.ok) {
       showFormMessage("Message sent successfully!", "success");
       contactForm.reset();
+      // Reset Turnstile
+      if (window.turnstile) {
+        turnstile.reset();
+        turnstileToken = null;
+      }
     } else {
       const errorText = await response.text();
       showFormMessage(errorText || "Failed to send message. Please try again.", "error");

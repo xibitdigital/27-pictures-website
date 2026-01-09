@@ -21,6 +21,7 @@ export default {
       const name = formData.get("name")?.trim();
       const email = formData.get("email")?.trim();
       const message = formData.get("message")?.trim();
+      const turnstileToken = formData.get("cf-turnstile-response");
 
       // Validation
       if (!name || !email || !message) {
@@ -32,11 +33,32 @@ export default {
         return new Response("Invalid email address", { status: 400, headers: corsHeaders });
       }
 
+      // Verify Turnstile token
+      if (!turnstileToken) {
+        return new Response("Please complete the verification", { status: 400, headers: corsHeaders });
+      }
+
+      const turnstileResponse = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: env.TURNSTILE_SECRET_KEY,
+          response: turnstileToken,
+          remoteip: request.headers.get("CF-Connecting-IP"),
+        }),
+      });
+
+      const turnstileResult = await turnstileResponse.json();
+      if (!turnstileResult.success) {
+        console.error("Turnstile verification failed:", JSON.stringify(turnstileResult));
+        return new Response("Verification failed. Please try again.", { status: 400, headers: corsHeaders });
+      }
+
       // Send email via Resend
       const resendResponse = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${env.RESEND_API_KEY}`,
+          Authorization: `Bearer ${env.RESEND_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -59,7 +81,10 @@ export default {
       } else {
         const errorData = await resendResponse.json();
         console.error("Resend error:", JSON.stringify(errorData));
-        return new Response(`Error: ${errorData.message || "Failed to send message"}`, { status: 500, headers: corsHeaders });
+        return new Response(`Error: ${errorData.message || "Failed to send message"}`, {
+          status: 500,
+          headers: corsHeaders,
+        });
       }
     } catch (error) {
       console.error("Error:", error);
