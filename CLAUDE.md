@@ -59,8 +59,6 @@ npx prettier --write public/styles.css public/index.html public/script.js
 │   ├── styles.css
 │   ├── script.js
 │   ├── logo.png
-│   ├── logoWhite.png
-│   ├── logoBlue.png
 │   ├── the-red-smile.jpg
 │   ├── sitemap.xml
 │   └── robots.txt
