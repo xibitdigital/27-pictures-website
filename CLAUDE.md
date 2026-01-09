@@ -62,7 +62,6 @@ npx prettier --write public/styles.css public/index.html public/script.js
 │   ├── logoWhite.png
 │   ├── logoBlue.png
 │   ├── the-red-smile.jpg
-│   ├── animatedLogo.mp4
 │   ├── sitemap.xml
 │   └── robots.txt
 ├── worker/                  # Cloudflare Worker (contact form API)
