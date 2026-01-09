@@ -61,11 +61,16 @@ mobileLinks.forEach((link) => {
   });
 });
 
-// 7. TURNSTILE CAPTCHA CALLBACKS
+// 7. TURNSTILE CAPTCHA (INVISIBLE MODE)
 let turnstileToken = null;
+let formReadyToSubmit = false;
 
 window.onTurnstileSuccess = function (token) {
   turnstileToken = token;
+  // If form validation passed, submit now
+  if (formReadyToSubmit) {
+    submitContactForm();
+  }
 };
 
 window.onTurnstileExpired = function () {
@@ -74,12 +79,13 @@ window.onTurnstileExpired = function () {
 
 // 8. CONTACT FORM SUBMISSION
 const contactForm = document.querySelector(".contact-form");
+const submitBtn = contactForm?.querySelector('button[type="submit"]');
+
 contactForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const email = document.getElementById("email");
   const message = document.getElementById("message");
-  const submitBtn = contactForm.querySelector('button[type="submit"]');
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // Clear previous errors/messages
@@ -100,15 +106,24 @@ contactForm?.addEventListener("submit", async (e) => {
     isValid = false;
   }
 
-  // Turnstile validation
-  if (!turnstileToken) {
-    showFormMessage("Please complete the verification", "error");
-    isValid = false;
-  }
-
   if (!isValid) return;
 
-  // Submit form via fetch
+  // If we already have a token, submit directly
+  if (turnstileToken) {
+    submitContactForm();
+  } else {
+    // Trigger invisible Turnstile challenge
+    formReadyToSubmit = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Verifying...";
+    if (window.turnstile) {
+      turnstile.execute();
+    }
+  }
+});
+
+async function submitContactForm() {
+  formReadyToSubmit = false;
   submitBtn.disabled = true;
   submitBtn.textContent = "Sending...";
 
@@ -136,7 +151,7 @@ contactForm?.addEventListener("submit", async (e) => {
     submitBtn.disabled = false;
     submitBtn.textContent = "Send Inquiry";
   }
-});
+}
 
 function showError(input, message) {
   input.classList.add("input-error");
