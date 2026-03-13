@@ -8,6 +8,9 @@ const path = require("path");
 const URL = "https://twentyseven.pictures/qr.html";
 const OUTPUT = path.join(require("os").homedir(), "Downloads", "27pictures-qr.pdf");
 const LOGO = path.join(__dirname, "..", "public", "logo.png");
+const FONT_PLAYFAIR = path.join(__dirname, "..", "node_modules/@fontsource/playfair-display/files/playfair-display-latin-900-normal.woff");
+const FONT_INTER = path.join(__dirname, "..", "node_modules/@fontsource/inter/files/inter-latin-400-normal.woff");
+const FONT_INTER_BOLD = path.join(__dirname, "..", "node_modules/@fontsource/inter/files/inter-latin-700-normal.woff");
 
 const RED = "#b30000";
 const BLACK = "#000000";
@@ -33,6 +36,10 @@ async function generate() {
     info: { Title: "27 Pictures — QR Code", Author: "27 Pictures" },
   });
 
+  doc.registerFont("Playfair", FONT_PLAYFAIR);
+  doc.registerFont("Inter", FONT_INTER);
+  doc.registerFont("Inter-Bold", FONT_INTER_BOLD);
+
   const stream = fs.createWriteStream(OUTPUT);
   doc.pipe(stream);
 
@@ -57,7 +64,7 @@ async function generate() {
 
   // Brand name
   doc
-    .font("Helvetica-Bold")
+    .font("Playfair")
     .fontSize(18)
     .fillColor(BLACK)
     .text("27 PICTURES", 0, y, { align: "center", width: cardW });
@@ -76,7 +83,7 @@ async function generate() {
 
   // URL
   doc
-    .font("Helvetica")
+    .font("Inter")
     .fontSize(8)
     .fillColor(GRAY)
     .text("TWENTYSEVEN.PICTURES/QR", 0, y, { align: "center", width: cardW, characterSpacing: 2 });
@@ -84,7 +91,7 @@ async function generate() {
 
   // Tagline
   doc
-    .font("Helvetica")
+    .font("Inter")
     .fontSize(7)
     .fillColor(GRAY)
     .text("CINEMA. HORROR. NEURAL SYNTHESIS.", 0, y, { align: "center", width: cardW, characterSpacing: 2 });

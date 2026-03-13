@@ -5,6 +5,8 @@
     "generate-qr": "node scripts/generate-qr.js"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/playfair-display": "^5.2.8",
     "pdfkit": "^0.15.0",
     "qrcode": "^1.5.4"
   }
