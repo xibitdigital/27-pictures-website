@@ -5,7 +5,7 @@
 **Always format files with Prettier** after making changes:
 
 ```bash
-npx prettier --write public/styles.css public/index.html public/script.js
+npx prettier --write public/styles.css public/index.html public/script.js public/qr.html
 ```
 
 ## CSS Guidelines
@@ -56,16 +56,20 @@ npx prettier --write public/styles.css public/index.html public/script.js
 27-pictures-website/
 ├── public/                  # Static site files (deployed to Cloudflare Pages)
 │   ├── index.html
+│   ├── qr.html              # Mobile landing page for QR code (noindex)
 │   ├── styles.css
 │   ├── script.js
 │   ├── logo.png
 │   ├── the-red-smile.jpg
 │   ├── sitemap.xml
 │   └── robots.txt
+├── scripts/
+│   └── generate-qr.js       # Generates branded QR code PDF → ~/Downloads/
 ├── worker/                  # Cloudflare Worker (contact form API)
 │   ├── src/index.js
 │   ├── wrangler.toml
 │   └── package.json
+├── package.json             # Root package (qrcode + pdfkit for QR generator)
 ├── .github/workflows/       # GitHub Actions (legacy GitHub Pages)
 │   └── deploy.yml
 ├── CLAUDE.md                # This file
@@ -136,6 +140,20 @@ To receive emails at `info@twentyseven.pictures`:
 1. Cloudflare Dashboard → Email → Email Routing
 2. Add route: `info` → forward to personal email
 3. Add MX records if prompted
+
+## QR Code Landing Page
+
+- **URL:** `https://twentyseven.pictures/qr.html`
+- **Purpose:** Mobile contact/inquiry page linked from a printed QR code
+- **SEO:** `noindex, nofollow` — also blocked in `robots.txt`
+- **Content:** Contact form (Turnstile + Resend), Instagram and YouTube links
+
+### Generate printable QR code PDF
+
+```bash
+npm run generate-qr
+# Output: ~/Downloads/27pictures-qr.pdf
+```
 
 ## Git Workflow
 
