@@ -1,0 +1,11 @@
+{
+  "name": "27-pictures-website",
+  "private": true,
+  "scripts": {
+    "generate-qr": "node scripts/generate-qr.js"
+  },
+  "dependencies": {
+    "pdfkit": "^0.15.0",
+    "qrcode": "^1.5.4"
+  }
+}

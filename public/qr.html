@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>27 Pictures — Contact</title>
+
+    <!-- No search engine indexing -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Inter:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <style>
+      :root {
+        --bg: #030303;
+        --bg-dark: #000;
+        --text: #fff;
+        --text-muted: #ccc;
+        --silver: #888;
+        --red-smile: #b30000;
+        --border: #222;
+        --border-light: #333;
+        --transition: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--bg-dark);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 24px;
+        text-align: center;
+      }
+
+      /* Grain overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_filmgrain.png");
+        opacity: 0.05;
+        pointer-events: none;
+        z-index: 0;
+        animation: grain 0.8s steps(10) infinite;
+      }
+
+      @keyframes grain {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        20% {
+          transform: translate(-2%, 2%);
+        }
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 380px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+      }
+
+      .logo {
+        width: 90px;
+        border: 1px solid var(--red-smile);
+        padding: 14px;
+      }
+
+      .tagline {
+        font-size: 9px;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--silver);
+        margin-top: -20px;
+      }
+
+      .divider {
+        width: 40px;
+        height: 1px;
+        background: var(--red-smile);
+      }
+
+      .headline {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        line-height: 1.1;
+      }
+
+      .body-text {
+        font-size: 0.9rem;
+        line-height: 1.8;
+        color: var(--text-muted);
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: 100%;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 16px 24px;
+        text-align: center;
+        text-decoration: none;
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        transition: 0.3s var(--transition);
+        cursor: pointer;
+        border: none;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--border-light);
+      }
+
+      .btn-outline:active {
+        background: var(--border-light);
+      }
+
+      /* Contact form */
+      .contact-form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        text-align: left;
+      }
+
+      .contact-form input,
+      .contact-form textarea {
+        width: 100%;
+        padding: 16px;
+        background: transparent;
+        border: 1px solid var(--border-light);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        transition: 0.3s var(--transition);
+      }
+
+      .contact-form input::placeholder,
+      .contact-form textarea::placeholder {
+        color: var(--silver);
+      }
+
+      .contact-form input:focus,
+      .contact-form textarea:focus {
+        outline: none;
+        border-color: var(--red-smile);
+      }
+
+      .contact-form textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .contact-form .input-error {
+        border-color: var(--red-smile);
+      }
+
+      .error-message {
+        color: var(--red-smile);
+        font-size: 0.75rem;
+        margin-top: 6px;
+        display: block;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 16px 24px;
+        background: var(--red-smile);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s var(--transition);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .form-message {
+        padding: 14px 16px;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+      }
+
+      .form-message--success {
+        border: 1px solid #4caf50;
+        color: #4caf50;
+      }
+
+      .form-message--error {
+        border: 1px solid var(--red-smile);
+        color: var(--red-smile);
+      }
+
+      .footer-note {
+        font-size: 9px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--silver);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <img src="logo.png" class="logo" alt="27 Pictures" />
+
+      <p class="tagline">Cinema. Horror. Neural Synthesis.</p>
+
+      <div class="divider"></div>
+
+      <h1 class="headline">Let's Make Something.</h1>
+
+      <p class="body-text">
+        Cosplay productions, horror short films, and AI-enhanced cinematography. Reach out and let's talk about your
+        project.
+      </p>
+
+      <form
+        action="https://contact-form.sangalli-marco.workers.dev"
+        method="POST"
+        class="contact-form"
+        aria-label="Contact form"
+      >
+        <div class="form-group">
+          <label
+            for="name"
+            style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0)"
+            >Your Name</label
+          >
+          <input type="text" id="name" name="name" placeholder="Your Name" required autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label
+            for="email"
+            style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0)"
+            >Your Email</label
+          >
+          <input type="email" id="email" name="email" placeholder="Your Email" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label
+            for="message"
+            style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0)"
+            >Your Message</label
+          >
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Tell us about your project..."
+            rows="4"
+            required
+          ></textarea>
+        </div>
+        <div
+          class="cf-turnstile"
+          data-sitekey="0x4AAAAAACLlfOmi5SSMELBj"
+          data-size="invisible"
+          data-callback="onTurnstileSuccess"
+          data-expired-callback="onTurnstileExpired"
+        ></div>
+        <button type="submit" class="submit-btn">Send Inquiry</button>
+      </form>
+
+      <div class="actions">
+        <a href="https://www.instagram.com/27pictures_production" class="btn btn-outline">Instagram</a>
+        <a href="https://www.youtube.com/channel/UCKrGuwv4VoNH5uQrrOBLeGA" class="btn btn-outline">YouTube</a>
+      </div>
+
+      <p class="footer-note">27 Pictures &mdash; Est. 2025</p>
+    </div>
+
+    <script>
+      let turnstileToken = null;
+      let formReadyToSubmit = false;
+
+      window.onTurnstileSuccess = function (token) {
+        turnstileToken = token;
+        if (formReadyToSubmit) submitContactForm();
+      };
+
+      window.onTurnstileExpired = function () {
+        turnstileToken = null;
+      };
+
+      const contactForm = document.querySelector(".contact-form");
+      const submitBtn = contactForm.querySelector(".submit-btn");
+
+      contactForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email");
+        const message = document.getElementById("message");
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        clearErrors();
+        clearFormMessage();
+
+        let isValid = true;
+
+        if (!emailRegex.test(email.value.trim())) {
+          showError(email, "Please enter a valid email address");
+          isValid = false;
+        }
+
+        if (message.value.trim() === "") {
+          showError(message, "Please enter a message");
+          isValid = false;
+        }
+
+        if (!isValid) return;
+
+        if (turnstileToken) {
+          submitContactForm();
+        } else {
+          formReadyToSubmit = true;
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Verifying...";
+          if (window.turnstile) turnstile.execute();
+        }
+      });
+
+      async function submitContactForm() {
+        formReadyToSubmit = false;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending...";
+
+        try {
+          const response = await fetch(contactForm.action, {
+            method: "POST",
+            body: new FormData(contactForm),
+          });
+
+          if (response.ok) {
+            showFormMessage("Message sent successfully!", "success");
+            contactForm.reset();
+            if (window.turnstile) {
+              turnstile.reset();
+              turnstileToken = null;
+            }
+          } else {
+            const errorText = await response.text();
+            showFormMessage(errorText || "Failed to send message. Please try again.", "error");
+          }
+        } catch (error) {
+          showFormMessage("An error occurred. Please try again.", "error");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Send Inquiry";
+        }
+      }
+
+      function showError(input, msg) {
+        input.classList.add("input-error");
+        const span = document.createElement("span");
+        span.className = "error-message";
+        span.textContent = msg;
+        input.parentElement.appendChild(span);
+      }
+
+      function clearErrors() {
+        document.querySelectorAll(".error-message").forEach((el) => el.remove());
+        document.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
+      }
+
+      function showFormMessage(text, type) {
+        const msg = document.createElement("div");
+        msg.className = `form-message form-message--${type}`;
+        msg.textContent = text;
+        contactForm.appendChild(msg);
+      }
+
+      function clearFormMessage() {
+        document.querySelectorAll(".form-message").forEach((el) => el.remove());
+      }
+    </script>
+  </body>
+</html>

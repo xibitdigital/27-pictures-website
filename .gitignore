@@ -11,6 +11,9 @@ node_modules
 /export
 /dist
 
+# generated files
+*.pdf
+
 # misc
 .DS_Store
 .env.local
