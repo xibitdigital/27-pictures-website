@@ -60,7 +60,7 @@
         content: "";
         position: fixed;
         inset: 0;
-        background: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_filmgrain.png");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
         opacity: 0.05;
         pointer-events: none;
         z-index: 0;
@@ -300,7 +300,7 @@
         <div
           class="cf-turnstile"
           data-sitekey="0x4AAAAAACLlfOmi5SSMELBj"
-          data-size="invisible"
+          data-appearance="interaction-only"
           data-callback="onTurnstileSuccess"
           data-expired-callback="onTurnstileExpired"
         ></div>
@@ -309,7 +309,7 @@
 
       <div class="actions">
         <a href="https://www.instagram.com/27pictures_production" class="btn btn-outline">Instagram</a>
-        <a href="https://www.youtube.com/channel/UCKrGuwv4VoNH5uQrrOBLeGA" class="btn btn-outline">YouTube</a>
+        <a href="https://www.youtube.com/@twentyseven.pictures" class="btn btn-outline">YouTube</a>
       </div>
 
       <p class="footer-note">27 Pictures &mdash; Est. 2025</p>
@@ -379,10 +379,7 @@
           if (response.ok) {
             showFormMessage("Message sent successfully!", "success");
             contactForm.reset();
-            if (window.turnstile) {
-              turnstile.reset();
-              turnstileToken = null;
-            }
+            turnstileToken = null;
           } else {
             const errorText = await response.text();
             showFormMessage(errorText || "Failed to send message. Please try again.", "error");

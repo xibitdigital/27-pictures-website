@@ -136,11 +136,7 @@ async function submitContactForm() {
     if (response.ok) {
       showFormMessage("Message sent successfully!", "success");
       contactForm.reset();
-      // Reset Turnstile
-      if (window.turnstile) {
-        turnstile.reset();
-        turnstileToken = null;
-      }
+      turnstileToken = null;
     } else {
       const errorText = await response.text();
       showFormMessage(errorText || "Failed to send message. Please try again.", "error");
