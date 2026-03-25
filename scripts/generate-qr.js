@@ -5,16 +5,21 @@ const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
 
-const URL = "https://twentyseven.pictures/qr.html";
+const URL = "https://www.instagram.com/27pictures_production";
 const OUTPUT = path.join(require("os").homedir(), "Downloads", "27pictures-qr.pdf");
 const LOGO = path.join(__dirname, "..", "public", "logo.png");
-const FONT_PLAYFAIR = path.join(__dirname, "..", "node_modules/@fontsource/playfair-display/files/playfair-display-latin-900-normal.woff");
+const FONT_PLAYFAIR = path.join(
+  __dirname,
+  "..",
+  "node_modules/@fontsource/playfair-display/files/playfair-display-latin-900-normal.woff"
+);
 const FONT_INTER = path.join(__dirname, "..", "node_modules/@fontsource/inter/files/inter-latin-400-normal.woff");
 const FONT_INTER_BOLD = path.join(__dirname, "..", "node_modules/@fontsource/inter/files/inter-latin-700-normal.woff");
 
 const RED = "#b30000";
 const BLACK = "#000000";
 const GRAY = "#999999";
+const PADDING = 10;
 
 async function generate() {
   // Generate QR code as PNG buffer
@@ -53,46 +58,39 @@ async function generate() {
 
   // Logo
   if (fs.existsSync(LOGO)) {
-    const logoW = 40;
-    const logoH = 60; // 2:3 ratio
+    const logoW = 80;
+    const logoH = 120; // 2:3 ratio
     const logoX = (cardW - logoW) / 2;
     doc.image(LOGO, logoX, y, { width: logoW, height: logoH });
-    // Red border around logo
-    doc.rect(logoX, y, logoW, logoH).stroke(RED);
-    y += logoH + 16;
+    y += logoH + PADDING;
   }
-
-  // Brand name
-  doc
-    .font("Playfair")
-    .fontSize(18)
-    .fillColor(BLACK)
-    .text("27 PICTURES", 0, y, { align: "center", width: cardW });
-  y += 28;
-
-  // Red divider
-  const divW = 32;
-  doc.rect((cardW - divW) / 2, y, divW, 1).fill(RED);
-  y += 16;
 
   // QR code
   const qrSize = 200;
   const qrX = (cardW - qrSize) / 2;
   doc.image(qrBuffer, qrX, y, { width: qrSize, height: qrSize });
-  y += qrSize + 14;
+  y += qrSize + PADDING;
 
   // URL
   doc
     .font("Inter")
     .fontSize(8)
     .fillColor(GRAY)
-    .text("TWENTYSEVEN.PICTURES/QR", 0, y, { align: "center", width: cardW, characterSpacing: 2 });
-  y += 16;
+    .text("INSTAGRAM", 0, y, { align: "center", width: cardW, characterSpacing: 2 });
+  y += 14;
+
+  // Instagram
+  doc
+    .font("Inter")
+    .fontSize(8)
+    .fillColor(GRAY)
+    .text("@27PICTURES_PRODUCTION", 0, y, { align: "center", width: cardW, characterSpacing: 1 });
+  y += PADDING;
 
   // Tagline
   doc
     .font("Inter")
-    .fontSize(7)
+    .fontSize(4)
     .fillColor(GRAY)
     .text("CINEMA. HORROR. NEURAL SYNTHESIS.", 0, y, { align: "center", width: cardW, characterSpacing: 2 });
 
