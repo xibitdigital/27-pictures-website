@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>27 Pictures | Horror Film Production & AI-Enhanced Cosplay Cinematography Studio</title>
+    <title>27 Pictures | Horror Film & AI Cosplay Cinematography</title>
 
     <!-- SEO Meta Tags -->
     <meta
@@ -58,19 +58,9 @@
     <meta name="twitter:image" content="https://twentyseven.pictures/the-red-smile.jpg" />
     <meta name="twitter:image:alt" content="The Red Smile - Horror production by 27 Pictures" />
 
-    <!-- Video Open Graph -->
-    <meta
-      property="og:video"
-      content="https://www.youtube.com/embed/videoseries?list=PLb5rxZ02eTKskIw5MglgYCObrkp9vAgDv"
-    />
-    <meta property="og:video:type" content="text/html" />
-    <meta property="og:video:width" content="1280" />
-    <meta property="og:video:height" content="720" />
-
     <!-- Resource Hints for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com" />
     <link rel="dns-prefetch" href="https://unpkg.com" />
 
     <!-- Premium Editorial Fonts -->
@@ -78,9 +68,6 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
@@ -90,6 +77,16 @@
 
     <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <!--
+      TODO: Update VideoObject uploadDate and duration for each video with actual YouTube values.
+      Get dates from YouTube Studio. Duration format: ISO 8601 (e.g. PT1M23S for 1m 23s).
+      TODO: Add a team section with director/founder name, 2-3 sentence bio, and a Person schema
+      node to the @graph below. This is the single highest-leverage E-E-A-T improvement.
+      TODO: Add studio location (city/country) to footer and to Organization schema address field.
+      TODO: Generate an IndexNow key at https://www.bing.com/indexnow, place the key file in public/,
+      and add: <meta name="indexnow-key" content="YOUR_KEY_HERE" />
+    -->
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -120,6 +117,12 @@
               "4K Video Production",
               "Post-Production"
             ],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer support",
+              "email": "info@twentyseven.pictures",
+              "url": "https://twentyseven.pictures/#contact"
+            },
             "sameAs": [
               "https://www.youtube.com/@twentyseven.pictures",
               "https://www.instagram.com/27pictures_production"
@@ -133,32 +136,56 @@
             "description": "Horror Film Production & AI-Enhanced Cosplay Cinematography Studio",
             "publisher": {
               "@id": "https://twentyseven.pictures/#organization"
+            }
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://twentyseven.pictures/#webpage",
+            "url": "https://twentyseven.pictures/",
+            "name": "27 Pictures | Horror Film & AI Cosplay Cinematography",
+            "description": "Professional horror film production studio specializing in psychological horror short films, AI-enhanced cosplay cinematography, and neural synthesis VFX.",
+            "isPartOf": {
+              "@id": "https://twentyseven.pictures/#website"
             },
-            "potentialAction": {
-              "@type": "ReadAction",
-              "target": "https://twentyseven.pictures/"
+            "about": {
+              "@id": "https://twentyseven.pictures/#organization"
+            },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://twentyseven.pictures/the-red-smile.jpg",
+              "width": 1135,
+              "height": 844
             }
           },
           {
             "@type": "CreativeWorkSeries",
             "@id": "https://twentyseven.pictures/#the-red-smile",
             "name": "The Red Smile",
+            "url": "https://twentyseven.pictures/#darkroom",
+            "startDate": "2025",
             "description": "A psychological horror short film series exploring the distortion of the human psyche through cinematic imagery, deep-shadow cinematography, and discordant soundscapes.",
             "genre": ["Horror", "Psychological Horror", "Short Film"],
             "creator": {
               "@id": "https://twentyseven.pictures/#organization"
             },
-            "image": "https://twentyseven.pictures/the-red-smile.jpg"
+            "image": {
+              "@type": "ImageObject",
+              "url": "https://twentyseven.pictures/the-red-smile.jpg",
+              "width": 1135,
+              "height": 844,
+              "caption": "The Red Smile — psychological horror short film series by 27 Pictures"
+            }
           },
           {
             "@type": "VideoObject",
             "@id": "https://twentyseven.pictures/#short-qjBL4zRIFbg",
             "name": "The Follower — She Thought It Was Just a Normal Run",
-            "description": "A psychological horror short by 27 Pictures — The Red Smile series.",
+            "description": "A psychological horror short from The Red Smile series by 27 Pictures. A woman on her evening run discovers she is not alone. Deep-shadow cinematography and neural synthesis VFX.",
             "thumbnailUrl": "https://i.ytimg.com/vi/qjBL4zRIFbg/maxresdefault.jpg",
             "embedUrl": "https://www.youtube.com/embed/qjBL4zRIFbg",
             "url": "https://www.youtube.com/watch?v=qjBL4zRIFbg",
             "uploadDate": "2025-01-01",
+            "duration": "PT1M00S",
             "genre": "Horror",
             "publisher": { "@id": "https://twentyseven.pictures/#organization" },
             "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
@@ -167,11 +194,12 @@
             "@type": "VideoObject",
             "@id": "https://twentyseven.pictures/#short-BOtFWCENtTc",
             "name": "She Asked for Argyle Alley… But Was This the Right One?",
-            "description": "A psychological horror short by 27 Pictures — The Red Smile series.",
+            "description": "A psychological horror short from The Red Smile series by 27 Pictures. A disorienting encounter in a narrow alleyway. Neural synthesis environments and AI visual effects.",
             "thumbnailUrl": "https://i.ytimg.com/vi/BOtFWCENtTc/maxresdefault.jpg",
             "embedUrl": "https://www.youtube.com/embed/BOtFWCENtTc",
             "url": "https://www.youtube.com/watch?v=BOtFWCENtTc",
             "uploadDate": "2025-01-01",
+            "duration": "PT1M00S",
             "genre": "Horror",
             "publisher": { "@id": "https://twentyseven.pictures/#organization" },
             "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
@@ -180,11 +208,12 @@
             "@type": "VideoObject",
             "@id": "https://twentyseven.pictures/#short-VEmf9eq62zo",
             "name": "My Reflection Started Glitching…",
-            "description": "A psychological horror short by 27 Pictures — The Red Smile series.",
+            "description": "A psychological horror short from The Red Smile series by 27 Pictures. A mirror distorts reality. AI texture diffusion and neural synthesis create a fractured visual nightmare.",
             "thumbnailUrl": "https://i.ytimg.com/vi/VEmf9eq62zo/maxresdefault.jpg",
             "embedUrl": "https://www.youtube.com/embed/VEmf9eq62zo",
             "url": "https://www.youtube.com/watch?v=VEmf9eq62zo",
             "uploadDate": "2025-01-01",
+            "duration": "PT1M00S",
             "genre": "Horror",
             "publisher": { "@id": "https://twentyseven.pictures/#organization" },
             "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
@@ -193,19 +222,34 @@
             "@type": "VideoObject",
             "@id": "https://twentyseven.pictures/#short-QMRlBqAdNGg",
             "name": "The Streamer — Watch Till the End",
-            "description": "A psychological horror short by 27 Pictures — The Red Smile series.",
+            "description": "A psychological horror short from The Red Smile series by 27 Pictures. A livestream that goes somewhere it should not. Generative AI environments and discordant soundscapes.",
             "thumbnailUrl": "https://i.ytimg.com/vi/QMRlBqAdNGg/maxresdefault.jpg",
             "embedUrl": "https://www.youtube.com/embed/QMRlBqAdNGg",
             "url": "https://www.youtube.com/watch?v=QMRlBqAdNGg",
             "uploadDate": "2025-01-01",
+            "duration": "PT1M00S",
             "genre": "Horror",
             "publisher": { "@id": "https://twentyseven.pictures/#organization" },
             "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
           },
           {
+            "@type": "VideoObject",
+            "@id": "https://twentyseven.pictures/#video-nuMPi_Rnxg0",
+            "name": "27 Pictures Cosplay Production Showcase",
+            "description": "A showcase of 27 Pictures' AI-enhanced cosplay cinematography. Full production sessions using high-bitrate 4K RAW, neural synthesis, and generative AI environment mapping.",
+            "thumbnailUrl": "https://i.ytimg.com/vi/nuMPi_Rnxg0/maxresdefault.jpg",
+            "embedUrl": "https://www.youtube.com/embed/nuMPi_Rnxg0",
+            "url": "https://www.youtube.com/watch?v=nuMPi_Rnxg0",
+            "uploadDate": "2025-01-01",
+            "duration": "PT1M00S",
+            "genre": "Cosplay",
+            "publisher": { "@id": "https://twentyseven.pictures/#organization" }
+          },
+          {
             "@type": "Service",
             "@id": "https://twentyseven.pictures/#vfx-service",
             "name": "VFX Assembly",
+            "url": "https://twentyseven.pictures/#assembly",
             "description": "Full-pipeline digital compositing, integrating live-action footage with supernatural effects and neural-generated environments.",
             "provider": {
               "@id": "https://twentyseven.pictures/#organization"
@@ -216,6 +260,7 @@
             "@type": "Service",
             "@id": "https://twentyseven.pictures/#cosplay-service",
             "name": "Beyond the Mask - Neural Cosplay Production",
+            "url": "https://twentyseven.pictures/#beyond",
             "description": "AI-enhanced cosplay cinematography using neural synthesis, generative AI environment mapping, and high-fidelity 4K production.",
             "provider": {
               "@id": "https://twentyseven.pictures/#organization"
@@ -226,7 +271,7 @@
       }
     </script>
   </head>
-  <body itemscope itemtype="https://schema.org/WebPage">
+  <body>
     <!-- Loading Screen -->
     <div id="loader" role="progressbar" aria-label="Loading 27 Pictures website">
       <img
@@ -251,13 +296,15 @@
             class="nav-logo-img"
             alt="27 Pictures"
             title="27 Pictures - Horror Film Production Studio"
+            width="40"
+            height="60"
           />
         </a>
 
         <!-- Burger Menu Button (mobile only) -->
         <button
           id="burgerBtn"
-          class="burger-btn md:hidden"
+          class="burger-btn"
           aria-label="Toggle navigation menu"
           aria-expanded="false"
           aria-controls="mobileMenu"
@@ -268,7 +315,7 @@
         </button>
 
         <!-- Desktop nav links -->
-        <div class="nav-links hidden md:flex" role="menubar">
+        <div class="nav-links" role="menubar">
           <a href="#darkroom" class="magnetic" role="menuitem">The Darkroom</a>
           <a href="#cosplay" class="magnetic" role="menuitem">Cosplay</a>
           <a href="#beyond" class="magnetic" role="menuitem">Beyond the Mask</a>
@@ -339,24 +386,17 @@
     <main id="main-content" role="main">
       <!-- HERO SECTION -->
       <section class="section hero-section" aria-labelledby="hero-title">
-        <h1 id="hero-title" class="reveal hero-title" itemprop="name"><span class="logo-27">27</span><br />PICTURES</h1>
-        <p class="reveal hero-tagline" itemprop="description">Cinema. Horror. Neural Synthesis.</p>
+        <h1 id="hero-title" class="reveal hero-title"><span class="logo-27">27</span><br />PICTURES</h1>
+        <p class="reveal hero-tagline">Cinema. Horror. Neural Synthesis.</p>
       </section>
 
       <!-- SECTION 1: THE DARKROOM (THE RED SMILE) -->
-      <article
-        id="darkroom"
-        class="section darkroom-section"
-        itemscope
-        itemtype="https://schema.org/CreativeWork"
-        aria-labelledby="darkroom-title"
-      >
-        <meta itemprop="image" content="https://twentyseven.pictures/the-red-smile.jpg" />
+      <article id="darkroom" class="section darkroom-section" aria-labelledby="darkroom-title">
         <span class="section-tag reveal">Archive 01: The Red Smile</span>
         <div class="horror-container">
           <div class="horror-text reveal">
-            <h2 id="darkroom-title" itemprop="name">THE<br />RED SMILE</h2>
-            <p itemprop="description">
+            <h2 id="darkroom-title">THE<br />RED SMILE</h2>
+            <p>
               Specializing in visceral, psychological short-form horror. Our flagship series, The Red Smile, explores
               the distortion of the human psyche through a cinematic lens. We prioritise atmosphere over jump-scares,
               crafting tension through deep-shadow cinematography and discordant soundscapes.
@@ -379,6 +419,7 @@
               src="https://www.youtube.com/embed/videoseries?list=PLb5rxZ02eTKskIw5MglgYCObrkp9vAgDv"
               title="The Red Smile Shorts Playlist"
               frameborder="0"
+              loading="lazy"
               allow="
                 accelerometer;
                 autoplay;
@@ -395,18 +436,12 @@
       </article>
 
       <!-- SECTION 2: COSPLAY -->
-      <article
-        id="cosplay"
-        class="section cosplay-section"
-        itemscope
-        itemtype="https://schema.org/Service"
-        aria-labelledby="cosplay-title"
-      >
+      <article id="cosplay" class="section cosplay-section" aria-labelledby="cosplay-title">
         <span class="section-tag reveal">Archive 02: Cosplay Production</span>
         <div class="horror-container">
           <div class="horror-text reveal">
-            <h2 id="cosplay-title" itemprop="name">COSPLAY</h2>
-            <p itemprop="description">
+            <h2 id="cosplay-title">COSPLAY</h2>
+            <p>
               We transform cosplay into cinema. Every session is a full production—lighting, direction, and
               post-production designed to bring your character to life with cinematic precision. From concept to final
               frame, we collaborate with cosplayers to create images that transcend convention photography.
@@ -420,6 +455,7 @@
               src="https://www.youtube.com/embed/nuMPi_Rnxg0"
               title="27 Pictures Cosplay Production Showcase"
               frameborder="0"
+              loading="lazy"
               allow="
                 accelerometer;
                 autoplay;
@@ -437,19 +473,13 @@
       </article>
 
       <!-- SECTION 3: BEYOND THE MASK (EDITORIAL) -->
-      <article
-        id="beyond"
-        class="section cosplay-editorial"
-        itemscope
-        itemtype="https://schema.org/Service"
-        aria-labelledby="beyond-title"
-      >
+      <article id="beyond" class="section cosplay-editorial" aria-labelledby="beyond-title">
         <header class="editorial-header reveal">
-          <h2 id="beyond-title" itemprop="name">BEYOND THE MASK</h2>
+          <h2 id="beyond-title">BEYOND THE MASK</h2>
         </header>
 
         <div class="editorial-content">
-          <div class="editorial-body reveal" itemprop="description">
+          <div class="editorial-body reveal">
             <h3>The Neural Evolution of Horror & Cosplay Cinema</h3>
             <p>
               At 27 Pictures, we have redefined the limits of horror and cosplay production. We treat every frame as a
@@ -457,10 +487,10 @@
               transformation.
             </p>
             <p>
-              Our specialized workflow utilizes proprietary Neural Synthesis and Generative AI to create otherworldly
-              atmospheres. Through AI-augmented environment mapping and texture diffusion, we craft hyper-realistic
-              visuals that blur the line between reality and imagination—whether summoning nightmares or bringing
-              beloved characters to life.
+              Our specialized workflow uses Neural Synthesis — a production pipeline combining AI-generated environment
+              mapping and texture diffusion with live-action 4K RAW footage — to create otherworldly atmospheres that
+              blur the line between reality and imagination, whether summoning nightmares or bringing beloved characters
+              to life.
             </p>
             <p>
               Every "Beyond the Mask" production is an assembly of artistic precision and artificial intelligence,
@@ -483,23 +513,23 @@
       <!-- SECTION 4: THE ASSEMBLY (TECHNICAL PIPELINE) -->
       <section id="assembly" class="assembly" aria-labelledby="assembly-title">
         <h2 id="assembly-title" class="sr-only">Our Production Process</h2>
-        <article class="assembly-box reveal" itemscope itemtype="https://schema.org/Service">
-          <h3 itemprop="name">VFX ASSEMBLY</h3>
-          <p itemprop="description">
+        <article class="assembly-box reveal">
+          <h3>VFX ASSEMBLY</h3>
+          <p>
             Full-pipeline digital compositing, integrating live-action footage with supernatural effects and
             neural-generated environments.
           </p>
         </article>
-        <article class="assembly-box reveal" itemscope itemtype="https://schema.org/Service">
-          <h3 itemprop="name">SONIC LANDSCAPES</h3>
-          <p itemprop="description">
+        <article class="assembly-box reveal">
+          <h3>SONIC LANDSCAPES</h3>
+          <p>
             Bespoke music scoring and foley design. We believe audio is 50% of the cinema experience, crafting custom
             scores for every production.
           </p>
         </article>
-        <article class="assembly-box reveal" itemscope itemtype="https://schema.org/Service">
-          <h3 itemprop="name">POST-PROCESSING</h3>
-          <p itemprop="description">
+        <article class="assembly-box reveal">
+          <h3>POST-PROCESSING</h3>
+          <p>
             Meticulous color grading and 4K assembly. Every frame is treated with a director's eye for lighting and
             narrative weight.
           </p>
@@ -507,13 +537,7 @@
       </section>
 
       <!-- CONTACT SECTION -->
-      <section
-        id="contact"
-        class="contact-section"
-        aria-labelledby="contact-title"
-        itemscope
-        itemtype="https://schema.org/ContactPage"
-      >
+      <section id="contact" class="contact-section" aria-labelledby="contact-title">
         <h2 id="contact-title" class="reveal contact-title">INITIATE PRODUCTION</h2>
         <form
           action="https://contact-form.sangalli-marco.workers.dev"
@@ -527,15 +551,7 @@
           </div>
           <div class="form-group">
             <label for="email" class="sr-only">Your Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Your Email"
-              required
-              autocomplete="email"
-              itemprop="email"
-            />
+            <input type="email" id="email" name="email" placeholder="Your Email" required autocomplete="email" />
           </div>
           <div class="form-group">
             <label for="message" class="sr-only">Your Message</label>
@@ -559,7 +575,7 @@
       </section>
     </main>
 
-    <footer role="contentinfo" itemscope itemtype="https://schema.org/Organization">
+    <footer role="contentinfo">
       <img
         src="logo.png"
         class="footer-logo-img"
@@ -567,7 +583,6 @@
         width="180"
         height="270"
         loading="lazy"
-        itemprop="logo"
       />
       <div class="footer-social">
         <a
@@ -620,12 +635,10 @@
           </svg>
         </a>
       </div>
-      <p class="footer-text">
-        <span itemprop="foundingDate">EST. 2025</span> |
-        <span itemprop="description">HIGH-FIDELITY HORROR & COSPLAY ASSEMBLY</span>
+      <p class="footer-text">EST. 2025 | HIGH-FIDELITY HORROR & COSPLAY ASSEMBLY</p>
+      <p class="footer-text" style="margin-top: 8px">
+        <a href="/privacy.html" class="footer-link">Privacy Policy</a>
       </p>
-      <meta itemprop="name" content="27 Pictures" />
-      <meta itemprop="url" content="https://twentyseven.pictures/" />
     </footer>
 
     <script src="script.js" defer></script>

@@ -6,7 +6,7 @@ window.addEventListener("load", () => {
 
   setTimeout(() => {
     document.getElementById("loader").style.transform = "translateY(-100%)";
-  }, 1800);
+  }, 500);
 });
 
 // 2. SMOOTH SCROLL
@@ -50,7 +50,10 @@ const mobileLinks = document.querySelectorAll(".mobile-menu-link");
 burgerBtn?.addEventListener("click", () => {
   burgerBtn.classList.toggle("active");
   mobileMenu.classList.toggle("active");
-  document.body.style.overflow = mobileMenu.classList.contains("active") ? "hidden" : "";
+  const isOpen = mobileMenu.classList.contains("active");
+  document.body.style.overflow = isOpen ? "hidden" : "";
+  burgerBtn.setAttribute("aria-expanded", isOpen.toString());
+  mobileMenu.setAttribute("aria-hidden", (!isOpen).toString());
 });
 
 mobileLinks.forEach((link) => {
@@ -58,6 +61,8 @@ mobileLinks.forEach((link) => {
     burgerBtn.classList.remove("active");
     mobileMenu.classList.remove("active");
     document.body.style.overflow = "";
+    burgerBtn.setAttribute("aria-expanded", "false");
+    mobileMenu.setAttribute("aria-hidden", "true");
   });
 });
 
