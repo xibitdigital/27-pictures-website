@@ -84,7 +84,6 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
-    <link rel="preload" href="the-red-smile.jpg" as="image" />
 
     <!-- Industry Standard Smooth Scroll -->
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
@@ -136,9 +135,8 @@
               "@id": "https://twentyseven.pictures/#organization"
             },
             "potentialAction": {
-              "@type": "SearchAction",
-              "target": "https://twentyseven.pictures/?s={search_term_string}",
-              "query-input": "required name=search_term_string"
+              "@type": "ReadAction",
+              "target": "https://twentyseven.pictures/"
             }
           },
           {
