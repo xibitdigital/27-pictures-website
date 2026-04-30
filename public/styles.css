@@ -166,18 +166,12 @@ body > header nav {
   position: relative;
   border-left: 1px solid var(--red-smile);
 }
-.clown-hero-frame img {
+.clown-hero-frame iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  opacity: 0.7;
-  filter: contrast(1.3) grayscale(0.2);
-  transition: 2s var(--transition);
-}
-.clown-hero-frame:hover img {
-  transform: scale(1.05);
-  opacity: 0.9;
-  filter: contrast(1.5) grayscale(0);
 }
 
 /* --- COSPLAY --- */
