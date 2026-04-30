@@ -2,7 +2,8 @@
   "name": "27-pictures-website",
   "private": true,
   "scripts": {
-    "generate-qr": "node scripts/generate-qr.js"
+    "generate-qr": "node scripts/generate-qr.js",
+    "generate-qr-image": "node scripts/generate-qr-image.js"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",

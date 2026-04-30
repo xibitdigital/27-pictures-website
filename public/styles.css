@@ -174,6 +174,22 @@ body > header nav {
   height: 100%;
 }
 
+/* --- YOUTUBE CTA --- */
+.youtube-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.youtube-cta::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 10px;
+  background: var(--red-smile);
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+  flex-shrink: 0;
+}
+
 /* --- COSPLAY --- */
 .cosplay-section {
   background: linear-gradient(180deg, #1a0000 0%, #3d0000 50%, #1a0000 100%);
