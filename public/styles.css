@@ -740,6 +740,7 @@ footer {
   }
   .footer-logo-img {
     width: 120px;
+    height: auto;
     padding: 15px;
   }
   .footer-text {
