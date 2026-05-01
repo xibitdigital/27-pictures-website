@@ -111,10 +111,10 @@ body > header nav {
   align-items: center;
 }
 .nav-logo-img {
-  height: 60px;
-  width: 60px;
+  height: 40px;
+  width: auto;
   border: 1px solid var(--red-smile);
-  padding: 10px;
+  padding: 6px;
 }
 
 .nav-links {
