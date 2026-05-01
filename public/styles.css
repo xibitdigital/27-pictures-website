@@ -333,6 +333,7 @@ footer {
 }
 .footer-logo-img {
   width: 180px;
+  height: auto;
   margin-bottom: 40px;
   border: 1px solid var(--red-smile);
   padding: 20px;
