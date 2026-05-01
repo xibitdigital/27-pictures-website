@@ -112,7 +112,7 @@ body > header nav {
 }
 .nav-logo-img {
   height: 60px;
-  width: auto;
+  width: 60px;
   border: 1px solid var(--red-smile);
   padding: 10px;
 }
