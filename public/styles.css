@@ -360,6 +360,30 @@ footer {
   margin-top: 20px;
 }
 
+.scroll-arrow {
+  display: none;
+}
+@media (max-width: 768px) {
+  .scroll-arrow {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    color: var(--silver);
+    animation: scroll-pulse 2s ease-in-out infinite;
+  }
+}
+@keyframes scroll-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(8px);
+  }
+}
+
 /* --- DARKROOM --- */
 .darkroom-section {
   background: var(--bg-dark);
