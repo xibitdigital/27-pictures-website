@@ -129,6 +129,9 @@ body > header nav {
   color: var(--silver);
   transition: color 0.3s var(--transition);
 }
+.nav-social-link svg {
+  display: block;
+}
 .nav-social-link:hover {
   color: var(--red-smile);
 }
