@@ -76,6 +76,11 @@ h5 {
     animation: none;
   }
 }
+@media (max-width: 768px) {
+  #grain {
+    display: none;
+  }
+}
 
 /* --- SCREEN READER ONLY (Accessibility) --- */
 .sr-only {
