@@ -86,7 +86,7 @@ npm run generate-qr
 - [ ] Add founder/director name, bio, and Person schema node to `index.html`
 - [ ] Add studio location (city/country) to footer text and Organization schema
 - [ ] Generate IndexNow key at https://www.bing.com/indexnow and add key file to `public/`
-- [ ] Submit sitemap to Google Search Console: https://search.google.com/search-console
+- [ ] Submit sitemap to Google Search Console: https://search.google.com/search-console?resource_id=sc-domain%3Atwentyseven.pictures
 - [ ] Submit sitemap to Bing Webmaster Tools: https://www.bing.com/webmasters
 
 ## Git
