@@ -548,6 +548,13 @@ footer {
   opacity: 1;
   transform: translateY(0);
 }
+@media (max-width: 768px) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 .magnetic {
   transition: transform 0.3s var(--transition);
   display: inline-block;
