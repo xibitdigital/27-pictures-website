@@ -5,7 +5,11 @@ window.addEventListener("load", () => {
   logo.style.transform = "scale(1)";
 
   setTimeout(() => {
-    document.getElementById("loader").style.transform = "translateY(-100%)";
+    const loader = document.getElementById("loader");
+    loader.style.transform = "translateY(-100%)";
+    setTimeout(() => {
+      loader.style.display = "none";
+    }, 1600);
   }, 500);
 });
 
