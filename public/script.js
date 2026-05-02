@@ -6,6 +6,7 @@ window.addEventListener("load", () => {
 
   setTimeout(() => {
     const loader = document.getElementById("loader");
+    loader.style.pointerEvents = "none";
     loader.style.transform = "translateY(-100%)";
     setTimeout(() => {
       loader.style.display = "none";
@@ -13,13 +14,15 @@ window.addEventListener("load", () => {
   }, 500);
 });
 
-// 2. SMOOTH SCROLL
-const lenis = new Lenis();
-function raf(time) {
-  lenis.raf(time);
+// 2. SMOOTH SCROLL (desktop only)
+if (window.innerWidth > 768) {
+  const lenis = new Lenis();
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
   requestAnimationFrame(raf);
 }
-requestAnimationFrame(raf);
 
 // 3. MAGNETICS
 const magnets = document.querySelectorAll(".magnetic");
