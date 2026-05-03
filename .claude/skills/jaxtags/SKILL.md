@@ -1,15 +1,15 @@
 ---
-name: tags
+name: jaxtags
 description: >
   YouTube Shorts tag and title generator for the Jax Netrunner cyberpunk series.
   Takes a scene description or episode title and outputs a ready-to-paste YouTube
   title with hashtags + description tag block. Fixed series tags always included.
-  Use when user says "tags", "/tags", "youtube tags", "generate tags", or "title tags".
+  Use when user says "jaxtags", "/jaxtags", "youtube tags", "generate tags", or "title tags".
 user-invokable: true
 argument-hint: "[episode title or scene description]"
 ---
 
-# TAGS — YouTube Shorts Tag Generator (Jax Netrunner Series)
+# JAXTAGS — YouTube Shorts Tag Generator (Jax Netrunner Series)
 
 Generate a YouTube title with hashtags and a description tag block for upload.
 
