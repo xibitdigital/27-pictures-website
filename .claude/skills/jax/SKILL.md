@@ -12,11 +12,11 @@ argument-hint: "[scene description]"
 
 # JAX — Grok Image Prompt Generator
 
-Take the user's scene/subject description and output a complete Grok image prompt plus YouTube Shorts tags.
+Take the user's scene/subject description and output a complete Grok image prompt.
 
 ## Output format
 
-Two blocks: prompt block, then tags block. No preamble, no explanation.
+Single copyable prompt block. No preamble, no explanation.
 
 ## Structure
 
@@ -24,13 +24,6 @@ Two blocks: prompt block, then tags block. No preamble, no explanation.
 [scene description expanded]. Do not change anything about: [protected nouns].
 
 Ultra-realistic cinematic cyberpunk scene, Blade Runner 2049 × Ghost in the Shell aesthetic. Heavy pouring rain at night, dramatic volumetric neon lighting. Shot on ARRI ALEXA 35 Xtreme with [LENS]. 4K, anamorphic 2.39:1 aspect ratio, strong horizontal lens flares, beautiful bokeh, subtle film grain, teal-cyan-orange cinematic grading.
-
----
-TITLE TAGS (pick 2, append to YouTube title):
-#CyberpunkShort #[most relevant scene tag]
-
-DESCRIPTION TAGS (5 max):
-#CyberpunkShort #SciFiShort #NeonNoir #CyberpunkAesthetic #[1 scene-specific tag]
 ```
 
 ## Protected Characters
@@ -47,7 +40,6 @@ Before expanding the prompt, scan the user's input and extract all proper nouns 
 - Ask the user for a lens before generating — if not provided, prompt: "What lens? (e.g. Zeiss Master Prime 35mm, Cooke S7/i 50mm, Leica Summilux-C 25mm)"
 - Include "Shot on ARRI ALEXA 35 Xtreme with [LENS]" in the suffix
 - Append `Do not change anything about: [protected nouns].` at end of scene description
-- Tags: always include `#CyberpunkShort`, `#SciFiShort`, and `#JaxNetrunner` as fixed base tags; add 1-2 scene-specific tags derived from the action/characters; never use trademarked IP names (#BladeRunner, #GhostInTheShell) or low-volume niche tags (#grokai)
 - If user provides no subject, ask for one before generating
 
 ## Example
@@ -61,11 +53,4 @@ Output:
 Jax sprints from a rain-slicked alley, boots hammering wet asphalt as neon signs bleed color across the fog, holographic adverts flickering in the dark above him. Do not change anything about: Jax.
 
 Ultra-realistic cinematic cyberpunk scene, Blade Runner 2049 × Ghost in the Shell aesthetic. Heavy pouring rain at night, dramatic volumetric neon lighting. Shot on ARRI ALEXA 35 Xtreme with Zeiss Master Prime 50mm. 4K, anamorphic 2.39:1 aspect ratio, strong horizontal lens flares, beautiful bokeh, subtle film grain, teal-cyan-orange cinematic grading.
-
----
-TITLE TAGS (pick 2, append to YouTube title):
-#CyberpunkShort #NeonNoir
-
-DESCRIPTION TAGS (5 max):
-#CyberpunkShort #SciFiShort #JaxNetrunner #NeonNoir #CyberpunkAesthetic
 ```
