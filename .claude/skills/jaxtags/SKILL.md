@@ -28,6 +28,7 @@ These appear in EVERY generation, no exceptions:
 ## Rules
 
 ### Title
+- Format: `Jax Ep. [N]: [Episode Name] (Cyberpunk Heist)` — use this exact pattern for numbered episodes
 - Use episode title as base if provided; otherwise generate short punchy title (max 60 chars before hashtags)
 - Append exactly 2 hashtags: always `#CyberpunkShort` + 1 scene-specific tag
 
@@ -68,12 +69,12 @@ TAGS:
 
 ## Example
 
-User: "Jax Episode 1: The Rabbit Door — Jax and Nova heist the Arcology Tower"
+User: "Jax Ep. 1: The Rabbit Door — Jax and Nova heist the Arcology Tower"
 
 Output:
 ```
 TITLE:
-Jax Episode 1: The Rabbit Door #CyberpunkShort #CyberpunkHeist
+Jax Ep. 1: The Rabbit Door (Cyberpunk Heist) #CyberpunkShort #CyberpunkHeist
 
 DESCRIPTION:
 In a rain-soaked neon megacity, rogue netrunner Jax and his deadly AI partner Nova — who lives inside his head — pull off an impossible heist inside the heavily guarded Arcology Tower.

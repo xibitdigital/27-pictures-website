@@ -757,6 +757,38 @@ footer {
   }
 }
 
+/* --- PULL QUOTE --- */
+.pull-quote {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1.3;
+  color: var(--text);
+  border: none;
+  margin: 0 0 40px 0;
+  padding: 0 0 0 28px;
+  border-left: 3px solid var(--red-smile);
+  position: relative;
+}
+.pull-quote::before {
+  content: "\201C";
+  font-size: 6rem;
+  line-height: 0;
+  color: var(--red-smile);
+  position: absolute;
+  top: 22px;
+  left: -20px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .pull-quote {
+    font-size: 1.4rem;
+    padding-left: 20px;
+  }
+}
+
 /* --- ABOUT STRIP --- */
 .about-strip {
   padding: 80px 10%;
@@ -776,6 +808,10 @@ footer {
 @media (max-width: 768px) {
   .about-strip {
     padding: 50px 5%;
+  }
+  .about-strip p {
+    max-width: 100%;
+    font-size: 1rem;
   }
 }
 
