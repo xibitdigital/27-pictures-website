@@ -180,7 +180,8 @@ body > header nav {
 }
 
 .clown-hero-frame {
-  height: 85vh;
+  aspect-ratio: 9 / 16;
+  max-height: 85vh;
   background: var(--bg-card);
   overflow: hidden;
   position: relative;
@@ -668,7 +669,7 @@ footer {
     font-size: 15vw;
   }
   .clown-hero-frame {
-    height: 60vh;
+    max-height: none;
     border-left: none;
     border-top: 1px solid var(--red-smile);
   }
@@ -821,7 +822,7 @@ footer {
 .latest-card-frame {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 9 / 16;
   overflow: hidden;
   border-left: 1px solid var(--red-smile);
   background: var(--bg-card);
