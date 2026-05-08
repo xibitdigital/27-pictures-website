@@ -31,25 +31,6 @@ h5 {
   font-family: "Playfair Display", serif;
 }
 
-/* --- PRELOADER --- */
-#loader {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-dark);
-  z-index: 11000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 1.5s var(--transition);
-}
-.loader-logo {
-  width: 150px;
-  height: auto;
-  opacity: 0;
-  transform: scale(0.9);
-  transition: 1s;
-}
-
 /* --- STUDIO POST-PRODUCTION OVERLAYS --- */
 #grain {
   position: fixed;

@@ -1,19 +1,3 @@
-// 1. PRELOADER LOGIC
-window.addEventListener("load", () => {
-  const logo = document.getElementById("loaderLogo");
-  logo.style.opacity = "1";
-  logo.style.transform = "scale(1)";
-
-  setTimeout(() => {
-    const loader = document.getElementById("loader");
-    loader.style.pointerEvents = "none";
-    loader.style.transform = "translateY(-100%)";
-    setTimeout(() => {
-      loader.style.display = "none";
-    }, 1600);
-  }, 500);
-});
-
 // 2. SMOOTH SCROLL (desktop only)
 if (window.innerWidth > 768) {
   const lenis = new Lenis();
