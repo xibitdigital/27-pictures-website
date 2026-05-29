@@ -70,7 +70,7 @@
     />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="styles.css?v=7" />
+    <link rel="stylesheet" href="styles.css?v=10" />
 
     <!-- Industry Standard Smooth Scroll -->
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
@@ -80,10 +80,6 @@
 
     <!-- IndexNow -->
     <meta name="indexnow-key" content="bdd5e80e21a8430d9316de0deacdb208" />
-    <!--
-      TODO: Add a team section with director/founder name, 2-3 sentence bio, and a Person schema
-      node to the @graph below. This is the single highest-leverage E-E-A-T improvement.
-    -->
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -128,7 +124,45 @@
             "sameAs": [
               "https://www.youtube.com/@twentyseven.pictures",
               "https://www.instagram.com/27pictures_production"
+            ],
+            "founder": [
+              { "@id": "https://twentyseven.pictures/#sonia-sangalli" },
+              { "@id": "https://twentyseven.pictures/#marco-sangalli" },
+              { "@id": "https://twentyseven.pictures/#daniele-sangalli" }
             ]
+          },
+          {
+            "@type": "Person",
+            "@id": "https://twentyseven.pictures/#sonia-sangalli",
+            "name": "Sonia Sangalli",
+            "jobTitle": "Founder",
+            "url": "https://twentyseven.pictures/",
+            "description": "Co-founder of 27 Pictures. Contributes to the studio’s creative and production direction for psychological horror shorts and cinematic cosplay work.",
+            "worksFor": {
+              "@id": "https://twentyseven.pictures/#organization"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://twentyseven.pictures/#marco-sangalli",
+            "name": "Marco Sangalli",
+            "jobTitle": "Founder",
+            "url": "https://twentyseven.pictures/",
+            "description": "Founder of 27 Pictures. Developed the Neural Synthesis production pipeline that fuses native 4K RAW cinematography with generative AI environment mapping and texture diffusion. His films and cosplay productions prioritise atmosphere, shadow, and narrative precision.",
+            "worksFor": {
+              "@id": "https://twentyseven.pictures/#organization"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://twentyseven.pictures/#daniele-sangalli",
+            "name": "Daniele Sangalli",
+            "jobTitle": "Founder",
+            "url": "https://twentyseven.pictures/",
+            "description": "Co-founder of 27 Pictures. Contributes to the studio’s technical and production direction for AI-enhanced cinematic work.",
+            "worksFor": {
+              "@id": "https://twentyseven.pictures/#organization"
+            }
           },
           {
             "@type": "WebSite",
@@ -423,6 +457,10 @@
           fully realised cinematic worlds. No generic content. No jump-scares. Every frame is a narrative decision.
           Every production is assembled to endure.
         </p>
+        <p class="studio-director">Founded by Sonia, Marco and Daniele Sangalli.</p>
+        <p class="studio-updated">
+          <small>Last updated May 2026</small>
+        </p>
       </section>
 
       <!-- SECTION 1: THE DARKROOM (THE RED SMILE) -->
@@ -474,58 +512,6 @@
               "
               allowfullscreen
             ></iframe>
-          </figure>
-        </div>
-      </article>
-
-      <!-- SECTION 2: COSPLAY -->
-      <article id="cosplay" class="section cosplay-section" aria-labelledby="cosplay-title">
-        <span class="section-tag reveal">Archive 02: Cosplay Production</span>
-        <div class="horror-container">
-          <div class="horror-text reveal">
-            <h2 id="cosplay-title">COSPLAY</h2>
-            <p>
-              We transform cosplay into cinema. Every session is a full production—lighting, direction, and
-              post-production designed to bring your character to life with cinematic precision. From concept to final
-              frame, we collaborate with cosplayers to create images that transcend convention photography.
-            </p>
-            <p>
-              Our cosplay productions use the same Neural Synthesis pipeline as our film work. Generative AI environment
-              mapping places your character in worlds that cannot be built on a physical set. Working with cosplayers
-              across characters and franchises, we deliver final edits in 4K ready for portfolios, social media, and
-              print. No convention booth. Full cinematic production — from costume design consultation through to final
-              colour-graded delivery.
-            </p>
-            <a href="#contact" class="magnetic cta-link" aria-label="Book a cosplay production session"
-              >Book a Session</a
-            >
-            <a
-              href="https://www.youtube.com/watch?v=nuMPi_Rnxg0"
-              class="cta-link"
-              style="display: inline-block; margin-top: 16px"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Watch cosplay showcase on YouTube →</a
-            >
-          </div>
-          <figure class="video-frame reveal">
-            <iframe
-              src="https://www.youtube.com/embed/nuMPi_Rnxg0"
-              title="27 Pictures Cosplay Production Showcase"
-              frameborder="0"
-              loading="lazy"
-              allow="
-                accelerometer;
-                autoplay;
-                clipboard-write;
-                encrypted-media;
-                gyroscope;
-                picture-in-picture;
-                web-share;
-              "
-              allowfullscreen
-            >
-            </iframe>
           </figure>
         </div>
       </article>
@@ -606,8 +592,8 @@
           <article class="latest-card reveal">
             <figure class="latest-card-frame">
               <iframe
-                src="https://www.youtube.com/embed/qjBL4zRIFbg"
-                title="She's Not Running Away. She's Hunting."
+                src="https://www.youtube.com/embed/videoseries?list=PLb5rxZ02eTKvvD9u-sugPDJIPadEEpO7m"
+                title="Red Smile: A Horror Anthology"
                 frameborder="0"
                 loading="lazy"
                 allow="
@@ -622,29 +608,27 @@
                 allowfullscreen
               ></iframe>
             </figure>
-            <h3>She's Not Running Away. She's Hunting.</h3>
-            <p>
-              A woman on her evening run begins to feel the creeping sensation that she is not alone. The streets are
-              empty, but something follows in the shadows. The Follower is part of the RED SMILE anthology — 27
-              Pictures' psychological horror short film series. Shot in high-bitrate 4K RAW and processed through our
-              Neural Synthesis pipeline, the film uses generative AI environment mapping to transform mundane urban
-              spaces into a slowly suffocating nightmare. Deep-shadow cinematography strips away comfort and replaces it
-              with dread. No jump-scares. Only the growing certainty that something is wrong. Look for the red smile.
-            </p>
+            <div class="latest-card-desc">
+              <h3>Red Smile: A Horror Anthology</h3>
+              <p>
+                What follows was not meant for public record. A growing anthology of psychological horror shorts — each
+                one hiding the red smile in plain sight.
+              </p>
+            </div>
             <a
-              href="https://www.youtube.com/shorts/qjBL4zRIFbg"
+              href="https://www.youtube.com/playlist?list=PLb5rxZ02eTKvvD9u-sugPDJIPadEEpO7m"
               class="cta-link"
               target="_blank"
               rel="noopener noreferrer"
-              >Watch on YouTube →</a
+              >Watch Playlist →</a
             >
           </article>
 
           <article class="latest-card reveal">
             <figure class="latest-card-frame">
               <iframe
-                src="https://www.youtube.com/embed/BOtFWCENtTc"
-                title="She Asked for Directions. She Should've Run."
+                src="https://www.youtube.com/embed/videoseries?list=PLb5rxZ02eTKskIw5MglgYCObrkp9vAgDv"
+                title="Horror Shorts - Collection of Short Horror Films"
                 frameborder="0"
                 loading="lazy"
                 allow="
@@ -659,29 +643,27 @@
                 allowfullscreen
               ></iframe>
             </figure>
-            <h3>She Asked for Directions. She Should've Run.</h3>
-            <p>
-              A simple question. A wrong answer. A narrow alleyway that should not exist. The second entry in the RED
-              SMILE anthology by 27 Pictures, exploring the horror of familiar spaces turned strange. Shot entirely in
-              4K RAW with Neural Synthesis post-processing, the film transforms a real location into a disorienting,
-              labyrinthine trap. Generative AI environment diffusion subtly warps the geometry of the alley frame by
-              frame, creating visual unease that operates below conscious recognition. The RED SMILE mythology runs
-              through every shot — viewers who look carefully will find it hidden in plain sight.
-            </p>
+            <div class="latest-card-desc">
+              <h3>Horror Shorts</h3>
+              <p>
+                From psychological chills and disturbing twists to atmospheric dread — bite-sized horror stories that
+                will keep you up at night.
+              </p>
+            </div>
             <a
-              href="https://www.youtube.com/shorts/BOtFWCENtTc"
+              href="https://www.youtube.com/playlist?list=PLb5rxZ02eTKskIw5MglgYCObrkp9vAgDv"
               class="cta-link"
               target="_blank"
               rel="noopener noreferrer"
-              >Watch on YouTube →</a
+              >Watch Playlist →</a
             >
           </article>
 
           <article class="latest-card reveal">
             <figure class="latest-card-frame">
               <iframe
-                src="https://www.youtube.com/embed/VEmf9eq62zo"
-                title="Something Is Wrong With My Reflection"
+                src="https://www.youtube.com/embed/videoseries?list=PLb5rxZ02eTKsZojd93MSPD-HoCxdx1xKh"
+                title="Cyberpunk Jax Netrunner"
                 frameborder="0"
                 loading="lazy"
                 allow="
@@ -696,62 +678,75 @@
                 allowfullscreen
               ></iframe>
             </figure>
-            <h3>Something Is Wrong With My Reflection</h3>
-            <p>
-              A mirror is supposed to show you what you are. This one shows something else. A RED SMILE anthology entry
-              from 27 Pictures, built on the horror of self-perception under digital stress. AI texture diffusion and
-              neural synthesis fracture the reflection, creating a visual nightmare that feels both technological and
-              deeply primal. Shot in 4K RAW, the film isolates a single domestic moment and systematically dismantles
-              its safety. The fractured mirror becomes a metaphor — for identity, for unreliable reality, for the RED
-              SMILE itself. Watch until the last frame. Then look again.
-            </p>
+            <div class="latest-card-desc">
+              <h3>Cyberpunk Jax Netrunner</h3>
+              <p>
+                A rogue netrunner turned gun-for-hire battles through a dystopian future. Cinematic cyberpunk action
+                series produced by 27 Pictures.
+              </p>
+            </div>
             <a
-              href="https://www.youtube.com/shorts/VEmf9eq62zo"
+              href="https://www.youtube.com/playlist?list=PLb5rxZ02eTKsZojd93MSPD-HoCxdx1xKh"
               class="cta-link"
               target="_blank"
               rel="noopener noreferrer"
-              >Watch on YouTube →</a
-            >
-          </article>
-
-          <article class="latest-card reveal">
-            <figure class="latest-card-frame">
-              <iframe
-                src="https://www.youtube.com/embed/QMRlBqAdNGg"
-                title="He Streamed the Challenge. The Monster Streamed Back."
-                frameborder="0"
-                loading="lazy"
-                allow="
-                  accelerometer;
-                  autoplay;
-                  clipboard-write;
-                  encrypted-media;
-                  gyroscope;
-                  picture-in-picture;
-                  web-share;
-                "
-                allowfullscreen
-              ></iframe>
-            </figure>
-            <h3>He Streamed the Challenge. The Monster Streamed Back.</h3>
-            <p>
-              A livestream begins normally. Then it doesn't. The Streamer is part of the RED SMILE anthology — 27
-              Pictures' ongoing psychological horror series — occupying the space between internet culture and
-              existential dread. The film uses a real streaming interface overlaid with generative AI environments that
-              bleed through the screen, creating a layered unreality that escalates slowly and then all at once.
-              Discordant sound design builds from ambient hum to full collapse. Watch it on a screen. In the dark.
-              Alone. The RED SMILE appears in this one. You may not see it the first time.
-            </p>
-            <a
-              href="https://www.youtube.com/shorts/QMRlBqAdNGg"
-              class="cta-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Watch on YouTube →</a
+              >Watch Playlist →</a
             >
           </article>
         </div>
       </section>
+
+      <!-- SECTION 2: COSPLAY -->
+      <article id="cosplay" class="section cosplay-section" aria-labelledby="cosplay-title">
+        <span class="section-tag reveal">Archive 02: Cosplay Production</span>
+        <div class="horror-container">
+          <div class="horror-text reveal">
+            <h2 id="cosplay-title">COSPLAY</h2>
+            <p>
+              We transform cosplay into cinema. Every session is a full production—lighting, direction, and
+              post-production designed to bring your character to life with cinematic precision. From concept to final
+              frame, we collaborate with cosplayers to create images that transcend convention photography.
+            </p>
+            <p>
+              Our cosplay productions use the same Neural Synthesis pipeline as our film work. Generative AI environment
+              mapping places your character in worlds that cannot be built on a physical set. Working with cosplayers
+              across characters and franchises, we deliver final edits in 4K ready for portfolios, social media, and
+              print. No convention booth. Full cinematic production — from costume design consultation through to final
+              colour-graded delivery.
+            </p>
+            <a href="#contact" class="magnetic cta-link" aria-label="Book a cosplay production session"
+              >Book a Session</a
+            >
+            <a
+              href="https://www.youtube.com/watch?v=nuMPi_Rnxg0"
+              class="cta-link"
+              style="display: inline-block; margin-top: 16px"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Watch cosplay showcase on YouTube →</a
+            >
+          </div>
+          <figure class="video-frame reveal">
+            <iframe
+              src="https://www.youtube.com/embed/nuMPi_Rnxg0"
+              title="27 Pictures Cosplay Production Showcase"
+              frameborder="0"
+              loading="lazy"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+                web-share;
+              "
+              allowfullscreen
+            >
+            </iframe>
+          </figure>
+        </div>
+      </article>
 
       <!-- CONTACT SECTION -->
       <section id="contact" class="contact-section" aria-labelledby="contact-title">
