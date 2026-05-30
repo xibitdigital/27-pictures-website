@@ -8,14 +8,14 @@ if (window.innerWidth > 768) {
   requestAnimationFrame(raf);
 }
 
-// 3. MAGNETICS
+// 3. MAGNETICS (subtle premium feel for modern tech-cinematic aesthetic)
 const magnets = document.querySelectorAll(".magnetic");
 magnets.forEach((m) => {
   m.addEventListener("mousemove", function (e) {
     const rect = this.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
-    this.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    this.style.transform = `translate(${x * 0.12}px, ${y * 0.12}px)`;
   });
   m.addEventListener("mouseleave", function () {
     this.style.transform = `translate(0px, 0px)`;

@@ -10,6 +10,15 @@
   --border: #222;
   --border-light: #333;
   --transition: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* New tokens for PR 1 (Foundations / Token Hygiene) */
+  --success: #4caf50;
+  --bg-cosplay: #0a0000;
+
+  /* Focused polish tokens - cleaner modern tech-cinematic */
+  --red-smile-hover: #c81010;
+  --focus-ring: rgba(179, 0, 0, 0.4);
+  --card-lift: translateY(-2px);
 }
 
 * {
@@ -163,10 +172,7 @@ body > header nav {
 .clown-hero-frame {
   aspect-ratio: 9 / 16;
   max-height: 85vh;
-  background: var(--bg-card);
   overflow: hidden;
-  position: relative;
-  border-left: 1px solid var(--red-smile);
 }
 .clown-hero-frame iframe {
   position: absolute;
@@ -194,15 +200,27 @@ body > header nav {
 
 /* --- COSPLAY --- */
 .cosplay-section {
-  background: linear-gradient(180deg, #1a0000 0%, #3d0000 50%, #1a0000 100%);
+  /* Fallback using only the new token (very dark near-black red-tinted base) */
+  background: linear-gradient(180deg, var(--bg-cosplay) 0%, var(--bg-cosplay) 100%);
   border-top: 1px solid var(--bg-card);
+}
+
+@supports (color: color-mix(in srgb, red 50%, blue 50%)) {
+  .cosplay-section {
+    /* Preferred: subtle red tint in the middle stop using color-mix */
+    background: linear-gradient(
+      180deg,
+      var(--bg-cosplay) 0%,
+      color-mix(in srgb, var(--bg-cosplay) 60%, var(--red-smile) 3%) 50%,
+      var(--bg-cosplay) 100%
+    );
+  }
 }
 .video-frame {
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-left: 1px solid var(--red-smile);
 }
 .video-frame iframe {
   position: absolute;
@@ -291,7 +309,7 @@ body > header nav {
   opacity: 0.5;
 }
 
-/* --- ASSEMBLY (VFX & PIPELINE) --- */
+/* --- ASSEMBLY (VFX & PIPELINE) — treated as film chapters / credit blocks --- */
 .assembly {
   padding: 100px 10%;
   display: grid;
@@ -299,6 +317,25 @@ body > header nav {
   gap: 60px;
   background: var(--bg-assembly);
   border-top: 1px solid var(--bg-card);
+  counter-reset: reel;
+}
+.assembly-box {
+  position: relative;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.assembly-box::before {
+  counter-increment: reel;
+  content: "REEL 0" counter(reel);
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 0.65rem;
+  letter-spacing: 5px;
+  color: var(--red-smile);
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  opacity: 0.9;
 }
 .assembly-box h3 {
   font-size: 1.8rem;
@@ -335,13 +372,27 @@ footer {
 }
 .hero-title {
   font-size: 12vw;
+  letter-spacing: -0.02em;
 }
 .hero-tagline {
-  letter-spacing: 15px;
+  letter-spacing: 18px;
   text-transform: uppercase;
   font-size: 0.7rem;
   color: var(--silver);
-  margin-top: 20px;
+  margin-top: 28px;
+  position: relative;
+  display: inline-block;
+}
+.hero-tagline::after {
+  content: "";
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--red-smile), transparent);
+  opacity: 0.6;
 }
 
 .scroll-arrow {
@@ -375,8 +426,6 @@ footer {
 .cta-link {
   color: var(--red-smile);
   text-decoration: none;
-  border-bottom: 1px solid var(--red-smile);
-  padding-bottom: 5px;
   font-size: 0.8rem;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -474,8 +523,8 @@ footer {
   letter-spacing: 1px;
 }
 .form-message--success {
-  border: 1px solid #4caf50;
-  color: #4caf50;
+  border: 1px solid var(--success);
+  color: var(--success);
 }
 .form-message--error {
   border: 1px solid var(--red-smile);
@@ -523,8 +572,10 @@ footer {
 /* --- ANIMATIONS --- */
 .reveal {
   opacity: 0;
-  transform: translateY(50px);
-  transition: 1.5s var(--transition);
+  transform: translateY(40px);
+  transition:
+    opacity 1.8s var(--transition),
+    transform 1.8s var(--transition);
 }
 .reveal.active {
   opacity: 1;
@@ -541,6 +592,211 @@ footer {
   transition: transform 0.3s var(--transition);
   display: inline-block;
 }
+
+/* ============================================
+   CINEMATIC REFINEMENTS
+   Embracing the language of film for an AI cinema studio
+   ============================================ */
+
+/* Deliberate, heavier motion — feels more like film than UI */
+:root {
+  --transition: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Focus treatment — minimal and cinematic (almost invisible) */
+a:focus-visible,
+button:focus-visible {
+  outline: 1px solid rgba(179, 0, 0, 0.5);
+  outline-offset: 2px;
+}
+
+/* CTA links — raw cinematic red, minimal web decoration */
+.cta-link {
+  color: var(--red-smile);
+  transition: color 0.4s var(--transition);
+  position: relative;
+}
+.cta-link:hover {
+  color: #fff;
+}
+.cta-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: var(--red-smile);
+  opacity: 0.6;
+}
+
+/* ============================================
+   PROJECTED CINEMA SCREENS
+   The frames are no longer "embeds" — they are screens in a dark theater
+   ============================================ */
+
+.clown-hero-frame,
+.video-frame,
+.latest-card-frame {
+  position: relative;
+  background: #000;
+  border-left: 6px solid var(--red-smile);
+  border-right: 1px solid rgba(179, 0, 0, 0.18);
+  box-shadow:
+    /* Outer theater darkness */
+    0 30px 80px -20px rgba(0, 0, 0, 0.9),
+    /* Heavy projector vignette */ inset 0 0 140px rgba(0, 0, 0, 0.92),
+    /* Subtle red gate bleed on the left edge */ inset 12px 0 60px -8px rgba(179, 0, 0, 0.25);
+  transition:
+    border-color 0.8s var(--transition),
+    box-shadow 0.9s var(--transition);
+  overflow: hidden;
+}
+
+/* Subtle film surface / projector light modeling */
+.clown-hero-frame::before,
+.video-frame::before,
+.latest-card-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.022) 0%,
+    rgba(0, 0, 0, 0.35) 65%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 1s var(--transition);
+}
+
+/* The actual video sits above the surface treatment */
+.clown-hero-frame iframe,
+.video-frame iframe,
+.latest-card-frame iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+/* === Projector ON hover state === */
+.clown-hero-frame:hover,
+.video-frame:hover,
+.latest-card-frame:hover {
+  border-left-color: #c81010;
+  box-shadow:
+    0 40px 100px -15px rgba(0, 0, 0, 0.95),
+    inset 0 0 110px rgba(0, 0, 0, 0.88),
+    inset 18px 0 70px -6px rgba(200, 16, 16, 0.38),
+    0 0 0 1px rgba(179, 0, 0, 0.12);
+}
+
+.clown-hero-frame:hover::before,
+.video-frame:hover::before,
+.latest-card-frame:hover::before {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.035) 0%,
+    rgba(0, 0, 0, 0.28) 60%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+}
+
+/* Very subtle projector breathing / light pulse when "on" */
+.clown-hero-frame:hover,
+.video-frame:hover,
+.latest-card-frame:hover {
+  animation: projector-breath 4s ease-in-out infinite;
+}
+
+@keyframes projector-breath {
+  0%,
+  100% {
+    box-shadow:
+      0 40px 100px -15px rgba(0, 0, 0, 0.95),
+      inset 0 0 110px rgba(0, 0, 0, 0.88),
+      inset 18px 0 70px -6px rgba(200, 16, 16, 0.38),
+      0 0 0 1px rgba(179, 0, 0, 0.12);
+  }
+  50% {
+    box-shadow:
+      0 40px 100px -15px rgba(0, 0, 0, 0.95),
+      inset 0 0 110px rgba(0, 0, 0, 0.88),
+      inset 18px 0 70px -6px rgba(200, 16, 16, 0.48),
+      0 0 0 1px rgba(179, 0, 0, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clown-hero-frame:hover,
+  .video-frame:hover,
+  .latest-card-frame:hover {
+    animation: none;
+  }
+}
+
+/* Latest cards — slow, heavy presence like film reels being revealed */
+.latest-card {
+  transition: opacity 0.6s var(--transition);
+}
+.latest-card:hover {
+  opacity: 0.95;
+}
+
+/* Assembly boxes — feel like film chapter cards or credit blocks */
+.assembly-box {
+  transition: border-color 0.5s var(--transition);
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+.assembly-box:hover {
+  border-top-color: var(--red-smile);
+}
+.assembly-box h3 {
+  transition: color 0.4s var(--transition);
+}
+.assembly-box:hover h3 {
+  color: #fff;
+}
+
+/* Contact button — heavy, title-card treatment */
+.contact-btn {
+  border: 1px solid var(--red-smile);
+  background: transparent;
+  color: var(--text);
+  transition:
+    background 0.5s var(--transition),
+    color 0.5s var(--transition);
+}
+.contact-btn:hover {
+  background: var(--red-smile);
+  color: #fff;
+  border-color: var(--red-smile);
+}
+
+/* Form focus — subtle red film gate feel */
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--red-smile);
+  box-shadow: none;
+}
+
+/* Nav links — subtle modern active/hover */
+.nav-links a {
+  position: relative;
+  transition: color 0.2s var(--transition);
+}
+.nav-links a:hover {
+  color: var(--red-smile-hover);
+}
+
+/* ============================================
+   END FOCUSED POLISH
+   ============================================ */
 
 /* --- BURGER MENU --- */
 .burger-btn {
@@ -649,14 +905,18 @@ footer {
   .horror-text h2 {
     font-size: 15vw;
   }
-  .clown-hero-frame {
-    max-height: none;
+  .clown-hero-frame,
+  .video-frame,
+  .latest-card-frame {
     border-left: none;
-    border-top: 1px solid var(--red-smile);
+    border-top: 4px solid var(--red-smile);
+    border-right: none;
+    box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
   }
-  .video-frame {
-    border-left: none;
-    border-top: 1px solid var(--red-smile);
+  .clown-hero-frame::before,
+  .video-frame::before,
+  .latest-card-frame::before {
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0.8) 100%);
   }
 
   /* Editorial */
@@ -815,6 +1075,25 @@ footer {
   }
 }
 
+/* --- FOUNDER ATTRIBUTION (E-E-A-T) --- */
+.studio-founders {
+  margin-top: 28px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+.studio-founders-note {
+  font-size: 0.95rem;
+  color: var(--silver);
+  font-style: italic;
+}
+.studio-updated {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--silver);
+  letter-spacing: 0.5px;
+}
+
 /* --- LATEST RELEASES --- */
 .latest-section {
   padding: 100px 10%;
@@ -830,8 +1109,8 @@ footer {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: auto auto auto;
   column-gap: 60px;
-  row-gap: 24px;
-  margin-top: 60px;
+  row-gap: 20px;
+  margin-top: 48px;
 }
 .latest-card {
   display: grid;
@@ -843,8 +1122,7 @@ footer {
   width: 100%;
   aspect-ratio: 9 / 16;
   overflow: hidden;
-  border-left: 1px solid var(--red-smile);
-  background: var(--bg-card);
+  background: #000;
 }
 .latest-card-frame iframe {
   position: absolute;
@@ -877,7 +1155,7 @@ footer {
   }
   .latest-grid {
     grid-template-columns: 1fr;
-    gap: 50px;
+    gap: 40px;
   }
   .latest-card h3 {
     font-size: 1.1rem;
