@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Erin | Experiments | 27 Pictures</title>
-    <meta
-      name="description"
-      content="Erin — an interactive page-turning manga reader from 27 Pictures Experiments."
-    />
+    <meta name="description" content="Erin — an interactive page-turning manga reader from 27 Pictures Experiments." />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="canonical" href="https://twentyseven.pictures/toons/" />
 
@@ -453,12 +450,78 @@
         display: none;
       }
 
-      @media (max-width: 600px) {
-        :root {
-          --book-width: 96vw;
-          --book-height: calc(var(--book-width) * 0.85);
-        }
+      /* Single-page (mobile) layout */
+      body.single-page {
+        --book-width: min(94vw, 420px);
+        --book-height: min(68dvh, calc(var(--book-width) * 1.5));
+      }
 
+      body.single-page .spread {
+        grid-template-columns: 1fr;
+        border-radius: 4px;
+      }
+
+      body.single-page .page-slot.left,
+      body.single-page .spine,
+      body.single-page .spine-glow {
+        display: none !important;
+      }
+
+      body.single-page .page-slot.right {
+        border-radius: 4px;
+        box-shadow: none;
+      }
+
+      body.single-page .page-slot img {
+        object-fit: contain;
+      }
+
+      body.single-page .nav-zone {
+        width: 42%;
+      }
+
+      body.single-page .flip-page {
+        width: 100%;
+      }
+
+      body.single-page .flip-page.from-right,
+      body.single-page .flip-page.from-left {
+        left: 0;
+        right: 0;
+        transform-origin: center center;
+      }
+
+      body.single-page .flip-page.flipping.from-right {
+        animation: single-next 0.35s var(--transition) forwards;
+      }
+
+      body.single-page .flip-page.flipping.from-left {
+        animation: single-prev 0.35s var(--transition) forwards;
+      }
+
+      @keyframes single-next {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(-18%);
+          opacity: 0;
+        }
+      }
+
+      @keyframes single-prev {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(18%);
+          opacity: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
         .reader {
           padding: 4.5rem 0.75rem 1.5rem;
           gap: 1.15rem;
@@ -487,6 +550,10 @@
         .front-cover-instructions ul {
           font-size: 0.68rem;
           gap: 0.5rem;
+        }
+
+        .title-bar h1 {
+          font-size: clamp(2.25rem, 12vw, 3.5rem);
         }
       }
     </style>
@@ -530,13 +597,19 @@
     <script>
       const FLIP_MS = 700;
       const FLIP_SAFETY_MS = FLIP_MS + 200;
+      const SINGLE_FLIP_MS = 350;
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const singlePageMq = window.matchMedia("(max-width: 768px)");
 
       let pages = [];
       let totalSpreads = 0;
-      let spreadIndex = 0;
+      /** Desktop: spread index. Mobile: 0 = front cover, 1..n = pages, n+1 = back cover */
+      let viewIndex = 0;
+      let singlePage = singlePageMq.matches;
       let isFlipping = false;
       let flipSafetyTimer = null;
+
+      document.body.classList.toggle("single-page", singlePage);
 
       const slotLeft = document.getElementById("slot-left");
       const slotRight = document.getElementById("slot-right");
@@ -546,6 +619,11 @@
       const zoneNext = document.getElementById("zone-next");
       const zonePrev = document.getElementById("zone-prev");
       const bookEl = document.getElementById("book");
+
+      function totalViews() {
+        if (singlePage) return pages.length + 2; // front cover + pages + back cover
+        return totalSpreads;
+      }
 
       async function loadPages() {
         const res = await fetch("manifest.json", { cache: "no-cache" });
@@ -582,10 +660,27 @@
         return spread === totalSpreads - 1 && !pageForSpread(spread, side);
       }
 
+      /** Mobile view: 0 front, 1..n page, n+1 back */
+      function singleViewContent(index) {
+        if (index <= 0) return { kind: "front" };
+        if (index > pages.length) return { kind: "back" };
+        return { kind: "page", src: pages[index - 1], num: index };
+      }
+
       function renderFrontCoverInstructions() {
         const wrap = document.createElement("div");
         wrap.className = "front-cover-instructions";
-        wrap.innerHTML = `
+        wrap.innerHTML = singlePage
+          ? `
+        <h2>How to read</h2>
+        <ul>
+          <li>Tap the right side<span>next page</span></li>
+          <li>Tap the left side<span>previous page</span></li>
+          <li>Use the arrow buttons<span>← previous · → next</span></li>
+          <li>Swipe<span>left = next · right = previous</span></li>
+        </ul>
+      `
+          : `
         <h2>How to read</h2>
         <ul>
           <li>Click or tap the right page<span>next page</span></li>
@@ -606,6 +701,14 @@
         parent.appendChild(img);
       }
 
+      function renderBackCoverLink(slot) {
+        const link = document.createElement("a");
+        link.href = "/experiments/";
+        link.textContent = "← experiments";
+        link.className = "back-cover-link";
+        slot.appendChild(link);
+      }
+
       function renderSlot(slot, src, isInsideCover, spread, side) {
         slot.innerHTML = "";
         slot.classList.toggle("blank", !src && !isInsideCover);
@@ -615,27 +718,43 @@
         } else if (isInsideCover && isFrontCover(spread, side)) {
           slot.appendChild(renderFrontCoverInstructions());
         } else if (isInsideCover && isBackCover(spread, side)) {
-          const link = document.createElement("a");
-          link.href = "/experiments/";
-          link.textContent = "← experiments";
-          link.className = "back-cover-link";
-          slot.appendChild(link);
+          renderBackCoverLink(slot);
         }
       }
 
-      function updateSpread(skipRender) {
-        const rightSrc = pageForSpread(spreadIndex, "right");
-        const leftSrc = pageForSpread(spreadIndex, "left");
+      function renderSingleSlot(content) {
+        const slot = slotRight;
+        slot.innerHTML = "";
+        slot.classList.remove("blank");
+        slot.classList.toggle("inside-cover", content.kind !== "page");
 
-        if (!skipRender) {
-          renderSlot(slotRight, rightSrc, !rightSrc, spreadIndex, "right");
-          renderSlot(slotLeft, leftSrc, !leftSrc, spreadIndex, "left");
+        if (content.kind === "page") {
+          appendPageImage(slot, content.src, content.num);
+        } else if (content.kind === "front") {
+          slot.appendChild(renderFrontCoverInstructions());
+        } else {
+          renderBackCoverLink(slot);
+        }
+      }
+
+      function updateIndicator() {
+        const total = pages.length;
+        if (singlePage) {
+          const content = singleViewContent(viewIndex);
+          if (content.kind === "page") {
+            indicator.textContent = `${content.num} / ${total}`;
+          } else if (content.kind === "front") {
+            indicator.textContent = `Cover`;
+          } else {
+            indicator.textContent = `End`;
+          }
+          btnPrev.disabled = viewIndex <= 0;
+          btnNext.disabled = viewIndex >= totalViews() - 1;
+          return;
         }
 
-        const rightNum = pageNumber(spreadIndex, "right");
-        const leftNum = pageNumber(spreadIndex, "left");
-        const total = pages.length;
-
+        const rightNum = pageNumber(viewIndex, "right");
+        const leftNum = pageNumber(viewIndex, "left");
         if (leftNum && rightNum) {
           indicator.textContent = `${leftNum} – ${rightNum} / ${total}`;
         } else if (rightNum) {
@@ -645,9 +764,26 @@
         } else {
           indicator.textContent = `0 / ${total}`;
         }
+        btnPrev.disabled = viewIndex <= 0;
+        btnNext.disabled = viewIndex >= totalSpreads - 1;
+      }
 
-        btnPrev.disabled = spreadIndex <= 0;
-        btnNext.disabled = spreadIndex >= totalSpreads - 1;
+      function updateView(skipRender) {
+        document.body.classList.toggle("single-page", singlePage);
+
+        if (singlePage) {
+          if (!skipRender) renderSingleSlot(singleViewContent(viewIndex));
+          updateIndicator();
+          return;
+        }
+
+        const rightSrc = pageForSpread(viewIndex, "right");
+        const leftSrc = pageForSpread(viewIndex, "left");
+        if (!skipRender) {
+          renderSlot(slotRight, rightSrc, !rightSrc, viewIndex, "right");
+          renderSlot(slotLeft, leftSrc, !leftSrc, viewIndex, "left");
+        }
+        updateIndicator();
       }
 
       function createFlipOverlay(direction, frontSrc, backSrc, frontNum, backNum) {
@@ -674,42 +810,63 @@
         return flip;
       }
 
-      function finishFlip(flip, targetSpread, lateSlot, lateSrc) {
+      function createSingleFlipOverlay(direction, content) {
+        const flip = document.createElement("div");
+        flip.className = `flip-page ${direction === "next" ? "from-right" : "from-left"}`;
+
+        const face = document.createElement("div");
+        face.className = "flip-face front";
+        if (content.kind === "page") {
+          appendPageImage(face, content.src, content.num);
+        } else {
+          face.classList.add("inside-cover");
+          if (content.kind === "front") face.appendChild(renderFrontCoverInstructions());
+          else renderBackCoverLink(face);
+        }
+
+        flip.appendChild(face);
+        bookEl.appendChild(flip);
+
+        if (!reduceMotion) {
+          requestAnimationFrame(() => flip.classList.add("flipping"));
+        }
+
+        return flip;
+      }
+
+      function finishFlip(flip, target, afterRender) {
         if (!isFlipping || !flip.isConnected) return;
         if (flipSafetyTimer) {
           clearTimeout(flipSafetyTimer);
           flipSafetyTimer = null;
         }
-        renderSlot(lateSlot, lateSrc, !lateSrc, targetSpread, lateSlot === slotLeft ? "left" : "right");
+        afterRender();
         flip.remove();
-        spreadIndex = targetSpread;
-        updateSpread(true);
+        viewIndex = target;
+        updateView(true);
         isFlipping = false;
       }
 
-      /** LTR book turn: +1 next (right), -1 previous (left). */
-      function turn(delta) {
-        if (isFlipping) return;
-        const target = spreadIndex + delta;
+      function turnDesktop(delta) {
+        const target = viewIndex + delta;
         if (target < 0 || target >= totalSpreads) return;
 
         const goingNext = delta > 0;
-        const curRight = pageForSpread(spreadIndex, "right");
-        const curLeft = pageForSpread(spreadIndex, "left");
+        const curRight = pageForSpread(viewIndex, "right");
+        const curLeft = pageForSpread(viewIndex, "left");
         const nextRight = pageForSpread(target, "right");
         const nextLeft = pageForSpread(target, "left");
 
         if (reduceMotion) {
-          spreadIndex = target;
-          updateSpread(false);
+          viewIndex = target;
+          updateView(false);
           return;
         }
 
         isFlipping = true;
-
         const frontSrc = goingNext ? curRight : curLeft;
         const backSrc = goingNext ? nextLeft : nextRight;
-        const frontNum = goingNext ? pageNumber(spreadIndex, "right") : pageNumber(spreadIndex, "left");
+        const frontNum = goingNext ? pageNumber(viewIndex, "right") : pageNumber(viewIndex, "left");
         const backNum = goingNext ? pageNumber(target, "left") : pageNumber(target, "right");
         const earlySlot = goingNext ? slotRight : slotLeft;
         const earlySrc = goingNext ? nextRight : nextLeft;
@@ -719,9 +876,75 @@
         const flip = createFlipOverlay(goingNext ? "next" : "prev", frontSrc, backSrc, frontNum, backNum);
         renderSlot(earlySlot, earlySrc, !earlySrc, target, goingNext ? "right" : "left");
 
-        const complete = () => finishFlip(flip, target, lateSlot, lateSrc);
+        const complete = () =>
+          finishFlip(flip, target, () => {
+            renderSlot(lateSlot, lateSrc, !lateSrc, target, lateSlot === slotLeft ? "left" : "right");
+          });
         flip.addEventListener("animationend", complete, { once: true });
         flipSafetyTimer = setTimeout(complete, FLIP_SAFETY_MS);
+      }
+
+      function turnSingle(delta) {
+        const target = viewIndex + delta;
+        if (target < 0 || target >= totalViews()) return;
+
+        if (reduceMotion) {
+          viewIndex = target;
+          updateView(false);
+          return;
+        }
+
+        isFlipping = true;
+        const leaving = singleViewContent(viewIndex);
+        const arriving = singleViewContent(target);
+        renderSingleSlot(arriving);
+
+        const flip = createSingleFlipOverlay(delta > 0 ? "next" : "prev", leaving);
+        const complete = () => finishFlip(flip, target, () => {});
+        flip.addEventListener("animationend", complete, { once: true });
+        flipSafetyTimer = setTimeout(complete, SINGLE_FLIP_MS + 150);
+      }
+
+      function turn(delta) {
+        if (isFlipping) return;
+        if (singlePage) turnSingle(delta);
+        else turnDesktop(delta);
+      }
+
+      /** Map desktop spread → best single-page view when resizing. */
+      function spreadToSingle(spread) {
+        const rightNum = pageNumber(spread, "right");
+        const leftNum = pageNumber(spread, "left");
+        if (rightNum) return rightNum;
+        if (leftNum) return leftNum;
+        if (spread <= 0) return 0;
+        return pages.length + 1;
+      }
+
+      /** Map single-page view → desktop spread when resizing. */
+      function singleToSpread(index) {
+        if (index <= 0) return 0;
+        if (index > pages.length) return Math.max(0, totalSpreads - 1);
+        return Math.floor(index / 2); // page 1→0, 2→1, 3→1, 4→2
+      }
+
+      function applyMode(nextSingle) {
+        if (nextSingle === singlePage) return;
+        if (isFlipping) {
+          // cancel in-flight flip cleanly
+          if (flipSafetyTimer) clearTimeout(flipSafetyTimer);
+          flipSafetyTimer = null;
+          bookEl.querySelectorAll(".flip-page").forEach((el) => el.remove());
+          isFlipping = false;
+        }
+
+        if (nextSingle) {
+          viewIndex = spreadToSingle(viewIndex);
+        } else {
+          viewIndex = singleToSpread(viewIndex);
+        }
+        singlePage = nextSingle;
+        updateView(false);
       }
 
       const goNext = () => turn(1);
@@ -757,6 +980,12 @@
         { passive: true }
       );
 
+      if (typeof singlePageMq.addEventListener === "function") {
+        singlePageMq.addEventListener("change", (e) => applyMode(e.matches));
+      } else {
+        singlePageMq.addListener((e) => applyMode(e.matches));
+      }
+
       async function init() {
         try {
           pages = await loadPages();
@@ -780,7 +1009,8 @@
           const img = new Image();
           img.src = src;
         });
-        updateSpread(false);
+        document.body.classList.toggle("single-page", singlePage);
+        updateView(false);
       }
 
       init();
