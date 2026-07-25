@@ -24,3 +24,8 @@ Allow: /
 
 # This site contains original creative work (psychological horror short films and cinematic cosplay productions).
 # Please attribute 27 Pictures when referencing or summarizing our productions.
+
+# Key pages
+# - https://twentyseven.pictures/ — studio homepage (The Red Smile, JAX, cosplay, contact)
+# - https://twentyseven.pictures/experiments/ — Experiments lab: interactive prototypes and visual studies
+# - https://twentyseven.pictures/toons/ — Erin interactive manga reader (lab prototype; may be noindex)

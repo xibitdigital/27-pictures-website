@@ -3,16 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Experiments | 27 Pictures</title>
+    <title>Experiments Lab | Interactive Prototypes by 27 Pictures</title>
+
     <meta
       name="description"
-      content="Side experiments from 27 Pictures — interactive prototypes and visual studies outside the main production slate."
+      content="27 Pictures Experiments lab: interactive prototypes and visual studies, including Erin — a cinematic page-turning manga reader from our horror production studio."
     />
-    <meta name="robots" content="index, follow" />
+    <meta
+      name="keywords"
+      content="27 Pictures experiments, interactive manga reader, AI visual prototypes, cinematic experiments, Erin manga, horror studio lab, neural synthesis experiments"
+    />
+    <meta name="author" content="27 Pictures" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
     <link rel="canonical" href="https://twentyseven.pictures/experiments/" />
+    <meta name="theme-color" content="#b30000" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="referrer" content="origin-when-cross-origin" />
+    <meta name="indexnow-key" content="bdd5e80e21a8430d9316de0deacdb208" />
 
     <link rel="icon" type="image/png" href="../logosquare.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="../logosquare.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../logosquare.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="../logosquare.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://twentyseven.pictures/experiments/" />
+    <meta property="og:title" content="Experiments Lab | Interactive Prototypes by 27 Pictures" />
+    <meta
+      property="og:description"
+      content="Interactive prototypes and visual studies from 27 Pictures — including Erin, a cinematic page-turning manga reader."
+    />
+    <meta property="og:image" content="https://twentyseven.pictures/toons/assets/1.jpg" />
+    <meta property="og:image:width" content="1152" />
+    <meta property="og:image:height" content="1728" />
+    <meta property="og:image:alt" content="Erin interactive manga reader — cover art from 27 Pictures Experiments" />
+    <meta property="og:site_name" content="27 Pictures" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@27pictures" />
+    <meta name="twitter:creator" content="@27pictures" />
+    <meta name="twitter:title" content="Experiments Lab | Interactive Prototypes by 27 Pictures" />
+    <meta
+      name="twitter:description"
+      content="Interactive prototypes and visual studies from 27 Pictures — including Erin, a cinematic page-turning manga reader."
+    />
+    <meta name="twitter:image" content="https://twentyseven.pictures/toons/assets/1.jpg" />
+    <meta name="twitter:image:alt" content="Erin interactive manga reader — cover art from 27 Pictures Experiments" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -48,7 +88,7 @@
       }
 
       .experiments-header {
-        margin-bottom: 64px;
+        margin-bottom: 48px;
       }
 
       .experiments-header .section-tag {
@@ -61,17 +101,56 @@
         margin-bottom: 20px;
       }
 
-      .experiments-header p {
-        max-width: 520px;
+      .experiments-header .lead {
+        max-width: 640px;
         color: var(--text-muted);
-        line-height: 1.7;
+        line-height: 1.75;
         font-weight: 300;
+        font-size: 1.05rem;
+        margin-bottom: 16px;
+      }
+
+      .experiments-intro {
+        max-width: 640px;
+        margin-bottom: 56px;
+        color: var(--silver);
+        line-height: 1.75;
+        font-weight: 300;
+        font-size: 0.95rem;
+      }
+
+      .experiments-intro p + p {
+        margin-top: 14px;
+      }
+
+      .experiments-intro a {
+        color: var(--text-muted);
+        text-decoration: none;
+        border-bottom: 1px solid var(--border);
+        transition:
+          color 0.2s var(--transition),
+          border-color 0.2s var(--transition);
+      }
+
+      .experiments-intro a:hover {
+        color: var(--red-smile);
+        border-color: var(--red-smile);
+      }
+
+      .experiments-section-label {
+        font-size: 10px;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--red-smile);
+        margin-bottom: 20px;
+        font-weight: 700;
       }
 
       .experiments-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 28px;
+        margin-bottom: 72px;
       }
 
       .experiment-card {
@@ -91,6 +170,11 @@
         border-color: var(--border-light);
       }
 
+      .experiment-card:focus-visible {
+        outline: 2px solid var(--red-smile);
+        outline-offset: 3px;
+      }
+
       .experiment-card-media {
         aspect-ratio: 16 / 10;
         overflow: hidden;
@@ -102,6 +186,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: top center;
         display: block;
         transition: transform 0.5s var(--transition);
       }
@@ -120,6 +205,7 @@
         text-transform: uppercase;
         color: var(--red-smile);
         margin-bottom: 12px;
+        font-weight: 700;
       }
 
       .experiment-card h2 {
@@ -149,41 +235,248 @@
         color: var(--red-smile);
       }
 
+      .experiments-footer {
+        border-top: 1px solid var(--border);
+        padding-top: 32px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px 32px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .experiments-footer p {
+        color: var(--silver);
+        font-size: 0.8rem;
+        line-height: 1.6;
+        font-weight: 300;
+        max-width: 420px;
+      }
+
+      .experiments-footer-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .experiments-footer-nav a {
+        color: var(--silver);
+        text-decoration: none;
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        border-bottom: 1px solid transparent;
+        transition:
+          color 0.2s var(--transition),
+          border-color 0.2s var(--transition);
+      }
+
+      .experiments-footer-nav a:hover {
+        color: var(--text);
+        border-color: var(--border-light);
+      }
+
+      /* Visually hidden but available to crawlers / AT */
+      .sr-only-seo {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
       @media (max-width: 768px) {
         .experiments-page {
           padding: 120px 24px 80px;
         }
+
+        .experiments-footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
       }
     </style>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "CollectionPage",
+            "@id": "https://twentyseven.pictures/experiments/#webpage",
+            "url": "https://twentyseven.pictures/experiments/",
+            "name": "Experiments Lab | Interactive Prototypes by 27 Pictures",
+            "headline": "Experiments",
+            "description": "Interactive prototypes and visual studies from 27 Pictures — including Erin, a cinematic page-turning manga reader built as an early darkroom study.",
+            "inLanguage": "en",
+            "isPartOf": {
+              "@type": "WebSite",
+              "@id": "https://twentyseven.pictures/#website",
+              "name": "27 Pictures",
+              "url": "https://twentyseven.pictures/"
+            },
+            "about": {
+              "@type": "Organization",
+              "@id": "https://twentyseven.pictures/#organization",
+              "name": "27 Pictures",
+              "url": "https://twentyseven.pictures/"
+            },
+            "publisher": {
+              "@id": "https://twentyseven.pictures/#organization"
+            },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "@id": "https://twentyseven.pictures/toons/assets/1.jpg",
+              "url": "https://twentyseven.pictures/toons/assets/1.jpg",
+              "width": 1152,
+              "height": 1728,
+              "caption": "Erin interactive manga reader cover art by 27 Pictures"
+            },
+            "breadcrumb": {
+              "@id": "https://twentyseven.pictures/experiments/#breadcrumb"
+            },
+            "mainEntity": {
+              "@id": "https://twentyseven.pictures/experiments/#itemlist"
+            }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://twentyseven.pictures/experiments/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://twentyseven.pictures/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Experiments",
+                "item": "https://twentyseven.pictures/experiments/"
+              }
+            ]
+          },
+          {
+            "@type": "ItemList",
+            "@id": "https://twentyseven.pictures/experiments/#itemlist",
+            "name": "27 Pictures Experiments",
+            "numberOfItems": 1,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Erin",
+                "url": "https://twentyseven.pictures/toons/",
+                "item": {
+                  "@type": "CreativeWork",
+                  "@id": "https://twentyseven.pictures/toons/#work",
+                  "name": "Erin",
+                  "url": "https://twentyseven.pictures/toons/",
+                  "description": "An interactive page-turning manga reader with keyboard, click, and swipe navigation. A visual prototype from the 27 Pictures Experiments lab.",
+                  "genre": ["Interactive Media", "Manga", "Visual Experiment"],
+                  "creator": {
+                    "@id": "https://twentyseven.pictures/#organization"
+                  },
+                  "image": {
+                    "@type": "ImageObject",
+                    "url": "https://twentyseven.pictures/toons/assets/1.jpg",
+                    "width": 1152,
+                    "height": 1728
+                  },
+                  "isPartOf": {
+                    "@id": "https://twentyseven.pictures/experiments/#webpage"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="grain" aria-hidden="true"></div>
 
     <main class="experiments-page" id="main-content" role="main">
-      <a href="/" class="experiments-back">← Back to 27 Pictures</a>
+      <nav aria-label="Breadcrumb">
+        <a href="/" class="experiments-back">← Back to 27 Pictures</a>
+        <ol class="sr-only-seo">
+          <li><a href="https://twentyseven.pictures/">Home</a></li>
+          <li aria-current="page">Experiments</li>
+        </ol>
+      </nav>
 
       <header class="experiments-header">
         <p class="section-tag">Lab</p>
         <h1>Experiments</h1>
-        <p>
-          Interactive prototypes and visual studies. Not part of the main production slate — just things we are testing
-          in the darkroom.
+        <p class="lead">
+          Interactive prototypes and visual studies from
+          <strong>27 Pictures</strong> — early darkroom work outside the main horror and cosplay production slate.
         </p>
       </header>
 
-      <div class="experiments-grid">
-        <a href="/toons/" class="experiment-card">
-          <div class="experiment-card-media">
-            <img src="/toons/assets/1.jpg" alt="Erin manga reader cover" loading="lazy" />
-          </div>
-          <div class="experiment-card-body">
-            <p class="experiment-card-label">Interactive reader</p>
-            <h2>Erin</h2>
-            <p>A page-turning manga reader. Click, swipe, or use the arrow keys.</p>
-            <span class="experiment-card-cta">Open experiment →</span>
-          </div>
-        </a>
-      </div>
+      <section class="experiments-intro" aria-label="About the Experiments lab">
+        <p>
+          This lab is where we test narrative interfaces, AI-assisted illustration workflows, and cinematic reading
+          experiences before they graduate into full productions like
+          <a href="/#darkroom">The Red Smile</a> or our <a href="/#latest">YouTube shorts</a>.
+        </p>
+        <p>
+          Each experiment is self-contained, intentionally small, and built to explore one idea: motion, interaction, or
+          visual language. New studies will appear here as they leave the darkroom.
+        </p>
+      </section>
+
+      <section aria-labelledby="current-experiments-heading">
+        <h2 id="current-experiments-heading" class="experiments-section-label">Current experiments</h2>
+
+        <div class="experiments-grid">
+          <article>
+            <a href="/toons/" class="experiment-card" aria-labelledby="erin-title">
+              <div class="experiment-card-media">
+                <img
+                  src="/toons/assets/1.jpg"
+                  alt="Erin interactive manga reader cover art by 27 Pictures"
+                  width="1152"
+                  height="1728"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                />
+              </div>
+              <div class="experiment-card-body">
+                <p class="experiment-card-label">Interactive reader</p>
+                <h2 id="erin-title">Erin</h2>
+                <p>
+                  A cinematic page-turning manga reader with click, swipe, and keyboard navigation — a prototype for
+                  immersive visual storytelling on the web.
+                </p>
+                <span class="experiment-card-cta">Open experiment →</span>
+              </div>
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <footer class="experiments-footer">
+        <p>
+          27 Pictures is a horror film and cinematic cosplay production studio. Experiments are public lab pieces, not
+          the main catalog.
+        </p>
+        <nav class="experiments-footer-nav" aria-label="Related links">
+          <a href="/">Home</a>
+          <a href="/#contact">Inquire</a>
+          <a href="https://www.youtube.com/@twentyseven.pictures" rel="noopener noreferrer" target="_blank">YouTube</a>
+          <a href="https://www.instagram.com/27pictures_production" rel="noopener noreferrer" target="_blank"
+            >Instagram</a
+          >
+        </nav>
+      </footer>
     </main>
   </body>
 </html>
