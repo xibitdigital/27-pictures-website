@@ -4,7 +4,7 @@
   <url>
     <loc>https://twentyseven.pictures/</loc>
     <lastmod>2026-05-30</lastmod>
-<image:image>
+    <image:image>
       <image:loc>https://twentyseven.pictures/the-red-smile.jpg</image:loc>
       <image:title>The Red Smile - Psychological Horror Short Film by 27 Pictures</image:title>
       <image:caption>Cinematic clown portrait from The Red Smile horror series featuring atmospheric deep-shadow cinematography</image:caption>
@@ -14,5 +14,9 @@
       <image:title>27 Pictures Logo</image:title>
       <image:caption>27 Pictures - Horror Film Production and AI-Enhanced Cosplay Cinematography Studio</image:caption>
     </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/experiments/</loc>
+    <lastmod>2026-07-25</lastmod>
   </url>
 </urlset>

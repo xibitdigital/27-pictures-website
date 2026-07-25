@@ -35,7 +35,8 @@ That:
 
 1. Backs up originals to `public/toons/assets/.watermark-backup/` (skips files already backed up)
 2. Bakes `twentyseven.pictures` bottom-right on every `.jpg` / `.jpeg` / `.png` / `.webp` in the folder
-3. Writes in place at JPEG quality 92
+3. Writes via temp file then atomic `mv` at JPEG quality 92
+4. Refuses to re-run if a backup dir already exists unless `--force` is passed
 
 ## Workflow for the agent
 
@@ -68,6 +69,7 @@ That:
 | `--offset-x N` | `20` | Horizontal inset from edge |
 | `--offset-y N` | `16` | Vertical inset from edge |
 | `--backup [DIR]` | `<input>/.watermark-backup` | Copy originals before write |
+| `--force` | — | Allow re-run when backup already exists (double-mark risk) |
 | `--dry-run` | — | List targets only |
 
 ### Examples

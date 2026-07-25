@@ -6,9 +6,9 @@
 #   ./scripts/watermark-images.sh <input-dir-or-glob> [options]
 #
 # Examples:
-#   ./scripts/watermark-images.sh public/toons/assets
+#   ./scripts/watermark-images.sh public/toons/assets --backup
 #   ./scripts/watermark-images.sh public/toons/assets --text "twentyseven.pictures" --backup
-#   ./scripts/watermark-images.sh "./exports/*.jpg" --pointsize 28 --quality 90
+#   ./scripts/watermark-images.sh "./exports/*.jpg" --pointsize 28 --quality 90 --force
 #
 set -euo pipefail
 
@@ -30,11 +30,14 @@ Options:
   --offset-x N        Right/left inset in px (default: 20)
   --offset-y N        Bottom/top inset in px (default: 16)
   --backup [DIR]      Copy originals before writing (default dir: <input>/.watermark-backup)
+  --force             Allow re-run when a backup dir already exists (risks double-mark)
   --dry-run           List files that would be processed, then exit
   -h, --help          Show this help
 
 Notes:
-  - Re-running on already-watermarked files will double the mark. Use --backup first.
+  - Re-running on already-watermarked files will double the mark.
+  - If a backup dir already exists, pass --force (or restore from backup first).
+  - Writes via temp file then mv (atomic replace per image).
   - Skips non-image files and the .watermark-backup directory.
 EOF
 }
@@ -60,6 +63,7 @@ OFFSET_Y=16
 DO_BACKUP=0
 BACKUP_DIR=""
 DRY_RUN=0
+FORCE=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -104,6 +108,10 @@ while [[ $# -gt 0 ]]; do
         shift 1
       fi
       ;;
+    --force)
+      FORCE=1
+      shift
+      ;;
     --dry-run)
       DRY_RUN=1
       shift
@@ -141,7 +149,6 @@ if [[ -d "$INPUT" ]]; then
     ! -path '*/.watermark-backup/*' -print0 | sort -z)
   DEFAULT_BACKUP="$INPUT/.watermark-backup"
 else
-  # Glob expansion (caller should quote if needed; unquoted expansion ok when passed as dir)
   shopt -s nullglob
   # shellcheck disable=SC2206
   CANDIDATES=($INPUT)
@@ -167,6 +174,18 @@ if [[ "$DO_BACKUP" -eq 1 ]]; then
   BACKUP_DIR="${BACKUP_DIR:-$DEFAULT_BACKUP}"
 fi
 
+# Guard against accidental double-watermark when a previous backup exists
+EXISTING_BACKUP=""
+if [[ -d "${BACKUP_DIR:-$DEFAULT_BACKUP}" ]]; then
+  EXISTING_BACKUP="${BACKUP_DIR:-$DEFAULT_BACKUP}"
+fi
+if [[ -n "$EXISTING_BACKUP" && "$FORCE" -ne 1 && "$DRY_RUN" -ne 1 ]]; then
+  echo "error: backup already exists at $EXISTING_BACKUP" >&2
+  echo "  Refusing to re-watermark (would double the mark)." >&2
+  echo "  Restore originals, or pass --force if you intend to re-run." >&2
+  exit 1
+fi
+
 SHADOW_X=$((OFFSET_X + 1))
 SHADOW_Y=$((OFFSET_Y + 1))
 
@@ -176,6 +195,9 @@ echo "Gravity:   $GRAVITY  pointsize=$POINTSIZE  quality=$QUALITY"
 if [[ "$DO_BACKUP" -eq 1 ]]; then
   echo "Backup:    $BACKUP_DIR"
 fi
+if [[ "$FORCE" -eq 1 ]]; then
+  echo "Force:     yes"
+fi
 
 if [[ "$DRY_RUN" -eq 1 ]]; then
   printf '  %s\n' "${FILES[@]}"
@@ -183,27 +205,41 @@ if [[ "$DRY_RUN" -eq 1 ]]; then
   exit 0
 fi
 
+backed_up=0
 if [[ "$DO_BACKUP" -eq 1 ]]; then
   mkdir -p "$BACKUP_DIR"
   for f in "${FILES[@]}"; do
     base="$(basename "$f")"
     if [[ ! -f "$BACKUP_DIR/$base" ]]; then
       cp "$f" "$BACKUP_DIR/$base"
+      backed_up=$((backed_up + 1))
     fi
   done
-  echo "Backed up ${#FILES[@]} file(s) → $BACKUP_DIR"
+  echo "Backed up $backed_up new file(s) → $BACKUP_DIR"
 fi
 
 count=0
 for f in "${FILES[@]}"; do
-  magick "$f" \
+  dir="$(dirname "$f")"
+  base="$(basename "$f")"
+  ext="${base##*.}"
+  tmp="$(mktemp "$dir/.wm-XXXXXX.${ext}")"
+
+  if ! magick "$f" \
     -gravity "$GRAVITY" \
     -font "$FONT" \
     -pointsize "$POINTSIZE" \
     -fill 'rgba(0,0,0,0.55)' -annotate "+${SHADOW_X}+${SHADOW_Y}" "$TEXT" \
     -fill 'rgba(255,255,255,0.82)' -annotate "+${OFFSET_X}+${OFFSET_Y}" "$TEXT" \
     -quality "$QUALITY" \
-    "$f"
+    "$tmp"
+  then
+    rm -f "$tmp"
+    echo "error: watermark failed for $f" >&2
+    exit 1
+  fi
+
+  mv "$tmp" "$f"
   count=$((count + 1))
   echo "  ✓ $f"
 done

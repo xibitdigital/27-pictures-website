@@ -4,37 +4,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Erin | Experiments | 27 Pictures</title>
+    <meta
+      name="description"
+      content="Erin — an interactive page-turning manga reader from 27 Pictures Experiments."
+    />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="canonical" href="https://twentyseven.pictures/toons/" />
-    <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
 
+    <link rel="icon" type="image/png" href="../logosquare.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../logosquare.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=13" />
+    <style>
+      /* Book-only tokens (page paper / spine — not site chrome) */
       :root {
         --book-width: min(92vw, 900px);
         --book-height: calc(var(--book-width) * 0.72);
         --page-bg: #f8f4ec;
         --spine: #2a2218;
-        --cover: #1a1510;
-        --accent: #c45c3e;
+        --cover: #111;
       }
 
-      body {
+      body.toons-reader {
         min-height: 100dvh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background:
-          radial-gradient(ellipse at 50% 0%, #3d3530 0%, transparent 60%),
-          radial-gradient(ellipse at 50% 100%, #1a1612 0%, transparent 50%), #0e0c0a;
-        font-family: "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
-        color: #e8e0d4;
+        background: var(--bg);
+        color: var(--text);
         overflow: hidden;
         user-select: none;
       }
@@ -44,45 +48,47 @@
         flex-direction: column;
         align-items: center;
         gap: 1.5rem;
-        padding: 1.5rem;
+        padding: 5rem 1.5rem 2rem;
         width: 100%;
+        position: relative;
+        z-index: 1;
       }
 
-      .back-experiments {
+      .toons-back {
         position: fixed;
-        top: 1.25rem;
-        left: 1.25rem;
+        top: 1.5rem;
+        left: 1.5rem;
         z-index: 50;
-        color: rgba(232, 224, 212, 0.45);
+        color: var(--silver);
         text-decoration: none;
-        font-family: "Inter", system-ui, sans-serif;
-        font-size: 0.65rem;
-        letter-spacing: 0.2em;
+        font-size: 0.75rem;
+        letter-spacing: 3px;
         text-transform: uppercase;
-        transition: color 0.2s;
+        border-bottom: 1px solid var(--border);
+        transition:
+          color 0.2s var(--transition),
+          border-color 0.2s var(--transition);
       }
 
-      .back-experiments:hover {
-        color: rgba(232, 224, 212, 0.85);
+      .toons-back:hover {
+        color: var(--text);
+        border-color: var(--silver);
       }
 
       .title-bar {
         text-align: center;
-        opacity: 0.85;
+      }
+
+      .title-bar .section-tag {
+        margin-bottom: 12px;
       }
 
       .title-bar h1 {
-        font-size: 1.1rem;
-        font-weight: 400;
-        letter-spacing: 0.35em;
-        text-transform: uppercase;
-      }
-
-      .title-bar p {
-        font-size: 0.75rem;
-        opacity: 0.5;
-        margin-top: 0.35rem;
-        letter-spacing: 0.1em;
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        line-height: 1.1;
+        color: var(--text);
       }
 
       /* ── Book container ── */
@@ -98,7 +104,6 @@
         height: 100%;
         position: relative;
         transform-style: preserve-3d;
-        transition: transform 0.6s ease;
       }
 
       .book-shadow {
@@ -112,7 +117,6 @@
         pointer-events: none;
       }
 
-      /* ── Spread (two visible pages) ── */
       .spread {
         width: 100%;
         height: 100%;
@@ -120,10 +124,10 @@
         grid-template-columns: 1fr 1fr;
         position: relative;
         border-radius: 2px 6px 6px 2px;
+        border: 1px solid var(--border);
         box-shadow:
           0 2px 4px rgba(0, 0, 0, 0.3),
-          0 12px 40px rgba(0, 0, 0, 0.55),
-          inset 0 0 30px rgba(0, 0, 0, 0.08);
+          0 12px 40px rgba(0, 0, 0, 0.55);
       }
 
       .page-slot {
@@ -168,7 +172,6 @@
         );
       }
 
-      /* Spine */
       .spine {
         position: absolute;
         top: 0;
@@ -176,7 +179,14 @@
         transform: translateX(-50%);
         width: 14px;
         height: 100%;
-        background: linear-gradient(90deg, #1a1510 0%, var(--spine) 30%, #4a3f32 50%, var(--spine) 70%, #1a1510 100%);
+        background: linear-gradient(
+          90deg,
+          var(--bg-dark) 0%,
+          var(--spine) 30%,
+          #4a3f32 50%,
+          var(--spine) 70%,
+          var(--bg-dark) 100%
+        );
         z-index: 10;
         box-shadow:
           -2px 0 6px rgba(0, 0, 0, 0.4),
@@ -184,7 +194,6 @@
         pointer-events: none;
       }
 
-      /* Page curl shadow at spine */
       .spine-glow {
         position: absolute;
         top: 0;
@@ -196,7 +205,7 @@
         pointer-events: none;
       }
 
-      /* ── Flip overlay (animated turning page) ── */
+      /* ── Flip overlay ── */
       .flip-page {
         position: absolute;
         top: 0;
@@ -206,7 +215,6 @@
         transform-origin: left center;
         z-index: 20;
         pointer-events: none;
-        transition: none;
       }
 
       .flip-page.from-right {
@@ -239,7 +247,7 @@
       }
 
       .flip-face.inside-cover {
-        background: linear-gradient(135deg, var(--cover) 0%, #2a2218 100%);
+        background: linear-gradient(135deg, var(--cover) 0%, var(--bg-dark) 100%);
       }
 
       .flip-page.from-right .flip-face.front {
@@ -253,11 +261,11 @@
       }
 
       .flip-page.flipping.from-right {
-        animation: flip-right 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        animation: flip-right 0.7s var(--transition) forwards;
       }
 
       .flip-page.flipping.from-left {
-        animation: flip-left 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        animation: flip-left 0.7s var(--transition) forwards;
       }
 
       @keyframes flip-right {
@@ -278,7 +286,7 @@
         }
       }
 
-      /* ── Click zones (manga: tap right = prev, tap left = next) ── */
+      /* LTR book: left = prev, right = next */
       .nav-zone {
         position: absolute;
         top: 0;
@@ -291,6 +299,7 @@
       .nav-zone.prev {
         left: 0;
       }
+
       .nav-zone.next {
         right: 0;
       }
@@ -300,7 +309,14 @@
         position: absolute;
         inset: 0;
         background: rgba(255, 255, 255, 0.03);
-        transition: background 0.2s;
+        transition: background 0.2s var(--transition);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .flip-page.flipping.from-right,
+        .flip-page.flipping.from-left {
+          animation-duration: 0.01ms;
+        }
       }
 
       /* ── Controls ── */
@@ -310,10 +326,10 @@
         gap: 1.5rem;
       }
 
-      .btn {
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: #e8e0d4;
+      .reader-btn {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        color: var(--text);
         width: 44px;
         height: 44px;
         border-radius: 50%;
@@ -322,39 +338,50 @@
         align-items: center;
         justify-content: center;
         font-size: 1.1rem;
+        font-family: "Inter", sans-serif;
         transition:
-          background 0.2s,
-          border-color 0.2s;
+          background 0.2s var(--transition),
+          border-color 0.2s var(--transition),
+          color 0.2s var(--transition);
       }
 
-      .btn:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(255, 255, 255, 0.25);
+      .reader-btn:hover:not(:disabled) {
+        border-color: var(--red-smile);
+        color: var(--red-smile);
       }
 
-      .btn:disabled {
+      .reader-btn:focus-visible {
+        outline: 2px solid var(--red-smile);
+        outline-offset: 2px;
+      }
+
+      .reader-btn:disabled {
         opacity: 0.25;
         cursor: default;
       }
 
       .page-indicator {
-        font-size: 0.85rem;
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
         letter-spacing: 0.15em;
-        min-width: 6rem;
+        min-width: 6.5rem;
         text-align: center;
-        opacity: 0.7;
+        color: var(--silver);
       }
 
       .hint {
-        font-size: 0.7rem;
-        opacity: 0.35;
-        letter-spacing: 0.08em;
+        font-family: "Inter", sans-serif;
+        font-size: 0.65rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         text-align: center;
+        color: var(--silver);
+        opacity: 0.7;
       }
 
-      /* Inside covers (first spread left = front cover, last spread right = back cover) */
       .page-slot.inside-cover {
-        background: linear-gradient(135deg, var(--cover) 0%, #2a2218 100%);
+        background: linear-gradient(135deg, var(--cover) 0%, var(--bg-dark) 100%);
       }
 
       .front-cover-instructions {
@@ -367,15 +394,17 @@
         gap: 1.25rem;
         padding: 1.5rem;
         text-align: center;
-        color: rgba(255, 255, 255, 0.45);
+        color: var(--silver);
+        font-family: "Inter", sans-serif;
       }
 
       .front-cover-instructions h2 {
-        font-size: 0.7rem;
-        font-weight: 400;
+        font-family: "Inter", sans-serif;
+        font-size: 0.65rem;
+        font-weight: 700;
         letter-spacing: 0.35em;
         text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.3);
+        color: var(--red-smile);
       }
 
       .front-cover-instructions ul {
@@ -384,14 +413,16 @@
         flex-direction: column;
         gap: 0.65rem;
         font-size: 0.78rem;
+        font-weight: 300;
         line-height: 1.5;
         letter-spacing: 0.04em;
+        color: var(--text-muted);
       }
 
       .front-cover-instructions li span {
         display: block;
         font-size: 0.65rem;
-        opacity: 0.55;
+        color: var(--silver);
         letter-spacing: 0.08em;
         margin-top: 0.15rem;
       }
@@ -402,15 +433,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.95rem;
-        color: rgba(255, 255, 255, 0.35);
-        letter-spacing: 0.12em;
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--silver);
         text-decoration: none;
-        transition: color 0.2s;
+        transition: color 0.2s var(--transition);
       }
 
       .back-cover-link:hover {
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--red-smile);
       }
 
       .page-slot.inside-cover.blank::after {
@@ -423,10 +457,22 @@
           --book-height: calc(var(--book-width) * 0.85);
         }
 
+        .reader {
+          padding: 4.5rem 0.75rem 1.5rem;
+          gap: 1.15rem;
+        }
+
+        .toons-back {
+          top: 1rem;
+          left: 1rem;
+          font-size: 0.65rem;
+        }
+
         .controls {
           gap: 1rem;
         }
-        .btn {
+
+        .reader-btn {
           width: 40px;
           height: 40px;
         }
@@ -443,13 +489,16 @@
       }
     </style>
   </head>
-  <body>
-    <a href="/experiments/" class="back-experiments">← Experiments</a>
-    <div class="reader">
-      <div class="title-bar">
+  <body class="toons-reader">
+    <div id="grain" aria-hidden="true"></div>
+
+    <a href="/experiments/" class="toons-back">← Experiments</a>
+
+    <main class="reader" id="main-content" role="main">
+      <header class="title-bar">
+        <p class="section-tag">Experiment</p>
         <h1>Erin</h1>
-        <p>the ancient scroll</p>
-      </div>
+      </header>
 
       <div class="book-scene">
         <div class="book-shadow"></div>
@@ -466,22 +515,27 @@
       </div>
 
       <div class="controls">
-        <button class="btn" id="btn-prev" title="Previous page" aria-label="Previous page">&#8592;</button>
-        <span class="page-indicator" id="indicator">…</span>
-        <button class="btn" id="btn-next" title="Next page" aria-label="Next page">&#8594;</button>
+        <button class="reader-btn" id="btn-prev" type="button" title="Previous page" aria-label="Previous page">
+          &#8592;
+        </button>
+        <span class="page-indicator" id="indicator" aria-live="polite">…</span>
+        <button class="reader-btn" id="btn-next" type="button" title="Next page" aria-label="Next page">&#8594;</button>
       </div>
 
       <p class="hint">← previous &nbsp;·&nbsp; → next</p>
-    </div>
+    </main>
 
     <script>
+      const FLIP_MS = 700;
+      const FLIP_SAFETY_MS = FLIP_MS + 200;
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
       let pages = [];
       let totalSpreads = 0;
-
       let spreadIndex = 0;
       let isFlipping = false;
+      let flipSafetyTimer = null;
 
-      const spreadEl = document.getElementById("spread");
       const slotLeft = document.getElementById("slot-left");
       const slotRight = document.getElementById("slot-right");
       const indicator = document.getElementById("indicator");
@@ -491,23 +545,14 @@
       const zonePrev = document.getElementById("zone-prev");
       const bookEl = document.getElementById("book");
 
-      function imageExists(src) {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => resolve(true);
-          img.onerror = () => resolve(false);
-          img.src = src;
-        });
-      }
-
       async function loadPages() {
-        const discovered = [];
-        for (let i = 1; ; i++) {
-          const src = `assets/${i}.jpg`;
-          if (!(await imageExists(src))) break;
-          discovered.push(src);
-        }
-        return discovered;
+        const res = await fetch("manifest.json", { cache: "no-cache" });
+        if (!res.ok) throw new Error(`manifest.json ${res.status}`);
+        const manifest = await res.json();
+        const count = Number(manifest.pages) || 0;
+        const pattern = manifest.pattern || "assets/{n}.jpg";
+        if (count < 1) return [];
+        return Array.from({ length: count }, (_, i) => pattern.replace("{n}", String(i + 1)));
       }
 
       function pageIndexForSpread(spread, side) {
@@ -517,14 +562,14 @@
 
       function pageForSpread(spread, side) {
         const idx = pageIndexForSpread(spread, side);
-        if (idx === null) return null;
-        return idx < pages.length ? pages[idx] : null;
+        if (idx === null || idx >= pages.length) return null;
+        return pages[idx];
       }
 
       function pageNumber(spread, side) {
         const idx = pageIndexForSpread(spread, side);
-        if (idx === null) return null;
-        return idx < pages.length ? idx + 1 : null;
+        if (idx === null || idx >= pages.length) return null;
+        return idx + 1;
       }
 
       function isFrontCover(spread, side) {
@@ -532,8 +577,7 @@
       }
 
       function isBackCover(spread, side) {
-        if (spread !== totalSpreads - 1) return false;
-        return !pageForSpread(spread, side);
+        return spread === totalSpreads - 1 && !pageForSpread(spread, side);
       }
 
       function renderFrontCoverInstructions() {
@@ -552,16 +596,20 @@
         return wrap;
       }
 
+      function appendPageImage(parent, src, pageNum) {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = pageNum ? `Erin — page ${pageNum}` : "Erin page";
+        img.draggable = false;
+        parent.appendChild(img);
+      }
+
       function renderSlot(slot, src, isInsideCover, spread, side) {
         slot.innerHTML = "";
         slot.classList.toggle("blank", !src && !isInsideCover);
         slot.classList.toggle("inside-cover", !src && isInsideCover);
         if (src) {
-          const img = document.createElement("img");
-          img.src = src;
-          img.alt = "Manga page";
-          img.draggable = false;
-          slot.appendChild(img);
+          appendPageImage(slot, src, pageNumber(spread, side));
         } else if (isInsideCover && isFrontCover(spread, side)) {
           slot.appendChild(renderFrontCoverInstructions());
         } else if (isInsideCover && isBackCover(spread, side)) {
@@ -600,91 +648,82 @@
         btnNext.disabled = spreadIndex >= totalSpreads - 1;
       }
 
-      function createFlipOverlay(direction, frontSrc, backSrc) {
+      function createFlipOverlay(direction, frontSrc, backSrc, frontNum, backNum) {
         const flip = document.createElement("div");
         flip.className = `flip-page ${direction === "next" ? "from-right" : "from-left"}`;
 
         const front = document.createElement("div");
         front.className = "flip-face front";
-        if (frontSrc) {
-          const img = document.createElement("img");
-          img.src = frontSrc;
-          img.draggable = false;
-          front.appendChild(img);
-        }
+        if (frontSrc) appendPageImage(front, frontSrc, frontNum);
 
         const back = document.createElement("div");
         back.className = "flip-face back";
-        if (backSrc) {
-          const img = document.createElement("img");
-          img.src = backSrc;
-          img.draggable = false;
-          back.appendChild(img);
-        } else {
-          back.classList.add("inside-cover");
-        }
+        if (backSrc) appendPageImage(back, backSrc, backNum);
+        else back.classList.add("inside-cover");
 
         flip.appendChild(front);
         flip.appendChild(back);
         bookEl.appendChild(flip);
 
-        requestAnimationFrame(() => {
-          flip.classList.add("flipping");
-        });
+        if (!reduceMotion) {
+          requestAnimationFrame(() => flip.classList.add("flipping"));
+        }
 
         return flip;
       }
 
-      function goNext() {
-        if (isFlipping || spreadIndex >= totalSpreads - 1) return;
-        isFlipping = true;
-
-        const curRight = pageForSpread(spreadIndex, "right");
-        const curLeft = pageForSpread(spreadIndex, "left");
-        const nextRight = pageForSpread(spreadIndex + 1, "right");
-        const nextLeft = pageForSpread(spreadIndex + 1, "left");
-
-        const flip = createFlipOverlay("next", curRight, nextLeft);
-        renderSlot(slotRight, nextRight, !nextRight, spreadIndex + 1, "right");
-
-        flip.addEventListener(
-          "animationend",
-          () => {
-            renderSlot(slotLeft, nextLeft, !nextLeft, spreadIndex + 1, "left");
-            flip.remove();
-            spreadIndex++;
-            updateSpread(true);
-            isFlipping = false;
-          },
-          { once: true }
-        );
+      function finishFlip(flip, targetSpread, lateSlot, lateSrc) {
+        if (!isFlipping || !flip.isConnected) return;
+        if (flipSafetyTimer) {
+          clearTimeout(flipSafetyTimer);
+          flipSafetyTimer = null;
+        }
+        renderSlot(lateSlot, lateSrc, !lateSrc, targetSpread, lateSlot === slotLeft ? "left" : "right");
+        flip.remove();
+        spreadIndex = targetSpread;
+        updateSpread(true);
+        isFlipping = false;
       }
 
-      function goPrev() {
-        if (isFlipping || spreadIndex <= 0) return;
-        isFlipping = true;
+      /** LTR book turn: +1 next (right), -1 previous (left). */
+      function turn(delta) {
+        if (isFlipping) return;
+        const target = spreadIndex + delta;
+        if (target < 0 || target >= totalSpreads) return;
 
+        const goingNext = delta > 0;
         const curRight = pageForSpread(spreadIndex, "right");
         const curLeft = pageForSpread(spreadIndex, "left");
-        const prevRight = pageForSpread(spreadIndex - 1, "right");
-        const prevLeft = pageForSpread(spreadIndex - 1, "left");
+        const nextRight = pageForSpread(target, "right");
+        const nextLeft = pageForSpread(target, "left");
 
-        // Cover the left page with the turning sheet before swapping the slot underneath
-        const flip = createFlipOverlay("prev", curLeft, prevRight);
-        renderSlot(slotLeft, prevLeft, !prevLeft, spreadIndex - 1, "left");
+        if (reduceMotion) {
+          spreadIndex = target;
+          updateSpread(false);
+          return;
+        }
 
-        flip.addEventListener(
-          "animationend",
-          () => {
-            renderSlot(slotRight, prevRight, !prevRight, spreadIndex - 1, "right");
-            flip.remove();
-            spreadIndex--;
-            updateSpread(true);
-            isFlipping = false;
-          },
-          { once: true }
-        );
+        isFlipping = true;
+
+        const frontSrc = goingNext ? curRight : curLeft;
+        const backSrc = goingNext ? nextLeft : nextRight;
+        const frontNum = goingNext ? pageNumber(spreadIndex, "right") : pageNumber(spreadIndex, "left");
+        const backNum = goingNext ? pageNumber(target, "left") : pageNumber(target, "right");
+        const earlySlot = goingNext ? slotRight : slotLeft;
+        const earlySrc = goingNext ? nextRight : nextLeft;
+        const lateSlot = goingNext ? slotLeft : slotRight;
+        const lateSrc = goingNext ? nextLeft : nextRight;
+
+        const flip = createFlipOverlay(goingNext ? "next" : "prev", frontSrc, backSrc, frontNum, backNum);
+        renderSlot(earlySlot, earlySrc, !earlySrc, target, goingNext ? "right" : "left");
+
+        const complete = () => finishFlip(flip, target, lateSlot, lateSrc);
+        flip.addEventListener("animationend", complete, { once: true });
+        flipSafetyTimer = setTimeout(complete, FLIP_SAFETY_MS);
       }
+
+      const goNext = () => turn(1);
+      const goPrev = () => turn(-1);
 
       zoneNext.addEventListener("click", goNext);
       zonePrev.addEventListener("click", goPrev);
@@ -717,7 +756,16 @@
       );
 
       async function init() {
-        pages = await loadPages();
+        try {
+          pages = await loadPages();
+        } catch (err) {
+          console.error(err);
+          indicator.textContent = "Failed to load";
+          btnPrev.disabled = true;
+          btnNext.disabled = true;
+          return;
+        }
+
         if (!pages.length) {
           indicator.textContent = "No pages found";
           btnPrev.disabled = true;
