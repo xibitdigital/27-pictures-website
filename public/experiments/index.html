@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiments | 27 Pictures</title>
+    <meta
+      name="description"
+      content="Side experiments from 27 Pictures — interactive prototypes and visual studies outside the main production slate."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="canonical" href="https://twentyseven.pictures/experiments/" />
+
+    <link rel="icon" type="image/png" href="../logosquare.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../logosquare.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=13" />
+    <style>
+      .experiments-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 140px 40px 100px;
+      }
+
+      .experiments-back {
+        display: inline-block;
+        margin-bottom: 48px;
+        color: var(--silver);
+        text-decoration: none;
+        font-size: 0.75rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border);
+        transition:
+          color 0.2s var(--transition),
+          border-color 0.2s var(--transition);
+      }
+
+      .experiments-back:hover {
+        color: var(--text);
+        border-color: var(--silver);
+      }
+
+      .experiments-header {
+        margin-bottom: 64px;
+      }
+
+      .experiments-header .section-tag {
+        margin-bottom: 16px;
+      }
+
+      .experiments-header h1 {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        line-height: 1.05;
+        margin-bottom: 20px;
+      }
+
+      .experiments-header p {
+        max-width: 520px;
+        color: var(--text-muted);
+        line-height: 1.7;
+        font-weight: 300;
+      }
+
+      .experiments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 28px;
+      }
+
+      .experiment-card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        transition:
+          transform 0.35s var(--transition),
+          border-color 0.35s var(--transition);
+      }
+
+      .experiment-card:hover {
+        transform: var(--card-lift);
+        border-color: var(--border-light);
+      }
+
+      .experiment-card-media {
+        aspect-ratio: 16 / 10;
+        overflow: hidden;
+        background: var(--bg-dark);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .experiment-card-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.5s var(--transition);
+      }
+
+      .experiment-card:hover .experiment-card-media img {
+        transform: scale(1.04);
+      }
+
+      .experiment-card-body {
+        padding: 28px 24px 32px;
+      }
+
+      .experiment-card-label {
+        font-size: 0.65rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--red-smile);
+        margin-bottom: 12px;
+      }
+
+      .experiment-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        font-family: "Playfair Display", serif;
+      }
+
+      .experiment-card p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        font-weight: 300;
+      }
+
+      .experiment-card-cta {
+        display: inline-block;
+        margin-top: 20px;
+        font-size: 0.7rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--silver);
+        transition: color 0.2s var(--transition);
+      }
+
+      .experiment-card:hover .experiment-card-cta {
+        color: var(--red-smile);
+      }
+
+      @media (max-width: 768px) {
+        .experiments-page {
+          padding: 120px 24px 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="grain" aria-hidden="true"></div>
+
+    <main class="experiments-page" id="main-content" role="main">
+      <a href="/" class="experiments-back">← Back to 27 Pictures</a>
+
+      <header class="experiments-header">
+        <p class="section-tag">Lab</p>
+        <h1>Experiments</h1>
+        <p>
+          Interactive prototypes and visual studies. Not part of the main production slate — just things we are testing
+          in the darkroom.
+        </p>
+      </header>
+
+      <div class="experiments-grid">
+        <a href="/toons/" class="experiment-card magnetic">
+          <div class="experiment-card-media">
+            <img src="/toons/assets/1.jpg" alt="Erin — the ancient scroll manga reader cover" loading="lazy" />
+          </div>
+          <div class="experiment-card-body">
+            <p class="experiment-card-label">Interactive reader</p>
+            <h2>Erin</h2>
+            <p>A page-turning manga reader for the ancient scroll. Click, swipe, or use the arrow keys.</p>
+            <span class="experiment-card-cta">Open experiment →</span>
+          </div>
+        </a>
+      </div>
+    </main>
+  </body>
+</html>

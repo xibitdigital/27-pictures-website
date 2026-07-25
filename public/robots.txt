@@ -5,6 +5,8 @@ User-agent: *
 Allow: /
 Disallow: /qr.html
 Disallow: /qr
+Disallow: /experiments
+Disallow: /toons
 
 # Sitemap location
 Sitemap: https://twentyseven.pictures/sitemap.xml
