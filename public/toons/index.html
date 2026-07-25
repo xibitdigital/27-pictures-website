@@ -621,7 +621,8 @@
       const bookEl = document.getElementById("book");
 
       function totalViews() {
-        if (singlePage) return pages.length + 2; // front cover + pages + back cover
+        // Mobile: page images only (index 0 = cover art) + back cover
+        if (singlePage) return pages.length + 1;
         return totalSpreads;
       }
 
@@ -660,27 +661,19 @@
         return spread === totalSpreads - 1 && !pageForSpread(spread, side);
       }
 
-      /** Mobile view: 0 front, 1..n page, n+1 back */
+      /**
+       * Mobile views: 0 = cover (first page image), 1..n-1 = following pages, n = back cover.
+       * Desktop keeps a separate “how to read” inside-cover on the left of spread 0.
+       */
       function singleViewContent(index) {
-        if (index <= 0) return { kind: "front" };
-        if (index > pages.length) return { kind: "back" };
-        return { kind: "page", src: pages[index - 1], num: index };
+        if (index >= pages.length) return { kind: "back" };
+        return { kind: "page", src: pages[index], num: index + 1 };
       }
 
       function renderFrontCoverInstructions() {
         const wrap = document.createElement("div");
         wrap.className = "front-cover-instructions";
-        wrap.innerHTML = singlePage
-          ? `
-        <h2>How to read</h2>
-        <ul>
-          <li>Tap the right side<span>next page</span></li>
-          <li>Tap the left side<span>previous page</span></li>
-          <li>Use the arrow buttons<span>← previous · → next</span></li>
-          <li>Swipe<span>left = next · right = previous</span></li>
-        </ul>
-      `
-          : `
+        wrap.innerHTML = `
         <h2>How to read</h2>
         <ul>
           <li>Click or tap the right page<span>next page</span></li>
@@ -730,8 +723,6 @@
 
         if (content.kind === "page") {
           appendPageImage(slot, content.src, content.num);
-        } else if (content.kind === "front") {
-          slot.appendChild(renderFrontCoverInstructions());
         } else {
           renderBackCoverLink(slot);
         }
@@ -742,9 +733,8 @@
         if (singlePage) {
           const content = singleViewContent(viewIndex);
           if (content.kind === "page") {
-            indicator.textContent = `${content.num} / ${total}`;
-          } else if (content.kind === "front") {
-            indicator.textContent = `Cover`;
+            indicator.textContent =
+              content.num === 1 ? `Cover · 1 / ${total}` : `${content.num} / ${total}`;
           } else {
             indicator.textContent = `End`;
           }
@@ -820,8 +810,7 @@
           appendPageImage(face, content.src, content.num);
         } else {
           face.classList.add("inside-cover");
-          if (content.kind === "front") face.appendChild(renderFrontCoverInstructions());
-          else renderBackCoverLink(face);
+          renderBackCoverLink(face);
         }
 
         flip.appendChild(face);
@@ -911,21 +900,22 @@
         else turnDesktop(delta);
       }
 
-      /** Map desktop spread → best single-page view when resizing. */
+      /** Map desktop spread → mobile page index (0 = cover art). */
       function spreadToSingle(spread) {
         const rightNum = pageNumber(spread, "right");
         const leftNum = pageNumber(spread, "left");
-        if (rightNum) return rightNum;
-        if (leftNum) return leftNum;
+        // Prefer cover/page art over the desktop “how to read” inside-cover
+        if (rightNum) return rightNum - 1;
+        if (leftNum) return leftNum - 1;
         if (spread <= 0) return 0;
-        return pages.length + 1;
+        return pages.length; // back cover
       }
 
-      /** Map single-page view → desktop spread when resizing. */
+      /** Map mobile page index → desktop spread when resizing. */
       function singleToSpread(index) {
-        if (index <= 0) return 0;
-        if (index > pages.length) return Math.max(0, totalSpreads - 1);
-        return Math.floor(index / 2); // page 1→0, 2→1, 3→1, 4→2
+        if (index >= pages.length) return Math.max(0, totalSpreads - 1);
+        const pageNum = index + 1; // 1-based
+        return Math.floor(pageNum / 2); // 1→0, 2→1, 3→1, 4→2
       }
 
       function applyMode(nextSingle) {
@@ -1009,6 +999,8 @@
           const img = new Image();
           img.src = src;
         });
+        // Mobile always opens on the cover (first page image)
+        viewIndex = 0;
         document.body.classList.toggle("single-page", singlePage);
         updateView(false);
       }
