@@ -153,8 +153,14 @@
         margin-bottom: 72px;
       }
 
+      .experiments-grid > article {
+        height: 100%;
+      }
+
       .experiment-card {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
         text-decoration: none;
         color: inherit;
         background: var(--bg-card);
@@ -196,6 +202,9 @@
       }
 
       .experiment-card-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
         padding: 28px 24px 32px;
       }
 
@@ -223,7 +232,8 @@
 
       .experiment-card-cta {
         display: inline-block;
-        margin-top: 20px;
+        margin-top: auto;
+        padding-top: 20px;
         font-size: 0.7rem;
         letter-spacing: 3px;
         text-transform: uppercase;
