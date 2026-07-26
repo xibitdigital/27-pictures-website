@@ -1,8 +1,9 @@
 /**
- * Jax toon reader helpers
- * - Multilingual word overlays at x/y design coordinates (Cabin Sketch)
+ * Jax caption overlays for ToonBook pages.
+ * - Multilingual words at x/y design coordinates (Cabin Sketch)
  * - Coordinates: 0–1 fractions of design size, or absolute design pixels
  * - variant: "plain" (default) | "bubble" (sketchy dialog balloon)
+ * Used with ../book-reader.js via ToonBook.init({ onPagePaint, … })
  */
 (function (global) {
   "use strict";
@@ -98,21 +99,134 @@
     return d;
   }
 
+  /**
+   * Rough torn-paper rectangle path (viewBox 0-100 x 0-100) — no tail.
+   * Used for "AI dialogue" caption boxes ("COMBAT MODE ACTIVATED" style).
+   */
+  function jaggedBoxPath(seed) {
+    const rnd = mulberry32(seed || 1);
+    const j = (amp) => (rnd() - 0.5) * 2 * amp;
+
+    // Points per edge, wobbled off the straight line — hand-brushed, not ruled
+    function edge(x0, y0, x1, y1, amp, segments) {
+      const pts = [];
+      for (let i = 0; i <= segments; i++) {
+        const t = i / segments;
+        let x = x0 + (x1 - x0) * t;
+        let y = y0 + (y1 - y0) * t;
+        if (i > 0 && i < segments) {
+          x += j(amp);
+          y += j(amp);
+        }
+        pts.push([x, y]);
+      }
+      return pts;
+    }
+
+    const tl = [4 + j(3), 6 + j(3)];
+    const tr = [96 + j(3), 6 + j(3)];
+    const br = [96 + j(3), 94 + j(3)];
+    const bl = [4 + j(3), 94 + j(3)];
+
+    const pts = [
+      ...edge(tl[0], tl[1], tr[0], tr[1], 3.5, 6),
+      ...edge(tr[0], tr[1], br[0], br[1], 3.5, 6).slice(1),
+      ...edge(br[0], br[1], bl[0], bl[1], 3.5, 6).slice(1),
+      ...edge(bl[0], bl[1], tl[0], tl[1], 3.5, 6).slice(1),
+    ];
+
+    // Sketchy pass: connect wobbled points with slightly bowed curves instead of
+    // ruler-straight lines, so each edge reads as a rough hand-drawn stroke.
+    let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1];
+      const cur = pts[i];
+      const mx = (prev[0] + cur[0]) / 2 + j(1.4);
+      const my = (prev[1] + cur[1]) / 2 + j(1.4);
+      d += ` Q ${mx.toFixed(2)} ${my.toFixed(2)} ${cur[0].toFixed(2)} ${cur[1].toFixed(2)}`;
+    }
+    d += " Z";
+    return d;
+  }
+
+  /**
+   * Short overshooting scratch strokes fired outward from the box perimeter —
+   * the crosshatched marker spikes around a hand-scrawled panel caption.
+   */
+  function scribbleScratches(seed, count) {
+    const rnd = mulberry32(seed || 1);
+    const bounds = { x0: 4, y0: 6, x1: 96, y1: 94 };
+    const scratches = [];
+
+    for (let i = 0; i < count; i++) {
+      const edgeIdx = Math.floor(rnd() * 4);
+      const t = 0.06 + rnd() * 0.88;
+      let x, y, nx, ny;
+      if (edgeIdx === 0) {
+        x = bounds.x0 + (bounds.x1 - bounds.x0) * t;
+        y = bounds.y0;
+        nx = 0;
+        ny = -1;
+      } else if (edgeIdx === 1) {
+        x = bounds.x1;
+        y = bounds.y0 + (bounds.y1 - bounds.y0) * t;
+        nx = 1;
+        ny = 0;
+      } else if (edgeIdx === 2) {
+        x = bounds.x0 + (bounds.x1 - bounds.x0) * t;
+        y = bounds.y1;
+        nx = 0;
+        ny = 1;
+      } else {
+        x = bounds.x0;
+        y = bounds.y0 + (bounds.y1 - bounds.y0) * t;
+        nx = -1;
+        ny = 0;
+      }
+
+      const angle = Math.atan2(ny, nx) + (rnd() - 0.5) * 1.7;
+      const len = 6 + rnd() * 14;
+      const wobble = () => (rnd() - 0.5) * 3;
+
+      const sx = x - nx * (3 + rnd() * 5);
+      const sy = y - ny * (3 + rnd() * 5);
+      const mx = x + Math.cos(angle) * len * 0.5 + wobble();
+      const my = y + Math.sin(angle) * len * 0.5 + wobble();
+      const ex = x + Math.cos(angle) * len + wobble();
+      const ey = y + Math.sin(angle) * len + wobble();
+
+      scratches.push(
+        `M ${sx.toFixed(2)} ${sy.toFixed(2)} L ${mx.toFixed(2)} ${my.toFixed(2)} L ${ex.toFixed(2)} ${ey.toFixed(2)}`
+      );
+    }
+    return scratches;
+  }
+
   function resolveVariant(w) {
     const v = (w.variant || w.mode || "plain").toString().toLowerCase();
+    if (v === "ai" || v === "hud" || v === "terminal" || v === "shout" || v === "caption") return "ai";
     if (v === "bubble" || v === "dialog" || v === "speech") return "bubble";
     return "plain";
   }
 
-  function resolveBubbleStyle(w) {
+  function resolveBubbleStyle(w, variant) {
     const b = w.bubble && typeof w.bubble === "object" ? w.bubble : {};
+    const isAi = variant === "ai";
     return {
-      fill: b.fill || w.bubbleFill || "#fffef6",
-      stroke: b.stroke || w.bubbleStroke || "#111111",
-      strokeWidth: b.strokeWidth != null ? Number(b.strokeWidth) : w.bubbleStrokeWidth != null ? Number(w.bubbleStrokeWidth) : 2.4,
-      tail: b.tail || w.tail || "bottom",
-      padX: b.padX != null ? Number(b.padX) : 0.55,
-      padY: b.padY != null ? Number(b.padY) : 0.4,
+      shape: b.shape || w.bubbleShape || (isAi ? "box" : "organic"),
+      fill: b.fill || w.bubbleFill || (isAi ? "#0a0a0a" : "#fffef6"),
+      stroke: b.stroke || w.bubbleStroke || (isAi ? "#0a0a0a" : "#111111"),
+      strokeWidth:
+        b.strokeWidth != null
+          ? Number(b.strokeWidth)
+          : w.bubbleStrokeWidth != null
+            ? Number(w.bubbleStrokeWidth)
+            : isAi
+              ? 2.2
+              : 2.4,
+      tail: b.tail || w.tail || (isAi ? "none" : "bottom"),
+      padX: b.padX != null ? Number(b.padX) : isAi ? 0.7 : 0.55,
+      padY: b.padY != null ? Number(b.padY) : isAi ? 0.5 : 0.4,
     };
   }
 
@@ -124,7 +238,10 @@
     svg.setAttribute("aria-hidden", "true");
 
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", sketchyBubblePath(bubbleStyle.tail, seed));
+    path.setAttribute(
+      "d",
+      bubbleStyle.shape === "box" ? jaggedBoxPath(seed) : sketchyBubblePath(bubbleStyle.tail, seed)
+    );
     path.setAttribute("fill", bubbleStyle.fill);
     path.setAttribute("stroke", bubbleStyle.stroke);
     const sw = Math.max(1.2, (bubbleStyle.strokeWidth || 2.4) * Math.min(1.4, designScale * 1.1));
@@ -133,6 +250,36 @@
     path.setAttribute("stroke-linecap", "round");
     path.setAttribute("vector-effect", "non-scaling-stroke");
     svg.appendChild(path);
+
+    if (bubbleStyle.shape === "box") {
+      // Second + third rough passes, unfilled — a hand re-tracing the marker
+      // outline instead of one clean stroke, like the reference caption box.
+      [97, 211].forEach((offset, i) => {
+        const retrace = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        retrace.setAttribute("d", jaggedBoxPath((seed || 1) + offset));
+        retrace.setAttribute("fill", "none");
+        retrace.setAttribute("stroke", bubbleStyle.stroke);
+        retrace.setAttribute("stroke-width", String(Math.max(0.8, sw * (0.65 - i * 0.15))));
+        retrace.setAttribute("stroke-linejoin", "round");
+        retrace.setAttribute("stroke-linecap", "round");
+        retrace.setAttribute("vector-effect", "non-scaling-stroke");
+        svg.appendChild(retrace);
+      });
+
+      // Crosshatched scratch spikes shooting past the border, like a marker
+      // that overshot while scrawling the frame.
+      scribbleScratches((seed || 1) + 401, 10).forEach((d, i) => {
+        const scratch = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        scratch.setAttribute("d", d);
+        scratch.setAttribute("fill", "none");
+        scratch.setAttribute("stroke", bubbleStyle.stroke);
+        scratch.setAttribute("stroke-width", String(Math.max(0.9, sw * (0.4 + (i % 3) * 0.18))));
+        scratch.setAttribute("stroke-linecap", "round");
+        scratch.setAttribute("vector-effect", "non-scaling-stroke");
+        svg.appendChild(scratch);
+      });
+    }
+
     return svg;
   }
 
@@ -157,9 +304,9 @@
     if (typeof entry === "string") return entry;
     if (entry.text) {
       if (typeof entry.text === "string") return entry.text;
-      return entry.text[lang] || entry.text.en || entry.text.it || "";
+      return entry.text[lang] || entry.text.en || entry.text.it || entry.text.de || entry.text.fr || "";
     }
-    return entry[lang] || entry.en || entry.it || "";
+    return entry[lang] || entry.en || entry.it || entry.de || entry.fr || "";
   }
 
   /**
@@ -218,7 +365,7 @@
    * @property {'plain'|'bubble'} [mode] - alias of variant
    * @property {string} [tail] - bubble tail: none|bottom|bottom-left|bottom-right|left|right
    * @property {Object} [bubble] - { fill, stroke, strokeWidth, tail, padX, padY }
-   * @property {Object|string} text - { en, it } or string
+   * @property {Object|string} text - { en, it, de, fr } or string
    */
 
   class WordOverlay {
@@ -232,6 +379,8 @@
       this.languages = config.languages || [
         { code: "en", label: "EN" },
         { code: "it", label: "IT" },
+        { code: "de", label: "DE" },
+        { code: "fr", label: "FR" },
       ];
       this.defaultLang = config.defaultLang || "en";
       this.fontFamily = config.fontFamily || '"Cabin Sketch", cursive';
@@ -322,28 +471,27 @@
           const y = toFraction(w.y, this.designHeight);
           const align = w.align || "center";
           const sizePx = (w.size != null ? Number(w.size) : 22) * designScale;
-          const maxW =
-            w.maxWidth != null
-              ? (w.maxWidth > 1 ? w.maxWidth / this.designWidth : w.maxWidth) * 100
-              : null;
+          const maxW = w.maxWidth != null ? (w.maxWidth > 1 ? w.maxWidth / this.designWidth : w.maxWidth) * 100 : null;
           const variant = resolveVariant(w);
-          const isBubble = variant === "bubble";
+          const isBubble = variant === "bubble" || variant === "ai";
 
           const el = document.createElement("div");
-          el.className = isBubble ? "jax-word jax-word--bubble" : "jax-word";
+          el.className = isBubble
+            ? "jax-word jax-word--bubble" + (variant === "ai" ? " jax-word--ai" : "")
+            : "jax-word";
 
           const textEl = document.createElement("span");
           textEl.className = "jax-word-text";
           textEl.textContent = text;
 
           if (isBubble) {
-            const bubbleStyle = resolveBubbleStyle(w);
+            const bubbleStyle = resolveBubbleStyle(w, variant);
             const seed = hashSeed(pageNum, wordIndex, text, w.x, w.y, bubbleStyle.tail);
             el.appendChild(createBubbleChrome(seed, bubbleStyle, designScale));
             el.appendChild(textEl);
             el.dataset.tail = bubbleStyle.tail;
-            // Bubble text defaults to dark ink unless color is set
-            textEl.style.color = w.color || "#111111";
+            // Bubble text defaults to dark ink; AI caption boxes default to white
+            textEl.style.color = w.color || (variant === "ai" ? "#f5f5f5" : "#111111");
             const padX = `${bubbleStyle.padX}em`;
             const padY = `${bubbleStyle.padY}em`;
             textEl.style.padding = `${padY} ${padX} ${bubbleStyle.tail === "none" ? padY : `calc(${padY} + 0.35em)`} ${padX}`;
@@ -355,8 +503,7 @@
           if (align === "center") transform.push("translate(-50%, -50%)");
           else if (align === "right") transform.push("translate(-100%, -50%)");
           else transform.push("translate(0, -50%)");
-          const angle =
-            w.angle != null ? Number(w.angle) : w.rotate != null ? Number(w.rotate) : 0;
+          const angle = w.angle != null ? Number(w.angle) : w.rotate != null ? Number(w.rotate) : 0;
           if (angle && !Number.isNaN(angle)) transform.push(`rotate(${angle}deg)`);
 
           const stroke = resolveStroke(w);
@@ -436,7 +583,7 @@
   }
 
   /**
-   * Wire a simple EN/IT language switcher.
+   * Wire language switcher buttons (EN/IT/DE/FR by default).
    * @param {HTMLElement} container
    * @param {WordOverlay} overlay
    * @param {() => void} onChange

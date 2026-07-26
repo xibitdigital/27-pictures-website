@@ -3,8 +3,22 @@
   "designHeight": 1792,
   "defaultLang": "en",
   "languages": [
-    { "code": "en", "label": "EN" },
-    { "code": "it", "label": "IT" }
+    {
+      "code": "en",
+      "label": "EN"
+    },
+    {
+      "code": "it",
+      "label": "IT"
+    },
+    {
+      "code": "de",
+      "label": "DE"
+    },
+    {
+      "code": "fr",
+      "label": "FR"
+    }
   ],
   "fontFamily": "\"Cabin Sketch\", cursive",
   "pages": {
@@ -13,7 +27,7 @@
         "x": 0.42,
         "y": 0.1,
         "align": "center",
-        "size": 48,
+        "size": 50,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 9,
@@ -21,14 +35,16 @@
         "maxWidth": 0.45,
         "text": {
           "en": "CLANK",
-          "it": "CLANK"
+          "it": "CLANK",
+          "de": "KLIRR",
+          "fr": "CLANG"
         }
       },
       {
         "x": 0.62,
         "y": 0.42,
         "align": "center",
-        "size": 44,
+        "size": 46,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 8,
@@ -36,14 +52,16 @@
         "maxWidth": 0.4,
         "text": {
           "en": "WHOOSH",
-          "it": "SWISH"
+          "it": "SWISH",
+          "de": "WUSCH",
+          "fr": "FOUICH"
         }
       },
       {
         "x": 0.72,
         "y": 0.78,
         "align": "center",
-        "size": 50,
+        "size": 52,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 9,
@@ -51,7 +69,31 @@
         "maxWidth": 0.4,
         "text": {
           "en": "HRAA!",
-          "it": "HRAA!"
+          "it": "HRAA!",
+          "de": "HRAA!",
+          "fr": "HRAA!"
+        }
+      },
+      {
+        "x": 0.28,
+        "y": 0.87,
+        "align": "center",
+        "size": 46,
+        "variant": "ai",
+        "color": "#f5f5f5",
+        "angle": -3,
+        "maxWidth": 0.34,
+        "bubble": {
+          "fill": "#0a0a0a",
+          "stroke": "#0a0a0a",
+          "strokeWidth": 2.2,
+          "tail": "none"
+        },
+        "text": {
+          "en": "WE ARE IN!",
+          "it": "CI SIAMO!",
+          "de": "WIR SIND DRIN!",
+          "fr": "ON Y EST!"
         }
       }
     ],
@@ -60,7 +102,7 @@
         "x": 0.22,
         "y": 0.13,
         "align": "center",
-        "size": 52,
+        "size": 54,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 9,
@@ -68,14 +110,16 @@
         "maxWidth": 0.4,
         "text": {
           "en": "KRAKOOM",
-          "it": "KRAKOOM"
+          "it": "KRAKOOM",
+          "de": "KRAKOOM",
+          "fr": "KRAKOOM"
         }
       },
       {
         "x": 0.52,
         "y": 0.11,
         "align": "center",
-        "size": 36,
+        "size": 38,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -83,14 +127,16 @@
         "maxWidth": 0.35,
         "text": {
           "en": "WHOOSH",
-          "it": "SWISH"
+          "it": "SWISH",
+          "de": "WUSCH",
+          "fr": "FOUICH"
         }
       },
       {
         "x": 0.48,
         "y": 0.58,
         "align": "center",
-        "size": 40,
+        "size": 42,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 8,
@@ -98,14 +144,16 @@
         "maxWidth": 0.4,
         "text": {
           "en": "THUD",
-          "it": "BUM"
+          "it": "BUM",
+          "de": "BUMM",
+          "fr": "BADA"
         }
       },
       {
         "x": 0.74,
         "y": 0.84,
         "align": "center",
-        "size": 34,
+        "size": 36,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -113,7 +161,9 @@
         "maxWidth": 0.38,
         "text": {
           "en": "KRR-CHUNK",
-          "it": "CLACK"
+          "it": "CLACK",
+          "de": "KLACK",
+          "fr": "CLAC"
         }
       }
     ],
@@ -122,7 +172,7 @@
         "x": 0.72,
         "y": 0.14,
         "align": "center",
-        "size": 32,
+        "size": 34,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 6,
@@ -130,14 +180,16 @@
         "maxWidth": 0.3,
         "text": {
           "en": "FWOOSH",
-          "it": "SWISH"
+          "it": "SWISH",
+          "de": "WUSCH",
+          "fr": "FOUICH"
         }
       },
       {
         "x": 0.78,
         "y": 0.42,
         "align": "center",
-        "size": 38,
+        "size": 40,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -145,14 +197,16 @@
         "maxWidth": 0.32,
         "text": {
           "en": "GRRRH",
-          "it": "GRRRH"
+          "it": "GRRRH",
+          "de": "GRRRH",
+          "fr": "GRRRH"
         }
       },
       {
         "x": 0.48,
         "y": 0.88,
         "align": "center",
-        "size": 54,
+        "size": 56,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 10,
@@ -160,7 +214,9 @@
         "maxWidth": 0.45,
         "text": {
           "en": "CRAAASH",
-          "it": "CRAAASH"
+          "it": "CRAAASH",
+          "de": "KRACH",
+          "fr": "CRAAASH"
         }
       }
     ],
@@ -169,7 +225,7 @@
         "x": 0.45,
         "y": 0.1,
         "align": "center",
-        "size": 40,
+        "size": 42,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 8,
@@ -177,14 +233,16 @@
         "maxWidth": 0.35,
         "text": {
           "en": "DASH",
-          "it": "FOOSH"
+          "it": "FOOSH",
+          "de": "RUSCH",
+          "fr": "VROUM"
         }
       },
       {
         "x": 0.55,
         "y": 0.36,
         "align": "center",
-        "size": 36,
+        "size": 38,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -192,14 +250,16 @@
         "maxWidth": 0.35,
         "text": {
           "en": "SNATCH",
-          "it": "GRAB"
+          "it": "GRAB",
+          "de": "RAPS",
+          "fr": "ATTRAP'"
         }
       },
       {
         "x": 0.38,
         "y": 0.6,
         "align": "center",
-        "size": 34,
+        "size": 36,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -207,14 +267,16 @@
         "maxWidth": 0.3,
         "text": {
           "en": "HUH?!",
-          "it": "EH?!"
+          "it": "EH?!",
+          "de": "HÄ?!",
+          "fr": "HEIN?!"
         }
       },
       {
         "x": 0.22,
         "y": 0.8,
         "align": "center",
-        "size": 42,
+        "size": 44,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 8,
@@ -222,7 +284,9 @@
         "maxWidth": 0.35,
         "text": {
           "en": "SHUNK",
-          "it": "SWISH"
+          "it": "SWISH",
+          "de": "SCHUNK",
+          "fr": "CHTONG"
         }
       }
     ],
@@ -231,7 +295,7 @@
         "x": 0.58,
         "y": 0.12,
         "align": "center",
-        "size": 36,
+        "size": 38,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -239,14 +303,16 @@
         "maxWidth": 0.32,
         "text": {
           "en": "BEEP",
-          "it": "BIP"
+          "it": "BIP",
+          "de": "PIEP",
+          "fr": "BIP"
         }
       },
       {
         "x": 0.72,
         "y": 0.18,
         "align": "center",
-        "size": 30,
+        "size": 32,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 6,
@@ -254,14 +320,16 @@
         "maxWidth": 0.28,
         "text": {
           "en": "CLICK",
-          "it": "CLIC"
+          "it": "CLIC",
+          "de": "KLICK",
+          "fr": "CLIC"
         }
       },
       {
         "x": 0.5,
         "y": 0.42,
         "align": "center",
-        "size": 28,
+        "size": 30,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 6,
@@ -269,14 +337,16 @@
         "maxWidth": 0.45,
         "text": {
           "en": "MURMUR…",
-          "it": "MORMORIO…"
+          "it": "MORMORIO…",
+          "de": "GEMURMEL…",
+          "fr": "MURMURE…"
         }
       },
       {
         "x": 0.55,
         "y": 0.86,
         "align": "center",
-        "size": 38,
+        "size": 40,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -284,7 +354,9 @@
         "maxWidth": 0.35,
         "text": {
           "en": "HISS",
-          "it": "SSSH"
+          "it": "SSSH",
+          "de": "ZISCH",
+          "fr": "PSSSH"
         }
       }
     ],
@@ -293,7 +365,7 @@
         "x": 0.28,
         "y": 0.1,
         "align": "center",
-        "size": 34,
+        "size": 36,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -301,14 +373,16 @@
         "maxWidth": 0.3,
         "text": {
           "en": "CLACK",
-          "it": "CLACK"
+          "it": "CLACK",
+          "de": "KLACK",
+          "fr": "CLAC"
         }
       },
       {
         "x": 0.72,
         "y": 0.12,
         "align": "center",
-        "size": 38,
+        "size": 40,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -316,14 +390,16 @@
         "maxWidth": 0.32,
         "text": {
           "en": "FWIP",
-          "it": "SWISH"
+          "it": "SWISH",
+          "de": "WUPS",
+          "fr": "FWIP"
         }
       },
       {
         "x": 0.42,
         "y": 0.38,
         "align": "center",
-        "size": 48,
+        "size": 50,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 9,
@@ -331,27 +407,31 @@
         "maxWidth": 0.38,
         "text": {
           "en": "WHAM",
-          "it": "BAM"
+          "it": "BAM",
+          "de": "WUMM",
+          "fr": "PAF"
         }
       },
       {
         "x": 0.83,
         "y": 0.31,
         "align": "center",
-        "size": 42,
+        "size": 44,
         "color": "#111111",
         "angle": 6,
         "maxWidth": 0.22,
         "text": {
           "en": "Too slow,\nman!",
-          "it": "Troppo lento,\ntizio!"
+          "it": "Troppo lento,\ntizio!",
+          "de": "Zu langsam,\nKumpel!",
+          "fr": "Trop lent,\nmec!"
         }
       },
       {
         "x": 0.32,
         "y": 0.66,
         "align": "center",
-        "size": 36,
+        "size": 38,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -359,14 +439,16 @@
         "maxWidth": 0.32,
         "text": {
           "en": "THUD",
-          "it": "BUM"
+          "it": "BUM",
+          "de": "BUMM",
+          "fr": "BADA"
         }
       },
       {
         "x": 0.5,
         "y": 0.9,
         "align": "center",
-        "size": 28,
+        "size": 30,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 6,
@@ -374,16 +456,18 @@
         "maxWidth": 0.35,
         "text": {
           "en": "TAP… TAP",
-          "it": "TAP… TAP"
+          "it": "TAP… TAP",
+          "de": "TIPP… TIPP",
+          "fr": "TAP… TAP"
         }
       }
     ],
     "7": [
       {
         "x": 0.5,
-        "y": 0.16,
+        "y": 0.3,
         "align": "center",
-        "size": 46,
+        "size": 48,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 9,
@@ -391,14 +475,16 @@
         "maxWidth": 0.42,
         "text": {
           "en": "CRASH",
-          "it": "CRASH"
+          "it": "CRASH",
+          "de": "KRACH",
+          "fr": "CRASH"
         }
       },
       {
         "x": 0.22,
         "y": 0.42,
         "align": "center",
-        "size": 32,
+        "size": 34,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 6,
@@ -406,14 +492,16 @@
         "maxWidth": 0.28,
         "text": {
           "en": "VZZT",
-          "it": "VZZT"
+          "it": "VZZT",
+          "de": "WZZT",
+          "fr": "VZZT"
         }
       },
       {
         "x": 0.78,
         "y": 0.48,
         "align": "center",
-        "size": 30,
+        "size": 32,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 6,
@@ -421,14 +509,16 @@
         "maxWidth": 0.28,
         "text": {
           "en": "BZZT",
-          "it": "BZZT"
+          "it": "BZZT",
+          "de": "BZZT",
+          "fr": "BZZT"
         }
       },
       {
         "x": 0.52,
         "y": 0.86,
         "align": "center",
-        "size": 48,
+        "size": 50,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 9,
@@ -436,7 +526,31 @@
         "maxWidth": 0.4,
         "text": {
           "en": "FOOM",
-          "it": "FOOM"
+          "it": "FOOM",
+          "de": "FOOM",
+          "fr": "FOOM"
+        }
+      },
+      {
+        "x": 0.76,
+        "y": 0.41,
+        "align": "center",
+        "size": 34,
+        "variant": "ai",
+        "color": "#f5f5f5",
+        "angle": -1,
+        "maxWidth": 0.27,
+        "bubble": {
+          "fill": "#0a0a0a",
+          "stroke": "#0a0a0a",
+          "strokeWidth": 2.2,
+          "tail": "none"
+        },
+        "text": {
+          "en": "COMBAT MODE\nACTIVATED",
+          "it": "MODALITÀ COMBATTIMENTO\nATTIVATA",
+          "de": "KAMPFMODUS\nAKTIVIERT",
+          "fr": "MODE COMBAT\nACTIVÉ"
         }
       }
     ],
@@ -445,7 +559,7 @@
         "x": 0.55,
         "y": 0.1,
         "align": "center",
-        "size": 40,
+        "size": 42,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 8,
@@ -453,14 +567,16 @@
         "maxWidth": 0.35,
         "text": {
           "en": "WHIRR",
-          "it": "VRUM"
+          "it": "VRUM",
+          "de": "SUMM",
+          "fr": "VRROUM"
         }
       },
       {
         "x": 0.62,
         "y": 0.48,
         "align": "center",
-        "size": 38,
+        "size": 40,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 7,
@@ -468,14 +584,16 @@
         "maxWidth": 0.35,
         "text": {
           "en": "CLUNK",
-          "it": "CLUNK"
+          "it": "CLUNK",
+          "de": "KLONK",
+          "fr": "CLONC"
         }
       },
       {
         "x": 0.68,
         "y": 0.86,
         "align": "center",
-        "size": 56,
+        "size": 58,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 10,
@@ -483,7 +601,9 @@
         "maxWidth": 0.4,
         "text": {
           "en": "BOOOOM",
-          "it": "BOOOOM"
+          "it": "BOOOOM",
+          "de": "BOOOOM",
+          "fr": "BOOOOM"
         }
       }
     ],
@@ -492,7 +612,7 @@
         "x": 0.68,
         "y": 0.2,
         "align": "center",
-        "size": 42,
+        "size": 44,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 8,
@@ -500,14 +620,16 @@
         "maxWidth": 0.35,
         "text": {
           "en": "PING",
-          "it": "PING"
+          "it": "PING",
+          "de": "PING",
+          "fr": "PING"
         }
       },
       {
         "x": 0.58,
         "y": 0.72,
         "align": "center",
-        "size": 58,
+        "size": 60,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 11,
@@ -515,7 +637,9 @@
         "maxWidth": 0.45,
         "text": {
           "en": "KABOOOM",
-          "it": "KABOOOM"
+          "it": "KABOOOM",
+          "de": "KABOOOM",
+          "fr": "KABOOOM"
         }
       }
     ]

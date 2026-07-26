@@ -5,7 +5,9 @@
   "font": "Cabin Sketch",
   "languages": [
     "en",
-    "it"
+    "it",
+    "de",
+    "fr"
   ],
   "defaultLang": "en",
   "pages": 9,
