@@ -325,80 +325,6 @@
     ],
     "5": [
       {
-        "x": 0.58,
-        "y": 0.12,
-        "align": "center",
-        "size": 38,
-        "color": "#111111",
-        "stroke": "#ffffff",
-        "strokeThickness": 7,
-        "angle": 6,
-        "maxWidth": 0.32,
-        "text": {
-          "en": "BEEP",
-          "it": "BIP",
-          "de": "PIEP",
-          "fr": "BIP"
-        },
-        "audio": "assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3"
-      },
-      {
-        "x": 0.72,
-        "y": 0.18,
-        "align": "center",
-        "size": 32,
-        "color": "#111111",
-        "stroke": "#ffffff",
-        "strokeThickness": 6,
-        "angle": -8,
-        "maxWidth": 0.28,
-        "text": {
-          "en": "CLICK",
-          "it": "CLIC",
-          "de": "KLICK",
-          "fr": "CLIC"
-        },
-        "audio": "assets/sfx/a26856c59d8712e0783875649fae0c44.mp3"
-      },
-      {
-        "x": 0.5,
-        "y": 0.42,
-        "align": "center",
-        "size": 30,
-        "color": "#111111",
-        "stroke": "#ffffff",
-        "strokeThickness": 6,
-        "angle": 4,
-        "maxWidth": 0.45,
-        "text": {
-          "en": "MURMUR…",
-          "it": "MORMORIO…",
-          "de": "GEMURMEL…",
-          "fr": "MURMURE…"
-        },
-        "audio": "assets/sfx/e56538a6a8131136e32b19f6ddd10809.mp3"
-      },
-      {
-        "x": 0.55,
-        "y": 0.86,
-        "align": "center",
-        "size": 40,
-        "color": "#111111",
-        "stroke": "#ffffff",
-        "strokeThickness": 7,
-        "angle": -5,
-        "maxWidth": 0.35,
-        "text": {
-          "en": "HISS",
-          "it": "SSSH",
-          "de": "ZISCH",
-          "fr": "PSSSH"
-        },
-        "audio": "assets/sfx/0fca11e7102bbe6c2b78b934af29f924.mp3"
-      }
-    ],
-    "6": [
-      {
         "x": 0.28,
         "y": 0.1,
         "align": "center",
@@ -503,6 +429,80 @@
           "fr": "TAP… TAP"
         },
         "audio": "assets/sfx/74c47a1ba1519b5508bf3c524af53129.mp3"
+      }
+    ],
+    "6": [
+      {
+        "x": 0.58,
+        "y": 0.12,
+        "align": "center",
+        "size": 38,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": 6,
+        "maxWidth": 0.32,
+        "text": {
+          "en": "BEEP",
+          "it": "BIP",
+          "de": "PIEP",
+          "fr": "BIP"
+        },
+        "audio": "assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3"
+      },
+      {
+        "x": 0.72,
+        "y": 0.18,
+        "align": "center",
+        "size": 32,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 6,
+        "angle": -8,
+        "maxWidth": 0.28,
+        "text": {
+          "en": "CLICK",
+          "it": "CLIC",
+          "de": "KLICK",
+          "fr": "CLIC"
+        },
+        "audio": "assets/sfx/a26856c59d8712e0783875649fae0c44.mp3"
+      },
+      {
+        "x": 0.5,
+        "y": 0.42,
+        "align": "center",
+        "size": 30,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 6,
+        "angle": 4,
+        "maxWidth": 0.45,
+        "text": {
+          "en": "MURMUR…",
+          "it": "MORMORIO…",
+          "de": "GEMURMEL…",
+          "fr": "MURMURE…"
+        },
+        "audio": "assets/sfx/e56538a6a8131136e32b19f6ddd10809.mp3"
+      },
+      {
+        "x": 0.55,
+        "y": 0.86,
+        "align": "center",
+        "size": 40,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": -5,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "HISS",
+          "it": "SSSH",
+          "de": "ZISCH",
+          "fr": "PSSSH"
+        },
+        "audio": "assets/sfx/0fca11e7102bbe6c2b78b934af29f924.mp3"
       }
     ],
     "7": [
