@@ -1,0 +1,743 @@
+/**
+ * Shared page-turning book reader chrome for 27 Pictures toons (Erin, Jax, …).
+ * Pairs with book-reader.js. Each toon's own <style> block keeps only its
+ * book-specific tokens (--book-width/--book-height aspect math, --page-bg,
+ * --spine, --cover) and any page-specific extras (e.g. Jax's word-caption
+ * overlay, language switcher, sound/music buttons).
+ */
+
+body.toons-reader {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  user-select: none;
+}
+
+.reader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 5rem 1.5rem 2rem;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.toons-back {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 50;
+  color: var(--silver);
+  text-decoration: none;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  transition:
+    color 0.2s var(--transition),
+    border-color 0.2s var(--transition);
+}
+
+.toons-back:hover {
+  color: var(--text);
+  border-color: var(--silver);
+}
+
+.title-bar {
+  text-align: center;
+}
+
+.title-bar .section-tag {
+  margin-bottom: 12px;
+}
+
+.title-bar h1 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.35rem, 4.5vw, 2rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+/* Top-right controls (fullscreen always; language/sound/music are additive
+   per-page — see each toon's own <style> block) */
+.toon-top-controls {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.toon-fs-btn {
+  font-family: "Inter", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--silver);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.65rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 1.9rem;
+  transition:
+    color 0.2s var(--transition),
+    border-color 0.2s var(--transition),
+    background 0.2s var(--transition);
+}
+
+.toon-fs-btn:hover {
+  color: var(--text);
+  border-color: var(--border-light);
+}
+
+.toon-fs-btn.is-active {
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+}
+
+.toon-fs-btn:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 2px;
+}
+
+.toon-fs-btn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Fullscreen chrome: hide nav; shrink title; keep top-right controls */
+body.is-fullscreen .toons-back,
+body.is-fullscreen .controls,
+body.is-fullscreen .page-nav-btn,
+body.is-fullscreen .hint {
+  display: none !important;
+}
+
+body.is-fullscreen .title-bar {
+  margin: 0;
+}
+
+body.is-fullscreen .title-bar .section-tag {
+  font-size: 8px;
+  letter-spacing: 3px;
+  margin-bottom: 4px;
+}
+
+body.is-fullscreen .title-bar h1 {
+  font-size: clamp(1.1rem, 2.8vw, 1.65rem);
+}
+
+body.is-fullscreen .reader {
+  min-height: 100dvh;
+  padding: 0.75rem 1rem 1rem;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+/* ── Book container ──
+   Sizes off --book-width/--book-height, which each toon defines locally
+   (different page aspect ratios), including the body.is-fullscreen and
+   body.single-page overrides of those same custom properties. */
+.book-scene {
+  perspective: 2200px;
+  width: var(--book-width);
+  height: var(--book-height);
+  position: relative;
+}
+
+.book {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.book-shadow {
+  position: absolute;
+  bottom: -18px;
+  left: 5%;
+  width: 90%;
+  height: 30px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55) 0%, transparent 70%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.spread {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  border-radius: 2px 6px 6px 2px;
+  border: 1px solid var(--border);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+.page-slot {
+  position: relative;
+  overflow: hidden;
+  background: var(--page-bg);
+}
+
+.page-slot.right {
+  border-radius: 0 4px 4px 0;
+  box-shadow: inset -8px 0 16px rgba(0, 0, 0, 0.06);
+}
+
+.page-slot.left {
+  border-radius: 4px 0 0 4px;
+  box-shadow: inset 8px 0 16px rgba(0, 0, 0, 0.06);
+}
+
+.page-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  /* Matches .page-slot's own background so any sub-pixel letterbox
+     gap from object-fit:contain blends in instead of showing white. */
+  background: var(--page-bg);
+  -webkit-user-drag: none;
+}
+
+.page-slot.blank {
+  background: linear-gradient(135deg, #f0ebe3 0%, #e8e2d8 100%);
+}
+
+.page-slot.blank::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 28px,
+    rgba(0, 0, 0, 0.015) 28px,
+    rgba(0, 0, 0, 0.015) 29px
+  );
+}
+
+.spine {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--bg-dark) 0%,
+    var(--spine) 30%,
+    #4a3f32 50%,
+    var(--spine) 70%,
+    var(--bg-dark) 100%
+  );
+  z-index: 10;
+  box-shadow:
+    -2px 0 6px rgba(0, 0, 0, 0.4),
+    2px 0 6px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.spine-glow {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 20px);
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.12) 50%, transparent);
+  z-index: 9;
+  pointer-events: none;
+}
+
+/* ── Flip overlay ── */
+.flip-page {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  /* Above .nav-zone (30) and any word-caption overlay a page might paint
+     (e.g. Jax's .jax-word-layer at 35) so the incoming page's content stays
+     covered until the flip animation finishes instead of flashing through. */
+  z-index: 40;
+  pointer-events: none;
+}
+
+.flip-page.from-right {
+  right: 0;
+  transform-origin: left center;
+}
+
+.flip-page.from-left {
+  left: 0;
+  transform-origin: right center;
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  overflow: hidden;
+  background: var(--page-bg);
+}
+
+.flip-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--page-bg);
+}
+
+.flip-face.back {
+  transform: rotateY(180deg);
+}
+
+.flip-face.inside-cover {
+  background: linear-gradient(135deg, var(--cover) 0%, var(--bg-dark) 100%);
+}
+
+.flip-page.from-right .flip-face.front {
+  border-radius: 0 4px 4px 0;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.flip-page.from-left .flip-face.front {
+  border-radius: 4px 0 0 4px;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.flip-page.flipping.from-right {
+  animation: flip-right 0.7s var(--transition) forwards;
+}
+
+.flip-page.flipping.from-left {
+  animation: flip-left 0.7s var(--transition) forwards;
+}
+
+@keyframes flip-right {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(-180deg);
+  }
+}
+
+@keyframes flip-left {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+/* LTR book: left = prev, right = next */
+.nav-zone {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 30;
+  cursor: pointer;
+}
+
+.nav-zone.prev {
+  left: 0;
+}
+
+.nav-zone.next {
+  right: 0;
+}
+
+.nav-zone:hover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 0.2s var(--transition);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-page.flipping.from-right,
+  .flip-page.flipping.from-left {
+    animation-duration: 0.01ms;
+  }
+}
+
+/* ── Controls ── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.reader-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-family: "Inter", sans-serif;
+  transition:
+    background 0.2s var(--transition),
+    border-color 0.2s var(--transition),
+    color 0.2s var(--transition);
+}
+
+.reader-btn:hover:not(:disabled) {
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+}
+
+.reader-btn:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 2px;
+}
+
+.reader-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+/* Prev/next arrows sit on the page margins themselves, above the
+   full-page .nav-zone click areas (z-index 30), instead of in a
+   row below the book. */
+.page-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 32;
+  opacity: 0.85;
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.page-nav-btn.prev {
+  left: -22px;
+}
+
+.page-nav-btn.next {
+  right: -22px;
+}
+
+.page-indicator {
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  min-width: 6.5rem;
+  text-align: center;
+  color: var(--silver);
+}
+
+.hint {
+  font-family: "Inter", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--silver);
+  opacity: 0.7;
+}
+
+.page-slot.inside-cover {
+  background: linear-gradient(135deg, var(--cover) 0%, var(--bg-dark) 100%);
+}
+
+.front-cover-instructions {
+  position: absolute;
+  inset: 0;
+  /* Above .nav-zone (30) — otherwise nav-zone silently swallows real
+     clicks meant for any interactive control inside this panel
+     (e.g. .front-cover-sound-btn). */
+  z-index: 32;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Base rhythm between blocks; individual elements below tighten or widen
+     this for their own pairing (e.g. brand text hugs the logo, the "how to
+     read" heading gets a rule + extra padding to read as its own section). */
+  gap: 0.9rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--silver);
+  font-family: "Inter", sans-serif;
+}
+
+/* Higher specificity than .page-slot img (width/height/object-fit
+   100%/contain) — the logo lives inside a .page-slot and would otherwise
+   silently inherit page-image sizing instead of its own. */
+.front-cover-instructions img.front-cover-logo {
+  width: 68px;
+  height: auto;
+  object-fit: initial;
+  opacity: 0.92;
+  margin-bottom: 0.75rem;
+}
+
+/* Reader product name + studio attribution, shown under the logo on
+   every toon's front cover. */
+.front-cover-brand {
+  font-family: "Inter", sans-serif;
+  font-weight: 900;
+  font-size: 1.35rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  margin: 0;
+}
+
+.front-cover-brand span {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--border-light);
+  margin-top: 0.3rem;
+}
+
+.front-cover-instructions h2 {
+  font-family: "Inter", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--red-smile);
+  /* Rule + extra top padding reads as the start of a new section, separating
+     the brand/logo masthead above from the instructions below it. */
+  border-top: 1px solid var(--border);
+  padding-top: 1.1rem;
+  margin-top: 0.15rem;
+  width: 100%;
+  max-width: 220px;
+}
+
+.front-cover-instructions ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.front-cover-instructions li span {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--silver);
+  letter-spacing: 0.08em;
+  margin-top: 0.15rem;
+}
+
+/* Optional CTA rendered by book-reader.js when a toon passes opts.soundHint */
+.front-cover-sound-btn.is-enabled {
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+}
+
+.front-cover-sound-btn .front-cover-sound-waves {
+  display: none;
+}
+
+.front-cover-sound-btn.is-enabled .front-cover-sound-waves {
+  display: inline;
+}
+
+.front-cover-sound-btn {
+  font-size: 0.7rem;
+  padding: 0.55rem 0.9rem;
+  margin-top: 0.35rem;
+}
+
+.front-cover-sound-note {
+  font-family: "Inter", sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: var(--silver);
+  opacity: 0.75;
+  max-width: 220px;
+}
+
+.back-cover-link {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--silver);
+  text-decoration: none;
+  transition: color 0.2s var(--transition);
+}
+
+.back-cover-link:hover {
+  color: var(--red-smile);
+}
+
+.page-slot.inside-cover.blank::after {
+  display: none;
+}
+
+/* Single-page (mobile) layout — --book-width/--book-height overrides live
+   in each toon's own <style> (different page aspect ratios) */
+body.single-page .spread {
+  grid-template-columns: 1fr;
+  border-radius: 4px;
+}
+
+body.single-page .page-slot.left,
+body.single-page .spine,
+body.single-page .spine-glow {
+  display: none !important;
+}
+
+body.single-page .page-slot.right {
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+body.single-page .page-slot img {
+  object-fit: contain;
+}
+
+body.single-page .nav-zone {
+  width: 42%;
+}
+
+body.single-page .flip-page {
+  width: 100%;
+}
+
+body.single-page .flip-page.from-right,
+body.single-page .flip-page.from-left {
+  left: 0;
+  right: 0;
+  transform-origin: center center;
+}
+
+body.single-page .flip-page.flipping.from-right {
+  animation: single-next 0.35s var(--transition) forwards;
+}
+
+body.single-page .flip-page.flipping.from-left {
+  animation: single-prev 0.35s var(--transition) forwards;
+}
+
+@keyframes single-next {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-18%);
+    opacity: 0;
+  }
+}
+
+@keyframes single-prev {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(18%);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .reader {
+    padding: 4.5rem 0.75rem 1.5rem;
+    gap: 1.15rem;
+  }
+
+  .toons-back {
+    top: 1rem;
+    left: 1rem;
+    font-size: 0.65rem;
+  }
+
+  .controls {
+    gap: 1rem;
+  }
+
+  .reader-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .page-nav-btn.prev {
+    left: -20px;
+  }
+
+  .page-nav-btn.next {
+    right: -20px;
+  }
+
+  .front-cover-instructions {
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+
+  .front-cover-instructions ul {
+    font-size: 0.68rem;
+    gap: 0.5rem;
+  }
+
+  .title-bar h1 {
+    font-size: clamp(1.15rem, 5vw, 1.5rem);
+  }
+
+  .toon-top-controls {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .toon-fs-btn .toon-fs-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+}

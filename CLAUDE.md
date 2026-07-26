@@ -142,6 +142,17 @@ To receive emails at `info@twentyseven.pictures`:
 2. Add route: `info` → forward to personal email
 3. Add MX records if prompted
 
+## Experiments Page
+
+`public/experiments/index.html` carries the **same main site nav** as the
+homepage (`<header><nav>...</nav></header>` + mobile menu overlay), copied
+from `public/index.html` with the hash links rewritten to be homepage-
+relative (`/#darkroom` instead of `#darkroom`, since this page isn't the
+homepage). It also loads `../script.js` (burger menu + magnetic hover) —
+keep both the nav markup and that script tag if this page is ever
+regenerated or restructured; the page's own top padding (140px desktop) was
+already sized to clear a fixed header, they just weren't in sync before.
+
 ## QR Code Landing Page
 
 - **URL:** `https://twentyseven.pictures/qr.html`
@@ -155,6 +166,76 @@ To receive emails at `info@twentyseven.pictures`:
 npm run generate-qr
 # Output: ~/Downloads/27pictures-qr.pdf
 ```
+
+## Toon Reader (shared by Erin, Jax, …)
+
+Every toon page (`public/toons/<name>/index.html`) is a thin shell around two
+shared files:
+
+- **`public/toons/book-reader.js`** — the page-turning engine (flip
+  animation, keyboard/swipe/click nav, fullscreen, front-cover
+  instructions/logo/sound-button). `ToonBook.init({...})` wires it up; see
+  the JSDoc at the top of the file for every option. The reader's product
+  name/attribution — "FlipFrame — by twentyseven.pictures" (`.front-cover-brand`)
+  — is baked into `renderFrontCoverInstructions()` here, so it shows on
+  every toon automatically; it isn't per-toon config.
+- **`public/toons/reader-shared.css`** — the reader's visual chrome (book,
+  pages, spine, flip overlay, nav zones, controls, front-cover panel). Any
+  rule here applies to **every** toon reader — changing it changes Erin and
+  Jax (and any future toon) at once.
+
+### What goes where
+
+A toon's own `<style>` block should contain **only**:
+
+1. Its book-aspect `:root` tokens — `--book-width`, `--book-height`,
+   `--page-bg`, `--spine`, `--cover` — plus the matching
+   `body.is-fullscreen .book-scene`, `body.is-fullscreen.single-page
+   .book-scene`, and `body.single-page` overrides of those same tokens
+   (every toon's pages have a different aspect ratio, so these can't be
+   shared).
+2. Page-specific extras that don't apply to other toons — e.g. Jax's word/
+   caption overlay (`.jax-word*`), language switcher, sound/music buttons.
+
+Everything else (book-scene, page-slot, flip-page, nav-zone, controls,
+reader-btn, page-nav-btn, front-cover-instructions + logo, back-cover-link,
+single-page layout, the 768px media query) belongs in `reader-shared.css`.
+Before adding a CSS rule to a toon's own `<style>` block, check whether it's
+actually shared behavior that should go in `reader-shared.css` instead —
+don't recreate a rule that already exists there.
+
+### Adding a new toon reader
+
+```html
+<link rel="stylesheet" href="../reader-shared.css?v=<current version>" />
+<style>
+  :root {
+    --book-width: min(92vw, 900px, calc((100dvh - 240px) / <aspect>));
+    --book-height: calc(var(--book-width) * <aspect>);
+    --page-bg: ...;
+    --spine: ...;
+    --cover: ...;
+  }
+  /* + the matching fullscreen/single-page token overrides, + anything
+     genuinely unique to this toon */
+</style>
+...
+<script src="../book-reader.js?v=<current version>"></script>
+<script>
+  ToonBook.init({ altPrefix: "Name", frontCoverLogo: "../../logosquare.png" });
+</script>
+```
+
+### Cache-busting (`?v=N`)
+
+`book-reader.js`, `words.js`, and `reader-shared.css` are all linked with a
+`?v=N` query string. **Bump the version whenever you edit one of these
+files.** Browsers (and this repo's local dev server) cache them aggressively
+by URL — without a version bump, a hard-refreshed page can still run the old
+script/CSS while `curl`/`fetch` on the same URL shows the new content,
+which is confusing and wasted a lot of time before this convention existed.
+Bumping is just editing the number in each `<script src="...?v=N">` /
+`<link href="...?v=N">` tag that references the changed file.
 
 ## Jax Toon — SFX (ElevenLabs) + background music
 

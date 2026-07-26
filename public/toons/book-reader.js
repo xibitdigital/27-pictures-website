@@ -32,6 +32,11 @@
    * @param {string} [opts.backLabel]
    * @param {string} [opts.fsLabelSelector] - .toon-fs-label
    * @param {string} [opts.frontCoverLogo] - image src shown above "How to read"
+   * @param {string} [opts.soundHint] - if set, adds a real "Turn the sound on"
+   *   button (class .front-cover-sound-btn, this string as its label) below
+   *   the front-cover instructions list. The page's own script must wire up
+   *   its click behavior (e.g. via event delegation, since this button is
+   *   recreated whenever the front cover re-renders).
    * @param {(slot: HTMLElement, pageNum: number) => void} [opts.onPagePaint]
    * @param {(slot: HTMLElement) => void} [opts.onPageClear]
    * @param {() => void} [opts.afterFullscreen]
@@ -49,6 +54,7 @@
     const afterFullscreen = typeof opts.afterFullscreen === "function" ? opts.afterFullscreen : null;
     const beforeStart = typeof opts.beforeStart === "function" ? opts.beforeStart : null;
     const frontCoverLogo = opts.frontCoverLogo || null;
+    const soundHint = opts.soundHint || null;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const singlePageMq = window.matchMedia("(max-width: 768px)");
@@ -77,7 +83,8 @@
     }
 
     function totalViews() {
-      if (singlePage) return pages.length + 1;
+      // +2 = front-cover view + back-cover view around the pages themselves.
+      if (singlePage) return pages.length + 2;
       return totalSpreads;
     }
 
@@ -120,14 +127,20 @@
     }
 
     function singleViewContent(index) {
-      if (index >= pages.length) return { kind: "back" };
-      return { kind: "page", src: pages[index], num: index + 1 };
+      // index 0 = front cover (how-to-read instructions), same as desktop's
+      // spread 0 pairing a front cover with page 1 — mobile just shows them
+      // as separate swipeable views instead of side by side.
+      if (index === 0) return { kind: "front" };
+      const pageIndex = index - 1;
+      if (pageIndex >= pages.length) return { kind: "back" };
+      return { kind: "page", src: pages[pageIndex], num: pageIndex + 1 };
     }
 
     function renderFrontCoverInstructions() {
       const wrap = document.createElement("div");
       wrap.className = "front-cover-instructions";
       wrap.innerHTML = `
+        <p class="front-cover-brand">FlipFrame<span>by twentyseven.pictures</span></p>
         ${frontCoverLogo ? `<img class="front-cover-logo" src="${frontCoverLogo}" alt="${altPrefix} logo" />` : ""}
         <h2>How to read</h2>
         <ul>
@@ -137,6 +150,18 @@
           <li>Keyboard arrow keys<span>← previous · → next</span></li>
           <li>Swipe on touch devices<span>left = next · right = previous</span></li>
         </ul>
+        ${
+          soundHint
+            ? `<button type="button" class="toon-fs-btn front-cover-sound-btn" aria-pressed="false" title="Enable sound">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
+                  <path class="front-cover-sound-waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>${soundHint}</span>
+              </button>
+              <p class="front-cover-sound-note">Hover (or tap) glowing captions on any page to hear them</p>`
+            : ""
+        }
       `;
       return wrap;
     }
@@ -197,6 +222,10 @@
       slot.classList.toggle("inside-cover", content.kind !== "page");
       if (content.kind === "page") {
         appendPageImage(slot, content.src, content.num);
+      } else if (content.kind === "front") {
+        delete slot.dataset.pageNum;
+        if (onPageClear) onPageClear(slot);
+        slot.appendChild(renderFrontCoverInstructions());
       } else {
         renderBackCoverLink(slot);
       }
@@ -207,8 +236,9 @@
       if (singlePage) {
         const content = singleViewContent(viewIndex);
         if (content.kind === "page") {
-          indicator.textContent =
-            content.num === 1 ? `Cover · 1 / ${total}` : `${content.num} / ${total}`;
+          indicator.textContent = `${content.num} / ${total}`;
+        } else if (content.kind === "front") {
+          indicator.textContent = `Cover`;
         } else {
           indicator.textContent = `End`;
         }
@@ -286,6 +316,9 @@
       face.className = "flip-face front";
       if (content.kind === "page") {
         face.appendChild(createFlipFaceImage(content.src));
+      } else if (content.kind === "front") {
+        face.classList.add("inside-cover");
+        face.appendChild(renderFrontCoverInstructions());
       } else {
         face.classList.add("inside-cover");
         const link = document.createElement("a");
@@ -378,18 +411,20 @@
     }
 
     function spreadToSingle(spread) {
+      // Single-page index N (N>=1) is page N; index 0 is the front cover;
+      // pages.length+1 is the back cover — matches singleViewContent().
       const rightNum = pageNumber(spread, "right");
       const leftNum = pageNumber(spread, "left");
-      if (rightNum) return rightNum - 1;
-      if (leftNum) return leftNum - 1;
+      if (rightNum) return rightNum;
+      if (leftNum) return leftNum;
       if (spread <= 0) return 0;
-      return pages.length;
+      return pages.length + 1;
     }
 
     function singleToSpread(index) {
-      if (index >= pages.length) return Math.max(0, totalSpreads - 1);
-      const pageNum = index + 1;
-      return Math.floor(pageNum / 2);
+      if (index <= 0) return 0;
+      if (index > pages.length) return Math.max(0, totalSpreads - 1);
+      return Math.floor(index / 2);
     }
 
     function applyMode(nextSingle) {
