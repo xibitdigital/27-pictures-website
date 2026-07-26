@@ -146,6 +146,7 @@
       /* Fullscreen: hide back + nav; shrink title */
       body.is-fullscreen .toons-back,
       body.is-fullscreen .controls,
+      body.is-fullscreen .page-nav-btn,
       body.is-fullscreen .hint {
         display: none !important;
       }
@@ -243,7 +244,9 @@
         height: 100%;
         object-fit: contain;
         display: block;
-        background: #fff;
+        /* Matches .page-slot's own background so any sub-pixel letterbox
+           gap from object-fit:contain blends in instead of showing white. */
+        background: var(--page-bg);
         -webkit-user-drag: none;
       }
 
@@ -331,7 +334,7 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
-        background: #fff;
+        background: var(--page-bg);
       }
 
       .flip-face.back {
@@ -452,6 +455,29 @@
         cursor: default;
       }
 
+      /* Prev/next arrows sit on the page margins themselves, above the
+         full-page .nav-zone click areas (z-index 30), instead of in a
+         row below the book. */
+      .page-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 32;
+        opacity: 0.85;
+      }
+
+      .page-nav-btn:hover:not(:disabled) {
+        opacity: 1;
+      }
+
+      .page-nav-btn.prev {
+        left: -22px;
+      }
+
+      .page-nav-btn.next {
+        right: -22px;
+      }
+
       .page-indicator {
         font-family: "Inter", sans-serif;
         font-size: 0.75rem;
@@ -488,6 +514,12 @@
         text-align: center;
         color: var(--silver);
         font-family: "Inter", sans-serif;
+      }
+
+      .front-cover-logo {
+        width: 56px;
+        height: auto;
+        opacity: 0.92;
       }
 
       .front-cover-instructions h2 {
@@ -635,6 +667,14 @@
           height: 40px;
         }
 
+        .page-nav-btn.prev {
+          left: -20px;
+        }
+
+        .page-nav-btn.next {
+          right: -20px;
+        }
+
         .front-cover-instructions {
           gap: 0.85rem;
           padding: 1rem;
@@ -702,22 +742,34 @@
             <div class="nav-zone prev" id="zone-prev" title="Previous page"></div>
           </div>
         </div>
+        <button
+          class="reader-btn page-nav-btn prev"
+          id="btn-prev"
+          type="button"
+          title="Previous page"
+          aria-label="Previous page"
+        >
+          &#8592;
+        </button>
+        <button
+          class="reader-btn page-nav-btn next"
+          id="btn-next"
+          type="button"
+          title="Next page"
+          aria-label="Next page"
+        >
+          &#8594;
+        </button>
       </div>
 
       <div class="controls">
-        <button class="reader-btn" id="btn-prev" type="button" title="Previous page" aria-label="Previous page">
-          &#8592;
-        </button>
         <span class="page-indicator" id="indicator" aria-live="polite">…</span>
-        <button class="reader-btn" id="btn-next" type="button" title="Next page" aria-label="Next page">&#8594;</button>
       </div>
-
-      <p class="hint">← previous &nbsp;·&nbsp; → next</p>
     </main>
 
     <script src="../book-reader.js"></script>
     <script>
-      ToonBook.init({ altPrefix: "Erin" });
+      ToonBook.init({ altPrefix: "Erin", frontCoverLogo: "../../logosquare.png" });
     </script>
   </body>
 </html>

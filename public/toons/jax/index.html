@@ -160,6 +160,7 @@
       /* Fullscreen chrome: hide nav; shrink title; keep lang/fullscreen controls */
       body.is-fullscreen .toons-back,
       body.is-fullscreen .controls,
+      body.is-fullscreen .page-nav-btn,
       body.is-fullscreen .hint {
         display: none !important;
       }
@@ -205,6 +206,22 @@
         text-transform: uppercase;
       }
 
+      /* Base placement/rotation comes from --jax-transform (set inline per
+         word); kept out of the `transform` shorthand itself so the hover
+         rule below can append scale() without clobbering position. */
+      .jax-word {
+        transform: var(--jax-transform);
+      }
+
+      .jax-word--sfx {
+        transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+        transform-origin: center;
+      }
+
+      .jax-word--sfx:hover {
+        transform: var(--jax-transform) scale(1.22);
+      }
+
       /* Sketchy dialog bubble variant */
       .jax-word--bubble {
         display: inline-block;
@@ -242,7 +259,8 @@
         text-align: center;
       }
 
-      #soundBtn.is-enabled {
+      #soundBtn.is-enabled,
+      #musicBtn.is-enabled {
         border-color: var(--red-smile);
         color: var(--red-smile);
       }
@@ -315,7 +333,9 @@
         height: 100%;
         object-fit: contain;
         display: block;
-        background: #fff;
+        /* Matches .page-slot's own background so any sub-pixel letterbox
+           gap from object-fit:contain blends in instead of showing white. */
+        background: var(--page-bg);
         -webkit-user-drag: none;
       }
 
@@ -403,7 +423,7 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
-        background: #fff;
+        background: var(--page-bg);
       }
 
       .flip-face.back {
@@ -524,6 +544,29 @@
         cursor: default;
       }
 
+      /* Prev/next arrows sit on the page margins themselves, above the
+         full-page .nav-zone click areas (z-index 30), instead of in a
+         row below the book. */
+      .page-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 32;
+        opacity: 0.85;
+      }
+
+      .page-nav-btn:hover:not(:disabled) {
+        opacity: 1;
+      }
+
+      .page-nav-btn.prev {
+        left: -22px;
+      }
+
+      .page-nav-btn.next {
+        right: -22px;
+      }
+
       .page-indicator {
         font-family: "Inter", sans-serif;
         font-size: 0.75rem;
@@ -560,6 +603,12 @@
         text-align: center;
         color: var(--silver);
         font-family: "Inter", sans-serif;
+      }
+
+      .front-cover-logo {
+        width: 56px;
+        height: auto;
+        opacity: 0.92;
       }
 
       .front-cover-instructions h2 {
@@ -707,6 +756,14 @@
           height: 40px;
         }
 
+        .page-nav-btn.prev {
+          left: -20px;
+        }
+
+        .page-nav-btn.next {
+          right: -20px;
+        }
+
         .front-cover-instructions {
           gap: 0.85rem;
           padding: 1rem;
@@ -738,6 +795,13 @@
   </head>
   <body class="toons-reader">
     <div id="grain" aria-hidden="true"></div>
+    <audio
+      id="bgMusic"
+      src="assets/music/990f5db70e833cdaa0a411a9f0025275.mp3"
+      loop
+      preload="none"
+      aria-hidden="true"
+    ></audio>
 
     <a href="/experiments/" class="toons-back">← Experiments</a>
     <div class="toon-top-controls">
@@ -764,6 +828,23 @@
           />
         </svg>
         <span class="toon-fs-label" id="soundBtnLabel">Sound</span>
+      </button>
+      <button
+        type="button"
+        id="musicBtn"
+        class="toon-fs-btn"
+        aria-pressed="false"
+        title="Play music"
+        aria-label="Play music"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path
+            d="M9 18V5l10-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm10-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span class="toon-fs-label" id="musicBtnLabel">Music</span>
       </button>
       <button
         type="button"
@@ -798,14 +879,28 @@
             <div class="nav-zone prev" id="zone-prev" title="Previous page"></div>
           </div>
         </div>
+        <button
+          class="reader-btn page-nav-btn prev"
+          id="btn-prev"
+          type="button"
+          title="Previous page"
+          aria-label="Previous page"
+        >
+          &#8592;
+        </button>
+        <button
+          class="reader-btn page-nav-btn next"
+          id="btn-next"
+          type="button"
+          title="Next page"
+          aria-label="Next page"
+        >
+          &#8594;
+        </button>
       </div>
 
       <div class="controls">
-        <button class="reader-btn" id="btn-prev" type="button" title="Previous page" aria-label="Previous page">
-          &#8592;
-        </button>
         <span class="page-indicator" id="indicator" aria-live="polite">…</span>
-        <button class="reader-btn" id="btn-next" type="button" title="Next page" aria-label="Next page">&#8594;</button>
       </div>
     </main>
 
@@ -825,21 +920,41 @@
           window.__jaxSoundEnabled = enabled;
           btn.classList.toggle("is-enabled", enabled);
           btn.setAttribute("aria-pressed", String(enabled));
-          btn.title = enabled ? "Mute sound effects" : "Enable sound effects";
+          btn.title = enabled ? "Mute sound" : "Enable sound";
           btn.setAttribute("aria-label", btn.title);
           if (label) label.textContent = enabled ? "Sound on" : "Sound";
-          // The click itself is a real user gesture — play a confirmation
-          // tone so enabling is audibly obvious (and proves audio output
-          // works before the user starts hovering word captions).
           if (enabled) {
-            const confirm = new Audio("assets/sfx/beep.mp3");
+            // The click itself is a real user gesture — play a confirmation
+            // tone so enabling is audibly obvious (and proves audio output
+            // works before the user starts hovering word captions).
+            const confirm = new Audio("assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3");
             confirm.play().catch(() => {});
           }
         });
       })();
 
+      (function () {
+        const btn = document.getElementById("musicBtn");
+        const label = document.getElementById("musicBtnLabel");
+        const music = document.getElementById("bgMusic");
+        if (!btn || !music) return;
+        music.volume = 0.22;
+        let enabled = false;
+        btn.addEventListener("click", () => {
+          enabled = !enabled;
+          btn.classList.toggle("is-enabled", enabled);
+          btn.setAttribute("aria-pressed", String(enabled));
+          btn.title = enabled ? "Pause music" : "Play music";
+          btn.setAttribute("aria-label", btn.title);
+          if (label) label.textContent = enabled ? "Music on" : "Music";
+          if (enabled) music.play().catch(() => {});
+          else music.pause();
+        });
+      })();
+
       ToonBook.init({
         altPrefix: "Jax",
+        frontCoverLogo: "../../logosquare.png",
         onPagePaint(slot, pageNum) {
           if (wordOverlay) wordOverlay.render(slot, pageNum);
         },

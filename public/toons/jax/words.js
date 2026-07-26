@@ -494,9 +494,9 @@
           const isBubble = variant === "bubble" || variant === "ai";
 
           const el = document.createElement("div");
-          el.className = isBubble
-            ? "jax-word jax-word--bubble" + (variant === "ai" ? " jax-word--ai" : "")
-            : "jax-word";
+          el.className =
+            (isBubble ? "jax-word jax-word--bubble" + (variant === "ai" ? " jax-word--ai" : "") : "jax-word") +
+            (w.audio ? " jax-word--sfx" : "");
 
           const textEl = document.createElement("span");
           textEl.className = "jax-word-text";
@@ -544,7 +544,10 @@
             "position:absolute",
             `left:${x * 100}%`,
             `top:${y * 100}%`,
-            `transform:${transform.join(" ")}`,
+            // Base position/rotation lives in a custom property, not the
+            // `transform` shorthand itself, so the CSS hover-zoom rule can
+            // append `scale()` without clobbering placement.
+            `--jax-transform:${transform.join(" ")}`,
             `font-family:${this.fontFamily}`,
             `font-size:${Math.max(10, sizePx)}px`,
             "line-height:1.15",

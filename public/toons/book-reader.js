@@ -31,6 +31,7 @@
    * @param {string} [opts.backHref]
    * @param {string} [opts.backLabel]
    * @param {string} [opts.fsLabelSelector] - .toon-fs-label
+   * @param {string} [opts.frontCoverLogo] - image src shown above "How to read"
    * @param {(slot: HTMLElement, pageNum: number) => void} [opts.onPagePaint]
    * @param {(slot: HTMLElement) => void} [opts.onPageClear]
    * @param {() => void} [opts.afterFullscreen]
@@ -47,6 +48,7 @@
     const onPageClear = typeof opts.onPageClear === "function" ? opts.onPageClear : null;
     const afterFullscreen = typeof opts.afterFullscreen === "function" ? opts.afterFullscreen : null;
     const beforeStart = typeof opts.beforeStart === "function" ? opts.beforeStart : null;
+    const frontCoverLogo = opts.frontCoverLogo || null;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const singlePageMq = window.matchMedia("(max-width: 768px)");
@@ -126,6 +128,7 @@
       const wrap = document.createElement("div");
       wrap.className = "front-cover-instructions";
       wrap.innerHTML = `
+        ${frontCoverLogo ? `<img class="front-cover-logo" src="${frontCoverLogo}" alt="${altPrefix} logo" />` : ""}
         <h2>How to read</h2>
         <ul>
           <li>Click or tap the right page<span>next page</span></li>

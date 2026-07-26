@@ -156,30 +156,65 @@ npm run generate-qr
 # Output: ~/Downloads/27pictures-qr.pdf
 ```
 
-## Jax Toon — SFX (ElevenLabs)
+## Jax Toon — SFX (ElevenLabs) + background music
 
 Word overlays in `public/toons/jax/words.json` can carry an `"audio"` field
-(e.g. `"assets/sfx/clank.mp3"`) pointing at a short SFX clip baked for that
-onomatopoeia/caption. Playback is wired in `public/toons/jax/words.js`:
-desktop mouse hover (`mouseenter`, gated on `(hover: hover) and (pointer:
-fine)`) plays the clip; touch devices play on tap instead.
+(e.g. `"assets/sfx/12cd3501a258f305455ed5bf3cf76ed3.mp3"`) pointing at a short
+SFX clip baked for that onomatopoeia/caption. All audio assets — SFX and
+music — are named by content hash (`md5.mp3`), matching the site's existing
+image-asset convention; **there is no human-readable filename to guess from**,
+always resolve the current hash from `words.json` / the source files
+themselves.
 
-### Regenerating / adding clips
+Playback: `public/toons/jax/words.js` wires `mouseenter` (desktop, gated on
+`(hover: hover) and (pointer: fine)`) and `click` (touch fallback) on each
+word that has an `audio` field. Both check `window.__jaxSoundEnabled` — set
+by the Sound toggle button in `index.html` — before calling `play()`, so
+nothing plays until the user opts in.
+
+The **Sound** button (top-right, next to the language switcher) is the single
+gate for all audio: first click plays a confirmation beep (satisfies the
+browser's user-gesture requirement for audio) and starts the looping
+background track (`#bgMusic` in `index.html`, `loop`, volume `0.22`); a
+second click pauses the music and mutes future SFX.
+
+**Word-layer z-index matters**: `.nav-zone` (the full-height page-turn click
+areas) sits at `z-index: 30`. The word overlay layer must stay above it
+(`z-index: 35` in `words.js`) or nav-zone silently wins hit-testing and no
+hover/click ever reaches the word captions, regardless of `pointer-events` on
+the word itself — this was a real regression once, don't reintroduce it.
+
+### Regenerating / adding SFX clips
 
 1. `ELEVENLABS_API_KEY` lives in `.env` (gitignored, never commit it).
 2. Add/edit an entry in `scripts/jax-sfx-manifest.json` (`slug`, `prompt`,
-   `duration` in seconds).
+   `duration` in seconds). `slug` is only a human-readable key for the
+   generator/lockfile — it is never the output filename.
 3. Run:
    ```bash
    set -a; source .env; set +a
    python3 scripts/generate-jax-sfx.py
    ```
-   Writes `public/toons/jax/assets/sfx/<slug>.mp3` via the ElevenLabs Sound
-   Effects API (`POST /v1/sound-generation`). Skips slugs whose file already
-   exists — pass `--force` to regenerate (re-spends credits).
-4. Add `"audio": "assets/sfx/<slug>.mp3"` to the matching word entry/entries
-   in `words.json` (multiple entries can share one clip, e.g. both `WHOOSH`
-   instances).
+   Calls the ElevenLabs Sound Effects API (`POST /v1/sound-generation`),
+   writes `public/toons/jax/assets/sfx/<md5>.mp3`, and records `slug -> hash`
+   in `scripts/jax-sfx-lock.json` so re-runs skip already-generated slugs
+   (idempotent, avoids re-spending credits) unless `--force`. Prints the
+   exact `"audio": "assets/sfx/<hash>.mp3"` lines to paste into `words.json`
+   for anything new/changed.
+4. Update the matching word entry/entries in `words.json` (multiple entries
+   can share one clip, e.g. both `WHOOSH` instances point at the same hash).
+
+### Replacing the background track
+
+Drop a new source file in `public/toons/jax/assets/music/`, convert + hash it:
+```bash
+ffmpeg -y -i public/toons/jax/assets/music/<source> -codec:a libmp3lame -b:a 192k /tmp/bg.mp3
+HASH=$(md5 -q /tmp/bg.mp3)
+mv /tmp/bg.mp3 "public/toons/jax/assets/music/$HASH.mp3"
+```
+then update the `#bgMusic` `src` in `index.html` to the new hash and delete
+the old hashed file (and the original source, once converted — the source
+format, e.g. a large `.wav`, shouldn't be committed).
 
 ## SEO State
 
