@@ -204,6 +204,30 @@ the word itself — this was a real regression once, don't reintroduce it.
 4. Update the matching word entry/entries in `words.json` (multiple entries
    can share one clip, e.g. both `WHOOSH` instances point at the same hash).
 
+### Generating a spoken voice line (dialogue, not onomatopoeia)
+
+Onomatopoeia (`CLANK`, `WHOOSH`, …) go through `generate-jax-sfx.py` (Sound
+Effects API — non-verbal). Actual dialogue captions (e.g. "Too slow, man!")
+should be a real spoken line instead, via Text-to-Speech:
+
+1. Voices are locked by name in `scripts/jax-voices.json` (`name ->
+   voice_id`), so a character keeps the same voice across generations. To
+   add a new one: open the voice on
+   `elevenlabs.io/app/voice-library?voiceId=...`, copy the ID from the URL,
+   add `"name": "voiceId"` to that file. (Listing/searching voices via
+   `GET /v1/voices` needs a separate `voices_read` scope that isn't exposed
+   as a toggle in the key-permission UI — grab the ID from the dashboard
+   URL instead of trying to list voices from a script.)
+2. Run:
+   ```bash
+   set -a; source .env; set +a
+   python3 scripts/generate-jax-voice.py "Too slow, man!" --voice jax
+   ```
+   Writes `public/toons/jax/assets/sfx/<md5>.mp3` and prints the
+   `"audio": "assets/sfx/<hash>.mp3"` line to paste into `words.json`.
+3. Delete the old hashed file for that entry if you're replacing a line —
+   these aren't tracked in the lockfile like SFX slugs are.
+
 ### Replacing the background track
 
 Drop a new source file in `public/toons/jax/assets/music/`, convert + hash it:

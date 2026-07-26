@@ -24,7 +24,9 @@
     <style>
       /* Book-only tokens — portrait pages (1008×1792) */
       :root {
-        --book-width: min(92vw, 920px);
+        /* 240px ≈ title-bar + reader padding + controls row, so the book
+           itself never forces the whole stack past the viewport height. */
+        --book-width: min(92vw, 920px, calc((100dvh - 240px) / 0.89));
         --book-height: calc(var(--book-width) * 0.89);
         --page-bg: #0a0a0c;
         --spine: #1a1a22;
@@ -397,7 +399,11 @@
         height: 100%;
         transform-style: preserve-3d;
         transform-origin: left center;
-        z-index: 20;
+        /* Above .jax-word-layer (35, itself above .nav-zone's 30 for hover
+           hit-testing) so the incoming page's captions — already painted
+           onto the hidden slot underneath — stay covered until the flip
+           animation finishes instead of flashing through it. */
+        z-index: 40;
         pointer-events: none;
       }
 

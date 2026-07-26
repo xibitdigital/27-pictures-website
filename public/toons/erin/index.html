@@ -21,7 +21,9 @@
     <style>
       /* Book-only tokens (page paper / spine — not site chrome) */
       :root {
-        --book-width: min(92vw, 900px);
+        /* 240px ≈ title-bar + reader padding + controls row, so the book
+           itself never forces the whole stack past the viewport height. */
+        --book-width: min(92vw, 900px, calc((100dvh - 240px) / 0.72));
         --book-height: calc(var(--book-width) * 0.72);
         --page-bg: #f8f4ec;
         --spine: #2a2218;

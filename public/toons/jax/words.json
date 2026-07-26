@@ -98,7 +98,7 @@
           "de": "WIR SIND DRIN!",
           "fr": "ON Y EST!"
         },
-        "audio": "assets/sfx/fe038962c7ea8889f33edbd25bc09e4f.mp3"
+        "audio": "assets/sfx/eb6ef2562b828e184ff9a1daf88659d1.mp3"
       }
     ],
     "2": [
@@ -211,6 +211,24 @@
           "fr": "GRRRH"
         },
         "audio": "assets/sfx/4d51968d284a7b2421817489cddd597b.mp3"
+      },
+      {
+        "x": 0.28,
+        "y": 0.6,
+        "align": "center",
+        "size": 30,
+        "variant": "burst",
+        "color": "#111111",
+        "angle": -4,
+        "scale": 1.8,
+        "maxWidth": 0.3,
+        "text": {
+          "en": "Coming\nto get\nyou!",
+          "it": "Sto\narrivando\nper te!",
+          "de": "Ich komme\ndich holen!",
+          "fr": "Je viens\nte chercher!"
+        },
+        "audio": "assets/sfx/c44313afbad33a35f2573802abd96a9a.mp3"
       },
       {
         "x": 0.48,
@@ -448,7 +466,7 @@
           "de": "Zu langsam,\nKumpel!",
           "fr": "Trop lent,\nmec!"
         },
-        "audio": "assets/sfx/e00687ae8c7fec7253dbdac90ddf1f53.mp3"
+        "audio": "assets/sfx/84a067779b133b9c847e4d9f072adb7a.mp3"
       },
       {
         "x": 0.32,
@@ -581,7 +599,7 @@
           "de": "KAMPFMODUS\nAKTIVIERT",
           "fr": "MODE COMBAT\nACTIVÉ"
         },
-        "audio": "assets/sfx/59fb584a96c1147245584dae71ab664c.mp3"
+        "audio": "assets/sfx/e8c38f7bc195ba7fa25819c5cd2df790.mp3"
       }
     ],
     "8": [

@@ -150,6 +150,41 @@
   }
 
   /**
+   * Jagged star-burst outline (viewBox 0-100 x 0-100) — no tail. Used for
+   * shouted lines/impact captions ("TOO SLOW, MAN!" comic burst style).
+   */
+  function starBurstPath(seed, points) {
+    const rnd = mulberry32(seed || 1);
+    const n = points || 13;
+    const total = n * 2;
+    const cx = 50;
+    const cy = 50;
+    const outerR = 48;
+    const innerR = 27;
+
+    const pts = [];
+    for (let i = 0; i < total; i++) {
+      const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
+      const baseR = i % 2 === 0 ? outerR : innerR;
+      // Jitter only adds size (never subtracts) so every outer tip reaches
+      // at least `outerR` — with preserveAspectRatio:none stretching this
+      // non-uniformly to fit the (often very wide) text box, an undershoot
+      // here left gaps at the horizontal extremes where dark text sat over
+      // dark art with no white fill behind it, reading as "clipped" text.
+      const r = baseR + rnd() * (baseR * 0.12);
+      const a = angle + (rnd() - 0.5) * 2 * ((Math.PI / total) * 0.4);
+      pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+    }
+
+    let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
+    for (let i = 1; i < pts.length; i++) {
+      d += ` L ${pts[i][0].toFixed(2)} ${pts[i][1].toFixed(2)}`;
+    }
+    d += " Z";
+    return d;
+  }
+
+  /**
    * Short overshooting scratch strokes fired outward from the box perimeter —
    * the crosshatched marker spikes around a hand-scrawled panel caption.
    */
@@ -220,7 +255,8 @@
 
   function resolveVariant(w) {
     const v = (w.variant || w.mode || "plain").toString().toLowerCase();
-    if (v === "ai" || v === "hud" || v === "terminal" || v === "shout" || v === "caption") return "ai";
+    if (v === "ai" || v === "hud" || v === "terminal" || v === "caption") return "ai";
+    if (v === "burst" || v === "spiky" || v === "star" || v === "shout") return "burst";
     if (v === "bubble" || v === "dialog" || v === "speech") return "bubble";
     return "plain";
   }
@@ -228,9 +264,10 @@
   function resolveBubbleStyle(w, variant) {
     const b = w.bubble && typeof w.bubble === "object" ? w.bubble : {};
     const isAi = variant === "ai";
+    const isBurst = variant === "burst";
     return {
-      shape: b.shape || w.bubbleShape || (isAi ? "box" : "organic"),
-      fill: b.fill || w.bubbleFill || (isAi ? "#0a0a0a" : "#fffef6"),
+      shape: b.shape || w.bubbleShape || (isAi ? "box" : isBurst ? "star" : "organic"),
+      fill: b.fill || w.bubbleFill || (isAi ? "#0a0a0a" : "#ffffff"),
       stroke: b.stroke || w.bubbleStroke || (isAi ? "#0a0a0a" : "#111111"),
       strokeWidth:
         b.strokeWidth != null
@@ -239,10 +276,12 @@
             ? Number(w.bubbleStrokeWidth)
             : isAi
               ? 2.2
-              : 2.4,
-      tail: b.tail || w.tail || (isAi ? "none" : "bottom"),
-      padX: b.padX != null ? Number(b.padX) : isAi ? 0.7 : 0.55,
-      padY: b.padY != null ? Number(b.padY) : isAi ? 0.5 : 0.4,
+              : isBurst
+                ? 3
+                : 2.4,
+      tail: b.tail || w.tail || (isAi || isBurst ? "none" : "bottom"),
+      padX: b.padX != null ? Number(b.padX) : isAi ? 0.7 : isBurst ? 1.1 : 0.55,
+      padY: b.padY != null ? Number(b.padY) : isAi ? 0.5 : isBurst ? 0.9 : 0.4,
     };
   }
 
@@ -256,7 +295,11 @@
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute(
       "d",
-      bubbleStyle.shape === "box" ? jaggedBoxPath(seed) : sketchyBubblePath(bubbleStyle.tail, seed)
+      bubbleStyle.shape === "box"
+        ? jaggedBoxPath(seed)
+        : bubbleStyle.shape === "star"
+          ? starBurstPath(seed)
+          : sketchyBubblePath(bubbleStyle.tail, seed)
     );
     path.setAttribute("fill", bubbleStyle.fill);
     path.setAttribute("stroke", bubbleStyle.stroke);
@@ -377,6 +420,8 @@
    * @property {number} [maxWidth] - 0–1 fraction of page width
    * @property {number} [angle] - rotation in degrees (clockwise positive)
    * @property {number} [rotate] - alias of angle
+   * @property {number} [scale] - uniform size multiplier (1 = no change) for the bubble/ai/burst
+   *   background shape only — text size is unaffected; ignored on plain (non-bubble) words
    * @property {'plain'|'bubble'} [variant] - "bubble" = sketchy dialog balloon
    * @property {'plain'|'bubble'} [mode] - alias of variant
    * @property {string} [tail] - bubble tail: none|bottom|bottom-left|bottom-right|left|right
@@ -491,11 +536,12 @@
           const sizePx = (w.size != null ? Number(w.size) : 22) * designScale;
           const maxW = w.maxWidth != null ? (w.maxWidth > 1 ? w.maxWidth / this.designWidth : w.maxWidth) * 100 : null;
           const variant = resolveVariant(w);
-          const isBubble = variant === "bubble" || variant === "ai";
+          const isBubble = variant === "bubble" || variant === "ai" || variant === "burst";
 
           const el = document.createElement("div");
+          const bubbleVariantClass = variant === "ai" ? " jax-word--ai" : variant === "burst" ? " jax-word--burst" : "";
           el.className =
-            (isBubble ? "jax-word jax-word--bubble" + (variant === "ai" ? " jax-word--ai" : "") : "jax-word") +
+            (isBubble ? "jax-word jax-word--bubble" + bubbleVariantClass : "jax-word") +
             (w.audio ? " jax-word--sfx" : "");
 
           const textEl = document.createElement("span");
@@ -505,7 +551,14 @@
           if (isBubble) {
             const bubbleStyle = resolveBubbleStyle(w, variant);
             const seed = hashSeed(pageNum, wordIndex, text, w.x, w.y, bubbleStyle.tail);
-            el.appendChild(createBubbleChrome(seed, bubbleStyle, designScale));
+            const chrome = createBubbleChrome(seed, bubbleStyle, designScale);
+            const bubbleScale = w.scale != null ? Number(w.scale) : 1;
+            if (bubbleScale && bubbleScale !== 1 && !Number.isNaN(bubbleScale)) {
+              // Scale only the bubble background shape, not the text on top.
+              chrome.style.transform = `scale(${bubbleScale})`;
+              chrome.style.transformOrigin = "center";
+            }
+            el.appendChild(chrome);
             el.appendChild(textEl);
             el.dataset.tail = bubbleStyle.tail;
             // Bubble text defaults to dark ink; AI caption boxes default to white
