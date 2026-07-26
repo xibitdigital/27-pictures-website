@@ -1,0 +1,10 @@
+{
+  "title": "Jax",
+  "pages": 9,
+  "pattern": "assets/{n}.jpg",
+  "designWidth": 1008,
+  "designHeight": 1792,
+  "font": "Cabin Sketch",
+  "languages": ["en", "it"],
+  "defaultLang": "en"
+}

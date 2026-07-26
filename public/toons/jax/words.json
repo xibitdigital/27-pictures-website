@@ -1,0 +1,170 @@
+{
+  "designWidth": 1008,
+  "designHeight": 1792,
+  "defaultLang": "en",
+  "languages": [
+    { "code": "en", "label": "EN" },
+    { "code": "it", "label": "IT" }
+  ],
+  "fontFamily": "\"Cabin Sketch\", cursive",
+  "pages": {
+    "1": [
+      {
+        "id": "p1-title",
+        "x": 0.5,
+        "y": 0.08,
+        "align": "center",
+        "size": 48,
+        "color": "#ffffff",
+        "shadow": true,
+        "maxWidth": 0.85,
+        "text": {
+          "en": "JAX",
+          "it": "JAX"
+        }
+      },
+      {
+        "id": "p1-sub",
+        "x": 0.5,
+        "y": 0.14,
+        "align": "center",
+        "size": 18,
+        "color": "#e8e0d4",
+        "shadow": true,
+        "maxWidth": 0.8,
+        "text": {
+          "en": "Netrunner · Night City edge",
+          "it": "Netrunner · Confini di Night City"
+        }
+      }
+    ],
+    "2": [
+      {
+        "id": "p2-a",
+        "x": 0.12,
+        "y": 0.18,
+        "align": "left",
+        "size": 22,
+        "color": "#ffffff",
+        "shadow": true,
+        "maxWidth": 0.42,
+        "text": {
+          "en": "Rain on chrome.\nSame alleys. New ghosts.",
+          "it": "Pioggia sul cromo.\nStessi vicoli. Nuovi fantasmi."
+        }
+      }
+    ],
+    "3": [
+      {
+        "id": "p3-a",
+        "x": 0.55,
+        "y": 0.22,
+        "align": "left",
+        "size": 20,
+        "color": "#ffffff",
+        "shadow": true,
+        "maxWidth": 0.4,
+        "text": {
+          "en": "Signal's dirty.\nSomeone's spoofing the grid.",
+          "it": "Segnale sporco.\nQualcuno sta spoofando la rete."
+        }
+      }
+    ],
+    "4": [
+      {
+        "id": "p4-a",
+        "x": 0.1,
+        "y": 0.7,
+        "align": "left",
+        "size": 22,
+        "color": "#fff8e7",
+        "shadow": true,
+        "maxWidth": 0.5,
+        "text": {
+          "en": "Stay low.\nDon't jack in cold.",
+          "it": "Stai basso.\nNon entrare a freddo."
+        }
+      }
+    ],
+    "5": [
+      {
+        "id": "p5-a",
+        "x": 0.5,
+        "y": 0.12,
+        "align": "center",
+        "size": 24,
+        "color": "#ffffff",
+        "shadow": true,
+        "maxWidth": 0.75,
+        "text": {
+          "en": "The deal was simple.\nUntil it wasn't.",
+          "it": "L'affare era semplice.\nFino a quando non lo fu più."
+        }
+      }
+    ],
+    "6": [
+      {
+        "id": "p6-a",
+        "x": 0.58,
+        "y": 0.55,
+        "align": "left",
+        "size": 20,
+        "color": "#ffffff",
+        "shadow": true,
+        "maxWidth": 0.38,
+        "text": {
+          "en": "Eyes up.\nNeon lies.",
+          "it": "Occhi aperti.\nIl neon mente."
+        }
+      }
+    ],
+    "7": [
+      {
+        "id": "p7-a",
+        "x": 0.15,
+        "y": 0.25,
+        "align": "left",
+        "size": 22,
+        "color": "#ffffff",
+        "shadow": true,
+        "maxWidth": 0.45,
+        "text": {
+          "en": "I can hear the ICE\nbefore it bites.",
+          "it": "Sento l'ICE\nprima che morda."
+        }
+      }
+    ],
+    "8": [
+      {
+        "id": "p8-a",
+        "x": 0.5,
+        "y": 0.82,
+        "align": "center",
+        "size": 20,
+        "color": "#e8e0d4",
+        "shadow": true,
+        "maxWidth": 0.7,
+        "text": {
+          "en": "Run the exploit.\nDon't look back.",
+          "it": "Lancia l'exploit.\nNon voltarti."
+        }
+      }
+    ],
+    "9": [
+      {
+        "id": "p9-a",
+        "x": 0.5,
+        "y": 0.5,
+        "align": "center",
+        "size": 28,
+        "color": "#ffffff",
+        "shadow": true,
+        "maxWidth": 0.8,
+        "text": {
+          "en": "End of line — for now.",
+          "it": "Fine della linea — per ora."
+        }
+      }
+    ]
+  }
+}

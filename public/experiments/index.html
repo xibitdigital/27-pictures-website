@@ -35,7 +35,7 @@
       property="og:description"
       content="Interactive prototypes and visual studies from 27 Pictures — including Erin, a cinematic page-turning manga reader."
     />
-    <meta property="og:image" content="https://twentyseven.pictures/toons/assets/1.jpg" />
+    <meta property="og:image" content="https://twentyseven.pictures/toons/erin/assets/1.jpg" />
     <meta property="og:image:width" content="1152" />
     <meta property="og:image:height" content="1728" />
     <meta property="og:image:alt" content="Erin interactive manga reader — cover art from 27 Pictures Experiments" />
@@ -51,7 +51,7 @@
       name="twitter:description"
       content="Interactive prototypes and visual studies from 27 Pictures — including Erin, a cinematic page-turning manga reader."
     />
-    <meta name="twitter:image" content="https://twentyseven.pictures/toons/assets/1.jpg" />
+    <meta name="twitter:image" content="https://twentyseven.pictures/toons/erin/assets/1.jpg" />
     <meta name="twitter:image:alt" content="Erin interactive manga reader — cover art from 27 Pictures Experiments" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -330,8 +330,8 @@
             },
             "primaryImageOfPage": {
               "@type": "ImageObject",
-              "@id": "https://twentyseven.pictures/toons/assets/1.jpg",
-              "url": "https://twentyseven.pictures/toons/assets/1.jpg",
+              "@id": "https://twentyseven.pictures/toons/erin/assets/1.jpg",
+              "url": "https://twentyseven.pictures/toons/erin/assets/1.jpg",
               "width": 1152,
               "height": 1728,
               "caption": "Erin interactive manga reader cover art by 27 Pictures"
@@ -365,18 +365,18 @@
             "@type": "ItemList",
             "@id": "https://twentyseven.pictures/experiments/#itemlist",
             "name": "27 Pictures Experiments",
-            "numberOfItems": 1,
+            "numberOfItems": 2,
             "itemListElement": [
               {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Erin",
-                "url": "https://twentyseven.pictures/toons/",
+                "url": "https://twentyseven.pictures/toons/erin/",
                 "item": {
                   "@type": "CreativeWork",
-                  "@id": "https://twentyseven.pictures/toons/#work",
+                  "@id": "https://twentyseven.pictures/toons/erin/#work",
                   "name": "Erin",
-                  "url": "https://twentyseven.pictures/toons/",
+                  "url": "https://twentyseven.pictures/toons/erin/",
                   "description": "An interactive page-turning manga reader with keyboard, click, and swipe navigation. A visual prototype from the 27 Pictures Experiments lab.",
                   "genre": ["Interactive Media", "Manga", "Visual Experiment"],
                   "creator": {
@@ -384,9 +384,36 @@
                   },
                   "image": {
                     "@type": "ImageObject",
-                    "url": "https://twentyseven.pictures/toons/assets/1.jpg",
+                    "url": "https://twentyseven.pictures/toons/erin/assets/1.jpg",
                     "width": 1152,
                     "height": 1728
+                  },
+                  "isPartOf": {
+                    "@id": "https://twentyseven.pictures/experiments/#webpage"
+                  }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Jax",
+                "url": "https://twentyseven.pictures/toons/jax/",
+                "item": {
+                  "@type": "CreativeWork",
+                  "@id": "https://twentyseven.pictures/toons/jax/#work",
+                  "name": "Jax",
+                  "url": "https://twentyseven.pictures/toons/jax/",
+                  "description": "Interactive cyberpunk toon with multilingual captions (English and Italian) positioned on each page. A 27 Pictures Experiments prototype.",
+                  "genre": ["Interactive Media", "Cyberpunk", "Visual Experiment"],
+                  "inLanguage": ["en", "it"],
+                  "creator": {
+                    "@id": "https://twentyseven.pictures/#organization"
+                  },
+                  "image": {
+                    "@type": "ImageObject",
+                    "url": "https://twentyseven.pictures/toons/jax/assets/1.jpg",
+                    "width": 1008,
+                    "height": 1792
                   },
                   "isPartOf": {
                     "@id": "https://twentyseven.pictures/experiments/#webpage"
@@ -437,10 +464,10 @@
 
         <div class="experiments-grid">
           <article>
-            <a href="/toons/" class="experiment-card" aria-labelledby="erin-title">
+            <a href="/toons/erin/" class="experiment-card" aria-labelledby="erin-title">
               <div class="experiment-card-media">
                 <img
-                  src="/toons/assets/1.jpg"
+                  src="/toons/erin/assets/1.jpg"
                   alt="Erin interactive manga reader cover art by 27 Pictures"
                   width="1152"
                   height="1728"
@@ -455,6 +482,29 @@
                 <p>
                   A cinematic page-turning manga reader with click, swipe, and keyboard navigation — a prototype for
                   immersive visual storytelling on the web.
+                </p>
+                <span class="experiment-card-cta">Open experiment →</span>
+              </div>
+            </a>
+          </article>
+          <article>
+            <a href="/toons/jax/" class="experiment-card" aria-labelledby="jax-title">
+              <div class="experiment-card-media">
+                <img
+                  src="/toons/jax/assets/1.jpg"
+                  alt="Jax interactive cyberpunk toon cover art by 27 Pictures"
+                  width="1008"
+                  height="1792"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="experiment-card-body">
+                <p class="experiment-card-label">Multilingual toon</p>
+                <h2 id="jax-title">Jax</h2>
+                <p>
+                  Cyberpunk page-turner with word overlays at design coordinates. Switch captions between English and
+                  Italian — set in Cabin Sketch.
                 </p>
                 <span class="experiment-card-cta">Open experiment →</span>
               </div>
