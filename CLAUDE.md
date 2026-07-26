@@ -226,16 +226,29 @@ don't recreate a rule that already exists there.
 </script>
 ```
 
-### Cache-busting (`?v=N`)
+### Cache-busting (`?v=<hash>`)
 
-`book-reader.js`, `words.js`, and `reader-shared.css` are all linked with a
-`?v=N` query string. **Bump the version whenever you edit one of these
-files.** Browsers (and this repo's local dev server) cache them aggressively
-by URL — without a version bump, a hard-refreshed page can still run the old
-script/CSS while `curl`/`fetch` on the same URL shows the new content,
-which is confusing and wasted a lot of time before this convention existed.
-Bumping is just editing the number in each `<script src="...?v=N">` /
-`<link href="...?v=N">` tag that references the changed file.
+`styles.css`, `script.js`, `book-reader.js`, `words.js`, and
+`reader-shared.css` are all linked with a `?v=<hash>` query string, the
+first 10 hex chars of that file's own sha256. Browsers (and this repo's
+local dev server) cache them aggressively by URL — without a cache-bust, a
+hard-refreshed page can still run the old script/CSS while `curl`/`fetch`
+on the same URL shows the new content.
+
+This used to be a manually incremented `?v=N` — hand-bumping across
+multiple HTML files that all reference the same asset (Jax + Erin both
+link `reader-shared.css`, both site pages link `styles.css`/`script.js`)
+was error-prone and repeatedly caused exactly the stale-asset confusion
+this convention exists to prevent. Now it's automatic:
+
+```bash
+npm run hash-assets
+```
+
+Run this before every deploy that touched any of those five files — it
+hashes each one and rewrites every `?v=...` reference to it across every
+`public/**/*.html` file, so the query string always matches content and
+never needs manual bumping or cross-file bookkeeping.
 
 ## Jax Toon — SFX (ElevenLabs) + background music
 

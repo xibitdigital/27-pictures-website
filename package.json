@@ -4,7 +4,8 @@
   "scripts": {
     "generate-qr": "node scripts/generate-qr.js",
     "generate-qr-image": "node scripts/generate-qr-image.js",
-    "watermark": "bash scripts/watermark-images.sh"
+    "watermark": "bash scripts/watermark-images.sh",
+    "hash-assets": "node scripts/hash-assets.js"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
