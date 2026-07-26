@@ -202,6 +202,22 @@
     return scratches;
   }
 
+  const CAN_HOVER =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  /** Play a word's SFX clip. Fresh Audio() per play so rapid re-triggers overlap. */
+  function playSfx(url) {
+    if (typeof window !== "undefined" && window.__jaxSoundEnabled === false) return;
+    try {
+      const audio = new Audio(url);
+      audio.play().catch(() => {});
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
   function resolveVariant(w) {
     const v = (w.variant || w.mode || "plain").toString().toLowerCase();
     if (v === "ai" || v === "hud" || v === "terminal" || v === "shout" || v === "caption") return "ai";
@@ -457,7 +473,9 @@
           `height:${box.height}px`,
           "pointer-events:none",
           "overflow:visible",
-          "z-index:4",
+          // Above .nav-zone (z-index:30, covers the full page for turn
+          // clicks) so word hover/click targets actually receive events.
+          "z-index:35",
         ].join(";");
 
         layer.innerHTML = "";
@@ -537,12 +555,24 @@
             maxW != null ? `max-width:${maxW}%` : "",
             ...strokeCss,
             "letter-spacing:0.02em",
+            w.audio ? "pointer-events:auto" : "",
+            w.audio ? "cursor:pointer" : "",
           ]
             .filter(Boolean)
             .join(";");
 
           if (!isBubble) {
             textEl.style.cssText = strokeCss.concat([`color:${w.color || "#fff"}`]).join(";");
+          }
+
+          if (w.audio) {
+            const play = (ev) => {
+              ev.stopPropagation();
+              playSfx(w.audio);
+            };
+            // Desktop mouse: play on hover. Touch (no hover): play on tap.
+            if (CAN_HOVER) el.addEventListener("mouseenter", play);
+            el.addEventListener("click", play);
           }
 
           layer.appendChild(el);

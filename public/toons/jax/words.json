@@ -38,7 +38,8 @@
           "it": "CLANK",
           "de": "KLIRR",
           "fr": "CLANG"
-        }
+        },
+        "audio": "assets/sfx/clank.mp3"
       },
       {
         "x": 0.62,
@@ -55,7 +56,8 @@
           "it": "SWISH",
           "de": "WUSCH",
           "fr": "FOUICH"
-        }
+        },
+        "audio": "assets/sfx/whoosh.mp3"
       },
       {
         "x": 0.72,
@@ -72,7 +74,8 @@
           "it": "HRAA!",
           "de": "HRAA!",
           "fr": "HRAA!"
-        }
+        },
+        "audio": "assets/sfx/hraa.mp3"
       },
       {
         "x": 0.28,
@@ -94,7 +97,8 @@
           "it": "CI SIAMO!",
           "de": "WIR SIND DRIN!",
           "fr": "ON Y EST!"
-        }
+        },
+        "audio": "assets/sfx/we-are-in.mp3"
       }
     ],
     "2": [
@@ -113,7 +117,8 @@
           "it": "KRAKOOM",
           "de": "KRAKOOM",
           "fr": "KRAKOOM"
-        }
+        },
+        "audio": "assets/sfx/krakoom.mp3"
       },
       {
         "x": 0.52,
@@ -130,7 +135,8 @@
           "it": "SWISH",
           "de": "WUSCH",
           "fr": "FOUICH"
-        }
+        },
+        "audio": "assets/sfx/whoosh.mp3"
       },
       {
         "x": 0.48,
@@ -147,7 +153,8 @@
           "it": "BUM",
           "de": "BUMM",
           "fr": "BADA"
-        }
+        },
+        "audio": "assets/sfx/thud.mp3"
       },
       {
         "x": 0.74,
@@ -164,7 +171,8 @@
           "it": "CLACK",
           "de": "KLACK",
           "fr": "CLAC"
-        }
+        },
+        "audio": "assets/sfx/krr-chunk.mp3"
       }
     ],
     "3": [
@@ -183,7 +191,8 @@
           "it": "SWISH",
           "de": "WUSCH",
           "fr": "FOUICH"
-        }
+        },
+        "audio": "assets/sfx/fwoosh.mp3"
       },
       {
         "x": 0.78,
@@ -200,7 +209,8 @@
           "it": "GRRRH",
           "de": "GRRRH",
           "fr": "GRRRH"
-        }
+        },
+        "audio": "assets/sfx/grrrh.mp3"
       },
       {
         "x": 0.48,
@@ -217,7 +227,8 @@
           "it": "CRAAASH",
           "de": "KRACH",
           "fr": "CRAAASH"
-        }
+        },
+        "audio": "assets/sfx/craaash.mp3"
       }
     ],
     "4": [
@@ -236,7 +247,8 @@
           "it": "FOOSH",
           "de": "RUSCH",
           "fr": "VROUM"
-        }
+        },
+        "audio": "assets/sfx/dash.mp3"
       },
       {
         "x": 0.55,
@@ -253,7 +265,8 @@
           "it": "GRAB",
           "de": "RAPS",
           "fr": "ATTRAP'"
-        }
+        },
+        "audio": "assets/sfx/snatch.mp3"
       },
       {
         "x": 0.38,
@@ -270,7 +283,8 @@
           "it": "EH?!",
           "de": "HÄ?!",
           "fr": "HEIN?!"
-        }
+        },
+        "audio": "assets/sfx/huh.mp3"
       },
       {
         "x": 0.22,
@@ -287,7 +301,8 @@
           "it": "SWISH",
           "de": "SCHUNK",
           "fr": "CHTONG"
-        }
+        },
+        "audio": "assets/sfx/shunk.mp3"
       }
     ],
     "5": [
@@ -306,7 +321,8 @@
           "it": "BIP",
           "de": "PIEP",
           "fr": "BIP"
-        }
+        },
+        "audio": "assets/sfx/beep.mp3"
       },
       {
         "x": 0.72,
@@ -323,7 +339,8 @@
           "it": "CLIC",
           "de": "KLICK",
           "fr": "CLIC"
-        }
+        },
+        "audio": "assets/sfx/click.mp3"
       },
       {
         "x": 0.5,
@@ -340,7 +357,8 @@
           "it": "MORMORIO…",
           "de": "GEMURMEL…",
           "fr": "MURMURE…"
-        }
+        },
+        "audio": "assets/sfx/murmur.mp3"
       },
       {
         "x": 0.55,
@@ -357,7 +375,8 @@
           "it": "SSSH",
           "de": "ZISCH",
           "fr": "PSSSH"
-        }
+        },
+        "audio": "assets/sfx/hiss.mp3"
       }
     ],
     "6": [
@@ -376,7 +395,8 @@
           "it": "CLACK",
           "de": "KLACK",
           "fr": "CLAC"
-        }
+        },
+        "audio": "assets/sfx/clack.mp3"
       },
       {
         "x": 0.72,
@@ -393,7 +413,8 @@
           "it": "SWISH",
           "de": "WUPS",
           "fr": "FWIP"
-        }
+        },
+        "audio": "assets/sfx/fwip.mp3"
       },
       {
         "x": 0.42,
@@ -410,7 +431,8 @@
           "it": "BAM",
           "de": "WUMM",
           "fr": "PAF"
-        }
+        },
+        "audio": "assets/sfx/wham.mp3"
       },
       {
         "x": 0.83,
@@ -425,7 +447,8 @@
           "it": "Troppo lento,\ntizio!",
           "de": "Zu langsam,\nKumpel!",
           "fr": "Trop lent,\nmec!"
-        }
+        },
+        "audio": "assets/sfx/too-slow-man.mp3"
       },
       {
         "x": 0.32,
@@ -442,7 +465,8 @@
           "it": "BUM",
           "de": "BUMM",
           "fr": "BADA"
-        }
+        },
+        "audio": "assets/sfx/thud.mp3"
       },
       {
         "x": 0.5,
@@ -459,7 +483,8 @@
           "it": "TAP… TAP",
           "de": "TIPP… TIPP",
           "fr": "TAP… TAP"
-        }
+        },
+        "audio": "assets/sfx/tap-tap.mp3"
       }
     ],
     "7": [
@@ -478,7 +503,8 @@
           "it": "CRASH",
           "de": "KRACH",
           "fr": "CRASH"
-        }
+        },
+        "audio": "assets/sfx/crash.mp3"
       },
       {
         "x": 0.22,
@@ -495,7 +521,8 @@
           "it": "VZZT",
           "de": "WZZT",
           "fr": "VZZT"
-        }
+        },
+        "audio": "assets/sfx/vzzt.mp3"
       },
       {
         "x": 0.78,
@@ -512,7 +539,8 @@
           "it": "BZZT",
           "de": "BZZT",
           "fr": "BZZT"
-        }
+        },
+        "audio": "assets/sfx/bzzt.mp3"
       },
       {
         "x": 0.52,
@@ -529,7 +557,8 @@
           "it": "FOOM",
           "de": "FOOM",
           "fr": "FOOM"
-        }
+        },
+        "audio": "assets/sfx/foom.mp3"
       },
       {
         "x": 0.76,
@@ -551,7 +580,8 @@
           "it": "MODALITÀ COMBATTIMENTO\nATTIVATA",
           "de": "KAMPFMODUS\nAKTIVIERT",
           "fr": "MODE COMBAT\nACTIVÉ"
-        }
+        },
+        "audio": "assets/sfx/combat-mode-activated.mp3"
       }
     ],
     "8": [
@@ -570,7 +600,8 @@
           "it": "VRUM",
           "de": "SUMM",
           "fr": "VRROUM"
-        }
+        },
+        "audio": "assets/sfx/whirr.mp3"
       },
       {
         "x": 0.62,
@@ -587,7 +618,8 @@
           "it": "CLUNK",
           "de": "KLONK",
           "fr": "CLONC"
-        }
+        },
+        "audio": "assets/sfx/clunk.mp3"
       },
       {
         "x": 0.68,
@@ -604,7 +636,8 @@
           "it": "BOOOOM",
           "de": "BOOOOM",
           "fr": "BOOOOM"
-        }
+        },
+        "audio": "assets/sfx/booom.mp3"
       }
     ],
     "9": [
@@ -623,7 +656,8 @@
           "it": "PING",
           "de": "PING",
           "fr": "PING"
-        }
+        },
+        "audio": "assets/sfx/ping.mp3"
       },
       {
         "x": 0.58,
@@ -640,7 +674,8 @@
           "it": "KABOOOM",
           "de": "KABOOOM",
           "fr": "KABOOOM"
-        }
+        },
+        "audio": "assets/sfx/kaboom.mp3"
       }
     ]
   }

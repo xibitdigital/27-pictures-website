@@ -156,6 +156,31 @@ npm run generate-qr
 # Output: ~/Downloads/27pictures-qr.pdf
 ```
 
+## Jax Toon — SFX (ElevenLabs)
+
+Word overlays in `public/toons/jax/words.json` can carry an `"audio"` field
+(e.g. `"assets/sfx/clank.mp3"`) pointing at a short SFX clip baked for that
+onomatopoeia/caption. Playback is wired in `public/toons/jax/words.js`:
+desktop mouse hover (`mouseenter`, gated on `(hover: hover) and (pointer:
+fine)`) plays the clip; touch devices play on tap instead.
+
+### Regenerating / adding clips
+
+1. `ELEVENLABS_API_KEY` lives in `.env` (gitignored, never commit it).
+2. Add/edit an entry in `scripts/jax-sfx-manifest.json` (`slug`, `prompt`,
+   `duration` in seconds).
+3. Run:
+   ```bash
+   set -a; source .env; set +a
+   python3 scripts/generate-jax-sfx.py
+   ```
+   Writes `public/toons/jax/assets/sfx/<slug>.mp3` via the ElevenLabs Sound
+   Effects API (`POST /v1/sound-generation`). Skips slugs whose file already
+   exists — pass `--force` to regenerate (re-spends credits).
+4. Add `"audio": "assets/sfx/<slug>.mp3"` to the matching word entry/entries
+   in `words.json` (multiple entries can share one clip, e.g. both `WHOOSH`
+   instances).
+
 ## SEO State
 
 ### Completed

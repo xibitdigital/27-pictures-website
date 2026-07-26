@@ -242,6 +242,19 @@
         text-align: center;
       }
 
+      #soundBtn.is-enabled {
+        border-color: var(--red-smile);
+        color: var(--red-smile);
+      }
+
+      #soundBtn #soundWaves {
+        display: none;
+      }
+
+      #soundBtn.is-enabled #soundWaves {
+        display: inline;
+      }
+
       /* ── Book container ── */
       .book-scene {
         perspective: 2200px;
@@ -731,6 +744,29 @@
       <div id="langSwitcher" class="jax-lang-switcher"></div>
       <button
         type="button"
+        id="soundBtn"
+        class="toon-fs-btn"
+        aria-pressed="false"
+        title="Enable sound effects"
+        aria-label="Enable sound effects"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path
+            d="M4 9v6h4l5 4V5L8 9H4z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            id="soundWaves"
+            d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span class="toon-fs-label" id="soundBtnLabel">Sound</span>
+      </button>
+      <button
+        type="button"
         id="fullscreenBtn"
         class="toon-fs-btn"
         aria-pressed="false"
@@ -777,6 +813,30 @@
     <script src="words.js"></script>
     <script>
       let wordOverlay = null;
+
+      window.__jaxSoundEnabled = false;
+
+      (function () {
+        const btn = document.getElementById("soundBtn");
+        const label = document.getElementById("soundBtnLabel");
+        if (!btn) return;
+        btn.addEventListener("click", () => {
+          const enabled = !window.__jaxSoundEnabled;
+          window.__jaxSoundEnabled = enabled;
+          btn.classList.toggle("is-enabled", enabled);
+          btn.setAttribute("aria-pressed", String(enabled));
+          btn.title = enabled ? "Mute sound effects" : "Enable sound effects";
+          btn.setAttribute("aria-label", btn.title);
+          if (label) label.textContent = enabled ? "Sound on" : "Sound";
+          // The click itself is a real user gesture — play a confirmation
+          // tone so enabling is audibly obvious (and proves audio output
+          // works before the user starts hovering word captions).
+          if (enabled) {
+            const confirm = new Audio("assets/sfx/beep.mp3");
+            confirm.play().catch(() => {});
+          }
+        });
+      })();
 
       ToonBook.init({
         altPrefix: "Jax",
