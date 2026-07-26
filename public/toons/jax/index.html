@@ -21,7 +21,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../../styles.css?v=13" />
-    <link rel="stylesheet" href="../reader-shared.css?v=5" />
+    <link rel="stylesheet" href="../reader-shared.css?v=9" />
     <style>
       /* Book-only tokens — portrait pages (1008×1792). Shared reader shell
          chrome lives in ../reader-shared.css; this block only has Jax's own
@@ -50,8 +50,8 @@
       }
 
       body.single-page {
-        --book-width: min(94vw, 420px);
-        --book-height: min(72dvh, calc(var(--book-width) * 1.778));
+        --book-width: min(97vw, 460px);
+        --book-height: min(84dvh, calc(var(--book-width) * 1.778));
       }
 
       /* Language switcher — same chrome as .toon-fs-btn (reader-shared.css)
@@ -179,7 +179,11 @@
       aria-hidden="true"
     ></audio>
 
-    <a href="/experiments/" class="toons-back">← Experiments</a>
+    <a href="/experiments/" class="toons-back" title="Back to Experiments" aria-label="Back to Experiments">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </a>
     <div class="toon-top-controls">
       <div id="langSwitcher" class="jax-lang-switcher"></div>
       <button
@@ -191,11 +195,7 @@
         aria-label="Enable sound effects"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path
-            d="M4 9v6h4l5 4V5L8 9H4z"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+          <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
           <path
             id="soundWaves"
             d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
@@ -280,7 +280,7 @@
       </div>
     </main>
 
-    <script src="../book-reader.js?v=4"></script>
+    <script src="../book-reader.js?v=5"></script>
     <script src="words.js?v=1"></script>
     <script>
       let wordOverlay = null;

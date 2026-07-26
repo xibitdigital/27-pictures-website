@@ -34,12 +34,15 @@ body.toons-reader {
   top: 1.5rem;
   left: 1.5rem;
   z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--silver);
   text-decoration: none;
-  font-size: 0.75rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.65rem;
+  min-height: 1.9rem;
   transition:
     color 0.2s var(--transition),
     border-color 0.2s var(--transition);
@@ -47,7 +50,13 @@ body.toons-reader {
 
 .toons-back:hover {
   color: var(--text);
-  border-color: var(--silver);
+  border-color: var(--border-light);
+}
+
+.toons-back svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
 .title-bar {
@@ -687,14 +696,13 @@ body.single-page .flip-page.flipping.from-left {
 
 @media (max-width: 768px) {
   .reader {
-    padding: 4.5rem 0.75rem 1.5rem;
+    padding: 3.25rem 0.75rem 1.5rem;
     gap: 1.15rem;
   }
 
   .toons-back {
     top: 1rem;
     left: 1rem;
-    font-size: 0.65rem;
   }
 
   .controls {
@@ -724,13 +732,21 @@ body.single-page .flip-page.flipping.from-left {
     gap: 0.5rem;
   }
 
+  .title-bar .section-tag {
+    display: none;
+  }
+
   .title-bar h1 {
-    font-size: clamp(1.15rem, 5vw, 1.5rem);
+    display: none;
   }
 
   .toon-top-controls {
     top: 1rem;
     right: 1rem;
+    max-width: calc(100vw - 2rem);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: 0.35rem;
   }
 
   .toon-fs-btn .toon-fs-label {

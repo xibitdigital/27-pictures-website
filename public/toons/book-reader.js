@@ -237,10 +237,8 @@
         const content = singleViewContent(viewIndex);
         if (content.kind === "page") {
           indicator.textContent = `${content.num} / ${total}`;
-        } else if (content.kind === "front") {
-          indicator.textContent = `Cover`;
         } else {
-          indicator.textContent = `End`;
+          indicator.textContent = "";
         }
         btnPrev.disabled = viewIndex <= 0;
         btnNext.disabled = viewIndex >= totalViews() - 1;
@@ -480,11 +478,7 @@
     }
 
     function isFullscreen() {
-      return !!(
-        document.fullscreenElement ||
-        document.webkitFullscreenElement ||
-        document.msFullscreenElement
-      );
+      return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
     }
 
     function updateFullscreenButton() {
@@ -500,12 +494,7 @@
       if (label) label.textContent = on ? "Exit" : "Full";
       const path = btn.querySelector("svg path");
       if (path) {
-        path.setAttribute(
-          "d",
-          on
-            ? "M8 8H3V3M16 8h5V3M8 16H3v5M16 16h5v5"
-            : "M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"
-        );
+        path.setAttribute("d", on ? "M8 8H3V3M16 8h5V3M8 16H3v5M16 16h5v5" : "M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5");
       }
       if (afterFullscreen) afterFullscreen();
     }

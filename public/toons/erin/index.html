@@ -18,7 +18,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../../styles.css?v=13" />
-    <link rel="stylesheet" href="../reader-shared.css?v=5" />
+    <link rel="stylesheet" href="../reader-shared.css?v=9" />
     <style>
       /* Book-only tokens (page paper / spine — not site chrome). Shared
          reader shell chrome lives in ../reader-shared.css; this block only
@@ -46,15 +46,19 @@
       }
 
       body.single-page {
-        --book-width: min(94vw, 420px);
-        --book-height: min(68dvh, calc(var(--book-width) * 1.5));
+        --book-width: min(97vw, 460px);
+        --book-height: min(80dvh, calc(var(--book-width) * 1.5));
       }
     </style>
   </head>
   <body class="toons-reader">
     <div id="grain" aria-hidden="true"></div>
 
-    <a href="/experiments/" class="toons-back">← Experiments</a>
+    <a href="/experiments/" class="toons-back" title="Back to Experiments" aria-label="Back to Experiments">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </a>
     <div class="toon-top-controls">
       <button
         type="button"
@@ -114,7 +118,7 @@
       </div>
     </main>
 
-    <script src="../book-reader.js?v=4"></script>
+    <script src="../book-reader.js?v=5"></script>
     <script>
       ToonBook.init({ altPrefix: "Erin", frontCoverLogo: "../../logosquare.png" });
     </script>
