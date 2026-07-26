@@ -10,159 +10,512 @@
   "pages": {
     "1": [
       {
-        "id": "p1-title",
-        "x": 0.5,
-        "y": 0.08,
+        "x": 0.42,
+        "y": 0.1,
         "align": "center",
         "size": 48,
-        "color": "#ffffff",
-        "shadow": true,
-        "maxWidth": 0.85,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -12,
+        "maxWidth": 0.45,
         "text": {
-          "en": "JAX",
-          "it": "JAX"
+          "en": "CLANK",
+          "it": "CLANK"
         }
       },
       {
-        "id": "p1-sub",
-        "x": 0.5,
-        "y": 0.14,
+        "x": 0.62,
+        "y": 0.42,
         "align": "center",
-        "size": 18,
-        "color": "#e8e0d4",
-        "shadow": true,
-        "maxWidth": 0.8,
+        "size": 44,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 8,
+        "angle": 14,
+        "maxWidth": 0.4,
         "text": {
-          "en": "Netrunner · Night City edge",
-          "it": "Netrunner · Confini di Night City"
+          "en": "WHOOSH",
+          "it": "SWISH"
+        }
+      },
+      {
+        "x": 0.72,
+        "y": 0.78,
+        "align": "center",
+        "size": 50,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -8,
+        "maxWidth": 0.4,
+        "text": {
+          "en": "HRAA!",
+          "it": "HRAA!"
         }
       }
     ],
     "2": [
       {
-        "id": "p2-a",
-        "x": 0.12,
-        "y": 0.18,
-        "align": "left",
-        "size": 22,
-        "color": "#ffffff",
-        "shadow": true,
-        "maxWidth": 0.42,
+        "x": 0.22,
+        "y": 0.13,
+        "align": "center",
+        "size": 52,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -18,
+        "maxWidth": 0.4,
         "text": {
-          "en": "Rain on chrome.\nSame alleys. New ghosts.",
-          "it": "Pioggia sul cromo.\nStessi vicoli. Nuovi fantasmi."
+          "en": "KRAKOOM",
+          "it": "KRAKOOM"
+        }
+      },
+      {
+        "x": 0.52,
+        "y": 0.11,
+        "align": "center",
+        "size": 36,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": 22,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "WHOOSH",
+          "it": "SWISH"
+        }
+      },
+      {
+        "x": 0.48,
+        "y": 0.58,
+        "align": "center",
+        "size": 40,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 8,
+        "angle": -6,
+        "maxWidth": 0.4,
+        "text": {
+          "en": "THUD",
+          "it": "BUM"
+        }
+      },
+      {
+        "x": 0.74,
+        "y": 0.84,
+        "align": "center",
+        "size": 34,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": 12,
+        "maxWidth": 0.38,
+        "text": {
+          "en": "KRR-CHUNK",
+          "it": "CLACK"
         }
       }
     ],
     "3": [
       {
-        "id": "p3-a",
-        "x": 0.55,
-        "y": 0.22,
-        "align": "left",
-        "size": 20,
-        "color": "#ffffff",
-        "shadow": true,
-        "maxWidth": 0.4,
+        "x": 0.72,
+        "y": 0.14,
+        "align": "center",
+        "size": 32,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 6,
+        "angle": 10,
+        "maxWidth": 0.3,
         "text": {
-          "en": "Signal's dirty.\nSomeone's spoofing the grid.",
-          "it": "Segnale sporco.\nQualcuno sta spoofando la rete."
+          "en": "FWOOSH",
+          "it": "SWISH"
+        }
+      },
+      {
+        "x": 0.78,
+        "y": 0.42,
+        "align": "center",
+        "size": 38,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": -6,
+        "maxWidth": 0.32,
+        "text": {
+          "en": "GRRRH",
+          "it": "GRRRH"
+        }
+      },
+      {
+        "x": 0.48,
+        "y": 0.88,
+        "align": "center",
+        "size": 54,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 10,
+        "angle": -14,
+        "maxWidth": 0.45,
+        "text": {
+          "en": "CRAAASH",
+          "it": "CRAAASH"
         }
       }
     ],
     "4": [
       {
-        "id": "p4-a",
-        "x": 0.1,
-        "y": 0.7,
-        "align": "left",
-        "size": 22,
-        "color": "#fff8e7",
-        "shadow": true,
-        "maxWidth": 0.5,
+        "x": 0.45,
+        "y": 0.1,
+        "align": "center",
+        "size": 40,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 8,
+        "angle": -12,
+        "maxWidth": 0.35,
         "text": {
-          "en": "Stay low.\nDon't jack in cold.",
-          "it": "Stai basso.\nNon entrare a freddo."
+          "en": "DASH",
+          "it": "FOOSH"
+        }
+      },
+      {
+        "x": 0.55,
+        "y": 0.36,
+        "align": "center",
+        "size": 36,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": 8,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "SNATCH",
+          "it": "GRAB"
+        }
+      },
+      {
+        "x": 0.38,
+        "y": 0.6,
+        "align": "center",
+        "size": 34,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": -10,
+        "maxWidth": 0.3,
+        "text": {
+          "en": "HUH?!",
+          "it": "EH?!"
+        }
+      },
+      {
+        "x": 0.22,
+        "y": 0.8,
+        "align": "center",
+        "size": 42,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 8,
+        "angle": -20,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "SHUNK",
+          "it": "SWISH"
         }
       }
     ],
     "5": [
       {
-        "id": "p5-a",
-        "x": 0.5,
+        "x": 0.58,
         "y": 0.12,
         "align": "center",
-        "size": 24,
-        "color": "#ffffff",
-        "shadow": true,
-        "maxWidth": 0.75,
+        "size": 36,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": 6,
+        "maxWidth": 0.32,
         "text": {
-          "en": "The deal was simple.\nUntil it wasn't.",
-          "it": "L'affare era semplice.\nFino a quando non lo fu più."
+          "en": "BEEP",
+          "it": "BIP"
+        }
+      },
+      {
+        "x": 0.72,
+        "y": 0.18,
+        "align": "center",
+        "size": 30,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 6,
+        "angle": -8,
+        "maxWidth": 0.28,
+        "text": {
+          "en": "CLICK",
+          "it": "CLIC"
+        }
+      },
+      {
+        "x": 0.5,
+        "y": 0.42,
+        "align": "center",
+        "size": 28,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 6,
+        "angle": 4,
+        "maxWidth": 0.45,
+        "text": {
+          "en": "MURMUR…",
+          "it": "MORMORIO…"
+        }
+      },
+      {
+        "x": 0.55,
+        "y": 0.86,
+        "align": "center",
+        "size": 38,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": -5,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "HISS",
+          "it": "SSSH"
         }
       }
     ],
     "6": [
       {
-        "id": "p6-a",
-        "x": 0.58,
-        "y": 0.55,
-        "align": "left",
-        "size": 20,
-        "color": "#ffffff",
-        "shadow": true,
+        "x": 0.28,
+        "y": 0.1,
+        "align": "center",
+        "size": 34,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": -14,
+        "maxWidth": 0.3,
+        "text": {
+          "en": "CLACK",
+          "it": "CLACK"
+        }
+      },
+      {
+        "x": 0.72,
+        "y": 0.12,
+        "align": "center",
+        "size": 38,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": 18,
+        "maxWidth": 0.32,
+        "text": {
+          "en": "FWIP",
+          "it": "SWISH"
+        }
+      },
+      {
+        "x": 0.42,
+        "y": 0.38,
+        "align": "center",
+        "size": 48,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -16,
         "maxWidth": 0.38,
         "text": {
-          "en": "Eyes up.\nNeon lies.",
-          "it": "Occhi aperti.\nIl neon mente."
+          "en": "WHAM",
+          "it": "BAM"
+        }
+      },
+      {
+        "x": 0.83,
+        "y": 0.31,
+        "align": "center",
+        "size": 42,
+        "color": "#111111",
+        "angle": 6,
+        "maxWidth": 0.22,
+        "text": {
+          "en": "Too slow,\nman!",
+          "it": "Troppo lento,\ntizio!"
+        }
+      },
+      {
+        "x": 0.32,
+        "y": 0.66,
+        "align": "center",
+        "size": 36,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": 8,
+        "maxWidth": 0.32,
+        "text": {
+          "en": "THUD",
+          "it": "BUM"
+        }
+      },
+      {
+        "x": 0.5,
+        "y": 0.9,
+        "align": "center",
+        "size": 28,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 6,
+        "angle": 0,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "TAP… TAP",
+          "it": "TAP… TAP"
         }
       }
     ],
     "7": [
       {
-        "id": "p7-a",
-        "x": 0.15,
-        "y": 0.25,
-        "align": "left",
-        "size": 22,
-        "color": "#ffffff",
-        "shadow": true,
-        "maxWidth": 0.45,
+        "x": 0.5,
+        "y": 0.16,
+        "align": "center",
+        "size": 46,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -10,
+        "maxWidth": 0.42,
         "text": {
-          "en": "I can hear the ICE\nbefore it bites.",
-          "it": "Sento l'ICE\nprima che morda."
+          "en": "CRASH",
+          "it": "CRASH"
+        }
+      },
+      {
+        "x": 0.22,
+        "y": 0.42,
+        "align": "center",
+        "size": 32,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 6,
+        "angle": -4,
+        "maxWidth": 0.28,
+        "text": {
+          "en": "VZZT",
+          "it": "VZZT"
+        }
+      },
+      {
+        "x": 0.78,
+        "y": 0.48,
+        "align": "center",
+        "size": 30,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 6,
+        "angle": 8,
+        "maxWidth": 0.28,
+        "text": {
+          "en": "BZZT",
+          "it": "BZZT"
+        }
+      },
+      {
+        "x": 0.52,
+        "y": 0.86,
+        "align": "center",
+        "size": 48,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -12,
+        "maxWidth": 0.4,
+        "text": {
+          "en": "FOOM",
+          "it": "FOOM"
         }
       }
     ],
     "8": [
       {
-        "id": "p8-a",
-        "x": 0.5,
-        "y": 0.82,
+        "x": 0.55,
+        "y": 0.1,
         "align": "center",
-        "size": 20,
-        "color": "#e8e0d4",
-        "shadow": true,
-        "maxWidth": 0.7,
+        "size": 40,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 8,
+        "angle": -8,
+        "maxWidth": 0.35,
         "text": {
-          "en": "Run the exploit.\nDon't look back.",
-          "it": "Lancia l'exploit.\nNon voltarti."
+          "en": "WHIRR",
+          "it": "VRUM"
+        }
+      },
+      {
+        "x": 0.62,
+        "y": 0.48,
+        "align": "center",
+        "size": 38,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 7,
+        "angle": 10,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "CLUNK",
+          "it": "CLUNK"
+        }
+      },
+      {
+        "x": 0.68,
+        "y": 0.86,
+        "align": "center",
+        "size": 56,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 10,
+        "angle": -14,
+        "maxWidth": 0.4,
+        "text": {
+          "en": "BOOOOM",
+          "it": "BOOOOM"
         }
       }
     ],
     "9": [
       {
-        "id": "p9-a",
-        "x": 0.5,
-        "y": 0.5,
+        "x": 0.68,
+        "y": 0.2,
         "align": "center",
-        "size": 28,
-        "color": "#ffffff",
-        "shadow": true,
-        "maxWidth": 0.8,
+        "size": 42,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 8,
+        "angle": 12,
+        "maxWidth": 0.35,
         "text": {
-          "en": "End of line — for now.",
-          "it": "Fine della linea — per ora."
+          "en": "PING",
+          "it": "PING"
+        }
+      },
+      {
+        "x": 0.58,
+        "y": 0.72,
+        "align": "center",
+        "size": 58,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 11,
+        "angle": -16,
+        "maxWidth": 0.45,
+        "text": {
+          "en": "KABOOOM",
+          "it": "KABOOOM"
         }
       }
     ]

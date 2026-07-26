@@ -83,11 +83,104 @@
       /* Match .horror-text h2 (The Red Smile) — Playfair display, bigger */
       .title-bar h1 {
         font-family: "Playfair Display", serif;
-        font-size: clamp(2rem, 9vw, 4rem);
+        font-size: clamp(1.35rem, 4.5vw, 2rem);
         font-weight: 900;
-        line-height: 0.9;
+        line-height: 0.95;
         letter-spacing: 0;
         color: var(--text);
+      }
+
+      /* Top-right fullscreen control */
+      .erin-top-controls {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .erin-fs-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--silver);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 0.4rem 0.65rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        min-height: 1.9rem;
+        transition:
+          color 0.2s var(--transition),
+          border-color 0.2s var(--transition),
+          background 0.2s var(--transition);
+      }
+
+      .erin-fs-btn:hover {
+        color: var(--text);
+        border-color: var(--border-light);
+      }
+
+      .erin-fs-btn.is-active {
+        border-color: var(--red-smile);
+        color: var(--red-smile);
+      }
+
+      .erin-fs-btn:focus-visible {
+        outline: 2px solid var(--red-smile);
+        outline-offset: 2px;
+      }
+
+      .erin-fs-btn svg {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+      }
+
+      /* Fullscreen: hide back + nav; shrink title */
+      body.is-fullscreen .toons-back,
+      body.is-fullscreen .controls,
+      body.is-fullscreen .hint {
+        display: none !important;
+      }
+
+      body.is-fullscreen .title-bar {
+        margin: 0;
+      }
+
+      body.is-fullscreen .title-bar .section-tag {
+        font-size: 8px;
+        letter-spacing: 3px;
+        margin-bottom: 4px;
+      }
+
+      body.is-fullscreen .title-bar h1 {
+        font-size: clamp(1.1rem, 2.8vw, 1.65rem);
+      }
+
+      body.is-fullscreen .reader {
+        min-height: 100dvh;
+        padding: 0.75rem 1rem 1rem;
+        justify-content: center;
+        gap: 0.65rem;
+      }
+
+      body.is-fullscreen .book-scene {
+        --book-width: min(96vw, calc(92dvh * 1.35));
+        --book-height: min(88dvh, calc(var(--book-width) * 0.72));
+        width: var(--book-width);
+        height: var(--book-height);
+      }
+
+      body.is-fullscreen.single-page .book-scene {
+        --book-width: min(94vw, calc(88dvh * 0.67));
+        --book-height: min(88dvh, calc(var(--book-width) * 1.5));
       }
 
       /* ── Book container ── */
@@ -553,7 +646,20 @@
         }
 
         .title-bar h1 {
-          font-size: clamp(1.5rem, 7vw, 2.1rem);
+          font-size: clamp(1.15rem, 5vw, 1.5rem);
+        }
+
+        .erin-top-controls {
+          top: 1rem;
+          right: 1rem;
+        }
+
+        .erin-fs-btn .erin-fs-label {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
         }
       }
     </style>
@@ -562,6 +668,21 @@
     <div id="grain" aria-hidden="true"></div>
 
     <a href="/experiments/" class="toons-back">← Experiments</a>
+    <div class="erin-top-controls">
+      <button
+        type="button"
+        id="fullscreenBtn"
+        class="erin-fs-btn"
+        aria-pressed="false"
+        title="Fullscreen"
+        aria-label="Enter fullscreen"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="erin-fs-label">Full</span>
+      </button>
+    </div>
 
     <main class="reader" id="main-content" role="main">
       <header class="title-bar">
@@ -630,6 +751,11 @@
         const res = await fetch("manifest.json", { cache: "no-cache" });
         if (!res.ok) throw new Error(`manifest.json ${res.status}`);
         const manifest = await res.json();
+        // Ordered hashed file list (preferred) — not sequentially guessable
+        if (Array.isArray(manifest.files) && manifest.files.length) {
+          return manifest.files.map((f) => String(f));
+        }
+        // Legacy fallback: assets/1.jpg …
         const count = Number(manifest.pages) || 0;
         const pattern = manifest.pattern || "assets/{n}.jpg";
         if (count < 1) return [];
@@ -976,6 +1102,70 @@
         singlePageMq.addListener((e) => applyMode(e.matches));
       }
 
+      function isFullscreen() {
+        return !!(
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.msFullscreenElement
+        );
+      }
+
+      function updateFullscreenButton() {
+        const btn = document.getElementById("fullscreenBtn");
+        if (!btn) return;
+        const on = isFullscreen();
+        document.body.classList.toggle("is-fullscreen", on);
+        btn.classList.toggle("is-active", on);
+        btn.setAttribute("aria-pressed", String(on));
+        btn.setAttribute("aria-label", on ? "Exit fullscreen" : "Enter fullscreen");
+        btn.title = on ? "Exit fullscreen" : "Fullscreen";
+        const label = btn.querySelector(".erin-fs-label");
+        if (label) label.textContent = on ? "Exit" : "Full";
+        const path = btn.querySelector("svg path");
+        if (path) {
+          path.setAttribute(
+            "d",
+            on
+              ? "M8 8H3V3M16 8h5V3M8 16H3v5M16 16h5v5"
+              : "M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"
+          );
+        }
+      }
+
+      async function toggleFullscreen() {
+        try {
+          if (isFullscreen()) {
+            if (document.exitFullscreen) await document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+          } else {
+            const el = document.documentElement;
+            if (el.requestFullscreen) await el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.msRequestFullscreen) el.msRequestFullscreen();
+          }
+        } catch (err) {
+          console.warn("Fullscreen not available:", err);
+        }
+      }
+
+      function mountFullscreenButton() {
+        const btn = document.getElementById("fullscreenBtn");
+        if (!btn) return;
+        if (
+          !document.documentElement.requestFullscreen &&
+          !document.documentElement.webkitRequestFullscreen &&
+          !document.documentElement.msRequestFullscreen
+        ) {
+          btn.hidden = true;
+          return;
+        }
+        btn.addEventListener("click", toggleFullscreen);
+        document.addEventListener("fullscreenchange", updateFullscreenButton);
+        document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+        updateFullscreenButton();
+      }
+
       async function init() {
         try {
           pages = await loadPages();
@@ -993,6 +1183,8 @@
           btnNext.disabled = true;
           return;
         }
+
+        mountFullscreenButton();
 
         totalSpreads = Math.ceil((pages.length + 1) / 2);
         pages.forEach((src) => {

@@ -1,10 +1,23 @@
 {
   "title": "Jax",
-  "pages": 9,
-  "pattern": "assets/{n}.jpg",
   "designWidth": 1008,
   "designHeight": 1792,
   "font": "Cabin Sketch",
-  "languages": ["en", "it"],
-  "defaultLang": "en"
+  "languages": [
+    "en",
+    "it"
+  ],
+  "defaultLang": "en",
+  "pages": 9,
+  "files": [
+    "assets/305881205875c4c3566e633f3c7559fc.jpg",
+    "assets/cffdbfa921cc19a12fe57ea1aff5ecc3.jpg",
+    "assets/4c49d8376a92301853c429a929b6b1de.jpg",
+    "assets/44a034637440b971d0bf3ed865d16929.jpg",
+    "assets/4efaf31880584cfa509ef295d981945e.jpg",
+    "assets/05a84783a8e2f8d09fdb89dd47f935ec.jpg",
+    "assets/28558a37d2c085f9a514fd5b49a89906.jpg",
+    "assets/df1e31be97290d1c2ffaa314d414fbf3.jpg",
+    "assets/0574a2b82684847176dd7d8d5985034b.jpg"
+  ]
 }
