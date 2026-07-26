@@ -153,7 +153,7 @@
         ${
           soundHint
             ? `<button type="button" class="toon-fs-btn front-cover-sound-btn" aria-pressed="false" title="Enable sound">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
                   <path class="front-cover-sound-waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
