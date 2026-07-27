@@ -24,4 +24,17 @@
       <image:caption>Cover art for Erin, an interactive page-turning manga reader prototype by 27 Pictures</image:caption>
     </image:image>
   </url>
+  <url>
+    <loc>https://twentyseven.pictures/toons/erin/</loc>
+    <lastmod>2026-07-27</lastmod>
+    <image:image>
+      <image:loc>https://twentyseven.pictures/toons/erin/assets/6bfcd46718a6a8defd3b22e4998c7ddf.jpg</image:loc>
+      <image:title>Erin interactive manga reader — 27 Pictures Experiments</image:title>
+      <image:caption>Cover art for Erin, an interactive page-turning manga reader prototype by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/toons/jax/</loc>
+    <lastmod>2026-07-27</lastmod>
+  </url>
 </urlset>
