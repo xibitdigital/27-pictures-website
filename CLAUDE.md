@@ -355,7 +355,7 @@ format, e.g. a large `.wav`, shouldn't be committed).
 | `nuMPi_Rnxg0` | Cosplay showcase (unlisted) | — | — |
 
 ### Remaining TODOs
-- **Person schema** — add founder/director name + 2-3 sentence bio (highest E-E-A-T leverage)
+- ~~Person schema~~ — done: 3 founders (Sonia, Marco, Daniele Sangalli) with `jobTitle`/`description`/`worksFor`, linked from `Organization.founder`
 - Update VideoObject entries when new Shorts are published
 - Submit new URLs to IndexNow after each deploy:
   ```bash
