@@ -24,10 +24,10 @@
   "pages": {
     "1": [
       {
-        "x": 0.42,
-        "y": 0.1,
+        "x": 0.40,
+        "y": 0.15,
         "align": "center",
-        "size": 55,
+        "size": 65,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 9,
@@ -42,8 +42,8 @@
         "audio": "assets/sfx/12cd3501a258f305455ed5bf3cf76ed3.mp3"
       },
       {
-        "x": 0.62,
-        "y": 0.42,
+        "x": 0.35,
+        "y": 0.32 ,
         "align": "center",
         "size": 51,
         "color": "#111111",
@@ -60,7 +60,7 @@
         "audio": "assets/sfx/87ab1ab9462f4cb320e5795269b5ad31.mp3"
       },
       {
-        "x": 0.72,
+        "x": 0.82,
         "y": 0.78,
         "align": "center",
         "size": 57,
@@ -142,7 +142,7 @@
         "x": 0.48,
         "y": 0.67,
         "align": "center",
-        "size": 52,
+        "size": 72,
         "color": "#111111",
         "stroke": "#ffffff",
         "strokeThickness": 8,
