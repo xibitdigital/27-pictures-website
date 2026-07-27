@@ -1,6 +1,6 @@
 /**
  * Jax caption overlays for ToonBook pages.
- * - Multilingual words at x/y design coordinates (Cabin Sketch)
+ * - Multilingual words at x/y design coordinates (Bangers)
  * - Coordinates: 0–1 fractions of design size, or absolute design pixels
  * - variant: "plain" (default) | "bubble" (sketchy dialog balloon)
  * Used with ../book-reader.js via ToonBook.init({ onPagePaint, … })
@@ -444,7 +444,7 @@
         { code: "fr", label: "FR" },
       ];
       this.defaultLang = config.defaultLang || "en";
-      this.fontFamily = config.fontFamily || '"Cabin Sketch", cursive';
+      this.fontFamily = config.fontFamily || '"Bangers", cursive';
       this.lang = this._readStoredLang() || this.defaultLang;
       this._observers = new WeakMap();
     }
