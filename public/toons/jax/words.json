@@ -695,6 +695,110 @@
         },
         "audio": "assets/sfx/658af530af4a6554557a436b92836102.mp3"
       }
+    ],
+    "10": [
+      {
+        "x": 0.78,
+        "y": 0.12,
+        "align": "center",
+        "size": 58,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -14,
+        "maxWidth": 0.38,
+        "text": {
+          "en": "KRAKOOM",
+          "it": "KRAKOOM",
+          "de": "KRAKOOM",
+          "fr": "KRAKOOM"
+        },
+        "audio": "assets/sfx/67acf8d270ae24fb4048829498c536ee.mp3"
+      },
+      {
+        "x": 0.18,
+        "y": 0.52,
+        "align": "center",
+        "size": 72,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 10,
+        "angle": 12,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "THUD",
+          "it": "BUM",
+          "de": "BUMM",
+          "fr": "BADA"
+        },
+        "audio": "assets/sfx/5b26b702d12fc87c5e8dbb3c197fff8e.mp3"
+      },
+      {
+        "x": 0.74,
+        "y": 0.82,
+        "align": "center",
+        "size": 68,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -10,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "BZZT",
+          "it": "BZZT",
+          "de": "BZZT",
+          "fr": "BZZT"
+        },
+        "audio": "assets/sfx/56648d1a28af2428b55a600e623515e5.mp3"
+      }
+    ],
+    "11": [
+      {
+        "x": 0.72,
+        "y": 0.22,
+        "align": "center",
+        "size": 46,
+        "variant": "ai",
+        "color": "#f5f5f5",
+        "angle": -2,
+        "maxWidth": 0.32,
+        "bubble": {
+          "fill": "#0a0a0a",
+          "stroke": "#0a0a0a",
+          "strokeWidth": 2.2,
+          "tail": "none"
+        },
+        "text": {
+          "en": "NANOBOTS\nACTIVATED",
+          "it": "NANOBOT\nATTIVATI",
+          "de": "NANOBOTS\nAKTIVIERT",
+          "fr": "NANOBOTS\nACTIVÉS"
+        },
+        "audio": "assets/sfx/59f01d185c22445d705240332b5f937f.mp3"
+      },
+      {
+        "x": 0.68,
+        "y": 0.72,
+        "align": "center",
+        "size": 68,
+        "variant": "ai",
+        "color": "#f5f5f5",
+        "angle": 3,
+        "maxWidth": 0.28,
+        "bubble": {
+          "fill": "#0a0a0a",
+          "stroke": "#0a0a0a",
+          "strokeWidth": 2.2,
+          "tail": "none"
+        },
+        "text": {
+          "en": "FIXING SKIN",
+          "it": "RIPARO PELLE",
+          "de": "HAUT WIRD\nREPARIERT",
+          "fr": "RÉPARATION\nPEAU"
+        },
+        "audio": "assets/sfx/8f7af8ef6d3f69518d7d21a7a04826cb.mp3"
+      }
     ]
   }
 }
