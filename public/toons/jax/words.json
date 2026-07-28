@@ -22,7 +22,8 @@
   ],
   "fontFamily": "\"Bangers\", cursive",
   "pages": {
-    "1": [
+    "1": [],
+    "2": [
       {
         "x": 0.4,
         "y": 0.15,
@@ -101,7 +102,7 @@
         "audio": "assets/sfx/eb6ef2562b828e184ff9a1daf88659d1.mp3"
       }
     ],
-    "2": [
+    "3": [
       {
         "x": 0.22,
         "y": 0.08,
@@ -175,7 +176,7 @@
         "audio": "assets/sfx/8377a7f0c3aea6eaa8d7ed1a304797e0.mp3"
       }
     ],
-    "3": [
+    "4": [
       {
         "x": 0.72,
         "y": 0.14,
@@ -249,7 +250,7 @@
         "audio": "assets/sfx/cea33fce429168a72924d9e5a74e9c03.mp3"
       }
     ],
-    "4": [
+    "5": [
       {
         "x": 0.45,
         "y": 0.1,
@@ -299,7 +300,7 @@
         "text": {
           "en": "HUH?!",
           "it": "EH?!",
-          "de": "HÄ?!",
+          "de": "H\u00c4?!",
           "fr": "HEIN?!"
         },
         "audio": "assets/sfx/a8d31a43df7205bbcd9e3e6f83db6253.mp3"
@@ -323,7 +324,7 @@
         "audio": "assets/sfx/923903dde483c77d8070d43ac796e769.mp3"
       }
     ],
-    "5": [
+    "6": [
       {
         "x": 0.28,
         "y": 0.1,
@@ -423,15 +424,15 @@
         "angle": 0,
         "maxWidth": 0.35,
         "text": {
-          "en": "TAP… TAP",
-          "it": "TAP… TAP",
-          "de": "TIPP… TIPP",
-          "fr": "TAP… TAP"
+          "en": "TAP\u2026 TAP",
+          "it": "TAP\u2026 TAP",
+          "de": "TIPP\u2026 TIPP",
+          "fr": "TAP\u2026 TAP"
         },
         "audio": "assets/sfx/74c47a1ba1519b5508bf3c524af53129.mp3"
       }
     ],
-    "6": [
+    "7": [
       {
         "x": 0.58,
         "y": 0.12,
@@ -479,10 +480,10 @@
         "angle": 4,
         "maxWidth": 0.45,
         "text": {
-          "en": "MURMUR…",
-          "it": "MORMORIO…",
-          "de": "GEMURMEL…",
-          "fr": "MURMURE…"
+          "en": "MURMUR\u2026",
+          "it": "MORMORIO\u2026",
+          "de": "GEMURMEL\u2026",
+          "fr": "MURMURE\u2026"
         },
         "audio": "assets/sfx/e56538a6a8131136e32b19f6ddd10809.mp3"
       },
@@ -505,7 +506,7 @@
         "audio": "assets/sfx/0fca11e7102bbe6c2b78b934af29f924.mp3"
       }
     ],
-    "7": [
+    "8": [
       {
         "x": 0.5,
         "y": 0.3,
@@ -595,14 +596,14 @@
         },
         "text": {
           "en": "COMBAT MODE\nACTIVATED",
-          "it": "MODALITÀ COMBATTIMENTO\nATTIVATA",
+          "it": "MODALIT\u00c0 COMBATTIMENTO\nATTIVATA",
           "de": "KAMPFMODUS\nAKTIVIERT",
-          "fr": "MODE COMBAT\nACTIVÉ"
+          "fr": "MODE COMBAT\nACTIV\u00c9"
         },
         "audio": "assets/sfx/e8c38f7bc195ba7fa25819c5cd2df790.mp3"
       }
     ],
-    "8": [
+    "9": [
       {
         "x": 0.55,
         "y": 0.1,
@@ -658,7 +659,7 @@
         "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
       }
     ],
-    "9": [
+    "10": [
       {
         "x": 0.72,
         "y": 0.2,
@@ -696,7 +697,7 @@
         "audio": "assets/sfx/658af530af4a6554557a436b92836102.mp3"
       }
     ],
-    "10": [
+    "11": [
       {
         "x": 0.78,
         "y": 0.12,
@@ -752,7 +753,7 @@
         "audio": "assets/sfx/56648d1a28af2428b55a600e623515e5.mp3"
       }
     ],
-    "11": [
+    "12": [
       {
         "x": 0.72,
         "y": 0.22,
@@ -772,7 +773,7 @@
           "en": "NANOBOTS\nACTIVATED",
           "it": "NANOBOT\nATTIVATI",
           "de": "NANOBOTS\nAKTIVIERT",
-          "fr": "NANOBOTS\nACTIVÉS"
+          "fr": "NANOBOTS\nACTIV\u00c9S"
         },
         "audio": "assets/sfx/59f01d185c22445d705240332b5f937f.mp3"
       },
@@ -795,12 +796,12 @@
           "en": "FIXING SKIN",
           "it": "RIPARO PELLE",
           "de": "HAUT WIRD\nREPARIERT",
-          "fr": "RÉPARATION\nPEAU"
+          "fr": "R\u00c9PARATION\nPEAU"
         },
         "audio": "assets/sfx/8f7af8ef6d3f69518d7d21a7a04826cb.mp3"
       }
     ],
-    "12": [
+    "13": [
       {
         "x": 0.48,
         "y": 0.12,
@@ -879,7 +880,7 @@
         "audio": "assets/sfx/ba6c620b0bfe0cc85e6f3af4ef987150.mp3"
       }
     ],
-    "13": [
+    "14": [
       {
         "x": 0.78,
         "y": 0.34,
@@ -928,58 +929,14 @@
         "maxWidth": 0.32,
         "text": {
           "en": "This is\nfor you!",
-          "it": "Questo è\nper te!",
-          "de": "Das ist\nfür dich!",
-          "fr": "Ça c'est\npour toi!"
+          "it": "Questo \u00e8\nper te!",
+          "de": "Das ist\nf\u00fcr dich!",
+          "fr": "\u00c7a c'est\npour toi!"
         },
         "audio": "assets/sfx/729e3661e5f3fd9d185c56d8596dc217.mp3"
       }
     ],
     "15": [
-      {
-        "x": 0.5,
-        "y": 0.5,
-        "align": "center",
-        "size": 72,
-        "variant": "ai",
-        "color": "#f5f5f5",
-        "angle": 0,
-        "maxWidth": 0.72,
-        "bubble": {
-          "shape": "clean",
-          "fill": "#000000",
-          "stroke": "#f5f5f5",
-          "strokeWidth": 2.4,
-          "tail": "none",
-          "padX": 0.9,
-          "padY": 0.7
-        },
-        "text": {
-          "en": "TO BE\nCONTINUED...",
-          "it": "CONTINUA...",
-          "de": "FORTSETZUNG\nFOLGT...",
-          "fr": "À SUIVRE..."
-        },
-        "audio": "assets/sfx/f062999c721f23def34752881ab8ab24.mp3"
-      },
-      {
-        "x": 0.5,
-        "y": 0.72,
-        "align": "center",
-        "size": 22,
-        "variant": "credit",
-        "color": "var(--silver)",
-        "angle": 0,
-        "maxWidth": 0.7,
-        "text": {
-          "en": "Story & sound effects\nMarco Sangalli",
-          "it": "Storia ed effetti sonori\nMarco Sangalli",
-          "de": "Story & Soundeffekte\nMarco Sangalli",
-          "fr": "Histoire et effets sonores\nMarco Sangalli"
-        }
-      }
-    ],
-    "14": [
       {
         "x": 0.78,
         "y": 0.36,
@@ -1051,6 +1008,50 @@
           "fr": "ARGHH!"
         },
         "audio": "assets/sfx/a8ca5bec70c73d83eccd1bf79aec2cc2.mp3"
+      }
+    ],
+    "16": [
+      {
+        "x": 0.5,
+        "y": 0.5,
+        "align": "center",
+        "size": 72,
+        "variant": "ai",
+        "color": "#f5f5f5",
+        "angle": 0,
+        "maxWidth": 0.72,
+        "bubble": {
+          "shape": "clean",
+          "fill": "#000000",
+          "stroke": "#f5f5f5",
+          "strokeWidth": 2.4,
+          "tail": "none",
+          "padX": 0.9,
+          "padY": 0.7
+        },
+        "text": {
+          "en": "TO BE\nCONTINUED...",
+          "it": "CONTINUA...",
+          "de": "FORTSETZUNG\nFOLGT...",
+          "fr": "\u00c0 SUIVRE..."
+        },
+        "audio": "assets/sfx/f062999c721f23def34752881ab8ab24.mp3"
+      },
+      {
+        "x": 0.5,
+        "y": 0.72,
+        "align": "center",
+        "size": 22,
+        "variant": "credit",
+        "color": "var(--silver)",
+        "angle": 0,
+        "maxWidth": 0.7,
+        "text": {
+          "en": "Story & sound effects\nMarco Sangalli",
+          "it": "Storia ed effetti sonori\nMarco Sangalli",
+          "de": "Story & Soundeffekte\nMarco Sangalli",
+          "fr": "Histoire et effets sonores\nMarco Sangalli"
+        }
       }
     ]
   }
