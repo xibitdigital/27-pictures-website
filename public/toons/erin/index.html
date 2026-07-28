@@ -153,70 +153,12 @@
     </main>
 
     <script src="../book-reader.js?v=2416b7d502"></script>
+    <script src="../view-mode.js?v=73a009f9e0"></script>
     <script>
-      (function () {
-        const btn = document.getElementById("viewModeBtn");
-        const label = document.getElementById("viewModeLabel");
-        const strip = document.getElementById("verticalStrip");
-        if (!btn || !strip) return;
-
-        let vertical = false;
-        let verticalBuilt = false;
-
-        async function buildVerticalStrip() {
-          const res = await fetch("manifest.json", { cache: "no-cache" });
-          if (!res.ok) throw new Error("manifest " + res.status);
-          const manifest = await res.json();
-          const files = Array.isArray(manifest.files) ? manifest.files : [];
-          strip.innerHTML = "";
-          files.forEach((src, i) => {
-            const pageNum = i + 1;
-            const slot = document.createElement("div");
-            slot.className = "vertical-page page-slot";
-            slot.dataset.pageNum = String(pageNum);
-            const img = document.createElement("img");
-            img.src = src;
-            img.alt = "Erin — page " + pageNum;
-            img.draggable = false;
-            img.loading = pageNum > 2 ? "lazy" : "eager";
-            slot.appendChild(img);
-            strip.appendChild(slot);
-          });
-          verticalBuilt = true;
-        }
-
-        async function setVerticalMode(on) {
-          vertical = on;
-          document.body.classList.toggle("view-vertical", on);
-          btn.classList.toggle("is-active", on);
-          btn.setAttribute("aria-pressed", String(on));
-          if (on) {
-            btn.title = "Switch to book view";
-            btn.setAttribute("aria-label", btn.title);
-            if (label) label.textContent = "Book";
-            strip.hidden = false;
-            if (!verticalBuilt) {
-              try {
-                await buildVerticalStrip();
-              } catch (err) {
-                console.error(err);
-              }
-            }
-            const reader = document.getElementById("main-content");
-            if (reader) reader.scrollTop = 0;
-            window.scrollTo(0, 0);
-          } else {
-            btn.title = "Switch to vertical scroll view";
-            btn.setAttribute("aria-label", btn.title);
-            if (label) label.textContent = "Scroll";
-            strip.hidden = true;
-          }
-        }
-
-        btn.addEventListener("click", () => {
-          setVerticalMode(!vertical);
-        });
-      })();
+      ToonViewMode.init({
+        altPrefix: "Erin",
+        mobileDefault: true,
+      });
 
       ToonBook.init({
         altPrefix: "Erin",

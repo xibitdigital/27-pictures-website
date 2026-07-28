@@ -169,8 +169,8 @@ npm run generate-qr
 
 ## Toon Reader (shared by Erin, Jax, …)
 
-Every toon page (`public/toons/<name>/index.html`) is a thin shell around two
-shared files:
+Every toon page (`public/toons/<name>/index.html`) is a thin shell around
+shared reader files:
 
 - **`public/toons/book-reader.js`** — the page-turning engine (flip
   animation, keyboard/swipe/click nav, fullscreen, front-cover
@@ -179,10 +179,14 @@ shared files:
   name/attribution — "FlipFrame — by twentyseven.pictures" (`.front-cover-brand`)
   — is baked into `renderFrontCoverInstructions()` here, so it shows on
   every toon automatically; it isn't per-toon config.
+- **`public/toons/view-mode.js`** — scroll vs book view toggle
+  (`ToonViewMode.init({...})`). Defaults to vertical scroll on viewports
+  ≤768px (same breakpoint as single-page book mode). CSS for the strip is
+  in `reader-shared.css` (`body.view-vertical`).
 - **`public/toons/reader-shared.css`** — the reader's visual chrome (book,
-  pages, spine, flip overlay, nav zones, controls, front-cover panel). Any
-  rule here applies to **every** toon reader — changing it changes Erin and
-  Jax (and any future toon) at once.
+  pages, spine, flip overlay, nav zones, controls, front-cover panel,
+  vertical scroll mode). Any rule here applies to **every** toon reader —
+  changing it changes Erin and Jax (and any future toon) at once.
 
 ### What goes where
 
@@ -221,14 +225,16 @@ don't recreate a rule that already exists there.
 </style>
 ...
 <script src="../book-reader.js?v=<current version>"></script>
+<script src="../view-mode.js?v=<current version>"></script>
 <script>
+  ToonViewMode.init({ altPrefix: "Name", mobileDefault: true });
   ToonBook.init({ altPrefix: "Name", frontCoverLogo: "../../logosquare.png" });
 </script>
 ```
 
 ### Cache-busting (`?v=<hash>`)
 
-`styles.css`, `script.js`, `book-reader.js`, `words.js`, and
+`styles.css`, `script.js`, `book-reader.js`, `view-mode.js`, `words.js`, and
 `reader-shared.css` are all linked with a `?v=<hash>` query string, the
 first 10 hex chars of that file's own sha256. Browsers (and this repo's
 local dev server) cache them aggressively by URL — without a cache-bust, a
@@ -245,7 +251,7 @@ this convention exists to prevent. Now it's automatic:
 npm run hash-assets
 ```
 
-Run this before every deploy that touched any of those five files — it
+Run this before every deploy that touched any of those shared assets — it
 hashes each one and rewrites every `?v=...` reference to it across every
 `public/**/*.html` file, so the query string always matches content and
 never needs manual bumping or cross-file bookkeeping.

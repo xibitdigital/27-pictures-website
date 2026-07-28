@@ -10,7 +10,14 @@ const crypto = require("crypto");
 
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 
-const ASSETS = ["styles.css", "script.js", "toons/reader-shared.css", "toons/book-reader.js", "toons/jax/words.js"];
+const ASSETS = [
+  "styles.css",
+  "script.js",
+  "toons/reader-shared.css",
+  "toons/book-reader.js",
+  "toons/view-mode.js",
+  "toons/jax/words.js",
+];
 
 function hashFile(relPath) {
   const buf = fs.readFileSync(path.join(PUBLIC_DIR, relPath));

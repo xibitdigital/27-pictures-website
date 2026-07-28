@@ -422,10 +422,11 @@
     </main>
 
     <script src="../book-reader.js?v=2416b7d502"></script>
+    <script src="../view-mode.js?v=73a009f9e0"></script>
     <script src="words.js?v=1d23405488"></script>
     <script>
       let wordOverlay = null;
-      let verticalBuilt = false;
+      let viewMode = null;
 
       window.__jaxSoundEnabled = false;
 
@@ -542,78 +543,19 @@
         });
       })();
 
-      (function () {
-        const btn = document.getElementById("viewModeBtn");
-        const label = document.getElementById("viewModeLabel");
-        const strip = document.getElementById("verticalStrip");
-        if (!btn || !strip) return;
-
-        let vertical = false;
-
-        async function buildVerticalStrip() {
-          const res = await fetch("manifest.json", { cache: "no-cache" });
-          if (!res.ok) throw new Error("manifest " + res.status);
-          const manifest = await res.json();
-          const files = Array.isArray(manifest.files) ? manifest.files : [];
-          strip.innerHTML = "";
-          files.forEach((src, i) => {
-            const pageNum = i + 1;
-            const slot = document.createElement("div");
-            slot.className = "vertical-page page-slot";
-            slot.dataset.pageNum = String(pageNum);
-            const img = document.createElement("img");
-            img.src = src;
-            img.alt = "Jax — page " + pageNum;
-            img.draggable = false;
-            img.loading = pageNum > 2 ? "lazy" : "eager";
-            slot.appendChild(img);
-            strip.appendChild(slot);
-            if (wordOverlay) wordOverlay.render(slot, pageNum);
-          });
-          verticalBuilt = true;
-        }
-
-        async function setVerticalMode(on) {
-          vertical = on;
-          document.body.classList.toggle("view-vertical", on);
-          btn.classList.toggle("is-active", on);
-          btn.setAttribute("aria-pressed", String(on));
-          if (on) {
-            btn.title = "Switch to book view";
-            btn.setAttribute("aria-label", btn.title);
-            if (label) label.textContent = "Book";
-            strip.hidden = false;
-            if (!verticalBuilt) {
-              try {
-                await buildVerticalStrip();
-              } catch (err) {
-                console.error(err);
-              }
-            } else if (wordOverlay) {
-              wordOverlay.refreshAll(strip);
-            }
-            // Scroll to top of strip when entering
-            const reader = document.getElementById("main-content");
-            if (reader) reader.scrollTop = 0;
-            window.scrollTo(0, 0);
-          } else {
-            btn.title = "Switch to vertical scroll view";
-            btn.setAttribute("aria-label", btn.title);
-            if (label) label.textContent = "Scroll";
-            strip.hidden = true;
-            if (wordOverlay) wordOverlay.refreshAll(document.getElementById("book"));
-          }
-        }
-
-        btn.addEventListener("click", () => {
-          setVerticalMode(!vertical);
-        });
-
-        // Expose rebuild for language changes
-        window.__jaxRebuildVerticalCaptions = () => {
-          if (vertical && wordOverlay && strip) wordOverlay.refreshAll(strip);
-        };
-      })();
+      viewMode = ToonViewMode.init({
+        altPrefix: "Jax",
+        mobileDefault: true,
+        onPagePaint(slot, pageNum) {
+          if (wordOverlay) wordOverlay.render(slot, pageNum);
+        },
+        onEnterScroll(strip) {
+          if (wordOverlay && strip) wordOverlay.refreshAll(strip);
+        },
+        onEnterBook() {
+          if (wordOverlay) wordOverlay.refreshAll(document.getElementById("book"));
+        },
+      });
 
       ToonBook.init({
         altPrefix: "Jax",
@@ -626,24 +568,27 @@
           if (wordOverlay) wordOverlay.render(slot, null);
         },
         afterFullscreen() {
-          if (wordOverlay) {
-            if (document.body.classList.contains("view-vertical")) {
-              wordOverlay.refreshAll(document.getElementById("verticalStrip"));
-            } else {
-              wordOverlay.refreshAll(document.getElementById("book"));
-            }
+          if (!wordOverlay) return;
+          if (viewMode && viewMode.isVertical()) {
+            const strip = viewMode.getStrip();
+            if (strip) wordOverlay.refreshAll(strip);
+          } else {
+            wordOverlay.refreshAll(document.getElementById("book"));
           }
         },
         async beforeStart() {
           const wordsConfig = await window.JaxToon.loadWords("words.json");
           wordOverlay = new window.JaxToon.WordOverlay(wordsConfig);
           window.JaxToon.mountLangSwitcher(document.getElementById("langSwitcher"), wordOverlay, () => {
-            if (document.body.classList.contains("view-vertical")) {
-              wordOverlay.refreshAll(document.getElementById("verticalStrip"));
+            if (viewMode && viewMode.isVertical()) {
+              const strip = viewMode.getStrip();
+              if (strip) wordOverlay.refreshAll(strip);
             } else {
               wordOverlay.refreshAll(document.getElementById("book"));
             }
           });
+          // Mobile may have entered scroll before words loaded — paint captions now.
+          if (viewMode && viewMode.isVertical()) viewMode.refreshStrip();
         },
       });
     </script>
