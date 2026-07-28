@@ -221,23 +221,21 @@
     function setCoverBoard(el, on) {
       if (!el) return;
       el.classList.toggle("inside-cover", !!on);
+      // Remove any previous board image (re-renders clear via innerHTML too,
+      // but flip faces reuse this helper without a full wipe).
+      el.querySelectorAll("img.cover-texture-img").forEach((n) => n.remove());
+      el.classList.remove("has-cover-texture");
       if (on && coverTexture) {
         el.classList.add("has-cover-texture");
-        // Set background-image in JS (not via CSS var + url()) so the path
-        // resolves against the page URL, not reader-shared.css. Relative
-        // urls in custom properties were resolving to /assets/... and 404ing.
-        el.style.backgroundImage = 'url("' + coverTexture + '")';
-        el.style.backgroundSize = "cover";
-        el.style.backgroundPosition = "center";
-        el.style.backgroundRepeat = "no-repeat";
-        el.style.backgroundColor = "";
-      } else {
-        el.classList.remove("has-cover-texture");
-        el.style.backgroundImage = "";
-        el.style.backgroundSize = "";
-        el.style.backgroundPosition = "";
-        el.style.backgroundRepeat = "";
-        el.style.backgroundColor = "";
+        // Real <img> is more reliable than background-image (cascade with the
+        // .inside-cover gradient shorthand was hiding the texture on live).
+        const img = document.createElement("img");
+        img.className = "cover-texture-img";
+        img.src = coverTexture;
+        img.alt = "";
+        img.draggable = false;
+        img.setAttribute("aria-hidden", "true");
+        el.insertBefore(img, el.firstChild);
       }
     }
 

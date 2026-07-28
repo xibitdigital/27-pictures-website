@@ -572,23 +572,42 @@ body.is-fullscreen .reader {
   background: linear-gradient(135deg, var(--cover) 0%, var(--bg-dark) 100%);
 }
 
-/* Optional hardcover board texture — image is set inline by book-reader.js
-   (el.style.backgroundImage) so the URL resolves against the document. */
+/* Optional hardcover board texture — <img.cover-texture-img> injected by
+   book-reader.js under the instructions / back-cover link. */
 .page-slot.inside-cover.has-cover-texture,
 .flip-face.inside-cover.has-cover-texture {
-  /* Reset gradient shorthand; JS then sets background-image inline */
   background: var(--cover, var(--bg-dark));
 }
 
-/* Soft scrim so FlipFrame type stays readable over mesh texture */
+img.cover-texture-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  /* Mesh is very dark — lift it slightly so it reads on the cover */
+  filter: brightness(1.35) contrast(1.08);
+}
+
+/* Light scrim only where type sits — keep mesh visible around it */
 .page-slot.inside-cover.has-cover-texture .front-cover-instructions,
 .flip-face.inside-cover.has-cover-texture .front-cover-instructions {
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--bg-dark) 50%, transparent) 0%,
-    color-mix(in srgb, var(--bg-dark) 20%, transparent) 42%,
-    color-mix(in srgb, var(--bg-dark) 55%, transparent) 100%
+    color-mix(in srgb, var(--bg-dark) 35%, transparent) 0%,
+    transparent 38%,
+    color-mix(in srgb, var(--bg-dark) 40%, transparent) 100%
   );
+}
+
+.page-slot.inside-cover.has-cover-texture .back-cover-link,
+.flip-face.inside-cover.has-cover-texture .back-cover-link {
+  z-index: 32;
 }
 
 .front-cover-instructions {
