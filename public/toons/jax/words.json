@@ -24,7 +24,7 @@
   "pages": {
     "1": [
       {
-        "x": 0.40,
+        "x": 0.4,
         "y": 0.15,
         "align": "center",
         "size": 65,
@@ -43,7 +43,7 @@
       },
       {
         "x": 0.35,
-        "y": 0.32 ,
+        "y": 0.32,
         "align": "center",
         "size": 51,
         "color": "#111111",
@@ -623,7 +623,7 @@
       },
       {
         "x": 0.52,
-        "y": 0.60,
+        "y": 0.6,
         "align": "center",
         "size": 65,
         "color": "#111111",
@@ -655,13 +655,13 @@
           "de": "BOOOOM",
           "fr": "BOOOOM"
         },
-        "audio": "assets/sfx/59d30f0e069f19b720dbef98760cdebd.mp3"
+        "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
       }
     ],
     "9": [
       {
         "x": 0.72,
-        "y": 0.20,
+        "y": 0.2,
         "align": "center",
         "size": 69,
         "color": "#111111",
@@ -679,7 +679,7 @@
       },
       {
         "x": 0.68,
-        "y": 0.70,
+        "y": 0.7,
         "align": "center",
         "size": 75,
         "color": "#111111",
@@ -839,7 +839,7 @@
       },
       {
         "x": 0.22,
-        "y": 0.80,
+        "y": 0.8,
         "align": "center",
         "size": 78,
         "color": "#111111",
@@ -853,7 +853,7 @@
           "de": "BOOOOM",
           "fr": "BOOOOM"
         },
-        "audio": "assets/sfx/59d30f0e069f19b720dbef98760cdebd.mp3"
+        "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
       }
     ],
     "13": [
@@ -894,7 +894,7 @@
         "audio": "assets/sfx/a8ca5bec70c73d83eccd1bf79aec2cc2.mp3"
       }
     ],
-    "14": [
+    "15": [
       {
         "x": 0.5,
         "y": 0.5,
@@ -920,6 +920,80 @@
           "fr": "À SUIVRE..."
         },
         "audio": "assets/sfx/f062999c721f23def34752881ab8ab24.mp3"
+      }
+    ],
+    "14": [
+      {
+        "x": 0.78,
+        "y": 0.36,
+        "align": "center",
+        "size": 46,
+        "variant": "burst",
+        "color": "#111111",
+        "angle": -6,
+        "scale": 1.5,
+        "maxWidth": 0.34,
+        "text": {
+          "en": "What the\nhell!!!",
+          "it": "Ma che\ncazzo!!!",
+          "de": "Was zum\nTeufel!!!",
+          "fr": "C'est quoi\nce bordel!!!"
+        },
+        "audio": "assets/sfx/af843f26eec90a6d6cda0b310721b9b0.mp3"
+      },
+      {
+        "x": 0.72,
+        "y": 0.58,
+        "align": "center",
+        "size": 68,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 10,
+        "angle": -10,
+        "maxWidth": 0.4,
+        "text": {
+          "en": "KRAKOOM",
+          "it": "KRAKOOM",
+          "de": "KRAKOOM",
+          "fr": "KRAKOOM"
+        },
+        "audio": "assets/sfx/67acf8d270ae24fb4048829498c536ee.mp3"
+      },
+      {
+        "x": 0.28,
+        "y": 0.72,
+        "align": "center",
+        "size": 62,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": 12,
+        "maxWidth": 0.35,
+        "text": {
+          "en": "BOOOOM",
+          "it": "BOOOOM",
+          "de": "BOOOOM",
+          "fr": "BOOOOM"
+        },
+        "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
+      },
+      {
+        "x": 0.48,
+        "y": 0.9,
+        "align": "center",
+        "size": 58,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": -8,
+        "maxWidth": 0.32,
+        "text": {
+          "en": "ARGHH!",
+          "it": "ARGHH!",
+          "de": "ARGHH!",
+          "fr": "ARGHH!"
+        },
+        "audio": "assets/sfx/a8ca5bec70c73d83eccd1bf79aec2cc2.mp3"
       }
     ]
   }
