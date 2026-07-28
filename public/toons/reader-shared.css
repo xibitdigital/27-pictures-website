@@ -6,8 +6,8 @@
  * overlay, language switcher, sound/music buttons).
  */
 
-/* Prevent side “black band” resize: nothing (grain, nav buttons, flash)
-   may expand document scroll width and change 100vw-based book sizing. */
+/* Prevent side “black band” resize: nav buttons / chrome must not expand
+   document scroll width and change 100vw-based book sizing. */
 html:has(body.toons-reader) {
   overflow: hidden;
   height: 100%;
@@ -413,6 +413,8 @@ body.is-fullscreen .reader {
   background: linear-gradient(135deg, var(--cover) 0%, var(--bg-dark) 100%);
 }
 
+/* has-cover-texture background rules live with .page-slot.inside-cover above */
+
 .flip-page.from-right .flip-face.front {
   border-radius: 0 4px 4px 0;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
@@ -568,6 +570,25 @@ body.is-fullscreen .reader {
 
 .page-slot.inside-cover {
   background: linear-gradient(135deg, var(--cover) 0%, var(--bg-dark) 100%);
+}
+
+/* Optional hardcover board texture — image is set inline by book-reader.js
+   (el.style.backgroundImage) so the URL resolves against the document. */
+.page-slot.inside-cover.has-cover-texture,
+.flip-face.inside-cover.has-cover-texture {
+  /* Reset gradient shorthand; JS then sets background-image inline */
+  background: var(--cover, var(--bg-dark));
+}
+
+/* Soft scrim so FlipFrame type stays readable over mesh texture */
+.page-slot.inside-cover.has-cover-texture .front-cover-instructions,
+.flip-face.inside-cover.has-cover-texture .front-cover-instructions {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--bg-dark) 50%, transparent) 0%,
+    color-mix(in srgb, var(--bg-dark) 20%, transparent) 42%,
+    color-mix(in srgb, var(--bg-dark) 55%, transparent) 100%
+  );
 }
 
 .front-cover-instructions {

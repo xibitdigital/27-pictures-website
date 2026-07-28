@@ -19,8 +19,8 @@
       href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../../styles.css?v=2f5d542525" />
-    <link rel="stylesheet" href="../reader-shared.css?v=2133fcf2da" />
+    <link rel="stylesheet" href="../../styles.css?v=db029ea008" />
+    <link rel="stylesheet" href="../reader-shared.css?v=f5045ec13f" />
     <style>
       /* Book-only tokens — portrait pages (1008×1792). Shared reader shell
          chrome lives in ../reader-shared.css; this block only has Jax's own
@@ -229,7 +229,6 @@
     </style>
   </head>
   <body class="toons-reader">
-    <div id="grain" aria-hidden="true"></div>
     <audio
       id="bgMusic"
       src="assets/music/990f5db70e833cdaa0a411a9f0025275.mp3"
@@ -258,17 +257,10 @@
           aria-hidden="true"
         >
           <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
-          <path
-            d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+          <path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <h2 id="soundPromptTitle">Enable sound</h2>
-        <p>
-          Turn sound on to hear dialogue, onomatopoeia, and SFX. Hover or tap glowing captions
-          while you read.
-        </p>
+        <p>This caption has audio. Turn sound on to hear dialogue, onomatopoeia, and SFX.</p>
         <div class="sound-prompt__actions">
           <button type="button" id="soundPromptEnable" class="sound-prompt__btn sound-prompt__btn--primary">
             Enable sound
@@ -337,11 +329,7 @@
           stroke-width="2"
           aria-hidden="true"
         >
-          <path
-            d="M4 6h16M4 12h16M4 18h10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+          <path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <span class="toon-fs-label" id="viewModeLabel">Scroll</span>
       </button>
@@ -430,16 +418,11 @@
         <span class="page-indicator" id="indicator" aria-live="polite">…</span>
       </div>
 
-      <div
-        id="verticalStrip"
-        class="vertical-strip"
-        aria-label="Vertical page scroll"
-        hidden
-      ></div>
+      <div id="verticalStrip" class="vertical-strip" aria-label="Vertical page scroll" hidden></div>
     </main>
 
-    <script src="../book-reader.js?v=1678884cc4"></script>
-    <script src="words.js?v=2413fb2b72"></script>
+    <script src="../book-reader.js?v=ee69e554c4"></script>
+    <script src="words.js?v=1d23405488"></script>
     <script>
       let wordOverlay = null;
       let verticalBuilt = false;
@@ -451,8 +434,18 @@
         // .front-cover-sound-btn (recreated every time the front cover
         // re-renders). Event delegation on document covers both regardless
         // of when/whether either exists in the DOM at a given moment.
-        const SOUND_PROMPT_DELAY_MS = 3000;
-        let soundPromptTimer = null;
+        //
+        // Sound prompt: only the first caption hover/tap while sound is off
+        // this page load. Resets on reload (in-memory flag only).
+        let soundPromptShown = false;
+
+        function hasShownSoundPrompt() {
+          return soundPromptShown;
+        }
+
+        function markSoundPromptShown() {
+          soundPromptShown = true;
+        }
 
         function setSoundEnabled(enabled) {
           window.__jaxSoundEnabled = enabled;
@@ -474,6 +467,7 @@
             const confirm = new Audio("assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3");
             confirm.play().catch(() => {});
             hideSoundPrompt();
+            markSoundPromptShown();
           }
         }
 
@@ -484,22 +478,19 @@
           if (prompt) prompt.hidden = true;
         }
 
-        function showSoundPrompt() {
-          // Always surface after the delay unless the user already turned
-          // sound on (via the top-bar / cover button) during those 3s.
+        /**
+         * Called from words.js when the user interacts with a caption that
+         * has audio but sound is still off. First time only this session.
+         */
+        window.__jaxMaybePromptSound = function maybePromptSound() {
           if (window.__jaxSoundEnabled) return;
+          if (hasShownSoundPrompt()) return;
           const prompt = document.getElementById("soundPrompt");
-          if (prompt) {
-            prompt.hidden = false;
-            const enable = document.getElementById("soundPromptEnable");
-            if (enable) enable.focus();
-          }
-        }
-
-        /** Called once the reader has finished loading (manifest + words). */
-        window.__jaxScheduleSoundPrompt = function scheduleSoundPrompt() {
-          if (soundPromptTimer != null) window.clearTimeout(soundPromptTimer);
-          soundPromptTimer = window.setTimeout(showSoundPrompt, SOUND_PROMPT_DELAY_MS);
+          if (!prompt || !prompt.hidden) return;
+          markSoundPromptShown();
+          prompt.hidden = false;
+          const enable = document.getElementById("soundPromptEnable");
+          if (enable) enable.focus();
         };
 
         document.addEventListener("click", (ev) => {
@@ -517,6 +508,7 @@
         }
         if (dismissBtn) {
           dismissBtn.addEventListener("click", () => {
+            markSoundPromptShown();
             hideSoundPrompt();
           });
         }
@@ -524,7 +516,10 @@
         document.addEventListener("keydown", (ev) => {
           if (ev.key !== "Escape") return;
           const prompt = document.getElementById("soundPrompt");
-          if (prompt && !prompt.hidden) hideSoundPrompt();
+          if (prompt && !prompt.hidden) {
+            markSoundPromptShown();
+            hideSoundPrompt();
+          }
         });
       })();
 
@@ -623,6 +618,7 @@
       ToonBook.init({
         altPrefix: "Jax",
         frontCoverLogo: "../../logosquare.png",
+        coverTexture: "/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg",
         onPagePaint(slot, pageNum) {
           if (wordOverlay) wordOverlay.render(slot, pageNum);
         },
@@ -648,11 +644,6 @@
               wordOverlay.refreshAll(document.getElementById("book"));
             }
           });
-          // Reader is ready (manifest already loaded; words wired) — always
-          // show the sound prompt 3s after this point.
-          if (typeof window.__jaxScheduleSoundPrompt === "function") {
-            window.__jaxScheduleSoundPrompt();
-          }
         },
       });
     </script>

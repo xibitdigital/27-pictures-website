@@ -255,7 +255,13 @@
 
   /** Play a word's SFX clip. Fresh Audio() per play so rapid re-triggers overlap. */
   function playSfx(url) {
-    if (typeof window !== "undefined" && window.__jaxSoundEnabled === false) return;
+    if (typeof window !== "undefined" && window.__jaxSoundEnabled === false) {
+      // First hover/tap on a caption with audio while sound is off → prompt once.
+      if (typeof window.__jaxMaybePromptSound === "function") {
+        window.__jaxMaybePromptSound();
+      }
+      return;
+    }
     try {
       const audio = new Audio(url);
       audio.play().catch(() => {});

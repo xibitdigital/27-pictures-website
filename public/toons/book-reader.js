@@ -41,6 +41,8 @@
    *   the front-cover instructions list. The page's own script must wire up
    *   its click behavior (e.g. via event delegation, since this button is
    *   recreated whenever the front cover re-renders).
+   * @param {string} [opts.coverTexture] - image URL for inside front/back
+   *   cover boards (hardcover texture). Applied via CSS --cover-texture.
    * @param {(slot: HTMLElement, pageNum: number) => void} [opts.onPagePaint]
    * @param {(slot: HTMLElement) => void} [opts.onPageClear]
    * @param {() => void} [opts.afterFullscreen]
@@ -62,6 +64,7 @@
     const coverSubtitle =
       opts.coverSubtitle !== undefined ? opts.coverSubtitle : "Experiment";
     const soundHint = opts.soundHint || null;
+    const coverTexture = opts.coverTexture || null;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const singlePageMq = window.matchMedia("(max-width: 768px)");
@@ -214,18 +217,43 @@
       slot.appendChild(link);
     }
 
+    /** Apply or clear hardcover texture on an inside-cover face/slot. */
+    function setCoverBoard(el, on) {
+      if (!el) return;
+      el.classList.toggle("inside-cover", !!on);
+      if (on && coverTexture) {
+        el.classList.add("has-cover-texture");
+        // Set background-image in JS (not via CSS var + url()) so the path
+        // resolves against the page URL, not reader-shared.css. Relative
+        // urls in custom properties were resolving to /assets/... and 404ing.
+        el.style.backgroundImage = 'url("' + coverTexture + '")';
+        el.style.backgroundSize = "cover";
+        el.style.backgroundPosition = "center";
+        el.style.backgroundRepeat = "no-repeat";
+        el.style.backgroundColor = "";
+      } else {
+        el.classList.remove("has-cover-texture");
+        el.style.backgroundImage = "";
+        el.style.backgroundSize = "";
+        el.style.backgroundPosition = "";
+        el.style.backgroundRepeat = "";
+        el.style.backgroundColor = "";
+      }
+    }
+
     function renderSlot(slot, src, isInsideCover, spread, side) {
       slot.innerHTML = "";
       slot.classList.toggle("blank", !src && !isInsideCover);
-      slot.classList.toggle("inside-cover", !src && isInsideCover);
+      const showCover = !src && isInsideCover;
+      setCoverBoard(slot, showCover);
       if (src) {
         appendPageImage(slot, src, pageNumber(spread, side));
       } else {
         delete slot.dataset.pageNum;
         if (onPageClear) onPageClear(slot);
-        if (isInsideCover && isFrontCover(spread, side)) {
+        if (showCover && isFrontCover(spread, side)) {
           slot.appendChild(renderFrontCoverInstructions());
-        } else if (isInsideCover && isBackCover(spread, side)) {
+        } else if (showCover && isBackCover(spread, side)) {
           renderBackCoverLink(slot);
         }
       }
@@ -235,7 +263,8 @@
       const slot = slotRight;
       slot.innerHTML = "";
       slot.classList.remove("blank");
-      slot.classList.toggle("inside-cover", content.kind !== "page");
+      const showCover = content.kind !== "page";
+      setCoverBoard(slot, showCover);
       if (content.kind === "page") {
         appendPageImage(slot, content.src, content.num);
       } else if (content.kind === "front") {
@@ -311,7 +340,7 @@
       const back = document.createElement("div");
       back.className = "flip-face back";
       if (backSrc) back.appendChild(createFlipFaceImage(backSrc));
-      else back.classList.add("inside-cover");
+      else setCoverBoard(back, true);
 
       flip.appendChild(front);
       flip.appendChild(back);
@@ -331,10 +360,10 @@
       if (content.kind === "page") {
         face.appendChild(createFlipFaceImage(content.src));
       } else if (content.kind === "front") {
-        face.classList.add("inside-cover");
+        setCoverBoard(face, true);
         face.appendChild(renderFrontCoverInstructions());
       } else {
-        face.classList.add("inside-cover");
+        setCoverBoard(face, true);
         const link = document.createElement("a");
         link.href = backHref;
         link.textContent = backLabel;

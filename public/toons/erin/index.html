@@ -16,8 +16,8 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../../styles.css?v=2f5d542525" />
-    <link rel="stylesheet" href="../reader-shared.css?v=2133fcf2da" />
+    <link rel="stylesheet" href="../../styles.css?v=db029ea008" />
+    <link rel="stylesheet" href="../reader-shared.css?v=f5045ec13f" />
     <style>
       /* Book-only tokens (page paper / spine — not site chrome). Shared
          reader shell chrome lives in ../reader-shared.css; this block only
@@ -51,13 +51,9 @@
         --book-width: min(97vw, 520px);
         --book-height: min(84dvh, calc(var(--book-width) * 1.5));
       }
-
-
     </style>
   </head>
   <body class="toons-reader">
-    <div id="grain" aria-hidden="true"></div>
-
     <a href="/experiments/" class="toons-back" title="Back to Experiments" aria-label="Back to Experiments">
       <svg
         width="24"
@@ -153,15 +149,10 @@
         <span class="page-indicator" id="indicator" aria-live="polite">…</span>
       </div>
 
-      <div
-        id="verticalStrip"
-        class="vertical-strip"
-        aria-label="Vertical page scroll"
-        hidden
-      ></div>
+      <div id="verticalStrip" class="vertical-strip" aria-label="Vertical page scroll" hidden></div>
     </main>
 
-    <script src="../book-reader.js?v=1678884cc4"></script>
+    <script src="../book-reader.js?v=ee69e554c4"></script>
     <script>
       (function () {
         const btn = document.getElementById("viewModeBtn");
@@ -227,7 +218,11 @@
         });
       })();
 
-      ToonBook.init({ altPrefix: "Erin", frontCoverLogo: "../../logosquare.png" });
+      ToonBook.init({
+        altPrefix: "Erin",
+        frontCoverLogo: "../../logosquare.png",
+        coverTexture: "/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg",
+      });
     </script>
   </body>
 </html>
