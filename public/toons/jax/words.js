@@ -102,37 +102,43 @@
   /**
    * Rough torn-paper rectangle path (viewBox 0-100 x 0-100) — no tail.
    * Used for "AI dialogue" caption boxes ("COMBAT MODE ACTIVATED" style).
+   * @param {number} [seed]
+   * @param {{ amp?: number, corner?: number, segments?: number, bow?: number }} [opts]
    */
-  function jaggedBoxPath(seed) {
+  function jaggedBoxPath(seed, opts) {
     const rnd = mulberry32(seed || 1);
     const j = (amp) => (rnd() - 0.5) * 2 * amp;
+    const amp = opts && opts.amp != null ? opts.amp : 3.5;
+    const corner = opts && opts.corner != null ? opts.corner : 3;
+    const segments = opts && opts.segments != null ? opts.segments : 6;
+    const bow = opts && opts.bow != null ? opts.bow : 1.4;
 
     // Points per edge, wobbled off the straight line — hand-brushed, not ruled
-    function edge(x0, y0, x1, y1, amp, segments) {
+    function edge(x0, y0, x1, y1, edgeAmp, segs) {
       const pts = [];
-      for (let i = 0; i <= segments; i++) {
-        const t = i / segments;
+      for (let i = 0; i <= segs; i++) {
+        const t = i / segs;
         let x = x0 + (x1 - x0) * t;
         let y = y0 + (y1 - y0) * t;
-        if (i > 0 && i < segments) {
-          x += j(amp);
-          y += j(amp);
+        if (i > 0 && i < segs) {
+          x += j(edgeAmp);
+          y += j(edgeAmp);
         }
         pts.push([x, y]);
       }
       return pts;
     }
 
-    const tl = [4 + j(3), 6 + j(3)];
-    const tr = [96 + j(3), 6 + j(3)];
-    const br = [96 + j(3), 94 + j(3)];
-    const bl = [4 + j(3), 94 + j(3)];
+    const tl = [4 + j(corner), 6 + j(corner)];
+    const tr = [96 + j(corner), 6 + j(corner)];
+    const br = [96 + j(corner), 94 + j(corner)];
+    const bl = [4 + j(corner), 94 + j(corner)];
 
     const pts = [
-      ...edge(tl[0], tl[1], tr[0], tr[1], 3.5, 6),
-      ...edge(tr[0], tr[1], br[0], br[1], 3.5, 6).slice(1),
-      ...edge(br[0], br[1], bl[0], bl[1], 3.5, 6).slice(1),
-      ...edge(bl[0], bl[1], tl[0], tl[1], 3.5, 6).slice(1),
+      ...edge(tl[0], tl[1], tr[0], tr[1], amp, segments),
+      ...edge(tr[0], tr[1], br[0], br[1], amp, segments).slice(1),
+      ...edge(br[0], br[1], bl[0], bl[1], amp, segments).slice(1),
+      ...edge(bl[0], bl[1], tl[0], tl[1], amp, segments).slice(1),
     ];
 
     // Sketchy pass: connect wobbled points with slightly bowed curves instead of
@@ -141,12 +147,17 @@
     for (let i = 1; i < pts.length; i++) {
       const prev = pts[i - 1];
       const cur = pts[i];
-      const mx = (prev[0] + cur[0]) / 2 + j(1.4);
-      const my = (prev[1] + cur[1]) / 2 + j(1.4);
+      const mx = (prev[0] + cur[0]) / 2 + j(bow);
+      const my = (prev[1] + cur[1]) / 2 + j(bow);
       d += ` Q ${mx.toFixed(2)} ${my.toFixed(2)} ${cur[0].toFixed(2)} ${cur[1].toFixed(2)}`;
     }
     d += " Z";
     return d;
+  }
+
+  /** Near-rect HUD frame — light hand wobble, no wild overshoots. */
+  function cleanBoxPath(seed) {
+    return jaggedBoxPath(seed, { amp: 0.9, corner: 0.8, segments: 4, bow: 0.35 });
   }
 
   /**
@@ -265,8 +276,12 @@
     const b = w.bubble && typeof w.bubble === "object" ? w.bubble : {};
     const isAi = variant === "ai";
     const isBurst = variant === "burst";
+    const shape = (b.shape || w.bubbleShape || (isAi ? "box" : isBurst ? "star" : "organic"))
+      .toString()
+      .toLowerCase();
+    const isClean = shape === "clean" || shape === "frame" || shape === "rect";
     return {
-      shape: b.shape || w.bubbleShape || (isAi ? "box" : isBurst ? "star" : "organic"),
+      shape,
       fill: b.fill || w.bubbleFill || (isAi ? "#0a0a0a" : "#ffffff"),
       stroke: b.stroke || w.bubbleStroke || (isAi ? "#0a0a0a" : "#111111"),
       strokeWidth:
@@ -282,7 +297,15 @@
       tail: b.tail || w.tail || (isAi || isBurst ? "none" : "bottom"),
       padX: b.padX != null ? Number(b.padX) : isAi ? 0.7 : isBurst ? 1.1 : 0.55,
       padY: b.padY != null ? Number(b.padY) : isAi ? 0.5 : isBurst ? 0.9 : 0.4,
+      // Sketchy multi-pass defaults for torn "box"; clean HUD frame is a single stroke.
+      retrace: b.retrace != null ? Number(b.retrace) : isClean ? 0 : shape === "box" ? 2 : 0,
+      scratches: b.scratches != null ? Number(b.scratches) : isClean ? 0 : shape === "box" ? 10 : 0,
     };
+  }
+
+  function boxPathForShape(shape, seed) {
+    if (shape === "clean" || shape === "frame" || shape === "rect") return cleanBoxPath(seed);
+    return jaggedBoxPath(seed);
   }
 
   function createBubbleChrome(seed, bubbleStyle, designScale) {
@@ -292,12 +315,14 @@
     svg.setAttribute("preserveAspectRatio", "none");
     svg.setAttribute("aria-hidden", "true");
 
+    const shape = bubbleStyle.shape;
+    const isBoxy = shape === "box" || shape === "clean" || shape === "frame" || shape === "rect";
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute(
       "d",
-      bubbleStyle.shape === "box"
-        ? jaggedBoxPath(seed)
-        : bubbleStyle.shape === "star"
+      isBoxy
+        ? boxPathForShape(shape, seed)
+        : shape === "star"
           ? starBurstPath(seed)
           : sketchyBubblePath(bubbleStyle.tail, seed)
     );
@@ -310,12 +335,12 @@
     path.setAttribute("vector-effect", "non-scaling-stroke");
     svg.appendChild(path);
 
-    if (bubbleStyle.shape === "box") {
-      // Second + third rough passes, unfilled — a hand re-tracing the marker
-      // outline instead of one clean stroke, like the reference caption box.
-      [97, 211].forEach((offset, i) => {
+    if (isBoxy) {
+      const retraceN = Math.max(0, Math.min(3, bubbleStyle.retrace | 0));
+      // Extra unfilled passes — hand re-tracing the marker outline (sketchy boxes only).
+      for (let i = 0; i < retraceN; i++) {
         const retrace = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        retrace.setAttribute("d", jaggedBoxPath((seed || 1) + offset));
+        retrace.setAttribute("d", boxPathForShape(shape, (seed || 1) + 97 + i * 114));
         retrace.setAttribute("fill", "none");
         retrace.setAttribute("stroke", bubbleStyle.stroke);
         retrace.setAttribute("stroke-width", String(Math.max(0.8, sw * (0.65 - i * 0.15))));
@@ -323,20 +348,22 @@
         retrace.setAttribute("stroke-linecap", "round");
         retrace.setAttribute("vector-effect", "non-scaling-stroke");
         svg.appendChild(retrace);
-      });
+      }
 
-      // Crosshatched scratch spikes shooting past the border, like a marker
-      // that overshot while scrawling the frame.
-      scribbleScratches((seed || 1) + 401, 10).forEach((d, i) => {
-        const scratch = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        scratch.setAttribute("d", d);
-        scratch.setAttribute("fill", "none");
-        scratch.setAttribute("stroke", bubbleStyle.stroke);
-        scratch.setAttribute("stroke-width", String(Math.max(0.9, sw * (0.4 + (i % 3) * 0.18))));
-        scratch.setAttribute("stroke-linecap", "round");
-        scratch.setAttribute("vector-effect", "non-scaling-stroke");
-        svg.appendChild(scratch);
-      });
+      const scratchN = Math.max(0, Math.min(16, bubbleStyle.scratches | 0));
+      if (scratchN > 0) {
+        // Crosshatched scratch spikes shooting past the border (sketchy boxes only).
+        scribbleScratches((seed || 1) + 401, scratchN).forEach((d, i) => {
+          const scratch = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          scratch.setAttribute("d", d);
+          scratch.setAttribute("fill", "none");
+          scratch.setAttribute("stroke", bubbleStyle.stroke);
+          scratch.setAttribute("stroke-width", String(Math.max(0.9, sw * (0.4 + (i % 3) * 0.18))));
+          scratch.setAttribute("stroke-linecap", "round");
+          scratch.setAttribute("vector-effect", "non-scaling-stroke");
+          svg.appendChild(scratch);
+        });
+      }
     }
 
     return svg;

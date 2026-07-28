@@ -855,6 +855,72 @@
         },
         "audio": "assets/sfx/59d30f0e069f19b720dbef98760cdebd.mp3"
       }
+    ],
+    "13": [
+      {
+        "x": 0.78,
+        "y": 0.34,
+        "align": "center",
+        "size": 52,
+        "variant": "burst",
+        "color": "#111111",
+        "angle": -8,
+        "scale": 1.6,
+        "maxWidth": 0.28,
+        "text": {
+          "en": "FOOL!",
+          "it": "IDIOTA!",
+          "de": "NARR!",
+          "fr": "IDIOT!"
+        },
+        "audio": "assets/sfx/97ed1b3373fc7d9b7e5a839aba3f56a2.mp3"
+      },
+      {
+        "x": 0.86,
+        "y": 0.58,
+        "align": "center",
+        "size": 62,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 10,
+        "angle": 16,
+        "maxWidth": 0.32,
+        "text": {
+          "en": "ARGHH!",
+          "it": "ARGHH!",
+          "de": "ARGHH!",
+          "fr": "ARGHH!"
+        },
+        "audio": "assets/sfx/a8ca5bec70c73d83eccd1bf79aec2cc2.mp3"
+      }
+    ],
+    "14": [
+      {
+        "x": 0.5,
+        "y": 0.5,
+        "align": "center",
+        "size": 72,
+        "variant": "ai",
+        "color": "#f5f5f5",
+        "angle": 0,
+        "maxWidth": 0.72,
+        "bubble": {
+          "shape": "clean",
+          "fill": "#000000",
+          "stroke": "#f5f5f5",
+          "strokeWidth": 2.4,
+          "tail": "none",
+          "padX": 0.9,
+          "padY": 0.7
+        },
+        "text": {
+          "en": "TO BE\nCONTINUED...",
+          "it": "CONTINUA...",
+          "de": "FORTSETZUNG\nFOLGT...",
+          "fr": "À SUIVRE..."
+        },
+        "audio": "assets/sfx/f062999c721f23def34752881ab8ab24.mp3"
+      }
     ]
   }
 }

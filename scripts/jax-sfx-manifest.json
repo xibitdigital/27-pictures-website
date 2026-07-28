@@ -28,5 +28,6 @@
   { "slug": "clunk", "prompt": "Heavy metal clunk, machinery part dropping", "duration": 1.0 },
   { "slug": "booom", "prompt": "Deep massive explosion boom with sub bass", "duration": 2.2 },
   { "slug": "ping", "prompt": "Bright digital ping, radar blip sound", "duration": 0.6 },
-  { "slug": "kaboom", "prompt": "Huge cartoonish explosion kaboom, big bang blast", "duration": 2.2 }
+  { "slug": "kaboom", "prompt": "Huge cartoonish explosion kaboom, big bang blast", "duration": 2.2 },
+  { "slug": "arghh", "prompt": "Short painful male grunt yell of being punched hard, manga impact reaction, sharp guttural ARGHH", "duration": 0.8 }
 ]
