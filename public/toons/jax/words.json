@@ -799,6 +799,62 @@
         },
         "audio": "assets/sfx/8f7af8ef6d3f69518d7d21a7a04826cb.mp3"
       }
+    ],
+    "12": [
+      {
+        "x": 0.48,
+        "y": 0.12,
+        "align": "center",
+        "size": 68,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 10,
+        "angle": -12,
+        "maxWidth": 0.38,
+        "text": {
+          "en": "WHAM",
+          "it": "WHAM",
+          "de": "WHAM",
+          "fr": "WHAM"
+        },
+        "audio": "assets/sfx/3dc2568cc8d4b35387961d01c38f0d7d.mp3"
+      },
+      {
+        "x": 0.55,
+        "y": 0.48,
+        "align": "center",
+        "size": 62,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 9,
+        "angle": 8,
+        "maxWidth": 0.4,
+        "text": {
+          "en": "KRAKOOM",
+          "it": "KRAKOOM",
+          "de": "KRAKOOM",
+          "fr": "KRAKOOM"
+        },
+        "audio": "assets/sfx/67acf8d270ae24fb4048829498c536ee.mp3"
+      },
+      {
+        "x": 0.22,
+        "y": 0.80,
+        "align": "center",
+        "size": 78,
+        "color": "#111111",
+        "stroke": "#ffffff",
+        "strokeThickness": 11,
+        "angle": -16,
+        "maxWidth": 0.4,
+        "text": {
+          "en": "BOOOOM",
+          "it": "BOOOOM",
+          "de": "BOOOOM",
+          "fr": "BOOOOM"
+        },
+        "audio": "assets/sfx/59d30f0e069f19b720dbef98760cdebd.mp3"
+      }
     ]
   }
 }
