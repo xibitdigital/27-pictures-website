@@ -17,24 +17,26 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../../styles.css?v=179e55496f" />
-    <link rel="stylesheet" href="../reader-shared.css?v=dbea354862" />
+    <link rel="stylesheet" href="../reader-shared.css?v=6fe08ecc95" />
     <style>
       /* Book-only tokens (page paper / spine — not site chrome). Shared
          reader shell chrome lives in ../reader-shared.css; this block only
          has Erin's own book-aspect tokens. */
       :root {
-        /* 240px ≈ title-bar + reader padding + controls row, so the book
-           itself never forces the whole stack past the viewport height. */
-        --book-width: min(92vw, 900px, calc((100dvh - 240px) / 0.72));
-        --book-height: calc(var(--book-width) * 0.72);
+        /* Spread aspect ≈ 0.75 (two 1152×1728 pages side by side).
+           Prefer height-fill like Jax: Erin is flatter, so it needs a wider
+           max width to reach the same on-screen height (was 900px / 0.72 and
+           looked noticeably smaller than Jax). */
+        --book-width: min(98vw, 1200px, calc((100dvh - 160px) / 0.75));
+        --book-height: calc(var(--book-width) * 0.75);
         --page-bg: #f8f4ec;
         --spine: #2a2218;
         --cover: #111;
       }
 
       body.is-fullscreen .book-scene {
-        --book-width: min(96vw, calc(92dvh * 1.35));
-        --book-height: min(88dvh, calc(var(--book-width) * 0.72));
+        --book-width: min(98vw, calc(92dvh / 0.75));
+        --book-height: min(88dvh, calc(var(--book-width) * 0.75));
         width: var(--book-width);
         height: var(--book-height);
       }
@@ -45,9 +47,11 @@
       }
 
       body.single-page {
-        --book-width: min(97vw, 460px);
-        --book-height: min(80dvh, calc(var(--book-width) * 1.5));
+        --book-width: min(97vw, 520px);
+        --book-height: min(84dvh, calc(var(--book-width) * 1.5));
       }
+
+
     </style>
   </head>
   <body class="toons-reader">
@@ -67,6 +71,27 @@
       </svg>
     </a>
     <div class="toon-top-controls">
+      <button
+        type="button"
+        id="viewModeBtn"
+        class="toon-fs-btn"
+        aria-pressed="false"
+        title="Switch to vertical scroll view"
+        aria-label="Switch to vertical scroll view"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="toon-fs-label" id="viewModeLabel">Scroll</span>
+      </button>
       <button
         type="button"
         id="fullscreenBtn"
@@ -91,11 +116,6 @@
     </div>
 
     <main class="reader" id="main-content" role="main">
-      <header class="title-bar">
-        <p class="section-tag">Experiment</p>
-        <h1>ERIN</h1>
-      </header>
-
       <div class="book-scene">
         <div class="book-shadow"></div>
         <div class="book" id="book">
@@ -131,10 +151,81 @@
       <div class="controls">
         <span class="page-indicator" id="indicator" aria-live="polite">…</span>
       </div>
+
+      <div
+        id="verticalStrip"
+        class="vertical-strip"
+        aria-label="Vertical page scroll"
+        hidden
+      ></div>
     </main>
 
-    <script src="../book-reader.js?v=129e50711a"></script>
+    <script src="../book-reader.js?v=4bb92081a0"></script>
     <script>
+      (function () {
+        const btn = document.getElementById("viewModeBtn");
+        const label = document.getElementById("viewModeLabel");
+        const strip = document.getElementById("verticalStrip");
+        if (!btn || !strip) return;
+
+        let vertical = false;
+        let verticalBuilt = false;
+
+        async function buildVerticalStrip() {
+          const res = await fetch("manifest.json", { cache: "no-cache" });
+          if (!res.ok) throw new Error("manifest " + res.status);
+          const manifest = await res.json();
+          const files = Array.isArray(manifest.files) ? manifest.files : [];
+          strip.innerHTML = "";
+          files.forEach((src, i) => {
+            const pageNum = i + 1;
+            const slot = document.createElement("div");
+            slot.className = "vertical-page page-slot";
+            slot.dataset.pageNum = String(pageNum);
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = "Erin — page " + pageNum;
+            img.draggable = false;
+            img.loading = pageNum > 2 ? "lazy" : "eager";
+            slot.appendChild(img);
+            strip.appendChild(slot);
+          });
+          verticalBuilt = true;
+        }
+
+        async function setVerticalMode(on) {
+          vertical = on;
+          document.body.classList.toggle("view-vertical", on);
+          btn.classList.toggle("is-active", on);
+          btn.setAttribute("aria-pressed", String(on));
+          if (on) {
+            btn.title = "Switch to book view";
+            btn.setAttribute("aria-label", btn.title);
+            if (label) label.textContent = "Book";
+            strip.hidden = false;
+            if (!verticalBuilt) {
+              try {
+                await buildVerticalStrip();
+              } catch (err) {
+                console.error(err);
+              }
+            }
+            const reader = document.getElementById("main-content");
+            if (reader) reader.scrollTop = 0;
+            window.scrollTo(0, 0);
+          } else {
+            btn.title = "Switch to vertical scroll view";
+            btn.setAttribute("aria-label", btn.title);
+            if (label) label.textContent = "Scroll";
+            strip.hidden = true;
+          }
+        }
+
+        btn.addEventListener("click", () => {
+          setVerticalMode(!vertical);
+        });
+      })();
+
       ToonBook.init({ altPrefix: "Erin", frontCoverLogo: "../../logosquare.png" });
     </script>
   </body>

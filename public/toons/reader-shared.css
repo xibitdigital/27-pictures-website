@@ -97,11 +97,14 @@ body.toons-reader {
   color: var(--silver);
   background: var(--bg-card);
   border: 1px solid var(--border);
-  padding: 0.4rem 0.65rem;
+  /* Icon-only chrome — labels stay in DOM for a11y/JS but are not shown */
+  padding: 0.45rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
+  gap: 0;
+  min-width: 1.9rem;
   min-height: 1.9rem;
   transition:
     color 0.2s var(--transition),
@@ -125,9 +128,18 @@ body.toons-reader {
 }
 
 .toon-fs-btn svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
+}
+
+.toon-fs-btn .toon-fs-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 /* Fullscreen chrome: hide nav; shrink title; keep top-right controls */
@@ -493,15 +505,43 @@ body.is-fullscreen .reader {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* Title + brand sit at the top of the cover; instructions stack below. */
+  justify-content: flex-start;
   /* Base rhythm between blocks; individual elements below tighten or widen
      this for their own pairing (e.g. brand text hugs the logo, the "how to
      read" heading gets a rule + extra padding to read as its own section). */
   gap: 0.9rem;
-  padding: 1.5rem;
+  /* Extra bottom padding so the FlipFrame block (docked to the bottom) isn’t flush. */
+  padding: 1.35rem 1.5rem 2.25rem;
   text-align: center;
   color: var(--silver);
   font-family: "Inter", sans-serif;
+  overflow-y: auto;
+}
+
+/* Toon series title at the top of the front-cover manual (Jax / Erin). */
+.front-cover-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.75rem, 5vw, 2.35rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* Small label under the title (e.g. "Experiment") — stays at the top. */
+.front-cover-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--red-smile);
+  margin: 0.15rem 0 0;
+  flex-shrink: 0;
 }
 
 /* Higher specificity than .page-slot img (width/height/object-fit
@@ -513,17 +553,20 @@ body.is-fullscreen .reader {
   object-fit: initial;
   opacity: 0.92;
   margin-bottom: 0.75rem;
+  flex-shrink: 0;
 }
 
-/* Reader product name + studio attribution, shown under the logo on
-   every toon's front cover. */
+/* FlipFrame brand + studio attribution. margin-top:auto docks this block
+   (and everything after it — logo, how-to, list) to the bottom of the cover
+   while .front-cover-title stays at the top. */
 .front-cover-brand {
   font-family: "Inter", sans-serif;
   font-weight: 900;
   font-size: 1.35rem;
   letter-spacing: 0.02em;
   color: var(--text);
-  margin: 0;
+  margin: auto 0 0;
+  flex-shrink: 0;
 }
 
 .front-cover-brand span {
@@ -601,6 +644,202 @@ body.is-fullscreen .reader {
   color: var(--silver);
   opacity: 0.75;
   max-width: 220px;
+}
+
+/* ── Sound enable prompt (modal) ── */
+.sound-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.sound-prompt[hidden] {
+  display: none !important;
+}
+
+.sound-prompt__panel {
+  width: min(100%, 380px);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 1.75rem 1.5rem 1.4rem;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.sound-prompt__icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 1rem;
+  color: var(--red-smile);
+}
+
+.sound-prompt__panel h2 {
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0 0 0.75rem;
+}
+
+.sound-prompt__panel p {
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  margin: 0 0 1.35rem;
+}
+
+.sound-prompt__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.sound-prompt__btn {
+  font-family: "Inter", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--silver);
+  padding: 0.7rem 1rem;
+  transition:
+    color 0.2s var(--transition),
+    border-color 0.2s var(--transition),
+    background 0.2s var(--transition);
+}
+
+.sound-prompt__btn:hover {
+  color: var(--text);
+  border-color: var(--border-light);
+}
+
+.sound-prompt__btn:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 2px;
+}
+
+.sound-prompt__btn--primary {
+  background: var(--red-smile);
+  border-color: var(--red-smile);
+  color: var(--text);
+}
+
+.sound-prompt__btn--primary:hover {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* ── Vertical scroll reading mode ──
+   Match (or beat) single-page book width so pages don’t look shrunk vs flip view.
+   Portrait plates read well up to ~720–800px wide on desktop. */
+.vertical-strip {
+  display: none;
+  width: min(96vw, 720px);
+  margin: 0 auto;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 0 1rem;
+}
+
+body.view-vertical .vertical-strip {
+  display: flex;
+}
+
+body.view-vertical .book-scene,
+body.view-vertical .controls {
+  display: none !important;
+}
+
+/* Book mode locks body scroll; vertical mode scrolls the document. */
+body.view-vertical.toons-reader {
+  overflow-x: hidden;
+  overflow-y: auto;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+body.view-vertical .reader {
+  justify-content: flex-start;
+  overflow: visible;
+  min-height: auto;
+  height: auto;
+  width: 100%;
+  padding-top: 4.5rem;
+  padding-bottom: 3rem;
+}
+
+body.view-vertical.is-fullscreen .reader {
+  padding-top: 3.5rem;
+}
+
+.vertical-page {
+  position: relative;
+  width: 100%;
+  background: var(--page-bg, var(--bg-card));
+  border: 1px solid var(--border);
+  overflow: hidden;
+  /* page-slot uses absolute img in book mode; vertical stack needs flow layout */
+}
+
+.vertical-page > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: top;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Book page-slots position images absolutely; vertical pages must not */
+.vertical-page.page-slot {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  flex: none;
+  /* Let burst/AI bubbles breathe past the panel edge a little */
+  overflow: visible;
+}
+
+.vertical-page.page-slot > img {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: auto !important;
+  max-height: none;
+  object-fit: contain;
+}
+
+#viewModeBtn.is-active {
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+}
+
+/* Shared caption credit style (end cards, colophons) — quiet Inter, not
+   comic Bangers. Used by any toon word overlay with variant: "credit". */
+.jax-word--credit,
+.jax-word--credit .jax-word-text {
+  font-family: "Inter", sans-serif !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
 }
 
 .back-cover-link {
@@ -747,13 +986,5 @@ body.single-page .flip-page.flipping.from-left {
     flex-wrap: wrap;
     justify-content: flex-end;
     row-gap: 0.35rem;
-  }
-
-  .toon-fs-btn .toon-fs-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
   }
 }

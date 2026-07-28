@@ -961,6 +961,22 @@
           "fr": "À SUIVRE..."
         },
         "audio": "assets/sfx/f062999c721f23def34752881ab8ab24.mp3"
+      },
+      {
+        "x": 0.5,
+        "y": 0.72,
+        "align": "center",
+        "size": 22,
+        "variant": "credit",
+        "color": "var(--silver)",
+        "angle": 0,
+        "maxWidth": 0.7,
+        "text": {
+          "en": "Story & sound effects\nMarco Sangalli",
+          "it": "Storia ed effetti sonori\nMarco Sangalli",
+          "de": "Story & Soundeffekte\nMarco Sangalli",
+          "fr": "Histoire et effets sonores\nMarco Sangalli"
+        }
       }
     ],
     "14": [

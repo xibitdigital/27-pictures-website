@@ -32,6 +32,10 @@
    * @param {string} [opts.backLabel]
    * @param {string} [opts.fsLabelSelector] - .toon-fs-label
    * @param {string} [opts.frontCoverLogo] - image src shown above "How to read"
+   * @param {string} [opts.coverTitle] - toon title at the top of the front-cover
+   *   manual (defaults to altPrefix, e.g. "Jax" / "Erin")
+   * @param {string} [opts.coverSubtitle] - small label under the title at the top
+   *   (e.g. "Experiment"); omit or pass "" for none
    * @param {string} [opts.soundHint] - if set, adds a real "Turn the sound on"
    *   button (class .front-cover-sound-btn, this string as its label) below
    *   the front-cover instructions list. The page's own script must wire up
@@ -54,6 +58,9 @@
     const afterFullscreen = typeof opts.afterFullscreen === "function" ? opts.afterFullscreen : null;
     const beforeStart = typeof opts.beforeStart === "function" ? opts.beforeStart : null;
     const frontCoverLogo = opts.frontCoverLogo || null;
+    const coverTitle = opts.coverTitle || altPrefix || "";
+    const coverSubtitle =
+      opts.coverSubtitle !== undefined ? opts.coverSubtitle : "Experiment";
     const soundHint = opts.soundHint || null;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -139,7 +146,16 @@
     function renderFrontCoverInstructions() {
       const wrap = document.createElement("div");
       wrap.className = "front-cover-instructions";
+      const esc = (s) => String(s).replace(/</g, "&lt;");
+      const titleHtml = coverTitle
+        ? `<h1 class="front-cover-title">${esc(coverTitle)}</h1>`
+        : "";
+      const subtitleHtml = coverSubtitle
+        ? `<p class="front-cover-subtitle">${esc(coverSubtitle)}</p>`
+        : "";
       wrap.innerHTML = `
+        ${titleHtml}
+        ${subtitleHtml}
         <p class="front-cover-brand">FlipFrame<span>by twentyseven.pictures</span></p>
         ${frontCoverLogo ? `<img class="front-cover-logo" src="${frontCoverLogo}" alt="${altPrefix} logo" />` : ""}
         <h2>How to read</h2>

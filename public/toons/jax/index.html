@@ -20,16 +20,17 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../../styles.css?v=179e55496f" />
-    <link rel="stylesheet" href="../reader-shared.css?v=dbea354862" />
+    <link rel="stylesheet" href="../reader-shared.css?v=6fe08ecc95" />
     <style>
       /* Book-only tokens — portrait pages (1008×1792). Shared reader shell
          chrome lives in ../reader-shared.css; this block only has Jax's own
          book-aspect tokens and Jax-only extras (word captions, language
          switcher, sound/music buttons). */
       :root {
-        /* 240px ≈ title-bar + reader padding + controls row, so the book
-           itself never forces the whole stack past the viewport height. */
-        --book-width: min(92vw, 920px, calc((100dvh - 240px) / 0.89));
+        /* Spread aspect ≈ 0.89 (two 1008×1792 pages). Prefer height-fill
+           with a wide max so the book uses the full available viewport
+           (aligned with Erin’s sizing approach). */
+        --book-width: min(98vw, 1200px, calc((100dvh - 160px) / 0.89));
         --book-height: calc(var(--book-width) * 0.89);
         --page-bg: #0a0a0c;
         --spine: #1a1a22;
@@ -37,7 +38,7 @@
       }
 
       body.is-fullscreen .book-scene {
-        --book-width: min(96vw, calc(92dvh * 1.12));
+        --book-width: min(98vw, calc(92dvh / 0.89));
         --book-height: min(88dvh, calc(var(--book-width) * 0.89));
         width: var(--book-width);
         height: var(--book-height);
@@ -49,47 +50,104 @@
       }
 
       body.single-page {
-        --book-width: min(97vw, 460px);
+        --book-width: min(97vw, 520px);
         --book-height: min(84dvh, calc(var(--book-width) * 1.778));
       }
 
-      /* Language switcher — same chrome as .toon-fs-btn (reader-shared.css)
-         since it renders separate buttons via words.js, not that class. */
+      /* Language dropdown — only the selected code is visible; menu opens on click */
       .jax-lang-switcher {
         display: flex;
-        gap: 0.35rem;
+        align-items: center;
       }
 
-      .jax-lang-btn {
+      .jax-lang-dropdown {
+        position: relative;
+      }
+
+      .jax-lang-toggle {
+        min-width: 2.4rem;
+        gap: 0.2rem;
+        padding: 0.45rem 0.4rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+      }
+
+      .jax-lang-toggle-label {
         font-family: "Inter", sans-serif;
-        font-size: 0.65rem;
         font-weight: 700;
-        letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--silver);
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        padding: 0.4rem 0.65rem;
-        cursor: pointer;
-        transition:
-          color 0.2s var(--transition),
-          border-color 0.2s var(--transition),
-          background 0.2s var(--transition);
+        line-height: 1;
       }
 
-      .jax-lang-btn:hover {
-        color: var(--text);
-        border-color: var(--border-light);
+      .jax-lang-chevron {
+        width: 9px;
+        height: 9px;
+        flex-shrink: 0;
+        opacity: 0.75;
+        transition: transform 0.18s var(--transition);
       }
 
-      .jax-lang-btn.is-active {
+      .jax-lang-dropdown.is-open .jax-lang-toggle {
         border-color: var(--red-smile);
         color: var(--red-smile);
       }
 
-      .jax-lang-btn:focus-visible {
+      .jax-lang-dropdown.is-open .jax-lang-chevron {
+        transform: rotate(180deg);
+        opacity: 1;
+      }
+
+      .jax-lang-menu {
+        position: absolute;
+        top: calc(100% + 0.35rem);
+        right: 0;
+        z-index: 60;
+        display: flex;
+        flex-direction: column;
+        min-width: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+      }
+
+      .jax-lang-menu[hidden] {
+        display: none !important;
+      }
+
+      .jax-lang-option {
+        font-family: "Inter", sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--silver);
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--border);
+        padding: 0.55rem 0.75rem;
+        cursor: pointer;
+        text-align: center;
+        transition:
+          color 0.15s var(--transition),
+          background 0.15s var(--transition);
+      }
+
+      .jax-lang-option:last-child {
+        border-bottom: none;
+      }
+
+      .jax-lang-option:hover {
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      .jax-lang-option.is-active {
+        color: var(--red-smile);
+      }
+
+      .jax-lang-option:focus-visible {
         outline: 2px solid var(--red-smile);
-        outline-offset: 2px;
+        outline-offset: -2px;
       }
 
       .jax-word-layer,
@@ -166,6 +224,8 @@
       #soundBtn.is-enabled #soundWaves {
         display: inline;
       }
+
+      /* Vertical strip width is set in reader-shared.css (not --book-width). */
     </style>
   </head>
   <body class="toons-reader">
@@ -177,6 +237,46 @@
       preload="none"
       aria-hidden="true"
     ></audio>
+
+    <div
+      id="soundPrompt"
+      class="sound-prompt"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="soundPromptTitle"
+      hidden
+    >
+      <div class="sound-prompt__panel">
+        <svg
+          class="sound-prompt__icon"
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          aria-hidden="true"
+        >
+          <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
+          <path
+            d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <h2 id="soundPromptTitle">Enable sound</h2>
+        <p>
+          Turn sound on to hear dialogue, onomatopoeia, and SFX. Hover or tap glowing captions
+          while you read.
+        </p>
+        <div class="sound-prompt__actions">
+          <button type="button" id="soundPromptEnable" class="sound-prompt__btn sound-prompt__btn--primary">
+            Enable sound
+          </button>
+          <button type="button" id="soundPromptDismiss" class="sound-prompt__btn">Not now</button>
+        </div>
+      </div>
+    </div>
 
     <a href="/experiments/" class="toons-back" title="Back to Experiments" aria-label="Back to Experiments">
       <svg
@@ -219,6 +319,31 @@
           />
         </svg>
         <span class="toon-fs-label" id="soundBtnLabel">Sound</span>
+      </button>
+      <button
+        type="button"
+        id="viewModeBtn"
+        class="toon-fs-btn"
+        aria-pressed="false"
+        title="Switch to vertical scroll view"
+        aria-label="Switch to vertical scroll view"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 6h16M4 12h16M4 18h10"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span class="toon-fs-label" id="viewModeLabel">Scroll</span>
       </button>
       <button
         type="button"
@@ -269,11 +394,6 @@
     </div>
 
     <main class="reader" id="main-content" role="main">
-      <header class="title-bar">
-        <p class="section-tag">Experiment</p>
-        <h1>JAX</h1>
-      </header>
-
       <div class="book-scene">
         <div class="book-shadow"></div>
         <div class="book" id="book">
@@ -309,12 +429,20 @@
       <div class="controls">
         <span class="page-indicator" id="indicator" aria-live="polite">…</span>
       </div>
+
+      <div
+        id="verticalStrip"
+        class="vertical-strip"
+        aria-label="Vertical page scroll"
+        hidden
+      ></div>
     </main>
 
-    <script src="../book-reader.js?v=129e50711a"></script>
-    <script src="words.js?v=02abacbbaa"></script>
+    <script src="../book-reader.js?v=4bb92081a0"></script>
+    <script src="words.js?v=2413fb2b72"></script>
     <script>
       let wordOverlay = null;
+      let verticalBuilt = false;
 
       window.__jaxSoundEnabled = false;
 
@@ -323,6 +451,9 @@
         // .front-cover-sound-btn (recreated every time the front cover
         // re-renders). Event delegation on document covers both regardless
         // of when/whether either exists in the DOM at a given moment.
+        const SOUND_PROMPT_DELAY_MS = 3000;
+        let soundPromptTimer = null;
+
         function setSoundEnabled(enabled) {
           window.__jaxSoundEnabled = enabled;
           document.querySelectorAll("#soundBtn, .front-cover-sound-btn").forEach((btn) => {
@@ -342,13 +473,58 @@
             // works before the user starts hovering word captions).
             const confirm = new Audio("assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3");
             confirm.play().catch(() => {});
+            hideSoundPrompt();
           }
         }
+
+        window.__jaxSetSoundEnabled = setSoundEnabled;
+
+        function hideSoundPrompt() {
+          const prompt = document.getElementById("soundPrompt");
+          if (prompt) prompt.hidden = true;
+        }
+
+        function showSoundPrompt() {
+          // Always surface after the delay unless the user already turned
+          // sound on (via the top-bar / cover button) during those 3s.
+          if (window.__jaxSoundEnabled) return;
+          const prompt = document.getElementById("soundPrompt");
+          if (prompt) {
+            prompt.hidden = false;
+            const enable = document.getElementById("soundPromptEnable");
+            if (enable) enable.focus();
+          }
+        }
+
+        /** Called once the reader has finished loading (manifest + words). */
+        window.__jaxScheduleSoundPrompt = function scheduleSoundPrompt() {
+          if (soundPromptTimer != null) window.clearTimeout(soundPromptTimer);
+          soundPromptTimer = window.setTimeout(showSoundPrompt, SOUND_PROMPT_DELAY_MS);
+        };
 
         document.addEventListener("click", (ev) => {
           const target = ev.target.closest("#soundBtn, .front-cover-sound-btn");
           if (!target) return;
           setSoundEnabled(!window.__jaxSoundEnabled);
+        });
+
+        const enableBtn = document.getElementById("soundPromptEnable");
+        const dismissBtn = document.getElementById("soundPromptDismiss");
+        if (enableBtn) {
+          enableBtn.addEventListener("click", () => {
+            setSoundEnabled(true);
+          });
+        }
+        if (dismissBtn) {
+          dismissBtn.addEventListener("click", () => {
+            hideSoundPrompt();
+          });
+        }
+
+        document.addEventListener("keydown", (ev) => {
+          if (ev.key !== "Escape") return;
+          const prompt = document.getElementById("soundPrompt");
+          if (prompt && !prompt.hidden) hideSoundPrompt();
         });
       })();
 
@@ -371,10 +547,82 @@
         });
       })();
 
+      (function () {
+        const btn = document.getElementById("viewModeBtn");
+        const label = document.getElementById("viewModeLabel");
+        const strip = document.getElementById("verticalStrip");
+        if (!btn || !strip) return;
+
+        let vertical = false;
+
+        async function buildVerticalStrip() {
+          const res = await fetch("manifest.json", { cache: "no-cache" });
+          if (!res.ok) throw new Error("manifest " + res.status);
+          const manifest = await res.json();
+          const files = Array.isArray(manifest.files) ? manifest.files : [];
+          strip.innerHTML = "";
+          files.forEach((src, i) => {
+            const pageNum = i + 1;
+            const slot = document.createElement("div");
+            slot.className = "vertical-page page-slot";
+            slot.dataset.pageNum = String(pageNum);
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = "Jax — page " + pageNum;
+            img.draggable = false;
+            img.loading = pageNum > 2 ? "lazy" : "eager";
+            slot.appendChild(img);
+            strip.appendChild(slot);
+            if (wordOverlay) wordOverlay.render(slot, pageNum);
+          });
+          verticalBuilt = true;
+        }
+
+        async function setVerticalMode(on) {
+          vertical = on;
+          document.body.classList.toggle("view-vertical", on);
+          btn.classList.toggle("is-active", on);
+          btn.setAttribute("aria-pressed", String(on));
+          if (on) {
+            btn.title = "Switch to book view";
+            btn.setAttribute("aria-label", btn.title);
+            if (label) label.textContent = "Book";
+            strip.hidden = false;
+            if (!verticalBuilt) {
+              try {
+                await buildVerticalStrip();
+              } catch (err) {
+                console.error(err);
+              }
+            } else if (wordOverlay) {
+              wordOverlay.refreshAll(strip);
+            }
+            // Scroll to top of strip when entering
+            const reader = document.getElementById("main-content");
+            if (reader) reader.scrollTop = 0;
+            window.scrollTo(0, 0);
+          } else {
+            btn.title = "Switch to vertical scroll view";
+            btn.setAttribute("aria-label", btn.title);
+            if (label) label.textContent = "Scroll";
+            strip.hidden = true;
+            if (wordOverlay) wordOverlay.refreshAll(document.getElementById("book"));
+          }
+        }
+
+        btn.addEventListener("click", () => {
+          setVerticalMode(!vertical);
+        });
+
+        // Expose rebuild for language changes
+        window.__jaxRebuildVerticalCaptions = () => {
+          if (vertical && wordOverlay && strip) wordOverlay.refreshAll(strip);
+        };
+      })();
+
       ToonBook.init({
         altPrefix: "Jax",
         frontCoverLogo: "../../logosquare.png",
-        soundHint: "Turn the sound on",
         onPagePaint(slot, pageNum) {
           if (wordOverlay) wordOverlay.render(slot, pageNum);
         },
@@ -382,14 +630,29 @@
           if (wordOverlay) wordOverlay.render(slot, null);
         },
         afterFullscreen() {
-          if (wordOverlay) wordOverlay.refreshAll(document.getElementById("book"));
+          if (wordOverlay) {
+            if (document.body.classList.contains("view-vertical")) {
+              wordOverlay.refreshAll(document.getElementById("verticalStrip"));
+            } else {
+              wordOverlay.refreshAll(document.getElementById("book"));
+            }
+          }
         },
         async beforeStart() {
           const wordsConfig = await window.JaxToon.loadWords("words.json");
           wordOverlay = new window.JaxToon.WordOverlay(wordsConfig);
           window.JaxToon.mountLangSwitcher(document.getElementById("langSwitcher"), wordOverlay, () => {
-            wordOverlay.refreshAll(document.getElementById("book"));
+            if (document.body.classList.contains("view-vertical")) {
+              wordOverlay.refreshAll(document.getElementById("verticalStrip"));
+            } else {
+              wordOverlay.refreshAll(document.getElementById("book"));
+            }
           });
+          // Reader is ready (manifest already loaded; words wired) — always
+          // show the sound prompt 3s after this point.
+          if (typeof window.__jaxScheduleSoundPrompt === "function") {
+            window.__jaxScheduleSoundPrompt();
+          }
         },
       });
     </script>

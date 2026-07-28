@@ -269,6 +269,7 @@
     if (v === "ai" || v === "hud" || v === "terminal" || v === "caption") return "ai";
     if (v === "burst" || v === "spiky" || v === "star" || v === "shout") return "burst";
     if (v === "bubble" || v === "dialog" || v === "speech") return "bubble";
+    if (v === "credit" || v === "credits") return "credit";
     return "plain";
   }
 
@@ -564,12 +565,21 @@
           const maxW = w.maxWidth != null ? (w.maxWidth > 1 ? w.maxWidth / this.designWidth : w.maxWidth) * 100 : null;
           const variant = resolveVariant(w);
           const isBubble = variant === "bubble" || variant === "ai" || variant === "burst";
+          const isCredit = variant === "credit";
 
           const el = document.createElement("div");
-          const bubbleVariantClass = variant === "ai" ? " jax-word--ai" : variant === "burst" ? " jax-word--burst" : "";
-          el.className =
-            (isBubble ? "jax-word jax-word--bubble" + bubbleVariantClass : "jax-word") +
-            (w.audio ? " jax-word--sfx" : "");
+          // Leading spaces on optional classes — never glue names together
+          // (e.g. "jax-word--bubblejax-word--burst" broke burst/AI CSS).
+          const bubbleVariantClass =
+            variant === "ai" ? " jax-word--ai" : variant === "burst" ? " jax-word--burst" : "";
+          el.className = [
+            isBubble ? "jax-word jax-word--bubble" : "jax-word",
+            bubbleVariantClass,
+            isCredit ? "jax-word--credit" : "",
+            w.audio ? "jax-word--sfx" : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
 
           const textEl = document.createElement("span");
           textEl.className = "jax-word-text";
@@ -620,6 +630,9 @@
 
           const textAlign = align === "right" ? "right" : align === "left" ? "left" : "center";
 
+          const fontFamily = isCredit
+            ? '"Inter", sans-serif'
+            : w.fontFamily || this.fontFamily;
           el.style.cssText = [
             "position:absolute",
             `left:${x * 100}%`,
@@ -628,16 +641,17 @@
             // `transform` shorthand itself, so the CSS hover-zoom rule can
             // append `scale()` without clobbering placement.
             `--jax-transform:${transform.join(" ")}`,
-            `font-family:${this.fontFamily}`,
+            `font-family:${fontFamily}`,
             `font-size:${Math.max(10, sizePx)}px`,
-            "line-height:1.15",
-            "font-weight:700",
+            isCredit ? "line-height:1.45" : "line-height:1.15",
+            isCredit ? "font-weight:400" : "font-weight:700",
             isBubble ? "" : `color:${w.color || "#fff"}`,
             "white-space:pre-line",
             "text-align:" + textAlign,
             maxW != null ? `max-width:${maxW}%` : "",
             ...strokeCss,
-            "letter-spacing:0.02em",
+            isCredit ? "letter-spacing:0.06em" : "letter-spacing:0.02em",
+            isCredit ? "text-transform:none" : "",
             w.audio ? "pointer-events:auto" : "",
             w.audio ? "cursor:pointer" : "",
           ]
@@ -696,7 +710,8 @@
   }
 
   /**
-   * Wire language switcher buttons (EN/IT/DE/FR by default).
+   * Compact language dropdown: shows only the selected code; opens a menu
+   * with EN/IT/DE/FR (or whatever is in words.json languages).
    * @param {HTMLElement} container
    * @param {WordOverlay} overlay
    * @param {() => void} onChange
@@ -708,25 +723,102 @@
     container.setAttribute("role", "group");
     container.setAttribute("aria-label", "Language");
 
-    overlay.getLanguages().forEach((lang) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "jax-lang-btn";
-      btn.textContent = lang.label || lang.code.toUpperCase();
-      btn.dataset.lang = lang.code;
-      btn.setAttribute("aria-pressed", String(lang.code === overlay.getLang()));
-      if (lang.code === overlay.getLang()) btn.classList.add("is-active");
-      btn.addEventListener("click", () => {
-        overlay.setLang(lang.code);
-        container.querySelectorAll(".jax-lang-btn").forEach((b) => {
-          const active = b.dataset.lang === lang.code;
-          b.classList.toggle("is-active", active);
-          b.setAttribute("aria-pressed", String(active));
-        });
-        if (typeof onChange === "function") onChange(lang.code);
+    const languages = overlay.getLanguages();
+    const labelFor = (code) => {
+      const lang = languages.find((l) => l.code === code);
+      return (lang && (lang.label || lang.code.toUpperCase())) || String(code).toUpperCase();
+    };
+
+    const wrap = document.createElement("div");
+    wrap.className = "jax-lang-dropdown";
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "toon-fs-btn jax-lang-toggle";
+    toggle.setAttribute("aria-haspopup", "listbox");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.title = "Language";
+    toggle.setAttribute("aria-label", "Language: " + labelFor(overlay.getLang()));
+
+    const toggleLabel = document.createElement("span");
+    toggleLabel.className = "jax-lang-toggle-label";
+    toggleLabel.textContent = labelFor(overlay.getLang());
+    toggle.appendChild(toggleLabel);
+
+    const chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    chevron.setAttribute("class", "jax-lang-chevron");
+    chevron.setAttribute("width", "10");
+    chevron.setAttribute("height", "10");
+    chevron.setAttribute("viewBox", "0 0 24 24");
+    chevron.setAttribute("fill", "none");
+    chevron.setAttribute("stroke", "currentColor");
+    chevron.setAttribute("stroke-width", "2.5");
+    chevron.setAttribute("aria-hidden", "true");
+    const chevronPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    chevronPath.setAttribute("d", "M6 9l6 6 6-6");
+    chevronPath.setAttribute("stroke-linecap", "round");
+    chevronPath.setAttribute("stroke-linejoin", "round");
+    chevron.appendChild(chevronPath);
+    toggle.appendChild(chevron);
+
+    const menu = document.createElement("div");
+    menu.className = "jax-lang-menu";
+    menu.setAttribute("role", "listbox");
+    menu.hidden = true;
+    menu.setAttribute("aria-label", "Choose language");
+
+    function setOpen(open) {
+      wrap.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      menu.hidden = !open;
+    }
+
+    function selectLang(code) {
+      overlay.setLang(code);
+      toggleLabel.textContent = labelFor(code);
+      toggle.setAttribute("aria-label", "Language: " + labelFor(code));
+      menu.querySelectorAll(".jax-lang-option").forEach((opt) => {
+        const active = opt.dataset.lang === code;
+        opt.classList.toggle("is-active", active);
+        opt.setAttribute("aria-selected", String(active));
       });
-      container.appendChild(btn);
+      setOpen(false);
+      if (typeof onChange === "function") onChange(code);
+    }
+
+    languages.forEach((lang) => {
+      const opt = document.createElement("button");
+      opt.type = "button";
+      opt.className = "jax-lang-option";
+      opt.dataset.lang = lang.code;
+      opt.setAttribute("role", "option");
+      const active = lang.code === overlay.getLang();
+      opt.classList.toggle("is-active", active);
+      opt.setAttribute("aria-selected", String(active));
+      opt.textContent = lang.label || lang.code.toUpperCase();
+      opt.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        selectLang(lang.code);
+      });
+      menu.appendChild(opt);
     });
+
+    toggle.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      setOpen(menu.hidden);
+    });
+
+    // Close on outside click / Escape
+    document.addEventListener("click", (ev) => {
+      if (!wrap.contains(ev.target)) setOpen(false);
+    });
+    document.addEventListener("keydown", (ev) => {
+      if (ev.key === "Escape") setOpen(false);
+    });
+
+    wrap.appendChild(toggle);
+    wrap.appendChild(menu);
+    container.appendChild(wrap);
   }
 
   global.JaxToon = {
