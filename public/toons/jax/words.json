@@ -854,6 +854,29 @@
           "fr": "BOOOOM"
         },
         "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
+      },
+      {
+        "x": 0.78,
+        "y": 0.72,
+        "align": "center",
+        "size": 38,
+        "variant": "ai",
+        "color": "#f5f5f5",
+        "angle": -2,
+        "maxWidth": 0.3,
+        "bubble": {
+          "fill": "#0a0a0a",
+          "stroke": "#0a0a0a",
+          "strokeWidth": 2.2,
+          "tail": "none"
+        },
+        "text": {
+          "en": "PUNCH NOW!",
+          "it": "PUGNA ORA!",
+          "de": "JETZT SCHLAGEN!",
+          "fr": "FRAPPE MAINTENANT!"
+        },
+        "audio": "assets/sfx/ba6c620b0bfe0cc85e6f3af4ef987150.mp3"
       }
     ],
     "13": [
@@ -892,6 +915,24 @@
           "fr": "ARGHH!"
         },
         "audio": "assets/sfx/a8ca5bec70c73d83eccd1bf79aec2cc2.mp3"
+      },
+      {
+        "x": 0.22,
+        "y": 0.62,
+        "align": "center",
+        "size": 34,
+        "variant": "burst",
+        "color": "#111111",
+        "angle": -6,
+        "scale": 1.5,
+        "maxWidth": 0.32,
+        "text": {
+          "en": "This is\nfor you!",
+          "it": "Questo è\nper te!",
+          "de": "Das ist\nfür dich!",
+          "fr": "Ça c'est\npour toi!"
+        },
+        "audio": "assets/sfx/729e3661e5f3fd9d185c56d8596dc217.mp3"
       }
     ],
     "15": [
