@@ -6,8 +6,16 @@
  * overlay, language switcher, sound/music buttons).
  */
 
+/* Prevent side “black band” resize: nothing (grain, nav buttons, flash)
+   may expand document scroll width and change 100vw-based book sizing. */
+html:has(body.toons-reader) {
+  overflow: hidden;
+  height: 100%;
+}
+
 body.toons-reader {
   min-height: 100dvh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,6 +24,8 @@ body.toons-reader {
   color: var(--text);
   overflow: hidden;
   user-select: none;
+  /* Stable layout even if a classic scrollbar would otherwise appear */
+  scrollbar-gutter: stable;
 }
 
 .reader {
@@ -86,6 +96,71 @@ body.toons-reader {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  padding: 0.25rem;
+  border-radius: 6px;
+  /* Contain highlight paint; never let the intro flash touch page layout */
+  isolation: isolate;
+}
+
+/* One-shot intro: flash the whole menu group 3×.
+   Animate only opacity / color (no box-shadow growth, no springy
+   --transition easing) so the page doesn’t look like it wobbles. */
+@keyframes toon-menu-ring-flash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes toon-menu-btn-flash {
+  0%,
+  100% {
+    border-color: var(--border);
+    color: var(--silver);
+  }
+  50% {
+    border-color: var(--red-smile);
+    color: var(--red-smile);
+  }
+}
+
+.toon-top-controls.is-highlight-pulse {
+  position: fixed; /* keep stacking context for ::before */
+}
+
+.toon-top-controls.is-highlight-pulse::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 8px;
+  border: 2px solid var(--red-smile);
+  background: color-mix(in srgb, var(--red-smile) 20%, transparent);
+  pointer-events: none;
+  z-index: -1;
+  animation: toon-menu-ring-flash 0.48s ease-in-out 3;
+}
+
+.toon-top-controls.is-highlight-pulse .toon-fs-btn {
+  /* Color-only pulse on every control in the group */
+  animation: toon-menu-btn-flash 0.48s ease-in-out 3;
+  /* Kill the normal 0.2s border transition so the flash is crisp */
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toon-top-controls.is-highlight-pulse::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  .toon-top-controls.is-highlight-pulse .toon-fs-btn {
+    animation: none;
+    border-color: var(--red-smile);
+    color: var(--red-smile);
+  }
 }
 
 .toon-fs-btn {

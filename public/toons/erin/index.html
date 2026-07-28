@@ -16,8 +16,8 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../../styles.css?v=179e55496f" />
-    <link rel="stylesheet" href="../reader-shared.css?v=6fe08ecc95" />
+    <link rel="stylesheet" href="../../styles.css?v=2f5d542525" />
+    <link rel="stylesheet" href="../reader-shared.css?v=2133fcf2da" />
     <style>
       /* Book-only tokens (page paper / spine — not site chrome). Shared
          reader shell chrome lives in ../reader-shared.css; this block only
@@ -27,7 +27,8 @@
            Prefer height-fill like Jax: Erin is flatter, so it needs a wider
            max width to reach the same on-screen height (was 900px / 0.72 and
            looked noticeably smaller than Jax). */
-        --book-width: min(98vw, 1200px, calc((100dvh - 160px) / 0.75));
+        /* Leave room for side page-nav buttons (see Jax note). */
+        --book-width: min(calc(100vw - 56px), 1200px, calc((100dvh - 160px) / 0.75));
         --book-height: calc(var(--book-width) * 0.75);
         --page-bg: #f8f4ec;
         --spine: #2a2218;
@@ -35,7 +36,7 @@
       }
 
       body.is-fullscreen .book-scene {
-        --book-width: min(98vw, calc(92dvh / 0.75));
+        --book-width: min(calc(100vw - 24px), calc(92dvh / 0.75));
         --book-height: min(88dvh, calc(var(--book-width) * 0.75));
         width: var(--book-width);
         height: var(--book-height);
@@ -160,7 +161,7 @@
       ></div>
     </main>
 
-    <script src="../book-reader.js?v=4bb92081a0"></script>
+    <script src="../book-reader.js?v=1678884cc4"></script>
     <script>
       (function () {
         const btn = document.getElementById("viewModeBtn");

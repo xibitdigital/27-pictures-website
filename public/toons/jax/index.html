@@ -19,18 +19,18 @@
       href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../../styles.css?v=179e55496f" />
-    <link rel="stylesheet" href="../reader-shared.css?v=6fe08ecc95" />
+    <link rel="stylesheet" href="../../styles.css?v=2f5d542525" />
+    <link rel="stylesheet" href="../reader-shared.css?v=2133fcf2da" />
     <style>
       /* Book-only tokens — portrait pages (1008×1792). Shared reader shell
          chrome lives in ../reader-shared.css; this block only has Jax's own
          book-aspect tokens and Jax-only extras (word captions, language
          switcher, sound/music buttons). */
       :root {
-        /* Spread aspect ≈ 0.89 (two 1008×1792 pages). Prefer height-fill
-           with a wide max so the book uses the full available viewport
-           (aligned with Erin’s sizing approach). */
-        --book-width: min(98vw, 1200px, calc((100dvh - 160px) / 0.89));
+        /* Spread aspect ≈ 0.89 (two 1008×1792 pages). Prefer height-fill.
+           Leave ~56px total for side page-nav buttons so they never stick
+           past the viewport (that overflow caused a resizing black band). */
+        --book-width: min(calc(100vw - 56px), 1200px, calc((100dvh - 160px) / 0.89));
         --book-height: calc(var(--book-width) * 0.89);
         --page-bg: #0a0a0c;
         --spine: #1a1a22;
@@ -38,7 +38,7 @@
       }
 
       body.is-fullscreen .book-scene {
-        --book-width: min(98vw, calc(92dvh / 0.89));
+        --book-width: min(calc(100vw - 24px), calc(92dvh / 0.89));
         --book-height: min(88dvh, calc(var(--book-width) * 0.89));
         width: var(--book-width);
         height: var(--book-height);
@@ -438,7 +438,7 @@
       ></div>
     </main>
 
-    <script src="../book-reader.js?v=4bb92081a0"></script>
+    <script src="../book-reader.js?v=1678884cc4"></script>
     <script src="words.js?v=2413fb2b72"></script>
     <script>
       let wordOverlay = null;

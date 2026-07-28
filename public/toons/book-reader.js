@@ -585,6 +585,21 @@
       viewIndex = 0;
       document.body.classList.toggle("single-page", singlePage);
       updateView(false);
+      highlightTopControls();
+    }
+
+    /** Flash the top menu group 3 times so users notice Sound / Scroll / etc. */
+    function highlightTopControls() {
+      const el = document.querySelector(".toon-top-controls");
+      if (!el) return;
+      el.classList.remove("is-highlight-pulse");
+      // Force reflow so re-adding the class restarts the animation.
+      void el.offsetWidth;
+      el.classList.add("is-highlight-pulse");
+      const clear = () => el.classList.remove("is-highlight-pulse");
+      // 3 × 0.48s ≈ 1.44s; clear a beat after so the last flash finishes.
+      // (animationend on multi-iteration + ::before is unreliable across browsers.)
+      window.setTimeout(clear, 1700);
     }
 
     start();
