@@ -78,8 +78,12 @@ watermark: ## Bake site watermark into images (pass args after --)
 # ---------------------------------------------------------------------------
 
 .PHONY: deploy
-deploy: build ## ⚠ Production: build then deploy dist/ to Cloudflare Pages (custom domain)
-	$(NPX) wrangler pages deploy dist --project-name=twentyseven-pictures --commit-dirty=true
+deploy: build ## Production: build then deploy dist/ to main (custom domain)
+	@find dist -name .DS_Store -delete 2>/dev/null || true
+	$(NPX) wrangler pages deploy dist \
+		--project-name=twentyseven-pictures \
+		--branch=main \
+		--commit-dirty=true
 
 .PHONY: preview-deploy
 preview-deploy: build ## Preview only: deploy dist/ to branch feat/vue-frontend (not production)
