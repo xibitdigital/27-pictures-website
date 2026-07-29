@@ -38,7 +38,8 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const PUBLIC = path.join(ROOT, "public");
-const MEDIA_ROOT = path.join(PUBLIC, "toons");
+/** Media roots under public/ mirrored 1:1 into R2 (toon plates + experiment cards). */
+const MEDIA_ROOTS = [path.join(PUBLIC, "toons"), path.join(PUBLIC, "card-art")];
 const LOCK_PATH = path.join(__dirname, "r2-assets-lock.json");
 const CORS_PATH = path.join(__dirname, "r2-cors.json");
 
@@ -258,14 +259,17 @@ function main() {
     process.exit(0);
   }
 
-  if (!fs.existsSync(MEDIA_ROOT)) {
-    console.error(`No media root at ${MEDIA_ROOT}`);
-    process.exit(1);
+  const files = [];
+  for (const root of MEDIA_ROOTS) {
+    if (!fs.existsSync(root)) {
+      console.warn(`warning: media root missing, skip: ${path.relative(ROOT, root)}`);
+      continue;
+    }
+    walkMedia(root, files);
   }
-
-  const files = walkMedia(MEDIA_ROOT).sort();
+  files.sort();
   if (!files.length) {
-    console.log("No media files found under public/toons.");
+    console.log("No media files found under public/toons or public/card-art.");
     process.exit(0);
   }
 

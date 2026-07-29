@@ -12,90 +12,67 @@ const isTest = !!process.env.VITEST;
 
 const MEDIA_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".mp3", ".mp4", ".webm", ".ogg", ".wav"]);
 
-/**
- * Site-root paths under /toons/… that static HTML/XML still reference
- * (experiment cards, og:image, JSON-LD, sitemap). These must stay on Pages
- * even when bulk reader media is offloaded to R2.
- */
-function collectToonMediaKeepList(root: string): Set<string> {
-  const keep = new Set<string>();
-  const re = /(?:https?:\/\/[^"'/\s]+)?(\/toons\/[^"'?\s#]+\.(?:jpe?g|png|webp|gif|mp3|mp4|webm|ogg|wav))/gi;
-
-  const walk = (dir: string) => {
-    if (!fs.existsSync(dir)) return;
-    for (const name of fs.readdirSync(dir)) {
-      const full = path.join(dir, name);
-      let st: fs.Stats;
-      try {
-        st = fs.statSync(full);
-      } catch {
-        continue;
-      }
-      if (st.isDirectory()) {
-        walk(full);
-        continue;
-      }
-      if (!/\.(html?|xml|json|txt)$/i.test(name)) continue;
-      let text: string;
-      try {
-        text = fs.readFileSync(full, "utf8");
-      } catch {
-        continue;
-      }
-      for (const m of text.matchAll(re)) {
-        // "/toons/erin/assets/x.jpg" → "toons/erin/assets/x.jpg"
-        keep.add(m[1].replace(/^\//, ""));
-      }
-    }
-  };
-
-  walk(root);
-  return keep;
+/** CDN origin without trailing slash, or empty. */
+function assetBase(): string {
+  return (process.env.VITE_ASSET_BASE || "").trim().replace(/\/+$/, "");
 }
 
 /**
- * When VITE_ASSET_BASE is set, drop toon media from dist/ after the public/
- * copy — those files are served from R2/CDN instead of Pages.
- * Keeps manifest.json, words.json, reader CSS, and any media still referenced
- * from static HTML/XML (e.g. experiments card thumbs, og:image).
+ * Rewrite static card-art / same-origin media refs to the CDN base so experiments
+ * HTML, og:image, JSON-LD, and sitemap hit R2 when VITE_ASSET_BASE is set.
  */
-function stripToonMediaWhenCdn(): Plugin {
-  return {
-    name: "strip-toon-media-when-cdn",
-    apply: "build",
-    closeBundle() {
-      const base = (process.env.VITE_ASSET_BASE || "").trim();
-      if (!base) return;
-      const toonsDir = path.join(distDir, "toons");
-      if (!fs.existsSync(toonsDir)) return;
+function rewriteStaticMediaToCdn(html: string, base: string): string {
+  if (!base) return html;
+  return html
+    .replaceAll("https://twentyseven.pictures/card-art/", `${base}/card-art/`)
+    .replaceAll('"/card-art/', `"${base}/card-art/`)
+    .replaceAll("'/card-art/", `'${base}/card-art/`);
+}
 
-      const keep = collectToonMediaKeepList(distDir);
+/**
+ * When VITE_ASSET_BASE is set:
+ *  - rewrite HTML card-art URLs to the CDN
+ *  - drop toon media + card-art files from dist (served from R2)
+ * Keeps manifests, words.json, reader CSS on Pages.
+ */
+function cdnMediaPlugin(): Plugin {
+  return {
+    name: "cdn-media",
+    apply: "build",
+    transformIndexHtml(html) {
+      return rewriteStaticMediaToCdn(html, assetBase());
+    },
+    closeBundle() {
+      const base = assetBase();
+      if (!base) return;
+
+      // Sitemap is copied from public/ (not an HTML entry) — rewrite in place.
+      const sitemap = path.join(distDir, "sitemap.xml");
+      if (fs.existsSync(sitemap)) {
+        const next = rewriteStaticMediaToCdn(fs.readFileSync(sitemap, "utf8"), base);
+        fs.writeFileSync(sitemap, next);
+      }
+
       let removed = 0;
-      let kept = 0;
-      const walk = (dir: string) => {
+      const stripDir = (dir: string) => {
+        if (!fs.existsSync(dir)) return;
         for (const name of fs.readdirSync(dir)) {
           const full = path.join(dir, name);
           const st = fs.statSync(full);
           if (st.isDirectory()) {
-            walk(full);
-            // Remove empty dirs left behind (e.g. assets/sfx)
-            if (fs.readdirSync(full).length === 0) fs.rmdirSync(full);
+            stripDir(full);
+            if (fs.existsSync(full) && fs.readdirSync(full).length === 0) fs.rmdirSync(full);
           } else if (MEDIA_EXT.has(path.extname(name).toLowerCase())) {
-            const rel = path.relative(distDir, full).split(path.sep).join("/");
-            if (keep.has(rel)) {
-              kept += 1;
-              continue;
-            }
             fs.unlinkSync(full);
             removed += 1;
           }
         }
       };
-      walk(toonsDir);
-      if (removed || kept) {
-        console.log(
-          `[strip-toon-media-when-cdn] removed ${removed} media file(s) from dist/toons; kept ${kept} (HTML/sitemap refs)`
-        );
+
+      stripDir(path.join(distDir, "toons"));
+      stripDir(path.join(distDir, "card-art"));
+      if (removed) {
+        console.log(`[cdn-media] removed ${removed} media file(s) from dist (served from ${base})`);
       }
     },
   };
@@ -168,7 +145,7 @@ export default defineConfig({
   root: isTest ? __dirname : srcDir,
   publicDir: path.resolve(__dirname, "public"),
   appType: "mpa",
-  plugins: [vue(), stripToonMediaWhenCdn(), basicAuthDevPlugin()],
+  plugins: [vue(), cdnMediaPlugin(), basicAuthDevPlugin()],
   resolve: {
     alias: {
       "@": srcDir,
