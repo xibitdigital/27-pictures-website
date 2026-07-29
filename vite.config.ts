@@ -13,9 +13,51 @@ const isTest = !!process.env.VITEST;
 const MEDIA_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".mp3", ".mp4", ".webm", ".ogg", ".wav"]);
 
 /**
+ * Site-root paths under /toons/… that static HTML/XML still reference
+ * (experiment cards, og:image, JSON-LD, sitemap). These must stay on Pages
+ * even when bulk reader media is offloaded to R2.
+ */
+function collectToonMediaKeepList(root: string): Set<string> {
+  const keep = new Set<string>();
+  const re = /(?:https?:\/\/[^"'/\s]+)?(\/toons\/[^"'?\s#]+\.(?:jpe?g|png|webp|gif|mp3|mp4|webm|ogg|wav))/gi;
+
+  const walk = (dir: string) => {
+    if (!fs.existsSync(dir)) return;
+    for (const name of fs.readdirSync(dir)) {
+      const full = path.join(dir, name);
+      let st: fs.Stats;
+      try {
+        st = fs.statSync(full);
+      } catch {
+        continue;
+      }
+      if (st.isDirectory()) {
+        walk(full);
+        continue;
+      }
+      if (!/\.(html?|xml|json|txt)$/i.test(name)) continue;
+      let text: string;
+      try {
+        text = fs.readFileSync(full, "utf8");
+      } catch {
+        continue;
+      }
+      for (const m of text.matchAll(re)) {
+        // "/toons/erin/assets/x.jpg" → "toons/erin/assets/x.jpg"
+        keep.add(m[1].replace(/^\//, ""));
+      }
+    }
+  };
+
+  walk(root);
+  return keep;
+}
+
+/**
  * When VITE_ASSET_BASE is set, drop toon media from dist/ after the public/
  * copy — those files are served from R2/CDN instead of Pages.
- * Keeps manifest.json, words.json, and reader CSS on Pages.
+ * Keeps manifest.json, words.json, reader CSS, and any media still referenced
+ * from static HTML/XML (e.g. experiments card thumbs, og:image).
  */
 function stripToonMediaWhenCdn(): Plugin {
   return {
@@ -27,7 +69,9 @@ function stripToonMediaWhenCdn(): Plugin {
       const toonsDir = path.join(distDir, "toons");
       if (!fs.existsSync(toonsDir)) return;
 
+      const keep = collectToonMediaKeepList(distDir);
       let removed = 0;
+      let kept = 0;
       const walk = (dir: string) => {
         for (const name of fs.readdirSync(dir)) {
           const full = path.join(dir, name);
@@ -37,14 +81,21 @@ function stripToonMediaWhenCdn(): Plugin {
             // Remove empty dirs left behind (e.g. assets/sfx)
             if (fs.readdirSync(full).length === 0) fs.rmdirSync(full);
           } else if (MEDIA_EXT.has(path.extname(name).toLowerCase())) {
+            const rel = path.relative(distDir, full).split(path.sep).join("/");
+            if (keep.has(rel)) {
+              kept += 1;
+              continue;
+            }
             fs.unlinkSync(full);
             removed += 1;
           }
         }
       };
       walk(toonsDir);
-      if (removed) {
-        console.log(`[strip-toon-media-when-cdn] removed ${removed} media files from dist/toons (VITE_ASSET_BASE set)`);
+      if (removed || kept) {
+        console.log(
+          `[strip-toon-media-when-cdn] removed ${removed} media file(s) from dist/toons; kept ${kept} (HTML/sitemap refs)`
+        );
       }
     },
   };
