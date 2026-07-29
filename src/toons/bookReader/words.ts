@@ -251,11 +251,6 @@ function scribbleScratches(seed, count) {
   return scratches;
 }
 
-const CAN_HOVER =
-  typeof window !== "undefined" &&
-  typeof window.matchMedia === "function" &&
-  window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-
 /** Default gate: allow playback (used in tests / pages without a sound UI). */
 const DEFAULT_SOUND_GATE: SoundGate = {
   isEnabled: () => true,
@@ -695,8 +690,8 @@ export class WordOverlay {
             ev.stopPropagation();
             playSfx(url, sound);
           };
-          // Desktop mouse: play on hover. Touch (no hover): play on tap.
-          if (CAN_HOVER) el.addEventListener("mouseenter", play);
+          // Tap/click only — hover playback fired SFX the reader never asked
+          // for (and on mobile it stole the audio channel from the music).
           el.addEventListener("click", play);
         }
 

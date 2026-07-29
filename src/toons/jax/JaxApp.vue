@@ -126,8 +126,9 @@ onMounted(() => {
   } catch {
     /* ignore */
   }
-  // Also pin music in the shared preload cache (same URL resolution).
-  void preloadAudioUrls([BG_MUSIC]);
+  // Don't also pin music in the shared preload cache — a second element on the
+  // same 4MB src just competes for bandwidth/decoders on mobile; #bgMusic's own
+  // preload="auto" + load() already warms it.
   bg.addEventListener("play", () => {
     musicEnabled.value = true;
   });
