@@ -9,7 +9,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 describe("site entry modules", () => {
   const mount = vi.fn();
   const directive = vi.fn();
-  const createApp = vi.fn(() => ({ directive, mount }));
+  // Accept root + props so mock.calls typing matches createApp(Component, props?).
+  const createApp = vi.fn((..._args: unknown[]) => ({ directive, mount }));
   const useSmoothScroll = vi.fn();
 
   beforeEach(() => {
@@ -35,9 +36,7 @@ describe("site entry modules", () => {
   it("main.ts mounts SiteApp(home) on #site-app", async () => {
     await import("./main");
     expect(useSmoothScroll).toHaveBeenCalled();
-    expect(createApp).toHaveBeenCalled();
-    const props = createApp.mock.calls[0][1];
-    expect(props).toEqual({ page: "home" });
+    expect(createApp).toHaveBeenCalledWith(expect.anything(), { page: "home" });
     expect(directive).toHaveBeenCalledWith("magnetic", expect.anything());
     expect(directive).toHaveBeenCalledWith("reveal", expect.anything());
     expect(mount).toHaveBeenCalledWith("#site-app");
@@ -46,9 +45,7 @@ describe("site entry modules", () => {
   it("experimentsMain.ts mounts SiteApp(experiments) on #site-app", async () => {
     await import("./experimentsMain");
     expect(useSmoothScroll).toHaveBeenCalled();
-    expect(createApp).toHaveBeenCalled();
-    const props = createApp.mock.calls[0][1];
-    expect(props).toEqual({ page: "experiments" });
+    expect(createApp).toHaveBeenCalledWith(expect.anything(), { page: "experiments" });
     expect(mount).toHaveBeenCalledWith("#site-app");
   });
 });

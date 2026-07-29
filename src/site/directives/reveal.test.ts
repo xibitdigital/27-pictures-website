@@ -62,9 +62,13 @@ describe("vReveal", () => {
   });
 
   it("adds active when the observer reports intersection", async () => {
-    let callback: IntersectionObserverCallback | null = null;
+    let callback:
+      | ((entries: IntersectionObserverEntry[], obs: IntersectionObserver) => void)
+      | null = null;
     class FakeIO {
-      constructor(cb: IntersectionObserverCallback) {
+      constructor(
+        cb: (entries: IntersectionObserverEntry[], obs: IntersectionObserver) => void
+      ) {
         callback = cb;
       }
       observe = vi.fn();
@@ -90,7 +94,8 @@ describe("vReveal", () => {
     const el = wrapper.find(".r").element as HTMLElement;
     expect(el.classList.contains("active")).toBe(false);
 
-    callback?.(
+    expect(callback).toBeTypeOf("function");
+    callback!(
       [
         {
           isIntersecting: true,
