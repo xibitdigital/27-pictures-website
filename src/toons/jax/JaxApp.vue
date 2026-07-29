@@ -93,6 +93,7 @@ function onLangChange(): void {
 
 /** Stable options — shell owns page source and cover identity. */
 const bookOptions: ToonShellBookOptions = {
+  coverSubtitle: "Cyberpunk Chronicles",
   soundHint: "Turn the sound on",
   getSoundEnabled: () => soundEnabled.value,
   onSoundToggle: () => toggleSound(),
