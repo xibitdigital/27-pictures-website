@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/** Main site chrome (fixed header + mobile menu). */
 import { computed, ref, watch } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 
