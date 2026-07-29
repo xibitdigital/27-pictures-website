@@ -57,9 +57,9 @@ describe("resolveAssetUrl / getAssetBase", () => {
     );
   });
 
-  it("requires pageDir for relative paths when CDN is set", () => {
+  it("leaves relative paths alone when CDN is set but pageDir is missing", () => {
     vi.stubEnv("VITE_ASSET_BASE", "https://cdn.example");
-    expect(() => resolveAssetUrl("assets/1.jpg")).toThrow(/pageDir required/);
+    expect(resolveAssetUrl("assets/1.jpg")).toBe("assets/1.jpg");
   });
 
   it("leaves absolute and data URLs alone", () => {

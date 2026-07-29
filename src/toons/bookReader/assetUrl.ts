@@ -54,8 +54,10 @@ export function resolveAssetUrl(path: string, pageDir?: string): string {
   const base = getAssetBase();
   if (!base) return path;
 
+  // Relative paths need pageDir to become CDN absolute; without it leave
+  // relative (same-origin / tests). Readers always pass asset-page-dir.
   if (!path.startsWith("/") && (pageDir == null || pageDir === "")) {
-    throw new Error(`resolveAssetUrl: pageDir required for relative path "${path}" when VITE_ASSET_BASE is set`);
+    return path;
   }
 
   return base + toSitePath(path, pageDir);
