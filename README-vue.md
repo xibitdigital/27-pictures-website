@@ -30,7 +30,7 @@ Work-in-progress migration of frontend JS to **Vue 3 + Vite + TypeScript**.
 | `src/experiments/index.html` | Experiments lab entry |
 | `src/toons/jax\|erin/index.html` | Toon reader entries (next to their Vue apps) |
 | `src/site/` | `SiteApp.vue`, `SiteNav.vue`, `ContactForm.vue`, directives |
-| `src/toons/shared/` | `useToonBook`, `useViewMode`, `book-reader`, `words`, `types` |
+| `src/toons/shared/` | `useToonBook`, `useViewMode`, `bookReader`, `words`, `types` |
 | `src/toons/jax/` | `JaxApp.vue`, `LangSwitcher.vue`, `main.ts` |
 | `src/toons/erin/` | `ErinApp.vue` + `main.ts` |
 | `src/env.d.ts` | Vue / Window ambient types |
@@ -39,7 +39,17 @@ Work-in-progress migration of frontend JS to **Vue 3 + Vite + TypeScript**.
 
 Repo root stays config/tooling only — no page HTML mixed with `package.json` / `Makefile`.
 
-`book-reader.ts` / `words.ts` use `// @ts-nocheck` on the large imperative DOM ports; public option/API shapes live in `types.ts`. Shells and site code are fully typed.
+`bookReader.ts` / `words.ts` use `// @ts-nocheck` on the large imperative DOM ports; public option/API shapes live in `types.ts`. Shells and site code are fully typed.
+
+### File naming
+
+| Kind | Convention | Examples |
+|------|------------|----------|
+| Vue SFCs | PascalCase | `SiteNav.vue`, `ToonReaderShell.vue` |
+| TypeScript modules | camelCase | `bookReader.ts`, `loadManifest.ts`, `experimentsMain.ts` |
+| Composables | camelCase + `use` prefix | `useToonBook.ts`, `useSoundGate.ts` |
+| Colocated tests | match source + `.test.ts` | `bookReader.test.ts`, `SiteNav.test.ts` |
+| HTML entries | `index.html` per route | `src/toons/jax/index.html` |
 
 ### Book reader + Vue refs
 
@@ -77,7 +87,7 @@ Vitest + Vue Test Utils + happy-dom. Specs live next to source:
 
 | Spec | Covers |
 |------|--------|
-| `book-reader.test.ts` | FlipFrame: cover, spreads, keyboard/zones/buttons, indicator, single-page, flip smoke |
+| `bookReader.test.ts` | FlipFrame: cover, spreads, keyboard/zones/buttons, indicator, single-page, flip smoke |
 | `useToonBook.test.ts` | Vue ref wiring, init/destroy, goNext |
 | `words.test.ts` | fractions, WordOverlay, loadWords |
 | `useViewMode.test.ts` | manifest load, vertical toggle |

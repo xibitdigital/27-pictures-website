@@ -26,8 +26,4 @@ interface Window {
   Lenis?: new (opts?: Record<string, unknown>) => {
     raf: (time: number) => void;
   };
-  /** Jax SFX gate — set by JaxApp. */
-  __jaxSoundEnabled?: boolean;
-  __jaxSetSoundEnabled?: (enabled: boolean) => void;
-  __jaxMaybePromptSound?: () => void;
 }

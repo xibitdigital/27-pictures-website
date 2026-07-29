@@ -11,7 +11,7 @@
  *   );
  */
 import { onMounted, onBeforeUnmount, unref, type MaybeRef } from "vue";
-import { initToonBook } from "./book-reader";
+import { initToonBook } from "./bookReader";
 import type { ToonBookApi, ToonBookEls, ToonBookOptions } from "./types";
 
 export type ToonBookRefMap = {

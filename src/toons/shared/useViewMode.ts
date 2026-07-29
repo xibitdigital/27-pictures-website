@@ -3,6 +3,7 @@
  * UI state only — the strip is a VerticalStrip component (no createElement).
  */
 import { onMounted, ref, type Ref } from "vue";
+import { loadManifest } from "./loadManifest";
 
 export const MOBILE_MAX_WIDTH = 768;
 
@@ -20,6 +21,12 @@ export interface UseViewModeOptions {
   onEnterScroll?: () => void;
   /** Optional reader element to scroll to top when entering vertical mode. */
   reader?: Ref<HTMLElement | null | undefined>;
+  /**
+   * Shared page loader (e.g. createManifestLoader). When set, book + strip
+   * share one fetch. Default: loadManifest.
+   */
+  loadPages?: (url?: string) => Promise<string[]>;
+  manifestUrl?: string;
 }
 
 export interface UseViewModeApi {
@@ -34,21 +41,12 @@ export function useViewMode(opts: UseViewModeOptions = {}): UseViewModeApi {
   const mobileDefault = opts.mobileDefault !== false;
   const isVertical = ref(false);
   const pages = ref<string[]>([]);
+  const defaultUrl = opts.manifestUrl || "manifest.json";
+  const resolvePages =
+    opts.loadPages ?? ((url?: string) => loadManifest(url || defaultUrl));
 
-  async function loadPages(manifestUrl = "manifest.json"): Promise<void> {
-    const res = await fetch(manifestUrl, { cache: "no-cache" });
-    if (!res.ok) throw new Error("manifest " + res.status);
-    const manifest = (await res.json()) as { files?: string[]; pages?: number; pattern?: string };
-    if (Array.isArray(manifest.files) && manifest.files.length) {
-      pages.value = manifest.files.map(String);
-      return;
-    }
-    const count = Number(manifest.pages) || 0;
-    const pattern = manifest.pattern || "assets/{n}.jpg";
-    pages.value =
-      count < 1
-        ? []
-        : Array.from({ length: count }, (_, i) => pattern.replace("{n}", String(i + 1)));
+  async function loadPages(manifestUrl?: string): Promise<void> {
+    pages.value = await resolvePages(manifestUrl || defaultUrl);
   }
 
   async function setVertical(on: boolean): Promise<void> {

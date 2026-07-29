@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { initToonBook } from "./book-reader";
+import { initToonBook } from "./bookReader";
 import {
   mountBookFixture,
   stubReaderMatchMedia,

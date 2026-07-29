@@ -21,6 +21,14 @@ export interface ToonBookEls {
 
 export interface ToonBookOptions {
   altPrefix?: string;
+  /**
+   * Pre-resolved page URLs. Prefer `getPages` when sharing a single fetch with
+   * vertical-scroll mode (see ToonReaderShell + createManifestLoader).
+   */
+  pages?: string[];
+  /** Async page source; used when `pages` is not set. Default: loadManifest. */
+  getPages?: () => Promise<string[]>;
+  /** Only used when neither `pages` nor `getPages` is set. */
   manifestUrl?: string;
   backHref?: string;
   backLabel?: string;
@@ -38,6 +46,23 @@ export interface ToonBookOptions {
   beforeStart?: () => void | Promise<void>;
 }
 
+/**
+ * Book options a toon app may pass into ToonReaderShell.
+ * Page source + cover identity are owned by the shell — not overridable here.
+ */
+export type ToonShellBookOptions = Omit<
+  ToonBookOptions,
+  "altPrefix" | "frontCoverLogo" | "coverTexture" | "pages" | "getPages" | "manifestUrl"
+>;
+
+/** Minimal shell surface for parent apps (lang switch, sound cover re-paint). */
+export interface ToonReaderShellExpose {
+  /** Re-paint captions on the active view (book slots or vertical strip). */
+  refreshCaptions: () => void;
+  /** Re-render the current book view (e.g. front-cover sound button state). */
+  repaintCover: () => void;
+}
+
 export interface ToonBookApi {
   turn: (delta: number) => void;
   goNext: () => void;
@@ -49,27 +74,6 @@ export interface ToonBookApi {
   destroy: () => void;
 }
 
-export interface ViewModeOptions {
-  altPrefix?: string;
-  manifestUrl?: string;
-  btn?: string | HTMLElement;
-  label?: string | HTMLElement;
-  strip?: string | HTMLElement;
-  readerId?: string;
-  /** Default true — scroll mode under max-width 768px. */
-  mobileDefault?: boolean;
-  onPagePaint?: PagePaintHandler;
-  onEnterBook?: () => void;
-  onEnterScroll?: (strip: HTMLElement) => void;
-}
-
-export interface ViewModeApi {
-  isVertical: () => boolean;
-  setVertical: (on: boolean) => Promise<void>;
-  refreshStrip: () => void;
-  getStrip: () => HTMLElement | null;
-}
-
 export interface ToonManifest {
   title?: string;
   pages?: number;
@@ -77,6 +81,13 @@ export interface ToonManifest {
   pattern?: string;
   designWidth?: number;
   designHeight?: number;
+}
+
+/** Injected into WordOverlay so caption SFX never reads window globals. */
+export interface SoundGate {
+  isEnabled: () => boolean;
+  /** Called when the user tries SFX while sound is off (e.g. show prompt once). */
+  onBlockedPlay?: () => void;
 }
 
 export type LangCode = string;
@@ -102,6 +113,8 @@ export interface WordBubbleStyle {
   padX?: number;
   padY?: number;
   shape?: string;
+  retrace?: number;
+  scratches?: number;
 }
 
 export interface WordEntry {
@@ -110,7 +123,7 @@ export interface WordEntry {
   align?: string;
   size?: number;
   color?: string;
-  stroke?: string;
+  stroke?: string | { color?: string; strokeColor?: string; thickness?: number; width?: number };
   strokeColor?: string;
   strokeThickness?: number;
   strokeWidth?: number;
@@ -122,6 +135,12 @@ export interface WordEntry {
   mode?: string;
   tail?: string;
   bubble?: WordBubbleStyle;
+  /** Legacy flat bubble keys (still accepted by resolveBubbleStyle). */
+  bubbleShape?: string;
+  bubbleFill?: string;
+  bubbleStroke?: string;
+  bubbleStrokeWidth?: number;
+  fontFamily?: string;
   audio?: string;
   text?: WordTextMap | string;
 }
@@ -133,4 +152,10 @@ export interface WordsConfig {
   languages?: LangOption[];
   defaultLang?: LangCode;
   fontFamily?: string;
+}
+
+export interface WordOverlayOptions {
+  sound?: SoundGate;
+  /** localStorage key for language; default keeps legacy Jax key. */
+  langStorageKey?: string;
 }

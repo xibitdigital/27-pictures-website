@@ -184,6 +184,50 @@ describe("WordOverlay", () => {
     o.refreshSlots([slot]);
     expect(slot.querySelector(".jax-word-layer")).toBeTruthy();
   });
+
+  it("uses injected SoundGate instead of window globals", async () => {
+    const onBlockedPlay = vi.fn();
+    let enabled = false;
+    const gate = {
+      isEnabled: () => enabled,
+      onBlockedPlay,
+    };
+    const o = new WordOverlay(
+      {
+        ...sampleConfig,
+        pages: {
+          "1": [{ x: 0.5, y: 0.5, text: "BOOM", audio: "sfx/x.mp3" }],
+        },
+      },
+      { sound: gate }
+    );
+
+    const slot = document.createElement("div");
+    document.body.appendChild(slot);
+    const img = document.createElement("img");
+    Object.defineProperty(img, "naturalWidth", { value: 100 });
+    Object.defineProperty(img, "naturalHeight", { value: 100 });
+    Object.defineProperty(img, "clientWidth", { value: 100 });
+    Object.defineProperty(img, "clientHeight", { value: 100 });
+    Object.defineProperty(img, "complete", { value: true });
+    slot.appendChild(img);
+
+    o.render(slot, 1);
+    const word = slot.querySelector(".jax-word--sfx") as HTMLElement;
+    expect(word).toBeTruthy();
+
+    const playSpy = vi
+      .spyOn(window.HTMLAudioElement.prototype, "play")
+      .mockResolvedValue(undefined);
+
+    word.click();
+    expect(onBlockedPlay).toHaveBeenCalled();
+    expect(playSpy).not.toHaveBeenCalled();
+
+    enabled = true;
+    word.click();
+    expect(playSpy).toHaveBeenCalled();
+  });
 });
 
 describe("loadWords", () => {

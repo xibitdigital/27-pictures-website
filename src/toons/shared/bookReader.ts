@@ -3,7 +3,8 @@
  * Shared page-turning book reader for 27 Pictures toons (Erin, Jax, …).
  * Imperative flip engine. Pass DOM nodes from Vue template refs via initToonBook(els, opts).
  */
-import type { ToonBookApi, ToonBookEls, ToonBookOptions, ToonManifest } from "./types";
+import { loadManifest } from "./loadManifest";
+import type { ToonBookApi, ToonBookEls, ToonBookOptions } from "./types";
 
 const FLIP_MS = 700;
 const FLIP_SAFETY_MS = FLIP_MS + 200;
@@ -32,6 +33,12 @@ export function initToonBook(
     const getSoundEnabled = typeof opts.getSoundEnabled === "function" ? opts.getSoundEnabled : () => false;
     const onSoundToggle = typeof opts.onSoundToggle === "function" ? opts.onSoundToggle : null;
     const coverTexture = opts.coverTexture || null;
+    const resolvePages =
+      typeof opts.getPages === "function"
+        ? opts.getPages
+        : Array.isArray(opts.pages) && opts.pages.length
+          ? async () => opts.pages.slice()
+          : () => loadManifest(manifestUrl);
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const singlePageMq = window.matchMedia("(max-width: 768px)");
@@ -65,19 +72,6 @@ export function initToonBook(
       // +2 = front-cover view + back-cover view around the pages themselves.
       if (singlePage) return pages.length + 2;
       return totalSpreads;
-    }
-
-    async function loadPages() {
-      const res = await fetch(manifestUrl, { cache: "no-cache" });
-      if (!res.ok) throw new Error(`manifest.json ${res.status}`);
-      const manifest = (await res.json()) as ToonManifest;
-      if (Array.isArray(manifest.files) && manifest.files.length) {
-        return manifest.files.map((f) => String(f));
-      }
-      const count = Number(manifest.pages) || 0;
-      const pattern = manifest.pattern || "assets/{n}.jpg";
-      if (count < 1) return [];
-      return Array.from({ length: count }, (_, i) => pattern.replace("{n}", String(i + 1)));
     }
 
     function pageIndexForSpread(spread, side) {
@@ -601,7 +595,7 @@ export function initToonBook(
 
     async function start() {
       try {
-        pages = await loadPages();
+        pages = await resolvePages();
       } catch (err) {
         console.error(err);
         indicator.textContent = "Failed to load";

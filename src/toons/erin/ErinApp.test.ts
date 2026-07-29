@@ -30,6 +30,12 @@ vi.mock("../shared/useViewMode", () => ({
   }),
 }));
 
+vi.mock("../shared/loadManifest", () => ({
+  createManifestLoader: () => async () => pages.value.slice(),
+  loadManifest: async () => pages.value.slice(),
+  pagesFromManifest: (m: { files?: string[] }) => m.files ?? [],
+}));
+
 import ErinApp from "./ErinApp.vue";
 
 describe("ErinApp", () => {
@@ -59,7 +65,7 @@ describe("ErinApp", () => {
     });
   }
 
-  it("renders back link and book chrome", async () => {
+  it("renders back link and book chrome via shared shell", async () => {
     const wrapper = mountErin();
     await flushPromises();
 

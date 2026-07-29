@@ -38,6 +38,12 @@ vi.mock("../shared/useViewMode", () => ({
   }),
 }));
 
+vi.mock("../shared/loadManifest", () => ({
+  createManifestLoader: () => async () => pages.value.slice(),
+  loadManifest: async () => pages.value.slice(),
+  pagesFromManifest: (m: { files?: string[] }) => m.files ?? [],
+}));
+
 vi.mock("../shared/words", () => {
   class WordOverlay {
     render = vi.fn();
@@ -73,7 +79,7 @@ function mountJax() {
         VerticalStrip: {
           props: ["pages", "altPrefix", "onPagePaint"],
           emits: ["ready"],
-          template: `<div class="strip-stub" data-pages="{{ pages?.length }}"></div>`,
+          template: `<div class="strip-stub"></div>`,
         },
         TransitionRoot: {
           props: ["show"],
@@ -88,9 +94,13 @@ function mountJax() {
           emits: ["update:modelValue"],
           template: `<div class="listbox"><slot :open="false" /></div>`,
         },
-        ListboxButton: { template: `<button type="button" class="jax-lang-toggle"><slot /></button>` },
+        ListboxButton: {
+          template: `<button type="button" class="jax-lang-toggle"><slot /></button>`,
+        },
         ListboxOptions: { template: `<div><slot /></div>` },
-        ListboxOption: { template: `<button type="button"><slot :active="false" :selected="false" /></button>` },
+        ListboxOption: {
+          template: `<button type="button"><slot :active="false" :selected="false" /></button>`,
+        },
       },
     },
   });
@@ -103,11 +113,7 @@ describe("JaxApp", () => {
     updateView.mockClear();
     loadPages.mockClear();
     toggle.mockClear();
-    window.__jaxSoundEnabled = false;
-    delete window.__jaxSetSoundEnabled;
-    delete window.__jaxMaybePromptSound;
 
-    // Happy-dom Audio: stub play/pause
     vi.spyOn(window.HTMLMediaElement.prototype, "play").mockImplementation(function (
       this: HTMLMediaElement
     ) {
@@ -140,7 +146,7 @@ describe("JaxApp", () => {
     expect(loadPages).toHaveBeenCalled();
   });
 
-  it("toggles sound on and exposes window helpers", async () => {
+  it("toggles sound via shell.repaintCover (no window globals, no bookApi let)", async () => {
     const playSpy = vi
       .spyOn(window.HTMLAudioElement.prototype, "play")
       .mockResolvedValue(undefined);
@@ -148,37 +154,19 @@ describe("JaxApp", () => {
     const wrapper = mountJax();
     await flushPromises();
 
-    expect(window.__jaxSoundEnabled).toBe(false);
-    expect(typeof window.__jaxSetSoundEnabled).toBe("function");
-    expect(typeof window.__jaxMaybePromptSound).toBe("function");
+    expect((window as Window & { __jaxSoundEnabled?: boolean }).__jaxSoundEnabled).toBeUndefined();
 
     await wrapper.find('button[title="Enable sound effects"]').trigger("click");
     await nextTick();
 
-    expect(window.__jaxSoundEnabled).toBe(true);
     expect(wrapper.find('button[title="Mute sound"]').exists()).toBe(true);
     expect(wrapper.find('button[title="Mute sound"]').classes()).toContain("is-active");
-    expect(playSpy).toHaveBeenCalled(); // confirmation beep
-    expect(updateView).toHaveBeenCalled();
+    expect(playSpy).toHaveBeenCalled();
+    expect(updateView).toHaveBeenCalledWith(false);
 
     await wrapper.find('button[title="Mute sound"]').trigger("click");
     await nextTick();
-    expect(window.__jaxSoundEnabled).toBe(false);
-  });
-
-  it("prompts for sound once via __jaxMaybePromptSound", async () => {
-    const wrapper = mountJax();
-    await flushPromises();
-
-    window.__jaxMaybePromptSound?.();
-    await nextTick();
-    expect(wrapper.text()).toMatch(/Enable sound/i);
-
-    // Second call is a no-op after shown
-    window.__jaxMaybePromptSound?.();
-    await wrapper.find("button.sound-prompt__btn--primary").trigger("click");
-    await nextTick();
-    expect(window.__jaxSoundEnabled).toBe(true);
+    expect(wrapper.find('button[title="Enable sound effects"]').exists()).toBe(true);
   });
 
   it("toggles background music on and off", async () => {

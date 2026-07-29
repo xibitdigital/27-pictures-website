@@ -1,10 +1,17 @@
 // @ts-nocheck — imperative DOM port; public API typed in types.ts
 /**
- * Jax caption overlays for ToonBook pages.
+ * Caption overlays for ToonBook pages (Jax today; injectable sound + lang storage).
  */
-import type { LangCode, LangOption, WordEntry, WordsConfig } from "./types";
+import type {
+  LangCode,
+  LangOption,
+  SoundGate,
+  WordEntry,
+  WordOverlayOptions,
+  WordsConfig,
+} from "./types";
 
-
+/** Default localStorage key (legacy Jax). Override via WordOverlayOptions.langStorageKey. */
 export const LANG_STORAGE_KEY = "jax-toon-lang";
 
 function clamp01(n) {
@@ -250,13 +257,15 @@ const CAN_HOVER =
   typeof window.matchMedia === "function" &&
   window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
+/** Default gate: allow playback (used in tests / pages without a sound UI). */
+const DEFAULT_SOUND_GATE: SoundGate = {
+  isEnabled: () => true,
+};
+
 /** Play a word's SFX clip. Fresh Audio() per play so rapid re-triggers overlap. */
-function playSfx(url) {
-  if (typeof window !== "undefined" && window.__jaxSoundEnabled === false) {
-    // First hover/tap on a caption with audio while sound is off → prompt once.
-    if (typeof window.__jaxMaybePromptSound === "function") {
-      window.__jaxMaybePromptSound();
-    }
+function playSfx(url: string, sound: SoundGate): void {
+  if (!sound.isEnabled()) {
+    sound.onBlockedPlay?.();
     return;
   }
   try {
@@ -376,7 +385,13 @@ function createBubbleChrome(seed, bubbleStyle, designScale) {
 /**
  * Content box of an object-fit:contain image inside its offset parent slot.
  */
-export function imageContentBox(img: HTMLImageElement): { left: number; top: number; width: number; height: number } {
+export function imageContentBox(img: HTMLImageElement): {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  scale: number;
+} {
   const nw = img.naturalWidth || 1;
   const nh = img.naturalHeight || 1;
   const cw = img.clientWidth;
@@ -468,9 +483,11 @@ export class WordOverlay {
   defaultLang: LangCode;
   fontFamily: string;
   lang: LangCode;
+  sound: SoundGate;
+  langStorageKey: string;
   _observers: WeakMap<HTMLElement, ResizeObserver>;
 
-  constructor(config: WordsConfig) {
+  constructor(config: WordsConfig, options: WordOverlayOptions = {}) {
     this.designWidth = config.designWidth || 1008;
     this.designHeight = config.designHeight || 1792;
     this.pages = config.pages || {};
@@ -482,13 +499,15 @@ export class WordOverlay {
     ];
     this.defaultLang = config.defaultLang || "en";
     this.fontFamily = config.fontFamily || '"Bangers", cursive';
+    this.sound = options.sound || DEFAULT_SOUND_GATE;
+    this.langStorageKey = options.langStorageKey || LANG_STORAGE_KEY;
     this.lang = this._readStoredLang() || this.defaultLang;
     this._observers = new WeakMap();
   }
 
   _readStoredLang(): LangCode | null {
     try {
-      const v = localStorage.getItem(LANG_STORAGE_KEY);
+      const v = localStorage.getItem(this.langStorageKey);
       if (v && this.languages.some((l) => l.code === v)) return v;
     } catch (_) {
       /* ignore */
@@ -498,7 +517,7 @@ export class WordOverlay {
 
   _storeLang(code: LangCode): void {
     try {
-      localStorage.setItem(LANG_STORAGE_KEY, code);
+      localStorage.setItem(this.langStorageKey, code);
     } catch (_) {
       /* ignore */
     }
@@ -676,9 +695,11 @@ export class WordOverlay {
         }
 
         if (w.audio) {
+          const url = w.audio;
+          const sound = this.sound;
           const play = (ev) => {
             ev.stopPropagation();
-            playSfx(w.audio);
+            playSfx(url, sound);
           };
           // Desktop mouse: play on hover. Touch (no hover): play on tap.
           if (CAN_HOVER) el.addEventListener("mouseenter", play);

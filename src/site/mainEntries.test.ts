@@ -43,8 +43,8 @@ describe("site entry modules", () => {
     expect(mount).toHaveBeenCalledWith("#site-app");
   });
 
-  it("experiments-main.ts mounts SiteApp(experiments) on #site-app", async () => {
-    await import("./experiments-main");
+  it("experimentsMain.ts mounts SiteApp(experiments) on #site-app", async () => {
+    await import("./experimentsMain");
     expect(useSmoothScroll).toHaveBeenCalled();
     expect(createApp).toHaveBeenCalled();
     const props = createApp.mock.calls[0][1];
