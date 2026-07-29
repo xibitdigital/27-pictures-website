@@ -1,4 +1,4 @@
-import type { ToonBookEls } from "@/toons/shared/types";
+import type { ToonBookEls } from "@/toons/bookReader/types";
 import { vi } from "vitest";
 
 /** Minimal book DOM matching what the flip engine expects. */

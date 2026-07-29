@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import LangSwitcher from "./LangSwitcher.vue";
-import type { WordOverlay } from "../../shared/words";
+import type { WordOverlay } from "../../bookReader/words";
 
 function mockOverlay(lang = "en"): WordOverlay {
   return {

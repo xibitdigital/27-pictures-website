@@ -7,10 +7,11 @@ import {
   TransitionChild,
   TransitionRoot,
 } from "@headlessui/vue";
-import ToonReaderShell from "../shared/ToonReaderShell.vue";
-import { useSoundGate } from "../shared/useSoundGate";
-import { WordOverlay, loadWords } from "../shared/words";
-import type { ToonReaderShellExpose, ToonShellBookOptions } from "../shared/types";
+import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
+import { useSoundGate } from "../bookReader/audio/useSoundGate";
+import { collectWordAudioUrls, preloadAudioUrls } from "../bookReader/audio/preloadAudio";
+import { WordOverlay, loadWords } from "../bookReader/words";
+import type { ToonReaderShellExpose, ToonShellBookOptions } from "../bookReader/types";
 import LangSwitcher from "./components/LangSwitcher.vue";
 
 const COVER_TEXTURE = "/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg";
@@ -33,9 +34,12 @@ const {
   toggle: toggleSound,
   dismissPrompt,
   enableFromPrompt,
+  onEngage: onSoundEngage,
   gate: soundGate,
 } = useSoundGate({
   confirmSrc: CONFIRM_SFX,
+  // First scroll (vertical mode) or page turn — once per mount, desktop + mobile.
+  promptOnScroll: true,
   onChange: () => {
     // Re-paint front cover so the engine-built sound button matches state.
     shellRef.value?.repaintCover();
@@ -100,6 +104,9 @@ const bookOptions: ToonShellBookOptions = {
   soundHint: "Turn the sound on",
   getSoundEnabled: () => soundEnabled.value,
   onSoundToggle: () => toggleSound(),
+  onPageTurn() {
+    onSoundEngage();
+  },
   onPagePaint(slot, pageNum) {
     wordOverlay.value?.render(slot, pageNum);
   },
@@ -109,6 +116,8 @@ const bookOptions: ToonShellBookOptions = {
   async beforeStart() {
     const wordsConfig = await loadWords("words.json");
     wordOverlay.value = new WordOverlay(wordsConfig, { sound: soundGate });
+    // Warm SFX + confirm beep in the background; don't block first paint.
+    void preloadAudioUrls([CONFIRM_SFX, ...collectWordAudioUrls(wordsConfig)]);
     // Shell calls refreshCaptions after beforeStart.
   },
 };
@@ -117,6 +126,15 @@ onMounted(() => {
   const bg = bgMusicEl.value;
   if (!bg) return;
   bg.volume = 0.22;
+  // Full buffer, not just metadata — music starts without a network stall.
+  bg.preload = "auto";
+  try {
+    bg.load();
+  } catch {
+    /* ignore */
+  }
+  // Also pin music in the shared preload cache (same URL resolution).
+  void preloadAudioUrls([BG_MUSIC]);
   bg.addEventListener("play", () => {
     musicEnabled.value = true;
   });
@@ -140,7 +158,7 @@ onMounted(() => {
         ref="bgMusicEl"
         :src="BG_MUSIC"
         loop
-        preload="metadata"
+        preload="auto"
         aria-hidden="true"
       />
 
@@ -180,7 +198,7 @@ onMounted(() => {
                 </svg>
                 <DialogTitle as="h2">Enable sound</DialogTitle>
                 <p>
-                  This caption has audio. Turn sound on to hear dialogue, onomatopoeia, and SFX.
+                  This comic has audio. Turn sound on to hear dialogue, onomatopoeia, and SFX.
                 </p>
                 <div class="sound-prompt__actions">
                   <button

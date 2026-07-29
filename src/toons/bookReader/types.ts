@@ -43,6 +43,11 @@ export interface ToonBookOptions {
   coverTexture?: string | null;
   onPagePaint?: PagePaintHandler;
   onPageClear?: PageClearHandler;
+  /**
+   * Fired when the user successfully turns a page (next/prev), after bounds
+   * checks pass. Not fired for the initial paint or programmatic repaints.
+   */
+  onPageTurn?: (delta: number) => void;
   beforeStart?: () => void | Promise<void>;
 }
 

@@ -742,4 +742,3 @@ export async function loadWords(url?: string): Promise<WordsConfig> {
   if (!res.ok) throw new Error(`words.json ${res.status}`);
   return (await res.json()) as WordsConfig;
 }
-

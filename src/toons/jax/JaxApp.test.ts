@@ -2,26 +2,59 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { ref, nextTick } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
 
-const updateView = vi.fn();
-const loadPages = vi.fn().mockResolvedValue(undefined);
-const toggle = vi.fn();
-const isVertical = ref(false);
-const pages = ref<string[]>(["assets/1.jpg", "assets/2.jpg"]);
+const {
+  updateView,
+  loadPages,
+  toggle,
+  isVertical,
+  pages,
+  mockEngine,
+} = vi.hoisted(() => {
+  const { ref } = require("vue") as typeof import("vue");
+  const updateView = vi.fn();
+  const loadPages = vi.fn().mockResolvedValue(undefined);
+  const toggle = vi.fn();
+  const isVertical = ref(false);
+  const pages = ref<string[]>(["assets/1.jpg", "assets/2.jpg"]);
+  const mockEngine = {
+    state: {
+      highlightPulse: false,
+      ready: true,
+      leftSlot: { kind: "blank" as const },
+      rightSlot: { kind: "blank" as const },
+      flip: null as null,
+      indicator: "…",
+      canPrev: false,
+      canNext: true,
+      isFlipping: false,
+      pages: [] as string[],
+      viewIndex: 0,
+      singlePage: false,
+      error: null as string | null,
+      coverRev: 0,
+    },
+    subscribe: () => () => {},
+    onFlipComplete: vi.fn(),
+    goNext: vi.fn(),
+    goPrev: vi.fn(),
+    turn: vi.fn(),
+    start: vi.fn(),
+    destroy: vi.fn(),
+    updateView,
+    getViewIndex: () => 0,
+    getPages: () => pages.value.slice(),
+  };
+  return { updateView, loadPages, toggle, isVertical, pages, mockEngine };
+});
 
-vi.mock("../shared/useToonBook", () => ({
+vi.mock("../bookReader/useToonBook", () => ({
   useToonBook: () => ({
-    getApi: () => ({
-      updateView,
-      destroy: vi.fn(),
-      goNext: vi.fn(),
-      goPrev: vi.fn(),
-      turn: vi.fn(),
-      getViewIndex: () => 0,
-    }),
+    engine: mockEngine,
+    getApi: () => mockEngine,
   }),
 }));
 
-vi.mock("../shared/useViewMode", () => ({
+vi.mock("../bookReader/useViewMode", () => ({
   useViewMode: () => ({
     isVertical,
     pages,
@@ -38,13 +71,13 @@ vi.mock("../shared/useViewMode", () => ({
   }),
 }));
 
-vi.mock("../shared/loadManifest", () => ({
+vi.mock("../bookReader/loadManifest", () => ({
   createManifestLoader: () => async () => pages.value.slice(),
   loadManifest: async () => pages.value.slice(),
   pagesFromManifest: (m: { files?: string[] }) => m.files ?? [],
 }));
 
-vi.mock("../shared/words", () => {
+vi.mock("../bookReader/words", () => {
   class WordOverlay {
     render = vi.fn();
     refreshSlots = vi.fn();

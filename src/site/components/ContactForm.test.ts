@@ -13,7 +13,7 @@ describe("ContactForm", () => {
     expect(wrapper.find("#name").exists()).toBe(true);
     expect(wrapper.find("#email").exists()).toBe(true);
     expect(wrapper.find("#message").exists()).toBe(true);
-    expect(wrapper.find('button[type="submit"]').text()).toMatch(/Send Inquiry/i);
+    expect(wrapper.find('button[type="submit"]').text()).toMatch(/Send Message/i);
   });
 
   it("shows validation errors on empty submit", async () => {

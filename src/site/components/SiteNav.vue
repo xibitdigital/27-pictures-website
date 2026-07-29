@@ -26,7 +26,7 @@ const links = computed(() => [
   { href: section("#beyond"), label: "Beyond the Mask" },
   { href: section("#assembly"), label: "Process" },
   { href: section("#latest"), label: "Watch" },
-  { href: section("#contact"), label: "Inquire" },
+  { href: section("#contact"), label: "Contact" },
   {
     href: "/experiments/",
     label: "Experiments",

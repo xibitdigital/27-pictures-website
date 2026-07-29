@@ -65,13 +65,30 @@ body > header,
 body > header nav,
 #site-app > header nav {
   width: 100%;
-  padding: 30px 60px;
+  /* Fluid padding tracks viewport; keeps chrome proportional with link type. */
+  padding: clamp(1rem, 0.75rem + 1vw, 1.875rem) clamp(1.25rem, 1rem + 2vw, 3.75rem);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* Base nav type — scales with viewport; bumped after large breakpoint. */
+  /* Floor at 12px (0.75rem) so type never drops below readable size. */
+  --nav-font-size: clamp(0.75rem, 0.62rem + 0.35vw, 0.875rem);
+  --nav-logo-h: clamp(2.25rem, 2rem + 0.5vw, 2.75rem);
+  --nav-link-gap: clamp(1.1rem, 0.85rem + 0.9vw, 2.5rem);
+  --nav-social-size: clamp(0.9rem, 0.8rem + 0.25vw, 1.05rem);
+}
+/* +20% type scale on wide desktops (desktop nav only; burger hides links ≤768). */
+@media (min-width: 1200px) {
+  body > header nav,
+  #site-app > header nav {
+    --nav-font-size: calc(1.2 * clamp(0.75rem, 0.62rem + 0.35vw, 0.875rem));
+    --nav-logo-h: calc(1.12 * clamp(2.25rem, 2rem + 0.5vw, 2.75rem));
+    --nav-link-gap: calc(1.15 * clamp(1.1rem, 0.85rem + 0.9vw, 2.5rem));
+    --nav-social-size: calc(1.15 * clamp(0.9rem, 0.8rem + 0.25vw, 1.05rem));
+  }
 }
 .nav-logo-img {
-  height: 40px;
+  height: var(--nav-logo-h, 40px);
   width: auto;
   border: 1px solid var(--red-smile);
   padding: 6px;
@@ -84,10 +101,10 @@ body > header nav,
 .nav-links a {
   text-decoration: none;
   color: var(--text);
-  font-size: 10px;
-  letter-spacing: 4px;
+  font-size: var(--nav-font-size);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  margin-left: 40px;
+  margin-left: var(--nav-link-gap);
   font-weight: 700;
 }
 .nav-social-link {
@@ -98,6 +115,8 @@ body > header nav,
 }
 .nav-social-link svg {
   display: block;
+  width: var(--nav-social-size);
+  height: var(--nav-social-size);
 }
 .nav-social-link:hover {
   color: var(--red-smile);
@@ -112,11 +131,16 @@ body > header nav,
   justify-content: center;
 }
 .section-tag {
-  font-size: 10px;
-  letter-spacing: 5px;
+  display: inline-block;
+  font-family: "Inter", sans-serif;
+  /* Label above section titles — sit near body type, not micro-caption size. */
+  font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--red-smile);
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
+  line-height: 1.45;
 }
 
 /* --- HORROR: THE RED SMILE --- */
@@ -420,6 +444,15 @@ footer {
 .contact-title {
   font-size: 5vw;
   margin-bottom: 20px;
+  width: 100%;
+  max-width: 900px;
+}
+/* Host for teleported Vue form — must take a real width or flex
+   align-items:center shrink-wraps the form to the button’s intrinsic size. */
+#contact-form-app {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 40px;
 }
 .contact-btn {
   color: var(--text);
@@ -427,7 +460,6 @@ footer {
   font-size: 1.2rem;
   border: 1px solid var(--text);
   padding: 20px 60px;
-  margin-top: 40px;
   background: transparent;
   cursor: pointer;
   letter-spacing: 3px;
@@ -445,15 +477,19 @@ footer {
   max-width: 600px;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 20px;
-  margin-top: 40px;
+  margin: 0 auto;
 }
 .form-group {
   width: 100%;
+  min-width: 0;
 }
 .contact-form input,
 .contact-form textarea {
+  display: block;
   width: 100%;
+  max-width: 100%;
   padding: 20px;
   background: transparent;
   border: 1px solid var(--border-light);
@@ -479,6 +515,11 @@ footer {
 .contact-form .input-error {
   border-color: var(--red-smile);
 }
+.contact-form .contact-btn {
+  width: 100%;
+  margin-top: 0;
+  align-self: stretch;
+}
 .error-message {
   color: var(--red-smile);
   font-size: 0.8rem;
@@ -488,7 +529,7 @@ footer {
 }
 .form-message {
   padding: 15px 20px;
-  margin-top: 20px;
+  margin-top: 0;
   font-size: 0.9rem;
   letter-spacing: 1px;
 }
@@ -506,6 +547,9 @@ footer {
 }
 .cf-turnstile {
   min-height: 65px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 /* --- FOOTER SOCIAL --- */
@@ -849,8 +893,8 @@ button:focus-visible {
 .mobile-menu-link {
   color: var(--text);
   text-decoration: none;
-  font-size: 1.5rem;
-  letter-spacing: 5px;
+  font-size: clamp(1.35rem, 1.1rem + 1.6vw, 1.85rem);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   font-weight: 700;
   transition: 0.3s;
@@ -862,11 +906,12 @@ button:focus-visible {
 /* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
   /* Navigation */
-  nav {
-    padding: 15px 20px;
+  body > header nav,
+  #site-app > header nav {
+    padding: 0.9rem 1.25rem;
+    --nav-logo-h: 2.5rem;
   }
   .nav-logo-img {
-    height: 40px;
     padding: 6px;
   }
   .burger-btn {

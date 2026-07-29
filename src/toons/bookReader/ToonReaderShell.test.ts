@@ -11,10 +11,40 @@ const pages = ref<string[]>(["assets/1.jpg", "assets/2.jpg"]);
 
 let lastBookOpts: Record<string, unknown> | undefined;
 
+const engineState = {
+  highlightPulse: false,
+  ready: true,
+  leftSlot: { kind: "blank" as const },
+  rightSlot: { kind: "blank" as const },
+  flip: null,
+  indicator: "…",
+  canPrev: false,
+  canNext: true,
+  isFlipping: false,
+  pages: [] as string[],
+  viewIndex: 0,
+  singlePage: false,
+  error: null as string | null,
+  coverRev: 0,
+};
+
 vi.mock("./useToonBook", () => ({
-  useToonBook: (_refs: unknown, opts: Record<string, unknown>) => {
+  useToonBook: (opts: Record<string, unknown>) => {
     lastBookOpts = opts;
     return {
+      engine: {
+        state: engineState,
+        subscribe: () => () => {},
+        onFlipComplete: vi.fn(),
+        goNext: vi.fn(),
+        goPrev: vi.fn(),
+        turn: vi.fn(),
+        start: vi.fn(),
+        destroy: vi.fn(),
+        updateView,
+        getViewIndex: () => 0,
+        getPages: () => pages.value.slice(),
+      },
       getApi: () => ({
         updateView,
         destroy: vi.fn(),
@@ -71,7 +101,10 @@ describe("ToonReaderShell", () => {
       attachTo: document.body,
       global: {
         stubs: {
-          FullscreenButton: { template: `<button type="button">FS</button>` },
+          ReaderTopBar: {
+            template: `<div class="top-bar-stub"><slot name="start" /><slot name="mid" /></div>`,
+          },
+          BookSurface: { template: `<div class="book-surface-stub"></div>` },
           VerticalStrip: {
             props: ["pages", "altPrefix", "onPagePaint"],
             emits: ["ready"],
@@ -83,7 +116,6 @@ describe("ToonReaderShell", () => {
   }
 
   it("shell ownership fields always win over bookOptions", async () => {
-    // Malicious / accidental wider object — getPages must not stick.
     const sneaky = {
       soundHint: "hi",
       getPages: async () => ["hijacked.jpg"],
@@ -99,7 +131,6 @@ describe("ToonReaderShell", () => {
     expect(lastBookOpts?.coverTexture).toBe("/tex.jpg");
     expect(lastBookOpts?.getPages).toBeTypeOf("function");
     expect(lastBookOpts?.soundHint).toBe("hi");
-    // Shared loader, not the sneaky getPages
     const resolved = await (lastBookOpts?.getPages as () => Promise<string[]>)();
     expect(resolved).toEqual(["assets/1.jpg", "assets/2.jpg"]);
   });
@@ -113,7 +144,6 @@ describe("ToonReaderShell", () => {
       repaintCover: () => void;
     };
 
-    // Contract for parents (JaxApp): two methods only — no slot/viewMode reach-in.
     expect(typeof exposed.refreshCaptions).toBe("function");
     expect(typeof exposed.repaintCover).toBe("function");
 
@@ -133,7 +163,6 @@ describe("ToonReaderShell", () => {
     mountShell({ beforeStart, onPagePaint });
     await flushPromises();
 
-    // beforeStart is wrapped by the shell — call the wrapped one from lastBookOpts
     await (lastBookOpts?.beforeStart as () => Promise<void>)();
     expect(beforeStart).toHaveBeenCalled();
   });

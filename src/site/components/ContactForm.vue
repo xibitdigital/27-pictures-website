@@ -21,7 +21,7 @@ const messageError = ref("");
 const formMessage = ref("");
 const formMessageType = ref<"success" | "error">("success");
 const submitting = ref(false);
-const submitLabel = ref("Send Inquiry");
+const submitLabel = ref("Send Message");
 
 let turnstileToken: string | null = null;
 let formReadyToSubmit = false;
@@ -66,7 +66,7 @@ async function submitContactForm(): Promise<void> {
     formMessageType.value = "error";
   } finally {
     submitting.value = false;
-    submitLabel.value = "Send Inquiry";
+    submitLabel.value = "Send Message";
   }
 }
 

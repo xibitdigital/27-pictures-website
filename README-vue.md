@@ -1,6 +1,6 @@
 # Vue + TypeScript frontend branch (`feat/vue-frontend`)
 
-Work-in-progress migration of frontend JS to **Vue 3 + Vite + TypeScript**.  
+Work-in-progress migration of frontend JS to **Vue 3 + Vite + TypeScript**.
 **Do not deploy this branch to production until the migration is validated.**
 
 ## Layout
@@ -12,7 +12,7 @@ Work-in-progress migration of frontend JS to **Vue 3 + Vite + TypeScript**.
 │   ├── experiments/index.html    # Experiments lab entry
 │   ├── site/                     # Site Vue app (nav, contact, …)
 │   ├── toons/
-│   │   ├── shared/               # FlipFrame engine, view-mode, components
+│   │   ├── bookReader/           # FlipFrame package (engine + shell + chrome)
 │   │   ├── jax/                  # JaxApp + index.html entry
 │   │   └── erin/                 # ErinApp + index.html entry
 │   └── test/                     # Vitest setup
@@ -30,32 +30,46 @@ Work-in-progress migration of frontend JS to **Vue 3 + Vite + TypeScript**.
 | `src/experiments/index.html` | Experiments lab entry |
 | `src/toons/jax\|erin/index.html` | Toon reader entries (next to their Vue apps) |
 | `src/site/` | `SiteApp.vue`, `SiteNav.vue`, `ContactForm.vue`, directives |
-| `src/toons/shared/` | `useToonBook`, `useViewMode`, `bookReader`, `words`, `types` |
+| `src/toons/bookReader/` | Entire FlipFrame package (see below) |
 | `src/toons/jax/` | `JaxApp.vue`, `LangSwitcher.vue`, `main.ts` |
 | `src/toons/erin/` | `ErinApp.vue` + `main.ts` |
-| `src/env.d.ts` | Vue / Window ambient types |
 | `public/` | Static assets only (CSS, images, plates, manifests, qr, …) |
 | `dist/` | Production build output (`make build`) |
 
 Repo root stays config/tooling only — no page HTML mixed with `package.json` / `Makefile`.
-
-`bookReader.ts` / `words.ts` use `// @ts-nocheck` on the large imperative DOM ports; public option/API shapes live in `types.ts`. Shells and site code are fully typed.
 
 ### File naming
 
 | Kind | Convention | Examples |
 |------|------------|----------|
 | Vue SFCs | PascalCase | `SiteNav.vue`, `ToonReaderShell.vue` |
-| TypeScript modules | camelCase | `bookReader.ts`, `loadManifest.ts`, `experimentsMain.ts` |
+| TypeScript modules | camelCase | `loadManifest.ts`, `experimentsMain.ts` |
 | Composables | camelCase + `use` prefix | `useToonBook.ts`, `useSoundGate.ts` |
 | Colocated tests | match source + `.test.ts` | `bookReader.test.ts`, `SiteNav.test.ts` |
 | HTML entries | `index.html` per route | `src/toons/jax/index.html` |
 
-### Book reader + Vue refs
+### Book reader (`src/toons/bookReader/`)
 
-- `initToonBook(els, opts)` takes explicit DOM nodes (`ToonBookEls`) — no `getElementById` for the flip surface.
-- `useToonBook(refs, opts)` maps Vue template refs → `initToonBook`, and calls `destroy()` on unmount.
-- Jax / Erin templates use `ref="bookEl"`, `ref="slotLeft"`, etc. (ids kept for CSS / a11y where useful).
+Everything the FlipFrame / toon readers need lives in this package — nothing reader-only remains as a loose sibling.
+
+| Path | Role |
+|------|------|
+| `bookReader.ts` / `bookModels.ts` | Reactive flip engine (no DOM) |
+| `useToonBook.ts` | Engine lifecycle composable |
+| `BookSurface.vue` / `BookSlot.vue` / `FlipLeaf.vue` | Book markup |
+| `FrontCoverInstructions.vue` / `BackCoverLink.vue` | Cover chrome |
+| `ToonReaderShell.vue` | App shell (top bar + book + scroll strip) |
+| `VerticalStrip.vue` / `useViewMode.ts` | Vertical scroll mode |
+| `loadManifest.ts` | Shared page list loader |
+| `words.ts` | Caption overlays (Jax) |
+| `types.ts` | Public option / API types |
+| `chrome/` | `ReaderTopBar`, `ViewModeToggle`, `FullscreenButton` |
+| `audio/` | `useSoundGate`, `preloadAudio` |
+| `index.ts` | Barrel re-exports |
+
+- Apps import the shell: `from "../bookReader/ToonReaderShell.vue"`.
+- Prefer `from "../bookReader"` (or deeper paths) for types / audio / words.
+- Jax-only UI (lang switcher, sound/music buttons) stays under `jax/`.
 
 ## UI library
 
@@ -83,57 +97,11 @@ make hash-assets   # cache-bust public CSS hashes in src/**/*.html
 
 ### Tests
 
-Vitest + Vue Test Utils + happy-dom. Specs live next to source:
-
-| Spec | Covers |
-|------|--------|
-| `bookReader.test.ts` | FlipFrame: cover, spreads, keyboard/zones/buttons, indicator, single-page, flip smoke |
-| `useToonBook.test.ts` | Vue ref wiring, init/destroy, goNext |
-| `words.test.ts` | fractions, WordOverlay, loadWords |
-| `useViewMode.test.ts` | manifest load, vertical toggle |
-| `VerticalStrip.test.ts` | page slots / ready emit |
-| `FullscreenButton.test.ts` | FS request / body class |
-| `ContactForm.test.ts` | validation + submit |
-| `SiteNav.test.ts` | home vs experiments links |
+Vitest + Vue Test Utils + happy-dom. Specs live next to source under `bookReader/` and each app.
 
 ### Dev URLs
 
-- Site: http://localhost:5173/
-- Experiments: http://localhost:5173/experiments/
-- Jax: http://localhost:5173/toons/jax/
-- Erin: http://localhost:5173/toons/erin/
-
-Vite uses `appType: "mpa"` with `root: src/`, so each HTML entry keeps its URL path
-(`/`, `/experiments/`, `/toons/jax/`, `/toons/erin/`) without SPA fallback.
-
-## Deploy
-
-### Preview (safe — does not update the custom domain)
-
-```bash
-make preview-deploy
-# → Cloudflare Pages branch "feat/vue-frontend"
-# URL like: https://feat-vue-frontend.twentyseven-pictures.pages.dev
-```
-
-**Known preview gaps (expected):**
-
-| Check | Preview | Notes |
-|-------|---------|--------|
-| Contact form submit | ❌ CORS | Worker only allows `https://twentyseven.pictures` |
-| Turnstile widget | ⚠ | May need preview host added in Turnstile dashboard |
-| Nav / readers / CSS / plates | ✅ | Full static + Vue bundles from `dist/` |
-| Production domain | untouched | Preview uses `--branch=feat/vue-frontend` |
-
-### Production (later — only after preview sign-off)
-
-```bash
-make deploy   # builds dist/ and deploys as production
-```
-
-## Design notes
-
-- **Book flip engine** stays imperative DOM (ported ESM); Vue owns the shell and site UI.
-- **View mode** is the shared ESM module with mobile scroll default.
-- **Contact form** is a Vue SFC with Turnstile hooks.
-- Hash-assets rewrites `?v=` on CSS in `src/**/*.html` (and any leftover `public/**/*.html`); Vue bundles are content-hashed by Vite.
+- Home: `/`
+- Experiments: `/experiments/`
+- Jax: `/toons/jax/`
+- Erin: `/toons/erin/`

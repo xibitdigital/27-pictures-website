@@ -6,7 +6,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/vue";
-import type { WordOverlay } from "../../shared/words";
+import type { WordOverlay } from "../../bookReader/words";
 
 const props = defineProps<{
   overlay: WordOverlay | null;
