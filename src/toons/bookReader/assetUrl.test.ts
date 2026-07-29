@@ -1,25 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getAssetBase, pageDirFromPathname, resolveAssetUrl, resolvePageUrls, toSitePath } from "./assetUrl";
-
-describe("pageDirFromPathname", () => {
-  it("keeps trailing slash directories", () => {
-    expect(pageDirFromPathname("/toons/jax/")).toBe("/toons/jax/");
-  });
-
-  it("strips index.html and other files", () => {
-    expect(pageDirFromPathname("/toons/jax/index.html")).toBe("/toons/jax/");
-    expect(pageDirFromPathname("/toons/erin/index.html")).toBe("/toons/erin/");
-  });
-
-  it("adds slash for path without file extension", () => {
-    expect(pageDirFromPathname("/toons/jax")).toBe("/toons/jax/");
-  });
-
-  it("handles root", () => {
-    expect(pageDirFromPathname("/")).toBe("/");
-    expect(pageDirFromPathname("")).toBe("/");
-  });
-});
+import { getAssetBase, resolveAssetUrl, resolvePageUrls, toSitePath } from "./assetUrl";
 
 describe("toSitePath", () => {
   it("passes through root-absolute paths", () => {
@@ -57,9 +37,9 @@ describe("resolveAssetUrl / getAssetBase", () => {
     );
   });
 
-  it("leaves relative paths alone when CDN is set but pageDir is missing", () => {
+  it("throws when CDN is set and relative path lacks pageDir", () => {
     vi.stubEnv("VITE_ASSET_BASE", "https://cdn.example");
-    expect(resolveAssetUrl("assets/1.jpg")).toBe("assets/1.jpg");
+    expect(() => resolveAssetUrl("assets/1.jpg")).toThrow(/pageDir required/);
   });
 
   it("leaves absolute and data URLs alone", () => {

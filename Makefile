@@ -148,8 +148,8 @@ PAGES_BRANCH  ?= main
 PREVIEW_BRANCH ?= feat/vue-frontend
 
 .PHONY: deploy
-deploy: ## Build (honours VITE_ASSET_BASE from .env) + deploy Pages production
-	@if [ -n "$(VITE_ASSET_BASE)" ]; then echo "→ CDN media: $(VITE_ASSET_BASE)"; else echo "→ Same-origin media (no VITE_ASSET_BASE)"; fi
+deploy: require-cdn-base ## Build (requires VITE_ASSET_BASE) + deploy Pages production
+	@echo "→ CDN media: $(VITE_ASSET_BASE)"
 	$(NPM) run build
 	@find dist -name .DS_Store -delete 2>/dev/null || true
 	@echo "→ Deploying dist/ → $(PAGES_PROJECT) ($(PAGES_BRANCH))"
@@ -164,7 +164,8 @@ deploy-cdn: require-cdn-base upload-assets ## Upload R2 + build with CDN + deplo
 	@$(MAKE) deploy
 
 .PHONY: preview-deploy
-preview-deploy: ## Build + deploy Pages preview branch
+preview-deploy: require-cdn-base ## Build + deploy Pages preview branch
+	@echo "→ CDN media: $(VITE_ASSET_BASE)"
 	$(NPM) run build
 	@find dist -name .DS_Store -delete 2>/dev/null || true
 	$(NPX) wrangler pages deploy dist \
@@ -174,16 +175,7 @@ preview-deploy: ## Build + deploy Pages preview branch
 		--commit-message="preview: vue frontend MPA"
 
 .PHONY: preview-cdn
-preview-cdn: require-cdn-base ## Build with CDN + deploy Pages preview
-	@echo "→ Building with VITE_ASSET_BASE=$(VITE_ASSET_BASE)"
-	$(NPM) run build
-	@find dist -name .DS_Store -delete 2>/dev/null || true
-	$(NPX) wrangler pages deploy dist \
-		--project-name=$(PAGES_PROJECT) \
-		--branch=$(PREVIEW_BRANCH) \
-		--commit-dirty=true \
-		--commit-message="preview: CDN assets from R2"
-	@echo "✓ Media base: $(VITE_ASSET_BASE)"
+preview-cdn: preview-deploy ## Alias for preview-deploy (CDN required)
 
 .PHONY: serve
 serve: dev ## Alias for dev

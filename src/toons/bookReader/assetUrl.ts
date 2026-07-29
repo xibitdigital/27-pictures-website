@@ -1,27 +1,16 @@
 /**
- * Resolve media URLs against optional CDN base (VITE_ASSET_BASE).
+ * Resolve media URLs against VITE_ASSET_BASE (CDN).
  *
- * Empty base → leave path as-is (same-origin from Pages / public/).
- * With base → root-absolute and relative paths become `${base}/…`.
+ * Production builds require VITE_ASSET_BASE (see vite/plugins/cdnMedia.ts).
+ * Unit tests force an empty base via vitest config so paths stay relative.
  *
- * Relative paths require an explicit `pageDir` (e.g. `/toons/jax/`) when
- * the CDN is enabled — no window.location guessing.
+ * Relative paths need an explicit `pageDir` (e.g. `/toons/jax/`) when the CDN
+ * base is set — readers pass this via `asset-page-dir`.
  */
 
 export function getAssetBase(): string {
   const raw = (import.meta.env.VITE_ASSET_BASE as string | undefined) ?? "";
   return String(raw).trim().replace(/\/+$/, "");
-}
-
-/** `/toons/jax` and `/toons/jax/index.html` → `/toons/jax/`. */
-export function pageDirFromPathname(pathname: string): string {
-  if (!pathname || pathname === "/") return "/";
-  if (pathname.endsWith("/")) return pathname;
-  const last = pathname.lastIndexOf("/");
-  if (last <= 0) return "/";
-  const leaf = pathname.slice(last + 1);
-  if (leaf.includes(".")) return pathname.slice(0, last + 1);
-  return pathname + "/";
 }
 
 function normalizeSitePath(p: string): string {
@@ -30,7 +19,10 @@ function normalizeSitePath(p: string): string {
   return withLead.replace(/\/{2,}/g, "/");
 }
 
-/** Root-absolute site path (`/toons/jax/assets/x.jpg`). */
+/**
+ * Root-absolute site path (`/toons/jax/assets/x.jpg`).
+ * Relative paths require `pageDir`.
+ */
 export function toSitePath(path: string, pageDir?: string): string {
   if (!path) return path;
   if (path.startsWith("/")) return normalizeSitePath(path);
@@ -43,7 +35,9 @@ export function toSitePath(path: string, pageDir?: string): string {
 
 /**
  * Resolve a media URL for img/audio src.
- * Relative paths need `pageDir` when VITE_ASSET_BASE is set.
+ * - Absolute http(s) / data: / blob: pass through
+ * - Empty CDN base: return path unchanged
+ * - With CDN base: prefix root-absolute or pageDir-relative paths
  */
 export function resolveAssetUrl(path: string, pageDir?: string): string {
   if (!path) return path;
@@ -54,10 +48,8 @@ export function resolveAssetUrl(path: string, pageDir?: string): string {
   const base = getAssetBase();
   if (!base) return path;
 
-  // Relative paths need pageDir to become CDN absolute; without it leave
-  // relative (same-origin / tests). Readers always pass asset-page-dir.
   if (!path.startsWith("/") && (pageDir == null || pageDir === "")) {
-    return path;
+    throw new Error(`resolveAssetUrl: pageDir required for relative path "${path}" when VITE_ASSET_BASE is set`);
   }
 
   return base + toSitePath(path, pageDir);

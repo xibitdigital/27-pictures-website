@@ -57,5 +57,9 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     setupFiles: ["src/test/setup.ts"],
     css: true,
+    // Do not inherit VITE_ASSET_BASE from developer .env — unit tests use relative paths.
+    env: {
+      VITE_ASSET_BASE: "",
+    },
   },
 });

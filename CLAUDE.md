@@ -99,19 +99,23 @@ make local-cdn     # require VITE_ASSET_BASE, CDN build, then protected serve
 
 `PREVIEW_USER` / `PREVIEW_PASS` in `.env` (empty pass on `make local` → random printed once).
 
-### Media on R2 (CDN)
+### Media on R2 (CDN) — required
 
-Binary media is **not in git** (`public/toons/**/assets/**`, `public/card-art/**` are
-gitignored). Source of truth is R2; manifests/`words.json` stay in the repo.
+Binary media is **not in git**. `VITE_ASSET_BASE` is **required** for `npm run build`
+and all deploy targets (hard fail if missing). Unit tests force an empty base via
+vitest config so they ignore developer `.env`.
 
 ```bash
-# .env (required for readers + experiment cards)
+# .env (required)
 VITE_ASSET_BASE=https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev
 # or: VITE_ASSET_BASE=https://assets.twentyseven.pictures
 
-make deploy-cdn    # upload any local new media + build + deploy
-make deploy        # build (uses VITE_ASSET_BASE) + deploy
+make deploy        # requires VITE_ASSET_BASE + build + Pages
+make deploy-cdn    # upload R2 first, then deploy
 ```
+
+Static card-art URLs use the token `%VITE_ASSET_BASE%/card-art/…` in HTML/sitemap
+(expanded at build by `vite/plugins/cdnMedia.ts`).
 
 Local workflow for **new** plates:
 
@@ -119,7 +123,7 @@ Local workflow for **new** plates:
 2. `make add-image … UPLOAD=1` or `npm run upload-assets` → R2
 3. Commit only manifest/words changes, not the binaries
 
-- `resolveAssetUrl()` + `asset-page-dir`; card-art HTML rewritten at build
+- Readers: `resolveAssetUrl()` + `asset-page-dir`
 - Keys: `toons/jax/assets/<hash>.jpg`, `card-art/erin.jpg`
 - Shared put/lock: `scripts/lib/r2-media.js`
 

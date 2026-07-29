@@ -26,7 +26,7 @@ export { default as ToonReaderShell } from "./ToonReaderShell.vue";
 export { default as VerticalStrip } from "./VerticalStrip.vue";
 export { useViewMode, prefersMobileScroll, MOBILE_MAX_WIDTH } from "./useViewMode";
 export { loadManifest, createManifestLoader, pagesFromManifest } from "./loadManifest";
-export { getAssetBase, pageDirFromPathname, resolveAssetUrl, resolvePageUrls, toSitePath } from "./assetUrl";
+export { getAssetBase, resolveAssetUrl, resolvePageUrls, toSitePath } from "./assetUrl";
 
 // Chrome
 export { FullscreenButton, ViewModeToggle, ReaderTopBar } from "./chrome";

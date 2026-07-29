@@ -18,8 +18,8 @@
     "typecheck": "vue-tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "format": "prettier --write \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\"",
-    "format:check": "prettier --check \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\"",
+    "format": "prettier --write \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\"",
     "check": "npm test && npm run build"
   },
   "dependencies": {
