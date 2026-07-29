@@ -111,18 +111,11 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
   }
 
   function maxIndex(): number {
-    return state.singlePage
-      ? totalSingleViews(state.pages.length) - 1
-      : Math.max(0, totalSpreads() - 1);
+    return state.singlePage ? totalSingleViews(state.pages.length) - 1 : Math.max(0, totalSpreads() - 1);
   }
 
   function syncChrome(): void {
-    state.indicator = indicatorText(
-      state.pages,
-      state.viewIndex,
-      state.singlePage,
-      totalSpreads()
-    );
+    state.indicator = indicatorText(state.pages, state.viewIndex, state.singlePage, totalSpreads());
     state.canPrev = state.viewIndex > 0;
     state.canNext = state.viewIndex < maxIndex();
     document.body.classList.toggle("single-page", state.singlePage);
@@ -424,10 +417,7 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
  * Test / legacy helper: create engine, start immediately, return API.
  * Prefer `createBookEngine` + Vue surface in app code.
  */
-export function initToonBook(
-  _els: unknown,
-  opts: ToonBookOptions = {}
-): ToonBookApi | undefined {
+export function initToonBook(_els: unknown, opts: ToonBookOptions = {}): ToonBookApi | undefined {
   const engine = createBookEngine(opts);
   void engine.start();
   return engine;

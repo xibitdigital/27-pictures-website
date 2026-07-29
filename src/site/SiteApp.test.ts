@@ -27,9 +27,7 @@ describe("SiteApp", () => {
       global: { stubs: headlessStubs },
     });
 
-    expect(wrapper.findComponent({ name: "SiteNav" }).exists() || wrapper.find("header").exists()).toBe(
-      true
-    );
+    expect(wrapper.findComponent({ name: "SiteNav" }).exists() || wrapper.find("header").exists()).toBe(true);
     // Teleport target receives the form
     expect(host.querySelector("form.contact-form")).toBeTruthy();
     expect(host.querySelector("#name")).toBeTruthy();

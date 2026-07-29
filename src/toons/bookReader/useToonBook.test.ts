@@ -3,11 +3,7 @@ import { defineComponent, h, nextTick } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
-import {
-  stubReaderMatchMedia,
-  stubImagePreload,
-  FOUR_PAGES,
-} from "@/test/bookFixture";
+import { stubReaderMatchMedia, stubImagePreload, FOUR_PAGES } from "@/test/bookFixture";
 
 function mountBook() {
   let api: ReturnType<typeof useToonBook> | undefined;

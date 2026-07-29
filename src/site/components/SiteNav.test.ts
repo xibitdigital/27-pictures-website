@@ -50,9 +50,7 @@ describe("SiteNav", () => {
     const hrefs = wrapper.findAll(".nav-links a.magnetic").map((a) => a.attributes("href"));
     expect(hrefs).toContain("/#darkroom");
     expect(hrefs).toContain("/#contact");
-    const experiments = wrapper
-      .findAll(".nav-links a.magnetic")
-      .find((a) => a.attributes("href") === "/experiments/");
+    const experiments = wrapper.findAll(".nav-links a.magnetic").find((a) => a.attributes("href") === "/experiments/");
     expect(experiments?.attributes("aria-current")).toBe("page");
   });
 

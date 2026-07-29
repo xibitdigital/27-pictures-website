@@ -3,12 +3,7 @@ import { defineComponent, h, nextTick, onBeforeUnmount, onMounted } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createBookEngine, initToonBook } from "./bookReader";
 import BookSurface from "./BookSurface.vue";
-import {
-  stubReaderMatchMedia,
-  stubImagePreload,
-  stubManifestFetch,
-  FOUR_PAGES,
-} from "@/test/bookFixture";
+import { stubReaderMatchMedia, stubImagePreload, stubManifestFetch, FOUR_PAGES } from "@/test/bookFixture";
 import type { ToonBookApi, ToonBookOptions } from "./types";
 
 async function readyBook(
@@ -96,24 +91,16 @@ describe("FlipFrame reader (desktop / reduced-motion)", () => {
 
     api.goNext();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(1));
-    expect(wrapper.find(".page-slot.left img:not(.cover-texture-img)").attributes("src")).toBe(
-      "assets/p2.jpg"
-    );
-    expect(wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")).toBe(
-      "assets/p3.jpg"
-    );
+    expect(wrapper.find(".page-slot.left img:not(.cover-texture-img)").attributes("src")).toBe("assets/p2.jpg");
+    expect(wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")).toBe("assets/p3.jpg");
 
     api.goNext();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(2));
-    expect(wrapper.find(".page-slot.left img:not(.cover-texture-img)").attributes("src")).toBe(
-      "assets/p4.jpg"
-    );
+    expect(wrapper.find(".page-slot.left img:not(.cover-texture-img)").attributes("src")).toBe("assets/p4.jpg");
 
     api.goPrev();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(1));
-    expect(wrapper.find(".page-slot.left img:not(.cover-texture-img)").attributes("src")).toBe(
-      "assets/p2.jpg"
-    );
+    expect(wrapper.find(".page-slot.left img:not(.cover-texture-img)").attributes("src")).toBe("assets/p2.jpg");
   });
 
   it("fires onPageTurn for successful next/prev (not at bounds)", async () => {
@@ -311,16 +298,12 @@ describe("FlipFrame reader (single-page / mobile)", () => {
 
     api.goNext();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(1));
-    expect(
-      wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")
-    ).toBe("a.jpg");
+    expect(wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")).toBe("a.jpg");
     expect(wrapper.find("#indicator").text()).toMatch(/1\s*\/\s*2/);
 
     api.goNext();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(2));
-    expect(
-      wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")
-    ).toBe("b.jpg");
+    expect(wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")).toBe("b.jpg");
 
     api.goNext();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(3));

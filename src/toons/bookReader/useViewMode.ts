@@ -8,10 +8,7 @@ import { loadManifest } from "./loadManifest";
 export const MOBILE_MAX_WIDTH = 768;
 
 export function prefersMobileScroll(): boolean {
-  return (
-    typeof window.matchMedia === "function" &&
-    window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches
-  );
+  return typeof window.matchMedia === "function" && window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches;
 }
 
 export interface UseViewModeOptions {
@@ -42,8 +39,7 @@ export function useViewMode(opts: UseViewModeOptions = {}): UseViewModeApi {
   const isVertical = ref(false);
   const pages = ref<string[]>([]);
   const defaultUrl = opts.manifestUrl || "manifest.json";
-  const resolvePages =
-    opts.loadPages ?? ((url?: string) => loadManifest(url || defaultUrl));
+  const resolvePages = opts.loadPages ?? ((url?: string) => loadManifest(url || defaultUrl));
 
   async function loadPages(manifestUrl?: string): Promise<void> {
     pages.value = await resolvePages(manifestUrl || defaultUrl);

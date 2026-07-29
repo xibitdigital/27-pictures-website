@@ -3,12 +3,7 @@
  */
 
 // Engine
-export {
-  createBookEngine,
-  initToonBook,
-  type BookEngine,
-  type BookEngineState,
-} from "./bookReader";
+export { createBookEngine, initToonBook, type BookEngine, type BookEngineState } from "./bookReader";
 export { useToonBook } from "./useToonBook";
 export type { SlotModel, FlipModel, FlipFaceModel } from "./bookModels";
 export {
@@ -30,18 +25,10 @@ export { default as BackCoverLink } from "./BackCoverLink.vue";
 export { default as ToonReaderShell } from "./ToonReaderShell.vue";
 export { default as VerticalStrip } from "./VerticalStrip.vue";
 export { useViewMode, prefersMobileScroll, MOBILE_MAX_WIDTH } from "./useViewMode";
-export {
-  loadManifest,
-  createManifestLoader,
-  pagesFromManifest,
-} from "./loadManifest";
+export { loadManifest, createManifestLoader, pagesFromManifest } from "./loadManifest";
 
 // Chrome
-export {
-  FullscreenButton,
-  ViewModeToggle,
-  ReaderTopBar,
-} from "./chrome";
+export { FullscreenButton, ViewModeToggle, ReaderTopBar } from "./chrome";
 
 // Audio
 export {

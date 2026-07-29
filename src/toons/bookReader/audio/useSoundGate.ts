@@ -5,14 +5,7 @@
  * remounts). Triggers: blocked caption SFX, first page turn, or first vertical
  * scroll (desktop and mobile).
  */
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  type ComputedRef,
-  type Ref,
-} from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, type ComputedRef, type Ref } from "vue";
 import type { SoundGate } from "../types";
 
 /** Ignore tiny scroll noise / programmatic reset-to-top. */
@@ -52,9 +45,7 @@ export function useSoundGate(opts: UseSoundGateOptions = {}): UseSoundGateApi {
   /** Session flag — always false on mount; never persisted. */
   let promptShown = false;
 
-  const title = computed(() =>
-    enabled.value ? "Mute sound" : "Enable sound effects"
-  );
+  const title = computed(() => (enabled.value ? "Mute sound" : "Enable sound effects"));
   const label = computed(() => (enabled.value ? "Sound on" : "Sound"));
 
   function setEnabled(on: boolean): void {

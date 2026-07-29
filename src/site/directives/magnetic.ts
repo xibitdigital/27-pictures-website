@@ -14,8 +14,10 @@ export const vMagnetic: Directive<HTMLElement> = {
     };
     el.addEventListener("mousemove", onMove);
     el.addEventListener("mouseleave", onLeave);
-    (el as HTMLElement & { __magnetic?: { onMove: typeof onMove; onLeave: typeof onLeave } }).__magnetic =
-      { onMove, onLeave };
+    (el as HTMLElement & { __magnetic?: { onMove: typeof onMove; onLeave: typeof onLeave } }).__magnetic = {
+      onMove,
+      onLeave,
+    };
   },
   unmounted(el) {
     const h = (el as HTMLElement & { __magnetic?: { onMove: (e: MouseEvent) => void; onLeave: () => void } })

@@ -12,9 +12,7 @@ const emit = defineEmits<{
   toggle: [];
 }>();
 
-const title = computed(() =>
-  props.isVertical ? "Switch to book view" : "Switch to vertical scroll view"
-);
+const title = computed(() => (props.isVertical ? "Switch to book view" : "Switch to vertical scroll view"));
 const label = computed(() => (props.isVertical ? "Book" : "Scroll"));
 </script>
 

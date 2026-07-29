@@ -1,11 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import {
-  WordOverlay,
-  toFraction,
-  imageContentBox,
-  loadWords,
-  LANG_STORAGE_KEY,
-} from "./words";
+import { WordOverlay, toFraction, imageContentBox, loadWords, LANG_STORAGE_KEY } from "./words";
 import type { WordsConfig } from "./types";
 
 const sampleConfig: WordsConfig = {
@@ -216,9 +210,7 @@ describe("WordOverlay", () => {
     const word = slot.querySelector(".jax-word--sfx") as HTMLElement;
     expect(word).toBeTruthy();
 
-    const playSpy = vi
-      .spyOn(window.HTMLAudioElement.prototype, "play")
-      .mockResolvedValue(undefined);
+    const playSpy = vi.spyOn(window.HTMLAudioElement.prototype, "play").mockResolvedValue(undefined);
 
     word.click();
     expect(onBlockedPlay).toHaveBeenCalled();
@@ -249,10 +241,7 @@ describe("loadWords", () => {
   });
 
   it("throws on HTTP error", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: false, status: 404 })
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 404 }));
     await expect(loadWords("missing.json")).rejects.toThrow(/words\.json 404/);
   });
 });

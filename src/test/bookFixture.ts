@@ -53,9 +53,8 @@ export function stubReaderMatchMedia(mode: MatchMediaMode = "desktop") {
     vi.fn().mockImplementation((query: string) => {
       let matches = false;
       if (query.includes("prefers-reduced-motion")) {
-        matches = mode === "reduce-motion" || mode === "desktop" || mode === "mobile"
-          ? mode === "reduce-motion"
-          : false;
+        matches =
+          mode === "reduce-motion" || mode === "desktop" || mode === "mobile" ? mode === "reduce-motion" : false;
       }
       // When testing reduce-motion, still want desktop layout unless mobile.
       if (query.includes("max-width: 768px") || query.includes("max-width:768px")) {
@@ -102,16 +101,8 @@ export function stubImagePreload() {
 }
 
 export function stubManifestFetch(files: string[]) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn().mockResolvedValue(mockManifest(files))
-  );
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(mockManifest(files)));
 }
 
 /** 4 pages → spreads: 0=(cover|p1), 1=(p2|p3), 2=(p4|?) with totalSpreads = ceil((4+1)/2)=3 */
-export const FOUR_PAGES = [
-  "assets/p1.jpg",
-  "assets/p2.jpg",
-  "assets/p3.jpg",
-  "assets/p4.jpg",
-];
+export const FOUR_PAGES = ["assets/p1.jpg", "assets/p2.jpg", "assets/p3.jpg", "assets/p4.jpg"];

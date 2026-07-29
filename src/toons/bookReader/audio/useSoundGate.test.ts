@@ -120,18 +120,13 @@ describe("useSoundGate", () => {
 
   it("plays confirm beep when confirmSrc is set", () => {
     const play = vi.fn().mockResolvedValue(undefined);
-    vi.spyOn(window, "Audio").mockImplementation(function (
-      this: HTMLAudioElement,
-      src?: string
-    ) {
+    vi.spyOn(window, "Audio").mockImplementation(function (this: HTMLAudioElement, src?: string) {
       this.src = src || "";
       this.play = play;
       return this;
     } as unknown as typeof Audio);
 
-    const { api: g } = withSetup(() =>
-      useSoundGate({ confirmSrc: "assets/sfx/beep.mp3", promptOnScroll: false })
-    );
+    const { api: g } = withSetup(() => useSoundGate({ confirmSrc: "assets/sfx/beep.mp3", promptOnScroll: false }));
     g.setEnabled(true);
     expect(window.Audio).toHaveBeenCalledWith("assets/sfx/beep.mp3");
     expect(play).toHaveBeenCalled();

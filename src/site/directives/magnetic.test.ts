@@ -34,9 +34,7 @@ describe("vMagnetic", () => {
         toJSON: () => ({}),
       }) as DOMRect;
 
-    el.dispatchEvent(
-      new MouseEvent("mousemove", { clientX: 140, clientY: 70, bubbles: true })
-    );
+    el.dispatchEvent(new MouseEvent("mousemove", { clientX: 140, clientY: 70, bubbles: true }));
     await nextTick();
 
     // center = (120, 60); offset = (20, 10); * 0.12 = (2.4, 1.2)

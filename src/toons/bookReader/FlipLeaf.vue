@@ -64,10 +64,7 @@ function faceIsCover(face: FlipFaceModel): boolean {
   <div
     ref="rootEl"
     class="flip-page"
-    :class="[
-      flip.direction === 'next' ? 'from-right' : 'from-left',
-      { flipping },
-    ]"
+    :class="[flip.direction === 'next' ? 'from-right' : 'from-left', { flipping }]"
     @animationend="onAnimationEnd"
   >
     <div
@@ -85,12 +82,7 @@ function faceIsCover(face: FlipFaceModel): boolean {
         draggable="false"
         aria-hidden="true"
       />
-      <img
-        v-if="flip.front.kind === 'page'"
-        :src="flip.front.src"
-        alt=""
-        draggable="false"
-      />
+      <img v-if="flip.front.kind === 'page'" :src="flip.front.src" alt="" draggable="false" />
       <FrontCoverInstructions
         v-else-if="flip.front.kind === 'front'"
         :title="coverTitle"
@@ -101,11 +93,7 @@ function faceIsCover(face: FlipFaceModel): boolean {
         :sound-enabled="soundEnabled"
         @sound-toggle="emit('soundToggle')"
       />
-      <BackCoverLink
-        v-else-if="flip.front.kind === 'back'"
-        :href="backHref"
-        :label="backLabel"
-      />
+      <BackCoverLink v-else-if="flip.front.kind === 'back'" :href="backHref" :label="backLabel" />
     </div>
 
     <div
@@ -124,12 +112,7 @@ function faceIsCover(face: FlipFaceModel): boolean {
         draggable="false"
         aria-hidden="true"
       />
-      <img
-        v-if="flip.back.kind === 'page'"
-        :src="flip.back.src"
-        alt=""
-        draggable="false"
-      />
+      <img v-if="flip.back.kind === 'page'" :src="flip.back.src" alt="" draggable="false" />
       <FrontCoverInstructions
         v-else-if="flip.back.kind === 'front'"
         :title="coverTitle"
@@ -140,11 +123,7 @@ function faceIsCover(face: FlipFaceModel): boolean {
         :sound-enabled="soundEnabled"
         @sound-toggle="emit('soundToggle')"
       />
-      <BackCoverLink
-        v-else-if="flip.back.kind === 'back'"
-        :href="backHref"
-        :label="backLabel"
-      />
+      <BackCoverLink v-else-if="flip.back.kind === 'back'" :href="backHref" :label="backLabel" />
     </div>
   </div>
 </template>

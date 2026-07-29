@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot,
-} from "@headlessui/vue";
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import { useSoundGate } from "../bookReader/audio/useSoundGate";
 import { collectWordAudioUrls, preloadAudioUrls } from "../bookReader/audio/preloadAudio";
@@ -46,9 +40,7 @@ const {
   },
 });
 
-const musicTitle = computed(() =>
-  musicEnabled.value ? "Pause music" : "Play music"
-);
+const musicTitle = computed(() => (musicEnabled.value ? "Pause music" : "Play music"));
 const musicLabel = computed(() => (musicEnabled.value ? "Music on" : "Music"));
 
 function stopBgMusic(): void {
@@ -153,14 +145,7 @@ onMounted(() => {
     :book-options="bookOptions"
   >
     <template #overlays>
-      <audio
-        id="bgMusic"
-        ref="bgMusicEl"
-        :src="BG_MUSIC"
-        loop
-        preload="auto"
-        aria-hidden="true"
-      />
+      <audio id="bgMusic" ref="bgMusicEl" :src="BG_MUSIC" loop preload="auto" aria-hidden="true" />
 
       <TransitionRoot :show="soundPromptVisible" as="template">
         <Dialog class="sound-prompt-dialog" as="div" @close="dismissPrompt">
@@ -185,11 +170,7 @@ onMounted(() => {
                   stroke-width="1.75"
                   aria-hidden="true"
                 >
-                  <path
-                    d="M4 9v6h4l5 4V5L8 9H4z"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
+                  <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
                   <path
                     d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
                     stroke-linecap="round"
@@ -197,20 +178,12 @@ onMounted(() => {
                   />
                 </svg>
                 <DialogTitle as="h2">Enable sound</DialogTitle>
-                <p>
-                  This comic has audio. Turn sound on to hear dialogue, onomatopoeia, and SFX.
-                </p>
+                <p>This comic has audio. Turn sound on to hear dialogue, onomatopoeia, and SFX.</p>
                 <div class="sound-prompt__actions">
-                  <button
-                    type="button"
-                    class="sound-prompt__btn sound-prompt__btn--primary"
-                    @click="enableFromPrompt"
-                  >
+                  <button type="button" class="sound-prompt__btn sound-prompt__btn--primary" @click="enableFromPrompt">
                     Enable sound
                   </button>
-                  <button type="button" class="sound-prompt__btn" @click="dismissPrompt">
-                    Not now
-                  </button>
+                  <button type="button" class="sound-prompt__btn" @click="dismissPrompt">Not now</button>
                 </div>
               </DialogPanel>
             </div>

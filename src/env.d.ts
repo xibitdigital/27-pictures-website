@@ -12,10 +12,7 @@ interface TurnstileApi {
   execute: (widgetId?: string | HTMLElement) => void;
   reset: (widgetId?: string | HTMLElement) => void;
   remove: (widgetId?: string | HTMLElement) => void;
-  render: (
-    el: string | HTMLElement,
-    options: Record<string, unknown>
-  ) => string;
+  render: (el: string | HTMLElement, options: Record<string, unknown>) => string;
 }
 
 interface Window {

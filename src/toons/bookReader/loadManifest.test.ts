@@ -1,23 +1,13 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import {
-  pagesFromManifest,
-  loadManifest,
-  createManifestLoader,
-} from "./loadManifest";
+import { pagesFromManifest, loadManifest, createManifestLoader } from "./loadManifest";
 
 describe("pagesFromManifest", () => {
   it("prefers explicit files list", () => {
-    expect(
-      pagesFromManifest({ files: ["a.jpg", "b.jpg"], pages: 99 })
-    ).toEqual(["a.jpg", "b.jpg"]);
+    expect(pagesFromManifest({ files: ["a.jpg", "b.jpg"], pages: 99 })).toEqual(["a.jpg", "b.jpg"]);
   });
 
   it("expands pages + pattern", () => {
-    expect(pagesFromManifest({ pages: 3, pattern: "p/{n}.jpg" })).toEqual([
-      "p/1.jpg",
-      "p/2.jpg",
-      "p/3.jpg",
-    ]);
+    expect(pagesFromManifest({ pages: 3, pattern: "p/{n}.jpg" })).toEqual(["p/1.jpg", "p/2.jpg", "p/3.jpg"]);
   });
 
   it("returns empty when no usable data", () => {
@@ -44,10 +34,7 @@ describe("loadManifest", () => {
   });
 
   it("throws on HTTP error", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: false, status: 500 })
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 500 }));
     await expect(loadManifest()).rejects.toThrow(/manifest\.json 500/);
   });
 });

@@ -3,12 +3,7 @@
   "designWidth": 1008,
   "designHeight": 1792,
   "font": "Bangers",
-  "languages": [
-    "en",
-    "it",
-    "de",
-    "fr"
-  ],
+  "languages": ["en", "it", "de", "fr"],
   "defaultLang": "en",
   "pages": 16,
   "files": [

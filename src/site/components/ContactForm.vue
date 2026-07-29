@@ -210,11 +210,7 @@ onUnmounted(() => {
     <button type="submit" class="magnetic contact-btn" :disabled="submitting">
       {{ submitLabel }}
     </button>
-    <div
-      v-if="formMessage"
-      class="form-message"
-      :class="`form-message--${formMessageType}`"
-    >
+    <div v-if="formMessage" class="form-message" :class="`form-message--${formMessageType}`">
       {{ formMessage }}
     </div>
   </form>

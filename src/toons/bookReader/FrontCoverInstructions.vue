@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot,
-} from "@headlessui/vue";
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 
 const props = withDefaults(
   defineProps<{
@@ -33,12 +27,8 @@ const emit = defineEmits<{
 
 const aboutOpen = ref(false);
 
-const soundTitle = computed(() =>
-  props.soundEnabled ? "Mute sound" : "Enable sound"
-);
-const soundLabel = computed(() =>
-  props.soundEnabled ? "Sound on" : props.soundHint || "Sound"
-);
+const soundTitle = computed(() => (props.soundEnabled ? "Mute sound" : "Enable sound"));
+const soundLabel = computed(() => (props.soundEnabled ? "Sound on" : props.soundHint || "Sound"));
 </script>
 
 <template>
@@ -74,12 +64,7 @@ const soundLabel = computed(() =>
       <p class="front-cover-brand-by">by twentyseven.pictures</p>
     </div>
 
-    <img
-      v-if="logo"
-      class="front-cover-logo"
-      :src="logo"
-      :alt="`${altPrefix} logo`"
-    />
+    <img v-if="logo" class="front-cover-logo" :src="logo" :alt="`${altPrefix} logo`" />
     <h2>How to read</h2>
     <ul>
       <li>Click or tap the right page<span>next page</span></li>
@@ -108,11 +93,7 @@ const soundLabel = computed(() =>
           stroke-width="2"
           aria-hidden="true"
         >
-          <path
-            d="M4 9v6h4l5 4V5L8 9H4z"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+          <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
           <path
             class="front-cover-sound-waves"
             d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
@@ -122,9 +103,7 @@ const soundLabel = computed(() =>
         </svg>
         <span :data-off-label="soundHint">{{ soundLabel }}</span>
       </button>
-      <p class="front-cover-sound-note">
-        Hover (or tap) glowing captions on any page to hear them
-      </p>
+      <p class="front-cover-sound-note">Hover (or tap) glowing captions on any page to hear them</p>
     </template>
   </div>
 
@@ -158,24 +137,12 @@ const soundLabel = computed(() =>
             <DialogTitle as="h2">FlipFrame beta</DialogTitle>
             <p>
               FlipFrame is a beta product by
-              <strong>twentyseven.pictures</strong>. If you’d like to integrate
-              this reader on your site, get in touch via our contact form.
+              <strong>twentyseven.pictures</strong>. If you’d like to integrate this reader on your site, get in touch
+              via our contact form.
             </p>
             <div class="sound-prompt__actions">
-              <a
-                href="/#contact"
-                class="sound-prompt__btn sound-prompt__btn--primary"
-                @click.stop
-              >
-                Contact us
-              </a>
-              <button
-                type="button"
-                class="sound-prompt__btn"
-                @click.stop="aboutOpen = false"
-              >
-                Close
-              </button>
+              <a href="/#contact" class="sound-prompt__btn sound-prompt__btn--primary" @click.stop> Contact us </a>
+              <button type="button" class="sound-prompt__btn" @click.stop="aboutOpen = false">Close</button>
             </div>
           </DialogPanel>
         </div>

@@ -46,13 +46,7 @@ function onTouchEnd(e: TouchEvent): void {
 <template>
   <div class="book-scene">
     <div class="book-shadow"></div>
-    <div
-      class="book"
-      id="book"
-      ref="bookEl"
-      @touchstart.passive="onTouchStart"
-      @touchend.passive="onTouchEnd"
-    >
+    <div class="book" id="book" ref="bookEl" @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
       <div class="spread" id="spread">
         <BookSlot
           side="left"
@@ -104,18 +98,8 @@ function onTouchEnd(e: TouchEvent): void {
         />
         <div class="spine-glow"></div>
         <div class="spine"></div>
-        <div
-          class="nav-zone next"
-          id="zone-next"
-          title="Next page"
-          @click="engine.goNext()"
-        ></div>
-        <div
-          class="nav-zone prev"
-          id="zone-prev"
-          title="Previous page"
-          @click="engine.goPrev()"
-        ></div>
+        <div class="nav-zone next" id="zone-next" title="Next page" @click="engine.goNext()"></div>
+        <div class="nav-zone prev" id="zone-prev" title="Previous page" @click="engine.goPrev()"></div>
       </div>
     </div>
     <button
@@ -143,8 +127,6 @@ function onTouchEnd(e: TouchEvent): void {
   </div>
 
   <div class="controls">
-    <span class="page-indicator" id="indicator" aria-live="polite">{{
-      engine.state.indicator
-    }}</span>
+    <span class="page-indicator" id="indicator" aria-live="polite">{{ engine.state.indicator }}</span>
   </div>
 </template>

@@ -49,12 +49,7 @@ watch(
 
 <template>
   <div ref="rootEl" class="vertical-strip-pages">
-    <div
-      v-for="(src, i) in pages"
-      :key="src + '-' + i"
-      class="vertical-page page-slot"
-      :data-page-num="i + 1"
-    >
+    <div v-for="(src, i) in pages" :key="src + '-' + i" class="vertical-page page-slot" :data-page-num="i + 1">
       <img
         :src="src"
         :alt="`${altPrefix || 'Page'} — page ${i + 1}`"

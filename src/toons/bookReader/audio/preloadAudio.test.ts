@@ -54,11 +54,7 @@ describe("collectWordAudioUrls", () => {
         "2": [{ audio: "assets/sfx/c.mp3", text: "C" }],
       },
     };
-    expect(collectWordAudioUrls(config).sort()).toEqual([
-      "assets/sfx/a.mp3",
-      "assets/sfx/b.mp3",
-      "assets/sfx/c.mp3",
-    ]);
+    expect(collectWordAudioUrls(config).sort()).toEqual(["assets/sfx/a.mp3", "assets/sfx/b.mp3", "assets/sfx/c.mp3"]);
   });
 
   it("handles missing pages", () => {
@@ -87,9 +83,7 @@ describe("preloadAudioUrl / preloadAudioUrls", () => {
 
     const calls = (window.Audio as unknown as ReturnType<typeof vi.fn>).mock.calls.length;
     await preloadAudioUrl("assets/sfx/x.mp3");
-    expect((window.Audio as unknown as ReturnType<typeof vi.fn>).mock.calls.length).toBe(
-      calls
-    );
+    expect((window.Audio as unknown as ReturnType<typeof vi.fn>).mock.calls.length).toBe(calls);
   });
 
   it("resolves on error without rejecting", async () => {

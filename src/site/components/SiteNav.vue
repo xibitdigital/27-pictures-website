@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot,
-} from "@headlessui/vue";
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 
 const props = withDefaults(
   defineProps<{
@@ -46,12 +40,7 @@ function closeMenu(): void {
 <template>
   <header>
     <nav role="navigation" aria-label="Main navigation">
-      <a
-        v-magnetic
-        href="/"
-        class="magnetic"
-        aria-label="27 Pictures - Return to homepage"
-      >
+      <a v-magnetic href="/" class="magnetic" aria-label="27 Pictures - Return to homepage">
         <img
           src="/logo.png"
           class="nav-logo-img"

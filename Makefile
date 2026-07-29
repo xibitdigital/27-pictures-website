@@ -26,8 +26,16 @@ install: ## Install npm deps + pre-commit / pre-push hooks
 	pre-commit install --hook-type pre-commit --hook-type pre-push
 
 .PHONY: check
-check: ## Run tests + production build (same as pre-push gate)
+check: ## Prettier check + tests + production build (same as pre-push gate)
 	$(NPM) run check
+
+.PHONY: format
+format: ## Format src/ + public/ with Prettier
+	$(NPM) run format
+
+.PHONY: format-check
+format-check: ## Fail if Prettier would change files (pre-push step)
+	$(NPM) run format:check
 
 .PHONY: local-ci
 local-ci: ## Run pre-commit on all files

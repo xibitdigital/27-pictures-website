@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-} from "@headlessui/vue";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
 import type { WordOverlay } from "../../bookReader/words";
 
 const props = defineProps<{
@@ -48,12 +43,7 @@ function onLangUpdate(code: string): void {
         <ListboxButton class="jax-lang-toggle" type="button">
           <span class="jax-lang-toggle-label">{{ currentLabel }}</span>
           <svg class="jax-lang-chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-            <path
-              d="M3 4.5 L6 8 L9 4.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-            />
+            <path d="M3 4.5 L6 8 L9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" />
           </svg>
         </ListboxButton>
 
@@ -65,11 +55,7 @@ function onLangUpdate(code: string): void {
             :value="l.code"
             as="template"
           >
-            <button
-              type="button"
-              class="jax-lang-option"
-              :class="{ 'is-active': active || selected }"
-            >
+            <button type="button" class="jax-lang-option" :class="{ 'is-active': active || selected }">
               {{ l.label }}
             </button>
           </ListboxOption>

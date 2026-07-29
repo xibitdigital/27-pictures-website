@@ -22,12 +22,21 @@ repos:
     rev: v3.1.0
     hooks:
     -   id: prettier
-        types_or: [html, css, javascript, json]
+        name: prettier
+        types_or: [html, css, javascript, json, vue, ts]
         args: [--write]
+        stages: [pre-commit]
 
-# Gate pushes: tests + production build must pass (typecheck included via `npm run build`).
+# Gate pushes: Prettier clean, then tests + production build.
 -   repo: local
     hooks:
+    -   id: prettier-check
+        name: prettier --check
+        entry: npm run format:check
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
     -   id: test-and-build
         name: npm test && npm run build
         entry: npm run check

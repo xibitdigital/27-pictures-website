@@ -79,11 +79,7 @@ describe("useViewMode", () => {
 
     const vm = withSetup(() => useViewMode({ mobileDefault: false }));
     await vm.loadPages("manifest.json");
-    expect(vm.pages.value).toEqual([
-      "assets/a.jpg",
-      "assets/b.jpg",
-      "assets/c.jpg",
-    ]);
+    expect(vm.pages.value).toEqual(["assets/a.jpg", "assets/b.jpg", "assets/c.jpg"]);
   });
 
   it("builds pages from pattern when files missing", async () => {
@@ -100,11 +96,7 @@ describe("useViewMode", () => {
 
     const vm = withSetup(() => useViewMode({ mobileDefault: false }));
     await vm.loadPages();
-    expect(vm.pages.value).toEqual([
-      "assets/1.jpg",
-      "assets/2.jpg",
-      "assets/3.jpg",
-    ]);
+    expect(vm.pages.value).toEqual(["assets/1.jpg", "assets/2.jpg", "assets/3.jpg"]);
   });
 
   it("toggles body.view-vertical and fires callbacks", async () => {

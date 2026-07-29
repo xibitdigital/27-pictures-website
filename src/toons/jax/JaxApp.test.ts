@@ -2,14 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { ref, nextTick } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
 
-const {
-  updateView,
-  loadPages,
-  toggle,
-  isVertical,
-  pages,
-  mockEngine,
-} = vi.hoisted(() => {
+const { updateView, loadPages, toggle, isVertical, pages, mockEngine } = vi.hoisted(() => {
   const { ref } = require("vue") as typeof import("vue");
   const updateView = vi.fn();
   const loadPages = vi.fn().mockResolvedValue(undefined);
@@ -147,16 +140,12 @@ describe("JaxApp", () => {
     loadPages.mockClear();
     toggle.mockClear();
 
-    vi.spyOn(window.HTMLMediaElement.prototype, "play").mockImplementation(function (
-      this: HTMLMediaElement
-    ) {
+    vi.spyOn(window.HTMLMediaElement.prototype, "play").mockImplementation(function (this: HTMLMediaElement) {
       Object.defineProperty(this, "paused", { configurable: true, get: () => false });
       this.dispatchEvent(new Event("play"));
       return Promise.resolve();
     });
-    vi.spyOn(window.HTMLMediaElement.prototype, "pause").mockImplementation(function (
-      this: HTMLMediaElement
-    ) {
+    vi.spyOn(window.HTMLMediaElement.prototype, "pause").mockImplementation(function (this: HTMLMediaElement) {
       Object.defineProperty(this, "paused", { configurable: true, get: () => true });
       this.dispatchEvent(new Event("pause"));
     });
@@ -180,9 +169,7 @@ describe("JaxApp", () => {
   });
 
   it("toggles sound via shell.repaintCover (no window globals, no bookApi let)", async () => {
-    const playSpy = vi
-      .spyOn(window.HTMLAudioElement.prototype, "play")
-      .mockResolvedValue(undefined);
+    const playSpy = vi.spyOn(window.HTMLAudioElement.prototype, "play").mockResolvedValue(undefined);
 
     const wrapper = mountJax();
     await flushPromises();

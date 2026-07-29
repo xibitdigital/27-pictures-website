@@ -12,6 +12,8 @@
     "typecheck": "vue-tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "format": "prettier --write \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\"",
     "check": "npm test && npm run build"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "@vue/test-utils": "^2.4.11",
     "@vue/tsconfig": "^0.9.1",
     "happy-dom": "^20.11.1",
+    "prettier": "^3.1.0",
     "typescript": "^5.9.3",
     "vite": "^8.1.5",
     "vitest": "^4.1.10",

@@ -110,17 +110,13 @@ describe("ErinApp", () => {
 
     expect(wrapper.find(".erin-strip").exists()).toBe(false);
 
-    await wrapper
-      .find('button[title="Switch to vertical scroll view"]')
-      .trigger("click");
+    await wrapper.find('button[title="Switch to vertical scroll view"]').trigger("click");
     await nextTick();
 
     expect(isVertical.value).toBe(true);
     expect(wrapper.find(".erin-strip").exists()).toBe(true);
     expect(wrapper.find(".erin-strip").attributes("data-count")).toBe("3");
-    expect(wrapper.find('button[title="Switch to book view"]').classes()).toContain(
-      "is-active"
-    );
+    expect(wrapper.find('button[title="Switch to book view"]').classes()).toContain("is-active");
 
     await wrapper.find('button[title="Switch to book view"]').trigger("click");
     await nextTick();

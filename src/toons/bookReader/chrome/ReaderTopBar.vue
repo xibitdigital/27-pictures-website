@@ -18,10 +18,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div
-    class="toon-top-controls"
-    :class="{ 'is-highlight-pulse': highlightPulse }"
-  >
+  <div class="toon-top-controls" :class="{ 'is-highlight-pulse': highlightPulse }">
     <slot name="start" />
     <ViewModeToggle :is-vertical="isVertical" @toggle="emit('toggle-view')" />
     <slot name="mid" />

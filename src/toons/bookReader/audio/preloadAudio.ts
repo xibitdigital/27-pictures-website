@@ -74,10 +74,7 @@ function waitForAudio(audio: HTMLAudioElement): Promise<void> {
  * Preload many URLs with limited concurrency (default 6).
  * Dedupes, skips empties, never rejects.
  */
-export async function preloadAudioUrls(
-  urls: Iterable<string>,
-  opts: { concurrency?: number } = {}
-): Promise<void> {
+export async function preloadAudioUrls(urls: Iterable<string>, opts: { concurrency?: number } = {}): Promise<void> {
   const list = [...new Set([...urls].filter((u) => typeof u === "string" && u.trim()))];
   if (!list.length) return;
 

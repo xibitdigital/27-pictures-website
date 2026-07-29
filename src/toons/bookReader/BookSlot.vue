@@ -46,15 +46,10 @@ const emit = defineEmits<{
 const rootEl = ref<HTMLElement | null>(null);
 
 const isCover = computed(
-  () =>
-    props.model.kind === "front" ||
-    props.model.kind === "back" ||
-    props.model.kind === "cover"
+  () => props.model.kind === "front" || props.model.kind === "back" || props.model.kind === "cover"
 );
 const isBlank = computed(() => props.model.kind === "blank");
-const pageNum = computed(() =>
-  props.model.kind === "page" ? props.model.pageNum : undefined
-);
+const pageNum = computed(() => (props.model.kind === "page" ? props.model.pageNum : undefined));
 
 function notifyPaint(): void {
   const el = rootEl.value;
@@ -120,10 +115,6 @@ watch(
       @sound-toggle="emit('soundToggle')"
     />
 
-    <BackCoverLink
-      v-else-if="model.kind === 'back'"
-      :href="backHref"
-      :label="backLabel"
-    />
+    <BackCoverLink v-else-if="model.kind === 'back'" :href="backHref" :label="backLabel" />
   </div>
 </template>

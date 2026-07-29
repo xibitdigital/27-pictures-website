@@ -49,21 +49,13 @@ export function pageIndexForSpread(spread: number, side: "left" | "right"): numb
   return side === "left" ? 2 * spread - 1 : 2 * spread;
 }
 
-export function pageSrcForSpread(
-  pages: string[],
-  spread: number,
-  side: "left" | "right"
-): string | null {
+export function pageSrcForSpread(pages: string[], spread: number, side: "left" | "right"): string | null {
   const idx = pageIndexForSpread(spread, side);
   if (idx === null || idx >= pages.length) return null;
   return pages[idx] ?? null;
 }
 
-export function pageNumForSpread(
-  pages: string[],
-  spread: number,
-  side: "left" | "right"
-): number | null {
+export function pageNumForSpread(pages: string[], spread: number, side: "left" | "right"): number | null {
   const idx = pageIndexForSpread(spread, side);
   if (idx === null || idx >= pages.length) return null;
   return idx + 1;
@@ -73,12 +65,7 @@ export function isFrontCover(spread: number, side: "left" | "right"): boolean {
   return spread === 0 && side === "left";
 }
 
-export function isBackCover(
-  pages: string[],
-  totalSpreads: number,
-  spread: number,
-  side: "left" | "right"
-): boolean {
+export function isBackCover(pages: string[], totalSpreads: number, spread: number, side: "left" | "right"): boolean {
   return spread === totalSpreads - 1 && !pageSrcForSpread(pages, spread, side);
 }
 
@@ -99,10 +86,7 @@ export function slotForSpread(
   return { kind: "cover" };
 }
 
-export function singleViewContent(
-  pages: string[],
-  index: number
-): SlotModel {
+export function singleViewContent(pages: string[], index: number): SlotModel {
   if (index === 0) return { kind: "front" };
   const pageIndex = index - 1;
   if (pageIndex >= pages.length) return { kind: "back" };
@@ -113,11 +97,7 @@ export function totalSingleViews(pageCount: number): number {
   return pageCount + 2;
 }
 
-export function spreadToSingle(
-  pages: string[],
-  totalSpreads: number,
-  spread: number
-): number {
+export function spreadToSingle(pages: string[], totalSpreads: number, spread: number): number {
   const rightNum = pageNumForSpread(pages, spread, "right");
   const leftNum = pageNumForSpread(pages, spread, "left");
   if (rightNum) return rightNum;
@@ -132,12 +112,7 @@ export function singleToSpread(pages: string[], totalSpreads: number, index: num
   return Math.floor(index / 2);
 }
 
-export function indicatorText(
-  pages: string[],
-  viewIndex: number,
-  singlePage: boolean,
-  totalSpreads: number
-): string {
+export function indicatorText(pages: string[], viewIndex: number, singlePage: boolean, totalSpreads: number): string {
   const total = pages.length;
   if (singlePage) {
     const content = singleViewContent(pages, viewIndex);

@@ -107,8 +107,7 @@ function onStripPagePaint(slot: HTMLElement, pageNum: number): void {
 
 function onStripReady(slots: HTMLElement[]): void {
   const prev = stripSlots.value;
-  const same =
-    prev.length === slots.length && prev.every((el, i) => el === slots[i]);
+  const same = prev.length === slots.length && prev.every((el, i) => el === slots[i]);
   if (!same) stripSlots.value = slots;
   paintStripSlots();
 }
@@ -128,12 +127,7 @@ defineExpose<ToonReaderShellExpose>({
 <template>
   <slot name="overlays" />
 
-  <a
-    href="/experiments/"
-    class="toons-back"
-    title="Back to Experiments"
-    aria-label="Back to Experiments"
-  >
+  <a href="/experiments/" class="toons-back" title="Back to Experiments" aria-label="Back to Experiments">
     <svg
       width="24"
       height="24"
@@ -178,11 +172,7 @@ defineExpose<ToonReaderShellExpose>({
       @sound-toggle="bookOptions?.onSoundToggle?.()"
     />
 
-    <div
-      class="vertical-strip"
-      aria-label="Vertical page scroll"
-      :hidden="!viewMode.isVertical.value"
-    >
+    <div class="vertical-strip" aria-label="Vertical page scroll" :hidden="!viewMode.isVertical.value">
       <VerticalStrip
         v-if="viewMode.isVertical.value && viewMode.pages.value.length"
         :pages="viewMode.pages.value"

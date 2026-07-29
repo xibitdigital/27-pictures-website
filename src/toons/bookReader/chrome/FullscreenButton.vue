@@ -11,9 +11,7 @@ const supported = ref(true);
 const title = computed(() => (isFs.value ? "Exit fullscreen" : "Fullscreen"));
 const label = computed(() => (isFs.value ? "Exit" : "Full"));
 const pathD = computed(() =>
-  isFs.value
-    ? "M8 8H3V3M16 8h5V3M8 16H3v5M16 16h5v5"
-    : "M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"
+  isFs.value ? "M8 8H3V3M16 8h5V3M8 16H3v5M16 16h5v5" : "M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"
 );
 
 function sync(): void {
@@ -21,11 +19,7 @@ function sync(): void {
     webkitFullscreenElement?: Element | null;
     msFullscreenElement?: Element | null;
   };
-  isFs.value = !!(
-    document.fullscreenElement ||
-    doc.webkitFullscreenElement ||
-    doc.msFullscreenElement
-  );
+  isFs.value = !!(document.fullscreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement);
   document.body.classList.toggle("is-fullscreen", isFs.value);
   props.afterChange?.();
 }
@@ -59,11 +53,7 @@ onMounted(() => {
     webkitRequestFullscreen?: () => void;
     msRequestFullscreen?: () => void;
   };
-  supported.value = !!(
-    el.requestFullscreen ||
-    el.webkitRequestFullscreen ||
-    el.msRequestFullscreen
-  );
+  supported.value = !!(el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen);
   document.addEventListener("fullscreenchange", sync);
   document.addEventListener("webkitfullscreenchange", sync);
   sync();

@@ -2,14 +2,7 @@
 /**
  * Caption overlays for ToonBook pages (Jax today; injectable sound + lang storage).
  */
-import type {
-  LangCode,
-  LangOption,
-  SoundGate,
-  WordEntry,
-  WordOverlayOptions,
-  WordsConfig,
-} from "./types";
+import type { LangCode, LangOption, SoundGate, WordEntry, WordOverlayOptions, WordsConfig } from "./types";
 
 /** Default localStorage key (legacy Jax). Override via WordOverlayOptions.langStorageKey. */
 export const LANG_STORAGE_KEY = "jax-toon-lang";
@@ -85,7 +78,9 @@ function sketchyBubblePath(tail, seed) {
   // close body
   const last = pts[pts.length - 1];
   const first = pts[0];
-  d += ` Q ${((last[0] + first[0]) / 2 + j(1)).toFixed(2)} ${((last[1] + first[1]) / 2 + j(1)).toFixed(2)} ${first[0].toFixed(2)} ${first[1].toFixed(2)} Z`;
+  d += ` Q ${((last[0] + first[0]) / 2 + j(1)).toFixed(2)} ${((last[1] + first[1]) / 2 + j(1)).toFixed(
+    2
+  )} ${first[0].toFixed(2)} ${first[1].toFixed(2)} Z`;
 
   const t = tail || "bottom";
   if (t === "none") return d;
@@ -93,7 +88,11 @@ function sketchyBubblePath(tail, seed) {
   // Sketchy speech tail
   if (t === "bottom" || t === "bottom-left" || t === "bottom-right") {
     const cx = t === "bottom-left" ? 32 : t === "bottom-right" ? 68 : 50;
-    d += ` M ${(cx - 7 + j(1)).toFixed(2)} 68 Q ${(cx + j(2)).toFixed(2)} 78 ${(cx - 2 + j(2)).toFixed(2)} 92 L ${(cx + 8 + j(2)).toFixed(2)} 70 Z`;
+    d += ` M ${(cx - 7 + j(1)).toFixed(2)} 68 Q ${(cx + j(2)).toFixed(2)} 78 ${(cx - 2 + j(2)).toFixed(2)} 92 L ${(
+      cx +
+      8 +
+      j(2)
+    ).toFixed(2)} 70 Z`;
   } else if (t === "left") {
     d += ` M 12 40 Q 4 48 -2 52 L 14 56 Z`;
   } else if (t === "right") {
@@ -289,9 +288,7 @@ function resolveBubbleStyle(w, variant) {
   const b = w.bubble && typeof w.bubble === "object" ? w.bubble : {};
   const isAi = variant === "ai";
   const isBurst = variant === "burst";
-  const shape = (b.shape || w.bubbleShape || (isAi ? "box" : isBurst ? "star" : "organic"))
-    .toString()
-    .toLowerCase();
+  const shape = (b.shape || w.bubbleShape || (isAi ? "box" : isBurst ? "star" : "organic")).toString().toLowerCase();
   const isClean = shape === "clean" || shape === "frame" || shape === "rect";
   return {
     shape,
@@ -554,9 +551,7 @@ export class WordOverlay {
     });
 
     if (pageNum == null) return;
-    const img = Array.from(slot.children).find(
-      (n): n is HTMLImageElement => n.tagName === "IMG"
-    );
+    const img = Array.from(slot.children).find((n): n is HTMLImageElement => n.tagName === "IMG");
     if (!img) return;
 
     const words = this.wordsForPage(pageNum);
@@ -602,8 +597,7 @@ export class WordOverlay {
         const el = document.createElement("div");
         // Leading spaces on optional classes — never glue names together
         // (e.g. "jax-word--bubblejax-word--burst" broke burst/AI CSS).
-        const bubbleVariantClass =
-          variant === "ai" ? " jax-word--ai" : variant === "burst" ? " jax-word--burst" : "";
+        const bubbleVariantClass = variant === "ai" ? " jax-word--ai" : variant === "burst" ? " jax-word--burst" : "";
         el.className = [
           isBubble ? "jax-word jax-word--bubble" : "jax-word",
           bubbleVariantClass,
@@ -634,7 +628,9 @@ export class WordOverlay {
           textEl.style.color = w.color || (variant === "ai" ? "#f5f5f5" : "#111111");
           const padX = `${bubbleStyle.padX}em`;
           const padY = `${bubbleStyle.padY}em`;
-          textEl.style.padding = `${padY} ${padX} ${bubbleStyle.tail === "none" ? padY : `calc(${padY} + 0.35em)`} ${padX}`;
+          textEl.style.padding = `${padY} ${padX} ${
+            bubbleStyle.tail === "none" ? padY : `calc(${padY} + 0.35em)`
+          } ${padX}`;
         } else {
           el.appendChild(textEl);
         }
@@ -662,9 +658,7 @@ export class WordOverlay {
 
         const textAlign = align === "right" ? "right" : align === "left" ? "left" : "center";
 
-        const fontFamily = isCredit
-          ? '"Inter", sans-serif'
-          : w.fontFamily || this.fontFamily;
+        const fontFamily = isCredit ? '"Inter", sans-serif' : w.fontFamily || this.fontFamily;
         el.style.cssText = [
           "position:absolute",
           `left:${x * 100}%`,
