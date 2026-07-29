@@ -70,8 +70,12 @@ test-watch: ## Vitest watch mode (npm run test:watch)
 	$(NPM) run test:watch
 
 .PHONY: hash-assets
-hash-assets: ## Content-hash CSS ?v= query strings in HTML
+hash-assets: ## Bump ?v=<content-hash> for public CSS in all HTML
 	$(NPM) run hash-assets
+
+.PHONY: hash-assets-check
+hash-assets-check: ## Fail if HTML asset versions are stale
+	$(NPM) run hash-assets:check
 
 .PHONY: generate-qr
 generate-qr: ## Branded QR PDF → ~/Downloads/
@@ -90,7 +94,7 @@ watermark: ## Bake site watermark into images (pass args after --)
 # ---------------------------------------------------------------------------
 
 .PHONY: deploy
-deploy: build ## Production: build then deploy dist/ to main (custom domain)
+deploy: build ## Production: hash CSS (via build), build, deploy dist/ to main
 	@find dist -name .DS_Store -delete 2>/dev/null || true
 	$(NPX) wrangler pages deploy dist \
 		--project-name=twentyseven-pictures \
@@ -98,7 +102,7 @@ deploy: build ## Production: build then deploy dist/ to main (custom domain)
 		--commit-dirty=true
 
 .PHONY: preview-deploy
-preview-deploy: build ## Preview only: deploy dist/ to branch feat/vue-frontend (not production)
+preview-deploy: build ## Preview only: hash CSS (via build), deploy to feat/vue-frontend
 	@find dist -name .DS_Store -delete 2>/dev/null || true
 	$(NPX) wrangler pages deploy dist \
 		--project-name=twentyseven-pictures \

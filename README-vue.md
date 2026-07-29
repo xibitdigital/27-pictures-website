@@ -92,7 +92,9 @@ make test          # vitest run
 make test-watch    # vitest
 make build         # vue-tsc -b && vite build → dist/
 make preview       # preview dist/
-make hash-assets   # cache-bust public CSS hashes in src/**/*.html
+make hash-assets         # bump ?v=<content-hash> for public CSS in all HTML
+make hash-assets-check   # fail if HTML hashes are stale
+# `make build` / `npm run build` always run hash-assets first
 ```
 
 ### Tests
