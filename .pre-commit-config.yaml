@@ -1,3 +1,6 @@
+# Install both commit and push hooks: `pre-commit install` (see Makefile `install`).
+default_install_hook_types: [pre-commit, pre-push]
+
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -21,3 +24,14 @@ repos:
     -   id: prettier
         types_or: [html, css, javascript, json]
         args: [--write]
+
+# Gate pushes: tests + production build must pass (typecheck included via `npm run build`).
+-   repo: local
+    hooks:
+    -   id: test-and-build
+        name: npm test && npm run build
+        entry: npm run check
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]

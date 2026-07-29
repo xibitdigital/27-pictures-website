@@ -20,10 +20,14 @@ help: ## Show this help
 # ---------------------------------------------------------------------------
 
 .PHONY: install
-install: ## Install npm deps + pre-commit hooks
+install: ## Install npm deps + pre-commit / pre-push hooks
 	$(NPM) install
 	@command -v pre-commit >/dev/null 2>&1 || brew install pre-commit
-	pre-commit install
+	pre-commit install --hook-type pre-commit --hook-type pre-push
+
+.PHONY: check
+check: ## Run tests + production build (same as pre-push gate)
+	$(NPM) run check
 
 .PHONY: local-ci
 local-ci: ## Run pre-commit on all files
