@@ -140,6 +140,13 @@ make deploy
 - Keys in the bucket mirror site paths: `toons/jax/assets/<hash>.jpg`, etc.
 - See `.env.example` for `R2_BUCKET` / `VITE_ASSET_BASE`.
 
+### Experiment card art (CDN)
+
+Marketing thumbs for `/experiments/` live in `public/card-art/` (`erin.jpg`, `jax.jpg`).
+They are uploaded to R2 with the rest of the media (`npm run upload-assets`) and, when
+`VITE_ASSET_BASE` is set, HTML/og/sitemap are rewritten to that origin and `dist/card-art/`
+is stripped from Pages.
+
 ### Adding a new toon page image
 
 Images are content-hashed (`md5.ext`) under `public/toons/<toon>/assets/` — same convention as
