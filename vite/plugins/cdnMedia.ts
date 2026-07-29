@@ -8,6 +8,7 @@
  * (Vite also expands %VITE_*% in HTML; we re-run for sitemap + safety.)
  */
 import type { Plugin } from "vite";
+import { loadEnv } from "vite";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -16,8 +17,20 @@ const MEDIA_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".mp3", ".m
 /** Token used in static HTML/XML; replaced with the CDN origin (no trailing slash). */
 export const ASSET_BASE_TOKEN = "%VITE_ASSET_BASE%";
 
-export function readAssetBase(): string {
-  return (process.env.VITE_ASSET_BASE || "").trim().replace(/\/+$/, "");
+/**
+ * Resolve CDN origin from process.env and/or project .env files.
+ * Vite loads VITE_* into import.meta.env for app code; plugins must use loadEnv
+ * (or process.env) so `npm run build` / pre-push see the same value as `make deploy`.
+ */
+export function readAssetBase(mode = process.env.MODE || process.env.NODE_ENV || "production"): string {
+  const fromProcess = (process.env.VITE_ASSET_BASE || "").trim();
+  if (fromProcess) return fromProcess.replace(/\/+$/, "");
+  try {
+    const env = loadEnv(mode === "test" ? "development" : mode, process.cwd(), "VITE_");
+    return (env.VITE_ASSET_BASE || "").trim().replace(/\/+$/, "");
+  } catch {
+    return "";
+  }
 }
 
 /** Replace %VITE_ASSET_BASE% with the resolved origin. */
@@ -44,18 +57,19 @@ function stripMediaUnder(dir: string): number {
 
 export function cdnMediaPlugin(distDir: string): Plugin {
   let isBuild = false;
+  let mode = "production";
 
   return {
     name: "cdn-media",
     configResolved(config) {
       isBuild = config.command === "build";
+      mode = config.mode;
     },
     buildStart() {
       // Hard gate: production builds must set the CDN origin (media is not in git).
-      // Vitest sets VITEST=true and never runs a real app build through this path
-      // for serve; skip when not building.
+      // Vitest sets VITEST=true — skip gate for unit tests.
       if (!isBuild || process.env.VITEST) return;
-      const base = readAssetBase();
+      const base = readAssetBase(mode);
       if (!base) {
         throw new Error(
           [
@@ -68,13 +82,13 @@ export function cdnMediaPlugin(distDir: string): Plugin {
       }
     },
     transformIndexHtml(html) {
-      const base = readAssetBase();
+      const base = readAssetBase(mode);
       if (!base) return html;
       return expandAssetBaseToken(html, base);
     },
     closeBundle() {
       if (!isBuild || process.env.VITEST) return;
-      const base = readAssetBase();
+      const base = readAssetBase(mode);
       if (!base) return;
 
       const sitemap = path.join(distDir, "sitemap.xml");
