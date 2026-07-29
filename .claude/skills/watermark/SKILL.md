@@ -27,6 +27,20 @@ Default mark: **twentyseven.pictures**, bottom-right corner.
 
 ## Default recipe (27 Pictures)
 
+### New single page (preferred)
+
+Watermark + content-hash + place under the toon assets dir (optional manifest + R2):
+
+```bash
+make add-image SRC=~/Downloads/page.jpg TOON=jax
+make add-image SRC=~/Downloads/page.jpg TOON=jax MANIFEST=1 UPLOAD=1
+# or: npm run add-image -- ~/Downloads/page.jpg --toon erin --manifest --upload
+```
+
+Script: `scripts/add-toon-image.js`. See Claude.md → “Adding a new toon page image”.
+
+### Batch folder (existing files)
+
 ```bash
 ./scripts/watermark-images.sh public/toons/assets --backup
 ```

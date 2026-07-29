@@ -1,6 +1,19 @@
 /// <reference types="vite/client" />
 /// <reference types="vitest/globals" />
 
+interface ImportMetaEnv {
+  /**
+   * Optional CDN / R2 origin for toon media (images, SFX, music).
+   * Empty or unset = serve from same origin (Cloudflare Pages `public/`).
+   * Example: `https://assets.twentyseven.pictures`
+   */
+  readonly VITE_ASSET_BASE?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 declare module "*.vue" {
   import type { DefineComponent } from "vue";
   const component: DefineComponent<object, object, unknown>;

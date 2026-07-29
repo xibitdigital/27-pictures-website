@@ -26,6 +26,7 @@ export { default as ToonReaderShell } from "./ToonReaderShell.vue";
 export { default as VerticalStrip } from "./VerticalStrip.vue";
 export { useViewMode, prefersMobileScroll, MOBILE_MAX_WIDTH } from "./useViewMode";
 export { loadManifest, createManifestLoader, pagesFromManifest } from "./loadManifest";
+export { getAssetBase, pageDirFromPathname, resolveAssetUrl, resolvePageUrls, toSitePath } from "./assetUrl";
 
 // Chrome
 export { FullscreenButton, ViewModeToggle, ReaderTopBar } from "./chrome";
@@ -41,7 +42,7 @@ export {
 } from "./audio";
 
 // Captions
-export { WordOverlay, loadWords, LANG_STORAGE_KEY } from "./words";
+export { WordOverlay, loadWords, resolveWordsAssets, LANG_STORAGE_KEY } from "./words";
 
 // Types
 export type * from "./types";

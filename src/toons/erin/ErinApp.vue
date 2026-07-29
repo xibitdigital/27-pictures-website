@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { resolveAssetUrl } from "../bookReader/assetUrl";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "../bookReader/types";
 
-const COVER_TEXTURE = "/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg";
+/** Media path — resolved against VITE_ASSET_BASE when set (R2/CDN). */
+const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
 
 const bookOptions: ToonShellBookOptions = {
   coverSubtitle: "The Missing Child",

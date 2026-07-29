@@ -2,6 +2,7 @@
 /**
  * Caption overlays for ToonBook pages (Jax today; injectable sound + lang storage).
  */
+import { resolveAssetUrl } from "./assetUrl";
 import type { LangCode, LangOption, SoundGate, WordEntry, WordOverlayOptions, WordsConfig } from "./types";
 
 /** Default localStorage key (legacy Jax). Override via WordOverlayOptions.langStorageKey. */
@@ -726,8 +727,29 @@ export class WordOverlay {
   }
 }
 
-export async function loadWords(url?: string): Promise<WordsConfig> {
+/**
+ * Resolve word SFX paths through VITE_ASSET_BASE so captions play from R2/CDN
+ * when configured (relative paths stay relative when base is empty).
+ */
+export function resolveWordsAssets(config: WordsConfig, pageDir?: string): WordsConfig {
+  if (!config?.pages) return config;
+  const pages: WordsConfig["pages"] = {};
+  for (const [key, entries] of Object.entries(config.pages)) {
+    if (!Array.isArray(entries)) {
+      pages[key] = entries;
+      continue;
+    }
+    pages[key] = entries.map((w) => {
+      if (!w || typeof w.audio !== "string" || !w.audio.trim()) return w;
+      return { ...w, audio: resolveAssetUrl(w.audio.trim(), pageDir) };
+    });
+  }
+  return { ...config, pages };
+}
+
+export async function loadWords(url?: string, pageDir?: string): Promise<WordsConfig> {
   const res = await fetch(url || "words.json", { cache: "no-cache" });
   if (!res.ok) throw new Error(`words.json ${res.status}`);
-  return (await res.json()) as WordsConfig;
+  const config = (await res.json()) as WordsConfig;
+  return resolveWordsAssets(config, pageDir);
 }

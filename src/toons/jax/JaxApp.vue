@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { resolveAssetUrl } from "../bookReader/assetUrl";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import { useSoundGate } from "../bookReader/audio/useSoundGate";
 import { collectWordAudioUrls, preloadAudioUrls } from "../bookReader/audio/preloadAudio";
@@ -8,9 +9,10 @@ import { WordOverlay, loadWords } from "../bookReader/words";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "../bookReader/types";
 import LangSwitcher from "./components/LangSwitcher.vue";
 
-const COVER_TEXTURE = "/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg";
-const CONFIRM_SFX = "assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3";
-const BG_MUSIC = "/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3";
+/** Media paths — resolved against VITE_ASSET_BASE when set (R2/CDN). */
+const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
+const CONFIRM_SFX = resolveAssetUrl("assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3", "/toons/jax/");
+const BG_MUSIC = resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3");
 
 const shellRef = ref<ToonReaderShellExpose | null>(null);
 const bgMusicEl = ref<HTMLAudioElement | null>(null);

@@ -81,13 +81,97 @@ npx prettier --write public/styles.css public/index.html public/script.js public
 
 ### Website (Cloudflare Pages)
 
-Deploy the `public/` folder:
-
 ```bash
-npx wrangler pages deploy public --project-name=twentyseven-pictures --commit-dirty=true
+make deploy            # build + deploy site to Cloudflare Pages
+make deploy-media      # upload toon media to R2, then make deploy
+make preview-cdn       # Pages preview branch, media from R2
 ```
 
 **Custom domain:** `twentyseven.pictures` (configured once in Cloudflare dashboard)
+
+### Local testing with protection
+
+Loopback-only + HTTP Basic Auth (not exposed on your LAN):
+
+```bash
+# Hot reload (Vite) — 127.0.0.1:5173, user/pass from env (default dev/dev)
+make dev-protected
+
+# Production build, media still local (public/) — 127.0.0.1:4173 + basic auth
+make local
+
+# Production build, media from R2 — same protection
+make local-cdn
+```
+
+Credentials (`.env`, gitignored):
+
+```bash
+PREVIEW_USER=dev
+PREVIEW_PASS=your-secret   # empty on `make local` → random pass printed once
+```
+
+- Binds **`127.0.0.1` only** (not `0.0.0.0`)
+- Browser prompts for user/pass; or open `http://dev:pass@127.0.0.1:4173/toons/jax/`
+- R2 media on `local-cdn` still uses the public r2.dev URL for `<img>`/`<audio>` — the **site** is protected, not the raw object URLs. For private media later: custom domain + Cloudflare Access, or a Worker gate.
+
+### Toon media on R2 (optional CDN)
+
+By default, toon images/audio ship with Pages from `public/toons/**`. To serve them from
+Cloudflare R2 instead (smaller deploys, assets out of the critical path):
+
+```bash
+# One-time
+npm run create-assets-bucket
+npm run upload-assets -- --setup-cors
+npx wrangler r2 bucket domain add twentyseven-assets --domain assets.twentyseven.pictures
+
+# Put in .env (gitignored):
+#   VITE_ASSET_BASE=https://assets.twentyseven.pictures
+
+# Day-to-day: sync media + deploy site
+make deploy-media
+# Site only (media already on R2):
+make deploy
+```
+
+- Frontend resolves paths via `resolveAssetUrl()` (`VITE_ASSET_BASE`). Empty base = same-origin.
+- CSP in `public/_headers` already allows `https://assets.twentyseven.pictures` for img/media.
+- Keys in the bucket mirror site paths: `toons/jax/assets/<hash>.jpg`, etc.
+- See `.env.example` for `R2_BUCKET` / `VITE_ASSET_BASE`.
+
+### Adding a new toon page image
+
+Images are content-hashed (`md5.ext`) under `public/toons/<toon>/assets/` — same convention as
+existing Jax/Erin plates. Prefer the one-shot command (watermark + hash + place):
+
+```bash
+# Watermark + write public/toons/jax/assets/<md5>.jpg
+make add-image SRC=~/Downloads/page17.jpg TOON=jax
+
+# Also append manifest.json and upload to R2
+make add-image SRC=~/Downloads/page17.jpg TOON=jax MANIFEST=1 UPLOAD=1
+
+# npm equivalent
+npm run add-image -- ~/Downloads/page17.jpg --toon erin --manifest --upload
+```
+
+What it does:
+
+1. Copies the source into a temp dir
+2. Bakes `twentyseven.pictures` (ImageMagick via `scripts/watermark-images.sh`) unless `--no-watermark`
+3. Renames by **md5 of the final bytes** → `public/toons/<toon>/assets/<md5>.jpg`
+4. `--manifest` — appends `"assets/<md5>.jpg"` to that toon’s `manifest.json` and sets `pages`
+5. `--upload` — `wrangler r2 object put` + updates `scripts/r2-assets-lock.json`
+
+Batch watermark only (existing folder, no hash/rename):
+
+```bash
+make watermark ARGS='public/toons/jax/assets --backup'
+# or: npm run watermark -- public/toons/jax/assets --backup
+```
+
+Requires ImageMagick 7+ (`brew install imagemagick`).
 
 ### Contact Form Worker
 

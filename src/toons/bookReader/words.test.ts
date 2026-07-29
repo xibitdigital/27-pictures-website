@@ -225,6 +225,7 @@ describe("WordOverlay", () => {
 describe("loadWords", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it("fetches and returns JSON config", async () => {
@@ -238,6 +239,23 @@ describe("loadWords", () => {
     const cfg = await loadWords("words.json");
     expect(cfg.pages?.["1"]).toHaveLength(2);
     expect(fetch).toHaveBeenCalledWith("words.json", { cache: "no-cache" });
+  });
+
+  it("resolves SFX paths when VITE_ASSET_BASE is set", async () => {
+    vi.stubEnv("VITE_ASSET_BASE", "https://assets.twentyseven.pictures");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          pages: {
+            "1": [{ x: 0.5, y: 0.5, text: "BOOM", audio: "assets/sfx/x.mp3" }],
+          },
+        }),
+      })
+    );
+    const cfg = await loadWords("words.json", "/toons/jax/");
+    expect(cfg.pages?.["1"]?.[0]?.audio).toBe("https://assets.twentyseven.pictures/toons/jax/assets/sfx/x.mp3");
   });
 
   it("throws on HTTP error", async () => {
