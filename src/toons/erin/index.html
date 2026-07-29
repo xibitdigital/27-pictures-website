@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Erin | Experiments | 27 Pictures</title>
+    <meta name="description" content="Erin — an interactive page-turning manga reader from 27 Pictures Experiments." />
+    <link rel="canonical" href="https://twentyseven.pictures/toons/erin/" />
+
+    <link rel="icon" type="image/png" href="/logosquare.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logosquare.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css?v=f03116fe70" />
+    <link rel="stylesheet" href="/toons/reader-shared.css?v=0222fbbf26" />
+    <style>
+      /* Book-only tokens (page paper / spine — not site chrome). Shared
+         reader shell chrome lives in ../reader-shared.css; this block only
+         has Erin's own book-aspect tokens. */
+      :root {
+        /* Spread aspect ≈ 0.75 (two 1152×1728 pages side by side).
+           Prefer height-fill like Jax: Erin is flatter, so it needs a wider
+           max width to reach the same on-screen height (was 900px / 0.72 and
+           looked noticeably smaller than Jax). */
+        /* Leave room for side page-nav buttons (see Jax note). */
+        --book-width: min(calc(100vw - 56px), 1200px, calc((100dvh - 160px) / 0.75));
+        --book-height: calc(var(--book-width) * 0.75);
+        --page-bg: #f8f4ec;
+        --spine: #2a2218;
+        --cover: #111;
+      }
+
+      body.is-fullscreen .book-scene {
+        --book-width: min(calc(100vw - 24px), calc(92dvh / 0.75));
+        --book-height: min(88dvh, calc(var(--book-width) * 0.75));
+        width: var(--book-width);
+        height: var(--book-height);
+      }
+
+      body.is-fullscreen.single-page .book-scene {
+        --book-width: min(94vw, calc(88dvh * 0.67));
+        --book-height: min(88dvh, calc(var(--book-width) * 1.5));
+      }
+
+      body.single-page {
+        --book-width: min(97vw, 520px);
+        --book-height: min(84dvh, calc(var(--book-width) * 1.5));
+      }
+    </style>
+  </head>
+  <body class="toons-reader">
+    <div id="app"></div>
+    <script type="module" src="/toons/erin/main.ts"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 /**
  * Shared page-turning book reader chrome for 27 Pictures toons (Erin, Jax, …).
- * Pairs with book-reader.js. Each toon's own <style> block keeps only its
+ * Pairs with the Vue FlipFrame reader (src/toons/shared/book-reader.ts). Each toon's own <style> block keeps only its
  * book-specific tokens (--book-width/--book-height aspect math, --page-bg,
  * --spine, --cover) and any page-specific extras (e.g. Jax's word-caption
  * overlay, language switcher, sound/music buttons).
@@ -195,6 +195,15 @@ body.toons-reader {
 .toon-fs-btn.is-active {
   border-color: var(--red-smile);
   color: var(--red-smile);
+}
+
+/* Sound icon: hide wave arcs until enabled (matches front-cover control). */
+.toon-fs-btn .toon-fs-sound-waves {
+  display: none;
+}
+
+.toon-fs-btn.is-active .toon-fs-sound-waves {
+  display: inline;
 }
 
 .toon-fs-btn:focus-visible {
@@ -573,7 +582,7 @@ body.is-fullscreen .reader {
 }
 
 /* Optional hardcover board texture — <img.cover-texture-img> injected by
-   book-reader.js under the instructions / back-cover link. */
+   the book engine under the instructions / back-cover link. */
 .page-slot.inside-cover.has-cover-texture,
 .flip-face.inside-cover.has-cover-texture {
   background: var(--cover, var(--bg-dark));
@@ -731,7 +740,7 @@ img.cover-texture-img {
   margin-top: 0.15rem;
 }
 
-/* Optional CTA rendered by book-reader.js when a toon passes opts.soundHint */
+/* Optional CTA rendered by the book engine when a toon passes opts.soundHint */
 .front-cover-sound-btn.is-enabled {
   border-color: var(--red-smile);
   color: var(--red-smile);
@@ -870,6 +879,14 @@ img.cover-texture-img {
   flex-direction: column;
   gap: 1.5rem;
   padding: 0 0 1rem;
+}
+
+/* Inner wrapper from VerticalStrip.vue — pass flex layout through */
+.vertical-strip .vertical-strip-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 body.view-vertical .vertical-strip {
@@ -1102,4 +1119,23 @@ body.single-page .flip-page.flipping.from-left {
     justify-content: flex-end;
     row-gap: 0.35rem;
   }
+}
+
+
+/* Headless UI Dialog root for sound prompt (portal) */
+.sound-prompt-dialog {
+  position: relative;
+  z-index: 200;
+}
+.sound-prompt-enter,
+.sound-prompt-leave {
+  transition: opacity 0.2s var(--transition);
+}
+.sound-prompt-enter-from,
+.sound-prompt-leave-to {
+  opacity: 0;
+}
+.sound-prompt-enter-to,
+.sound-prompt-leave-from {
+  opacity: 1;
 }

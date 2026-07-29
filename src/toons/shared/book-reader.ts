@@ -1,91 +1,60 @@
+// @ts-nocheck — imperative DOM port; public API typed in types.ts
 /**
  * Shared page-turning book reader for 27 Pictures toons (Erin, Jax, …).
- *
- * Usage:
- *   <script src="../book-reader.js"></script>
- *   <script>
- *     ToonBook.init({
- *       altPrefix: "Erin",
- *       onPagePaint(slot, pageNum) { ... },  // optional (Jax captions)
- *       onPageClear(slot) { ... },
- *       afterFullscreen() { ... },
- *       beforeStart() { return Promise },    // optional async setup
- *     });
- *   </script>
- *
- * Expected DOM ids: book, slot-left, slot-right, indicator,
- * btn-prev, btn-next, zone-next, zone-prev, fullscreenBtn (optional).
- * Body class "single-page" toggled under 768px.
+ * Imperative flip engine. Pass DOM nodes from Vue template refs via initToonBook(els, opts).
  */
-(function (global) {
-  "use strict";
+import type { ToonBookApi, ToonBookEls, ToonBookOptions, ToonManifest } from "./types";
 
-  const FLIP_MS = 700;
-  const FLIP_SAFETY_MS = FLIP_MS + 200;
-  const SINGLE_FLIP_MS = 350;
+const FLIP_MS = 700;
+const FLIP_SAFETY_MS = FLIP_MS + 200;
+const SINGLE_FLIP_MS = 350;
 
-  /**
-   * @param {object} [opts]
-   * @param {string} [opts.altPrefix]
-   * @param {string} [opts.manifestUrl]
-   * @param {string} [opts.backHref]
-   * @param {string} [opts.backLabel]
-   * @param {string} [opts.fsLabelSelector] - .toon-fs-label
-   * @param {string} [opts.frontCoverLogo] - image src shown above "How to read"
-   * @param {string} [opts.coverTitle] - toon title at the top of the front-cover
-   *   manual (defaults to altPrefix, e.g. "Jax" / "Erin")
-   * @param {string} [opts.coverSubtitle] - small label under the title at the top
-   *   (e.g. "Experiment"); omit or pass "" for none
-   * @param {string} [opts.soundHint] - if set, adds a real "Turn the sound on"
-   *   button (class .front-cover-sound-btn, this string as its label) below
-   *   the front-cover instructions list. The page's own script must wire up
-   *   its click behavior (e.g. via event delegation, since this button is
-   *   recreated whenever the front cover re-renders).
-   * @param {string} [opts.coverTexture] - image URL for inside front/back
-   *   cover boards (hardcover texture). Applied via CSS --cover-texture.
-   * @param {(slot: HTMLElement, pageNum: number) => void} [opts.onPagePaint]
-   * @param {(slot: HTMLElement) => void} [opts.onPageClear]
-   * @param {() => void} [opts.afterFullscreen]
-   * @param {() => void|Promise<void>} [opts.beforeStart]
-   */
-  function init(opts) {
-    opts = opts || {};
+/**
+ * @param els - Required book DOM nodes (from Vue refs, not getElementById)
+ * @param opts - Behaviour / content options
+ */
+export function initToonBook(
+  els: ToonBookEls,
+  opts: ToonBookOptions = {}
+): ToonBookApi | undefined {
     const altPrefix = opts.altPrefix || "Page";
     const manifestUrl = opts.manifestUrl || "manifest.json";
     const backHref = opts.backHref || "/experiments/";
     const backLabel = opts.backLabel || "← experiments";
-    const fsLabelSelector = opts.fsLabelSelector || ".toon-fs-label";
     const onPagePaint = typeof opts.onPagePaint === "function" ? opts.onPagePaint : null;
     const onPageClear = typeof opts.onPageClear === "function" ? opts.onPageClear : null;
-    const afterFullscreen = typeof opts.afterFullscreen === "function" ? opts.afterFullscreen : null;
     const beforeStart = typeof opts.beforeStart === "function" ? opts.beforeStart : null;
     const frontCoverLogo = opts.frontCoverLogo || null;
     const coverTitle = opts.coverTitle || altPrefix || "";
     const coverSubtitle =
       opts.coverSubtitle !== undefined ? opts.coverSubtitle : "Experiment";
     const soundHint = opts.soundHint || null;
+    const getSoundEnabled = typeof opts.getSoundEnabled === "function" ? opts.getSoundEnabled : () => false;
+    const onSoundToggle = typeof opts.onSoundToggle === "function" ? opts.onSoundToggle : null;
     const coverTexture = opts.coverTexture || null;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const singlePageMq = window.matchMedia("(max-width: 768px)");
 
-    let pages = [];
+    let pages: string[] = [];
     let totalSpreads = 0;
     let viewIndex = 0;
     let singlePage = singlePageMq.matches;
     let isFlipping = false;
-    let flipSafetyTimer = null;
+    let flipSafetyTimer: ReturnType<typeof setTimeout> | null = null;
+    let destroyed = false;
 
     document.body.classList.toggle("single-page", singlePage);
 
-    const slotLeft = document.getElementById("slot-left");
-    const slotRight = document.getElementById("slot-right");
-    const indicator = document.getElementById("indicator");
-    const btnPrev = document.getElementById("btn-prev");
-    const btnNext = document.getElementById("btn-next");
-    const zoneNext = document.getElementById("zone-next");
-    const zonePrev = document.getElementById("zone-prev");
-    const bookEl = document.getElementById("book");
+    const bookEl = els.book;
+    const slotLeft = els.slotLeft;
+    const slotRight = els.slotRight;
+    const indicator = els.indicator;
+    const btnPrev = els.btnPrev;
+    const btnNext = els.btnNext;
+    const zoneNext = els.zoneNext ?? null;
+    const zonePrev = els.zonePrev ?? null;
+    const topControls = els.topControls ?? null;
 
     if (!bookEl || !slotLeft || !slotRight || !indicator || !btnPrev || !btnNext) {
       console.error("ToonBook: missing required DOM nodes");
@@ -101,7 +70,7 @@
     async function loadPages() {
       const res = await fetch(manifestUrl, { cache: "no-cache" });
       if (!res.ok) throw new Error(`manifest.json ${res.status}`);
-      const manifest = await res.json();
+      const manifest = (await res.json()) as ToonManifest;
       if (Array.isArray(manifest.files) && manifest.files.length) {
         return manifest.files.map((f) => String(f));
       }
@@ -169,19 +138,32 @@
           <li>Keyboard arrow keys<span>← previous · → next</span></li>
           <li>Swipe on touch devices<span>left = next · right = previous</span></li>
         </ul>
-        ${
-          soundHint
-            ? `<button type="button" class="toon-fs-btn front-cover-sound-btn" aria-pressed="false" title="Enable sound">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      `;
+      if (soundHint) {
+        const soundOn = !!getSoundEnabled();
+        const btn = document.createElement("button");
+        btn.type = "button";
+        // is-active = shared top-chrome on-state; is-enabled kept for front-cover CSS.
+        btn.className =
+          "toon-fs-btn front-cover-sound-btn" + (soundOn ? " is-active is-enabled" : "");
+        btn.setAttribute("aria-pressed", String(soundOn));
+        btn.title = soundOn ? "Mute sound" : "Enable sound";
+        btn.setAttribute("aria-label", btn.title);
+        btn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
                   <path class="front-cover-sound-waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <span>${soundHint}</span>
-              </button>
-              <p class="front-cover-sound-note">Hover (or tap) glowing captions on any page to hear them</p>`
-            : ""
-        }
-      `;
+                </svg>`;
+        const span = document.createElement("span");
+        span.dataset.offLabel = soundHint;
+        span.textContent = soundOn ? "Sound on" : soundHint;
+        btn.appendChild(span);
+        if (onSoundToggle) btn.addEventListener("click", (e) => { e.stopPropagation(); onSoundToggle(); });
+        const note = document.createElement("p");
+        note.className = "front-cover-sound-note";
+        note.textContent = "Hover (or tap) glowing captions on any page to hear them";
+        wrap.appendChild(btn);
+        wrap.appendChild(note);
+      }
       return wrap;
     }
 
@@ -223,7 +205,9 @@
       el.classList.toggle("inside-cover", !!on);
       // Remove any previous board image (re-renders clear via innerHTML too,
       // but flip faces reuse this helper without a full wipe).
-      el.querySelectorAll("img.cover-texture-img").forEach((n) => n.remove());
+      Array.from(el.children).forEach((n) => {
+        if (n.tagName === "IMG" && n.classList.contains("cover-texture-img")) n.remove();
+      });
       el.classList.remove("has-cover-texture");
       if (on && coverTexture) {
         el.classList.add("has-cover-texture");
@@ -376,20 +360,52 @@
       return flip;
     }
 
-    function finishFlip(flip, target, afterRender) {
-      if (!isFlipping || !flip.isConnected) return;
+    /** Decode page art before swapping so the slot never flashes empty. */
+    function preloadSrc(src) {
+      return new Promise((resolve) => {
+        if (!src) {
+          resolve();
+          return;
+        }
+        const img = new Image();
+        let done = false;
+        const fin = () => {
+          if (done) return;
+          done = true;
+          resolve();
+        };
+        img.onload = fin;
+        img.onerror = fin;
+        img.src = src;
+        if (img.complete) fin();
+      });
+    }
+
+    /**
+     * End of page-turn: paint final spread UNDER the flip overlay, wait for a
+     * frame so the browser composites it, then remove the overlay.
+     * Avoids a one-frame flash of empty/old page when the flip is torn down.
+     */
+    function finishFlip(flip, target) {
+      // Settled guard lives on the caller; here just tear down safely.
       if (flipSafetyTimer) {
         clearTimeout(flipSafetyTimer);
         flipSafetyTimer = null;
       }
-      afterRender();
-      flip.remove();
-      viewIndex = target;
-      updateView(true);
       isFlipping = false;
+      viewIndex = target;
+      // Caller already painted the late slot under the flip. Sync indicator and
+      // ensure both slots match target without wiping again if possible.
+      updateIndicator();
+      // Double-rAF: wait until the late page is composited, then drop the leaf.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (flip.isConnected) flip.remove();
+        });
+      });
     }
 
-    function turnDesktop(delta) {
+    async function turnDesktop(delta) {
       const target = viewIndex + delta;
       if (target < 0 || target >= totalSpreads) return;
 
@@ -405,7 +421,6 @@
         return;
       }
 
-      isFlipping = true;
       const frontSrc = goingNext ? curRight : curLeft;
       const backSrc = goingNext ? nextLeft : nextRight;
       const earlySlot = goingNext ? slotRight : slotLeft;
@@ -413,18 +428,41 @@
       const lateSlot = goingNext ? slotLeft : slotRight;
       const lateSrc = goingNext ? nextLeft : nextRight;
 
+      isFlipping = true;
+      await Promise.all([
+        preloadSrc(frontSrc),
+        preloadSrc(backSrc),
+        preloadSrc(earlySrc),
+        preloadSrc(lateSrc),
+      ]);
+      // Aborted or mode-switched during preload.
+      if (!isFlipping) return;
+
       const flip = createFlipOverlay(goingNext ? "next" : "prev", frontSrc, backSrc);
+      // Incoming page under the flipping leaf only (right on next, left on prev).
+      // The opposite page stays as-is until finishFlip, when the leaf covers it.
       renderSlot(earlySlot, earlySrc, !earlySrc, target, goingNext ? "right" : "left");
 
-      const complete = () =>
-        finishFlip(flip, target, () => {
-          renderSlot(lateSlot, lateSrc, !lateSrc, target, lateSlot === slotLeft ? "left" : "right");
-        });
-      flip.addEventListener("animationend", complete, { once: true });
+      let settled = false;
+      const complete = () => {
+        if (settled) return;
+        settled = true;
+        // Paint the late page while the finished flip still covers that half.
+        renderSlot(lateSlot, lateSrc, !lateSrc, target, lateSlot === slotLeft ? "left" : "right");
+        finishFlip(flip, target);
+      };
+      flip.addEventListener(
+        "animationend",
+        (e) => {
+          if (e.target !== flip) return;
+          complete();
+        },
+        { once: true }
+      );
       flipSafetyTimer = setTimeout(complete, FLIP_SAFETY_MS);
     }
 
-    function turnSingle(delta) {
+    async function turnSingle(delta) {
       const target = viewIndex + delta;
       if (target < 0 || target >= totalViews()) return;
 
@@ -434,14 +472,34 @@
         return;
       }
 
-      isFlipping = true;
       const leaving = singleViewContent(viewIndex);
       const arriving = singleViewContent(target);
+      const leaveSrc = leaving.kind === "page" ? leaving.src : null;
+      const arriveSrc = arriving.kind === "page" ? arriving.src : null;
+
+      isFlipping = true;
+      await Promise.all([preloadSrc(leaveSrc), preloadSrc(arriveSrc)]);
+      if (!isFlipping) return;
+
+      // Cover the current page first, then paint the destination underneath
+      // so the user never sees an unpainted slot flash.
+      const flip = createSingleFlipOverlay(delta > 0 ? "next" : "prev", leaving);
       renderSingleSlot(arriving);
 
-      const flip = createSingleFlipOverlay(delta > 0 ? "next" : "prev", leaving);
-      const complete = () => finishFlip(flip, target, () => {});
-      flip.addEventListener("animationend", complete, { once: true });
+      let settled = false;
+      const complete = () => {
+        if (settled) return;
+        settled = true;
+        finishFlip(flip, target);
+      };
+      flip.addEventListener(
+        "animationend",
+        (e) => {
+          if (e.target !== flip) return;
+          complete();
+        },
+        { once: true }
+      );
       flipSafetyTimer = setTimeout(complete, SINGLE_FLIP_MS + 150);
     }
 
@@ -473,7 +531,9 @@
       if (isFlipping) {
         if (flipSafetyTimer) clearTimeout(flipSafetyTimer);
         flipSafetyTimer = null;
-        bookEl.querySelectorAll(".flip-page").forEach((el) => el.remove());
+        Array.from(bookEl.children).forEach((el) => {
+          if (el.classList && el.classList.contains("flip-page")) el.remove();
+        });
         isFlipping = false;
       }
       if (nextSingle) viewIndex = spreadToSingle(viewIndex);
@@ -485,95 +545,58 @@
     const goNext = () => turn(1);
     const goPrev = () => turn(-1);
 
+    function onKeydown(e) {
+      if (destroyed) return;
+      if (e.key === "ArrowLeft") goPrev();
+      if (e.key === "ArrowRight") goNext();
+    }
+
+    let touchStartX = 0;
+    function onTouchStart(e) {
+      touchStartX = e.touches[0].clientX;
+    }
+    function onTouchEnd(e) {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) < 40) return;
+      if (dx > 0) goPrev();
+      else goNext();
+    }
+
+    function onSinglePageMq(e) {
+      applyMode(e.matches);
+    }
+
     if (zoneNext) zoneNext.addEventListener("click", goNext);
     if (zonePrev) zonePrev.addEventListener("click", goPrev);
     btnPrev.addEventListener("click", goPrev);
     btnNext.addEventListener("click", goNext);
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") goPrev();
-      if (e.key === "ArrowRight") goNext();
-    });
-
-    let touchStartX = 0;
-    bookEl.addEventListener(
-      "touchstart",
-      (e) => {
-        touchStartX = e.touches[0].clientX;
-      },
-      { passive: true }
-    );
-    bookEl.addEventListener(
-      "touchend",
-      (e) => {
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(dx) < 40) return;
-        if (dx > 0) goPrev();
-        else goNext();
-      },
-      { passive: true }
-    );
+    document.addEventListener("keydown", onKeydown);
+    bookEl.addEventListener("touchstart", onTouchStart, { passive: true });
+    bookEl.addEventListener("touchend", onTouchEnd, { passive: true });
 
     if (typeof singlePageMq.addEventListener === "function") {
-      singlePageMq.addEventListener("change", (e) => applyMode(e.matches));
+      singlePageMq.addEventListener("change", onSinglePageMq);
     } else {
-      singlePageMq.addListener((e) => applyMode(e.matches));
+      singlePageMq.addListener(onSinglePageMq);
     }
 
-    function isFullscreen() {
-      return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
-    }
 
-    function updateFullscreenButton() {
-      const btn = document.getElementById("fullscreenBtn");
-      if (!btn) return;
-      const on = isFullscreen();
-      document.body.classList.toggle("is-fullscreen", on);
-      btn.classList.toggle("is-active", on);
-      btn.setAttribute("aria-pressed", String(on));
-      btn.setAttribute("aria-label", on ? "Exit fullscreen" : "Enter fullscreen");
-      btn.title = on ? "Exit fullscreen" : "Fullscreen";
-      const label = btn.querySelector(fsLabelSelector);
-      if (label) label.textContent = on ? "Exit" : "Full";
-      const path = btn.querySelector("svg path");
-      if (path) {
-        path.setAttribute("d", on ? "M8 8H3V3M16 8h5V3M8 16H3v5M16 16h5v5" : "M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5");
+    function destroy() {
+      if (destroyed) return;
+      destroyed = true;
+      if (zoneNext) zoneNext.removeEventListener("click", goNext);
+      if (zonePrev) zonePrev.removeEventListener("click", goPrev);
+      btnPrev.removeEventListener("click", goPrev);
+      btnNext.removeEventListener("click", goNext);
+      document.removeEventListener("keydown", onKeydown);
+      bookEl.removeEventListener("touchstart", onTouchStart);
+      bookEl.removeEventListener("touchend", onTouchEnd);
+      if (typeof singlePageMq.removeEventListener === "function") {
+        singlePageMq.removeEventListener("change", onSinglePageMq);
+      } else if (singlePageMq.removeListener) {
+        singlePageMq.removeListener(onSinglePageMq);
       }
-      if (afterFullscreen) afterFullscreen();
-    }
-
-    async function toggleFullscreen() {
-      try {
-        if (isFullscreen()) {
-          if (document.exitFullscreen) await document.exitFullscreen();
-          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-          else if (document.msExitFullscreen) document.msExitFullscreen();
-        } else {
-          const el = document.documentElement;
-          if (el.requestFullscreen) await el.requestFullscreen();
-          else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-          else if (el.msRequestFullscreen) el.msRequestFullscreen();
-        }
-      } catch (err) {
-        console.warn("Fullscreen not available:", err);
-      }
-    }
-
-    function mountFullscreenButton() {
-      const btn = document.getElementById("fullscreenBtn");
-      if (!btn) return;
-      if (
-        !document.documentElement.requestFullscreen &&
-        !document.documentElement.webkitRequestFullscreen &&
-        !document.documentElement.msRequestFullscreen
-      ) {
-        btn.hidden = true;
-        return;
-      }
-      btn.addEventListener("click", toggleFullscreen);
-      document.addEventListener("fullscreenchange", updateFullscreenButton);
-      document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
-      updateFullscreenButton();
+      if (flipSafetyTimer) clearTimeout(flipSafetyTimer);
     }
 
     async function start() {
@@ -602,8 +625,6 @@
         }
       }
 
-      mountFullscreenButton();
-
       totalSpreads = Math.ceil((pages.length + 1) / 2);
       pages.forEach((src) => {
         const img = new Image();
@@ -617,7 +638,7 @@
 
     /** Flash the top menu group 3 times so users notice Sound / Scroll / etc. */
     function highlightTopControls() {
-      const el = document.querySelector(".toon-top-controls");
+      const el = topControls;
       if (!el) return;
       el.classList.remove("is-highlight-pulse");
       // Force reflow so re-adding the class restarts the animation.
@@ -638,8 +659,6 @@
       updateView,
       getViewIndex: () => viewIndex,
       getPages: () => pages.slice(),
+      destroy,
     };
   }
-
-  global.ToonBook = { init };
-})(typeof window !== "undefined" ? window : globalThis);
