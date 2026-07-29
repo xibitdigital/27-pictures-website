@@ -101,28 +101,27 @@ make local-cdn     # require VITE_ASSET_BASE, CDN build, then protected serve
 
 ### Media on R2 (CDN)
 
-One media host when `VITE_ASSET_BASE` is set: toon plates + experiment cards.
+Binary media is **not in git** (`public/toons/**/assets/**`, `public/card-art/**` are
+gitignored). Source of truth is R2; manifests/`words.json` stay in the repo.
 
 ```bash
-# One-time
-npm run create-assets-bucket
-npm run upload-assets -- --setup-cors
-# Optional custom domain:
-# npx wrangler r2 bucket domain add twentyseven-assets --domain assets.twentyseven.pictures
-
-# .env
+# .env (required for readers + experiment cards)
 VITE_ASSET_BASE=https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev
 # or: VITE_ASSET_BASE=https://assets.twentyseven.pictures
 
-make deploy-cdn    # upload + build + deploy
-# or make deploy after media already uploaded
+make deploy-cdn    # upload any local new media + build + deploy
+make deploy        # build (uses VITE_ASSET_BASE) + deploy
 ```
 
-- `resolveAssetUrl()` + `asset-page-dir` on readers; static HTML card-art rewritten at build (`vite/plugins/cdnMedia.ts`)
-- Strip `dist/toons/**` media + `dist/card-art/` when CDN is on
-- Keys mirror `public/`: `toons/jax/assets/<hash>.jpg`, `card-art/erin.jpg`
+Local workflow for **new** plates:
+
+1. `make add-image SRC=… TOON=jax` → writes under `public/toons/…/assets/` (untracked)
+2. `make add-image … UPLOAD=1` or `npm run upload-assets` → R2
+3. Commit only manifest/words changes, not the binaries
+
+- `resolveAssetUrl()` + `asset-page-dir`; card-art HTML rewritten at build
+- Keys: `toons/jax/assets/<hash>.jpg`, `card-art/erin.jpg`
 - Shared put/lock: `scripts/lib/r2-media.js`
-- See `.env.example`
 
 ### Adding a new toon page image
 

@@ -25,6 +25,13 @@ node_modules
 # watermark script backups (originals before bake)
 .watermark-backup/
 
+# Toon / card media live on R2 (VITE_ASSET_BASE). Keep local copies untracked.
+# Structure: public/toons/*/assets/, public/toons/assets/, public/card-art/
+public/toons/**/assets/**
+!public/toons/**/assets/.gitkeep
+public/card-art/**
+!public/card-art/.gitkeep
+
 npm-debug.log*
 *.log
 dist
