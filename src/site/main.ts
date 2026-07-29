@@ -6,9 +6,6 @@ import { createApp } from "vue";
 import SiteApp from "./SiteApp.vue";
 import { vMagnetic } from "./directives/magnetic";
 import { vReveal } from "./directives/reveal";
-import { useSmoothScroll } from "./composables/useSmoothScroll";
-
-useSmoothScroll();
 
 const app = createApp(SiteApp, { page: "home" });
 app.directive("magnetic", vMagnetic);

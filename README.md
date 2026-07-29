@@ -7,7 +7,6 @@ Production website for [27 Pictures](https://twentyseven.pictures/) — a horror
 - **Hosting:** Cloudflare Pages (static)
 - **Contact form:** Cloudflare Worker + Resend API
 - **Fonts:** Google Fonts (Playfair Display, Inter)
-- **Smooth scroll:** Lenis
 - **Spam protection:** Cloudflare Turnstile
 
 ## Project Structure

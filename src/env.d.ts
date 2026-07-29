@@ -32,8 +32,4 @@ interface Window {
   turnstile?: TurnstileApi;
   onTurnstileSuccess?: (token: string) => void;
   onTurnstileExpired?: () => void;
-  /** Lenis smooth-scroll (CDN on marketing site). */
-  Lenis?: new (opts?: Record<string, unknown>) => {
-    raf: (time: number) => void;
-  };
 }
