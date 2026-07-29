@@ -30,6 +30,10 @@ describe("toSitePath", () => {
     expect(toSitePath("assets/a.jpg", "/toons/jax/")).toBe("/toons/jax/assets/a.jpg");
     expect(toSitePath("./assets/sfx/b.mp3", "/toons/jax")).toBe("/toons/jax/assets/sfx/b.mp3");
   });
+
+  it("throws when relative path lacks pageDir", () => {
+    expect(() => toSitePath("assets/a.jpg")).toThrow(/pageDir required/);
+  });
 });
 
 describe("resolveAssetUrl / getAssetBase", () => {
@@ -51,6 +55,11 @@ describe("resolveAssetUrl / getAssetBase", () => {
     expect(resolveAssetUrl("assets/1.jpg", "/toons/jax/")).toBe(
       "https://assets.twentyseven.pictures/toons/jax/assets/1.jpg"
     );
+  });
+
+  it("requires pageDir for relative paths when CDN is set", () => {
+    vi.stubEnv("VITE_ASSET_BASE", "https://cdn.example");
+    expect(() => resolveAssetUrl("assets/1.jpg")).toThrow(/pageDir required/);
   });
 
   it("leaves absolute and data URLs alone", () => {

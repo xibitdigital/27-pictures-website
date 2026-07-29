@@ -1,21 +1,7 @@
 #!/usr/bin/env node
 /**
- * Add a new toon page image: watermark → content-hash → place under public/toons/.
- *
- * Usage:
- *   npm run add-image -- ~/Downloads/page.jpg --toon jax
- *   npm run add-image -- ./export.png --toon erin --upload --manifest
- *   make add-image SRC=~/Downloads/page.jpg TOON=jax
- *   make add-image SRC=./page.jpg TOON=jax UPLOAD=1 MANIFEST=1
- *
- * Steps:
- *   1. Copy source into a temp work dir
- *   2. Bake "twentyseven.pictures" watermark (unless --no-watermark)
- *   3. Rename by md5 of the final bytes → public/toons/<toon>/assets/<md5>.<ext>
- *   4. Optionally append to that toon's manifest.json (--manifest)
- *   5. Optionally put the object in R2 (--upload)
- *
- * Prints the relative path to paste into manifest/words if you skip --manifest.
+ * Add a toon page: watermark → content-hash → public/toons/<toon>/assets/
+ * Optional --manifest / --upload (R2 via shared lib).
  */
 
 const { spawnSync } = require("node:child_process");
@@ -23,12 +9,10 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
+const { ROOT, putObject } = require("./lib/r2-media");
 
-const ROOT = path.resolve(__dirname, "..");
-const WATERMARK = path.join(__dirname, "watermark-images.sh");
-
+const WATERMARK = path.join(ROOT, "scripts", "watermark-images.sh");
 const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
-
 const DEFAULT_TOONS = new Set(["jax", "erin"]);
 
 function parseArgs(argv) {
@@ -44,7 +28,6 @@ function parseArgs(argv) {
     dryRun: false,
     help: false,
   };
-
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "-h" || a === "--help") opts.help = true;
@@ -74,24 +57,10 @@ function parseArgs(argv) {
 function printHelp() {
   console.log(`Usage: node scripts/add-toon-image.js <image> --toon <jax|erin> [options]
 
-Add a toon page image: watermark, content-hash, place under public/toons/.
+  --no-watermark | --manifest | --upload | --force | --dry-run
+  --text TEXT | --dest DIR
 
-Options:
-  --toon NAME       Target toon (jax | erin). Required unless --dest is set.
-  --dest DIR        Explicit output directory (overrides --toon assets path)
-  --no-watermark    Skip watermark step
-  --text TEXT       Watermark text (default: twentyseven.pictures)
-  --manifest        Append assets/<hash>.ext to that toon's manifest.json
-  --upload          Upload the new file to R2 (and update r2-assets-lock.json)
-  --force           Overwrite if the hashed dest file already exists
-  --dry-run         Show actions without writing
-  -h, --help        Show this help
-
-Examples:
-  npm run add-image -- ~/Downloads/page17.jpg --toon jax
-  npm run add-image -- ./page.png --toon erin --manifest --upload
-  make add-image SRC=~/Downloads/page.jpg TOON=jax
-  make add-image SRC=./page.jpg TOON=jax UPLOAD=1 MANIFEST=1
+  make add-image SRC=~/page.jpg TOON=jax MANIFEST=1 UPLOAD=1
 `);
 }
 
@@ -102,34 +71,12 @@ function resolveSrc(src) {
 }
 
 function md5File(filePath) {
-  const hash = crypto.createHash("md5");
-  hash.update(fs.readFileSync(filePath));
-  return hash.digest("hex");
+  return crypto.createHash("md5").update(fs.readFileSync(filePath)).digest("hex");
 }
 
-function contentTypeFor(ext) {
-  const map = {
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".png": "image/png",
-    ".webp": "image/webp",
-  };
-  return map[ext.toLowerCase()] || "application/octet-stream";
-}
-
-function run(cmd, args, { inherit = true } = {}) {
-  const res = spawnSync(cmd, args, {
-    cwd: ROOT,
-    encoding: "utf8",
-    stdio: inherit ? "inherit" : ["ignore", "pipe", "pipe"],
-    env: process.env,
-  });
-  if (res.status !== 0) {
-    const err = (res.stderr || res.stdout || "").trim();
-    if (err) console.error(err);
-    process.exit(res.status || 1);
-  }
-  return res;
+function run(cmd, args) {
+  const res = spawnSync(cmd, args, { cwd: ROOT, encoding: "utf8", stdio: "inherit", env: process.env });
+  if (res.status !== 0) process.exit(res.status || 1);
 }
 
 function appendManifest(toon, relAssetPath) {
@@ -148,42 +95,7 @@ function appendManifest(toon, relAssetPath) {
   data.files = files;
   data.pages = files.length;
   fs.writeFileSync(manifestPath, JSON.stringify(data, null, 2) + "\n");
-  console.log(`manifest: appended → ${path.relative(ROOT, manifestPath)} (pages=${data.pages})`);
-}
-
-function uploadOne(absDest) {
-  const key = path.relative(path.join(ROOT, "public"), absDest).split(path.sep).join("/");
-  const bucket = process.env.R2_BUCKET || "twentyseven-assets";
-  const ext = path.extname(absDest).toLowerCase();
-  console.log(`→ R2 put ${bucket}/${key}`);
-  run("npx", [
-    "wrangler",
-    "r2",
-    "object",
-    "put",
-    `${bucket}/${key}`,
-    `--file=${absDest}`,
-    `--content-type=${contentTypeFor(ext)}`,
-    "--cache-control=public, max-age=31536000, immutable",
-    "--remote",
-  ]);
-
-  // Keep lock in sync so bulk upload-assets skips this key later
-  const lockPath = path.join(__dirname, "r2-assets-lock.json");
-  let lock = { bucket, keys: {} };
-  try {
-    lock = JSON.parse(fs.readFileSync(lockPath, "utf8"));
-  } catch {
-    /* new lock */
-  }
-  if (!lock.keys || typeof lock.keys !== "object") lock.keys = {};
-  lock.bucket = bucket;
-  lock.keys[key] = {
-    size: fs.statSync(absDest).size,
-    uploadedAt: new Date().toISOString(),
-  };
-  fs.writeFileSync(lockPath, JSON.stringify(lock, null, 2) + "\n");
-  console.log(`lock: updated scripts/r2-assets-lock.json`);
+  console.log(`manifest: appended (pages=${data.pages})`);
 }
 
 function main() {
@@ -195,16 +107,15 @@ function main() {
 
   const src = resolveSrc(opts.src);
   if (!src || !fs.existsSync(src) || !fs.statSync(src).isFile()) {
-    console.error(`error: source image not found: ${opts.src}`);
+    console.error(`error: source not found: ${opts.src}`);
     process.exit(1);
   }
 
   let ext = path.extname(src).toLowerCase();
   if (!IMAGE_EXT.has(ext)) {
-    console.error(`error: unsupported image type "${ext}" (use jpg/jpeg/png/webp)`);
+    console.error(`error: unsupported type "${ext}"`);
     process.exit(1);
   }
-  // Normalize jpeg → .jpg for site convention
   if (ext === ".jpeg") ext = ".jpg";
 
   let destDir;
@@ -215,68 +126,51 @@ function main() {
   } else if (opts.toon) {
     const toon = opts.toon.toLowerCase();
     if (!DEFAULT_TOONS.has(toon)) {
-      console.warn(`warning: unknown toon "${toon}" — writing to public/toons/${toon}/assets/`);
+      console.warn(`warning: unknown toon "${toon}"`);
     }
     destDir = path.join(ROOT, "public", "toons", toon, "assets");
   } else {
-    console.error("error: pass --toon <jax|erin> or --dest <dir>");
-    printHelp();
+    console.error("error: pass --toon or --dest");
     process.exit(1);
   }
 
-  console.log(`Source:  ${src}`);
-  console.log(`Dest:    ${path.relative(ROOT, destDir) || destDir}`);
-  console.log(`Watermark: ${opts.watermark ? opts.text : "(skipped)"}`);
-  if (opts.manifest) console.log(`Manifest: yes`);
-  if (opts.upload) console.log(`Upload:  R2`);
-  if (opts.dryRun) console.log(`(dry-run)`);
+  console.log(`Source: ${src}`);
+  console.log(`Dest:   ${path.relative(ROOT, destDir)}`);
 
   const work = fs.mkdtempSync(path.join(os.tmpdir(), "add-toon-image-"));
-  const workFile = path.join(work, `input${ext === ".jpg" ? ".jpg" : ext}`);
+  const workFile = path.join(work, `input${ext}`);
   try {
     fs.copyFileSync(src, workFile);
 
     if (opts.watermark) {
-      if (!fs.existsSync(WATERMARK)) {
-        console.error(`error: missing ${WATERMARK}`);
-        process.exit(1);
-      }
-      if (opts.dryRun) {
-        console.log(`[dry-run] watermark ${workFile}`);
-      } else {
+      if (opts.dryRun) console.log("[dry-run] watermark");
+      else {
         console.log("→ Watermarking…");
         run("bash", [WATERMARK, work, "--text", opts.text, "--force"]);
       }
     }
 
     if (opts.dryRun) {
-      console.log(`[dry-run] md5 + write → ${path.relative(ROOT, destDir)}/<hash>${ext}`);
-      if (opts.manifest) console.log(`[dry-run] append to manifest`);
-      if (opts.upload) console.log(`[dry-run] upload to R2`);
+      console.log("[dry-run] hash + write + optional manifest/upload");
       return;
     }
 
     const hash = md5File(workFile);
     const destName = `${hash}${ext}`;
     const absDest = path.join(destDir, destName);
-    const relFromPublic = path.relative(path.join(ROOT, "public"), absDest).split(path.sep).join("/");
     const relAsset = `assets/${destName}`;
 
     if (fs.existsSync(absDest) && !opts.force) {
-      console.log(`Already present (same content): ${path.relative(ROOT, absDest)}`);
-      console.log(`  manifest path: ${relAsset}`);
+      console.log(`Already present: ${path.relative(ROOT, absDest)}`);
       if (opts.manifest && opts.toon) appendManifest(opts.toon.toLowerCase(), relAsset);
-      if (opts.upload) uploadOne(absDest);
-      console.log("\nDone (no rewrite).");
+      if (opts.upload) putObject(absDest);
       return;
     }
 
     fs.mkdirSync(destDir, { recursive: true });
     fs.copyFileSync(workFile, absDest);
     console.log(`→ Wrote ${path.relative(ROOT, absDest)}`);
-    console.log(`  md5: ${hash}`);
     console.log(`  manifest entry: "${relAsset}"`);
-    console.log(`  site path: /${relFromPublic}`);
 
     if (opts.manifest) {
       if (!opts.toon) {
@@ -285,13 +179,8 @@ function main() {
       }
       appendManifest(opts.toon.toLowerCase(), relAsset);
     }
-
-    if (opts.upload) uploadOne(absDest);
-
-    console.log("\nDone.");
-    if (!opts.manifest) {
-      console.log(`Add to manifest files[] if needed:\n  "${relAsset}"`);
-    }
+    if (opts.upload) putObject(absDest);
+    console.log("Done.");
   } finally {
     try {
       fs.rmSync(work, { recursive: true, force: true });

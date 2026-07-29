@@ -1,8 +1,17 @@
 # 27 Pictures website — Makefile wrappers around package.json scripts.
-# Prefer: make <target>   (same as npm run <target>)
+# Prefer: make <target>
+#
+# CDN production: set VITE_ASSET_BASE in .env (Vite loads it automatically).
+#   VITE_ASSET_BASE=https://pub-….r2.dev   # or assets.twentyseven.pictures
 
 NPM ?= npm
 NPX ?= npx
+
+# Load .env for Make recipes (VITE_ASSET_BASE, PREVIEW_*, R2_BUCKET)
+ifneq (,$(wildcard .env))
+  include .env
+  export
+endif
 
 .DEFAULT_GOAL := help
 
@@ -30,7 +39,7 @@ check: ## Tests + production build (same as pre-push gate)
 	$(NPM) run check
 
 .PHONY: format
-format: ## Format src/ + public/ with Prettier (also runs on pre-commit)
+format: ## Format src/ + public/ with Prettier
 	$(NPM) run format
 
 .PHONY: format-check
@@ -42,39 +51,39 @@ local-ci: ## Run pre-commit on all files
 	pre-commit run --all-files
 
 # ---------------------------------------------------------------------------
-# App (mirrors package.json "scripts")
+# App
 # ---------------------------------------------------------------------------
 
 .PHONY: dev
-dev: ## Vite dev server (Vue MPA)
+dev: ## Vite dev server (127.0.0.1 — same-origin media from public/)
 	$(NPM) run dev
-
-.PHONY: dev-protected
-dev-protected: ## Vite on 127.0.0.1 + HTTP Basic Auth (PREVIEW_USER/PASS)
-	@echo "→ Protected dev (loopback + basic auth)"
-	@echo "  user=$${PREVIEW_USER:-dev}  pass=$${PREVIEW_PASS:-dev}"
-	PROTECTED=1 LOCAL_ONLY=1 $(NPM) run dev
 
 .PHONY: build
 build: ## Typecheck + production build → dist/
 	$(NPM) run build
 
 .PHONY: preview
-preview: ## Preview production build
+preview: ## Vite preview of dist/ (127.0.0.1)
 	$(NPM) run preview
 
-# Production-like local server: loopback + basic auth (serves dist/)
 .PHONY: local
-local: ## Serve dist/ on 127.0.0.1 with basic auth (build first if needed)
+local: ## Serve dist/ on 127.0.0.1 with HTTP Basic Auth
 	@test -d dist || $(NPM) run build
 	$(NPM) run local
 
-# Same, but build against R2 so media loads from the bucket
+.PHONY: require-cdn-base
+require-cdn-base:
+	@test -n "$(VITE_ASSET_BASE)" || ( \
+		echo "Set VITE_ASSET_BASE in .env (CDN origin for media), e.g.:" && \
+		echo "  VITE_ASSET_BASE=https://pub-….r2.dev" && \
+		echo "  VITE_ASSET_BASE=https://assets.twentyseven.pictures" && \
+		exit 1)
+
 .PHONY: local-cdn
-local-cdn: ## Build with R2 assets + serve dist/ protected on 127.0.0.1
-	@echo "→ Building with VITE_ASSET_BASE=$(R2_PUBLIC_BASE)"
-	VITE_ASSET_BASE="$(R2_PUBLIC_BASE)" $(NPM) run build
-	@echo "→ Serving protected local preview (media from R2)"
+local-cdn: require-cdn-base ## Build with CDN media + serve protected on 127.0.0.1
+	@echo "→ Building with VITE_ASSET_BASE=$(VITE_ASSET_BASE)"
+	$(NPM) run build
+	@echo "→ Serving protected local preview"
 	$(NPM) run local
 
 .PHONY: typecheck
@@ -86,11 +95,11 @@ test: ## Run unit tests once
 	$(NPM) run test
 
 .PHONY: test-watch
-test-watch: ## Vitest watch mode (npm run test:watch)
+test-watch: ## Vitest watch mode
 	$(NPM) run test:watch
 
 .PHONY: hash-assets
-hash-assets: ## Bump ?v=<content-hash> for public CSS in all HTML
+hash-assets: ## Bump ?v=<content-hash> for public CSS
 	$(NPM) run hash-assets
 
 .PHONY: hash-assets-check
@@ -106,14 +115,11 @@ generate-qr-image: ## QR image helper
 	$(NPM) run generate-qr-image
 
 .PHONY: watermark
-watermark: ## Bake site watermark into images (pass args after --)
+watermark: ## Bake site watermark (pass ARGS=…)
 	$(NPM) run watermark -- $(ARGS)
 
-# Add a new toon page: watermark → content-hash → public/toons/<toon>/assets/
-#   make add-image SRC=~/Downloads/page.jpg TOON=jax
-#   make add-image SRC=./page.jpg TOON=erin UPLOAD=1 MANIFEST=1
 .PHONY: add-image
-add-image: ## Watermark + hash + place a toon image (SRC=… TOON=jax|erin [UPLOAD=1] [MANIFEST=1])
+add-image: ## Watermark + hash toon image (SRC=… TOON=jax|erin [UPLOAD=1] [MANIFEST=1])
 	@test -n "$(SRC)" || (echo "Usage: make add-image SRC=path/to.jpg TOON=jax [UPLOAD=1] [MANIFEST=1]" && exit 1)
 	@test -n "$(TOON)" || (echo "Usage: make add-image SRC=path/to.jpg TOON=jax [UPLOAD=1] [MANIFEST=1]" && exit 1)
 	$(NPM) run add-image -- "$(SRC)" --toon "$(TOON)" \
@@ -122,11 +128,11 @@ add-image: ## Watermark + hash + place a toon image (SRC=… TOON=jax|erin [UPLO
 		$(ARGS)
 
 .PHONY: create-assets-bucket
-create-assets-bucket: ## Create Cloudflare R2 bucket for toon media
+create-assets-bucket: ## Create Cloudflare R2 bucket
 	$(NPM) run create-assets-bucket
 
 .PHONY: upload-assets
-upload-assets: ## Sync public/toons media → R2 (pass ARGS='--dry-run' etc.)
+upload-assets: ## Sync public/toons + card-art → R2
 	$(NPM) run upload-assets -- $(ARGS)
 
 .PHONY: upload-assets-dry
@@ -139,10 +145,11 @@ upload-assets-dry: ## Dry-run R2 media sync
 
 PAGES_PROJECT ?= twentyseven-pictures
 PAGES_BRANCH  ?= main
+PREVIEW_BRANCH ?= feat/vue-frontend
 
 .PHONY: deploy
-deploy: ## Build and deploy to Cloudflare Pages (production)
-	@echo "→ Building…"
+deploy: ## Build (honours VITE_ASSET_BASE from .env) + deploy Pages production
+	@if [ -n "$(VITE_ASSET_BASE)" ]; then echo "→ CDN media: $(VITE_ASSET_BASE)"; else echo "→ Same-origin media (no VITE_ASSET_BASE)"; fi
 	$(NPM) run build
 	@find dist -name .DS_Store -delete 2>/dev/null || true
 	@echo "→ Deploying dist/ → $(PAGES_PROJECT) ($(PAGES_BRANCH))"
@@ -152,22 +159,14 @@ deploy: ## Build and deploy to Cloudflare Pages (production)
 		--commit-dirty=true
 	@echo "✓ Live: https://twentyseven.pictures"
 
-.PHONY: deploy-media
-deploy-media: ## Upload toon media to R2, then build + deploy Pages
-	@echo "→ Syncing media to R2…"
-	$(NPM) run upload-assets
+.PHONY: deploy-cdn
+deploy-cdn: require-cdn-base upload-assets ## Upload R2 + build with CDN + deploy production
 	@$(MAKE) deploy
 
-# R2 public base for CDN preview builds (override: make preview-cdn VITE_ASSET_BASE=…)
-R2_PUBLIC_BASE ?= https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev
-PREVIEW_BRANCH ?= feat/vue-frontend
-
 .PHONY: preview-deploy
-preview-deploy: ## Build and deploy a Pages preview branch (same-origin assets)
-	@echo "→ Building…"
+preview-deploy: ## Build + deploy Pages preview branch
 	$(NPM) run build
 	@find dist -name .DS_Store -delete 2>/dev/null || true
-	@echo "→ Deploying dist/ → $(PAGES_PROJECT) ($(PREVIEW_BRANCH))"
 	$(NPX) wrangler pages deploy dist \
 		--project-name=$(PAGES_PROJECT) \
 		--branch=$(PREVIEW_BRANCH) \
@@ -175,20 +174,19 @@ preview-deploy: ## Build and deploy a Pages preview branch (same-origin assets)
 		--commit-message="preview: vue frontend MPA"
 
 .PHONY: preview-cdn
-preview-cdn: ## Build with R2 media base + deploy Pages preview
-	@echo "→ Building with VITE_ASSET_BASE=$(R2_PUBLIC_BASE)"
-	VITE_ASSET_BASE="$(R2_PUBLIC_BASE)" $(NPM) run build
+preview-cdn: require-cdn-base ## Build with CDN + deploy Pages preview
+	@echo "→ Building with VITE_ASSET_BASE=$(VITE_ASSET_BASE)"
+	$(NPM) run build
 	@find dist -name .DS_Store -delete 2>/dev/null || true
-	@echo "→ Deploying dist/ → $(PAGES_PROJECT) ($(PREVIEW_BRANCH)) [CDN assets]"
 	$(NPX) wrangler pages deploy dist \
 		--project-name=$(PAGES_PROJECT) \
 		--branch=$(PREVIEW_BRANCH) \
 		--commit-dirty=true \
 		--commit-message="preview: CDN assets from R2"
-	@echo "✓ Media base: $(R2_PUBLIC_BASE)"
+	@echo "✓ Media base: $(VITE_ASSET_BASE)"
 
 .PHONY: serve
-serve: dev ## Alias for dev (legacy name)
+serve: dev ## Alias for dev
 
 .PHONY: all
 all: hash-assets test build ## Hash CSS, test, and build

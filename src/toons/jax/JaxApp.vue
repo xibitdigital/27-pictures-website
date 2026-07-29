@@ -9,9 +9,10 @@ import { WordOverlay, loadWords } from "../bookReader/words";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "../bookReader/types";
 import LangSwitcher from "./components/LangSwitcher.vue";
 
-/** Media paths — resolved against VITE_ASSET_BASE when set (R2/CDN). */
+/** Reader media root — explicit pageDir for CDN relative paths. */
+const ASSET_PAGE_DIR = "/toons/jax/";
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
-const CONFIRM_SFX = resolveAssetUrl("assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3", "/toons/jax/");
+const CONFIRM_SFX = resolveAssetUrl("assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3", ASSET_PAGE_DIR);
 const BG_MUSIC = resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3");
 
 const shellRef = ref<ToonReaderShellExpose | null>(null);
@@ -109,7 +110,7 @@ const bookOptions: ToonShellBookOptions = {
     wordOverlay.value?.render(slot, null);
   },
   async beforeStart() {
-    const wordsConfig = await loadWords("words.json");
+    const wordsConfig = await loadWords("words.json", ASSET_PAGE_DIR);
     wordOverlay.value = new WordOverlay(wordsConfig, { sound: soundGate });
     // Warm SFX + confirm beep in the background; don't block first paint.
     void preloadAudioUrls([CONFIRM_SFX, ...collectWordAudioUrls(wordsConfig)]);
@@ -144,6 +145,7 @@ onMounted(() => {
   <ToonReaderShell
     ref="shellRef"
     alt-prefix="Jax"
+    asset-page-dir="/toons/jax/"
     front-cover-logo="/logosquare.png"
     :cover-texture="COVER_TEXTURE"
     :book-options="bookOptions"

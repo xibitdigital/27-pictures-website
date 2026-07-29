@@ -82,70 +82,47 @@ npx prettier --write public/styles.css public/index.html public/script.js public
 ### Website (Cloudflare Pages)
 
 ```bash
-make deploy            # build + deploy site to Cloudflare Pages
-make deploy-media      # upload toon media to R2, then make deploy
-make preview-cdn       # Pages preview branch, media from R2
+make deploy        # build (uses VITE_ASSET_BASE from .env if set) + deploy production
+make deploy-cdn    # require VITE_ASSET_BASE, upload R2, then deploy
+make preview-cdn   # CDN build + Pages preview branch
 ```
 
-**Custom domain:** `twentyseven.pictures` (configured once in Cloudflare dashboard)
+**Custom domain:** `twentyseven.pictures`
 
-### Local testing with protection
-
-Loopback-only + HTTP Basic Auth (not exposed on your LAN):
+### Local
 
 ```bash
-# Hot reload (Vite) — 127.0.0.1:5173, user/pass from env (default dev/dev)
-make dev-protected
-
-# Production build, media still local (public/) — 127.0.0.1:4173 + basic auth
-make local
-
-# Production build, media from R2 — same protection
-make local-cdn
+make dev           # Vite on 127.0.0.1 (same-origin media from public/)
+make local         # serve dist/ on 127.0.0.1 + HTTP Basic Auth
+make local-cdn     # require VITE_ASSET_BASE, CDN build, then protected serve
 ```
 
-Credentials (`.env`, gitignored):
+`PREVIEW_USER` / `PREVIEW_PASS` in `.env` (empty pass on `make local` → random printed once).
 
-```bash
-PREVIEW_USER=dev
-PREVIEW_PASS=your-secret   # empty on `make local` → random pass printed once
-```
+### Media on R2 (CDN)
 
-- Binds **`127.0.0.1` only** (not `0.0.0.0`)
-- Browser prompts for user/pass; or open `http://dev:pass@127.0.0.1:4173/toons/jax/`
-- R2 media on `local-cdn` still uses the public r2.dev URL for `<img>`/`<audio>` — the **site** is protected, not the raw object URLs. For private media later: custom domain + Cloudflare Access, or a Worker gate.
-
-### Toon media on R2 (optional CDN)
-
-By default, toon images/audio ship with Pages from `public/toons/**`. To serve them from
-Cloudflare R2 instead (smaller deploys, assets out of the critical path):
+One media host when `VITE_ASSET_BASE` is set: toon plates + experiment cards.
 
 ```bash
 # One-time
 npm run create-assets-bucket
 npm run upload-assets -- --setup-cors
-npx wrangler r2 bucket domain add twentyseven-assets --domain assets.twentyseven.pictures
+# Optional custom domain:
+# npx wrangler r2 bucket domain add twentyseven-assets --domain assets.twentyseven.pictures
 
-# Put in .env (gitignored):
-#   VITE_ASSET_BASE=https://assets.twentyseven.pictures
+# .env
+VITE_ASSET_BASE=https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev
+# or: VITE_ASSET_BASE=https://assets.twentyseven.pictures
 
-# Day-to-day: sync media + deploy site
-make deploy-media
-# Site only (media already on R2):
-make deploy
+make deploy-cdn    # upload + build + deploy
+# or make deploy after media already uploaded
 ```
 
-- Frontend resolves paths via `resolveAssetUrl()` (`VITE_ASSET_BASE`). Empty base = same-origin.
-- CSP in `public/_headers` already allows `https://assets.twentyseven.pictures` for img/media.
-- Keys in the bucket mirror site paths: `toons/jax/assets/<hash>.jpg`, etc.
-- See `.env.example` for `R2_BUCKET` / `VITE_ASSET_BASE`.
-
-### Experiment card art (CDN)
-
-Marketing thumbs for `/experiments/` live in `public/card-art/` (`erin.jpg`, `jax.jpg`).
-They are uploaded to R2 with the rest of the media (`npm run upload-assets`) and, when
-`VITE_ASSET_BASE` is set, HTML/og/sitemap are rewritten to that origin and `dist/card-art/`
-is stripped from Pages.
+- `resolveAssetUrl()` + `asset-page-dir` on readers; static HTML card-art rewritten at build (`vite/plugins/cdnMedia.ts`)
+- Strip `dist/toons/**` media + `dist/card-art/` when CDN is on
+- Keys mirror `public/`: `toons/jax/assets/<hash>.jpg`, `card-art/erin.jpg`
+- Shared put/lock: `scripts/lib/r2-media.js`
+- See `.env.example`
 
 ### Adding a new toon page image
 

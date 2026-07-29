@@ -18,6 +18,11 @@ const props = withDefaults(
     frontCoverLogo?: string | null;
     coverTexture?: string | null;
     /**
+     * Site directory for relative manifest assets under VITE_ASSET_BASE
+     * (e.g. `/toons/jax/`). Required for CDN builds with relative files[].
+     */
+    assetPageDir?: string;
+    /**
      * Paint hooks, cover sound, beforeStart, … — never page source or cover identity.
      * Shell always wins on getPages / altPrefix / logos / texture.
      */
@@ -41,7 +46,9 @@ const readerEl = ref<HTMLElement | null>(null);
 /** Vertical-strip page slots (tracked for caption re-paint). */
 const stripSlots = ref<HTMLElement[]>([]);
 
-const loadSharedPages = createManifestLoader(props.manifestUrl);
+const loadSharedPages = createManifestLoader(props.manifestUrl, {
+  pageDir: props.assetPageDir,
+});
 
 const bookOpts = computed(() => ({
   ...props.bookOptions,
