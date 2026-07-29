@@ -2,10 +2,11 @@
 
 ## Code Formatting
 
-**Always format files with Prettier** after making changes:
+**Always format with Prettier** after making changes:
 
 ```bash
-npx prettier --write public/styles.css public/index.html public/script.js public/qr.html
+npm run format
+# or: npx prettier --write "src/**/*.{vue,ts,js,css,html,json}" "public/**/*.{css,html,js,json}" "vite/**/*.ts"
 ```
 
 ## CSS Guidelines
@@ -54,47 +55,55 @@ npx prettier --write public/styles.css public/index.html public/script.js public
 
 ```
 27-pictures-website/
-├── public/                  # Static site files (deployed to Cloudflare Pages)
-│   ├── index.html
-│   ├── qr.html              # Mobile landing page for QR code (noindex)
-│   ├── styles.css
-│   ├── script.js
-│   ├── logo.png
-│   ├── the-red-smile.jpg
-│   ├── sitemap.xml
-│   ├── robots.txt
-│   └── bdd5e80e21a8430d9316de0deacdb208.txt  # IndexNow key file
+├── src/                     # Vite root (Vue 3 + TS MPA entries)
+│   ├── index.html           # Homepage
+│   ├── experiments/         # Experiments lab
+│   ├── site/                # SiteNav, ContactForm, directives
+│   ├── toons/bookReader/    # FlipFrame package
+│   ├── toons/jax|erin/      # Toon apps
+│   └── test/setup.ts        # Vitest (forces empty VITE_ASSET_BASE)
+├── public/                  # Static → site root in dist/
+│   ├── styles.css, logo.png, the-red-smile.jpg, qr.html, …
+│   ├── toons/               # manifests, words.json, reader-shared.css
+│   │   └── **/assets/       # gitignored (R2 only)
+│   ├── card-art/            # gitignored posters (R2)
+│   ├── sitemap.xml          # uses %VITE_ASSET_BASE% for card images
+│   └── _headers             # CSP + cache (allow R2 + CF Insights)
+├── vite/plugins/cdnMedia.ts # hard CDN gate + token expand + strip media
 ├── scripts/
-│   └── generate-qr.js       # Generates branded QR code PDF → ~/Downloads/
-├── worker/                  # Cloudflare Worker (contact form API)
-│   ├── src/index.js
-│   ├── wrangler.toml
-│   └── package.json
-├── package.json             # Root package (qrcode + pdfkit for QR generator)
-├── .github/workflows/       # GitHub Actions (legacy GitHub Pages)
-│   └── deploy.yml
-├── CLAUDE.md                # This file
-└── .gitignore
+│   ├── lib/r2-media.js      # shared R2 put/lock
+│   ├── upload-r2-assets.js
+│   ├── add-toon-image.js
+│   ├── serve-protected.js
+│   ├── hash-assets.js
+│   └── generate-qr.js
+├── worker/                  # Contact form Worker
+├── dist/                    # build output (deploy this)
+├── Makefile
+└── .env.example
 ```
 
 ## Deployment
 
 ### Website (Cloudflare Pages)
 
-```bash
-make deploy        # build (uses VITE_ASSET_BASE from .env if set) + deploy production
-make deploy-cdn    # require VITE_ASSET_BASE, upload R2, then deploy
-make preview-cdn   # CDN build + Pages preview branch
-```
+**Artifact:** `dist/` (not raw `public/`).
+**Domain:** `twentyseven.pictures`.
 
-**Custom domain:** `twentyseven.pictures`
+```bash
+# .env must set VITE_ASSET_BASE or `vite build` fails
+make deploy        # require base → build → Pages production (main)
+make deploy-cdn    # upload R2, then make deploy
+make preview-deploy  # CDN build → preview branch
+```
 
 ### Local
 
 ```bash
-make dev           # Vite on 127.0.0.1 (same-origin media from public/)
-make local         # serve dist/ on 127.0.0.1 + HTTP Basic Auth
-make local-cdn     # require VITE_ASSET_BASE, CDN build, then protected serve
+make dev           # Vite on 127.0.0.1 (set VITE_ASSET_BASE so toon media loads)
+make local         # serve dist/ + HTTP Basic Auth (127.0.0.1)
+make local-cdn     # require base → CDN build → protected serve
+make test          # unit tests (CDN base forced empty)
 ```
 
 `PREVIEW_USER` / `PREVIEW_PASS` in `.env` (empty pass on `make local` → random printed once).
@@ -102,19 +111,19 @@ make local-cdn     # require VITE_ASSET_BASE, CDN build, then protected serve
 ### Media on R2 (CDN) — required
 
 Binary media is **not in git**. `VITE_ASSET_BASE` is **required** for `npm run build`
-and all deploy targets (hard fail if missing). Unit tests force an empty base via
-vitest config so they ignore developer `.env`.
+and all deploy targets (**hard fail** if missing). Vitest sets `VITE_ASSET_BASE=""` so
+tests never inherit a developer `.env`.
 
 ```bash
-# .env (required)
+# .env (required for build/deploy)
 VITE_ASSET_BASE=https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev
 # or: VITE_ASSET_BASE=https://assets.twentyseven.pictures
 
-make deploy        # requires VITE_ASSET_BASE + build + Pages
+make deploy        # require base + build + Pages
 make deploy-cdn    # upload R2 first, then deploy
 ```
 
-Static card-art URLs use the token `%VITE_ASSET_BASE%/card-art/…` in HTML/sitemap
+Static card-art URLs use the token **`%VITE_ASSET_BASE%/card-art/…`** in HTML/sitemap
 (expanded at build by `vite/plugins/cdnMedia.ts`).
 
 Local workflow for **new** plates:
@@ -123,9 +132,10 @@ Local workflow for **new** plates:
 2. `make add-image … UPLOAD=1` or `npm run upload-assets` → R2
 3. Commit only manifest/words changes, not the binaries
 
-- Readers: `resolveAssetUrl()` + `asset-page-dir`
+- Readers: `resolveAssetUrl()` + `asset-page-dir` on `ToonReaderShell`
 - Keys: `toons/jax/assets/<hash>.jpg`, `card-art/erin.jpg`
 - Shared put/lock: `scripts/lib/r2-media.js`
+- One-time: `npm run create-assets-bucket` && `npm run upload-assets -- --setup-cors`
 
 ### Adding a new toon page image
 
@@ -238,116 +248,64 @@ npm run generate-qr
 # Output: ~/Downloads/27pictures-qr.pdf
 ```
 
-## Toon Reader (shared by Erin, Jax, …)
+## Toon Reader (FlipFrame — Erin, Jax, …)
 
-Every toon page (`public/toons/<name>/index.html`) is a thin shell around
-shared reader files:
+Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 
-- **`public/toons/book-reader.js`** — the page-turning engine (flip
-  animation, keyboard/swipe/click nav, fullscreen, front-cover
-  instructions/logo/sound-button). `ToonBook.init({...})` wires it up; see
-  the JSDoc at the top of the file for every option. The reader's product
-  name/attribution — "FlipFrame — by twentyseven.pictures" (`.front-cover-brand`)
-  — is baked into `renderFrontCoverInstructions()` here, so it shows on
-  every toon automatically; it isn't per-toon config.
-- **`public/toons/view-mode.js`** — scroll vs book view toggle
-  (`ToonViewMode.init({...})`). Defaults to vertical scroll on viewports
-  ≤768px (same breakpoint as single-page book mode). CSS for the strip is
-  in `reader-shared.css` (`body.view-vertical`).
-- **`public/toons/reader-shared.css`** — the reader's visual chrome (book,
-  pages, spine, flip overlay, nav zones, controls, front-cover panel,
-  vertical scroll mode). Any rule here applies to **every** toon reader —
-  changing it changes Erin and Jax (and any future toon) at once.
+| Path | Role |
+|------|------|
+| `src/toons/bookReader/` | FlipFrame package: engine, shell, chrome, captions, audio |
+| `src/toons/jax/` · `src/toons/erin/` | App entry + `ToonReaderShell` config |
+| `public/toons/<name>/manifest.json` | Page list (relative `assets/<md5>.jpg`) |
+| `public/toons/jax/words.json` | Captions + optional `"audio"` paths |
+| `public/toons/reader-shared.css` | Shared book chrome (all toons) |
+| `public/toons/**/assets/` | **Gitignored** — load via `VITE_ASSET_BASE` |
 
-### What goes where
+Wire-up pattern:
 
-A toon's own `<style>` block should contain **only**:
-
-1. Its book-aspect `:root` tokens — `--book-width`, `--book-height`,
-   `--page-bg`, `--spine`, `--cover` — plus the matching
-   `body.is-fullscreen .book-scene`, `body.is-fullscreen.single-page
-   .book-scene`, and `body.single-page` overrides of those same tokens
-   (every toon's pages have a different aspect ratio, so these can't be
-   shared).
-2. Page-specific extras that don't apply to other toons — e.g. Jax's word/
-   caption overlay (`.jax-word*`), language switcher, sound/music buttons.
-
-Everything else (book-scene, page-slot, flip-page, nav-zone, controls,
-reader-btn, page-nav-btn, front-cover-instructions + logo, back-cover-link,
-single-page layout, the 768px media query) belongs in `reader-shared.css`.
-Before adding a CSS rule to a toon's own `<style>` block, check whether it's
-actually shared behavior that should go in `reader-shared.css` instead —
-don't recreate a rule that already exists there.
-
-### Adding a new toon reader
-
-```html
-<link rel="stylesheet" href="../reader-shared.css?v=<current version>" />
-<style>
-  :root {
-    --book-width: min(92vw, 900px, calc((100dvh - 240px) / <aspect>));
-    --book-height: calc(var(--book-width) * <aspect>);
-    --page-bg: ...;
-    --spine: ...;
-    --cover: ...;
-  }
-  /* + the matching fullscreen/single-page token overrides, + anything
-     genuinely unique to this toon */
-</style>
-...
-<script src="../book-reader.js?v=<current version>"></script>
-<script src="../view-mode.js?v=<current version>"></script>
-<script>
-  ToonViewMode.init({ altPrefix: "Name", mobileDefault: true });
-  ToonBook.init({ altPrefix: "Name", frontCoverLogo: "../../logosquare.png" });
-</script>
+```vue
+<ToonReaderShell
+  alt-prefix="Jax"
+  asset-page-dir="/toons/jax/"
+  front-cover-logo="/logosquare.png"
+  :cover-texture="COVER_TEXTURE"
+  :book-options="bookOptions"
+/>
 ```
 
-### Cache-busting (`?v=<hash>`)
+- **`asset-page-dir`** is required so relative manifest/SFX paths resolve on the CDN.
+- Product attribution **“FlipFrame — by twentyseven.pictures”** lives in
+  `FrontCoverInstructions.vue` (shared), not per-toon config.
 
-`styles.css`, `script.js`, `book-reader.js`, `view-mode.js`, `words.js`, and
-`reader-shared.css` are all linked with a `?v=<hash>` query string, the
-first 10 hex chars of that file's own sha256. Browsers (and this repo's
-local dev server) cache them aggressively by URL — without a cache-bust, a
-hard-refreshed page can still run the old script/CSS while `curl`/`fetch`
-on the same URL shows the new content.
+### What goes where (CSS)
 
-This used to be a manually incremented `?v=N` — hand-bumping across
-multiple HTML files that all reference the same asset (Jax + Erin both
-link `reader-shared.css`, both site pages link `styles.css`/`script.js`)
-was error-prone and repeatedly caused exactly the stale-asset confusion
-this convention exists to prevent. Now it's automatic:
+A toon entry’s own `<style>` should contain **only**:
+
+1. Book-aspect tokens (`--book-width`, `--book-height`, `--page-bg`, …) + fullscreen/single-page overrides.
+2. Genuinely unique extras (e.g. Jax language switcher / sound chrome).
+
+Everything shared belongs in `public/toons/reader-shared.css`.
+
+### Cache-busting shared CSS (`?v=<hash>`)
+
+`styles.css` and `toons/reader-shared.css` are linked with `?v=<sha256 prefix>`.
+Automatic:
 
 ```bash
-npm run hash-assets
+npm run hash-assets   # also runs as part of npm run build
 ```
 
-Run this before every deploy that touched any of those shared assets — it
-hashes each one and rewrites every `?v=...` reference to it across every
-`public/**/*.html` file, so the query string always matches content and
-never needs manual bumping or cross-file bookkeeping.
+Rewrites references under `src/**/*.html` (and legacy public HTML if present).
 
 ## Jax Toon — SFX (ElevenLabs) + background music
 
-Word overlays in `public/toons/jax/words.json` can carry an `"audio"` field
-(e.g. `"assets/sfx/12cd3501a258f305455ed5bf3cf76ed3.mp3"`) pointing at a short
-SFX clip baked for that onomatopoeia/caption. All audio assets — SFX and
-music — are named by content hash (`md5.mp3`), matching the site's existing
-image-asset convention; **there is no human-readable filename to guess from**,
-always resolve the current hash from `words.json` / the source files
-themselves.
+Word overlays in `public/toons/jax/words.json` may include `"audio": "assets/sfx/<md5>.mp3"`.
+SFX/music files are content-hashed and live on **R2** (not in git). Always take the
+current path from `words.json`.
 
-Playback: `public/toons/jax/words.js` wires `mouseenter` (desktop, gated on
-`(hover: hover) and (pointer: fine)`) and `click` (touch fallback) on each
-word that has an `audio` field. Both check `window.__jaxSoundEnabled` — set
-by the Sound toggle button in `index.html` — before calling `play()`, so
-nothing plays until the user opts in.
-
-The **Sound** button (top-right, next to the language switcher) is the single
-gate for all audio: first click plays a confirmation beep (satisfies the
-browser's user-gesture requirement for audio) and starts the looping
-background track (`#bgMusic` in `index.html`, `loop`, volume `0.22`); a
-second click pauses the music and mutes future SFX.
+Playback is implemented in `src/toons/bookReader` caption code + Jax
+`useSoundGate` / sound toggle (user gesture required). Background track path is set
+in `JaxApp.vue` (`BG_MUSIC` via `resolveAssetUrl`).
 
 **Word-layer z-index matters**: `.nav-zone` (the full-height page-turn click
 areas) sits at `z-index: 30`. The word overlay layer must stay above it
@@ -401,15 +359,16 @@ should be a real spoken line instead, via Text-to-Speech:
 
 ### Replacing the background track
 
-Drop a new source file in `public/toons/jax/assets/music/`, convert + hash it:
 ```bash
-ffmpeg -y -i public/toons/jax/assets/music/<source> -codec:a libmp3lame -b:a 192k /tmp/bg.mp3
+ffmpeg -y -i <source> -codec:a libmp3lame -b:a 192k /tmp/bg.mp3
 HASH=$(md5 -q /tmp/bg.mp3)
+mkdir -p public/toons/jax/assets/music
 mv /tmp/bg.mp3 "public/toons/jax/assets/music/$HASH.mp3"
+npm run upload-assets   # push to R2 (path is gitignored)
 ```
-then update the `#bgMusic` `src` in `index.html` to the new hash and delete
-the old hashed file (and the original source, once converted — the source
-format, e.g. a large `.wav`, shouldn't be committed).
+
+Update `BG_MUSIC` in `src/toons/jax/JaxApp.vue` to the new hash, then deploy.
+Do not commit the binary.
 
 ## SEO State
 

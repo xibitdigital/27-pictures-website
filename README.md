@@ -1,94 +1,128 @@
 # 27 Pictures — Website
 
-Production website for [27 Pictures](https://twentyseven.pictures/) — a horror film production studio specializing in psychological horror short films and AI-enhanced cosplay cinematography.
+Production site for [27 Pictures](https://twentyseven.pictures/) — psychological horror shorts and cinematic cosplay production.
 
 ## Stack
 
-- **Hosting:** Cloudflare Pages (static)
-- **Contact form:** Cloudflare Worker + Resend API
-- **Fonts:** Google Fonts (Playfair Display, Inter)
-- **Spam protection:** Cloudflare Turnstile
+| Layer | Tech |
+|--------|------|
+| App | Vue 3 + Vite + TypeScript (MPA) |
+| Hosting | Cloudflare Pages (`dist/`) |
+| Media | Cloudflare R2 (CDN) — **required** at build time |
+| Contact form | Cloudflare Worker + Resend + Turnstile |
+| Fonts | Google Fonts (Playfair Display, Inter) |
 
-## Project Structure
+## Quick start
+
+```bash
+cp .env.example .env
+# Set VITE_ASSET_BASE (required for npm run build / make deploy)
+# VITE_ASSET_BASE=https://pub-….r2.dev
+
+npm install
+make dev          # http://127.0.0.1:5173
+make test
+make deploy       # requires VITE_ASSET_BASE in .env
+```
+
+## Project layout
 
 ```
 27-pictures-website/
-├── public/                  # Static site (deployed to Cloudflare Pages)
-│   ├── index.html           # Main single-page site
-│   ├── qr.html              # Mobile QR code landing page (noindex)
-│   ├── privacy.html         # Privacy policy (noindex)
-│   ├── styles.css
-│   ├── script.js
-│   ├── logo.png
-│   ├── the-red-smile.jpg
-│   ├── sitemap.xml
-│   ├── robots.txt
-│   ├── llms.txt             # AI crawler guidance (GEO)
-│   └── _headers             # Cloudflare Pages security + cache headers
-├── scripts/
-│   └── generate-qr.js       # Generates branded QR code PDF → ~/Downloads/
-├── worker/                  # Cloudflare Worker (contact form API)
-│   ├── src/index.js
-│   ├── wrangler.toml
-│   └── package.json
-├── package.json
-├── CLAUDE.md
-└── .gitignore
+├── src/                         # Vite root (HTML entries + Vue/TS)
+│   ├── index.html               # Homepage
+│   ├── experiments/index.html   # Experiments lab
+│   ├── site/                    # SiteNav, ContactForm, directives
+│   ├── toons/
+│   │   ├── bookReader/          # FlipFrame package
+│   │   ├── jax/ | erin/         # Toon apps + entries
+│   └── test/                    # Vitest setup
+├── public/                      # Static assets → site root in dist/
+│   ├── styles.css, logo.png, …
+│   ├── toons/                   # manifests, words.json, reader-shared.css
+│   │   └── **/assets/           # gitignored — binaries live on R2
+│   ├── card-art/                # gitignored posters (R2)
+│   ├── sitemap.xml, _headers, …
+├── vite/plugins/cdnMedia.ts     # CDN gate + %VITE_ASSET_BASE% expand
+├── scripts/                     # QR, watermark, R2 upload, hash-assets
+├── worker/                      # Contact form Worker
+├── dist/                        # Production build (gitignored)
+├── Makefile
+└── CLAUDE.md                    # Agent / contributor ops notes
 ```
 
-## Deploy
+## Environment
 
-### Website
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `VITE_ASSET_BASE` | **Yes** for build/deploy | R2/CDN origin (no trailing slash) |
+| `R2_BUCKET` | No (default `twentyseven-assets`) | Upload target |
+| `PREVIEW_USER` / `PREVIEW_PASS` | No | Basic auth for `make local` |
+| `ELEVENLABS_API_KEY` | For SFX scripts only | Jax audio generation |
+
+Copy `.env.example` → `.env`. Unit tests **force an empty** `VITE_ASSET_BASE` so they never depend on your local `.env`.
+
+## Common commands
 
 ```bash
-npx wrangler pages deploy public --project-name=twentyseven-pictures --commit-dirty=true
+make help
+
+make dev              # Vite dev (127.0.0.1)
+make test
+make build            # fails without VITE_ASSET_BASE
+make deploy           # build + Pages production (main)
+make deploy-cdn       # upload R2 media, then deploy
+make local            # serve dist/ with basic auth on 127.0.0.1
+make local-cdn        # CDN build + protected local serve
+make upload-assets    # sync public/toons + card-art → R2
+make add-image SRC=… TOON=jax [MANIFEST=1] [UPLOAD=1]
 ```
 
-**Live URL:** https://twentyseven.pictures/
+## Media (R2)
 
-### Contact Form Worker
+Toon plates, SFX, music, and experiment card art are **not in git**. Source of truth is R2.
+
+- Keys mirror site paths: `toons/jax/assets/<md5>.jpg`, `card-art/erin.jpg`
+- Static HTML uses `%VITE_ASSET_BASE%/card-art/…` (expanded at build)
+- Readers use `resolveAssetUrl()` + `asset-page-dir` on `ToonReaderShell`
+- Shared upload helpers: `scripts/lib/r2-media.js`
+
+```bash
+# One-time bucket + CORS
+npm run create-assets-bucket
+npm run upload-assets -- --setup-cors
+
+# Day-to-day
+make deploy-cdn
+```
+
+New page plate:
+
+```bash
+make add-image SRC=~/Downloads/page.jpg TOON=jax MANIFEST=1 UPLOAD=1
+# commit only manifest/words changes — not the binary
+```
+
+## Contact form Worker
 
 ```bash
 cd worker && npm install && npx wrangler deploy
+# Secret: npx wrangler secret put RESEND_API_KEY
 ```
 
-**Worker URL:** `https://contact-form.sangalli-marco.workers.dev`
+**Worker:** `https://contact-form.sangalli-marco.workers.dev`
+CORS locked to `https://twentyseven.pictures`.
 
-## Local Development
+## Deploy notes
 
-No build step required. Edit files in `public/` directly and deploy.
-
-```bash
-# Generate QR code PDF
-npm run generate-qr
-# Output: ~/Downloads/27pictures-qr.pdf
-```
-
-## Contact Form
-
-- Frontend AJAX → Cloudflare Worker → Resend API
-- CORS locked to `https://twentyseven.pictures`
-- Resend API key stored as Wrangler secret: `npx wrangler secret put RESEND_API_KEY`
-- Domain verified at resend.com/domains
-
-## SEO
-
-- Schema: Organization, WebSite, WebPage, CreativeWorkSeries, VideoObject ×5, Service ×2
-- Sitemap: `https://twentyseven.pictures/sitemap.xml`
-- AI crawler guidance: `https://twentyseven.pictures/llms.txt`
-- Security headers: `public/_headers`
-
-### Pending manual SEO tasks
-
-- [ ] Cloudflare dashboard → disable AI bot blocks (GPTBot, ClaudeBot) to enable AI search indexing
-- [ ] Update VideoObject `uploadDate` and `duration` in `index.html` JSON-LD with real YouTube values
-- [ ] Add founder/director name, bio, and Person schema node to `index.html`
-- [ ] Add studio location (city/country) to footer text and Organization schema
-- [ ] Generate IndexNow key at https://www.bing.com/indexnow and add key file to `public/`
-- [ ] Submit sitemap to Google Search Console: https://search.google.com/search-console?resource_id=sc-domain%3Atwentyseven.pictures
-- [ ] Submit sitemap to Bing Webmaster Tools: https://www.bing.com/webmasters
+- Production domain: **https://twentyseven.pictures**
+- Deploy artifact is **`dist/`**, not raw `public/`
+- `npm run build` **hard-fails** if `VITE_ASSET_BASE` is missing
+- After shared CSS changes, `npm run hash-assets` (also runs as part of `build`)
 
 ## Git
 
 - **Branch:** `main`
 - **Remote:** `git@github.com:xibitdigital/27-pictures-website.git`
+
+More detail for agents and long-running workflows: **[CLAUDE.md](./CLAUDE.md)**.
