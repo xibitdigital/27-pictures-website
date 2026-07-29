@@ -20,3 +20,9 @@
 
 /the-red-smile.jpg
   Cache-Control: public, max-age=31536000, immutable
+
+/experiments/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/card-art/*
+  Cache-Control: public, max-age=31536000, immutable
