@@ -1240,22 +1240,22 @@
       "file": "assets/1b05e602efd1a952b63d332c94b560c3.jpg",
       "words": [
         {
-          "x": 0.78,
-          "y": 0.18,
+          "x": 0.74,
+          "y": 0.13,
           "align": "center",
-          "size": 42,
+          "size": 34,
           "variant": "bubble",
           "color": "#111111",
-          "angle": -8,
-          "maxWidth": 0.34,
+          "angle": 8,
+          "maxWidth": 0.28,
           "bubble": {
             "shape": "organic",
             "fill": "#ffffff",
             "stroke": "#111111",
-            "strokeWidth": 2.4,
-            "tail": "bottom",
-            "padX": 0.55,
-            "padY": 0.4
+            "strokeWidth": 2.6,
+            "tail": "bottom-left",
+            "padX": 0.5,
+            "padY": 0.35
           },
           "text": {
             "en": "GODDAMN!",
@@ -1266,28 +1266,28 @@
           "audio": "assets/sfx/f439e00319d68f75425af2c8e7cc73d3.mp3"
         },
         {
-          "x": 0.78,
-          "y": 0.68,
+          "x": 0.74,
+          "y": 0.66,
           "align": "center",
-          "size": 30,
+          "size": 26,
           "variant": "bubble",
           "color": "#111111",
-          "angle": 4,
-          "maxWidth": 0.38,
+          "angle": -3,
+          "maxWidth": 0.3,
           "bubble": {
             "shape": "organic",
             "fill": "#ffffff",
             "stroke": "#111111",
-            "strokeWidth": 2.4,
-            "tail": "bottom",
-            "padX": 0.55,
-            "padY": 0.4
+            "strokeWidth": 2.5,
+            "tail": "left",
+            "padX": 0.48,
+            "padY": 0.38
           },
           "text": {
-            "en": "C'mon Jax,\ndon't lose yourself!",
-            "it": "Dai Jax,\nnon perderti!",
-            "de": "Komm schon Jax,\nverlass dich nicht!",
-            "fr": "Allez Jax,\nne te perds pas!"
+            "en": "C'MON JAX,\nDON'T LOSE\nYOURSELF!",
+            "it": "DAI JAX,\nNON PERDERTI!",
+            "de": "KOMM SCHON JAX,\nVERLASS DICH\nNICHT!",
+            "fr": "ALLEZ JAX,\nNE TE PERDS\nPAS!"
           },
           "audio": "assets/sfx/70a03a4fa1e8e6ebd197a0c9137eda9e.mp3"
         }
