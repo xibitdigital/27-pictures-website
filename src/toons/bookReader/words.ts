@@ -46,27 +46,41 @@ function hashSeed(...parts: Array<string | number | null | undefined>): number {
 }
 
 /**
- * Sketchy rounded-rect path in viewBox units (0–100 x, 0–80 y) with optional tail.
+ * Sketchy organic speech bubble in viewBox 0–100.
+ * Body fills nearly the whole box so multi-line text (with padding) stays inside;
+ * the tail sticks out past the viewBox (SVG overflow is visible).
  * @param {'none'|'bottom'|'bottom-left'|'bottom-right'|'left'|'right'} tail
  */
 function sketchyBubblePath(tail, seed) {
   const rnd = mulberry32(seed || 1);
   const j = (amp) => (rnd() - 0.5) * 2 * amp;
+  const t = tail || "bottom";
 
-  // Wobbly points around a rounded bubble body
+  // Leave a little inset for the stroke; bottom/side tails need a bit more edge
+  // on that side so the tail attaches cleanly without eating text space.
+  const top = 5;
+  const bottom = t === "bottom" || t === "bottom-left" || t === "bottom-right" ? 82 : 95;
+  const left = t === "left" ? 14 : 5;
+  const right = t === "right" ? 86 : 95;
+  const midX = (left + right) / 2;
+  const midY = (top + bottom) / 2;
+
+  // Clockwise wobbly points around the full text box
   const pts = [
-    [12 + j(2), 18 + j(2)],
-    [28 + j(2), 8 + j(1.5)],
-    [50 + j(2), 6 + j(1.5)],
-    [72 + j(2), 9 + j(1.5)],
-    [88 + j(2), 18 + j(2)],
-    [94 + j(1.5), 36 + j(2)],
-    [92 + j(1.5), 54 + j(2)],
-    [78 + j(2), 68 + j(1.5)],
-    [55 + j(2), 72 + j(1.5)],
-    [32 + j(2), 70 + j(1.5)],
-    [14 + j(2), 58 + j(2)],
-    [8 + j(1.5), 38 + j(2)],
+    [left + 4 + j(1.5), top + 10 + j(1.5)],
+    [midX - 12 + j(2), top + 2 + j(1.2)],
+    [midX + j(2), top + j(1.2)],
+    [midX + 12 + j(2), top + 2 + j(1.2)],
+    [right - 4 + j(1.5), top + 10 + j(1.5)],
+    [right + j(1.2), midY - 12 + j(2)],
+    [right + j(1.2), midY + 12 + j(2)],
+    [right - 4 + j(1.5), bottom - 10 + j(1.5)],
+    [midX + 12 + j(2), bottom - 2 + j(1.2)],
+    [midX + j(2), bottom + j(1.2)],
+    [midX - 12 + j(2), bottom - 2 + j(1.2)],
+    [left + 4 + j(1.5), bottom - 10 + j(1.5)],
+    [left + j(1.2), midY + 12 + j(2)],
+    [left + j(1.2), midY - 12 + j(2)],
   ];
 
   let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
@@ -77,28 +91,30 @@ function sketchyBubblePath(tail, seed) {
     const my = (prev[1] + cur[1]) / 2 + j(1.2);
     d += ` Q ${mx.toFixed(2)} ${my.toFixed(2)} ${cur[0].toFixed(2)} ${cur[1].toFixed(2)}`;
   }
-  // close body
   const last = pts[pts.length - 1];
   const first = pts[0];
   d += ` Q ${((last[0] + first[0]) / 2 + j(1)).toFixed(2)} ${((last[1] + first[1]) / 2 + j(1)).toFixed(
     2
   )} ${first[0].toFixed(2)} ${first[1].toFixed(2)} Z`;
 
-  const t = tail || "bottom";
   if (t === "none") return d;
 
-  // Sketchy speech tail
+  // Tail draws outside the body (and often past 0–100) — parent SVG uses overflow:visible
   if (t === "bottom" || t === "bottom-left" || t === "bottom-right") {
-    const cx = t === "bottom-left" ? 32 : t === "bottom-right" ? 68 : 50;
-    d += ` M ${(cx - 7 + j(1)).toFixed(2)} 68 Q ${(cx + j(2)).toFixed(2)} 78 ${(cx - 2 + j(2)).toFixed(2)} 92 L ${(
-      cx +
-      8 +
-      j(2)
-    ).toFixed(2)} 70 Z`;
+    const cx = t === "bottom-left" ? midX - 14 : t === "bottom-right" ? midX + 14 : midX;
+    d += ` M ${(cx - 7 + j(1)).toFixed(2)} ${bottom - 2} Q ${(cx + j(2)).toFixed(2)} ${(bottom + 12 + j(1)).toFixed(
+      2
+    )} ${(cx - 1 + j(2)).toFixed(2)} ${(bottom + 22).toFixed(2)} L ${(cx + 8 + j(2)).toFixed(2)} ${(bottom - 1).toFixed(
+      2
+    )} Z`;
   } else if (t === "left") {
-    d += ` M 12 40 Q 4 48 -2 52 L 14 56 Z`;
+    d += ` M ${left + 1} ${(midY - 8).toFixed(2)} Q ${(left - 12 + j(1)).toFixed(2)} ${(midY + j(2)).toFixed(2)} ${(
+      left - 18
+    ).toFixed(2)} ${(midY + 2).toFixed(2)} L ${left + 2} ${(midY + 8).toFixed(2)} Z`;
   } else if (t === "right") {
-    d += ` M 88 40 Q 96 48 102 52 L 86 56 Z`;
+    d += ` M ${right - 1} ${(midY - 8).toFixed(2)} Q ${(right + 12 + j(1)).toFixed(2)} ${(midY + j(2)).toFixed(2)} ${(
+      right + 18
+    ).toFixed(2)} ${(midY + 2).toFixed(2)} L ${right - 2} ${(midY + 8).toFixed(2)} Z`;
   }
 
   return d;
