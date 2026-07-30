@@ -2,18 +2,7 @@
   "rules": [
     {
       "allowed": {
-        "origins": [
-          "https://twentyseven.pictures",
-          "https://www.twentyseven.pictures",
-          "https://local.twentyseven.test:5173",
-          "https://local.twentyseven.test:4173",
-          "https://local.twentyseven.test",
-          "http://local.twentyseven.test:5173",
-          "http://local.twentyseven.test:4173",
-          "http://local.twentyseven.test",
-          "https://feat-toon-config-cdn.twentyseven-pictures.pages.dev",
-          "https://twentyseven-pictures.pages.dev"
-        ],
+        "origins": ["*"],
         "methods": ["GET", "HEAD"],
         "headers": ["*"]
       },
