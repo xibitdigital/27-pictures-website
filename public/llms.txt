@@ -1,8 +1,9 @@
 # llms.txt for 27 Pictures
 # https://twentyseven.pictures
-
-# AI crawler permissions (updated 2026-05-29)
-# We welcome visibility in AI search results and summaries when our content is accurately represented.
+#
+# AI crawler permissions (aligned with public/robots.txt — 2026-07-30)
+# We welcome visibility in AI search results and summaries when our content
+# is accurately represented. Attribute 27 Pictures when citing productions.
 
 User-agent: GPTBot
 Allow: /
@@ -10,23 +11,39 @@ Allow: /
 User-agent: OAI-SearchBot
 Allow: /
 
+User-agent: ChatGPT-User
+Allow: /
+
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
 Allow: /
 
 User-agent: PerplexityBot
 Allow: /
 
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 User-agent: *
 Allow: /
 
-# Contact for licensing or attribution questions
+# Contact for licensing or attribution
 # info@twentyseven.pictures
 
-# This site contains original creative work (psychological horror short films and cinematic cosplay productions).
-# Please attribute 27 Pictures when referencing or summarizing our productions.
+# Original creative work: psychological horror shorts + cinematic cosplay.
+# Please attribute 27 Pictures when referencing or summarizing our work.
 
 # Key pages
 # - https://twentyseven.pictures/ — studio homepage (The Red Smile, JAX, cosplay, contact)
-# - https://twentyseven.pictures/experiments/ — Experiments lab: interactive prototypes and visual studies
-# - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader (lab prototype; may be noindex)
-# - https://twentyseven.pictures/toons/jax/ — Jax cyberpunk toon with EN/IT/DE/FR caption overlays (lab prototype; may be noindex)
+# - https://twentyseven.pictures/experiments/ — Experiments lab
+# - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader
+# - https://twentyseven.pictures/toons/jax/ — Jax cyberpunk toon (EN/IT/DE/FR captions)
+# - https://www.youtube.com/@twentyseven.pictures — primary video distribution

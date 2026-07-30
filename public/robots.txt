@@ -1,10 +1,54 @@
 # robots.txt for 27 Pictures
 # https://twentyseven.pictures
+#
+# Policy: allow search indexing and AI *search / citation* crawlers.
+# Aggressive bulk-training scrapers stay blocked.
+# If Cloudflare "AI Crawl Control" / managed robots still prepends
+# Disallow for these bots, turn that off in the CF dashboard or the
+# managed block wins for many crawlers.
 
+# --- Default: open site, hide QR landing only ---
 User-agent: *
 Allow: /
 Disallow: /qr.html
 Disallow: /qr
 
-# Sitemap location
+# --- AI search / citation (explicit Allow; overrides managed Disallow when merged) ---
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+# Sitemap
 Sitemap: https://twentyseven.pictures/sitemap.xml
