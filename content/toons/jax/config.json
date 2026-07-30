@@ -1207,6 +1207,32 @@
             "strokeWidth": 2.2,
             "tail": "none"
           }
+        },
+        {
+          "x": 0.22,
+          "y": 0.58,
+          "align": "center",
+          "size": 36,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -6,
+          "maxWidth": 0.32,
+          "bubble": {
+            "shape": "organic",
+            "fill": "#ffffff",
+            "stroke": "#111111",
+            "strokeWidth": 2.4,
+            "tail": "bottom",
+            "padX": 0.55,
+            "padY": 0.4
+          },
+          "text": {
+            "en": "HURTS!!",
+            "it": "FA MALE!!",
+            "de": "TUT WEH!!",
+            "fr": "ÇA FAIT MAL!!"
+          },
+          "audio": "assets/sfx/c924ce6b02851e93be26e265d8ecbfc6.mp3"
         }
       ]
     },
