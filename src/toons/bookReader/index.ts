@@ -56,5 +56,21 @@ export {
 // Captions
 export { WordOverlay, loadWords, resolveWordsAssets, LANG_STORAGE_KEY } from "./words";
 
+// Bubble chrome (speech balloons, AI panels, burst stars)
+export {
+  BUBBLE_STROKE_WIDTH,
+  DEFAULT_ORGANIC_BUBBLE,
+  mulberry32,
+  hashSeed,
+  sketchyBubblePath,
+  jaggedBoxPath,
+  cleanBoxPath,
+  starBurstPath,
+  resolveBubbleStyle,
+  createBubbleChrome,
+  type BubbleTail,
+  type BubbleStyle,
+} from "./bubbles";
+
 // Types
 export type * from "./types";
