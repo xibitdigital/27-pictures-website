@@ -1210,22 +1210,13 @@
         },
         {
           "x": 0.22,
-          "y": 0.58,
+          "y": 0.62,
           "align": "center",
-          "size": 36,
-          "variant": "bubble",
+          "size": 56,
+          "variant": "burst",
           "color": "#111111",
           "angle": -6,
           "maxWidth": 0.32,
-          "bubble": {
-            "shape": "organic",
-            "fill": "#ffffff",
-            "stroke": "#111111",
-            "strokeWidth": 2.4,
-            "tail": "bottom",
-            "padX": 0.55,
-            "padY": 0.4
-          },
           "text": {
             "en": "HURTS!!",
             "it": "FA MALE!!",
@@ -1248,15 +1239,6 @@
           "color": "#111111",
           "angle": 8,
           "maxWidth": 0.28,
-          "bubble": {
-            "shape": "organic",
-            "fill": "#ffffff",
-            "stroke": "#111111",
-            "strokeWidth": 2.2,
-            "tail": "bottom-left",
-            "padX": 0.7,
-            "padY": 0.5
-          },
           "text": {
             "en": "GODDAMN!",
             "it": "PORCA…!",
@@ -1266,23 +1248,14 @@
           "audio": "assets/sfx/f439e00319d68f75425af2c8e7cc73d3.mp3"
         },
         {
-          "x": 0.74,
-          "y": 0.66,
+          "x": 0.84,
+          "y": 0.56,
           "align": "center",
-          "size": 22,
+          "size": 32,
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
-          "maxWidth": 0.36,
-          "bubble": {
-            "shape": "organic",
-            "fill": "#ffffff",
-            "stroke": "#111111",
-            "strokeWidth": 2.2,
-            "tail": "bottom-left",
-            "padX": 0.75,
-            "padY": 0.65
-          },
+          "maxWidth": 0.46,
           "text": {
             "en": "C'MON JAX,\nDON'T LOSE\nYOURSELF!",
             "it": "DAI JAX,\nNON PERDERTI!",

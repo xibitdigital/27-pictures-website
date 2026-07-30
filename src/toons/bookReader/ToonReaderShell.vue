@@ -3,12 +3,13 @@
  * Shared FlipFrame chrome for Erin, Jax, and future toons.
  * Owns view-mode, config load, strip, captions, and the Vue book surface.
  */
-import { computed, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import { ReaderTopBar } from "./chrome";
 import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
+import { parsePageQuery } from "./pageQuery";
 import VerticalStrip from "./VerticalStrip.vue";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
 
@@ -124,12 +125,30 @@ function onStripReady(slots: HTMLElement[]): void {
   const same = prev.length === slots.length && prev.every((el, i) => el === slots[i]);
   if (!same) stripSlots.value = slots;
   paintStripSlots();
+  // Deep-link: scroll vertical strip to ?page=N once slots exist
+  scrollVerticalToQueryPage();
+}
+
+/** Scroll vertical mode to 1-based content page from `?page=`. */
+function scrollVerticalToQueryPage(): void {
+  if (!viewMode.isVertical.value) return;
+  const page = parsePageQuery();
+  if (page == null) return;
+  const root = readerEl.value;
+  if (!root) return;
+  const el = root.querySelector(`.vertical-page.page-slot[data-page-num="${page}"]`);
+  if (el) {
+    el.scrollIntoView({ block: "start" });
+  }
 }
 
 const soundEnabled = computed(() => !!props.bookOptions?.getSoundEnabled?.());
 
 onMounted(() => {
-  void viewMode.loadPages();
+  void viewMode.loadPages().then(async () => {
+    await nextTick();
+    scrollVerticalToQueryPage();
+  });
 });
 
 defineExpose<ToonReaderShellExpose>({

@@ -255,6 +255,15 @@ describe("FlipFrame reader (desktop / reduced-motion)", () => {
     await vi.waitFor(() => expect(pulses).toContain(true));
     engine.destroy();
   });
+
+  it("opens on initialPage (spread mode maps content page → spread)", async () => {
+    const { api } = await readyBook(FOUR_PAGES, { initialPage: 3 });
+    // desktop reduce-motion: spread view — page 3 → floor(3/2)=1
+    expect(api.getViewIndex()).toBe(1);
+    api.goToPage(1);
+    expect(api.getViewIndex()).toBe(0);
+    api.destroy();
+  });
 });
 
 describe("FlipFrame reader (single-page / mobile)", () => {
@@ -290,6 +299,15 @@ describe("FlipFrame reader (single-page / mobile)", () => {
     expect(document.body.classList.contains("single-page")).toBe(true);
     expect(api.getViewIndex()).toBe(0);
     expect(wrapper.find(".front-cover-instructions").exists()).toBe(true);
+  });
+
+  it("opens on ?page= / initialPage in single-page mode (page N → viewIndex N)", async () => {
+    const { api, wrapper } = await readyBook(["a.jpg", "b.jpg", "c.jpg"], { initialPage: 2 });
+    expect(api.getViewIndex()).toBe(2);
+    expect(wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")).toBe("b.jpg");
+    expect(wrapper.find("#indicator").text()).toMatch(/2\s*\/\s*3/);
+    api.goToPage(99);
+    expect(api.getViewIndex()).toBe(3); // clamp to last content page
   });
 
   it("steps through cover → pages → end in single-page mode", async () => {

@@ -21,6 +21,7 @@ import {
   type SlotModel,
 } from "./bookModels";
 import type { ToonBookApi, ToonBookOptions } from "./types";
+import { contentPageToViewIndex, parsePageQuery } from "./pageQuery";
 
 const FLIP_MS = 700;
 const FLIP_SAFETY_MS = FLIP_MS + 200;
@@ -300,6 +301,14 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
   const goNext = () => turn(1);
   const goPrev = () => turn(-1);
 
+  /** Jump to 1-based content page (clamped to loaded pages). */
+  function goToPage(pageNum: number): void {
+    if (destroyed || !state.ready || !state.pages.length) return;
+    if (state.isFlipping) abortFlip();
+    state.viewIndex = contentPageToViewIndex(pageNum, state.pages.length, state.singlePage, totalSpreads());
+    updateView(false);
+  }
+
   function applyMode(nextSingle: boolean): void {
     if (nextSingle === state.singlePage) return;
     if (state.isFlipping) abortFlip();
@@ -373,8 +382,16 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
       img.src = src;
     }
 
-    state.viewIndex = 0;
     state.ready = true;
+    // Deep-link: ?page=3 or opts.initialPage (1-based content page)
+    const fromOpts = typeof opts.initialPage === "number" && opts.initialPage >= 1 ? opts.initialPage : null;
+    const fromQuery = parsePageQuery();
+    const startPage = fromOpts ?? fromQuery;
+    if (startPage != null) {
+      state.viewIndex = contentPageToViewIndex(startPage, state.pages.length, state.singlePage, totalSpreads());
+    } else {
+      state.viewIndex = 0;
+    }
     updateView(false);
     highlightTopControls();
 
@@ -411,6 +428,7 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     turn,
     goNext,
     goPrev,
+    goToPage,
     updateView,
     getViewIndex: () => state.viewIndex,
     getPages: () => state.pages.slice(),

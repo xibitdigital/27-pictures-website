@@ -37,6 +37,7 @@ export {
   createManifestLoader,
   pagesFromManifest,
 } from "./loadConfig";
+export { parsePageQuery, contentPageToViewIndex } from "./pageQuery";
 export { getAssetBase, resolveAssetUrl, resolvePageUrls, toSitePath } from "./assetUrl";
 
 // Chrome

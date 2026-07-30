@@ -51,6 +51,11 @@ export interface ToonBookOptions {
    */
   onPageTurn?: (delta: number) => void;
   beforeStart?: () => void | Promise<void>;
+  /**
+   * 1-based content page to open on start (overrides `?page=` when set).
+   * Useful for tests; production usually relies on the URL query.
+   */
+  initialPage?: number;
 }
 
 /**
@@ -74,6 +79,8 @@ export interface ToonBookApi {
   turn: (delta: number) => void;
   goNext: () => void;
   goPrev: () => void;
+  /** Jump to a 1-based content page (clamped). */
+  goToPage: (pageNum: number) => void;
   updateView: (skipRender?: boolean) => void;
   getViewIndex: () => number;
   getPages: () => string[];

@@ -47,8 +47,8 @@ function hashSeed(...parts: Array<string | number | null | undefined>): number {
 
 /**
  * Sketchy organic speech bubble in viewBox 0–100.
- * Body is a near-full ellipse so multi-line text always sits inside the fill;
- * the tail is drawn outside the viewBox (SVG overflow: visible).
+ * One continuous outline: ellipse body + integrated triangular tail (not a
+ * separate second path). Tail tip sits outside the viewBox; SVG overflow is visible.
  * @param {'none'|'bottom'|'bottom-left'|'bottom-right'|'left'|'right'} tail
  */
 function sketchyBubblePath(tail, seed) {
@@ -56,42 +56,81 @@ function sketchyBubblePath(tail, seed) {
   const j = (amp) => (rnd() - 0.5) * 2 * amp;
   const t = tail || "bottom";
 
-  // Near-full ellipse (small inset so stroke stays visible)
+  // Body ellipse — nearly fills the box so multi-line text stays inside
   const cx = 50;
   const cy = 50;
-  const rx = 47;
-  const ry = 46;
-  const n = 28;
-  const pts = [];
-  for (let i = 0; i < n; i++) {
-    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-    // Mild hand-drawn wobble only — large dents made multi-line text poke out
-    pts.push([cx + Math.cos(a) * (rx + j(1.1)), cy + Math.sin(a) * (ry + j(1.1))]);
+  const rx = 46;
+  const ry = 44;
+  const n = 32;
+
+  /** Point on the ellipse at angle a (0 = east, π/2 = south). */
+  function onEllipse(a) {
+    return [cx + Math.cos(a) * (rx + j(0.9)), cy + Math.sin(a) * (ry + j(0.9))];
   }
 
-  // Closed smooth loop through ellipse points
-  let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
-  for (let i = 0; i < n; i++) {
-    const cur = pts[i];
-    const next = pts[(i + 1) % n];
-    const mx = (cur[0] + next[0]) / 2 + j(0.6);
-    const my = (cur[1] + next[1]) / 2 + j(0.6);
+  // No tail: closed ellipse only
+  if (t === "none") {
+    const pts = [];
+    for (let i = 0; i < n; i++) pts.push(onEllipse((i / n) * Math.PI * 2 - Math.PI / 2));
+    let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
+    for (let i = 0; i < n; i++) {
+      const cur = pts[i];
+      const next = pts[(i + 1) % n];
+      const mx = (cur[0] + next[0]) / 2 + j(0.5);
+      const my = (cur[1] + next[1]) / 2 + j(0.5);
+      d += ` Q ${mx.toFixed(2)} ${my.toFixed(2)} ${next[0].toFixed(2)} ${next[1].toFixed(2)}`;
+    }
+    return d + " Z";
+  }
+
+  // Tail attach angle + tip (outside viewBox so stroke/fill read as one shape)
+  let attachA = Math.PI / 2; // bottom
+  let tip = [50, 118];
+  let halfW = 0.28; // half angular width of mouth opening (radians)
+  if (t === "bottom-left") {
+    attachA = Math.PI / 2 + 0.4;
+    tip = [28, 116];
+  } else if (t === "bottom-right") {
+    attachA = Math.PI / 2 - 0.4;
+    tip = [72, 116];
+  } else if (t === "left") {
+    attachA = Math.PI;
+    tip = [-16, 52];
+    halfW = 0.26;
+  } else if (t === "right") {
+    attachA = 0;
+    tip = [116, 52];
+    halfW = 0.26;
+  }
+
+  // Walk the ellipse from one side of the mouth, around the body, to the other
+  // side, then out to the tip and back — single filled outline.
+  const a0 = attachA + halfW;
+  const span = Math.PI * 2 - halfW * 2;
+  const body = [];
+  for (let i = 0; i <= n; i++) {
+    body.push(onEllipse(a0 + (i / n) * span));
+  }
+
+  const tipJ = [tip[0] + j(1.2), tip[1] + j(1.2)];
+  // Slight side control points so the tail blends into the curve
+  const mouthL = body[body.length - 1];
+  const mouthR = body[0];
+  const midL = [(mouthL[0] + tipJ[0]) / 2 + j(1), (mouthL[1] + tipJ[1]) / 2 + j(1)];
+  const midR = [(mouthR[0] + tipJ[0]) / 2 + j(1), (mouthR[1] + tipJ[1]) / 2 + j(1)];
+
+  let d = `M ${body[0][0].toFixed(2)} ${body[0][1].toFixed(2)}`;
+  for (let i = 0; i < body.length - 1; i++) {
+    const cur = body[i];
+    const next = body[i + 1];
+    const mx = (cur[0] + next[0]) / 2 + j(0.5);
+    const my = (cur[1] + next[1]) / 2 + j(0.5);
     d += ` Q ${mx.toFixed(2)} ${my.toFixed(2)} ${next[0].toFixed(2)} ${next[1].toFixed(2)}`;
   }
+  // Tail: last mouth edge → tip → first mouth edge (continues the same path)
+  d += ` Q ${midL[0].toFixed(2)} ${midL[1].toFixed(2)} ${tipJ[0].toFixed(2)} ${tipJ[1].toFixed(2)}`;
+  d += ` Q ${midR[0].toFixed(2)} ${midR[1].toFixed(2)} ${mouthR[0].toFixed(2)} ${mouthR[1].toFixed(2)}`;
   d += " Z";
-
-  if (t === "none") return d;
-
-  // Tail entirely outside the body (past 0–100) so it never steals fill area from text
-  if (t === "bottom" || t === "bottom-left" || t === "bottom-right") {
-    const tx = t === "bottom-left" ? 34 : t === "bottom-right" ? 66 : 50;
-    d += ` M ${(tx - 8).toFixed(2)} 90 Q ${tx.toFixed(2)} 108 ${(tx - 1).toFixed(2)} 118 L ${(tx + 9).toFixed(2)} 91 Z`;
-  } else if (t === "left") {
-    d += ` M 10 42 Q -8 50 -14 52 L 10 58 Z`;
-  } else if (t === "right") {
-    d += ` M 90 42 Q 108 50 114 52 L 90 58 Z`;
-  }
-
   return d;
 }
 
@@ -273,16 +312,32 @@ function resolveVariant(w) {
   return "plain";
 }
 
+/**
+ * Default chrome for organic speech balloons (`variant: "bubble"`).
+ * Config may omit `bubble` entirely; only set overrides (e.g. tail) when needed.
+ */
+const DEFAULT_ORGANIC_BUBBLE = {
+  shape: "organic",
+  fill: "#ffffff",
+  stroke: "#111111",
+  strokeWidth: 2.2,
+  tail: "bottom-left",
+  padX: 0.8,
+  padY: 0.8,
+};
+
 function resolveBubbleStyle(w, variant) {
   const b = w.bubble && typeof w.bubble === "object" ? w.bubble : {};
   const isAi = variant === "ai";
   const isBurst = variant === "burst";
-  const shape = (b.shape || w.bubbleShape || (isAi ? "box" : isBurst ? "star" : "organic")).toString().toLowerCase();
+  const shape = (b.shape || w.bubbleShape || (isAi ? "box" : isBurst ? "star" : DEFAULT_ORGANIC_BUBBLE.shape))
+    .toString()
+    .toLowerCase();
   const isClean = shape === "clean" || shape === "frame" || shape === "rect";
   return {
     shape,
-    fill: b.fill || w.bubbleFill || (isAi ? "#0a0a0a" : "#ffffff"),
-    stroke: b.stroke || w.bubbleStroke || (isAi ? "#0a0a0a" : "#111111"),
+    fill: b.fill || w.bubbleFill || (isAi ? "#0a0a0a" : isBurst ? "#ffffff" : DEFAULT_ORGANIC_BUBBLE.fill),
+    stroke: b.stroke || w.bubbleStroke || (isAi ? "#0a0a0a" : isBurst ? "#111111" : DEFAULT_ORGANIC_BUBBLE.stroke),
     strokeWidth:
       b.strokeWidth != null
         ? Number(b.strokeWidth)
@@ -292,10 +347,11 @@ function resolveBubbleStyle(w, variant) {
             ? 2.2
             : isBurst
               ? 3
-              : 2.4,
-    tail: b.tail || w.tail || (isAi || isBurst ? "none" : "bottom"),
-    padX: b.padX != null ? Number(b.padX) : isAi ? 0.7 : isBurst ? 1.1 : 0.55,
-    padY: b.padY != null ? Number(b.padY) : isAi ? 0.5 : isBurst ? 0.9 : 0.4,
+              : DEFAULT_ORGANIC_BUBBLE.strokeWidth,
+    // Organic default tail is bottom-left; AI/burst have no tail unless overridden
+    tail: b.tail || w.tail || (isAi || isBurst ? "none" : DEFAULT_ORGANIC_BUBBLE.tail),
+    padX: b.padX != null ? Number(b.padX) : isAi ? 0.7 : isBurst ? 1.1 : DEFAULT_ORGANIC_BUBBLE.padX,
+    padY: b.padY != null ? Number(b.padY) : isAi ? 0.5 : isBurst ? 0.9 : DEFAULT_ORGANIC_BUBBLE.padY,
     // Sketchy multi-pass defaults for torn "box"; clean HUD frame is a single stroke.
     retrace: b.retrace != null ? Number(b.retrace) : isClean ? 0 : shape === "box" ? 2 : 0,
     scratches: b.scratches != null ? Number(b.scratches) : isClean ? 0 : shape === "box" ? 10 : 0,
