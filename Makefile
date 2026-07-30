@@ -146,7 +146,7 @@ upload-assets-dry: ## Dry-run R2 media sync
 
 PAGES_PROJECT ?= twentyseven-pictures
 PAGES_BRANCH  ?= main
-PREVIEW_BRANCH ?= feat/vue-frontend
+PREVIEW_BRANCH ?= staging
 
 .PHONY: deploy
 deploy: require-cdn-base ## Build (requires VITE_ASSET_BASE) + deploy Pages production
