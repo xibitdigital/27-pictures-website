@@ -5,7 +5,8 @@
  * Production readers load hashed config from CDN via config-lock.json.
  * Local `vite` / `make dev` always hit the editable reference file.
  */
-import type { Connect, Plugin } from "vite";
+import type { Plugin } from "vite";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -14,7 +15,7 @@ const DEV_CONFIG_RE = /^\/__dev\/toon-config\/([a-z0-9_-]+)\.json(?:\?.*)?$/i;
 export function toonConfigDevPlugin(projectRoot: string): Plugin {
   const contentToons = path.join(projectRoot, "content", "toons");
 
-  function middleware(req: Connect.IncomingMessage, res: Connect.ServerResponse, next: Connect.NextFunction) {
+  function middleware(req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void) {
     const url = req.url || "";
     const m = url.match(DEV_CONFIG_RE);
     if (!m) {

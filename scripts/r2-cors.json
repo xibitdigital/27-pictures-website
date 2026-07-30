@@ -10,7 +10,9 @@
           "https://local.twentyseven.test",
           "http://local.twentyseven.test:5173",
           "http://local.twentyseven.test:4173",
-          "http://local.twentyseven.test"
+          "http://local.twentyseven.test",
+          "https://feat-toon-config-cdn.twentyseven-pictures.pages.dev",
+          "https://twentyseven-pictures.pages.dev"
         ],
         "methods": ["GET", "HEAD"],
         "headers": ["*"]

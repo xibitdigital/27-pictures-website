@@ -61,15 +61,13 @@ export default defineConfig({
     port: 5173,
     // All interfaces + custom hosts name (see /etc/hosts → local.twentyseven.test)
     host: true,
-    // HTTPS via @vitejs/plugin-basic-ssl (self-signed — accept once; no HSTS on .test)
-    https: true,
+    // HTTPS certs injected by @vitejs/plugin-basic-ssl
     allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1"],
     fs: { allow: [__dirname] },
   },
   preview: {
     port: 4173,
     host: true,
-    https: true,
     allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1"],
   },
   test: {
