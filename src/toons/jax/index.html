@@ -182,18 +182,29 @@
       }
 
       .jax-word--bubble .jax-bubble-svg {
-        /* width/height are definite (100%) so the box always tracks the text
-           box's actual aspect ratio — leaving them "auto" makes browsers fall
-           back to the viewBox's intrinsic 1:1 ratio and force a square box.
-           Tail/scratch coordinates outside the 0–100 viewBox still bleed past
-           this box because overflow stays visible. */
+        /* Slightly larger than the text box so the white fill always
+           fully wraps glyphs + padding. Tail coords sit outside viewBox. */
         position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
         z-index: 0;
         overflow: visible;
         pointer-events: none;
+        left: -0.35em;
+        top: -0.3em;
+        width: calc(100% + 0.7em);
+        height: calc(100% + 0.6em);
+      }
+
+      .jax-word--bubble[data-tail^="bottom"] .jax-bubble-svg {
+        height: calc(100% + 1.15em);
+      }
+
+      .jax-word--bubble[data-tail="left"] .jax-bubble-svg {
+        left: -0.95em;
+        width: calc(100% + 1.3em);
+      }
+
+      .jax-word--bubble[data-tail="right"] .jax-bubble-svg {
+        width: calc(100% + 1.3em);
       }
 
       .jax-word--bubble .jax-word-text {
@@ -201,6 +212,8 @@
         z-index: 1;
         display: block;
         white-space: pre-line;
+        /* Keep multi-line comic caps from packing too tight in the fill */
+        line-height: 1.2;
       }
 
       .jax-word--ai .jax-word-text {

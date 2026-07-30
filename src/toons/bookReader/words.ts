@@ -47,8 +47,8 @@ function hashSeed(...parts: Array<string | number | null | undefined>): number {
 
 /**
  * Sketchy organic speech bubble in viewBox 0–100.
- * Body fills nearly the whole box so multi-line text (with padding) stays inside;
- * the tail sticks out past the viewBox (SVG overflow is visible).
+ * Body is a near-full ellipse so multi-line text always sits inside the fill;
+ * the tail is drawn outside the viewBox (SVG overflow: visible).
  * @param {'none'|'bottom'|'bottom-left'|'bottom-right'|'left'|'right'} tail
  */
 function sketchyBubblePath(tail, seed) {
@@ -56,65 +56,40 @@ function sketchyBubblePath(tail, seed) {
   const j = (amp) => (rnd() - 0.5) * 2 * amp;
   const t = tail || "bottom";
 
-  // Leave a little inset for the stroke; bottom/side tails need a bit more edge
-  // on that side so the tail attaches cleanly without eating text space.
-  const top = 5;
-  const bottom = t === "bottom" || t === "bottom-left" || t === "bottom-right" ? 82 : 95;
-  const left = t === "left" ? 14 : 5;
-  const right = t === "right" ? 86 : 95;
-  const midX = (left + right) / 2;
-  const midY = (top + bottom) / 2;
-
-  // Clockwise wobbly points around the full text box
-  const pts = [
-    [left + 4 + j(1.5), top + 10 + j(1.5)],
-    [midX - 12 + j(2), top + 2 + j(1.2)],
-    [midX + j(2), top + j(1.2)],
-    [midX + 12 + j(2), top + 2 + j(1.2)],
-    [right - 4 + j(1.5), top + 10 + j(1.5)],
-    [right + j(1.2), midY - 12 + j(2)],
-    [right + j(1.2), midY + 12 + j(2)],
-    [right - 4 + j(1.5), bottom - 10 + j(1.5)],
-    [midX + 12 + j(2), bottom - 2 + j(1.2)],
-    [midX + j(2), bottom + j(1.2)],
-    [midX - 12 + j(2), bottom - 2 + j(1.2)],
-    [left + 4 + j(1.5), bottom - 10 + j(1.5)],
-    [left + j(1.2), midY + 12 + j(2)],
-    [left + j(1.2), midY - 12 + j(2)],
-  ];
-
-  let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
-  for (let i = 1; i < pts.length; i++) {
-    const prev = pts[i - 1];
-    const cur = pts[i];
-    const mx = (prev[0] + cur[0]) / 2 + j(1.2);
-    const my = (prev[1] + cur[1]) / 2 + j(1.2);
-    d += ` Q ${mx.toFixed(2)} ${my.toFixed(2)} ${cur[0].toFixed(2)} ${cur[1].toFixed(2)}`;
+  // Near-full ellipse (small inset so stroke stays visible)
+  const cx = 50;
+  const cy = 50;
+  const rx = 47;
+  const ry = 46;
+  const n = 28;
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+    // Mild hand-drawn wobble only — large dents made multi-line text poke out
+    pts.push([cx + Math.cos(a) * (rx + j(1.1)), cy + Math.sin(a) * (ry + j(1.1))]);
   }
-  const last = pts[pts.length - 1];
-  const first = pts[0];
-  d += ` Q ${((last[0] + first[0]) / 2 + j(1)).toFixed(2)} ${((last[1] + first[1]) / 2 + j(1)).toFixed(
-    2
-  )} ${first[0].toFixed(2)} ${first[1].toFixed(2)} Z`;
+
+  // Closed smooth loop through ellipse points
+  let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
+  for (let i = 0; i < n; i++) {
+    const cur = pts[i];
+    const next = pts[(i + 1) % n];
+    const mx = (cur[0] + next[0]) / 2 + j(0.6);
+    const my = (cur[1] + next[1]) / 2 + j(0.6);
+    d += ` Q ${mx.toFixed(2)} ${my.toFixed(2)} ${next[0].toFixed(2)} ${next[1].toFixed(2)}`;
+  }
+  d += " Z";
 
   if (t === "none") return d;
 
-  // Tail draws outside the body (and often past 0–100) — parent SVG uses overflow:visible
+  // Tail entirely outside the body (past 0–100) so it never steals fill area from text
   if (t === "bottom" || t === "bottom-left" || t === "bottom-right") {
-    const cx = t === "bottom-left" ? midX - 14 : t === "bottom-right" ? midX + 14 : midX;
-    d += ` M ${(cx - 7 + j(1)).toFixed(2)} ${bottom - 2} Q ${(cx + j(2)).toFixed(2)} ${(bottom + 12 + j(1)).toFixed(
-      2
-    )} ${(cx - 1 + j(2)).toFixed(2)} ${(bottom + 22).toFixed(2)} L ${(cx + 8 + j(2)).toFixed(2)} ${(bottom - 1).toFixed(
-      2
-    )} Z`;
+    const tx = t === "bottom-left" ? 34 : t === "bottom-right" ? 66 : 50;
+    d += ` M ${(tx - 8).toFixed(2)} 90 Q ${tx.toFixed(2)} 108 ${(tx - 1).toFixed(2)} 118 L ${(tx + 9).toFixed(2)} 91 Z`;
   } else if (t === "left") {
-    d += ` M ${left + 1} ${(midY - 8).toFixed(2)} Q ${(left - 12 + j(1)).toFixed(2)} ${(midY + j(2)).toFixed(2)} ${(
-      left - 18
-    ).toFixed(2)} ${(midY + 2).toFixed(2)} L ${left + 2} ${(midY + 8).toFixed(2)} Z`;
+    d += ` M 10 42 Q -8 50 -14 52 L 10 58 Z`;
   } else if (t === "right") {
-    d += ` M ${right - 1} ${(midY - 8).toFixed(2)} Q ${(right + 12 + j(1)).toFixed(2)} ${(midY + j(2)).toFixed(2)} ${(
-      right + 18
-    ).toFixed(2)} ${(midY + 2).toFixed(2)} L ${right - 2} ${(midY + 8).toFixed(2)} Z`;
+    d += ` M 90 42 Q 108 50 114 52 L 90 58 Z`;
   }
 
   return d;

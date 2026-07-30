@@ -1252,10 +1252,10 @@
             "shape": "organic",
             "fill": "#ffffff",
             "stroke": "#111111",
-            "strokeWidth": 2.6,
+            "strokeWidth": 2.2,
             "tail": "bottom-left",
-            "padX": 0.6,
-            "padY": 0.45
+            "padX": 0.7,
+            "padY": 0.5
           },
           "text": {
             "en": "GODDAMN!",
@@ -1269,19 +1269,19 @@
           "x": 0.74,
           "y": 0.66,
           "align": "center",
-          "size": 24,
+          "size": 22,
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
-          "maxWidth": 0.34,
+          "maxWidth": 0.36,
           "bubble": {
             "shape": "organic",
             "fill": "#ffffff",
             "stroke": "#111111",
-            "strokeWidth": 2.6,
-            "tail": "left",
-            "padX": 0.65,
-            "padY": 0.55
+            "strokeWidth": 2.2,
+            "tail": "bottom-left",
+            "padX": 0.75,
+            "padY": 0.65
           },
           "text": {
             "en": "C'MON JAX,\nDON'T LOSE\nYOURSELF!",
