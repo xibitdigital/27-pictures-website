@@ -43,16 +43,19 @@ function mockAudio(opts: { readyState?: number; fail?: boolean } = {}) {
 describe("collectWordAudioUrls", () => {
   it("returns unique non-empty audio paths", () => {
     const config: WordsConfig = {
-      pages: {
-        "1": [
-          { audio: "assets/sfx/a.mp3", text: "A" },
-          { audio: "assets/sfx/a.mp3", text: "A2" },
-          { text: "silent" },
-          { audio: "  assets/sfx/b.mp3  ", text: "B" },
-          { audio: "", text: "empty" },
-        ],
-        "2": [{ audio: "assets/sfx/c.mp3", text: "C" }],
-      },
+      pages: [
+        {
+          file: "assets/1.jpg",
+          words: [
+            { audio: "assets/sfx/a.mp3", text: "A" },
+            { audio: "assets/sfx/a.mp3", text: "A2" },
+            { text: "silent" },
+            { audio: "  assets/sfx/b.mp3  ", text: "B" },
+            { audio: "", text: "empty" },
+          ],
+        },
+        { file: "assets/2.jpg", words: [{ audio: "assets/sfx/c.mp3", text: "C" }] },
+      ],
     };
     expect(collectWordAudioUrls(config).sort()).toEqual(["assets/sfx/a.mp3", "assets/sfx/b.mp3", "assets/sfx/c.mp3"]);
   });

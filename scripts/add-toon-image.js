@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 /**
- * Add a toon page: watermark → content-hash → public/toons/<toon>/assets/
- * Optional --manifest / --upload (R2 via shared lib).
+ * Add a toon page image: watermark → content-hash → R2 (CDN).
+ *
+ * By default with --upload, the file does NOT stay under public/ — only on CDN.
+ * Use --keep-local to also stage under public/toons/<toon>/assets/ (gitignored).
+ *
+ * Optional --config: append to content/toons/…/config.json + publish hashed config to R2.
+ * --manifest is an alias for --config.
  */
 
 const { spawnSync } = require("node:child_process");
@@ -9,7 +14,8 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { ROOT, putObject } = require("./lib/r2-media");
+const { ROOT, PUBLIC, putObject, contentTypeFor } = require("./lib/r2-media");
+const { appendPageToReference, publishToonConfig } = require("./lib/toon-config");
 
 const WATERMARK = path.join(ROOT, "scripts", "watermark-images.sh");
 const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
@@ -22,7 +28,8 @@ function parseArgs(argv) {
     destDir: null,
     watermark: true,
     upload: false,
-    manifest: false,
+    keepLocal: false,
+    config: false,
     text: "twentyseven.pictures",
     force: false,
     dryRun: false,
@@ -37,7 +44,8 @@ function parseArgs(argv) {
     else if (a.startsWith("--dest=")) opts.destDir = a.slice("--dest=".length);
     else if (a === "--no-watermark") opts.watermark = false;
     else if (a === "--upload") opts.upload = true;
-    else if (a === "--manifest") opts.manifest = true;
+    else if (a === "--keep-local") opts.keepLocal = true;
+    else if (a === "--config" || a === "--manifest") opts.config = true;
     else if (a === "--force") opts.force = true;
     else if (a === "--dry-run") opts.dryRun = true;
     else if (a === "--text") opts.text = argv[++i];
@@ -57,10 +65,14 @@ function parseArgs(argv) {
 function printHelp() {
   console.log(`Usage: node scripts/add-toon-image.js <image> --toon <jax|erin> [options]
 
-  --no-watermark | --manifest | --upload | --force | --dry-run
-  --text TEXT | --dest DIR
+  --upload       Put on R2 (CDN). Does not leave a file under public/ unless --keep-local
+  --keep-local   Also write public/toons/<toon>/assets/<md5>.ext (gitignored staging)
+  --config       Append page to content/ config + publish config to R2
+  --no-watermark | --force | --dry-run | --text TEXT | --dest DIR
 
-  make add-image SRC=~/page.jpg TOON=jax MANIFEST=1 UPLOAD=1
+  --manifest is an alias for --config
+
+  make add-image SRC=~/page.jpg TOON=jax CONFIG=1 UPLOAD=1
 `);
 }
 
@@ -79,23 +91,28 @@ function run(cmd, args) {
   if (res.status !== 0) process.exit(res.status || 1);
 }
 
-function appendManifest(toon, relAssetPath) {
-  const manifestPath = path.join(ROOT, "public", "toons", toon, "manifest.json");
-  if (!fs.existsSync(manifestPath)) {
-    console.error(`error: no manifest at ${path.relative(ROOT, manifestPath)}`);
+function contentTypeForExt(ext) {
+  return contentTypeFor(`x${ext}`);
+}
+
+/**
+ * Append page to content/ reference config, then publish hashed config to R2.
+ */
+function appendAndPublishConfig(toon, relAssetPath, { dryRun = false, skipUpload = false } = {}) {
+  try {
+    const { pages, already } = appendPageToReference(toon, relAssetPath);
+    if (already) {
+      console.log(`config: already lists ${relAssetPath}`);
+    } else {
+      console.log(`config: appended to content/toons/${toon}/config.json (pages=${pages.length})`);
+    }
+    const result = publishToonConfig(toon, { dryRun, skipUpload });
+    console.log(`config: published ${result.fileName} → ${result.r2Key}`);
+    return result;
+  } catch (err) {
+    console.error(`error: ${err.message || err}`);
     process.exit(1);
   }
-  const data = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-  const files = Array.isArray(data.files) ? data.files.slice() : [];
-  if (files.includes(relAssetPath)) {
-    console.log(`manifest: already lists ${relAssetPath}`);
-    return;
-  }
-  files.push(relAssetPath);
-  data.files = files;
-  data.pages = files.length;
-  fs.writeFileSync(manifestPath, JSON.stringify(data, null, 2) + "\n");
-  console.log(`manifest: appended (pages=${data.pages})`);
 }
 
 function main() {
@@ -118,13 +135,13 @@ function main() {
   }
   if (ext === ".jpeg") ext = ".jpg";
 
+  let toon = opts.toon ? opts.toon.toLowerCase() : null;
   let destDir;
   if (opts.destDir) {
     destDir = path.resolve(
       opts.destDir.startsWith("~/") ? path.join(os.homedir(), opts.destDir.slice(2)) : opts.destDir
     );
-  } else if (opts.toon) {
-    const toon = opts.toon.toLowerCase();
+  } else if (toon) {
     if (!DEFAULT_TOONS.has(toon)) {
       console.warn(`warning: unknown toon "${toon}"`);
     }
@@ -134,8 +151,13 @@ function main() {
     process.exit(1);
   }
 
+  // Prefer CDN-only path: upload from temp unless --keep-local or no --upload (stage only)
+  const stageLocal = opts.keepLocal || !opts.upload;
+
   console.log(`Source: ${src}`);
-  console.log(`Dest:   ${path.relative(ROOT, destDir)}`);
+  console.log(`CDN:    toons/${toon || "?"}/assets/<md5>${ext}`);
+  if (stageLocal) console.log(`Local:  ${path.relative(ROOT, destDir)} (--keep-local or no --upload)`);
+  else console.log(`Local:  (none — CDN only)`);
 
   const work = fs.mkdtempSync(path.join(os.tmpdir(), "add-toon-image-"));
   const workFile = path.join(work, `input${ext}`);
@@ -151,7 +173,7 @@ function main() {
     }
 
     if (opts.dryRun) {
-      console.log("[dry-run] hash + write + optional manifest/upload");
+      console.log("[dry-run] hash + optional local stage / upload / config");
       return;
     }
 
@@ -159,27 +181,45 @@ function main() {
     const destName = `${hash}${ext}`;
     const absDest = path.join(destDir, destName);
     const relAsset = `assets/${destName}`;
+    const r2Key = toon ? `toons/${toon}/assets/${destName}` : path.relative(PUBLIC, absDest).split(path.sep).join("/");
 
-    if (fs.existsSync(absDest) && !opts.force) {
-      console.log(`Already present: ${path.relative(ROOT, absDest)}`);
-      if (opts.manifest && opts.toon) appendManifest(opts.toon.toLowerCase(), relAsset);
-      if (opts.upload) putObject(absDest);
-      return;
+    console.log(`→ ${relAsset}`);
+
+    if (opts.upload) {
+      const ok = putObject(workFile, {
+        key: r2Key,
+        contentType: contentTypeForExt(ext),
+      });
+      if (!ok) process.exit(1);
+      console.log(`→ CDN ${r2Key}`);
     }
 
-    fs.mkdirSync(destDir, { recursive: true });
-    fs.copyFileSync(workFile, absDest);
-    console.log(`→ Wrote ${path.relative(ROOT, absDest)}`);
-    console.log(`  manifest entry: "${relAsset}"`);
+    if (stageLocal) {
+      fs.mkdirSync(destDir, { recursive: true });
+      if (fs.existsSync(absDest) && !opts.force) {
+        console.log(`Local already present: ${path.relative(ROOT, absDest)}`);
+      } else {
+        fs.copyFileSync(workFile, absDest);
+        console.log(`→ Wrote ${path.relative(ROOT, absDest)}`);
+      }
+    } else if (fs.existsSync(absDest)) {
+      // CDN-only run: drop any leftover local staging copy
+      fs.unlinkSync(absDest);
+      console.log(`→ Removed local staging copy ${path.relative(ROOT, absDest)}`);
+    }
 
-    if (opts.manifest) {
-      if (!opts.toon) {
-        console.error("error: --manifest requires --toon");
+    if (opts.config) {
+      if (!toon) {
+        console.error("error: --config requires --toon");
         process.exit(1);
       }
-      appendManifest(opts.toon.toLowerCase(), relAsset);
+      appendAndPublishConfig(toon, relAsset, { dryRun: false });
+    } else if (!opts.upload && !stageLocal) {
+      console.log(`  (config entry when ready: "${relAsset}")`);
+    } else {
+      console.log(`  config path: "${relAsset}"`);
     }
-    if (opts.upload) putObject(absDest);
+
     console.log("Done.");
   } finally {
     try {

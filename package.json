@@ -8,6 +8,9 @@
     "add-image": "node scripts/add-toon-image.js",
     "hash-assets": "node scripts/hash-assets.js",
     "hash-assets:check": "node scripts/hash-assets.js --check",
+    "hash-toon-config": "node scripts/hash-toon-config.js",
+    "publish-toon-config": "node scripts/publish-toon-config.js",
+    "download-toon-config": "node scripts/download-toon-config.js",
     "create-assets-bucket": "node scripts/upload-r2-assets.js --create-bucket",
     "upload-assets": "node scripts/upload-r2-assets.js",
     "upload-assets:dry": "node scripts/upload-r2-assets.js --dry-run",
@@ -32,6 +35,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.2",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/test-utils": "^2.4.11",
     "@vue/tsconfig": "^0.9.1",

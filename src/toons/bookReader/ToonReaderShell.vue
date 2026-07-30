@@ -1,14 +1,14 @@
 <script setup lang="ts">
 /**
  * Shared FlipFrame chrome for Erin, Jax, and future toons.
- * Owns view-mode, manifest load, strip, captions, and the Vue book surface.
+ * Owns view-mode, config load, strip, captions, and the Vue book surface.
  */
 import { computed, onMounted, ref } from "vue";
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import { ReaderTopBar } from "./chrome";
 import { useViewMode } from "./useViewMode";
-import { createManifestLoader } from "./loadManifest";
+import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
 import VerticalStrip from "./VerticalStrip.vue";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
 
@@ -18,8 +18,14 @@ const props = withDefaults(
     frontCoverLogo?: string | null;
     coverTexture?: string | null;
     /**
-     * Site directory for relative manifest assets under VITE_ASSET_BASE
-     * (e.g. `/toons/jax/`). Required for CDN builds with relative files[].
+     * Where the content-hashed toon config lives (required).
+     * Prefer `toonConfigUrl("jax")` → `/toons/jax/config.<md5>.json`.
+     * Relative names need `assetPageDir`. Resolved via VITE_ASSET_BASE when set.
+     */
+    configUrl: string;
+    /**
+     * Site directory for relative media paths under VITE_ASSET_BASE
+     * (e.g. `/toons/jax/`). Required for CDN builds with relative `file` / audio.
      */
     assetPageDir?: string;
     /**
@@ -27,12 +33,10 @@ const props = withDefaults(
      * Shell always wins on getPages / altPrefix / logos / texture.
      */
     bookOptions?: ToonShellBookOptions;
-    manifestUrl?: string;
     mobileDefault?: boolean;
   }>(),
   {
     mobileDefault: true,
-    manifestUrl: "manifest.json",
   }
 );
 
@@ -46,7 +50,10 @@ const readerEl = ref<HTMLElement | null>(null);
 /** Vertical-strip page slots (tracked for caption re-paint). */
 const stripSlots = ref<HTMLElement[]>([]);
 
-const loadSharedPages = createManifestLoader(props.manifestUrl, {
+/** Resolved fetch URL for config.json (same key as caption loaders should use). */
+const resolvedConfigUrl = resolveConfigUrl(props.configUrl, props.assetPageDir);
+
+const loadSharedPages = createConfigLoader(resolvedConfigUrl, {
   pageDir: props.assetPageDir,
 });
 

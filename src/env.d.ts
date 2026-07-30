@@ -20,6 +20,11 @@ declare module "*.vue" {
   export default component;
 }
 
+declare module "*.json" {
+  const value: Record<string, string>;
+  export default value;
+}
+
 /** Cloudflare Turnstile global (loaded from CDN on the marketing site). */
 interface TurnstileApi {
   execute: (widgetId?: string | HTMLElement) => void;

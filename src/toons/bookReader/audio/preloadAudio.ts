@@ -10,12 +10,13 @@ const cache = new Map<string, HTMLAudioElement>();
 /** HAVE_FUTURE_DATA — enough data to play forward a bit (see HTMLMediaElement). */
 const READY_ENOUGH = 3;
 
-/** Unique non-empty `audio` paths from a words.json config. */
+/** Unique non-empty `audio` paths from toon config page captions. */
 export function collectWordAudioUrls(config: WordsConfig | null | undefined): string[] {
   const urls = new Set<string>();
   const pages = config?.pages;
-  if (!pages) return [];
-  for (const entries of Object.values(pages)) {
+  if (!Array.isArray(pages)) return [];
+  for (const page of pages) {
+    const entries = page?.words;
     if (!Array.isArray(entries)) continue;
     for (const w of entries) {
       const src = w?.audio;

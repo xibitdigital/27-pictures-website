@@ -27,6 +27,7 @@ const CONTENT_TYPES = {
   ".webm": "video/webm",
   ".ogg": "audio/ogg",
   ".wav": "audio/wav",
+  ".json": "application/json",
 };
 
 const CACHE_CONTROL = "public, max-age=31536000, immutable";
@@ -94,40 +95,74 @@ function saveLock(lock) {
 
 /**
  * Put one object and update the lockfile.
+ * @param {string} absPath - local file
+ * @param {{ bucket?: string, dryRun?: boolean, updateLock?: boolean, key?: string, contentType?: string, cacheControl?: string }} [opts]
  * @returns {boolean}
  */
-function putObject(absPath, { bucket = DEFAULT_BUCKET, dryRun = false, updateLock = true } = {}) {
-  const key = keyForFile(absPath);
+function putObject(
+  absPath,
+  {
+    bucket = DEFAULT_BUCKET,
+    dryRun = false,
+    updateLock = true,
+    key = null,
+    contentType = null,
+    cacheControl = null,
+  } = {}
+) {
+  const objectKey = key || keyForFile(absPath);
+  const type = contentType || contentTypeFor(absPath);
+  const cache = cacheControl || CACHE_CONTROL;
   if (dryRun) {
-    console.log(`[dry-run] put ${bucket}/${key}`);
+    console.log(`[dry-run] put ${bucket}/${objectKey}`);
     return true;
   }
   const res = wrangler([
     "r2",
     "object",
     "put",
-    `${bucket}/${key}`,
+    `${bucket}/${objectKey}`,
     `--file=${absPath}`,
-    `--content-type=${contentTypeFor(absPath)}`,
-    `--cache-control=${CACHE_CONTROL}`,
+    `--content-type=${type}`,
+    `--cache-control=${cache}`,
     "--remote",
   ]);
   if (res.status !== 0) {
-    console.error(`FAIL ${key}`);
+    console.error(`FAIL ${objectKey}`);
     console.error((res.stderr || res.stdout || "").trim().slice(0, 500));
     return false;
   }
-  console.log(`ok   ${key}`);
+  console.log(`ok   ${objectKey}`);
   if (updateLock) {
     const lock = loadLock();
     if (!lock.keys || typeof lock.keys !== "object") lock.keys = {};
     lock.bucket = bucket;
-    lock.keys[key] = {
+    lock.keys[objectKey] = {
       size: fs.statSync(absPath).size,
       uploadedAt: new Date().toISOString(),
     };
     saveLock(lock);
   }
+  return true;
+}
+
+/**
+ * Download one R2 object to a local path.
+ * @returns {boolean}
+ */
+function getObject(key, destPath, { bucket = DEFAULT_BUCKET, dryRun = false } = {}) {
+  if (dryRun) {
+    console.log(`[dry-run] get ${bucket}/${key} → ${destPath}`);
+    return true;
+  }
+  fs.mkdirSync(path.dirname(destPath), { recursive: true });
+  const res = wrangler(["r2", "object", "get", `${bucket}/${key}`, `--file=${destPath}`, "--remote"]);
+  if (res.status !== 0) {
+    console.error(`FAIL get ${key}`);
+    console.error((res.stderr || res.stdout || "").trim().slice(0, 500));
+    return false;
+  }
+  console.log(`ok   get ${key} → ${path.relative(ROOT, destPath)}`);
   return true;
 }
 
@@ -178,6 +213,7 @@ module.exports = {
   loadLock,
   saveLock,
   putObject,
+  getObject,
   createBucket,
   setupCors,
   enableDevUrl,

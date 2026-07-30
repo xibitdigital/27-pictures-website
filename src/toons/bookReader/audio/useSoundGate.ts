@@ -1,15 +1,11 @@
 /**
  * Caption SFX enable/prompt state — injectable into WordOverlay (no window globals).
  *
- * Prompt is shown at most once per composable instance (resets when the reader
- * remounts). Triggers: blocked caption SFX, first page turn, or first vertical
- * scroll (desktop and mobile).
+ * Caption bubble tap while sound is off → show enable popup.
+ * Page turn / scroll do not prompt (only explicit sound control or caption taps).
  */
-import { computed, onBeforeUnmount, onMounted, ref, type ComputedRef, type Ref } from "vue";
+import { computed, ref, type ComputedRef, type Ref } from "vue";
 import type { SoundGate } from "../types";
-
-/** Ignore tiny scroll noise / programmatic reset-to-top. */
-const SCROLL_ENGAGE_PX = 32;
 
 export interface UseSoundGateOptions {
   /** Optional confirmation beep when enabling. */
@@ -17,8 +13,7 @@ export interface UseSoundGateOptions {
   /** Called after enable state changes (e.g. re-paint front-cover control). */
   onChange?: (enabled: boolean) => void;
   /**
-   * When true, listen for vertical-mode window scroll and show the prompt on
-   * first meaningful scroll. Default true.
+   * @deprecated Scroll no longer prompts for sound. Kept for call-site compatibility.
    */
   promptOnScroll?: boolean;
 }
@@ -31,7 +26,7 @@ export interface UseSoundGateApi {
   setEnabled: (on: boolean) => void;
   toggle: () => void;
   maybePrompt: () => void;
-  /** First scroll / page-turn engagement (same once-per-mount gate as maybePrompt). */
+  /** No-op — page turn / scroll no longer engage the sound prompt. */
   onEngage: () => void;
   dismissPrompt: () => void;
   enableFromPrompt: () => void;
@@ -42,8 +37,6 @@ export interface UseSoundGateApi {
 export function useSoundGate(opts: UseSoundGateOptions = {}): UseSoundGateApi {
   const enabled = ref(false);
   const promptVisible = ref(false);
-  /** Session flag — always false on mount; never persisted. */
-  let promptShown = false;
 
   const title = computed(() => (enabled.value ? "Mute sound" : "Enable sound effects"));
   const label = computed(() => (enabled.value ? "Sound on" : "Sound"));
@@ -56,25 +49,29 @@ export function useSoundGate(opts: UseSoundGateOptions = {}): UseSoundGateApi {
         confirm.play().catch(() => {});
       }
       promptVisible.value = false;
-      promptShown = true;
     }
     opts.onChange?.(on);
   }
 
+  /** @deprecated Prefer caption taps / sound button. No-op for passive engage. */
   function maybePrompt(): void {
+    /* page turn / scroll no longer open the prompt */
+  }
+
+  /**
+   * Caption bubble tap while muted: surface the enable popup
+   * (unless already open or sound is on).
+   */
+  function promptOnBlockedPlay(): void {
     if (enabled.value) return;
-    if (promptShown) return;
-    promptShown = true;
     promptVisible.value = true;
   }
 
-  /** Alias for engage hooks (page turn / scroll) — same once-per-mount gate. */
   function onEngage(): void {
-    maybePrompt();
+    /* intentional no-op */
   }
 
   function dismissPrompt(): void {
-    promptShown = true;
     promptVisible.value = false;
   }
 
@@ -84,24 +81,8 @@ export function useSoundGate(opts: UseSoundGateOptions = {}): UseSoundGateApi {
 
   const gate: SoundGate = {
     isEnabled: () => enabled.value,
-    onBlockedPlay: maybePrompt,
+    onBlockedPlay: promptOnBlockedPlay,
   };
-
-  function onScroll(): void {
-    if (!document.body.classList.contains("view-vertical")) return;
-    const y = window.scrollY || document.documentElement.scrollTop || 0;
-    if (y < SCROLL_ENGAGE_PX) return;
-    onEngage();
-  }
-
-  if (opts.promptOnScroll !== false) {
-    onMounted(() => {
-      window.addEventListener("scroll", onScroll, { passive: true });
-    });
-    onBeforeUnmount(() => {
-      window.removeEventListener("scroll", onScroll);
-    });
-  }
 
   return {
     enabled,

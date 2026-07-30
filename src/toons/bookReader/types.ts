@@ -23,12 +23,14 @@ export interface ToonBookOptions {
   altPrefix?: string;
   /**
    * Pre-resolved page URLs. Prefer `getPages` when sharing a single fetch with
-   * vertical-scroll mode (see ToonReaderShell + createManifestLoader).
+   * vertical-scroll mode (see ToonReaderShell + createConfigLoader).
    */
   pages?: string[];
-  /** Async page source; used when `pages` is not set. Default: loadManifest. */
+  /** Async page source; used when `pages` is not set. Default: loadConfigPages. */
   getPages?: () => Promise<string[]>;
-  /** Only used when neither `pages` nor `getPages` is set. */
+  /** Only used when neither `pages` nor `getPages` is set. Default: config.json */
+  configUrl?: string;
+  /** @deprecated Use configUrl */
   manifestUrl?: string;
   backHref?: string;
   backLabel?: string;
@@ -57,7 +59,7 @@ export interface ToonBookOptions {
  */
 export type ToonShellBookOptions = Omit<
   ToonBookOptions,
-  "altPrefix" | "frontCoverLogo" | "coverTexture" | "pages" | "getPages" | "manifestUrl"
+  "altPrefix" | "frontCoverLogo" | "coverTexture" | "pages" | "getPages" | "configUrl" | "manifestUrl"
 >;
 
 /** Minimal shell surface for parent apps (lang switch, sound cover re-paint). */
@@ -79,19 +81,36 @@ export interface ToonBookApi {
   destroy: () => void;
 }
 
-export interface ToonManifest {
+/** One page in config.json — image + optional caption overlays. */
+export interface ToonPage {
+  /** Relative image path (e.g. `assets/<hash>.jpg`). */
+  file: string;
+  /** Caption / SFX entries for this page. */
+  words?: WordEntry[];
+}
+
+/**
+ * Unified toon config (public/toons/<name>/config.json).
+ * Ordered `pages[]` is the source of truth for images + captions.
+ */
+export interface ToonConfig {
   title?: string;
-  pages?: number;
-  files?: string[];
-  pattern?: string;
   designWidth?: number;
   designHeight?: number;
+  defaultLang?: LangCode;
+  languages?: LangOption[];
+  fontFamily?: string;
+  /** Ordered pages: each has `file` + optional `words`. */
+  pages?: ToonPage[];
 }
+
+/** @deprecated Use ToonConfig */
+export type ToonManifest = ToonConfig;
 
 /** Injected into WordOverlay so caption SFX never reads window globals. */
 export interface SoundGate {
   isEnabled: () => boolean;
-  /** Called when the user tries SFX while sound is off (e.g. show prompt once). */
+  /** Called when the user taps a caption while sound is off (show enable prompt once). */
   onBlockedPlay?: () => void;
 }
 
@@ -150,14 +169,8 @@ export interface WordEntry {
   text?: WordTextMap | string;
 }
 
-export interface WordsConfig {
-  designWidth?: number;
-  designHeight?: number;
-  pages?: Record<string, WordEntry[]>;
-  languages?: LangOption[];
-  defaultLang?: LangCode;
-  fontFamily?: string;
-}
+/** Caption-relevant slice of ToonConfig (same object; alias for WordOverlay). */
+export type WordsConfig = ToonConfig;
 
 export interface WordOverlayOptions {
   sound?: SoundGate;

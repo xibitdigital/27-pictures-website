@@ -3,7 +3,7 @@
  * Vue components in BookSurface / BookSlot / FlipLeaf own all markup.
  */
 import { reactive } from "vue";
-import { loadManifest } from "./loadManifest";
+import { loadConfigPages } from "./loadConfig";
 import {
   indicatorText,
   pageSrcForSpread,
@@ -56,8 +56,13 @@ function resolvePages(opts: ToonBookOptions): () => Promise<string[]> {
   if (Array.isArray(opts.pages) && opts.pages.length) {
     return () => Promise.resolve(opts.pages!.slice());
   }
-  const url = opts.manifestUrl || "manifest.json";
-  return () => loadManifest(url);
+  const url = opts.configUrl || opts.manifestUrl;
+  if (!url) {
+    return async () => {
+      throw new Error("ToonBook: configUrl is required when pages/getPages are not set");
+    };
+  }
+  return () => loadConfigPages(url);
 }
 
 /**

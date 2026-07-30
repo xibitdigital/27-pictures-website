@@ -5,12 +5,16 @@ import { resolveAssetUrl } from "../bookReader/assetUrl";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import { useSoundGate } from "../bookReader/audio/useSoundGate";
 import { collectWordAudioUrls, preloadAudioUrls } from "../bookReader/audio/preloadAudio";
+import { resolveConfigUrl } from "../bookReader/loadConfig";
 import { WordOverlay, loadWords } from "../bookReader/words";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "../bookReader/types";
+import { toonConfigUrl } from "../configUrls";
 import LangSwitcher from "./components/LangSwitcher.vue";
 
 /** Reader media root — explicit pageDir for CDN relative paths. */
 const ASSET_PAGE_DIR = "/toons/jax/";
+/** Content-hashed config from config-lock.json (changes when config bytes change). */
+const CONFIG_URL = toonConfigUrl("jax");
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
 const CONFIRM_SFX = resolveAssetUrl("assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3", ASSET_PAGE_DIR);
 const BG_MUSIC = resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3");
@@ -110,7 +114,8 @@ const bookOptions: ToonShellBookOptions = {
     wordOverlay.value?.render(slot, null);
   },
   async beforeStart() {
-    const wordsConfig = await loadWords("words.json", ASSET_PAGE_DIR);
+    // Same resolved URL as ToonReaderShell → one shared config fetch.
+    const wordsConfig = await loadWords(resolveConfigUrl(CONFIG_URL, ASSET_PAGE_DIR), ASSET_PAGE_DIR);
     wordOverlay.value = new WordOverlay(wordsConfig, { sound: soundGate });
     // Warm SFX + confirm beep in the background; don't block first paint.
     void preloadAudioUrls([CONFIRM_SFX, ...collectWordAudioUrls(wordsConfig)]);
@@ -145,7 +150,8 @@ onMounted(() => {
   <ToonReaderShell
     ref="shellRef"
     alt-prefix="Jax"
-    asset-page-dir="/toons/jax/"
+    :config-url="CONFIG_URL"
+    :asset-page-dir="ASSET_PAGE_DIR"
     front-cover-logo="/logosquare.png"
     :cover-texture="COVER_TEXTURE"
     :book-options="bookOptions"

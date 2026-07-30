@@ -58,10 +58,13 @@ vi.mock("../bookReader/useViewMode", () => ({
   }),
 }));
 
-vi.mock("../bookReader/loadManifest", () => ({
-  createManifestLoader: () => async () => pages.value.slice(),
-  loadManifest: async () => pages.value.slice(),
-  pagesFromManifest: (m: { files?: string[] }) => m.files ?? [],
+vi.mock("../bookReader/loadConfig", () => ({
+  resolveConfigUrl: (url: string) => url,
+  createConfigLoader: () => async () => pages.value.slice(),
+  loadConfigPages: async () => pages.value.slice(),
+  loadConfig: async () => ({ pages: pages.value.map((file) => ({ file, words: [] })) }),
+  pagesFromConfig: (m: { pages?: { file: string }[] }) => (m.pages ?? []).map((p) => p.file),
+  clearConfigCache: () => {},
 }));
 
 import ErinApp from "./ErinApp.vue";

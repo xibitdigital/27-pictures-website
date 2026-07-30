@@ -64,10 +64,13 @@ vi.mock("../bookReader/useViewMode", () => ({
   }),
 }));
 
-vi.mock("../bookReader/loadManifest", () => ({
-  createManifestLoader: () => async () => pages.value.slice(),
-  loadManifest: async () => pages.value.slice(),
-  pagesFromManifest: (m: { files?: string[] }) => m.files ?? [],
+vi.mock("../bookReader/loadConfig", () => ({
+  resolveConfigUrl: (url: string) => url,
+  createConfigLoader: () => async () => pages.value.slice(),
+  loadConfigPages: async () => pages.value.slice(),
+  loadConfig: async () => ({ pages: pages.value.map((file) => ({ file, words: [] })) }),
+  pagesFromConfig: (m: { pages?: { file: string }[] }) => (m.pages ?? []).map((p) => p.file),
+  clearConfigCache: () => {},
 }));
 
 vi.mock("../bookReader/words", () => {
@@ -86,7 +89,7 @@ vi.mock("../bookReader/words", () => {
     loadWords: vi.fn().mockResolvedValue({
       designWidth: 1008,
       designHeight: 1792,
-      pages: {},
+      pages: [],
       languages: [{ code: "en", label: "EN" }],
       defaultLang: "en",
     }),

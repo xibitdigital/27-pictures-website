@@ -3,6 +3,7 @@
  * Caption overlays for ToonBook pages (Jax today; injectable sound + lang storage).
  */
 import { resolveAssetUrl } from "./assetUrl";
+import { loadConfig } from "./loadConfig";
 import type { LangCode, LangOption, SoundGate, WordEntry, WordOverlayOptions, WordsConfig } from "./types";
 
 /** Default localStorage key (legacy Jax). Override via WordOverlayOptions.langStorageKey. */
@@ -260,6 +261,7 @@ const DEFAULT_SOUND_GATE: SoundGate = {
 /** Play a word's SFX clip. Fresh Audio() per play so rapid re-triggers overlap. */
 function playSfx(url: string, sound: SoundGate): void {
   if (!sound.isEnabled()) {
+    // First blocked tap may show the enable prompt once; later taps stay quiet.
     sound.onBlockedPlay?.();
     return;
   }
@@ -483,7 +485,14 @@ export class WordOverlay {
   constructor(config: WordsConfig, options: WordOverlayOptions = {}) {
     this.designWidth = config.designWidth || 1008;
     this.designHeight = config.designHeight || 1792;
-    this.pages = config.pages || {};
+    // Normalize pages[] → map of 1-based page → words for fast lookup.
+    this.pages = {};
+    const list = Array.isArray(config.pages) ? config.pages : [];
+    for (let i = 0; i < list.length; i++) {
+      const entry = list[i];
+      const words = entry && Array.isArray(entry.words) ? entry.words : [];
+      this.pages[String(i + 1)] = words;
+    }
     this.languages = config.languages || [
       { code: "en", label: "EN" },
       { code: "it", label: "IT" },
@@ -728,28 +737,29 @@ export class WordOverlay {
 }
 
 /**
- * Resolve word SFX paths through VITE_ASSET_BASE so captions play from R2/CDN
- * when configured (relative paths stay relative when base is empty).
+ * Resolve page image + word SFX paths through VITE_ASSET_BASE so assets load
+ * from R2/CDN when configured (relative paths stay relative when base is empty).
  */
 export function resolveWordsAssets(config: WordsConfig, pageDir?: string): WordsConfig {
-  if (!config?.pages) return config;
-  const pages: WordsConfig["pages"] = {};
-  for (const [key, entries] of Object.entries(config.pages)) {
-    if (!Array.isArray(entries)) {
-      pages[key] = entries;
-      continue;
-    }
-    pages[key] = entries.map((w) => {
-      if (!w || typeof w.audio !== "string" || !w.audio.trim()) return w;
-      return { ...w, audio: resolveAssetUrl(w.audio.trim(), pageDir) };
-    });
-  }
+  if (!Array.isArray(config?.pages)) return config;
+  const pages = config.pages.map((page) => {
+    const file = page?.file && typeof page.file === "string" ? resolveAssetUrl(page.file.trim(), pageDir) : page?.file;
+    const words = Array.isArray(page?.words)
+      ? page.words.map((w) => {
+          if (!w || typeof w.audio !== "string" || !w.audio.trim()) return w;
+          return { ...w, audio: resolveAssetUrl(w.audio.trim(), pageDir) };
+        })
+      : page?.words;
+    return { ...page, file, words };
+  });
   return { ...config, pages };
 }
 
-export async function loadWords(url?: string, pageDir?: string): Promise<WordsConfig> {
-  const res = await fetch(url || "words.json", { cache: "no-cache" });
-  if (!res.ok) throw new Error(`words.json ${res.status}`);
-  const config = (await res.json()) as WordsConfig;
+/**
+ * Load toon config.json and resolve caption SFX paths.
+ * Shares fetch cache with the page loader (`loadConfig`) when the same URL is used.
+ */
+export async function loadWords(url: string, pageDir?: string): Promise<WordsConfig> {
+  const config = await loadConfig(url);
   return resolveWordsAssets(config, pageDir);
 }

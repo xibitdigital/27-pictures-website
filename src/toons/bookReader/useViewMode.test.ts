@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { defineComponent, nextTick, ref } from "vue";
 import { mount } from "@vue/test-utils";
 import { useViewMode, prefersMobileScroll, MOBILE_MAX_WIDTH } from "./useViewMode";
+import { clearConfigCache } from "./loadConfig";
 
 /** Run a composable inside a real component setup() so onMounted is valid. */
 function withSetup<T>(factory: () => T): T {
@@ -62,41 +63,43 @@ describe("useViewMode", () => {
   });
 
   afterEach(() => {
+    clearConfigCache();
     vi.unstubAllGlobals();
     document.body.className = "";
   });
 
-  it("loads pages from manifest files list", async () => {
+  it("loads pages from config page file list", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({
-          files: ["assets/a.jpg", "assets/b.jpg", "assets/c.jpg"],
+          pages: [
+            { file: "assets/a.jpg", words: [] },
+            { file: "assets/b.jpg", words: [] },
+            { file: "assets/c.jpg", words: [] },
+          ],
         }),
       })
     );
 
-    const vm = withSetup(() => useViewMode({ mobileDefault: false }));
-    await vm.loadPages("manifest.json");
+    const vm = withSetup(() => useViewMode({ mobileDefault: false, configUrl: "config.json" }));
+    await vm.loadPages("config.json");
     expect(vm.pages.value).toEqual(["assets/a.jpg", "assets/b.jpg", "assets/c.jpg"]);
   });
 
-  it("builds pages from pattern when files missing", async () => {
+  it("loads empty list when config has no pages", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => ({
-          pages: 3,
-          pattern: "assets/{n}.jpg",
-        }),
+        json: async () => ({ pages: [] }),
       })
     );
 
-    const vm = withSetup(() => useViewMode({ mobileDefault: false }));
+    const vm = withSetup(() => useViewMode({ mobileDefault: false, configUrl: "config.json" }));
     await vm.loadPages();
-    expect(vm.pages.value).toEqual(["assets/1.jpg", "assets/2.jpg", "assets/3.jpg"]);
+    expect(vm.pages.value).toEqual([]);
   });
 
   it("toggles body.view-vertical and fires callbacks", async () => {
@@ -109,13 +112,14 @@ describe("useViewMode", () => {
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => ({ files: ["a.jpg"] }),
+        json: async () => ({ pages: [{ file: "a.jpg", words: [] }] }),
       })
     );
 
     const vm = withSetup(() =>
       useViewMode({
         mobileDefault: false,
+        configUrl: "config.json",
         reader,
         onEnterScroll,
         onEnterBook,
@@ -140,10 +144,10 @@ describe("useViewMode", () => {
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => ({ files: ["a.jpg"] }),
+        json: async () => ({ pages: [{ file: "a.jpg", words: [] }] }),
       })
     );
-    const vm = withSetup(() => useViewMode({ mobileDefault: false }));
+    const vm = withSetup(() => useViewMode({ mobileDefault: false, configUrl: "config.json" }));
     expect(vm.isVertical.value).toBe(false);
     await vm.toggle();
     expect(vm.isVertical.value).toBe(true);

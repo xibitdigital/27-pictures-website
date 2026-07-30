@@ -25,7 +25,18 @@ export { default as BackCoverLink } from "./BackCoverLink.vue";
 export { default as ToonReaderShell } from "./ToonReaderShell.vue";
 export { default as VerticalStrip } from "./VerticalStrip.vue";
 export { useViewMode, prefersMobileScroll, MOBILE_MAX_WIDTH } from "./useViewMode";
-export { loadManifest, createManifestLoader, pagesFromManifest } from "./loadManifest";
+export {
+  loadConfig,
+  loadConfigPages,
+  createConfigLoader,
+  pagesFromConfig,
+  resolveConfigUrl,
+  clearConfigCache,
+  // deprecated aliases
+  loadManifest,
+  createManifestLoader,
+  pagesFromManifest,
+} from "./loadConfig";
 export { getAssetBase, resolveAssetUrl, resolvePageUrls, toSitePath } from "./assetUrl";
 
 // Chrome

@@ -38,79 +38,43 @@ describe("useSoundGate", () => {
     expect(onChange).toHaveBeenCalledWith(false);
   });
 
-  it("prompts once when SFX is blocked", () => {
+  it("shows enable popup when caption is tapped while sound is off", () => {
     const { api: g } = withSetup(() => useSoundGate());
 
+    expect(g.enabled.value).toBe(false);
+    g.gate.onBlockedPlay?.();
+    expect(g.promptVisible.value).toBe(true);
+    expect(g.enabled.value).toBe(false);
+
+    g.dismissPrompt();
+    expect(g.promptVisible.value).toBe(false);
+
+    // Bubble tap while still muted opens the popup again
     g.gate.onBlockedPlay?.();
     expect(g.promptVisible.value).toBe(true);
 
-    g.dismissPrompt();
+    g.enableFromPrompt();
+    expect(g.enabled.value).toBe(true);
     expect(g.promptVisible.value).toBe(false);
 
-    // Second blocked play does not re-open after dismiss
+    // Sound on → no popup
     g.gate.onBlockedPlay?.();
     expect(g.promptVisible.value).toBe(false);
   });
 
-  it("onEngage prompts once (desktop + mobile page-turn / scroll)", () => {
-    const { api: g } = withSetup(() => useSoundGate({ promptOnScroll: false }));
+  it("onEngage does not open the sound prompt", () => {
+    const { api: g } = withSetup(() => useSoundGate());
 
     g.onEngage();
-    expect(g.promptVisible.value).toBe(true);
-
-    g.dismissPrompt();
-    g.onEngage();
-    expect(g.promptVisible.value).toBe(false);
-  });
-
-  it("does not prompt on engage when sound is already on", () => {
-    const { api: g } = withSetup(() => useSoundGate({ promptOnScroll: false }));
-    g.setEnabled(true);
-    g.onEngage();
-    expect(g.promptVisible.value).toBe(false);
-  });
-
-  it("shows prompt on first vertical scroll past threshold", () => {
-    const { api: g } = withSetup(() => useSoundGate({ promptOnScroll: true }));
-    document.body.classList.add("view-vertical");
-
-    Object.defineProperty(window, "scrollY", { configurable: true, value: 0 });
-    window.dispatchEvent(new Event("scroll"));
     expect(g.promptVisible.value).toBe(false);
 
-    Object.defineProperty(window, "scrollY", { configurable: true, value: 48 });
-    window.dispatchEvent(new Event("scroll"));
-    expect(g.promptVisible.value).toBe(true);
-
-    g.dismissPrompt();
-    Object.defineProperty(window, "scrollY", { configurable: true, value: 120 });
-    window.dispatchEvent(new Event("scroll"));
+    g.maybePrompt();
     expect(g.promptVisible.value).toBe(false);
-  });
-
-  it("ignores scroll when not in vertical view mode", () => {
-    const { api: g } = withSetup(() => useSoundGate({ promptOnScroll: true }));
-    Object.defineProperty(window, "scrollY", { configurable: true, value: 100 });
-    window.dispatchEvent(new Event("scroll"));
-    expect(g.promptVisible.value).toBe(false);
-  });
-
-  it("resets prompt gate when the composable remounts", () => {
-    const first = withSetup(() => useSoundGate({ promptOnScroll: false }));
-    first.api.onEngage();
-    expect(first.api.promptVisible.value).toBe(true);
-    first.api.dismissPrompt();
-    first.unmount();
-
-    const second = withSetup(() => useSoundGate({ promptOnScroll: false }));
-    second.api.onEngage();
-    expect(second.api.promptVisible.value).toBe(true);
-    second.unmount();
   });
 
   it("enableFromPrompt turns sound on and closes dialog", () => {
-    const { api: g } = withSetup(() => useSoundGate({ promptOnScroll: false }));
-    g.maybePrompt();
+    const { api: g } = withSetup(() => useSoundGate());
+    g.gate.onBlockedPlay?.();
     expect(g.promptVisible.value).toBe(true);
 
     g.enableFromPrompt();
@@ -126,7 +90,7 @@ describe("useSoundGate", () => {
       return this;
     } as unknown as typeof Audio);
 
-    const { api: g } = withSetup(() => useSoundGate({ confirmSrc: "assets/sfx/beep.mp3", promptOnScroll: false }));
+    const { api: g } = withSetup(() => useSoundGate({ confirmSrc: "assets/sfx/beep.mp3" }));
     g.setEnabled(true);
     expect(window.Audio).toHaveBeenCalledWith("assets/sfx/beep.mp3");
     expect(play).toHaveBeenCalled();

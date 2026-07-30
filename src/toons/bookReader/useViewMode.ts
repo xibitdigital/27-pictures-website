@@ -3,7 +3,7 @@
  * UI state only — the strip is a VerticalStrip component (no createElement).
  */
 import { onMounted, ref, type Ref } from "vue";
-import { loadManifest } from "./loadManifest";
+import { loadConfigPages } from "./loadConfig";
 
 export const MOBILE_MAX_WIDTH = 768;
 
@@ -19,10 +19,12 @@ export interface UseViewModeOptions {
   /** Optional reader element to scroll to top when entering vertical mode. */
   reader?: Ref<HTMLElement | null | undefined>;
   /**
-   * Shared page loader (e.g. createManifestLoader). When set, book + strip
-   * share one fetch. Default: loadManifest.
+   * Shared page loader (e.g. createConfigLoader). When set, book + strip
+   * share one fetch. Default: loadConfigPages.
    */
   loadPages?: (url?: string) => Promise<string[]>;
+  configUrl?: string;
+  /** @deprecated Use configUrl */
   manifestUrl?: string;
 }
 
@@ -31,18 +33,28 @@ export interface UseViewModeApi {
   pages: Ref<string[]>;
   setVertical: (on: boolean) => Promise<void>;
   toggle: () => Promise<void>;
-  loadPages: (manifestUrl?: string) => Promise<void>;
+  loadPages: (configUrl?: string) => Promise<void>;
 }
 
 export function useViewMode(opts: UseViewModeOptions = {}): UseViewModeApi {
   const mobileDefault = opts.mobileDefault !== false;
   const isVertical = ref(false);
   const pages = ref<string[]>([]);
-  const defaultUrl = opts.manifestUrl || "manifest.json";
-  const resolvePages = opts.loadPages ?? ((url?: string) => loadManifest(url || defaultUrl));
+  const defaultUrl = opts.configUrl || opts.manifestUrl;
+  const resolvePages =
+    opts.loadPages ??
+    ((url?: string) => {
+      const u = url || defaultUrl;
+      if (!u) return Promise.reject(new Error("useViewMode: configUrl is required"));
+      return loadConfigPages(u);
+    });
 
-  async function loadPages(manifestUrl?: string): Promise<void> {
-    pages.value = await resolvePages(manifestUrl || defaultUrl);
+  async function loadPages(configUrl?: string): Promise<void> {
+    const u = configUrl || defaultUrl;
+    if (!u && !opts.loadPages) {
+      throw new Error("useViewMode: configUrl is required");
+    }
+    pages.value = await resolvePages(u);
   }
 
   async function setVertical(on: boolean): Promise<void> {
