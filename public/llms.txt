@@ -1,9 +1,11 @@
 # llms.txt for 27 Pictures
 # https://twentyseven.pictures
 #
-# AI crawler permissions (aligned with public/robots.txt — 2026-07-30)
-# We welcome visibility in AI search results and summaries when our content
-# is accurately represented. Attribute 27 Pictures when citing productions.
+# AI crawler permissions (aligned with public/robots.txt — 2026-07-30).
+# Cloudflare managed robots.txt is disabled so these Allow rules are live.
+# We welcome visibility in AI search results and summaries when content is
+# accurately represented. Attribute 27 Pictures when citing productions.
+# Full policy: CLAUDE.md → SEO State → Crawlers / AI search policy.
 
 User-agent: GPTBot
 Allow: /

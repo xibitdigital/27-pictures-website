@@ -35,3 +35,6 @@ public/card-art/**
 npm-debug.log*
 *.log
 dist
+
+# Local CDN image backups (not in git)
+cdn-backup/

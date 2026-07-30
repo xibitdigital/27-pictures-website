@@ -2,10 +2,11 @@
 # https://twentyseven.pictures
 #
 # Policy: allow search indexing and AI *search / citation* crawlers.
-# Aggressive bulk-training scrapers stay blocked.
-# If Cloudflare "AI Crawl Control" / managed robots still prepends
-# Disallow for these bots, turn that off in the CF dashboard or the
-# managed block wins for many crawlers.
+# Aggressive bulk scrapers (Bytespider, CCBot) stay blocked.
+# Keep Cloudflare "managed robots.txt" / Block AI scrapers DISABLED for this
+# zone — managed Disallow: / for GPTBot/ClaudeBot conflicts with the rules
+# below. Keep AI Crawl Control per-bot Block toggles OFF for citation bots.
+# See CLAUDE.md → SEO State → Crawlers / AI search policy.
 
 # --- Default: open site, hide QR landing only ---
 User-agent: *
@@ -13,7 +14,7 @@ Allow: /
 Disallow: /qr.html
 Disallow: /qr
 
-# --- AI search / citation (explicit Allow; overrides managed Disallow when merged) ---
+# --- AI search / citation (explicit Allow) ---
 User-agent: GPTBot
 Allow: /
 

@@ -39,16 +39,18 @@ make deploy       # requires VITE_ASSET_BASE in .env
 │   └── test/                    # Vitest setup
 ├── public/                      # Static assets → site root in dist/
 │   ├── styles.css, logo.png, …
-│   ├── toons/                   # manifests, words.json, reader-shared.css
-│   │   └── **/assets/           # gitignored — binaries live on R2
+│   ├── toons/                   # reader-shared.css; assets gitignored (R2)
 │   ├── card-art/                # gitignored posters (R2)
+│   ├── robots.txt, llms.txt     # crawl policy (AI search allowed)
 │   ├── sitemap.xml, _headers, …
+├── content/toons/               # editable toon config.json (publish → R2)
+├── cdn-backup/                  # local R2 image backup (gitignored)
 ├── vite/plugins/cdnMedia.ts     # CDN gate + %VITE_ASSET_BASE% expand
-├── scripts/                     # QR, watermark, R2 upload, hash-assets
+├── scripts/                     # QR, watermark, R2 upload, toon config
 ├── worker/                      # Contact form Worker
 ├── dist/                        # Production build (gitignored)
 ├── Makefile
-└── CLAUDE.md                    # Agent / contributor ops notes
+└── CLAUDE.md                    # Agent / contributor ops notes (incl. SEO)
 ```
 
 ## Environment
@@ -86,6 +88,14 @@ Toon plates, SFX, music, and experiment card art are **not in git**. Source of t
 - Static HTML uses `%VITE_ASSET_BASE%/card-art/…` (expanded at build)
 - Readers use `resolveAssetUrl()` + `asset-page-dir` on `ToonReaderShell`
 - Shared upload helpers: `scripts/lib/r2-media.js`
+- Optional local image backup (untracked): `cdn-backup/` (see `.gitignore`)
+
+## SEO / crawlers
+
+- `public/robots.txt` + `public/llms.txt` — allow search and AI *citation* crawlers; block Bytespider/CCBot and `/qr`
+- Cloudflare **managed robots.txt** must stay **disabled** (it used to inject `Disallow: /` for GPTBot/ClaudeBot)
+- AI Crawl Control per-bot **Block** toggles: leave **off** for citation bots
+- Details and IndexNow: `CLAUDE.md` → **SEO State**
 
 ```bash
 # One-time bucket + CORS

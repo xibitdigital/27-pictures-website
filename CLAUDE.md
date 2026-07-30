@@ -376,9 +376,36 @@ Do not commit the binary.
 - Page title: `27 Pictures | AI Horror Shorts & Cinematic Cosplay Production`
 - Meta description updated (matches YouTube channel description)
 - JSON-LD schema: Organization, WebSite, WebPage, CreativeWorkSeries, 6× VideoObject, 2× Service
+- Person schema: 3 founders (Sonia, Marco, Daniele Sangalli) with `jobTitle`/`description`/`worksFor`, linked from `Organization.founder`
 - Organization location: Switzerland & United Kingdom
 - IndexNow key deployed + submitted (`bdd5e80e21a8430d9316de0deacdb208`)
 - All VideoObject uploadDates and durations use real YouTube values
+- `public/llms.txt` — AI crawler allow-list + key pages (aligned with robots)
+- `public/robots.txt` — search + AI *citation* crawlers allowed; QR landing blocked
+
+### Crawlers / AI search policy (2026-07)
+
+**Intent:** maximize classic search + AI search / citation visibility. Block only aggressive bulk scrapers.
+
+| File | Role |
+|------|------|
+| `public/robots.txt` | Authoritative crawl rules shipped in `dist/` |
+| `public/llms.txt` | Human/AI policy note; must stay consistent with robots |
+| Cloudflare **AI Crawl Control** | Per-bot **Block** toggles (leave **off** for GPT/Claude/Google/Perplexity) |
+| Cloudflare **managed robots.txt** | **Must stay disabled** — when enabled it prepends `Disallow: /` for GPTBot, ClaudeBot, Google-Extended, etc. and conflicts with our Allow rules |
+
+**Allowed explicitly in robots:** GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-User, anthropic-ai, PerplexityBot, Google-Extended, Applebot-Extended, meta-externalagent (+ default `User-agent: * Allow: /`).
+
+**Disallowed:** Bytespider, CCBot, `/qr.html`, `/qr`.
+
+**Verify after CF changes:**
+
+```bash
+curl -sS https://twentyseven.pictures/robots.txt
+# Expect: no "# BEGIN Cloudflare Managed content", GPTBot/ClaudeBot → Allow: /
+```
+
+**Do not re-enable** Cloudflare “Block AI scrapers” / managed robots for this zone without updating both files and this section.
 
 ### Video ID → Title Map (as of 2026-05)
 | YouTube ID | Title | Duration | Upload |
@@ -391,9 +418,9 @@ Do not commit the binary.
 | `nuMPi_Rnxg0` | Cosplay showcase (unlisted) | — | — |
 
 ### Remaining TODOs
-- ~~Person schema~~ — done: 3 founders (Sonia, Marco, Daniele Sangalli) with `jobTitle`/`description`/`worksFor`, linked from `Organization.founder`
 - Update VideoObject entries when new Shorts are published
-- Submit new URLs to IndexNow after each deploy:
+- Add more indexable hub pages (series / cosplay) when ready — sitemap is still thin
+- Submit new URLs to IndexNow after each public URL change:
   ```bash
   curl -X POST "https://api.indexnow.org/indexnow" \
     -H "Content-Type: application/json" \
