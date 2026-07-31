@@ -64,19 +64,395 @@
     },
     {
       "file": "assets/c4f4d3acea3debe72330ce32a918f03e.jpg",
-      "words": []
+      "words": [
+        {
+          "x": 0.74,
+          "y": 0.16,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1.1,
+          "maxWidth": 0.36,
+          "text": {
+            "en": "No more hiding.",
+            "it": "Basta nascondersi.",
+            "de": "Kein Versteck mehr.",
+            "fr": "Plus de cachette."
+          },
+          "audio": "assets/sfx/6b14c0b40e53f7fe028c45268940156d.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.48,
+          "align": "center",
+          "size": 32,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "Come on…",
+            "it": "Dai…",
+            "de": "Komm schon…",
+            "fr": "Allez…"
+          },
+          "audio": "assets/sfx/3c6a460d7413bbdc911d251a3adf682a.mp3"
+        },
+        {
+          "x": 0.55,
+          "y": 0.72,
+          "align": "center",
+          "size": 34,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -6,
+          "scale": 1.2,
+          "maxWidth": 0.4,
+          "text": {
+            "en": "There you are.",
+            "it": "Eccoti.",
+            "de": "Da bist du.",
+            "fr": "Te voilà."
+          },
+          "audio": "assets/sfx/7b18268884c64e2eec83cdbc36bf0d22.mp3"
+        }
+      ]
     },
     {
       "file": "assets/c4b16515522a4aae08a711913429c1a2.jpg",
-      "words": []
+      "words": [
+        {
+          "x": 0.76,
+          "y": 0.18,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.1,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "Steady hands.",
+            "it": "Mani ferme.",
+            "de": "Ruhige Hände.",
+            "fr": "Mains stables."
+          },
+          "audio": "assets/sfx/58aa09458452a4f54c375b0793d3d1c3.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.52,
+          "align": "center",
+          "size": 36,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -5,
+          "scale": 1.25,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Loaded.",
+            "it": "Carica.",
+            "de": "Geladen.",
+            "fr": "Chargée."
+          },
+          "audio": "assets/sfx/bd1ae74e4673e5147fd033b038ef6699.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.82,
+          "align": "center",
+          "size": 40,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -10,
+          "scale": 1.35,
+          "maxWidth": 0.36,
+          "text": {
+            "en": "You're done.",
+            "it": "Sei finito.",
+            "de": "Du bist erledigt.",
+            "fr": "C'est fini."
+          },
+          "audio": "assets/sfx/74581dafe13139b784e315b18b6cb480.mp3"
+        }
+      ]
     },
     {
       "file": "assets/96108fa30f3a797290dddfbd8726bac5.jpg",
-      "words": []
+      "words": [
+        {
+          "x": 0.72,
+          "y": 0.14,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.1,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "Found you.",
+            "it": "Trovato.",
+            "de": "Gefunden.",
+            "fr": "Je t'ai trouvé."
+          },
+          "audio": "assets/sfx/ed91e85d5f512d1615c41fead8184e75.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.48,
+          "align": "center",
+          "size": 32,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.15,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "Breathe out.",
+            "it": "Espira.",
+            "de": "Ausatmen.",
+            "fr": "Expire."
+          },
+          "audio": "assets/sfx/f33953d9c75a49a7e42e7ada95911f85.mp3"
+        },
+        {
+          "x": 0.28,
+          "y": 0.78,
+          "align": "center",
+          "size": 36,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -8,
+          "scale": 1.3,
+          "maxWidth": 0.36,
+          "text": {
+            "en": "Lights out.",
+            "it": "Luci spente.",
+            "de": "Licht aus.",
+            "fr": "Lumières éteintes."
+          },
+          "audio": "assets/sfx/202f0b2145c1d26e192c0d4482bd94b5.mp3"
+        }
+      ]
     },
     {
       "file": "assets/d15e55b134e6039738c1da7bac34522b.jpg",
-      "words": []
+      "words": [
+        {
+          "x": 0.14,
+          "y": 0.12,
+          "align": "center",
+          "size": 52,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -18,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "BANG",
+            "it": "BANG",
+            "de": "BANG",
+            "fr": "BANG"
+          },
+          "audio": "assets/sfx/a3791c639af3b7d7549994d50c843105.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.22,
+          "align": "center",
+          "size": 34,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 6,
+          "scale": 1.2,
+          "maxWidth": 0.28,
+          "text": {
+            "en": "Paid.",
+            "it": "Pagato.",
+            "de": "Bezahlt.",
+            "fr": "Payé."
+          },
+          "audio": "assets/sfx/346ccac24bff2bf6cc7672dab9dbe746.mp3"
+        },
+        {
+          "x": 0.22,
+          "y": 0.55,
+          "align": "center",
+          "size": 48,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -10,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "THUD",
+            "it": "THUD",
+            "de": "THUD",
+            "fr": "THUD"
+          },
+          "audio": "assets/sfx/0cafb4a794cb2d50bba63b9ea5bb40bc.mp3"
+        },
+        {
+          "x": 0.74,
+          "y": 0.48,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.05,
+          "maxWidth": 0.38,
+          "text": {
+            "en": "Nothing personal.",
+            "it": "Niente di personale.",
+            "de": "Nichts Persönliches.",
+            "fr": "Rien de personnel."
+          },
+          "audio": "assets/sfx/056dc9fe0da410504c0ebc1fd58c09be.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.88,
+          "align": "center",
+          "size": 40,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 7,
+          "angle": 8,
+          "maxWidth": 0.28,
+          "text": {
+            "en": "DRIP",
+            "it": "DRIP",
+            "de": "DRIP",
+            "fr": "DRIP"
+          },
+          "audio": "assets/sfx/a4e3b2c3b8c64222a21bdb1e5d3cfcfc.mp3"
+        },
+        {
+          "x": 0.35,
+          "y": 0.78,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -5,
+          "scale": 1.05,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "Damn it…",
+            "it": "Dannazione…",
+            "de": "Verdammt…",
+            "fr": "Merde…"
+          },
+          "audio": "assets/sfx/38110fb34c94121ef49fb8c660a2e2d3.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/3e1aa41ac4b56309c61781548e7cfb9e.png",
+      "words": [
+        {
+          "x": 0.18,
+          "y": 0.08,
+          "align": "center",
+          "size": 48,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -14,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "BANG",
+            "it": "BANG",
+            "de": "BANG",
+            "fr": "BANG"
+          },
+          "audio": "assets/sfx/a3791c639af3b7d7549994d50c843105.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.2,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1.1,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "A shot.",
+            "it": "Uno sparo.",
+            "de": "Ein Schuss.",
+            "fr": "Un tir."
+          },
+          "audio": "assets/sfx/7fd973469847796da9046939123ad867.mp3"
+        },
+        {
+          "x": 0.72,
+          "y": 0.42,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.1,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "Face down.",
+            "it": "A terra.",
+            "de": "Gesicht nach unten.",
+            "fr": "Face contre terre."
+          },
+          "audio": "assets/sfx/9da242c83b8899e34e98052b1c9cbc1a.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.72,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.05,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "What is this?",
+            "it": "Che cos'è?",
+            "de": "Was ist das?",
+            "fr": "Qu'est-ce que c'est?"
+          },
+          "audio": "assets/sfx/30fcd638c704e5f869b28e86b43b2420.mp3"
+        },
+        {
+          "x": 0.28,
+          "y": 0.88,
+          "align": "center",
+          "size": 22,
+          "variant": "ai",
+          "color": "#f5f5f5",
+          "angle": -2,
+          "maxWidth": 0.42,
+          "bubble": {
+            "fill": "#0a0a0a",
+            "stroke": "#0a0a0a",
+            "strokeWidth": 2.2,
+            "tail": "none",
+            "scratches": 6,
+            "retrace": 2
+          },
+          "text": {
+            "en": "N› COMPOSITION:\nGERMANIUM +\nUNKNOWN MATERIAL",
+            "it": "N› COMPOSIZIONE:\nGERMANIO +\nMATERIALE SCONOSCIUTO",
+            "de": "N› ZUSAMMENSETZUNG:\nGERMANIUM +\nUNBEKANNTES MATERIAL",
+            "fr": "N› COMPOSITION:\nGERMANIUM +\nMATÉRIAU INCONNU"
+          },
+          "audio": "assets/sfx/165aec44845ba5257eb1dee0507b2f62.mp3"
+        }
+      ]
     }
   ]
 }
