@@ -35,15 +35,15 @@ make deploy       # requires VITE_ASSET_BASE in .env
 │   ├── site/                    # SiteNav, ContactForm, directives
 │   ├── toons/
 │   │   ├── bookReader/          # FlipFrame package
-│   │   ├── jax/ | erin/         # Toon apps + entries
+│   │   ├── jax/ | erin/ | nero/ # Toon apps + entries
 │   └── test/                    # Vitest setup
 ├── public/                      # Static assets → site root in dist/
 │   ├── styles.css, logo.png, …
 │   ├── toons/                   # reader-shared.css; assets gitignored (R2)
-│   ├── card-art/                # gitignored posters (R2)
+│   ├── card-art/                # gitignored posters (R2): erin, jax, nero
 │   ├── robots.txt, llms.txt     # crawl policy (AI search allowed)
 │   ├── sitemap.xml, _headers, …
-├── content/toons/               # editable toon config.json (publish → R2)
+├── content/toons/               # editable config.json (jax, erin, nero → R2)
 ├── cdn-backup/                  # local R2 image backup (gitignored)
 ├── vite/plugins/cdnMedia.ts     # CDN gate + %VITE_ASSET_BASE% expand
 ├── scripts/                     # QR, watermark, R2 upload, toon config
@@ -60,7 +60,7 @@ make deploy       # requires VITE_ASSET_BASE in .env
 | `VITE_ASSET_BASE` | **Yes** for build/deploy | R2/CDN origin (no trailing slash) |
 | `R2_BUCKET` | No (default `twentyseven-assets`) | Upload target |
 | `PREVIEW_USER` / `PREVIEW_PASS` | No | Basic auth for `make local` |
-| `ELEVENLABS_API_KEY` | For SFX scripts only | Jax audio generation |
+| `ELEVENLABS_API_KEY` | For SFX/voice scripts | Toon SFX + dialogue TTS |
 
 Copy `.env.example` → `.env`. Unit tests **force an empty** `VITE_ASSET_BASE` so they never depend on your local `.env`.
 
@@ -77,18 +77,33 @@ make deploy-cdn       # upload R2 media, then deploy
 make local            # serve dist/ with basic auth on 127.0.0.1
 make local-cdn        # CDN build + protected local serve
 make upload-assets    # sync public/toons + card-art → R2
-make add-image SRC=… TOON=jax [MANIFEST=1] [UPLOAD=1]
+make add-image SRC=… TOON=jax|erin|nero [CONFIG=1] [UPLOAD=1]
+```
+
+### Experiments (toons)
+
+| Toon | Path | Lab card |
+|------|------|----------|
+| Erin | `/toons/erin/` | Interactive reader |
+| Jax | `/toons/jax/` | Multilingual + sound |
+| Nero | `/toons/nero/` | Cyberpunk sicario |
+
+Edit captions in `content/toons/<toon>/config.json`, then:
+
+```bash
+npm run publish-toon-config -- --toon nero
 ```
 
 ## Media (R2)
 
 Toon plates, SFX, music, and experiment card art are **not in git**. Source of truth is R2.
 
-- Keys mirror site paths: `toons/jax/assets/<md5>.jpg`, `card-art/erin.jpg`
+- Keys mirror site paths: `toons/jax/assets/<md5>.jpg`, `toons/nero/assets/…`, `card-art/nero.jpg`
 - Static HTML uses `%VITE_ASSET_BASE%/card-art/…` (expanded at build)
 - Readers use `resolveAssetUrl()` + `asset-page-dir` on `ToonReaderShell`
 - Shared upload helpers: `scripts/lib/r2-media.js`
 - Optional local image backup (untracked): `cdn-backup/` (see `.gitignore`)
+- Full pull of lock keys: download via CDN base into `cdn-backup/` (see CLAUDE.md if scripting)
 
 ## SEO / crawlers
 
@@ -109,8 +124,8 @@ make deploy-cdn
 New page plate:
 
 ```bash
-make add-image SRC=~/Downloads/page.jpg TOON=jax MANIFEST=1 UPLOAD=1
-# commit only manifest/words changes — not the binary
+make add-image SRC=~/Downloads/page.jpg TOON=jax CONFIG=1 UPLOAD=1
+# commit content/toons/…/config.json + config-lock + r2-assets-lock — not binaries
 ```
 
 ## Contact form Worker

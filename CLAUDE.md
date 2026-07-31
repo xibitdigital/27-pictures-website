@@ -60,11 +60,12 @@ npm run format
 │   ├── experiments/         # Experiments lab
 │   ├── site/                # SiteNav, ContactForm, directives
 │   ├── toons/bookReader/    # FlipFrame package
-│   ├── toons/jax|erin/      # Toon apps
+│   ├── toons/jax|erin|nero/ # Toon apps
 │   └── test/setup.ts        # Vitest (forces empty VITE_ASSET_BASE)
+├── content/toons/           # Editable config.json per toon (publish → R2)
 ├── public/                  # Static → site root in dist/
 │   ├── styles.css, logo.png, the-red-smile.jpg, qr.html, …
-│   ├── toons/               # manifests, words.json, reader-shared.css
+│   ├── toons/               # reader-shared.css; assets on R2
 │   │   └── **/assets/       # gitignored (R2 only)
 │   ├── card-art/            # gitignored posters (R2)
 │   ├── sitemap.xml          # uses %VITE_ASSET_BASE% for card images
@@ -140,25 +141,25 @@ Local workflow for **new** plates:
 ### Adding a new toon page image
 
 Images are content-hashed (`md5.ext`) under `public/toons/<toon>/assets/` — same convention as
-existing Jax/Erin plates. Prefer the one-shot command (watermark + hash + place):
+Jax / Erin / Nero plates. Prefer the one-shot command (watermark + hash + R2):
 
 ```bash
-# Watermark + write public/toons/jax/assets/<md5>.jpg
+# Watermark + hash + optional local stage
 make add-image SRC=~/Downloads/page17.jpg TOON=jax
 
-# Also append manifest.json and upload to R2
-make add-image SRC=~/Downloads/page17.jpg TOON=jax MANIFEST=1 UPLOAD=1
+# Upload to R2 + append page to content/ config + publish hashed config
+make add-image SRC=~/Downloads/page17.jpg TOON=jax CONFIG=1 UPLOAD=1
 
-# npm equivalent
-npm run add-image -- ~/Downloads/page17.jpg --toon erin --manifest --upload
+# npm equivalent (toon: jax | erin | nero)
+npm run add-image -- ~/Downloads/page17.jpg --toon nero --config --upload
 ```
 
 What it does:
 
 1. Copies the source into a temp dir
 2. Bakes `twentyseven.pictures` (ImageMagick via `scripts/watermark-images.sh`) unless `--no-watermark`
-3. Renames by **md5 of the final bytes** → `public/toons/<toon>/assets/<md5>.jpg`
-4. `--manifest` — appends `"assets/<md5>.jpg"` to that toon’s `manifest.json` and sets `pages`
+3. Renames by **md5 of the final bytes** → `assets/<md5>.jpg` (CDN key `toons/<toon>/assets/…`)
+4. `--config` / `--manifest` — appends the page to `content/toons/<toon>/config.json` and publishes
 5. `--upload` — `wrangler r2 object put` + updates `scripts/r2-assets-lock.json`
 
 Batch watermark only (existing folder, no hash/rename):
@@ -248,24 +249,31 @@ npm run generate-qr
 # Output: ~/Downloads/27pictures-qr.pdf
 ```
 
-## Toon Reader (FlipFrame — Erin, Jax, …)
+## Toon Reader (FlipFrame — Erin, Jax, Nero, …)
 
 Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 
 | Path | Role |
 |------|------|
 | `src/toons/bookReader/` | FlipFrame package: engine, shell, chrome, captions, audio |
-| `src/toons/jax/` · `src/toons/erin/` | App entry + `ToonReaderShell` config |
-| `public/toons/<name>/manifest.json` | Page list (relative `assets/<md5>.jpg`) |
-| `public/toons/jax/words.json` | Captions + optional `"audio"` paths |
+| `src/toons/jax/` · `erin/` · `nero/` | App entry + `ToonReaderShell` config |
+| `content/toons/<name>/config.json` | **Edit here** — pages list, captions, audio paths |
+| `src/toons/config-lock.json` | Points prod at `config.<md5>.json` on R2 |
 | `public/toons/reader-shared.css` | Shared book chrome (all toons) |
 | `public/toons/**/assets/` | **Gitignored** — load via `VITE_ASSET_BASE` |
+
+| Toon | URL | Notes |
+|------|-----|--------|
+| Erin | `/toons/erin/` | Page-turner prototype |
+| Jax | `/toons/jax/` | Multilingual captions + SFX + music |
+| Nero | `/toons/nero/` | Cyberpunk sicario experiment (short) |
 
 Wire-up pattern:
 
 ```vue
 <ToonReaderShell
   alt-prefix="Jax"
+  :config-url="toonConfigUrl('jax')"
   asset-page-dir="/toons/jax/"
   front-cover-logo="/logosquare.png"
   :cover-texture="COVER_TEXTURE"
@@ -273,9 +281,16 @@ Wire-up pattern:
 />
 ```
 
-- **`asset-page-dir`** is required so relative manifest/SFX paths resolve on the CDN.
+- **`config-url`** — `toonConfigUrl("<toon>")` (dev → `content/`; prod → locked CDN hash).
+- **`asset-page-dir`** is required so relative plate/SFX paths resolve on the CDN.
 - Product attribution **“FlipFrame — by twentyseven.pictures”** lives in
   `FrontCoverInstructions.vue` (shared), not per-toon config.
+
+```bash
+# After editing content/toons/<toon>/config.json
+npm run publish-toon-config -- --toon jax   # or erin | nero
+# Deploy site so config-lock.json is live
+```
 
 ### What goes where (CSS)
 
@@ -297,23 +312,35 @@ npm run hash-assets   # also runs as part of npm run build
 
 Rewrites references under `src/**/*.html` (and legacy public HTML if present).
 
-## Jax Toon — SFX (ElevenLabs) + background music
+## Toon captions / SFX (ElevenLabs)
 
-Word overlays in `public/toons/jax/words.json` may include `"audio": "assets/sfx/<md5>.mp3"`.
-SFX/music files are content-hashed and live on **R2** (not in git). Always take the
-current path from `words.json`.
+Captions live in **`content/toons/<toon>/config.json`** under each page’s
+`words[]` (not legacy `public/toons/*/words.json`). Optional
+`"audio": "assets/sfx/<md5>.mp3"` is resolved via `asset-page-dir`.
 
-Playback is implemented in `src/toons/bookReader` caption code + Jax
-`useSoundGate` / sound toggle (user gesture required). Background track path is set
-in `JaxApp.vue` (`BG_MUSIC` via `resolveAssetUrl`).
+SFX/music binaries are content-hashed and live on **R2** (not in git).
+
+Playback is in `src/toons/bookReader` caption code. Jax also has
+`useSoundGate` / background music in `JaxApp.vue` (`BG_MUSIC`).
+
+**Bubble variants (word overlays):**
+
+| `variant` | Look | Use |
+|-----------|------|-----|
+| `bubble` | Organic speech balloon | Character dialogue |
+| `burst` | Spiky shout | Impact lines |
+| `ai` | Dark HUD + optional `N›` prefix | Nova / good system |
+| `badai` | Inverted light HUD + `!›` prefix | Hostile AI |
+| `credit` | Bangers, muted | End-card colophon |
 
 **Word-layer z-index matters**: `.nav-zone` (the full-height page-turn click
 areas) sits at `z-index: 30`. The word overlay layer must stay above it
-(`z-index: 35` in `words.js`) or nav-zone silently wins hit-testing and no
-hover/click ever reaches the word captions, regardless of `pointer-events` on
-the word itself — this was a real regression once, don't reintroduce it.
+(`z-index: 35` in `words.ts`) or nav-zone silently wins hit-testing and no
+hover/click ever reaches the word captions — this was a real regression once,
+don't reintroduce it. Bubbles (and any word with audio) must capture clicks
+(`pointer-events: auto` + `stopPropagation`).
 
-### Regenerating / adding SFX clips
+### Regenerating / adding SFX clips (Jax)
 
 1. `ELEVENLABS_API_KEY` lives in `.env` (gitignored, never commit it).
 2. Add/edit an entry in `scripts/jax-sfx-manifest.json` (`slug`, `prompt`,
@@ -328,34 +355,34 @@ the word itself — this was a real regression once, don't reintroduce it.
    writes `public/toons/jax/assets/sfx/<md5>.mp3`, and records `slug -> hash`
    in `scripts/jax-sfx-lock.json` so re-runs skip already-generated slugs
    (idempotent, avoids re-spending credits) unless `--force`. Prints the
-   exact `"audio": "assets/sfx/<hash>.mp3"` lines to paste into `words.json`
-   for anything new/changed.
-4. Update the matching word entry/entries in `words.json` (multiple entries
-   can share one clip, e.g. both `WHOOSH` instances point at the same hash).
+   exact `"audio": "assets/sfx/<hash>.mp3"` lines to paste into that toon’s
+   `content/toons/…/config.json`.
+4. Update the matching word entry/entries (multiple entries can share one clip).
 
 ### Generating a spoken voice line (dialogue, not onomatopoeia)
 
 Onomatopoeia (`CLANK`, `WHOOSH`, …) go through `generate-jax-sfx.py` (Sound
-Effects API — non-verbal). Actual dialogue captions (e.g. "Too slow, man!")
-should be a real spoken line instead, via Text-to-Speech:
+Effects API — non-verbal). Actual dialogue should be Text-to-Speech:
 
 1. Voices are locked by name in `scripts/jax-voices.json` (`name ->
-   voice_id`), so a character keeps the same voice across generations. To
-   add a new one: open the voice on
+   voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
+   `badai`, `nero`, `thedog`. To add a new one: open the voice on
    `elevenlabs.io/app/voice-library?voiceId=...`, copy the ID from the URL,
    add `"name": "voiceId"` to that file. (Listing/searching voices via
-   `GET /v1/voices` needs a separate `voices_read` scope that isn't exposed
-   as a toggle in the key-permission UI — grab the ID from the dashboard
-   URL instead of trying to list voices from a script.)
+   `GET /v1/voices` needs a separate `voices_read` scope — grab the ID from
+   the dashboard URL instead.)
 2. Run:
    ```bash
    set -a; source .env; set +a
    python3 scripts/generate-jax-voice.py "Too slow, man!" --voice jax
+   python3 scripts/generate-jax-voice.py "Contract closed." --voice thedog
    ```
-   Writes `public/toons/jax/assets/sfx/<md5>.mp3` and prints the
-   `"audio": "assets/sfx/<hash>.mp3"` line to paste into `words.json`.
-3. Delete the old hashed file for that entry if you're replacing a line —
-   these aren't tracked in the lockfile like SFX slugs are.
+   Writes under `public/toons/jax/assets/sfx/<md5>.mp3` by default and prints
+   the `"audio": "assets/sfx/<hash>.mp3"` line. For Nero, copy the file into
+   `public/toons/nero/assets/sfx/` (or re-upload under that key) so
+   `asset-page-dir` resolves on the CDN, then `npm run upload-assets`.
+3. Paste into `content/toons/<toon>/config.json`, then
+   `npm run publish-toon-config -- --toon <toon>`.
 
 ### Replacing the background track
 
