@@ -19,7 +19,7 @@ const { appendPageToReference, publishToonConfig } = require("./lib/toon-config"
 
 const WATERMARK = path.join(ROOT, "scripts", "watermark-images.sh");
 const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
-const DEFAULT_TOONS = new Set(["jax", "erin"]);
+const DEFAULT_TOONS = new Set(["jax", "erin", "nero"]);
 
 function parseArgs(argv) {
   const opts = {
@@ -63,7 +63,7 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log(`Usage: node scripts/add-toon-image.js <image> --toon <jax|erin> [options]
+  console.log(`Usage: node scripts/add-toon-image.js <image> --toon <jax|erin|nero> [options]
 
   --upload       Put on R2 (CDN). Does not leave a file under public/ unless --keep-local
   --keep-local   Also write public/toons/<toon>/assets/<md5>.ext (gitignored staging)

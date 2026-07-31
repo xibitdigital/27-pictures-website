@@ -37,4 +37,13 @@
     <loc>https://twentyseven.pictures/toons/jax/</loc>
     <lastmod>2026-07-27</lastmod>
   </url>
+  <url>
+    <loc>https://twentyseven.pictures/toons/nero/</loc>
+    <lastmod>2026-08-01</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/nero.jpg</image:loc>
+      <image:title>Nero interactive cyberpunk sicario toon — 27 Pictures Experiments</image:title>
+      <image:caption>Cover art for Nero, a cyberpunk sicario interactive toon prototype by 27 Pictures</image:caption>
+    </image:image>
+  </url>
 </urlset>

@@ -119,7 +119,7 @@ watermark: ## Bake site watermark (pass ARGS=…)
 	$(NPM) run watermark -- $(ARGS)
 
 .PHONY: add-image
-add-image: ## Watermark + hash toon image → R2 (SRC=… TOON=jax|erin [UPLOAD=1] [CONFIG=1] [KEEP_LOCAL=1])
+add-image: ## Watermark + hash toon image → R2 (SRC=… TOON=jax|erin|nero [UPLOAD=1] [CONFIG=1] [KEEP_LOCAL=1])
 	@test -n "$(SRC)" || (echo "Usage: make add-image SRC=path/to.jpg TOON=jax [UPLOAD=1] [CONFIG=1] [KEEP_LOCAL=1]" && exit 1)
 	@test -n "$(TOON)" || (echo "Usage: make add-image SRC=path/to.jpg TOON=jax [UPLOAD=1] [CONFIG=1] [KEEP_LOCAL=1]" && exit 1)
 	$(NPM) run add-image -- "$(SRC)" --toon "$(TOON)" \

@@ -31,4 +31,10 @@ describe("toon entry modules", () => {
     expect(createApp).toHaveBeenCalled();
     expect(mount).toHaveBeenCalledWith("#app");
   });
+
+  it("nero/main.ts mounts NeroApp on #app", async () => {
+    await import("./nero/main");
+    expect(createApp).toHaveBeenCalled();
+    expect(mount).toHaveBeenCalledWith("#app");
+  });
 });
