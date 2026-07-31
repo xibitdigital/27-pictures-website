@@ -160,36 +160,15 @@ describe("JaxApp", () => {
     vi.restoreAllMocks();
   });
 
-  it("mounts chrome: sound, scroll, music, back link", async () => {
+  it("mounts chrome: lang, scroll, music, back link (no SFX mute gate)", async () => {
     const wrapper = mountJax();
     await flushPromises();
 
     expect(wrapper.find(".toons-back").attributes("href")).toBe("/experiments/");
-    expect(wrapper.find('button[title="Enable sound effects"]').exists()).toBe(true);
+    expect(wrapper.find('button[title="Enable sound effects"]').exists()).toBe(false);
     expect(wrapper.find('button[title="Switch to vertical scroll view"]').exists()).toBe(true);
     expect(wrapper.find('button[title="Play music"]').exists()).toBe(true);
     expect(loadPages).toHaveBeenCalled();
-  });
-
-  it("toggles sound via shell.repaintCover (no window globals, no bookApi let)", async () => {
-    const playSpy = vi.spyOn(window.HTMLAudioElement.prototype, "play").mockResolvedValue(undefined);
-
-    const wrapper = mountJax();
-    await flushPromises();
-
-    expect((window as Window & { __jaxSoundEnabled?: boolean }).__jaxSoundEnabled).toBeUndefined();
-
-    await wrapper.find('button[title="Enable sound effects"]').trigger("click");
-    await nextTick();
-
-    expect(wrapper.find('button[title="Mute sound"]').exists()).toBe(true);
-    expect(wrapper.find('button[title="Mute sound"]').classes()).toContain("is-active");
-    expect(playSpy).toHaveBeenCalled();
-    expect(updateView).toHaveBeenCalledWith(false);
-
-    await wrapper.find('button[title="Mute sound"]').trigger("click");
-    await nextTick();
-    expect(wrapper.find('button[title="Enable sound effects"]').exists()).toBe(true);
   });
 
   it("toggles background music on and off", async () => {

@@ -5,7 +5,62 @@
   "pages": [
     {
       "file": "assets/6cf879b434ca81e4adf80fd367a40123.jpg",
-      "words": []
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.28,
+          "align": "center",
+          "size": 32,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.15,
+          "maxWidth": 0.36,
+          "text": {
+            "en": "Wrong alley.",
+            "it": "Vicolo sbagliato.",
+            "de": "Falsche Gasse.",
+            "fr": "Mauvaise ruelle."
+          },
+          "audio": "assets/sfx/1d280e95727138af95d24644d6e7a15b.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.48,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.1,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "I see you.",
+            "it": "Ti vedo.",
+            "de": "Ich sehe dich.",
+            "fr": "Je te vois."
+          },
+          "audio": "assets/sfx/f8e0c5c59087420c3393cc16e725404d.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.88,
+          "align": "center",
+          "size": 40,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -8,
+          "scale": 1.4,
+          "maxWidth": 0.38,
+          "text": {
+            "en": "Come on\nthen!",
+            "it": "Forza\nallora!",
+            "de": "Komm schon!",
+            "fr": "Allez\nvoyons!"
+          },
+          "audio": "assets/sfx/6380c12db8777ce04715f1fce22eba6c.mp3"
+        }
+      ]
     },
     {
       "file": "assets/c4f4d3acea3debe72330ce32a918f03e.jpg",

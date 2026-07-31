@@ -1033,8 +1033,89 @@ body.view-vertical.is-fullscreen .reader {
   color: var(--red-smile);
 }
 
+/* --------------------------------------------------------------------------
+   Word overlay / bubble chrome (all experiments)
+   Classes are still named .jax-word* for history; WordOverlay emits them for
+   every toon. Load Bangers + VT323 on the toon page when using captions.
+   -------------------------------------------------------------------------- */
+
+.jax-word-layer,
+.jax-word,
+.jax-word-text {
+  font-family: "Bangers", cursive;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+/* Base placement/rotation comes from --jax-transform (set inline per word);
+   kept out of the `transform` shorthand itself so the hover rule below can
+   append scale() without clobbering position. */
+.jax-word {
+  transform: var(--jax-transform);
+}
+
+.jax-word--sfx {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center;
+}
+
+.jax-word--sfx:hover {
+  transform: var(--jax-transform) scale(1.22);
+}
+
+/* Sketchy dialog bubble variant (also base for ai / badai / burst) */
+.jax-word--bubble {
+  display: inline-block;
+  position: absolute;
+  max-width: inherit;
+}
+
+.jax-word--bubble .jax-bubble-svg {
+  /* Slightly larger than the text box so the white fill always fully wraps
+     glyphs + padding. Tail coords sit outside viewBox. */
+  position: absolute;
+  z-index: 0;
+  overflow: visible;
+  pointer-events: none;
+  left: -0.35em;
+  top: -0.3em;
+  width: calc(100% + 0.7em);
+  height: calc(100% + 0.6em);
+}
+
+.jax-word--bubble[data-tail^="bottom"] .jax-bubble-svg {
+  height: calc(100% + 1.15em);
+}
+
+.jax-word--bubble[data-tail="left"] .jax-bubble-svg {
+  left: -0.95em;
+  width: calc(100% + 1.3em);
+}
+
+.jax-word--bubble[data-tail="right"] .jax-bubble-svg {
+  width: calc(100% + 1.3em);
+}
+
+.jax-word--bubble .jax-word-text {
+  position: relative;
+  z-index: 1;
+  display: block;
+  white-space: pre-line;
+  /* Keep multi-line comic caps from packing too tight in the fill */
+  line-height: 1.2;
+}
+
+/* Good AI HUD + hostile badai share monospace face; badai keeps dark ink via JS */
+.jax-word--ai .jax-word-text {
+  font-family: "VT323", monospace;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+
 /* Shared caption credit style (end cards, colophons).
-   Same face as AI HUD captions (Bangers) — quieter weight/tracking only. */
+   Same face as comic captions (Bangers) — quieter weight/tracking only. */
 .jax-word--credit,
 .jax-word--credit .jax-word-text {
   font-family: "Bangers", cursive !important;

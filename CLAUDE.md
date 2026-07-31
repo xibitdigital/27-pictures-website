@@ -259,7 +259,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | `src/toons/jax/` · `erin/` · `nero/` | App entry + `ToonReaderShell` config |
 | `content/toons/<name>/config.json` | **Edit here** — pages list, captions, audio paths |
 | `src/toons/config-lock.json` | Points prod at `config.<md5>.json` on R2 |
-| `public/toons/reader-shared.css` | Shared book chrome (all toons) |
+| `public/toons/reader-shared.css` | Shared book chrome + word/bubble CSS (all toons) |
 | `public/toons/**/assets/` | **Gitignored** — load via `VITE_ASSET_BASE` |
 
 | Toon | URL | Notes |
@@ -299,7 +299,9 @@ A toon entry’s own `<style>` should contain **only**:
 1. Book-aspect tokens (`--book-width`, `--book-height`, `--page-bg`, …) + fullscreen/single-page overrides.
 2. Genuinely unique extras (e.g. Jax language switcher / sound chrome).
 
-Everything shared belongs in `public/toons/reader-shared.css`.
+Everything shared belongs in `public/toons/reader-shared.css` — including
+`.jax-word*` / bubble SVG chrome (class names are historical; used by every
+toon). Caption pages should load **Bangers** + **VT323** from Google Fonts.
 
 ### Cache-busting shared CSS (`?v=<hash>`)
 
@@ -321,7 +323,9 @@ Captions live in **`content/toons/<toon>/config.json`** under each page’s
 SFX/music binaries are content-hashed and live on **R2** (not in git).
 
 Playback is in `src/toons/bookReader` caption code. Jax also has
-`useSoundGate` / background music in `JaxApp.vue` (`BG_MUSIC`).
+Caption SFX play on tap (no mute gate). Background music toggle lives in
+`JaxApp.vue` (`BG_MUSIC`). Shared `useSoundGate` remains available for other
+toons that want an opt-in SFX prompt.
 
 **Bubble variants (word overlays):**
 
