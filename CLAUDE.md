@@ -297,7 +297,7 @@ npm run publish-toon-config -- --toon jax   # or erin | nero
 A toon entry’s own `<style>` should contain **only**:
 
 1. Book-aspect tokens (`--book-width`, `--book-height`, `--page-bg`, …) + fullscreen/single-page overrides.
-2. Genuinely unique extras (e.g. Jax language switcher / sound chrome).
+2. Genuinely unique extras (e.g. Jax language switcher / music chrome).
 
 Everything shared belongs in `public/toons/reader-shared.css` — including
 `.jax-word*` / bubble SVG chrome (class names are historical; used by every
@@ -322,10 +322,10 @@ Captions live in **`content/toons/<toon>/config.json`** under each page’s
 
 SFX/music binaries are content-hashed and live on **R2** (not in git).
 
-Playback is in `src/toons/bookReader` caption code. Jax also has
-Caption SFX play on tap (no mute gate). Background music toggle lives in
-`JaxApp.vue` (`BG_MUSIC`). Shared `useSoundGate` remains available for other
-toons that want an opt-in SFX prompt.
+Playback is in `src/toons/bookReader` caption code. Caption SFX play on tap
+(no mute gate). Background music toggle lives in `JaxApp.vue` (`BG_MUSIC` via
+`resolveAssetUrl`). Shared `useSoundGate` remains available for other toons
+that want an opt-in SFX prompt.
 
 **Bubble variants (word overlays):**
 
