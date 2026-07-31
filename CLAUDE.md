@@ -282,7 +282,7 @@ Wire-up pattern:
 A toon entry’s own `<style>` should contain **only**:
 
 1. Book-aspect tokens (`--book-width`, `--book-height`, `--page-bg`, …) + fullscreen/single-page overrides.
-2. Genuinely unique extras (e.g. Jax language switcher / sound chrome).
+2. Genuinely unique extras (e.g. Jax language switcher / music chrome).
 
 Everything shared belongs in `public/toons/reader-shared.css`.
 
@@ -303,9 +303,9 @@ Word overlays in `public/toons/jax/words.json` may include `"audio": "assets/sfx
 SFX/music files are content-hashed and live on **R2** (not in git). Always take the
 current path from `words.json`.
 
-Playback is implemented in `src/toons/bookReader` caption code + Jax
-`useSoundGate` / sound toggle (user gesture required). Background track path is set
-in `JaxApp.vue` (`BG_MUSIC` via `resolveAssetUrl`).
+Caption SFX play on tap (no mute gate). Background music toggle lives in
+`JaxApp.vue` (`BG_MUSIC` via `resolveAssetUrl`). Shared `useSoundGate` remains
+available for other toons that want an opt-in SFX prompt.
 
 **Word-layer z-index matters**: `.nav-zone` (the full-height page-turn click
 areas) sits at `z-index: 30`. The word overlay layer must stay above it

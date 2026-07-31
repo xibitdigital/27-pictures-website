@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import { resolveAssetUrl } from "../bookReader/assetUrl";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
-import { useSoundGate } from "../bookReader/audio/useSoundGate";
 import { collectWordAudioUrls, preloadAudioUrls } from "../bookReader/audio/preloadAudio";
 import { resolveConfigUrl } from "../bookReader/loadConfig";
 import { WordOverlay, loadWords } from "../bookReader/words";
@@ -16,7 +14,6 @@ const ASSET_PAGE_DIR = "/toons/jax/";
 /** Content-hashed config from config-lock.json (changes when config bytes change). */
 const CONFIG_URL = toonConfigUrl("jax");
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
-const CONFIRM_SFX = resolveAssetUrl("assets/sfx/83f9d2254039840ee2c9c109bc8eb2fb.mp3", ASSET_PAGE_DIR);
 const BG_MUSIC = resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3");
 
 const shellRef = ref<ToonReaderShellExpose | null>(null);
@@ -26,26 +23,6 @@ const wordOverlay = ref<WordOverlay | null>(null);
 
 /** Bumps on every stop so an in-flight play() cannot restart audio after off. */
 let musicPlayGen = 0;
-
-const {
-  enabled: soundEnabled,
-  promptVisible: soundPromptVisible,
-  title: soundTitle,
-  label: soundLabel,
-  toggle: toggleSound,
-  dismissPrompt,
-  enableFromPrompt,
-  onEngage: onSoundEngage,
-  gate: soundGate,
-} = useSoundGate({
-  confirmSrc: CONFIRM_SFX,
-  // First scroll (vertical mode) or page turn — once per mount, desktop + mobile.
-  promptOnScroll: true,
-  onChange: () => {
-    // Re-paint front cover so the engine-built sound button matches state.
-    shellRef.value?.repaintCover();
-  },
-});
 
 const musicTitle = computed(() => (musicEnabled.value ? "Pause music" : "Play music"));
 const musicLabel = computed(() => (musicEnabled.value ? "Music on" : "Music"));
@@ -101,12 +78,6 @@ function onLangChange(): void {
 /** Stable options — shell owns page source and cover identity. */
 const bookOptions: ToonShellBookOptions = {
   coverSubtitle: "Cyberpunk Chronicles",
-  soundHint: "Turn the sound on",
-  getSoundEnabled: () => soundEnabled.value,
-  onSoundToggle: () => toggleSound(),
-  onPageTurn() {
-    onSoundEngage();
-  },
   onPagePaint(slot, pageNum) {
     wordOverlay.value?.render(slot, pageNum);
   },
@@ -116,9 +87,9 @@ const bookOptions: ToonShellBookOptions = {
   async beforeStart() {
     // Same resolved URL as ToonReaderShell → one shared config fetch.
     const wordsConfig = await loadWords(resolveConfigUrl(CONFIG_URL, ASSET_PAGE_DIR), ASSET_PAGE_DIR);
-    wordOverlay.value = new WordOverlay(wordsConfig, { sound: soundGate });
-    // Warm SFX + confirm beep in the background; don't block first paint.
-    void preloadAudioUrls([CONFIRM_SFX, ...collectWordAudioUrls(wordsConfig)]);
+    // Captions play on tap with no mute gate (DEFAULT_SOUND_GATE always on).
+    wordOverlay.value = new WordOverlay(wordsConfig);
+    void preloadAudioUrls(collectWordAudioUrls(wordsConfig));
     // Shell calls refreshCaptions after beforeStart.
   },
 };
@@ -158,82 +129,10 @@ onMounted(() => {
   >
     <template #overlays>
       <audio id="bgMusic" ref="bgMusicEl" :src="BG_MUSIC" loop preload="auto" aria-hidden="true" />
-
-      <TransitionRoot :show="soundPromptVisible" as="template">
-        <Dialog class="sound-prompt-dialog" as="div" @close="dismissPrompt">
-          <TransitionChild
-            as="template"
-            enter="sound-prompt-enter"
-            enter-from="sound-prompt-enter-from"
-            enter-to="sound-prompt-enter-to"
-            leave="sound-prompt-leave"
-            leave-from="sound-prompt-leave-from"
-            leave-to="sound-prompt-leave-to"
-          >
-            <div class="sound-prompt">
-              <DialogPanel class="sound-prompt__panel">
-                <svg
-                  class="sound-prompt__icon"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.75"
-                  aria-hidden="true"
-                >
-                  <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
-                  <path
-                    d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                <DialogTitle as="h2">Enable sound</DialogTitle>
-                <p>This comic has audio. Turn sound on to hear dialogue, onomatopoeia, and SFX.</p>
-                <div class="sound-prompt__actions">
-                  <button type="button" class="sound-prompt__btn sound-prompt__btn--primary" @click="enableFromPrompt">
-                    Enable sound
-                  </button>
-                  <button type="button" class="sound-prompt__btn" @click="dismissPrompt">Not now</button>
-                </div>
-              </DialogPanel>
-            </div>
-          </TransitionChild>
-        </Dialog>
-      </TransitionRoot>
     </template>
 
     <template #top-controls-start>
       <LangSwitcher :overlay="wordOverlay" @change="onLangChange" />
-      <button
-        type="button"
-        class="toon-fs-btn"
-        :class="{ 'is-active': soundEnabled }"
-        :aria-pressed="soundEnabled"
-        :title="soundTitle"
-        :aria-label="soundTitle"
-        @click="toggleSound"
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
-          <path
-            class="toon-fs-sound-waves"
-            d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <span class="toon-fs-label">{{ soundLabel }}</span>
-      </button>
     </template>
 
     <template #top-controls-mid>
