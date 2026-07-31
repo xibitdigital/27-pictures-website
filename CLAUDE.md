@@ -258,7 +258,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | `src/toons/jax/` · `src/toons/erin/` | App entry + `ToonReaderShell` config |
 | `public/toons/<name>/manifest.json` | Page list (relative `assets/<md5>.jpg`) |
 | `public/toons/jax/words.json` | Captions + optional `"audio"` paths |
-| `public/toons/reader-shared.css` | Shared book chrome (all toons) |
+| `public/toons/reader-shared.css` | Shared book chrome + word/bubble CSS (all toons) |
 | `public/toons/**/assets/` | **Gitignored** — load via `VITE_ASSET_BASE` |
 
 Wire-up pattern:
@@ -284,7 +284,9 @@ A toon entry’s own `<style>` should contain **only**:
 1. Book-aspect tokens (`--book-width`, `--book-height`, `--page-bg`, …) + fullscreen/single-page overrides.
 2. Genuinely unique extras (e.g. Jax language switcher / music chrome).
 
-Everything shared belongs in `public/toons/reader-shared.css`.
+Everything shared belongs in `public/toons/reader-shared.css` — including
+`.jax-word*` / bubble SVG chrome (class names are historical; used by every
+toon). Caption pages should load **Bangers** + **VT323** from Google Fonts.
 
 ### Cache-busting shared CSS (`?v=<hash>`)
 
