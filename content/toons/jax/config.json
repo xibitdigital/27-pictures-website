@@ -2090,9 +2090,9 @@
         },
         {
           "x": 0.5,
-          "y": 0.945,
+          "y": 0.935,
           "align": "center",
-          "size": 13,
+          "size": 23,
           "variant": "credit",
           "angle": 0,
           "maxWidth": 0.88,
