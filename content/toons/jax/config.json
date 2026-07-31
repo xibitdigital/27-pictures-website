@@ -2090,17 +2090,17 @@
         },
         {
           "x": 0.5,
-          "y": 0.93,
+          "y": 0.945,
           "align": "center",
-          "size": 28,
+          "size": 13,
           "variant": "credit",
           "angle": 0,
-          "maxWidth": 0.85,
+          "maxWidth": 0.88,
           "text": {
-            "en": "Story, sound & drawings by\n Marco Sangalli\nwith help from Grok Imagine & Elevenlabs",
-            "it": "Storia, suono e disegni di\n Marco Sangalli\ncon l'aiuto di Grok Imagine & Elevenlabs",
-            "de": "Story, Sound & Zeichnungen von\n Marco Sangalli\nmit Hilfe von Grok Imagine & Elevenlabs",
-            "fr": "Histoire, son et dessins par\n Marco Sangalli\navec l'aide de Grok Imagine & Elevenlabs"
+            "en": "Story, sound & drawings by\nMarco Sangalli\nwith help from Grok Imagine & Elevenlabs",
+            "it": "Storia, suono e disegni di\nMarco Sangalli\ncon l'aiuto di Grok Imagine & Elevenlabs",
+            "de": "Story, Sound & Zeichnungen von\nMarco Sangalli\nmit Hilfe von Grok Imagine & Elevenlabs",
+            "fr": "Histoire, son et dessins par\nMarco Sangalli\navec l'aide de Grok Imagine & Elevenlabs"
           }
         }
       ]
