@@ -1033,15 +1033,19 @@ body.view-vertical.is-fullscreen .reader {
   color: var(--red-smile);
 }
 
-/* Shared caption credit style (end cards, colophons) — quiet Inter, not
-   comic Bangers. Used by any toon word overlay with variant: "credit". */
+/* Shared caption credit style (end cards, colophons).
+   Same face as AI HUD captions (Bangers) — quieter weight/tracking only. */
 .jax-word--credit,
 .jax-word--credit .jax-word-text {
-  font-family: "Inter", sans-serif !important;
+  font-family: "Bangers", cursive !important;
   font-weight: 400 !important;
   text-transform: none !important;
-  letter-spacing: 0.06em;
-  line-height: 1.45;
+  letter-spacing: 0.06em !important;
+  line-height: 1.35 !important;
+  /* Readable on black end-card footers; avoid washed-out silver */
+  color: color-mix(in srgb, var(--text) 72%, transparent) !important;
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--bg-dark) 55%, transparent);
+  opacity: 1;
 }
 
 .back-cover-link {

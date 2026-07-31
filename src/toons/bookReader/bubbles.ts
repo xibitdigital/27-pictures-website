@@ -6,7 +6,7 @@
  * - box/clean — AI HUD / torn-paper panels
  * - star     — impact / shout burst
  *
- * Used by WordOverlay (`variant: "bubble" | "ai" | "burst"`).
+ * Used by WordOverlay (`variant: "bubble" | "ai" | "badai" | "burst"`).
  */
 // @ts-nocheck — matches words.ts imperative style
 
@@ -321,16 +321,22 @@ export function boxPathForShape(shape: string, seed?: number): string {
 /**
  * Resolve fill/stroke/tail/padding for a caption word + variant.
  * @param w WordEntry-like object
- * @param variant plain | bubble | ai | burst | credit
+ * @param variant plain | bubble | ai | badai | burst | credit
+ *
+ * Polarity (small but readable):
+ * - `ai`    — soft dark HUD (Nova / good system): fill = stroke, thin edge
+ * - `badai` — inverted + harsher (hostile): light fill, dark thick stroke, more scratches
  */
 export function resolveBubbleStyle(w: Record<string, unknown>, variant: string): BubbleStyle {
   const b = w.bubble && typeof w.bubble === "object" ? (w.bubble as Record<string, unknown>) : {};
   const isAi = variant === "ai";
+  const isBadai = variant === "badai";
+  const isHud = isAi || isBadai;
   const isBurst = variant === "burst";
   const shape = (
     (b.shape as string) ||
     (w.bubbleShape as string) ||
-    (isAi ? "box" : isBurst ? "star" : DEFAULT_ORGANIC_BUBBLE.shape)
+    (isHud ? "box" : isBurst ? "star" : DEFAULT_ORGANIC_BUBBLE.shape)
   )
     .toString()
     .toLowerCase();
@@ -340,22 +346,30 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
     fill:
       (b.fill as string) ||
       (w.bubbleFill as string) ||
-      (isAi ? "#0a0a0a" : isBurst ? "#ffffff" : DEFAULT_ORGANIC_BUBBLE.fill),
+      (isBadai ? "#f5f5f5" : isAi ? "#0a0a0a" : isBurst ? "#ffffff" : DEFAULT_ORGANIC_BUBBLE.fill),
     stroke:
       (b.stroke as string) ||
       (w.bubbleStroke as string) ||
-      (isAi ? "#0a0a0a" : isBurst ? "#111111" : DEFAULT_ORGANIC_BUBBLE.stroke),
+      // Nova: soft edge (stroke matches fill). Badai: hard dark outline.
+      (isBadai ? "#0a0a0a" : isAi ? "#0a0a0a" : isBurst ? "#111111" : DEFAULT_ORGANIC_BUBBLE.stroke),
     strokeWidth:
       b.strokeWidth != null
         ? Number(b.strokeWidth)
         : w.bubbleStrokeWidth != null
           ? Number(w.bubbleStrokeWidth)
-          : BUBBLE_STROKE_WIDTH,
-    tail: (b.tail as string) || (w.tail as string) || (isAi || isBurst ? "none" : DEFAULT_ORGANIC_BUBBLE.tail),
-    padX: b.padX != null ? Number(b.padX) : isAi ? 0.7 : isBurst ? 1.1 : DEFAULT_ORGANIC_BUBBLE.padX,
-    padY: b.padY != null ? Number(b.padY) : isAi ? 0.5 : isBurst ? 0.9 : DEFAULT_ORGANIC_BUBBLE.padY,
-    retrace: b.retrace != null ? Number(b.retrace) : isClean ? 0 : shape === "box" ? 2 : 0,
-    scratches: b.scratches != null ? Number(b.scratches) : isClean ? 0 : shape === "box" ? 10 : 0,
+          : isBadai
+            ? 4.5
+            : isAi
+              ? 2.2
+              : BUBBLE_STROKE_WIDTH,
+    tail: (b.tail as string) || (w.tail as string) || (isHud || isBurst ? "none" : DEFAULT_ORGANIC_BUBBLE.tail),
+    padX: b.padX != null ? Number(b.padX) : isHud ? 0.7 : isBurst ? 1.1 : DEFAULT_ORGANIC_BUBBLE.padX,
+    padY: b.padY != null ? Number(b.padY) : isHud ? 0.5 : isBurst ? 0.9 : DEFAULT_ORGANIC_BUBBLE.padY,
+    // Badai: extra retrace = harsher torn edge
+    retrace: b.retrace != null ? Number(b.retrace) : isClean ? 0 : isBadai ? 3 : shape === "box" ? 2 : 0,
+    // Badai: more perimeter scratches = corrupt HUD; Nova: slightly cleaner
+    scratches:
+      b.scratches != null ? Number(b.scratches) : isClean ? 0 : isBadai ? 16 : isAi ? 6 : shape === "box" ? 10 : 0,
   };
 }
 

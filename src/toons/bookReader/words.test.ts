@@ -186,6 +186,39 @@ describe("WordOverlay", () => {
     expect(slot.querySelector(".jax-word-layer")).toBeTruthy();
   });
 
+  it("bubble without audio still captures clicks (does not fall through to nav-zone)", () => {
+    const o = new WordOverlay({
+      ...sampleConfig,
+      pages: [
+        {
+          file: "assets/1.jpg",
+          words: [{ x: 0.72, y: 0.18, variant: "bubble", text: { en: "Where… am I?" } }],
+        },
+      ],
+    });
+
+    const slot = document.createElement("div");
+    document.body.appendChild(slot);
+    const img = document.createElement("img");
+    Object.defineProperty(img, "naturalWidth", { value: 100 });
+    Object.defineProperty(img, "naturalHeight", { value: 100 });
+    Object.defineProperty(img, "clientWidth", { value: 100 });
+    Object.defineProperty(img, "clientHeight", { value: 100 });
+    Object.defineProperty(img, "complete", { value: true });
+    slot.appendChild(img);
+
+    o.render(slot, 1);
+    const word = slot.querySelector(".jax-word--bubble") as HTMLElement;
+    expect(word).toBeTruthy();
+    expect(word.style.pointerEvents).toBe("auto");
+
+    const parentHandler = vi.fn();
+    slot.addEventListener("click", parentHandler);
+    word.click();
+    // stopPropagation on the word — parent/nav must not see the click
+    expect(parentHandler).not.toHaveBeenCalled();
+  });
+
   it("uses injected SoundGate — blocked tap prompts once, then plays when on", async () => {
     let enabled = false;
     const onBlockedPlay = vi.fn();

@@ -173,6 +173,8 @@ export interface WordEntry {
   bubbleStrokeWidth?: number;
   fontFamily?: string;
   audio?: string;
+  /** Playback gain 0–1 for `audio` (default 1). Louder needs a hotter source file. */
+  volume?: number;
   text?: WordTextMap | string;
 }
 

@@ -30,7 +30,7 @@ const DEFAULT_SOUND_GATE: SoundGate = {
 };
 
 /** Play a word's SFX clip. Fresh Audio() per play so rapid re-triggers overlap. */
-function playSfx(url: string, sound: SoundGate): void {
+function playSfx(url: string, sound: SoundGate, volume = 1): void {
   if (!sound.isEnabled()) {
     // First blocked tap may show the enable prompt once; later taps stay quiet.
     sound.onBlockedPlay?.();
@@ -38,6 +38,9 @@ function playSfx(url: string, sound: SoundGate): void {
   }
   try {
     const audio = new Audio(url);
+    // Clamp — HTMLAudioElement.volume is 0–1; use hotter source files for “louder”.
+    const v = Number(volume);
+    audio.volume = Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 1;
     audio.play().catch(() => {});
   } catch (_) {
     /* ignore */
@@ -46,6 +49,7 @@ function playSfx(url: string, sound: SoundGate): void {
 
 function resolveVariant(w) {
   const v = (w.variant || w.mode || "plain").toString().toLowerCase();
+  if (v === "badai" || v === "bad-ai" || v === "ai-inverted" || v === "ai-bad") return "badai";
   if (v === "ai" || v === "hud" || v === "terminal" || v === "caption") return "ai";
   if (v === "burst" || v === "spiky" || v === "star" || v === "shout") return "burst";
   if (v === "bubble" || v === "dialog" || v === "speech") return "bubble";
@@ -272,13 +276,20 @@ export class WordOverlay {
         const sizePx = (w.size != null ? Number(w.size) : 22) * designScale;
         const maxW = w.maxWidth != null ? (w.maxWidth > 1 ? w.maxWidth / this.designWidth : w.maxWidth) * 100 : null;
         const variant = resolveVariant(w);
-        const isBubble = variant === "bubble" || variant === "ai" || variant === "burst";
+        const isBubble = variant === "bubble" || variant === "ai" || variant === "badai" || variant === "burst";
         const isCredit = variant === "credit";
 
         const el = document.createElement("div");
         // Leading spaces on optional classes — never glue names together
         // (e.g. "jax-word--bubblejax-word--burst" broke burst/AI CSS).
-        const bubbleVariantClass = variant === "ai" ? " jax-word--ai" : variant === "burst" ? " jax-word--burst" : "";
+        const bubbleVariantClass =
+          variant === "badai"
+            ? " jax-word--ai jax-word--badai"
+            : variant === "ai"
+              ? " jax-word--ai"
+              : variant === "burst"
+                ? " jax-word--burst"
+                : "";
         el.className = [
           isBubble ? "jax-word jax-word--bubble" : "jax-word",
           bubbleVariantClass,
@@ -305,8 +316,8 @@ export class WordOverlay {
           el.appendChild(chrome);
           el.appendChild(textEl);
           el.dataset.tail = bubbleStyle.tail;
-          // Bubble text defaults to dark ink; AI caption boxes default to white
-          textEl.style.color = w.color || (variant === "ai" ? "#f5f5f5" : "#111111");
+          // Bubble text: organic/burst/badai = dark ink; good AI HUD = white
+          textEl.style.color = w.color || (variant === "ai" ? "#f5f5f5" : variant === "badai" ? "#0a0a0a" : "#111111");
           const padX = `${bubbleStyle.padX}em`;
           const padY = `${bubbleStyle.padY}em`;
           textEl.style.padding = `${padY} ${padX} ${
@@ -339,7 +350,13 @@ export class WordOverlay {
 
         const textAlign = align === "right" ? "right" : align === "left" ? "left" : "center";
 
-        const fontFamily = isCredit ? '"Inter", sans-serif' : w.fontFamily || this.fontFamily;
+        // Bubbles (and any word with SFX) must capture hits — the layer uses
+        // pointer-events:none so unhandled clicks fall through to .nav-zone
+        // (z-index 30, full-page turn areas) and flip the page.
+        const interactive = isBubble || !!w.audio;
+
+        // Credit uses the same face as AI/comic captions (toon fontFamily / Bangers).
+        const fontFamily = w.fontFamily || this.fontFamily;
         el.style.cssText = [
           "position:absolute",
           `left:${x * 100}%`,
@@ -350,16 +367,18 @@ export class WordOverlay {
           `--jax-transform:${transform.join(" ")}`,
           `font-family:${fontFamily}`,
           `font-size:${Math.max(10, sizePx)}px`,
-          isCredit ? "line-height:1.45" : "line-height:1.15",
+          isCredit ? "line-height:1.35" : "line-height:1.15",
           isCredit ? "font-weight:400" : "font-weight:700",
-          isBubble ? "" : `color:${w.color || "#fff"}`,
+          // Credit color is owned by .jax-word--credit CSS (end-card readable).
+          // Inline var(--silver) was too faint on black footers.
+          isBubble || isCredit ? "" : `color:${w.color || "#fff"}`,
           "white-space:pre-line",
           "text-align:" + textAlign,
           maxW != null ? `max-width:${maxW}%` : "",
           ...strokeCss,
           isCredit ? "letter-spacing:0.06em" : "letter-spacing:0.02em",
           isCredit ? "text-transform:none" : "",
-          w.audio ? "pointer-events:auto" : "",
+          interactive ? "pointer-events:auto" : "",
           w.audio ? "cursor:pointer" : "",
         ]
           .filter(Boolean)
@@ -369,16 +388,16 @@ export class WordOverlay {
           textEl.style.cssText = strokeCss.concat([`color:${w.color || "#fff"}`]).join(";");
         }
 
-        if (w.audio) {
+        if (interactive) {
           const url = w.audio;
           const sound = this.sound;
-          const play = (ev) => {
+          const vol = w.volume != null ? Number(w.volume) : 1;
+          // Always stopPropagation so .nav-zone (sibling under the spread)
+          // does not treat a bubble/SFX hit as a page turn.
+          el.addEventListener("click", (ev) => {
             ev.stopPropagation();
-            playSfx(url, sound);
-          };
-          // Tap/click only — hover playback fired SFX the reader never asked
-          // for (and on mobile it stole the audio channel from the music).
-          el.addEventListener("click", play);
+            if (url) playSfx(url, sound, vol);
+          });
         }
 
         layer.appendChild(el);
