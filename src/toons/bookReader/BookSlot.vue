@@ -64,15 +64,17 @@ function notifyPaint(): void {
 }
 
 onMounted(() => {
+  // First mount: wait one tick so the <img> exists under rootEl.
   void nextTick(notifyPaint);
 });
 
 watch(
   () => props.model,
   () => {
+    // Same-tick paint after Vue patches the slot — avoids a bare-page frame after flips.
     void nextTick(notifyPaint);
   },
-  { deep: true }
+  { deep: true, flush: "post" }
 );
 </script>
 
@@ -101,6 +103,7 @@ watch(
 
     <img
       v-if="model.kind === 'page'"
+      :key="`${model.pageNum}:${model.src}`"
       :src="model.src"
       :alt="`${altPrefix} — page ${model.pageNum}`"
       draggable="false"

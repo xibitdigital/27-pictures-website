@@ -6,6 +6,7 @@ import { reactive } from "vue";
 import { loadConfigPages } from "./loadConfig";
 import {
   indicatorText,
+  pageNumForSpread,
   pageSrcForSpread,
   prefersReduceMotion,
   prefersSinglePage,
@@ -177,15 +178,10 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     }
     state.isFlipping = false;
     syncChrome();
+    // Drop the leaf in the same tick as the late slot swap so caption paint
+    // (BookSlot → WordOverlay) lands with the revealed page, not a frame later.
+    state.flip = null;
     emit();
-
-    // Drop flip leaf after paint composites (double-rAF).
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        state.flip = null;
-        emit();
-      });
-    });
   }
 
   /** Called by FlipLeaf on animationend (or safety timeout inside engine). */
@@ -208,12 +204,12 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
 
     const goingNext = delta > 0;
     const cur = state.viewIndex;
-    const frontSrc = goingNext
-      ? pageSrcForSpread(state.pages, cur, "right")
-      : pageSrcForSpread(state.pages, cur, "left");
-    const backSrc = goingNext
-      ? pageSrcForSpread(state.pages, target, "left")
-      : pageSrcForSpread(state.pages, target, "right");
+    const frontSide: "left" | "right" = goingNext ? "right" : "left";
+    const backSide: "left" | "right" = goingNext ? "left" : "right";
+    const frontSrc = pageSrcForSpread(state.pages, cur, frontSide);
+    const backSrc = pageSrcForSpread(state.pages, target, backSide);
+    const frontNum = pageNumForSpread(state.pages, cur, frontSide);
+    const backNum = pageNumForSpread(state.pages, target, backSide);
     const earlySide: "left" | "right" = goingNext ? "right" : "left";
     const lateSide: "left" | "right" = goingNext ? "left" : "right";
     const earlyModel = slotForSpread(state.pages, ts, target, earlySide);
@@ -230,18 +226,18 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     ]);
     if (destroyed || !state.isFlipping) return;
 
-    // Early slot under the leaf.
+    // Early slot under the leaf (destination half revealed mid-turn).
     if (earlySide === "left") state.leftSlot = earlyModel;
     else state.rightSlot = earlyModel;
     pendingLate = { side: lateSide, model: lateModel };
     pendingFlipTarget = target;
 
     const frontFace = frontSrc
-      ? ({ kind: "page", src: frontSrc } as const)
-      : slotToFlipFace(slotForSpread(state.pages, ts, cur, goingNext ? "right" : "left"));
+      ? ({ kind: "page", src: frontSrc, pageNum: frontNum ?? 1 } as const)
+      : slotToFlipFace(slotForSpread(state.pages, ts, cur, frontSide));
     const backFace = backSrc
-      ? ({ kind: "page", src: backSrc } as const)
-      : slotToFlipFace(slotForSpread(state.pages, ts, target, goingNext ? "left" : "right"));
+      ? ({ kind: "page", src: backSrc, pageNum: backNum ?? 1 } as const)
+      : slotToFlipFace(slotForSpread(state.pages, ts, target, backSide));
 
     state.flip = {
       id: ++flipId,

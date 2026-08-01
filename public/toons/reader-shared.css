@@ -390,6 +390,12 @@ body.is-fullscreen .reader {
   pointer-events: none;
 }
 
+/* Hold page art until caption paint finishes (avoids bare-page flash after flips). */
+.page-slot.is-captions-pending > img:not(.cover-texture-img),
+.flip-face.is-captions-pending > img:not(.cover-texture-img) {
+  opacity: 0;
+}
+
 /* ── Flip overlay ── */
 .flip-page {
   position: absolute;
@@ -421,6 +427,8 @@ body.is-fullscreen .reader {
   backface-visibility: hidden;
   overflow: hidden;
   background: var(--page-bg);
+  /* Caption layer is position:absolute relative to this face */
+  isolation: isolate;
 }
 
 .flip-face img {

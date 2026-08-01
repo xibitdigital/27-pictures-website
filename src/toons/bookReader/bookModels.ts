@@ -9,7 +9,7 @@ export type SlotModel =
   | { kind: "cover" };
 
 export type FlipFaceModel =
-  | { kind: "page"; src: string }
+  | { kind: "page"; src: string; pageNum: number }
   | { kind: "front" }
   | { kind: "back" }
   | { kind: "cover" }
@@ -128,7 +128,7 @@ export function indicatorText(pages: string[], viewIndex: number, singlePage: bo
 }
 
 export function slotToFlipFace(slot: SlotModel): FlipFaceModel {
-  if (slot.kind === "page") return { kind: "page", src: slot.src };
+  if (slot.kind === "page") return { kind: "page", src: slot.src, pageNum: slot.pageNum };
   if (slot.kind === "front") return { kind: "front" };
   if (slot.kind === "back") return { kind: "back" };
   if (slot.kind === "cover") return { kind: "cover" };
@@ -150,5 +150,9 @@ export function preloadSrc(src: string | null | undefined): Promise<void> {
     img.onerror = fin;
     img.src = src;
     if (img.complete) fin();
+    // Prefer decode when available — settles layout-ready pixels sooner than load alone.
+    else if (typeof img.decode === "function") {
+      img.decode().then(fin).catch(fin);
+    }
   });
 }

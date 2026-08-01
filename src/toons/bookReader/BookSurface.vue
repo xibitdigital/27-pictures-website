@@ -97,6 +97,7 @@ function onTouchEnd(e: TouchEvent): void {
           :sound-enabled="soundEnabled"
           :back-href="backHref"
           :back-label="backLabel"
+          :on-page-paint="onPagePaint"
           @done="engine.onFlipComplete()"
           @sound-toggle="emit('soundToggle')"
         />

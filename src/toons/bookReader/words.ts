@@ -231,24 +231,47 @@ export class WordOverlay {
    */
   render(slot: HTMLElement | null, pageNum: number | null): void {
     if (!slot) return;
-    Array.from(slot.children).forEach((n) => {
-      if (n.classList?.contains("jax-word-layer")) n.remove();
-    });
 
-    if (pageNum == null) return;
-    const img = Array.from(slot.children).find((n): n is HTMLImageElement => n.tagName === "IMG");
-    if (!img) return;
+    const clearLayers = (): void => {
+      Array.from(slot.children).forEach((n) => {
+        if (n.classList?.contains("jax-word-layer")) n.remove();
+      });
+      slot.classList.remove("is-captions-pending");
+    };
+
+    if (pageNum == null) {
+      clearLayers();
+      return;
+    }
+
+    const img = Array.from(slot.children).find(
+      (n): n is HTMLImageElement => n.tagName === "IMG" && !n.classList.contains("cover-texture-img")
+    );
+    if (!img) {
+      clearLayers();
+      return;
+    }
 
     const words = this.wordsForPage(pageNum);
-    if (!words.length) return;
+    if (!words.length) {
+      clearLayers();
+      return;
+    }
 
-    const layer = document.createElement("div");
-    layer.className = "jax-word-layer";
-    layer.setAttribute("aria-hidden", "true");
-    slot.appendChild(layer);
+    // Hide the plate until captions are ready so flip settles don’t flash bare art.
+    slot.classList.add("is-captions-pending");
 
+    let painted = false;
     const paint = () => {
-      if (!img.isConnected || !layer.isConnected) return;
+      if (painted || !img.isConnected || !slot.isConnected) return;
+      // Need layout size — natural dims for contain box; fall back to client box.
+      if (!img.naturalWidth && !img.clientWidth) return;
+      painted = true;
+
+      const layer = document.createElement("div");
+      layer.className = "jax-word-layer";
+      layer.setAttribute("aria-hidden", "true");
+
       const box = imageContentBox(img);
       layer.style.cssText = [
         "position:absolute",
@@ -263,7 +286,6 @@ export class WordOverlay {
         "z-index:35",
       ].join(";");
 
-      layer.innerHTML = "";
       const designScale = box.width / this.designWidth;
 
       words.forEach((w, wordIndex) => {
@@ -402,16 +424,41 @@ export class WordOverlay {
 
         layer.appendChild(el);
       });
+
+      // Atomic swap: remove previous captions only when the new layer is ready.
+      Array.from(slot.children).forEach((n) => {
+        if (n.classList?.contains("jax-word-layer")) n.remove();
+      });
+      slot.appendChild(layer);
+      slot.classList.remove("is-captions-pending");
     };
 
-    if (img.complete && img.naturalWidth) paint();
-    else img.addEventListener("load", paint, { once: true });
+    const tryPaint = (): void => {
+      paint();
+    };
+
+    if (img.complete && (img.naturalWidth || img.clientWidth)) {
+      tryPaint();
+    } else {
+      img.addEventListener("load", tryPaint, { once: true });
+      if (typeof img.decode === "function") {
+        img
+          .decode()
+          .then(tryPaint)
+          .catch(() => {
+            /* load listener is the fallback */
+          });
+      }
+    }
 
     // Reposition on resize / layout changes
     if (typeof ResizeObserver !== "undefined") {
       const prev = this._observers.get(slot);
       if (prev) prev.disconnect();
-      const ro = new ResizeObserver(() => paint());
+      const ro = new ResizeObserver(() => {
+        painted = false;
+        tryPaint();
+      });
       ro.observe(slot);
       if (img) ro.observe(img);
       this._observers.set(slot, ro);
