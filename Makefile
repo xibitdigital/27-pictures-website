@@ -140,6 +140,10 @@ upload-assets: ## Sync public/toons + card-art → R2
 upload-assets-dry: ## Dry-run R2 media sync
 	$(NPM) run upload-assets:dry
 
+.PHONY: backup-cdn
+backup-cdn: ## Download CDN/R2 lock keys into cdn-backup/ (use ARGS=--images-only)
+	$(NPM) run backup-cdn -- $(ARGS)
+
 # ---------------------------------------------------------------------------
 # Deploy
 # ---------------------------------------------------------------------------
