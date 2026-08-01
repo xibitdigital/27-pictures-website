@@ -57,6 +57,7 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | 10 | Eve drops coat, glasses, leave | AI glasses tag faces & materials |
 | **11** | **Cybercab** | Eve hails driverless cab → both jump in → ECU faces inside |
 | **12** | **Cerberus club** | Drop-off → Eve distracts bouncer → Nero invites Eve in |
+| **13** | **Cerberus interior** | Floor crowd → bar / bartender → grand staircase |
 
 Asset for page 4: `assets/f6e5abea5751b52ecd7f6fc07c40dbb4.png` (diagonal interstitial).
 Asset for page 11: `assets/8c0cf8ac2ade39ab94d5754fb0381887.jpg`.
@@ -86,4 +87,5 @@ npm run upload-assets
 ```
 
 Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `left` | `right`
-Asset for page 12: `assets/ce7c53d6253dc4d615e3d87c623d2644.png`.
+Asset for page 12: `assets/48f2f01dc340005bfa85766a124865db.png`.
+Asset for page 13: `assets/bcc3f8280a10dba1266b449ca3c08988.jpg`.

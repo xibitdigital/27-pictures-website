@@ -1051,7 +1051,7 @@
       ]
     },
     {
-      "file": "assets/ce7c53d6253dc4d615e3d87c623d2644.png",
+      "file": "assets/48f2f01dc340005bfa85766a124865db.png",
       "words": [
         {
           "x": 0.22,
@@ -1078,7 +1078,7 @@
         },
         {
           "x": 0.6,
-          "y": 0.15,
+          "y": 0.165,
           "align": "center",
           "size": 24,
           "variant": "bubble",
@@ -1100,7 +1100,7 @@
           "audio": "assets/sfx/db38377b1853af6a372e6e04ba0e2a28.mp3"
         },
         {
-          "x": 0.14,
+          "x": 0.21,
           "y": 0.33,
           "align": "center",
           "size": 22,
@@ -1123,7 +1123,7 @@
           "audio": "assets/sfx/c1620ff5eefb8b757014ab164ca89a08.mp3"
         },
         {
-          "x": 0.1,
+          "x": 0.17,
           "y": 0.8,
           "align": "center",
           "size": 26,
@@ -1146,8 +1146,8 @@
           "audio": "assets/sfx/fdfa0b45fec21c4c7c6b8709d2deb17a.mp3"
         },
         {
-          "x": 0.36,
-          "y": 0.68,
+          "x": 0.27,
+          "y": 0.7,
           "align": "center",
           "size": 24,
           "variant": "bubble",
@@ -1190,6 +1190,172 @@
             "fr": "J'arrive."
           },
           "audio": "assets/sfx/26258e80fb4659fde45869d934a131cc.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/bcc3f8280a10dba1266b449ca3c08988.jpg",
+      "words": [
+        {
+          "x": 0.38,
+          "y": 0.08,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Stay close.",
+            "it": "Stammi vicino.",
+            "de": "Bleib nah.",
+            "fr": "Reste près."
+          },
+          "audio": "assets/sfx/da335f0b3b62f6f91f6620067afcb237.mp3"
+        },
+        {
+          "x": 0.62,
+          "y": 0.08,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Eyes open.",
+            "it": "Occhi aperti.",
+            "de": "Augen auf.",
+            "fr": "Yeux ouverts."
+          },
+          "audio": "assets/sfx/ea96eaf87603d48c91174078e559cfbb.mp3"
+        },
+        {
+          "x": 0.13,
+          "y": 0.395,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.0,
+          "maxWidth": 0.22,
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Chrome doesn't drink.",
+            "it": "Il cromo non beve.",
+            "de": "Chrom trinkt nicht.",
+            "fr": "Le chrome ne boit pas."
+          },
+          "audio": "assets/sfx/cf61cf2d96615d8ebc82b08c1b01b707.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.38,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1.0,
+          "maxWidth": 0.32,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Looking for\nsomeone.",
+            "it": "Cerco\nqualcuno.",
+            "de": "Suche\njemanden.",
+            "fr": "Je cherche\nquelqu'un."
+          },
+          "audio": "assets/sfx/7131d784b220ae5e55ee55b4e6f3647d.mp3"
+        },
+        {
+          "x": 0.48,
+          "y": 0.4,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Be careful.",
+            "it": "Attento.",
+            "de": "Vorsicht.",
+            "fr": "Prudence."
+          },
+          "audio": "assets/sfx/a15008b53f0b6ce0845f39a54093f779.mp3"
+        },
+        {
+          "x": 0.28,
+          "y": 0.7,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Upstairs.",
+            "it": "Di sopra.",
+            "de": "Nach oben.",
+            "fr": "À l'étage."
+          },
+          "audio": "assets/sfx/71a5b719e332b1c7c35bc98e0e61a4ac.mp3"
+        },
+        {
+          "x": 0.68,
+          "y": 0.7,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "After you.",
+            "it": "Prima tu.",
+            "de": "Nach dir.",
+            "fr": "Après toi."
+          },
+          "audio": "assets/sfx/31761be0e45236298574dbaa5a17e769.mp3"
         }
       ]
     }
