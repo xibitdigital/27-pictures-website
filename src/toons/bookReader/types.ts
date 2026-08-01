@@ -156,6 +156,8 @@ export interface WordBubbleStyle {
    * e.g. `0.8` = 80% white body.
    */
   opacity?: number;
+  /** Alias for strokeWidth (balloon outline thickness). */
+  strokeThickness?: number;
 }
 
 export interface WordEntry {

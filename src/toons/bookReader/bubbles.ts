@@ -363,13 +363,15 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
     strokeWidth:
       b.strokeWidth != null
         ? Number(b.strokeWidth)
-        : w.bubbleStrokeWidth != null
-          ? Number(w.bubbleStrokeWidth)
-          : isBadai
-            ? 4.5
-            : isAi
-              ? 2.2
-              : BUBBLE_STROKE_WIDTH,
+        : b.strokeThickness != null
+          ? Number(b.strokeThickness)
+          : w.bubbleStrokeWidth != null
+            ? Number(w.bubbleStrokeWidth)
+            : isBadai
+              ? 4.5
+              : isAi
+                ? 2.2
+                : BUBBLE_STROKE_WIDTH,
     tail: (b.tail as string) || (w.tail as string) || (isHud || isBurst ? "none" : DEFAULT_ORGANIC_BUBBLE.tail),
     padX: b.padX != null ? Number(b.padX) : isHud ? 0.7 : isBurst ? 1.1 : DEFAULT_ORGANIC_BUBBLE.padX,
     padY: b.padY != null ? Number(b.padY) : isHud ? 0.5 : isBurst ? 0.9 : DEFAULT_ORGANIC_BUBBLE.padY,
@@ -408,10 +410,26 @@ export function createBubbleChrome(seed: number, bubbleStyle: BubbleStyle, desig
     path.setAttribute("fill-opacity", String(Math.max(0, Math.min(1, fillOp))));
   }
   path.setAttribute("stroke", bubbleStyle.stroke);
-  const sw = Math.max(1.2, (bubbleStyle.strokeWidth || BUBBLE_STROKE_WIDTH) * Math.min(1.4, designScale * 1.1));
+  // Config strokeWidth is design-space weight (like caption size), not raw CSS px.
+  // With non-scaling-stroke we still convert via designScale so:
+  //   strokeWidth 5 @ ~0.55 scale ≈ 2.75px (original default look)
+  //   strokeWidth 8 ≈ 4.4px (clearly thicker)
+  // Do NOT map 1:1 to CSS px — that made strokeWidth:5 read as a heavy 5px rim.
+  // No artificial 1.4 cap (that used to crush 5 vs 6 to ~0.5px).
+  const configured =
+    bubbleStyle.strokeWidth != null && Number.isFinite(Number(bubbleStyle.strokeWidth))
+      ? Math.max(0.5, Number(bubbleStyle.strokeWidth))
+      : BUBBLE_STROKE_WIDTH;
+  const scale = Number.isFinite(designScale) && designScale > 0 ? designScale : 1;
+  const sw = Math.max(1, configured * scale);
   path.setAttribute("stroke-width", String(sw));
+  path.setAttribute("data-stroke-configured", String(configured));
+  path.setAttribute("data-stroke-px", String(sw));
   path.setAttribute("stroke-linejoin", "round");
   path.setAttribute("stroke-linecap", "round");
+  // Draw stroke first, then fill on top → only the outer half of the rim shows
+  // (inner half is covered by fill). Avoids a fat black band over semi-transparent body.
+  path.setAttribute("paint-order", "stroke fill");
   path.setAttribute("vector-effect", "non-scaling-stroke");
   svg.appendChild(path);
 
