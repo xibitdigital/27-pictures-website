@@ -14,7 +14,7 @@ Editable source of truth for toon page lists + captions. **Not deployed** with t
 |------|-----------|--------|
 | `erin` | `content/toons/erin/` | Interactive manga reader |
 | `jax` | `content/toons/jax/` | Multilingual captions, SFX, music, AI HUD bubbles |
-| `nero` | `content/toons/nero/` | Scotland Yard case: Nero, Eve, The Dog (see `nero/README.md`) |
+| `nero` | `content/toons/nero/` | Scotland Yard case: Nero / Eve / The Dog; `?page=N` deep-links; full manual in `nero/README.md` |
 
 ```bash
 # After editing config.json

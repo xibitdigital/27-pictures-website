@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
 import ToonReaderShell from "./ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "./types";
@@ -8,6 +8,7 @@ const updateView = vi.fn();
 const loadPages = vi.fn().mockResolvedValue(undefined);
 const isVertical = ref(false);
 const pages = ref<string[]>(["assets/1.jpg", "assets/2.jpg"]);
+const prefersSinglePageMock = vi.fn(() => false);
 
 let lastBookOpts: Record<string, unknown> | undefined;
 
@@ -79,6 +80,14 @@ vi.mock("./loadConfig", () => ({
   clearConfigCache: () => {},
 }));
 
+vi.mock("./bookModels", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./bookModels")>();
+  return {
+    ...actual,
+    prefersSinglePage: () => prefersSinglePageMock(),
+  };
+});
+
 describe("ToonReaderShell", () => {
   beforeEach(() => {
     isVertical.value = false;
@@ -86,11 +95,14 @@ describe("ToonReaderShell", () => {
     updateView.mockClear();
     loadPages.mockClear();
     lastBookOpts = undefined;
+    prefersSinglePageMock.mockReturnValue(false);
+    sessionStorage.clear();
   });
 
   afterEach(() => {
     document.body.innerHTML = "";
     document.body.className = "";
+    sessionStorage.clear();
   });
 
   function mountShell(bookOptions?: ToonShellBookOptions) {
@@ -109,11 +121,22 @@ describe("ToonReaderShell", () => {
           ReaderTopBar: {
             template: `<div class="top-bar-stub"><slot name="start" /><slot name="mid" /></div>`,
           },
-          BookSurface: { template: `<div class="book-surface-stub"></div>` },
+          BookSurface: {
+            props: ["coverTitle", "coverSubtitle", "coverSynopsis"],
+            template: `<div class="book-surface-stub" :data-synopsis="coverSynopsis || ''"></div>`,
+          },
           VerticalStrip: {
             props: ["pages", "altPrefix", "onPagePaint"],
             emits: ["ready"],
             template: `<div class="strip-stub"></div>`,
+          },
+          CoverGuideDialog: {
+            props: ["open", "title", "subtitle", "synopsis"],
+            emits: ["update:open"],
+            template: `<div v-if="open" class="cover-guide-stub" data-testid="cover-guide">
+              <span class="guide-title">{{ title }}</span>
+              <button type="button" class="guide-close-stub" @click="$emit('update:open', false)">close</button>
+            </div>`,
           },
         },
       },
@@ -170,5 +193,70 @@ describe("ToonReaderShell", () => {
 
     await (lastBookOpts?.beforeStart as () => Promise<void>)();
     expect(beforeStart).toHaveBeenCalled();
+  });
+
+  it("forwards coverSynopsis to the book surface", async () => {
+    const wrapper = mountShell({ coverSynopsis: "A rain-soaked city of wetwork." });
+    await flushPromises();
+    expect(wrapper.find(".book-surface-stub").attributes("data-synopsis")).toBe("A rain-soaked city of wetwork.");
+  });
+
+  it("shows Story toolbar button and auto-opens guide on mobile", async () => {
+    prefersSinglePageMock.mockReturnValue(true);
+    const wrapper = mountShell({
+      coverTitle: "Nero",
+      coverSynopsis: "Detective Nero hunts The Dog.",
+    });
+    await flushPromises();
+    await nextTick();
+
+    expect(wrapper.find(".cover-guide-toolbar-btn").exists()).toBe(true);
+    expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(true);
+    expect(wrapper.find(".guide-title").text()).toBe("Nero");
+  });
+
+  it("hides Story toolbar button on desktop book view", async () => {
+    prefersSinglePageMock.mockReturnValue(false);
+    isVertical.value = false;
+    const wrapper = mountShell();
+    await flushPromises();
+    await nextTick();
+
+    expect(wrapper.find(".cover-guide-toolbar-btn").exists()).toBe(false);
+    expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(false);
+  });
+
+  it("shows Story button in vertical scroll mode and reopens after close", async () => {
+    prefersSinglePageMock.mockReturnValue(false);
+    isVertical.value = true;
+    sessionStorage.setItem("flipframe-cover-guide:Test", "1");
+    const wrapper = mountShell({ coverTitle: "Nero" });
+    await flushPromises();
+    await nextTick();
+
+    // Seen this session — no auto-open
+    expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(false);
+    expect(wrapper.find(".cover-guide-toolbar-btn").exists()).toBe(true);
+
+    await wrapper.find(".cover-guide-toolbar-btn").trigger("click");
+    await nextTick();
+    expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(true);
+
+    await wrapper.find(".guide-close-stub").trigger("click");
+    await nextTick();
+    expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(false);
+    expect(sessionStorage.getItem("flipframe-cover-guide:Test")).toBe("1");
+  });
+
+  it("records session flag when guide is dismissed after auto-open", async () => {
+    prefersSinglePageMock.mockReturnValue(true);
+    const wrapper = mountShell({ coverTitle: "Nero" });
+    await flushPromises();
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(true);
+    await wrapper.find(".guide-close-stub").trigger("click");
+    await nextTick();
+    expect(sessionStorage.getItem("flipframe-cover-guide:Test")).toBe("1");
   });
 });

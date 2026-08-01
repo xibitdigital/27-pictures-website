@@ -181,6 +181,57 @@
       ]
     },
     {
+      "file": "assets/f6e5abea5751b52ecd7f6fc07c40dbb4.png",
+      "words": [
+        {
+          "x": 0.3,
+          "y": 0.15,
+          "align": "center",
+          "size": 72,
+          "variant": "credit",
+          "color": "#e8e8e8",
+          "maxWidth": 0.9,
+          "letterSpacing": 0.08,
+          "text": {
+            "en": "HOURS\nEARLIER",
+            "it": "ORE\nPRIMA",
+            "de": "STUNDEN\nZUVOR",
+            "fr": "DES HEURES\nPLUS T\u00d4T"
+          }
+        },
+        {
+          "x": 0.3,
+          "y": 0.26,
+          "align": "center",
+          "size": 28,
+          "variant": "credit",
+          "color": "#aaaaaa",
+          "maxWidth": 0.7,
+          "text": {
+            "en": "THE DOG",
+            "it": "THE DOG",
+            "de": "THE DOG",
+            "fr": "THE DOG"
+          }
+        },
+        {
+          "x": 0.3,
+          "y": 0.35,
+          "align": "center",
+          "size": 16,
+          "variant": "credit",
+          "color": "#777777",
+          "maxWidth": 0.72,
+          "text": {
+            "en": "Before Nero loads the gun,\na contract is already airborne.",
+            "it": "Prima che Nero carichi la pistola,\nun contratto \u00e8 gi\u00e0 in volo.",
+            "de": "Bevor Nero die Waffe l\u00e4dt,\nist ein Auftrag bereits unterwegs.",
+            "fr": "Avant que Nero charge l'arme,\nun contrat est d\u00e9j\u00e0 en l'air."
+          }
+        }
+      ]
+    },
+    {
       "file": "assets/96108fa30f3a797290dddfbd8726bac5.jpg",
       "words": [
         {
