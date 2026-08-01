@@ -716,22 +716,27 @@
           "audio": "assets/sfx/9e335afd4705b7d540a2618dcca00bf7.mp3"
         },
         {
-          "x": 0.86,
-          "y": 0.9,
+          "x": 0.88,
+          "y": 0.78,
           "align": "center",
-          "size": 26,
+          "size": 24,
           "variant": "bubble",
           "color": "#111111",
           "angle": 4,
           "scale": 1.1,
-          "maxWidth": 0.34,
+          "maxWidth": 0.28,
           "text": {
             "en": "Then we hunt denser\nghosts.",
             "it": "Allora cacciamo fantasmi\npi\u00f9 densi.",
             "de": "Dann jagen wir dichtere\nGeister.",
             "fr": "Alors on chasse des\nfantomes plus denses."
           },
-          "audio": "assets/sfx/54310827fb158f6f1e99c4d9586b2235.mp3"
+          "audio": "assets/sfx/54310827fb158f6f1e99c4d9586b2235.mp3",
+          "bubble": {
+            "tail": "left",
+            "padX": 1,
+            "padY": 1
+          }
         }
       ]
     }
