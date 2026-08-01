@@ -453,6 +453,65 @@
           "audio": "assets/sfx/165aec44845ba5257eb1dee0507b2f62.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/28d9bc5757ba0a476a9136b88b381176.png",
+      "words": [
+        {
+          "x": 0.72,
+          "y": 0.18,
+          "align": "center",
+          "size": 52,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": 12,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "DASH",
+            "it": "DASH",
+            "de": "DASH",
+            "fr": "DASH"
+          },
+          "audio": "assets/sfx/17ac29ef35976e67e6b3c7670120bdf7.mp3"
+        },
+        {
+          "x": 0.68,
+          "y": 0.51,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.1,
+          "maxWidth": 0.4,
+          "text": {
+            "en": "I'll ask Eve.",
+            "it": "Chiedo a Eve.",
+            "de": "Ich frage Eve.",
+            "fr": "Je vais demander à Eve."
+          },
+          "audio": "assets/sfx/47e8fa5f9d881d4dcd4f348364e4f623.mp3"
+        },
+        {
+          "x": 0.7,
+          "y": 0.69,
+          "align": "center",
+          "size": 18,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.15,
+          "maxWidth": 0.42,
+          "text": {
+            "en": "Good evening, gents.",
+            "it": "Buonasera, signori.",
+            "de": "Guten Abend, Herren.",
+            "fr": "Bonsoir, messieurs."
+          },
+          "audio": "assets/sfx/967a68961dba4e9a861dc4ad3d6a7534.mp3"
+        }
+      ]
     }
   ]
 }
