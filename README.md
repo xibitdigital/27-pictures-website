@@ -86,7 +86,7 @@ make add-image SRC=… TOON=jax|erin|nero [CONFIG=1] [UPLOAD=1]
 |------|------|----------|
 | Erin | `/toons/erin/` | Interactive reader |
 | Jax | `/toons/jax/` | Multilingual + sound |
-| Nero | `/toons/nero/` | Cyberpunk sicario |
+| Nero | `/toons/nero/` | Scotland Yard case (Nero / Eve / The Dog) |
 
 Edit captions in `content/toons/<toon>/config.json`, then:
 

@@ -15,6 +15,7 @@ const props = defineProps<{
   coverTexture?: string | null;
   coverTitle?: string;
   coverSubtitle?: string | null;
+  coverSynopsis?: string | null;
   frontCoverLogo?: string | null;
   soundHint?: string | null;
   soundEnabled?: boolean;
@@ -55,6 +56,7 @@ function onTouchEnd(e: TouchEvent): void {
           :cover-texture="coverTexture"
           :cover-title="coverTitle"
           :cover-subtitle="coverSubtitle"
+          :cover-synopsis="coverSynopsis"
           :front-cover-logo="frontCoverLogo"
           :sound-hint="soundHint"
           :sound-enabled="soundEnabled"
@@ -71,6 +73,7 @@ function onTouchEnd(e: TouchEvent): void {
           :cover-texture="coverTexture"
           :cover-title="coverTitle"
           :cover-subtitle="coverSubtitle"
+          :cover-synopsis="coverSynopsis"
           :front-cover-logo="frontCoverLogo"
           :sound-hint="soundHint"
           :sound-enabled="soundEnabled"
@@ -87,6 +90,7 @@ function onTouchEnd(e: TouchEvent): void {
           :cover-texture="coverTexture"
           :cover-title="coverTitle"
           :cover-subtitle="coverSubtitle"
+          :cover-synopsis="coverSynopsis"
           :front-cover-logo="frontCoverLogo"
           :alt-prefix="altPrefix"
           :sound-hint="soundHint"

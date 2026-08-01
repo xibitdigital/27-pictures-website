@@ -596,22 +596,27 @@
           "audio": "assets/sfx/3d96922315e19633e4c66df736b1100c.mp3"
         },
         {
-          "x": 0.88,
-          "y": 0.9,
+          "x": 0.86,
+          "y": 0.78,
           "align": "center",
-          "size": 26,
+          "size": 24,
           "variant": "bubble",
           "color": "#111111",
-          "angle": -5,
+          "angle": -4,
           "scale": 1.1,
-          "maxWidth": 0.32,
+          "maxWidth": 0.28,
           "text": {
             "en": "Nearly invisible\nbrain tech.",
             "it": "Tech cerebrale\nquasi invisibile.",
             "de": "Fast unsichtbare\nHirntechnik.",
             "fr": "Tech c\u00e9r\u00e9brale\nquasi invisible."
           },
-          "audio": "assets/sfx/70d46ff8b0bcce7250cc7d11d37a010b.mp3"
+          "audio": "assets/sfx/70d46ff8b0bcce7250cc7d11d37a010b.mp3",
+          "bubble": {
+            "tail": "left",
+            "padX": 1,
+            "padY": 1
+          }
         }
       ]
     },

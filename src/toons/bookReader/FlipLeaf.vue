@@ -14,6 +14,7 @@ const props = withDefaults(
     coverTexture?: string | null;
     coverTitle?: string;
     coverSubtitle?: string | null;
+    coverSynopsis?: string | null;
     frontCoverLogo?: string | null;
     altPrefix?: string;
     soundHint?: string | null;
@@ -25,6 +26,7 @@ const props = withDefaults(
     coverTexture: null,
     coverTitle: "",
     coverSubtitle: "Experiment",
+    coverSynopsis: null,
     frontCoverLogo: null,
     altPrefix: "Page",
     soundHint: null,
@@ -87,6 +89,7 @@ function faceIsCover(face: FlipFaceModel): boolean {
         v-else-if="flip.front.kind === 'front'"
         :title="coverTitle"
         :subtitle="coverSubtitle"
+        :synopsis="coverSynopsis"
         :logo="frontCoverLogo"
         :alt-prefix="altPrefix"
         :sound-hint="soundHint"
@@ -117,6 +120,7 @@ function faceIsCover(face: FlipFaceModel): boolean {
         v-else-if="flip.back.kind === 'front'"
         :title="coverTitle"
         :subtitle="coverSubtitle"
+        :synopsis="coverSynopsis"
         :logo="frontCoverLogo"
         :alt-prefix="altPrefix"
         :sound-hint="soundHint"

@@ -8,6 +8,8 @@ const props = withDefaults(
     subtitle?: string | null;
     logo?: string | null;
     altPrefix?: string;
+    /** Cast / story synopsis (front-cover manual). Newlines preserved. */
+    synopsis?: string | null;
     soundHint?: string | null;
     soundEnabled?: boolean;
   }>(),
@@ -16,6 +18,7 @@ const props = withDefaults(
     subtitle: "Experiment",
     logo: null,
     altPrefix: "Page",
+    synopsis: null,
     soundHint: null,
     soundEnabled: false,
   }
@@ -36,43 +39,55 @@ const soundLabel = computed(() => (props.soundEnabled ? "Sound on" : props.sound
     <h1 v-if="title" class="front-cover-title">{{ title }}</h1>
     <p v-if="subtitle" class="front-cover-subtitle">{{ subtitle }}</p>
 
-    <div class="front-cover-brand">
-      <p class="front-cover-brand-line">
-        <span class="front-cover-brand-word">FlipFrame</span>
-        <button
-          type="button"
-          class="front-cover-brand-info"
-          title="About FlipFrame"
-          aria-label="About FlipFrame"
-          @click.stop="aboutOpen = true"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 11v5" stroke-linecap="round" />
-            <circle cx="12" cy="8" r="0.75" fill="currentColor" stroke="none" />
-          </svg>
-        </button>
-      </p>
-      <p class="front-cover-brand-by">by twentyseven.pictures</p>
-    </div>
+    <template v-if="synopsis">
+      <div class="front-cover-separator front-cover-separator--before-story" role="separator" aria-hidden="true"></div>
+      <section class="front-cover-story" aria-label="The story">
+        <h2 class="front-cover-cast-heading">The story</h2>
+        <div class="front-cover-synopsis">{{ synopsis }}</div>
+      </section>
+      <div class="front-cover-separator front-cover-separator--after-story" role="separator" aria-hidden="true"></div>
+    </template>
 
-    <img v-if="logo" class="front-cover-logo" :src="logo" :alt="`${altPrefix} logo`" />
-    <h2>How to read</h2>
-    <ul>
-      <li>Click or tap the right page<span>next page</span></li>
-      <li>Click or tap the left page<span>previous page</span></li>
-      <li>Use the arrow buttons below<span>← previous · → next</span></li>
-      <li>Keyboard arrow keys<span>← previous · → next</span></li>
-      <li>Swipe on touch devices<span>left = next · right = previous</span></li>
-    </ul>
+    <!-- Product chrome + how-to — stays below the scrollable story -->
+    <div class="front-cover-manual">
+      <div class="front-cover-brand">
+        <p class="front-cover-brand-line">
+          <span class="front-cover-brand-word">FlipFrame</span>
+          <button
+            type="button"
+            class="front-cover-brand-info"
+            title="About FlipFrame"
+            aria-label="About FlipFrame"
+            @click.stop="aboutOpen = true"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v5" stroke-linecap="round" />
+              <circle cx="12" cy="8" r="0.75" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+        </p>
+        <p class="front-cover-brand-by">by twentyseven.pictures</p>
+      </div>
+
+      <img v-if="logo" class="front-cover-logo" :src="logo" :alt="`${altPrefix} logo`" />
+      <h2 class="front-cover-howto-heading">How to read</h2>
+      <ul>
+        <li>Tap right page<span>next</span></li>
+        <li>Tap left page<span>previous</span></li>
+        <li>Arrow buttons<span>← · →</span></li>
+        <li>Keyboard<span>← · →</span></li>
+        <li>Swipe<span>left next · right previous</span></li>
+      </ul>
+    </div>
 
     <template v-if="soundHint">
       <button

@@ -266,7 +266,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 |------|-----|--------|
 | Erin | `/toons/erin/` | Page-turner prototype |
 | Jax | `/toons/jax/` | Multilingual captions + SFX + music |
-| Nero | `/toons/nero/` | Cyberpunk sicario experiment (short) |
+| Nero | `/toons/nero/` | Scotland Yard case — Nero, Eve, The Dog (see `content/toons/nero/README.md`) |
 
 Wire-up pattern:
 

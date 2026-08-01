@@ -3,15 +3,17 @@
  * Shared FlipFrame chrome for Erin, Jax, and future toons.
  * Owns view-mode, config load, strip, captions, and the Vue book surface.
  */
-import { computed, nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
+import CoverGuideDialog from "./CoverGuideDialog.vue";
 import { ReaderTopBar } from "./chrome";
 import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
 import { parsePageQuery } from "./pageQuery";
 import VerticalStrip from "./VerticalStrip.vue";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
+import { prefersSinglePage } from "./bookModels";
 
 const props = withDefaults(
   defineProps<{
@@ -144,11 +146,78 @@ function scrollVerticalToQueryPage(): void {
 
 const soundEnabled = computed(() => !!props.bookOptions?.getSoundEnabled?.());
 
+/** Mobile / narrow UI — cover guide is a recallable popup (no full cover leaf in scroll mode). */
+const isMobileUi = ref(false);
+const guideOpen = ref(false);
+
+const coverTitle = computed(() => props.bookOptions?.coverTitle ?? props.altPrefix);
+const coverSubtitle = computed(() => props.bookOptions?.coverSubtitle ?? "Experiment");
+const coverSynopsis = computed(() => props.bookOptions?.coverSynopsis ?? null);
+
+function guideStorageKey(): string {
+  return `flipframe-cover-guide:${props.altPrefix}`;
+}
+
+function openGuide(): void {
+  guideOpen.value = true;
+}
+
+function onGuideOpenUpdate(open: boolean): void {
+  guideOpen.value = open;
+  if (!open && typeof sessionStorage !== "undefined") {
+    try {
+      sessionStorage.setItem(guideStorageKey(), "1");
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+function syncMobileUi(): void {
+  isMobileUi.value = prefersSinglePage();
+}
+
+let mobileMq: MediaQueryList | null = null;
+function onMobileMq(): void {
+  syncMobileUi();
+}
+
 onMounted(() => {
+  syncMobileUi();
+  if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
+    mobileMq = window.matchMedia("(max-width: 768px)");
+    if (typeof mobileMq.addEventListener === "function") {
+      mobileMq.addEventListener("change", onMobileMq);
+    } else {
+      mobileMq.addListener(onMobileMq);
+    }
+  }
+
+  // Auto-show story/guide once per session on mobile (or vertical scroll).
+  void nextTick(() => {
+    if (!isMobileUi.value && !viewMode.isVertical.value) return;
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem(guideStorageKey()) === "1";
+    } catch {
+      seen = false;
+    }
+    if (!seen) guideOpen.value = true;
+  });
+
   void viewMode.loadPages().then(async () => {
     await nextTick();
     scrollVerticalToQueryPage();
   });
+});
+
+onUnmounted(() => {
+  if (!mobileMq) return;
+  if (typeof mobileMq.removeEventListener === "function") {
+    mobileMq.removeEventListener("change", onMobileMq);
+  } else if (mobileMq.removeListener) {
+    mobileMq.removeListener(onMobileMq);
+  }
 });
 
 defineExpose<ToonReaderShellExpose>({
@@ -182,19 +251,50 @@ defineExpose<ToonReaderShellExpose>({
   >
     <template #start>
       <slot name="top-controls-start" />
+      <button
+        v-if="isMobileUi || viewMode.isVertical.value"
+        type="button"
+        class="toon-fs-btn cover-guide-toolbar-btn"
+        title="Story & guide"
+        aria-label="Story and guide"
+        @click="openGuide"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M4 5h16v14H4z" stroke-linejoin="round" />
+          <path d="M8 9h8M8 13h5" stroke-linecap="round" />
+        </svg>
+        <span class="toon-fs-label">Story</span>
+      </button>
     </template>
     <template #mid>
       <slot name="top-controls-mid" />
     </template>
   </ReaderTopBar>
 
+  <CoverGuideDialog
+    :open="guideOpen"
+    :title="coverTitle"
+    :subtitle="coverSubtitle"
+    :synopsis="coverSynopsis"
+    @update:open="onGuideOpenUpdate"
+  />
+
   <main class="reader" id="main-content" ref="readerEl" role="main">
     <BookSurface
       :engine="engine"
       :alt-prefix="altPrefix"
       :cover-texture="coverTexture"
-      :cover-title="bookOptions?.coverTitle ?? altPrefix"
-      :cover-subtitle="bookOptions?.coverSubtitle ?? 'Experiment'"
+      :cover-title="coverTitle"
+      :cover-subtitle="coverSubtitle"
+      :cover-synopsis="coverSynopsis"
       :front-cover-logo="frontCoverLogo"
       :sound-hint="bookOptions?.soundHint"
       :sound-enabled="soundEnabled"

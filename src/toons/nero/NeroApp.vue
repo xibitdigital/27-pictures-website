@@ -15,9 +15,14 @@ const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b
 
 const wordOverlay = ref<WordOverlay | null>(null);
 
+/** Front-cover “manual” blurb — full cast/synopsis in content/toons/nero/README.md */
+const COVER_SYNOPSIS =
+  "In a rain-soaked city of wetwork and wet labs, detective Nero — ex-military, one hand lost to a terrorist attack and rebuilt in steel — follows a trail of blood and crystal. His ally Eve, a Scotland Yard forensic specialist whose AI-enhanced glasses can tag faces and materials, reads the evidence he cannot. Between them stands The Dog: a cold-blooded sicario who never misses. Together Nero and Eve must crack the crystal case, hunt The Dog through the rooftops and the lab, and uncover who hired the bullet — and what near-invisible implant tech it was meant to protect.";
+
 /** Stable options — shell owns page source; we paint captions like Jax. */
 const bookOptions: ToonShellBookOptions = {
-  coverSubtitle: "Sicario",
+  coverSubtitle: "Scotland Yard case",
+  coverSynopsis: COVER_SYNOPSIS,
   onPagePaint(slot, pageNum) {
     wordOverlay.value?.render(slot, pageNum);
   },

@@ -17,6 +17,7 @@ const props = withDefaults(
     coverTexture?: string | null;
     coverTitle?: string;
     coverSubtitle?: string | null;
+    coverSynopsis?: string | null;
     frontCoverLogo?: string | null;
     soundHint?: string | null;
     soundEnabled?: boolean;
@@ -31,6 +32,7 @@ const props = withDefaults(
     coverTexture: null,
     coverTitle: "",
     coverSubtitle: "Experiment",
+    coverSynopsis: null,
     frontCoverLogo: null,
     soundHint: null,
     soundEnabled: false,
@@ -108,6 +110,7 @@ watch(
       v-else-if="model.kind === 'front'"
       :title="coverTitle"
       :subtitle="coverSubtitle"
+      :synopsis="coverSynopsis"
       :logo="frontCoverLogo"
       :alt-prefix="altPrefix"
       :sound-hint="soundHint"

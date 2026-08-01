@@ -37,6 +37,11 @@ export interface ToonBookOptions {
   frontCoverLogo?: string | null;
   coverTitle?: string;
   coverSubtitle?: string | null;
+  /**
+   * Optional cast / synopsis block on the front cover (after “How to read”).
+   * Plain text; use `\n\n` for paragraphs. Toon-specific “manual” blurb.
+   */
+  coverSynopsis?: string | null;
   soundHint?: string | null;
   /** Current sound state when (re)painting the front-cover sound button. */
   getSoundEnabled?: () => boolean;
