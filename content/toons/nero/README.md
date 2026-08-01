@@ -21,6 +21,8 @@ The same prose is on the **front cover** (`coverSynopsis` in `NeroApp.vue`) and 
 
 Detective and **ex-military**. Lost a hand in a **terrorist attack** and now fights with a heavy **prosthetic cyber arm**. Hard-edged, street-smart, still capable of being surprised (and charmed). Carries the case: the crystal, the crime scene, the hunt.
 
+- **Cyber limb: the RIGHT arm/hand only** — segmented steel plating, exposed cable bundles, articulated metal fingers. The left arm is ordinary flesh. Never both, never the left.
+- Pin this side in every image prompt.
 - Voice lock: `nero` in `scripts/jax-voices.json`
 
 ### Eve
