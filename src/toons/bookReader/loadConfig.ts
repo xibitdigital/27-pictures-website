@@ -49,21 +49,30 @@ export function pagesFromConfig(config: ToonConfig, opts?: ConfigLoadOptions): s
   return resolvePageUrls(raw, opts?.pageDir);
 }
 
-/** Fetch config.json (cached per resolved URL). */
+/**
+ * Fetch config.json.
+ * - Local `__dev/toon-config/*`: always re-fetch (no long-lived memory cache) so
+ *   appending pages under content/toons appears after reload — not a stale map.
+ * - Hashed CDN URLs: cache per URL so shell + captions share one fetch.
+ */
 export async function loadConfig(url: string): Promise<ToonConfig> {
   const key = url;
-  const hit = resolved.get(key);
-  if (hit) return hit;
+  const isDevLocal = isDevToonConfigUrl(url);
+
+  if (!isDevLocal) {
+    const hit = resolved.get(key);
+    if (hit) return hit;
+  }
 
   let pending = inflight.get(key);
   if (!pending) {
-    pending = fetch(key, { cache: "no-cache" })
+    pending = fetch(key, { cache: isDevLocal ? "no-store" : "no-cache" })
       .then(async (res) => {
         if (!res.ok) throw new Error(`toon config ${res.status}`);
         return (await res.json()) as ToonConfig;
       })
       .then((cfg) => {
-        resolved.set(key, cfg);
+        if (!isDevLocal) resolved.set(key, cfg);
         return cfg;
       })
       .finally(() => {

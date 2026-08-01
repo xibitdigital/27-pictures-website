@@ -151,6 +151,11 @@ export interface WordBubbleStyle {
   shape?: string;
   retrace?: number;
   scratches?: number;
+  /**
+   * Opacity of the bubble body fill only (0–1). Stroke and caption text stay solid.
+   * e.g. `0.8` = 80% white body.
+   */
+  opacity?: number;
 }
 
 export interface WordEntry {
@@ -176,6 +181,8 @@ export interface WordEntry {
   bubbleFill?: string;
   bubbleStroke?: string;
   bubbleStrokeWidth?: number;
+  /** Legacy alias for `bubble.opacity` (fill only, 0–1 or 0–100). */
+  bubbleOpacity?: number;
   fontFamily?: string;
   audio?: string;
   /** Playback gain 0–1 for `audio` (default 1). Louder needs a hotter source file. */

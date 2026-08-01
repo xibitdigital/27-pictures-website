@@ -55,8 +55,11 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | 8 | Scotland Yard run / gates | “I'll ask Eve.” |
 | 9 | Lab with Eve | Si spin qubits / CMOS + photonics / implants |
 | 10 | Eve drops coat, glasses, leave | AI glasses tag faces & materials |
+| **11** | **Cybercab** | Eve hails driverless cab → both jump in → ECU faces inside |
+| **12** | **Cerberus club** | Drop-off → Eve distracts bouncer → Nero invites Eve in |
 
 Asset for page 4: `assets/f6e5abea5751b52ecd7f6fc07c40dbb4.png` (diagonal interstitial).
+Asset for page 11: `assets/8c0cf8ac2ade39ab94d5754fb0381887.jpg`.
 
 ## Reader UX
 
@@ -83,3 +86,4 @@ npm run upload-assets
 ```
 
 Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `left` | `right`
+Asset for page 12: `assets/ce7c53d6253dc4d615e3d87c623d2644.png`.

@@ -4,10 +4,22 @@
   "designHeight": 1424,
   "defaultLang": "en",
   "languages": [
-    { "code": "en", "label": "EN" },
-    { "code": "it", "label": "IT" },
-    { "code": "de", "label": "DE" },
-    { "code": "fr", "label": "FR" }
+    {
+      "code": "en",
+      "label": "EN"
+    },
+    {
+      "code": "it",
+      "label": "IT"
+    },
+    {
+      "code": "de",
+      "label": "DE"
+    },
+    {
+      "code": "fr",
+      "label": "FR"
+    }
   ],
   "pages": [
     {
@@ -29,7 +41,10 @@
             "de": "Falsche Gasse.",
             "fr": "Mauvaise ruelle."
           },
-          "audio": "assets/sfx/1d280e95727138af95d24644d6e7a15b.mp3"
+          "audio": "assets/sfx/1d280e95727138af95d24644d6e7a15b.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.12,
@@ -47,7 +62,10 @@
             "de": "Ich sehe dich.",
             "fr": "Je te vois."
           },
-          "audio": "assets/sfx/f8e0c5c59087420c3393cc16e725404d.mp3"
+          "audio": "assets/sfx/f8e0c5c59087420c3393cc16e725404d.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.86,
@@ -65,7 +83,10 @@
             "de": "Komm schon!",
             "fr": "Allez\nvoyons!"
           },
-          "audio": "assets/sfx/6380c12db8777ce04715f1fce22eba6c.mp3"
+          "audio": "assets/sfx/6380c12db8777ce04715f1fce22eba6c.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         }
       ]
     },
@@ -88,7 +109,10 @@
             "de": "Kein Versteck mehr.",
             "fr": "Plus de cachette."
           },
-          "audio": "assets/sfx/6b14c0b40e53f7fe028c45268940156d.mp3"
+          "audio": "assets/sfx/6b14c0b40e53f7fe028c45268940156d.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.14,
@@ -101,12 +125,15 @@
           "scale": 1.05,
           "maxWidth": 0.28,
           "text": {
-            "en": "Come on\u2026",
-            "it": "Dai\u2026",
-            "de": "Komm schon\u2026",
-            "fr": "Allez\u2026"
+            "en": "Come on…",
+            "it": "Dai…",
+            "de": "Komm schon…",
+            "fr": "Allez…"
           },
-          "audio": "assets/sfx/3c6a460d7413bbdc911d251a3adf682a.mp3"
+          "audio": "assets/sfx/3c6a460d7413bbdc911d251a3adf682a.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.86,
@@ -122,9 +149,12 @@
             "en": "There you are.",
             "it": "Eccoti.",
             "de": "Da bist du.",
-            "fr": "Te voil\u00e0."
+            "fr": "Te voilà."
           },
-          "audio": "assets/sfx/7b18268884c64e2eec83cdbc36bf0d22.mp3"
+          "audio": "assets/sfx/7b18268884c64e2eec83cdbc36bf0d22.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         }
       ]
     },
@@ -144,10 +174,13 @@
           "text": {
             "en": "Steady hands.",
             "it": "Mani ferme.",
-            "de": "Ruhige H\u00e4nde.",
+            "de": "Ruhige Hände.",
             "fr": "Mains stables."
           },
-          "audio": "assets/sfx/58aa09458452a4f54c375b0793d3d1c3.mp3"
+          "audio": "assets/sfx/58aa09458452a4f54c375b0793d3d1c3.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.86,
@@ -163,9 +196,12 @@
             "en": "Loaded.",
             "it": "Carica.",
             "de": "Geladen.",
-            "fr": "Charg\u00e9e."
+            "fr": "Chargée."
           },
-          "audio": "assets/sfx/bd1ae74e4673e5147fd033b038ef6699.mp3"
+          "audio": "assets/sfx/bd1ae74e4673e5147fd033b038ef6699.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.88,
@@ -183,7 +219,10 @@
             "de": "Du bist erledigt.",
             "fr": "C'est fini."
           },
-          "audio": "assets/sfx/74581dafe13139b784e315b18b6cb480.mp3"
+          "audio": "assets/sfx/74581dafe13139b784e315b18b6cb480.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         }
       ]
     },
@@ -203,7 +242,7 @@
             "en": "HOURS\nEARLIER",
             "it": "ORE\nPRIMA",
             "de": "STUNDEN\nZUVOR",
-            "fr": "DES HEURES\nPLUS T\u00d4T"
+            "fr": "DES HEURES\nPLUS TÔT"
           }
         },
         {
@@ -231,9 +270,9 @@
           "maxWidth": 0.72,
           "text": {
             "en": "Before Nero loads the gun,\na contract is already airborne.",
-            "it": "Prima che Nero carichi la pistola,\nun contratto \u00e8 gi\u00e0 in volo.",
-            "de": "Bevor Nero die Waffe l\u00e4dt,\nist ein Auftrag bereits unterwegs.",
-            "fr": "Avant que Nero charge l'arme,\nun contrat est d\u00e9j\u00e0 en l'air."
+            "it": "Prima che Nero carichi la pistola,\nun contratto è già in volo.",
+            "de": "Bevor Nero die Waffe lädt,\nist ein Auftrag bereits unterwegs.",
+            "fr": "Avant que Nero charge l'arme,\nun contrat est déjà en l'air."
           }
         }
       ]
@@ -255,9 +294,12 @@
             "en": "Found you.",
             "it": "Trovato.",
             "de": "Gefunden.",
-            "fr": "Je t'ai trouv\u00e9."
+            "fr": "Je t'ai trouvé."
           },
-          "audio": "assets/sfx/ed91e85d5f512d1615c41fead8184e75.mp3"
+          "audio": "assets/sfx/ed91e85d5f512d1615c41fead8184e75.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.88,
@@ -275,7 +317,10 @@
             "de": "Ausatmen.",
             "fr": "Expire."
           },
-          "audio": "assets/sfx/f33953d9c75a49a7e42e7ada95911f85.mp3"
+          "audio": "assets/sfx/f33953d9c75a49a7e42e7ada95911f85.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.16,
@@ -291,9 +336,12 @@
             "en": "Lights out.",
             "it": "Luci spente.",
             "de": "Licht aus.",
-            "fr": "Lumi\u00e8res \u00e9teintes."
+            "fr": "Lumières éteintes."
           },
-          "audio": "assets/sfx/202f0b2145c1d26e192c0d4482bd94b5.mp3"
+          "audio": "assets/sfx/202f0b2145c1d26e192c0d4482bd94b5.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         }
       ]
     },
@@ -332,9 +380,12 @@
             "en": "Paid.",
             "it": "Pagato.",
             "de": "Bezahlt.",
-            "fr": "Pay\u00e9."
+            "fr": "Payé."
           },
-          "audio": "assets/sfx/346ccac24bff2bf6cc7672dab9dbe746.mp3"
+          "audio": "assets/sfx/346ccac24bff2bf6cc7672dab9dbe746.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.14,
@@ -367,10 +418,13 @@
           "text": {
             "en": "Nothing personal.",
             "it": "Niente di personale.",
-            "de": "Nichts Pers\u00f6nliches.",
+            "de": "Nichts Persönliches.",
             "fr": "Rien de personnel."
           },
-          "audio": "assets/sfx/056dc9fe0da410504c0ebc1fd58c09be.mp3"
+          "audio": "assets/sfx/056dc9fe0da410504c0ebc1fd58c09be.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.88,
@@ -401,12 +455,15 @@
           "scale": 1.05,
           "maxWidth": 0.3,
           "text": {
-            "en": "Damn it\u2026",
-            "it": "Dannazione\u2026",
-            "de": "Verdammt\u2026",
-            "fr": "Merde\u2026"
+            "en": "Damn it…",
+            "it": "Dannazione…",
+            "de": "Verdammt…",
+            "fr": "Merde…"
           },
-          "audio": "assets/sfx/38110fb34c94121ef49fb8c660a2e2d3.mp3"
+          "audio": "assets/sfx/38110fb34c94121ef49fb8c660a2e2d3.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         }
       ]
     },
@@ -447,7 +504,10 @@
             "de": "Ein Schuss.",
             "fr": "Un tir."
           },
-          "audio": "assets/sfx/7fd973469847796da9046939123ad867.mp3"
+          "audio": "assets/sfx/7fd973469847796da9046939123ad867.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.16,
@@ -465,7 +525,10 @@
             "de": "Gesicht nach unten.",
             "fr": "Face contre terre."
           },
-          "audio": "assets/sfx/9da242c83b8899e34e98052b1c9cbc1a.mp3"
+          "audio": "assets/sfx/9da242c83b8899e34e98052b1c9cbc1a.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.88,
@@ -479,11 +542,14 @@
           "maxWidth": 0.3,
           "text": {
             "en": "What is this?",
-            "it": "Che cos'\u00e8?",
+            "it": "Che cos'è?",
             "de": "Was ist das?",
             "fr": "Qu'est-ce que c'est?"
           },
-          "audio": "assets/sfx/30fcd638c704e5f869b28e86b43b2420.mp3"
+          "audio": "assets/sfx/30fcd638c704e5f869b28e86b43b2420.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.18,
@@ -500,13 +566,14 @@
             "strokeWidth": 2.2,
             "tail": "none",
             "scratches": 6,
-            "retrace": 2
+            "retrace": 2,
+            "opacity": 0.75
           },
           "text": {
-            "en": "N\u203a COMPOSITION:\nGERMANIUM +\nUNKNOWN MATERIAL",
-            "it": "N\u203a COMPOSIZIONE:\nGERMANIO +\nMATERIALE SCONOSCIUTO",
-            "de": "N\u203a ZUSAMMENSETZUNG:\nGERMANIUM +\nUNBEKANNTES MATERIAL",
-            "fr": "N\u203a COMPOSITION:\nGERMANIUM +\nMAT\u00c9RIAU INCONNU"
+            "en": "N› COMPOSITION:\nGERMANIUM +\nUNKNOWN MATERIAL",
+            "it": "N› COMPOSIZIONE:\nGERMANIO +\nMATERIALE SCONOSCIUTO",
+            "de": "N› ZUSAMMENSETZUNG:\nGERMANIUM +\nUNBEKANNTES MATERIAL",
+            "fr": "N› COMPOSITION:\nGERMANIUM +\nMATÉRIAU INCONNU"
           },
           "audio": "assets/sfx/165aec44845ba5257eb1dee0507b2f62.mp3"
         }
@@ -547,9 +614,12 @@
             "en": "I'll ask Eve.",
             "it": "Chiedo a Eve.",
             "de": "Ich frage Eve.",
-            "fr": "Je vais demander \u00e0 Eve."
+            "fr": "Je vais demander à Eve."
           },
-          "audio": "assets/sfx/47e8fa5f9d881d4dcd4f348364e4f623.mp3"
+          "audio": "assets/sfx/47e8fa5f9d881d4dcd4f348364e4f623.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.5,
@@ -567,7 +637,10 @@
             "de": "Guten Abend, Herren.",
             "fr": "Bonsoir, messieurs."
           },
-          "audio": "assets/sfx/967a68961dba4e9a861dc4ad3d6a7534.mp3"
+          "audio": "assets/sfx/967a68961dba4e9a861dc4ad3d6a7534.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         }
       ]
     },
@@ -587,10 +660,13 @@
           "text": {
             "en": "Got a crystal\nfor you.",
             "it": "Ho un cristallo\nper te.",
-            "de": "Hab' einen Kristall\nf\u00fcr dich.",
+            "de": "Hab' einen Kristall\nfür dich.",
             "fr": "J'ai un cristal\npour toi."
           },
-          "audio": "assets/sfx/c74cca79249a4b791632b04e8b2d4053.mp3"
+          "audio": "assets/sfx/c74cca79249a4b791632b04e8b2d4053.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.88,
@@ -608,7 +684,10 @@
             "de": "Unter das Mikroskop.",
             "fr": "Sous le microscope."
           },
-          "audio": "assets/sfx/be9094c9c32edc16f58b7dbde22a563f.mp3"
+          "audio": "assets/sfx/be9094c9c32edc16f58b7dbde22a563f.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.16,
@@ -625,13 +704,14 @@
             "strokeWidth": 2.2,
             "tail": "none",
             "scratches": 6,
-            "retrace": 2
+            "retrace": 2,
+            "opacity": 0.75
           },
           "text": {
-            "en": "N\u203a Si SPIN QUBITS\nCMOS + PHOTONICS\nFAB-DENSITY\nNEAR-INVIS. IMPLANTS",
-            "it": "N\u203a QUBIT SPIN Si\nCMOS + FOTONICA\nDENSIT\u00c0 FAB\nIMPIANTI QUASI INVIS.",
-            "de": "N\u203a Si-SPIN-QUBITS\nCMOS + PHOTONIK\nFAB-DICHTE\nFAST UNSICHTB. IMPLANTS",
-            "fr": "N\u203a QUBITS SPIN Si\nCMOS + PHOTONIQUE\nDENSIT\u00c9 FAB\nIMPLANTS QUASI INVIS."
+            "en": "N› Si SPIN QUBITS\nCMOS + PHOTONICS\nFAB-DENSITY\nNEAR-INVIS. IMPLANTS",
+            "it": "N› QUBIT SPIN Si\nCMOS + FOTONICA\nDENSITÀ FAB\nIMPIANTI QUASI INVIS.",
+            "de": "N› Si-SPIN-QUBITS\nCMOS + PHOTONIK\nFAB-DICHTE\nFAST UNSICHTB. IMPLANTS",
+            "fr": "N› QUBITS SPIN Si\nCMOS + PHOTONIQUE\nDENSITÉ FAB\nIMPLANTS QUASI INVIS."
           },
           "audio": "assets/sfx/f0a237dca456772e3a795530528040a6.mp3"
         },
@@ -649,9 +729,12 @@
             "en": "Readouts are clean.",
             "it": "Letture pulite.",
             "de": "Messwerte sind sauber.",
-            "fr": "Les relev\u00e9s sont nets."
+            "fr": "Les relevés sont nets."
           },
-          "audio": "assets/sfx/3d96922315e19633e4c66df736b1100c.mp3"
+          "audio": "assets/sfx/3d96922315e19633e4c66df736b1100c.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.86,
@@ -667,13 +750,14 @@
             "en": "Nearly invisible\nbrain tech.",
             "it": "Tech cerebrale\nquasi invisibile.",
             "de": "Fast unsichtbare\nHirntechnik.",
-            "fr": "Tech c\u00e9r\u00e9brale\nquasi invisible."
+            "fr": "Tech cérébrale\nquasi invisible."
           },
           "audio": "assets/sfx/70d46ff8b0bcce7250cc7d11d37a010b.mp3",
           "bubble": {
             "tail": "left",
             "padX": 1,
-            "padY": 1
+            "padY": 1,
+            "opacity": 0.75
           }
         }
       ]
@@ -694,10 +778,13 @@
           "text": {
             "en": "Costume off.",
             "it": "Costume via.",
-            "de": "Kost\u00fcm aus.",
-            "fr": "Costume retir\u00e9."
+            "de": "Kostüm aus.",
+            "fr": "Costume retiré."
           },
-          "audio": "assets/sfx/3828e57822967eeb0bfa87ac413165bf.mp3"
+          "audio": "assets/sfx/3828e57822967eeb0bfa87ac413165bf.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.88,
@@ -710,12 +797,15 @@
           "scale": 1.05,
           "maxWidth": 0.28,
           "text": {
-            "en": "\u2026You scrub up.",
-            "it": "\u2026Ti stai bene.",
-            "de": "\u2026Sieht gut aus.",
-            "fr": "\u2026Tu as de l'allure."
+            "en": "…You scrub up.",
+            "it": "…Ti stai bene.",
+            "de": "…Sieht gut aus.",
+            "fr": "…Tu as de l'allure."
           },
-          "audio": "assets/sfx/9dd8ca233ee22aed29c41ed5a6469db4.mp3"
+          "audio": "assets/sfx/9dd8ca233ee22aed29c41ed5a6469db4.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.86,
@@ -731,9 +821,12 @@
             "en": "They tag faces.\nAnd materials.",
             "it": "Marcano volti.\nE materiali.",
             "de": "Markieren Gesichter.\nUnd Materialien.",
-            "fr": "Ils taguent les visages.\nEt les mat\u00e9riaux."
+            "fr": "Ils taguent les visages.\nEt les matériaux."
           },
-          "audio": "assets/sfx/2cc9ae28b004905dc407432af00fd8ff.mp3"
+          "audio": "assets/sfx/2cc9ae28b004905dc407432af00fd8ff.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.12,
@@ -750,13 +843,14 @@
             "strokeWidth": 2.2,
             "tail": "none",
             "scratches": 6,
-            "retrace": 2
+            "retrace": 2,
+            "opacity": 0.75
           },
           "text": {
-            "en": "E\u203a SCAN ONLINE",
-            "it": "E\u203a SCAN ONLINE",
-            "de": "E\u203a SCAN ONLINE",
-            "fr": "E\u203a SCAN ONLINE"
+            "en": "E› SCAN ONLINE",
+            "it": "E› SCAN ONLINE",
+            "de": "E› SCAN ONLINE",
+            "fr": "E› SCAN ONLINE"
           },
           "audio": "assets/sfx/021c920e7cfd7a6181fd0843058b7c6b.mp3"
         },
@@ -773,10 +867,13 @@
           "text": {
             "en": "If it glows like that\ncrystal, I'll see it.",
             "it": "Se brilla come quel\ncristallo, lo vedo.",
-            "de": "Wenn es wie der Kristall\ngl\u00fcht, sehe ich es.",
+            "de": "Wenn es wie der Kristall\nglüht, sehe ich es.",
             "fr": "S'il brille comme ce\ncristal, je le verrai."
           },
-          "audio": "assets/sfx/9e335afd4705b7d540a2618dcca00bf7.mp3"
+          "audio": "assets/sfx/9e335afd4705b7d540a2618dcca00bf7.mp3",
+          "bubble": {
+            "opacity": 0.75
+          }
         },
         {
           "x": 0.88,
@@ -790,7 +887,7 @@
           "maxWidth": 0.28,
           "text": {
             "en": "Then we hunt denser\nghosts.",
-            "it": "Allora cacciamo fantasmi\npi\u00f9 densi.",
+            "it": "Allora cacciamo fantasmi\npiù densi.",
             "de": "Dann jagen wir dichtere\nGeister.",
             "fr": "Alors on chasse des\nfantomes plus denses."
           },
@@ -798,7 +895,254 @@
           "bubble": {
             "tail": "left",
             "padX": 1,
-            "padY": 1
+            "padY": 1,
+            "opacity": 0.75
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/8c0cf8ac2ade39ab94d5754fb0381887.jpg",
+      "words": [
+        {
+          "x": 0.78,
+          "y": 0.06,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "Cab's here.",
+            "it": "Il taxi è qui.",
+            "de": "Taxi ist da.",
+            "fr": "Le taxi est là."
+          },
+          "audio": "assets/sfx/189e6263352f65c4157a8c04562f7b22.mp3"
+        },
+        {
+          "x": 0.14,
+          "y": 0.34,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -6,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "tail": "right",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "Get in!",
+            "it": "Sali!",
+            "de": "Rein!",
+            "fr": "Monte!"
+          },
+          "audio": "assets/sfx/13498ab1cac32324d66b20b2410e7f40.mp3"
+        },
+        {
+          "x": 0.9,
+          "y": 0.36,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 6,
+          "scale": 1.0,
+          "maxWidth": 0.2,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "Move.",
+            "it": "Muoviti.",
+            "de": "Beweg dich.",
+            "fr": "Bouge."
+          },
+          "audio": "assets/sfx/afba5df6619668f4e3f43e5374c7d171.mp3"
+        },
+        {
+          "x": 0.12,
+          "y": 0.68,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "tail": "right",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "No driver.",
+            "it": "Nessun autista.",
+            "de": "Kein Fahrer.",
+            "fr": "Pas de chauffeur."
+          },
+          "audio": "assets/sfx/cb2649f580fe0e1e991832a8d657dee8.mp3"
+        },
+        {
+          "x": 0.88,
+          "y": 0.68,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "That's the point.",
+            "it": "È il punto.",
+            "de": "Genau darum.",
+            "fr": "C'est le but."
+          },
+          "audio": "assets/sfx/bc7aa9e5062993341e83b06367adfd92.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/ce7c53d6253dc4d615e3d87c623d2644.png",
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.1,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "We're here.",
+            "it": "Siamo qui.",
+            "de": "Wir sind da.",
+            "fr": "On y est."
+          }
+        },
+        {
+          "x": 0.48,
+          "y": 0.09,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "Two dogs\nat the door.",
+            "it": "Due cani\nalla porta.",
+            "de": "Zwei Hunde\nan der Tür.",
+            "fr": "Deux chiens\nà la porte."
+          }
+        },
+        {
+          "x": 0.14,
+          "y": 0.36,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.0,
+          "maxWidth": 0.3,
+          "bubble": {
+            "tail": "right",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "I have a friend\ninside — he should\nbe out soon.",
+            "it": "Ho un amico\ndentro — dovrebbe\nuscire presto.",
+            "de": "Ein Freund ist\ndrin — er kommt\ngleich raus.",
+            "fr": "Un ami est\ndedans — il sort\nbientôt."
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.7,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "Here you are.",
+            "it": "Eccoti.",
+            "de": "Da bist du.",
+            "fr": "Te voilà."
+          }
+        },
+        {
+          "x": 0.36,
+          "y": 0.68,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 0,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "She's with me.",
+            "it": "È con me.",
+            "de": "Sie ist bei mir.",
+            "fr": "Elle est avec moi."
+          }
+        },
+        {
+          "x": 0.68,
+          "y": 0.7,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "Coming.",
+            "it": "Arrivo.",
+            "de": "Komme.",
+            "fr": "J'arrive."
           }
         }
       ]

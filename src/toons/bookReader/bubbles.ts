@@ -45,6 +45,8 @@ export interface BubbleStyle {
   padY: number;
   retrace: number;
   scratches: number;
+  /** 0–1 fill opacity of the bubble body only (stroke stays opaque). */
+  opacity: number;
 }
 
 /** Default outline thickness for organic speech balloons (SVG stroke-width). */
@@ -341,6 +343,12 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
     .toString()
     .toLowerCase();
   const isClean = shape === "clean" || shape === "frame" || shape === "rect";
+  // Fill opacity only (0–1). Accept 0–1 or 0–100 (e.g. 80 → 0.8).
+  let opacity = 1;
+  const rawOp = b.opacity != null ? Number(b.opacity) : w.bubbleOpacity != null ? Number(w.bubbleOpacity) : 1;
+  if (Number.isFinite(rawOp)) {
+    opacity = rawOp > 1 ? Math.min(1, rawOp / 100) : Math.max(0, Math.min(1, rawOp));
+  }
   return {
     shape,
     fill:
@@ -370,6 +378,7 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
     // Badai: more perimeter scratches = corrupt HUD; Nova: slightly cleaner
     scratches:
       b.scratches != null ? Number(b.scratches) : isClean ? 0 : isBadai ? 16 : isAi ? 6 : shape === "box" ? 10 : 0,
+    opacity,
   };
 }
 
@@ -393,6 +402,11 @@ export function createBubbleChrome(seed: number, bubbleStyle: BubbleStyle, desig
         : sketchyBubblePath(bubbleStyle.tail, seed)
   );
   path.setAttribute("fill", bubbleStyle.fill);
+  // Body only: fill-opacity leaves stroke + caption text fully opaque.
+  const fillOp = bubbleStyle.opacity != null && Number.isFinite(bubbleStyle.opacity) ? bubbleStyle.opacity : 1;
+  if (fillOp < 1) {
+    path.setAttribute("fill-opacity", String(Math.max(0, Math.min(1, fillOp))));
+  }
   path.setAttribute("stroke", bubbleStyle.stroke);
   const sw = Math.max(1.2, (bubbleStyle.strokeWidth || BUBBLE_STROKE_WIDTH) * Math.min(1.4, designScale * 1.1));
   path.setAttribute("stroke-width", String(sw));
