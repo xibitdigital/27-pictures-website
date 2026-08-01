@@ -87,5 +87,5 @@ npm run upload-assets
 ```
 
 Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `left` | `right`
-Asset for page 12: `assets/48f2f01dc340005bfa85766a124865db.png`.
+Asset for page 12: `assets/46d12d33ef9b8f743d479fc841e00f3d.png` (panels 2–3 mirrored).
 Asset for page 13: `assets/bcc3f8280a10dba1266b449ca3c08988.jpg`.

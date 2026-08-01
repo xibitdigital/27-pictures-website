@@ -1051,7 +1051,7 @@
       ]
     },
     {
-      "file": "assets/48f2f01dc340005bfa85766a124865db.png",
+      "file": "assets/46d12d33ef9b8f743d479fc841e00f3d.png",
       "words": [
         {
           "x": 0.22,
@@ -1123,17 +1123,17 @@
           "audio": "assets/sfx/c1620ff5eefb8b757014ab164ca89a08.mp3"
         },
         {
-          "x": 0.17,
+          "x": 0.81,
           "y": 0.8,
           "align": "center",
           "size": 26,
           "variant": "bubble",
           "color": "#111111",
-          "angle": -2,
+          "angle": 2,
           "scale": 1.0,
           "maxWidth": 0.28,
           "bubble": {
-            "tail": "right",
+            "tail": "left",
             "opacity": 0.75,
             "strokeWidth": 5
           },
@@ -1146,7 +1146,7 @@
           "audio": "assets/sfx/fdfa0b45fec21c4c7c6b8709d2deb17a.mp3"
         },
         {
-          "x": 0.27,
+          "x": 0.736,
           "y": 0.7,
           "align": "center",
           "size": 24,
@@ -1169,13 +1169,13 @@
           "audio": "assets/sfx/6b3f995e4af0b308f3e6d8d4ab7ef26e.mp3"
         },
         {
-          "x": 0.68,
+          "x": 0.326,
           "y": 0.7,
           "align": "center",
           "size": 26,
           "variant": "bubble",
           "color": "#111111",
-          "angle": 2,
+          "angle": -2,
           "scale": 1.0,
           "maxWidth": 0.24,
           "bubble": {
