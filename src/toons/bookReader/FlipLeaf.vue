@@ -4,7 +4,7 @@
  * and listens for @done when CSS animation ends.
  */
 import { nextTick, onMounted, ref } from "vue";
-import FrontCoverInstructions from "./FrontCoverInstructions.vue";
+import CoverFirstPage from "./CoverFirstPage.vue";
 import BackCoverLink from "./BackCoverLink.vue";
 import type { FlipFaceModel, FlipModel } from "./bookModels";
 
@@ -85,8 +85,9 @@ function faceIsCover(face: FlipFaceModel): boolean {
         aria-hidden="true"
       />
       <img v-if="flip.front.kind === 'page'" :src="flip.front.src" alt="" draggable="false" />
-      <FrontCoverInstructions
+      <CoverFirstPage
         v-else-if="flip.front.kind === 'front'"
+        variant="plate"
         :title="coverTitle"
         :subtitle="coverSubtitle"
         :synopsis="coverSynopsis"
@@ -116,8 +117,9 @@ function faceIsCover(face: FlipFaceModel): boolean {
         aria-hidden="true"
       />
       <img v-if="flip.back.kind === 'page'" :src="flip.back.src" alt="" draggable="false" />
-      <FrontCoverInstructions
+      <CoverFirstPage
         v-else-if="flip.back.kind === 'front'"
+        variant="plate"
         :title="coverTitle"
         :subtitle="coverSubtitle"
         :synopsis="coverSynopsis"

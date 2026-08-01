@@ -229,18 +229,15 @@ defineExpose<ToonReaderShellExpose>({
 <template>
   <slot name="overlays" />
 
-  <a href="/experiments/" class="toons-back" title="Back to Experiments" aria-label="Back to Experiments">
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    >
-      <path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
+  <a href="/" class="toons-back" title="27 Pictures" aria-label="27 Pictures - Return to homepage">
+    <img
+      src="/logo.png"
+      class="nav-logo-img toons-back-logo"
+      alt="27 Pictures"
+      title="27 Pictures - Horror Film Production Studio"
+      height="40"
+      width="40"
+    />
   </a>
 
   <ReaderTopBar

@@ -18,8 +18,10 @@ export {
 export { default as BookSurface } from "./BookSurface.vue";
 export { default as BookSlot } from "./BookSlot.vue";
 export { default as FlipLeaf } from "./FlipLeaf.vue";
+export { default as CoverFirstPage } from "./CoverFirstPage.vue";
 export { default as FrontCoverInstructions } from "./FrontCoverInstructions.vue";
 export { default as BackCoverLink } from "./BackCoverLink.vue";
+export { DEFAULT_COVER_STORY, resolveCoverStory } from "./coverStory";
 
 // Shell + view modes
 export { default as ToonReaderShell } from "./ToonReaderShell.vue";
@@ -55,6 +57,7 @@ export {
 
 // Captions
 export { WordOverlay, loadWords, resolveWordsAssets, LANG_STORAGE_KEY } from "./words";
+export { default as LangSwitcher } from "./LangSwitcher.vue";
 
 // Bubble chrome (speech balloons, AI panels, burst stars)
 export {

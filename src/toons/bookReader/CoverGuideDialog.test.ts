@@ -12,7 +12,7 @@ const headlessStubs = {
     template: `<div class="dialog-stub" @click="$emit('close')"><slot /></div>`,
   },
   DialogPanel: { template: `<div class="dialog-panel-stub"><slot /></div>` },
-  DialogTitle: { template: `<h1><slot /></h1>` },
+  DialogTitle: { template: `<h1 class="front-cover-title"><slot /></h1>` },
 };
 
 function mountGuide(props: Record<string, unknown> = {}) {
@@ -29,14 +29,19 @@ function mountGuide(props: Record<string, unknown> = {}) {
 }
 
 describe("CoverGuideDialog", () => {
-  it("renders title, subtitle, synopsis, and how-to when open", () => {
+  it("renders shared CoverFirstPage content when open", () => {
     const wrapper = mountGuide();
 
-    expect(wrapper.find(".cover-guide-title").text()).toBe("Nero");
-    expect(wrapper.find(".cover-guide-subtitle").text()).toMatch(/Scotland Yard/i);
-    expect(wrapper.find(".cover-guide-synopsis").text()).toMatch(/Detective Nero/i);
-    expect(wrapper.find(".cover-guide-howto").exists()).toBe(true);
-    expect(wrapper.findAll(".cover-guide-howto li").length).toBe(4);
+    expect(wrapper.find(".front-cover-title").text()).toBe("Nero");
+    expect(wrapper.find(".front-cover-subtitle").text()).toMatch(/Scotland Yard/i);
+    expect(wrapper.find(".front-cover-synopsis").text()).toMatch(/Detective Nero/i);
+    expect(wrapper.find(".front-cover-story").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-brand-word").text()).toBe("FlipFrame");
+    expect(wrapper.find(".front-cover-howto").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-howto-keys").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-howto-click").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-howto-caption").text()).toMatch(/arrow keys|click on a page/i);
+    expect(wrapper.find(".cover-first-page--modal").exists()).toBe(true);
     expect(wrapper.find(".cover-guide-cta").text()).toMatch(/Start reading/i);
   });
 
@@ -46,10 +51,11 @@ describe("CoverGuideDialog", () => {
     expect(wrapper.find(".transition-root").exists()).toBe(false);
   });
 
-  it("omits story section when synopsis is absent", () => {
+  it("always shows story section with fallback when synopsis is absent", () => {
     const wrapper = mountGuide({ synopsis: null });
-    expect(wrapper.find(".cover-guide-story").exists()).toBe(false);
-    expect(wrapper.find(".cover-guide-howto").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-story").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-synopsis").text()).toMatch(/FlipFrame experiment/i);
+    expect(wrapper.find(".front-cover-howto").exists()).toBe(true);
   });
 
   it("emits update:open false on Start reading", async () => {
@@ -70,6 +76,6 @@ describe("CoverGuideDialog", () => {
 
   it("falls back to Story title when title is empty", () => {
     const wrapper = mountGuide({ title: "" });
-    expect(wrapper.find(".cover-guide-title").text()).toBe("Story");
+    expect(wrapper.find(".front-cover-title").text()).toBe("Story");
   });
 });

@@ -100,7 +100,10 @@ describe("ErinApp", () => {
     const wrapper = mountErin();
     await flushPromises();
 
-    expect(wrapper.find(".toons-back").attributes("href")).toBe("/experiments/");
+    const back = wrapper.find(".toons-back");
+    expect(back.attributes("href")).toBe("/");
+    expect(back.find("img.toons-back-logo, img.nav-logo-img").exists()).toBe(true);
+    expect(back.find("img").attributes("src")).toBe("/logo.png");
     expect(wrapper.find("#book").exists()).toBe(true);
     expect(wrapper.find("#btn-prev").exists()).toBe(true);
     expect(wrapper.find("#btn-next").exists()).toBe(true);

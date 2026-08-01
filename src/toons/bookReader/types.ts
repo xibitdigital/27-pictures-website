@@ -38,7 +38,7 @@ export interface ToonBookOptions {
   coverTitle?: string;
   coverSubtitle?: string | null;
   /**
-   * Optional cast / synopsis block on the front cover (after “How to read”).
+   * Optional story synopsis on the front cover (above FlipFrame / how-to icons).
    * Plain text; use `\n\n` for paragraphs. Toon-specific “manual” blurb.
    */
   coverSynopsis?: string | null;

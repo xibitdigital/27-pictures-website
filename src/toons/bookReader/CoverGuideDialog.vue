@@ -1,9 +1,10 @@
 <script setup lang="ts">
 /**
- * Mobile / narrow: story + short how-to as a clean modal (toolbar-recallable).
- * Own markup — does not reuse the absolute-fill book-cover layout.
+ * Mobile / narrow: same CoverFirstPage as the book plate, in a modal shell
+ * (toolbar-recallable). Dialog owns chrome only — close + start CTA.
  */
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import CoverFirstPage from "./CoverFirstPage.vue";
 
 defineProps<{
   open: boolean;
@@ -47,29 +48,18 @@ function close(): void {
           leave-to="cover-guide-panel-leave-to"
         >
           <DialogPanel class="cover-guide-panel">
-            <header class="cover-guide-header">
-              <div class="cover-guide-header-text">
-                <DialogTitle as="h1" class="cover-guide-title">{{ title || "Story" }}</DialogTitle>
-                <p v-if="subtitle" class="cover-guide-subtitle">{{ subtitle }}</p>
-              </div>
+            <div class="cover-guide-toolbar">
               <button type="button" class="cover-guide-close" aria-label="Close" @click="close">×</button>
-            </header>
+            </div>
 
             <div class="cover-guide-scroll">
-              <section v-if="synopsis" class="cover-guide-story" aria-label="The story">
-                <h2 class="cover-guide-section-label">The story</h2>
-                <p class="cover-guide-synopsis">{{ synopsis }}</p>
-              </section>
-
-              <section class="cover-guide-howto" aria-label="How to read">
-                <h2 class="cover-guide-section-label">How to read</h2>
-                <ul>
-                  <li>Tap right · next page</li>
-                  <li>Tap left · previous page</li>
-                  <li>Arrows or swipe to turn</li>
-                  <li>Tap glowing captions for audio</li>
-                </ul>
-              </section>
+              <CoverFirstPage variant="modal" :title="title" :subtitle="subtitle" :synopsis="synopsis">
+                <template #title>
+                  <DialogTitle as="h1" class="front-cover-title">
+                    {{ title || "Story" }}
+                  </DialogTitle>
+                </template>
+              </CoverFirstPage>
             </div>
 
             <footer class="cover-guide-footer">

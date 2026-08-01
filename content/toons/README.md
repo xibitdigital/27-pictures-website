@@ -13,7 +13,7 @@ Editable source of truth for toon page lists + captions. **Not deployed** with t
 | Toon | Directory | Notes |
 |------|-----------|--------|
 | `erin` | `content/toons/erin/` | Interactive manga reader |
-| `jax` | `content/toons/jax/` | Multilingual captions, SFX, music, AI HUD bubbles |
+| `jax` | `content/toons/jax/` | Netrunner chronicles — synopsis on cover; multilingual SFX/music (see `jax/README.md`) |
 | `nero` | `content/toons/nero/` | Scotland Yard case: Nero / Eve / The Dog; `?page=N` deep-links; full manual in `nero/README.md` |
 
 ```bash

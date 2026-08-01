@@ -6,7 +6,7 @@
     <title>Jax | Experiments | 27 Pictures</title>
     <meta
       name="description"
-      content="Jax — interactive cyberpunk toon with multilingual captions (EN/IT/DE/FR) from 27 Pictures Experiments."
+      content="Jax — a netrunner with a rare sickness who steals corporate mind-control tech like a future Robin Hood. Interactive FlipFrame from 27 Pictures Experiments."
     />
     <link rel="canonical" href="https://twentyseven.pictures/toons/jax/" />
 
@@ -54,102 +54,7 @@
         --book-height: min(84dvh, calc(var(--book-width) * 1.778));
       }
 
-      /* Language dropdown — only the selected code is visible; menu opens on click */
-      .jax-lang-switcher {
-        display: flex;
-        align-items: center;
-      }
-
-      .jax-lang-dropdown {
-        position: relative;
-      }
-
-      .jax-lang-toggle {
-        min-width: 2.4rem;
-        gap: 0.2rem;
-        padding: 0.45rem 0.4rem;
-        font-size: 0.7rem;
-        letter-spacing: 0.08em;
-      }
-
-      .jax-lang-toggle-label {
-        font-family: "Inter", sans-serif;
-        font-weight: 700;
-        text-transform: uppercase;
-        line-height: 1;
-      }
-
-      .jax-lang-chevron {
-        width: 9px;
-        height: 9px;
-        flex-shrink: 0;
-        opacity: 0.75;
-        transition: transform 0.18s var(--transition);
-      }
-
-      .jax-lang-dropdown.is-open .jax-lang-toggle {
-        border-color: var(--red-smile);
-        color: var(--red-smile);
-      }
-
-      .jax-lang-dropdown.is-open .jax-lang-chevron {
-        transform: rotate(180deg);
-        opacity: 1;
-      }
-
-      .jax-lang-menu {
-        position: absolute;
-        top: calc(100% + 0.35rem);
-        right: 0;
-        z-index: 60;
-        display: flex;
-        flex-direction: column;
-        min-width: 100%;
-        background: var(--bg-card);
-        border: 1px solid var(--border-light);
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
-      }
-
-      .jax-lang-menu[hidden] {
-        display: none !important;
-      }
-
-      .jax-lang-option {
-        font-family: "Inter", sans-serif;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--silver);
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid var(--border);
-        padding: 0.55rem 0.75rem;
-        cursor: pointer;
-        text-align: center;
-        transition:
-          color 0.15s var(--transition),
-          background 0.15s var(--transition);
-      }
-
-      .jax-lang-option:last-child {
-        border-bottom: none;
-      }
-
-      .jax-lang-option:hover {
-        color: var(--text);
-        background: var(--bg);
-      }
-
-      .jax-lang-option.is-active {
-        color: var(--red-smile);
-      }
-
-      .jax-lang-option:focus-visible {
-        outline: 2px solid var(--red-smile);
-        outline-offset: -2px;
-      }
-
+      /* Lang switcher styles live in reader-shared.css (.toon-lang-*). */
       /* Vertical strip width is set in reader-shared.css (not --book-width). */
     </style>
   </head>

@@ -9,8 +9,17 @@ const ASSET_PAGE_DIR = "/toons/erin/";
 const CONFIG_URL = toonConfigUrl("erin");
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
 
+/**
+ * CoverFirstPage props via ToonReaderShell (same component as Jax / Nero).
+ * Title falls back to alt-prefix "Erin" when coverTitle is omitted.
+ */
+const COVER_SYNOPSIS =
+  "Erin is half human, half vampire — too much of each world to belong fully to either. She lives in a small town that is not really a town at all: a thin place, a passage between the goblin world and the human one, where roads fold wrong at night and doors open onto forests that do not appear on any map. Blood, bargains, and old names move through her streets. She is the threshold’s keeper — and its most dangerous secret.";
+
 const bookOptions: ToonShellBookOptions = {
-  coverSubtitle: "The Missing Child",
+  coverTitle: "Erin",
+  coverSubtitle: "Between two worlds",
+  coverSynopsis: COVER_SYNOPSIS,
 };
 </script>
 

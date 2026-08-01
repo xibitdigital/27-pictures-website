@@ -265,7 +265,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Toon | URL | Notes |
 |------|-----|--------|
 | Erin | `/toons/erin/` | Page-turner prototype |
-| Jax | `/toons/jax/` | Multilingual captions + SFX + music |
+| Jax | `/toons/jax/` | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`) |
 | Nero | `/toons/nero/` | Scotland Yard case — Nero, Eve, The Dog; page 4 = *HOURS EARLIER* flashback plate (see `content/toons/nero/README.md`) |
 
 Wire-up pattern:

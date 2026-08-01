@@ -33,9 +33,11 @@ describe("FrontCoverInstructions", () => {
     expect(wrapper.find(".front-cover-subtitle").text()).toBe("Experiment");
     expect(wrapper.find(".front-cover-brand-word").text()).toBe("FlipFrame");
     expect(wrapper.find(".front-cover-brand-by").text()).toMatch(/twentyseven/i);
-    expect(wrapper.find(".front-cover-logo").attributes("src")).toBe("/logo.png");
-    expect(wrapper.find(".front-cover-howto-heading").text()).toBe("How to read");
-    expect(wrapper.findAll("li").length).toBe(5);
+    expect(wrapper.find(".front-cover-logo").exists()).toBe(false);
+    expect(wrapper.find(".front-cover-howto").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-howto-keys").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-howto-click").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-howto-caption").text()).toMatch(/arrow keys|click on a page/i);
   });
 
   it("opens About FlipFrame dialog with contact link", async () => {
@@ -58,12 +60,12 @@ describe("FrontCoverInstructions", () => {
     expect(wrapper.find(".front-cover-sound-btn").exists()).toBe(false);
   });
 
-  it("renders cast synopsis when provided, before FlipFrame / how-to", () => {
+  it("renders story synopsis when provided, before FlipFrame / how-to", () => {
     const wrapper = mountCover({
       title: "Nero",
       synopsis: "Nero — detective.\n\nEve — forensics.",
     });
-    expect(wrapper.find(".front-cover-cast-heading").text()).toMatch(/story/i);
+    expect(wrapper.find(".front-cover-cast-heading").exists()).toBe(false);
     expect(wrapper.find(".front-cover-story").exists()).toBe(true);
     expect(wrapper.find(".front-cover-synopsis").text()).toMatch(/detective/i);
     expect(wrapper.find(".front-cover-synopsis").text()).toMatch(/forensics/i);
@@ -73,21 +75,24 @@ describe("FrontCoverInstructions", () => {
     expect(wrapper.find(".front-cover-manual").exists()).toBe(true);
     const html = wrapper.find(".front-cover-instructions").html();
     const beforeAt = html.indexOf("front-cover-separator--before-story");
-    const castAt = html.indexOf("front-cover-cast-heading");
+    const storyAt = html.indexOf("front-cover-synopsis");
     const afterAt = html.indexOf("front-cover-separator--after-story");
     const brandAt = html.indexOf("front-cover-brand");
-    const howtoAt = html.indexOf("front-cover-howto-heading");
+    const howtoAt = html.indexOf("front-cover-howto");
     expect(beforeAt).toBeGreaterThan(-1);
-    expect(castAt).toBeGreaterThan(beforeAt);
-    expect(afterAt).toBeGreaterThan(castAt);
+    expect(storyAt).toBeGreaterThan(beforeAt);
+    expect(afterAt).toBeGreaterThan(storyAt);
     expect(brandAt).toBeGreaterThan(afterAt);
     expect(howtoAt).toBeGreaterThan(brandAt);
   });
 
-  it("omits cast block when synopsis is absent", () => {
+  it("always shows story block with fallback when synopsis is absent", () => {
     const wrapper = mountCover({ title: "Jax" });
-    expect(wrapper.find(".front-cover-synopsis").exists()).toBe(false);
-    expect(wrapper.find(".front-cover-separator").exists()).toBe(false);
+    expect(wrapper.find(".front-cover-story").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-synopsis").exists()).toBe(true);
+    expect(wrapper.find(".front-cover-synopsis").text()).toMatch(/FlipFrame experiment/i);
+    expect(wrapper.findAll(".front-cover-separator").length).toBe(2);
+    expect(wrapper.find(".front-cover-manual").exists()).toBe(true);
   });
 
   it("shows sound control and emits soundToggle", async () => {

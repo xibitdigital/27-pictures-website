@@ -124,7 +124,7 @@ function mountJax() {
           template: `<div class="listbox"><slot :open="false" /></div>`,
         },
         ListboxButton: {
-          template: `<button type="button" class="jax-lang-toggle"><slot /></button>`,
+          template: `<button type="button" class="toon-lang-toggle"><slot /></button>`,
         },
         ListboxOptions: { template: `<div><slot /></div>` },
         ListboxOption: {
@@ -164,7 +164,9 @@ describe("JaxApp", () => {
     const wrapper = mountJax();
     await flushPromises();
 
-    expect(wrapper.find(".toons-back").attributes("href")).toBe("/experiments/");
+    const back = wrapper.find(".toons-back");
+    expect(back.attributes("href")).toBe("/");
+    expect(back.find("img").attributes("src")).toBe("/logo.png");
     expect(wrapper.find('button[title="Enable sound effects"]').exists()).toBe(false);
     expect(wrapper.find('button[title="Switch to vertical scroll view"]').exists()).toBe(true);
     expect(wrapper.find('button[title="Play music"]').exists()).toBe(true);

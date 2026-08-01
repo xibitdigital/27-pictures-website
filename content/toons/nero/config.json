@@ -2,6 +2,13 @@
   "title": "Nero",
   "designWidth": 800,
   "designHeight": 1424,
+  "defaultLang": "en",
+  "languages": [
+    { "code": "en", "label": "EN" },
+    { "code": "it", "label": "IT" },
+    { "code": "de", "label": "DE" },
+    { "code": "fr", "label": "FR" }
+  ],
   "pages": [
     {
       "file": "assets/6cf879b434ca81e4adf80fd367a40123.jpg",

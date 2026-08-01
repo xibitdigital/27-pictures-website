@@ -4,7 +4,7 @@
  * no createElement / appendChild in the engine.
  */
 import { computed, nextTick, onMounted, ref, watch } from "vue";
-import FrontCoverInstructions from "./FrontCoverInstructions.vue";
+import CoverFirstPage from "./CoverFirstPage.vue";
 import BackCoverLink from "./BackCoverLink.vue";
 import type { SlotModel } from "./bookModels";
 import type { PageClearHandler, PagePaintHandler } from "./types";
@@ -106,8 +106,9 @@ watch(
       draggable="false"
     />
 
-    <FrontCoverInstructions
+    <CoverFirstPage
       v-else-if="model.kind === 'front'"
+      variant="plate"
       :title="coverTitle"
       :subtitle="coverSubtitle"
       :synopsis="coverSynopsis"
