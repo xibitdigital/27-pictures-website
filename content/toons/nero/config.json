@@ -1391,7 +1391,77 @@
     },
     {
       "file": "assets/97ee861fbf230ef8c8a143aceb412883.png",
-      "words": []
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.078,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Give me\na second.",
+            "it": "Dammi\nun secondo.",
+            "de": "Gib mir\neine Sekunde.",
+            "fr": "Donne-moi\nune seconde."
+          },
+          "audio": "assets/sfx/c8d0afa2740268881cb19e8a7265afdf.mp3"
+        },
+        {
+          "x": 0.21,
+          "y": 0.402,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "That's our\nvictim's hand.",
+            "it": "È la mano\ndella vittima.",
+            "de": "Das ist die Hand\nunseres Opfers.",
+            "fr": "C’est la main\nde la victime."
+          },
+          "audio": "assets/sfx/e5f3bc4fb1a39bcd8ed19d16ac0959fe.mp3"
+        },
+        {
+          "x": 0.56,
+          "y": 0.601,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Same dust as\nthe crystal.",
+            "it": "La stessa polvere\ndel cristallo.",
+            "de": "Derselbe Staub\nwie am Kristall.",
+            "fr": "La même poussière\nque le cristal."
+          },
+          "audio": "assets/sfx/6ef9301febd043b29949678cd82fa0ef.mp3"
+        }
+      ]
     }
   ]
 }
