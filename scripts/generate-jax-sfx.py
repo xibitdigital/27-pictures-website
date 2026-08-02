@@ -17,16 +17,29 @@ Usage:
   python3 scripts/generate-jax-sfx.py [--force]
 """
 import hashlib
+import glob
 import json
 import os
 import sys
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MANIFEST = os.path.join(ROOT, "scripts", "jax-sfx-manifest.json")
-LOCKFILE = os.path.join(ROOT, "scripts", "jax-sfx-lock.json")
-OUT_DIR = os.path.join(ROOT, "public", "toons", "jax", "assets", "sfx")
-API_URL = "https://api.elevenlabs.io/v1/sound-generation"
+MANIFEST = os.path.join(ROOT, 'scripts', 'jax-sfx-manifest.json')
+LOCKFILE = os.path.join(ROOT, 'scripts', 'jax-sfx-lock.json')
+OUT_DIR = os.path.join(ROOT, 'public', 'toons', 'jax', 'assets', 'sfx')
+# Clips generated here are often moved under another toon's sfx dir so
+# asset-page-dir resolves them on the CDN (see content/toons/nero/README.md).
+# Search every toon for an already-generated hash, or the move looks like a
+# deleted file and the slug is regenerated — re-spending credits each run.
+SFX_GLOB = os.path.join(ROOT, 'public', 'toons', '*', 'assets', 'sfx')
+API_URL = 'https://api.elevenlabs.io/v1/sound-generation'
+
+
+def find_existing(file_hash):
+    """Path of <hash>.mp3 under any toon's sfx dir, else None."""
+    for path in glob.glob(os.path.join(SFX_GLOB, f"{file_hash}.mp3")):
+        return path
+    return None
 
 
 def load_lock():
@@ -37,16 +50,16 @@ def load_lock():
 
 
 def save_lock(lock):
-    with open(LOCKFILE, "w") as f:
+    with open(LOCKFILE, 'w') as f:
         json.dump(lock, f, indent=2, sort_keys=True)
-        f.write("\n")
+        f.write('\n')
 
 
 def main():
-    force = "--force" in sys.argv
-    api_key = os.environ.get("ELEVENLABS_API_KEY")
+    force = '--force' in sys.argv
+    api_key = os.environ.get('ELEVENLABS_API_KEY')
     if not api_key:
-        print("error: ELEVENLABS_API_KEY not set (source .env first)", file=sys.stderr)
+        print('error: ELEVENLABS_API_KEY not set (source .env first)', file=sys.stderr)
         sys.exit(1)
 
     with open(MANIFEST) as f:
@@ -57,27 +70,30 @@ def main():
     changed = []
 
     for item in items:
-        slug = item["slug"]
+        slug = item['slug']
         prior_hash = lock.get(slug)
-        if prior_hash and not force and os.path.exists(os.path.join(OUT_DIR, f"{prior_hash}.mp3")):
-            print(f"skip  {slug} (exists as {prior_hash}.mp3)")
-            continue
+        if prior_hash and not force:
+            existing = find_existing(prior_hash)
+            if existing:
+                where = os.path.relpath(existing, ROOT)
+                print(f"skip  {slug} (exists as {where})")
+                continue
 
         body = json.dumps(
             {
-                "text": item["prompt"],
-                "duration_seconds": item["duration"],
-                "prompt_influence": 0.4,
+                'text': item['prompt'],
+                'duration_seconds': item['duration'],
+                'prompt_influence': 0.4,
             }
-        ).encode("utf-8")
+        ).encode('utf-8')
 
         req = urllib.request.Request(
             API_URL,
             data=body,
-            method="POST",
+            method='POST',
             headers={
-                "xi-api-key": api_key,
-                "Content-Type": "application/json",
+                'xi-api-key': api_key,
+                'Content-Type': 'application/json',
             },
         )
         try:
@@ -89,12 +105,12 @@ def main():
 
         new_hash = hashlib.md5(audio).hexdigest()
         out_path = os.path.join(OUT_DIR, f"{new_hash}.mp3")
-        with open(out_path, "wb") as f:
+        with open(out_path, 'wb') as f:
             f.write(audio)
 
         if prior_hash and prior_hash != new_hash:
-            old_path = os.path.join(OUT_DIR, f"{prior_hash}.mp3")
-            if os.path.exists(old_path):
+            old_path = find_existing(prior_hash)
+            if old_path:
                 os.remove(old_path)
 
         lock[slug] = new_hash
@@ -104,10 +120,10 @@ def main():
     save_lock(lock)
 
     if changed:
-        print("\nUpdate words.json audio fields for:")
+        print('\nUpdate words.json audio fields for:')
         for slug, h in changed:
             print(f'  {slug}: "assets/sfx/{h}.mp3"')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

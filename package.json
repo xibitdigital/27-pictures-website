@@ -6,6 +6,7 @@
     "generate-qr-image": "node scripts/generate-qr-image.js",
     "watermark": "bash scripts/watermark-images.sh",
     "add-image": "node scripts/add-toon-image.js",
+    "convert-plates": "node scripts/convert-toon-plates.js",
     "hash-assets": "node scripts/hash-assets.js",
     "hash-assets:check": "node scripts/hash-assets.js --check",
     "hash-toon-config": "node scripts/hash-toon-config.js",

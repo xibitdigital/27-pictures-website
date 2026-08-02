@@ -9,7 +9,7 @@ Usage:
 
   # prompt from a /toon-page .txt (leading "# " header lines are stripped)
   python3 scripts/generate-toon-page.py --prompt-file ~/Downloads/toon-page-foo-20260802-010101.txt \
-      --ref-asset toons/nero/assets/46d12d33ef9b8f743d479fc841e00f3d.png
+      --ref-asset toons/nero/assets/1b47ed56a7bf10c527e7b62ef3dd14ca.webp
 
   # inline prompt + explicit reference URLs
   python3 scripts/generate-toon-page.py --prompt "..." --ref https://example.com/ref.png

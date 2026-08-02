@@ -38,3 +38,6 @@ dist
 
 # Local CDN image backups (not in git)
 cdn-backup/
+
+# Local WebP conversion staging (npm run convert-plates)
+converted/

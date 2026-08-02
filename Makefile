@@ -128,6 +128,16 @@ add-image: ## Watermark + hash toon image → R2 (SRC=… TOON=jax|erin|nero [UP
 		$(if $(filter 1 true yes,$(KEEP_LOCAL)),--keep-local,) \
 		$(ARGS)
 
+.PHONY: convert-plates
+convert-plates: ## Toon plates → WebP in converted/ (TOON=jax|erin|nero [QUALITY=90] [UPLOAD=1] [NO_BAND=1] [DRY=1])
+	@test -n "$(TOON)" || (echo "Usage: make convert-plates TOON=nero [QUALITY=90] [UPLOAD=1] [NO_BAND=1] [DRY=1]" && exit 1)
+	$(NPM) run convert-plates -- --toon "$(TOON)" \
+		--quality "$(or $(QUALITY),90)" \
+		$(if $(filter 1 true yes,$(UPLOAD)),--upload,) \
+		$(if $(filter 1 true yes,$(NO_BAND)),--no-band,) \
+		$(if $(filter 1 true yes,$(DRY)),--dry-run,) \
+		$(ARGS)
+
 .PHONY: create-assets-bucket
 create-assets-bucket: ## Create Cloudflare R2 bucket
 	$(NPM) run create-assets-bucket
