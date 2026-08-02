@@ -23,11 +23,11 @@ Do **not** draw Eve as: short bob, messy punk hair, tactical combat armor, bare 
 ## Companion — Nero (when both appear)
 
 ```
-Nero: lean hard-bitten detective, short dark hair, intense eyes, dark coat, LEFT arm full steel cybernetic shoulder to fingertips (replacement not a third arm), RIGHT arm flesh ending in a metal cybernetic hand, two legs only, combat boots
+Nero: lean hard-bitten detective, short dark hair, intense eyes, dark coat, LEFT arm bare cracked-porcelain upper arm with a segmented steel forearm and metal hand from the elbow down, RIGHT arm flesh ending in a metal cybernetic hand at the wrist, two legs only, combat boots
 ```
 
 **Left/right always mean Nero's own left and right, never the viewer's.** Facing camera, his steel left arm falls on the viewer's right; seen from behind, it falls on the viewer's left. Spell out the frame side in the prompt whenever he is back-to-camera.
 
-Asymmetric cyberware: the **left** arm is prosthetic end to end — canon, set by the `nero.png` key art, where he faces camera and the steel arm reads on the viewer's right, i.e. his anatomical left. The **right** arm is flesh with a cybernetic **hand only**, starting at the wrist. Never a third arm, never two full steel arms.
+Asymmetric cyberware: the **left** arm is steel from the **elbow down** over a bare cracked-porcelain upper arm — canon, set by the `nero.png` key art, where he faces camera and that arm reads on the viewer's right, i.e. his anatomical left. The **right** arm is flesh with a cybernetic **hand only**, starting at the wrist. Never a third arm, never two chrome forearms.
 
 Action panels: state **exactly two arms / two legs** per person; cyber arm is a **replacement**, never an extra limb; prefer **one open door** for dual entry to avoid ghost limbs.

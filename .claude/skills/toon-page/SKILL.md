@@ -60,7 +60,7 @@ Attach / tell the user to attach in Seedream i2i:
 Always include a **pin clause** when refs are used, e.g.:
 
 ```
-Pin from references: keep Eve face/hair/glasses/outfit from Image [Eve]; keep Nero face/hair/full-steel-left-arm/metal-right-hand from Image [Nero]; keep B&W manga ink style and three-panel vertical stack from Image [layout] if provided.
+Pin from references: keep Eve face/hair/glasses/outfit from Image [Eve]; keep Nero face/hair/steel-left-forearm/metal-right-hand from Image [Nero]; keep B&W manga ink style and three-panel vertical stack from Image [layout] if provided.
 ```
 
 Name what must **not** change vs what must **change** (i2i rule: unmentioned elements drift).
@@ -146,7 +146,7 @@ BOTTOM (~35%): [1 sentence — ECU payoff; glasses stay on]
 
 SUBJECT LOCK: Eve — [compact]. Nero — [compact if present]. Same faces/outfits all panels.
 
-ANATOMY: exactly two arms and two legs per person. Nero's cyber limb replaces the left arm only, and his right hand is a metal prosthetic hand on a flesh right arm — never a third arm. No extra hands. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+ANATOMY: exactly two arms and two legs per person. Nero's LEFT arm is steel from the elbow down over a bare cracked-porcelain upper arm; his RIGHT arm is flesh with a metal hand from the wrist — never a third arm. No extra hands. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
 
 CHANGE: only the scene/action described above; preserve identity and ink style from pins.
 ```
@@ -172,21 +172,22 @@ Eve: long wavy dark hair past shoulders, fair skin, full lips, black rectangular
 ```
 
 ```
-Nero: lean hard-bitten detective, short dark hair, intense eyes, dark coat, LEFT arm full steel cybernetic shoulder to fingertips (replacement not extra), RIGHT arm flesh but ending in a metal cybernetic hand, two legs, combat boots
+Nero: lean hard-bitten detective, short dark hair, intense eyes, dark coat, LEFT arm cracked-porcelain bare upper arm with a segmented steel forearm and metal hand from the elbow down, RIGHT arm flesh ending in a metal cybernetic hand at the wrist, two legs, combat boots
 ```
 
 Eve anti-drift: no short bob, no missing glasses (including ECU), no tactical armor, no bare midriff.
 
 **Nero's cyber limbs — both sides, asymmetric:**
 
-- **LEFT arm: full steel prosthetic**, shoulder to fingertips. Cracked porcelain-like plating over the upper arm, segmented steel forearm, exposed cable seams, articulated metal fingers, rounded shoulder pauldron over that side. Set by the `nero.png` key art — facing camera, the steel arm reads on the viewer's right, i.e. his anatomical left.
+- **LEFT arm: bare cracked-porcelain upper arm, steel from the elbow down.** The bicep and shoulder are skin with fine crack lines running through it, under a rounded dark pauldron; the chrome begins at the elbow — segmented plated forearm, exposed cable seams, articulated metal fingers. Set by the `nero.png` key art: facing camera, that arm reads on the viewer's right, i.e. his anatomical left.
 - **RIGHT arm: ordinary flesh, cybernetic HAND only** — the prosthetic starts at the wrist. Forearm and upper arm are skin.
-- Never a third arm, never two full steel arms, never a flesh left hand.
+- Never a third arm, never two chrome forearms, never a flesh left hand.
+- Do **not** ask for "full steel shoulder to fingertips" — that contradicts the key art, and the model will keep drawing the elbow join no matter how the prompt is worded.
 - Beware mirroring: flopping a panel moves the full arm to the wrong side, so mirror the pose, not the character.
 
-**Left and right always mean the SUBJECT's own left and right, never the viewer's.** Which side of the frame the steel arm lands on therefore depends on which way he faces:
+**Left and right always mean the SUBJECT's own left and right, never the viewer's.** Which side of the frame the steel forearm lands on therefore depends on which way he faces:
 
-| Nero is | His LEFT (full steel) appears | His RIGHT (flesh + metal hand) appears |
+| Nero is | His LEFT (steel forearm) appears | His RIGHT (flesh + metal hand) appears |
 |---------|-------------------------------|----------------------------------------|
 | facing the camera | on the viewer's **right** | on the viewer's **left** |
 | seen from behind | on the viewer's **left** | on the viewer's **right** |
@@ -222,7 +223,7 @@ Diagnose: extra limbs, dropped glasses, dual-door chaos, etc. Rewrite a **short*
 PIN from Image 1: keep overall three-panel layout, rainy cyberpunk street, cab design, Eve long wavy hair and blazer, Nero short dark hair and dark coat, B&W manga ink.
 
 CHANGE / FIX:
-- MIDDLE: only ONE open car door; each person exactly two arms and two legs; Nero left arm full steel cyber, right arm flesh with a metal hand (not a third arm); no ghost limbs.
+- MIDDLE: only ONE open car door; each person exactly two arms and two legs; Nero left forearm steel from the elbow, right arm flesh with a metal hand (not a third arm); no ghost limbs.
 - BOTTOM: Eve keeps black rectangular glasses on her face.
 - Do not restyle faces into different people.
 
