@@ -65,8 +65,8 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | **16** | **Knife** | Nero draws from the waistband → blade in flight, shooter small in the doorway → hit in the neck gap above the vest |
 | **17** | **Unmasked** | Mask pulled off → the shooter is the Cerberus **bartender** → Nero lifts a blank keycard from his vest |
 
-Asset for page 4: `assets/f6e5abea5751b52ecd7f6fc07c40dbb4.png` (diagonal interstitial).
-Asset for page 11: `assets/8c0cf8ac2ade39ab94d5754fb0381887.jpg`.
+Asset for page 4: `assets/27519b004e3802fa29dd5d2cc7556754.webp` (diagonal interstitial).
+Asset for page 11: `assets/cd9089a69917fa08aedeb80e4d8fc03d.webp`.
 
 ## Reader UX
 
@@ -94,9 +94,9 @@ npm run upload-assets
 
 Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `top` | `top-left` | `top-right` | `left` | `right`
 (Use a `top*` tail when the speaker is *below* the bubble. Unknown values silently fall back to `bottom`.)
-Asset for page 12: `assets/46d12d33ef9b8f743d479fc841e00f3d.png` (panels 2–3 mirrored).
-Asset for page 13: `assets/9259129bcd03fb78b3d9f4b3ce022057.png` (Victorian + holo Cerberus interior).
-Asset for page 14: `assets/97ee861fbf230ef8c8a143aceb412883.png` (upstairs room, forensic scan).
-Asset for page 15: `assets/4cd4970454d400d7a90f6345b1fcaf60.png` (ambush; panels 2–3 split on a diagonal).
-Asset for page 16: `assets/fe9c5ed9c939fcc78479eb1397a4ec56.png` (knife throw; panels 1–2 split on a diagonal).
-Asset for page 17: `assets/f3da1761768e057bff4631541ca1c48d.png` (unmasking; the bartender is the shooter).
+Asset for page 12: `assets/1b47ed56a7bf10c527e7b62ef3dd14ca.webp` (panels 2–3 mirrored).
+Asset for page 13: `assets/abca70594fb25e9ba093ba48d3965938.webp` (Victorian + holo Cerberus interior).
+Asset for page 14: `assets/94c4ceac33c898f4ad5bfb3a2d861a78.webp` (upstairs room, forensic scan).
+Asset for page 15: `assets/5bb0e9e737adc372181810c9f89a3272.webp` (ambush; panels 2–3 split on a diagonal).
+Asset for page 16: `assets/cb61234b19178e8110de28c2002b1162.webp` (knife throw; straight horizontal panels).
+Asset for page 17: `assets/3124bcdc7106f49cf07712c411e44cfd.webp` (unmasking; the bartender is the shooter).

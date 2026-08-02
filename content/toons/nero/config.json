@@ -23,7 +23,7 @@
   ],
   "pages": [
     {
-      "file": "assets/6cf879b434ca81e4adf80fd367a40123.jpg",
+      "file": "assets/ba6da7dd5375b35e188f0f4c7507e7da.webp",
       "words": [
         {
           "x": 0.16,
@@ -94,7 +94,7 @@
       ]
     },
     {
-      "file": "assets/c4f4d3acea3debe72330ce32a918f03e.jpg",
+      "file": "assets/316fa87fda4417f0dc0a37c9d20f66d4.webp",
       "words": [
         {
           "x": 0.16,
@@ -165,7 +165,7 @@
       ]
     },
     {
-      "file": "assets/c4b16515522a4aae08a711913429c1a2.jpg",
+      "file": "assets/4a3246809bc9b14f33f84d6f91e23da1.webp",
       "words": [
         {
           "x": 0.14,
@@ -236,7 +236,7 @@
       ]
     },
     {
-      "file": "assets/f6e5abea5751b52ecd7f6fc07c40dbb4.png",
+      "file": "assets/27519b004e3802fa29dd5d2cc7556754.webp",
       "words": [
         {
           "x": 0.3,
@@ -287,7 +287,7 @@
       ]
     },
     {
-      "file": "assets/96108fa30f3a797290dddfbd8726bac5.jpg",
+      "file": "assets/1945a21659d9d0e87f4f8472c7fa43d8.webp",
       "words": [
         {
           "x": 0.16,
@@ -358,7 +358,7 @@
       ]
     },
     {
-      "file": "assets/d15e55b134e6039738c1da7bac34522b.jpg",
+      "file": "assets/f72f851c0b758023e0b7c7475d303a2c.webp",
       "words": [
         {
           "x": 0.14,
@@ -483,7 +483,7 @@
       ]
     },
     {
-      "file": "assets/3e1aa41ac4b56309c61781548e7cfb9e.png",
+      "file": "assets/01771cf880269bd3a3afdc2785919160.webp",
       "words": [
         {
           "x": 0.12,
@@ -598,7 +598,7 @@
       ]
     },
     {
-      "file": "assets/28d9bc5757ba0a476a9136b88b381176.png",
+      "file": "assets/94d2507f8c8a7ef055b5cf2fad596b5f.webp",
       "words": [
         {
           "x": 0.16,
@@ -667,7 +667,7 @@
       ]
     },
     {
-      "file": "assets/a9017fce9bdf23449cbf7be05323ec04.png",
+      "file": "assets/d197a6862708be93d69b3b7b7f5d336b.webp",
       "words": [
         {
           "x": 0.5,
@@ -791,7 +791,7 @@
       ]
     },
     {
-      "file": "assets/03eee5cabb8bcbb08401a9d3852fbbbf.png",
+      "file": "assets/52cef7310701914960aeada30fd13d56.webp",
       "words": [
         {
           "x": 0.14,
@@ -938,7 +938,7 @@
       ]
     },
     {
-      "file": "assets/8c0cf8ac2ade39ab94d5754fb0381887.jpg",
+      "file": "assets/cd9089a69917fa08aedeb80e4d8fc03d.webp",
       "words": [
         {
           "x": 0.78,
@@ -1058,7 +1058,7 @@
       ]
     },
     {
-      "file": "assets/46d12d33ef9b8f743d479fc841e00f3d.png",
+      "file": "assets/1b47ed56a7bf10c527e7b62ef3dd14ca.webp",
       "words": [
         {
           "x": 0.22,
@@ -1201,7 +1201,7 @@
       ]
     },
     {
-      "file": "assets/9259129bcd03fb78b3d9f4b3ce022057.png",
+      "file": "assets/abca70594fb25e9ba093ba48d3965938.webp",
       "words": [
         {
           "x": 0.29,
@@ -1390,7 +1390,7 @@
       ]
     },
     {
-      "file": "assets/97ee861fbf230ef8c8a143aceb412883.png",
+      "file": "assets/94c4ceac33c898f4ad5bfb3a2d861a78.webp",
       "words": [
         {
           "x": 0.22,
@@ -1464,11 +1464,11 @@
       ]
     },
     {
-      "file": "assets/4cd4970454d400d7a90f6345b1fcaf60.png",
+      "file": "assets/5bb0e9e737adc372181810c9f89a3272.webp",
       "words": [
         {
-          "x": 0.3,
-          "y": 0.16,
+          "x": 0.17,
+          "y": 0.145,
           "align": "center",
           "size": 46,
           "color": "#111111",
@@ -1485,8 +1485,8 @@
           "audio": "assets/sfx/29a5e1f26c4c7fa525dd6cf8df1d80cc.mp3"
         },
         {
-          "x": 0.85,
-          "y": 0.1,
+          "x": 0.86,
+          "y": 0.075,
           "align": "center",
           "size": 26,
           "color": "#111111",
@@ -1503,8 +1503,8 @@
           "audio": "assets/sfx/d3956e42cf6b3b6df42547376d2b3ea6.mp3"
         },
         {
-          "x": 0.23,
-          "y": 0.335,
+          "x": 0.22,
+          "y": 0.415,
           "align": "center",
           "size": 20,
           "variant": "ai",
@@ -1529,8 +1529,8 @@
           "audio": "assets/sfx/db6e5b1011a5fea1a95e735261b4ca39.mp3"
         },
         {
-          "x": 0.31,
-          "y": 0.425,
+          "x": 0.47,
+          "y": 0.445,
           "align": "center",
           "size": 30,
           "color": "#111111",
@@ -1547,8 +1547,8 @@
           "audio": "assets/sfx/7e55d3304898473dd60b4b3e838da41c.mp3"
         },
         {
-          "x": 0.6,
-          "y": 0.765,
+          "x": 0.26,
+          "y": 0.76,
           "align": "center",
           "size": 50,
           "color": "#111111",
@@ -1567,7 +1567,7 @@
       ]
     },
     {
-      "file": "assets/fe9c5ed9c939fcc78479eb1397a4ec56.png",
+      "file": "assets/cb61234b19178e8110de28c2002b1162.webp",
       "words": [
         {
           "x": 0.16,
@@ -1584,7 +1584,8 @@
             "it": "SHNK",
             "de": "SHNK",
             "fr": "SHNK"
-          }
+          },
+          "audio": "assets/sfx/bbab7c4d0f5e07f826d8b00f1fda14ba.mp3"
         },
         {
           "x": 0.17,
@@ -1601,7 +1602,8 @@
             "it": "SHFFF",
             "de": "SHFFF",
             "fr": "SHFFF"
-          }
+          },
+          "audio": "assets/sfx/10c5586dd81b2ddea0ded7352933f433.mp3"
         },
         {
           "x": 0.2,
@@ -1618,23 +1620,24 @@
             "it": "THUKK",
             "de": "THUKK",
             "fr": "THUKK"
-          }
+          },
+          "audio": "assets/sfx/5644df234aa6dd08fca718264a66788f.mp3"
         }
       ]
     },
     {
-      "file": "assets/f3da1761768e057bff4631541ca1c48d.png",
+      "file": "assets/3124bcdc7106f49cf07712c411e44cfd.webp",
       "words": [
         {
-          "x": 0.74,
-          "y": 0.395,
+          "x": 0.84,
+          "y": 0.365,
           "align": "center",
           "size": 26,
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
           "scale": 1.0,
-          "maxWidth": 0.22,
+          "maxWidth": 0.18,
           "bubble": {
             "tail": "top",
             "opacity": 0.75,
@@ -1650,7 +1653,7 @@
         },
         {
           "x": 0.21,
-          "y": 0.605,
+          "y": 0.655,
           "align": "center",
           "size": 24,
           "variant": "bubble",
@@ -1673,7 +1676,7 @@
         },
         {
           "x": 0.19,
-          "y": 0.745,
+          "y": 0.775,
           "align": "center",
           "size": 24,
           "variant": "bubble",
