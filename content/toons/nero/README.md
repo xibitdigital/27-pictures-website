@@ -21,8 +21,8 @@ The same prose is on the **front cover** (`coverSynopsis` in `NeroApp.vue`) and 
 
 Detective and **ex-military**. Lost a hand in a **terrorist attack** and now fights with a heavy **prosthetic cyber arm**. Hard-edged, street-smart, still capable of being surprised (and charmed). Carries the case: the crystal, the crime scene, the hunt.
 
-- **Cyberware is asymmetric.** The **left arm** is a full steel prosthetic, shoulder to fingertips — cracked porcelain-like plating above the elbow, segmented forearm, articulated metal fingers, shoulder pauldron over that side. The **right arm** is ordinary flesh ending in a **cybernetic hand**, prosthetic from the wrist down.
-- Never a third arm, never two full steel arms, never a flesh left hand. Sides are set by the `nero.png` key art: facing camera, the full steel arm reads on the viewer's right, i.e. his anatomical left. Pin this in every image prompt.
+- **Cyberware is asymmetric.** The **left arm** is steel from the **elbow down** — bare cracked-porcelain upper arm under a dark pauldron, segmented steel forearm, articulated metal fingers. The **right arm** is ordinary flesh ending in a **cybernetic hand**, prosthetic from the wrist down.
+- Never a third arm, never two chrome forearms, never a flesh left hand. Sides are set by the `nero.png` key art: facing camera, the steel forearm reads on the viewer's right, i.e. his anatomical left. Pin this in every image prompt.
 - Voice lock: `nero` in `scripts/jax-voices.json`
 
 ### Eve
@@ -60,6 +60,7 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | **11** | **Cybercab** | Eve hails driverless cab → both jump in → ECU faces inside |
 | **12** | **Cerberus club** | Drop-off → Eve distracts bouncer → Nero invites Eve in |
 | **13** | **Cerberus interior** | Floor crowd → bar / bartender → grand staircase |
+| **14** | **Upstairs room** | Eve's glasses scan → fingerprint on the door handle → Nero reads traces on the floor |
 
 Asset for page 4: `assets/f6e5abea5751b52ecd7f6fc07c40dbb4.png` (diagonal interstitial).
 Asset for page 11: `assets/8c0cf8ac2ade39ab94d5754fb0381887.jpg`.
@@ -92,3 +93,4 @@ Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `top` | `top-
 (Use a `top*` tail when the speaker is *below* the bubble. Unknown values silently fall back to `bottom`.)
 Asset for page 12: `assets/46d12d33ef9b8f743d479fc841e00f3d.png` (panels 2–3 mirrored).
 Asset for page 13: `assets/9259129bcd03fb78b3d9f4b3ce022057.png` (Victorian + holo Cerberus interior).
+Asset for page 14: `assets/97ee861fbf230ef8c8a143aceb412883.png` (upstairs room, forensic scan).
