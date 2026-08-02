@@ -19,7 +19,6 @@ export { default as BookSurface } from "./BookSurface.vue";
 export { default as BookSlot } from "./BookSlot.vue";
 export { default as FlipLeaf } from "./FlipLeaf.vue";
 export { default as CoverFirstPage } from "./CoverFirstPage.vue";
-export { default as FrontCoverInstructions } from "./FrontCoverInstructions.vue";
 export { default as BackCoverLink } from "./BackCoverLink.vue";
 export { DEFAULT_COVER_STORY, resolveCoverStory } from "./coverStory";
 

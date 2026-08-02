@@ -6,7 +6,6 @@ import { reactive } from "vue";
 import { loadConfigPages } from "./loadConfig";
 import {
   indicatorText,
-  pageNumForSpread,
   pageSrcForSpread,
   prefersReduceMotion,
   prefersSinglePage,
@@ -208,8 +207,6 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     const backSide: "left" | "right" = goingNext ? "left" : "right";
     const frontSrc = pageSrcForSpread(state.pages, cur, frontSide);
     const backSrc = pageSrcForSpread(state.pages, target, backSide);
-    const frontNum = pageNumForSpread(state.pages, cur, frontSide);
-    const backNum = pageNumForSpread(state.pages, target, backSide);
     const earlySide: "left" | "right" = goingNext ? "right" : "left";
     const lateSide: "left" | "right" = goingNext ? "left" : "right";
     const earlyModel = slotForSpread(state.pages, ts, target, earlySide);
@@ -232,12 +229,11 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     pendingLate = { side: lateSide, model: lateModel };
     pendingFlipTarget = target;
 
-    const frontFace = frontSrc
-      ? ({ kind: "page", src: frontSrc, pageNum: frontNum ?? 1 } as const)
-      : slotToFlipFace(slotForSpread(state.pages, ts, cur, frontSide));
-    const backFace = backSrc
-      ? ({ kind: "page", src: backSrc, pageNum: backNum ?? 1 } as const)
-      : slotToFlipFace(slotForSpread(state.pages, ts, target, backSide));
+    // slotForSpread already yields a `page` face (with the right pageNum) when
+    // that half has art, so no separate src/pageNum branch is needed here —
+    // pairing a src with a defaulted page number would paint the wrong captions.
+    const frontFace = slotToFlipFace(slotForSpread(state.pages, ts, cur, frontSide));
+    const backFace = slotToFlipFace(slotForSpread(state.pages, ts, target, backSide));
 
     state.flip = {
       id: ++flipId,
