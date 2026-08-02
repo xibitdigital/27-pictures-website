@@ -21,8 +21,8 @@ The same prose is on the **front cover** (`coverSynopsis` in `NeroApp.vue`) and 
 
 Detective and **ex-military**. Lost a hand in a **terrorist attack** and now fights with a heavy **prosthetic cyber arm**. Hard-edged, street-smart, still capable of being surprised (and charmed). Carries the case: the crystal, the crime scene, the hunt.
 
-- **Cyber limb: the RIGHT arm/hand only** — segmented steel plating, exposed cable bundles, articulated metal fingers. The left arm is ordinary flesh. Never both, never the left.
-- Pin this side in every image prompt.
+- **Cyberware is asymmetric.** The **left arm** is a full steel prosthetic, shoulder to fingertips — cracked porcelain-like plating above the elbow, segmented forearm, articulated metal fingers, shoulder pauldron over that side. The **right arm** is ordinary flesh ending in a **cybernetic hand**, prosthetic from the wrist down.
+- Never a third arm, never two full steel arms, never a flesh left hand. Sides are set by the `nero.png` key art: facing camera, the full steel arm reads on the viewer's right, i.e. his anatomical left. Pin this in every image prompt.
 - Voice lock: `nero` in `scripts/jax-voices.json`
 
 ### Eve
@@ -88,6 +88,7 @@ python3 scripts/generate-jax-voice.py "Line." --voice nero   # or eve | thedog |
 npm run upload-assets
 ```
 
-Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `left` | `right`
+Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `top` | `top-left` | `top-right` | `left` | `right`
+(Use a `top*` tail when the speaker is *below* the bubble. Unknown values silently fall back to `bottom`.)
 Asset for page 12: `assets/46d12d33ef9b8f743d479fc841e00f3d.png` (panels 2–3 mirrored).
-Asset for page 13: `assets/bcc3f8280a10dba1266b449ca3c08988.jpg`.
+Asset for page 13: `assets/9259129bcd03fb78b3d9f4b3ce022057.png` (Victorian + holo Cerberus interior).

@@ -619,7 +619,7 @@
           "audio": "assets/sfx/17ac29ef35976e67e6b3c7670120bdf7.mp3"
         },
         {
-          "x": 0.16,
+          "x": 0.26,
           "y": 0.55,
           "align": "center",
           "size": 28,
@@ -636,12 +636,13 @@
           },
           "audio": "assets/sfx/47e8fa5f9d881d4dcd4f348364e4f623.mp3",
           "bubble": {
+            "tail": "right",
             "opacity": 0.75,
             "strokeWidth": 5
           }
         },
         {
-          "x": 0.5,
+          "x": 0.7,
           "y": 0.68,
           "align": "center",
           "size": 24,
@@ -658,6 +659,7 @@
           },
           "audio": "assets/sfx/967a68961dba4e9a861dc4ad3d6a7534.mp3",
           "bubble": {
+            "tail": "bottom-left",
             "opacity": 0.75,
             "strokeWidth": 5
           }
@@ -668,8 +670,8 @@
       "file": "assets/a9017fce9bdf23449cbf7be05323ec04.png",
       "words": [
         {
-          "x": 0.16,
-          "y": 0.1,
+          "x": 0.5,
+          "y": 0.05,
           "align": "center",
           "size": 28,
           "variant": "bubble",
@@ -685,6 +687,7 @@
           },
           "audio": "assets/sfx/c74cca79249a4b791632b04e8b2d4053.mp3",
           "bubble": {
+            "tail": "bottom-left",
             "opacity": 0.75,
             "strokeWidth": 5
           }
@@ -755,6 +758,7 @@
           },
           "audio": "assets/sfx/3d96922315e19633e4c66df736b1100c.mp3",
           "bubble": {
+            "tail": "top",
             "opacity": 0.75,
             "strokeWidth": 5
           }
@@ -807,13 +811,14 @@
           },
           "audio": "assets/sfx/3828e57822967eeb0bfa87ac413165bf.mp3",
           "bubble": {
+            "tail": "right",
             "opacity": 0.75,
             "strokeWidth": 5
           }
         },
         {
           "x": 0.88,
-          "y": 0.12,
+          "y": 0.08,
           "align": "center",
           "size": 28,
           "variant": "bubble",
@@ -822,12 +827,12 @@
           "scale": 1.05,
           "maxWidth": 0.28,
           "text": {
-            "en": "…You scrub up.",
-            "it": "…Ti stai bene.",
-            "de": "…Sieht gut aus.",
-            "fr": "…Tu as de l'allure."
+            "en": "…You look\nbeautiful.",
+            "it": "…Sei\nbellissima.",
+            "de": "…Du siehst\nwunderschön aus.",
+            "fr": "…Tu es\nmagnifique."
           },
-          "audio": "assets/sfx/9dd8ca233ee22aed29c41ed5a6469db4.mp3",
+          "audio": "assets/sfx/1e5ed16f605e272b4444faa052d33299.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -851,13 +856,14 @@
           },
           "audio": "assets/sfx/2cc9ae28b004905dc407432af00fd8ff.mp3",
           "bubble": {
+            "tail": "left",
             "opacity": 0.75,
             "strokeWidth": 5
           }
         },
         {
-          "x": 0.12,
-          "y": 0.42,
+          "x": 0.35,
+          "y": 0.5,
           "align": "center",
           "size": 20,
           "variant": "ai",
@@ -882,15 +888,15 @@
           "audio": "assets/sfx/021c920e7cfd7a6181fd0843058b7c6b.mp3"
         },
         {
-          "x": 0.16,
-          "y": 0.72,
+          "x": 0.4,
+          "y": 0.6,
           "align": "center",
           "size": 24,
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
           "scale": 1.05,
-          "maxWidth": 0.36,
+          "maxWidth": 0.3,
           "text": {
             "en": "If it glows like that\ncrystal, I'll see it.",
             "it": "Se brilla come quel\ncristallo, lo vedo.",
@@ -899,13 +905,14 @@
           },
           "audio": "assets/sfx/9e335afd4705b7d540a2618dcca00bf7.mp3",
           "bubble": {
+            "tail": "bottom",
             "opacity": 0.75,
             "strokeWidth": 5
           }
         },
         {
           "x": 0.88,
-          "y": 0.78,
+          "y": 0.7,
           "align": "center",
           "size": 24,
           "variant": "bubble",
@@ -1100,7 +1107,7 @@
           "audio": "assets/sfx/db38377b1853af6a372e6e04ba0e2a28.mp3"
         },
         {
-          "x": 0.21,
+          "x": 0.81,
           "y": 0.33,
           "align": "center",
           "size": 22,
@@ -1124,7 +1131,7 @@
         },
         {
           "x": 0.81,
-          "y": 0.8,
+          "y": 0.72,
           "align": "center",
           "size": 26,
           "variant": "bubble",
@@ -1146,8 +1153,8 @@
           "audio": "assets/sfx/fdfa0b45fec21c4c7c6b8709d2deb17a.mp3"
         },
         {
-          "x": 0.736,
-          "y": 0.7,
+          "x": 0.636,
+          "y": 0.63,
           "align": "center",
           "size": 24,
           "variant": "bubble",
@@ -1170,7 +1177,7 @@
         },
         {
           "x": 0.326,
-          "y": 0.7,
+          "y": 0.66,
           "align": "center",
           "size": 26,
           "variant": "bubble",
@@ -1194,20 +1201,20 @@
       ]
     },
     {
-      "file": "assets/bcc3f8280a10dba1266b449ca3c08988.jpg",
+      "file": "assets/9259129bcd03fb78b3d9f4b3ce022057.png",
       "words": [
         {
-          "x": 0.38,
-          "y": 0.08,
+          "x": 0.29,
+          "y": 0.17,
           "align": "center",
           "size": 26,
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
           "scale": 1.0,
-          "maxWidth": 0.28,
+          "maxWidth": 0.24,
           "bubble": {
-            "tail": "bottom",
+            "tail": "bottom-right",
             "opacity": 0.75,
             "strokeWidth": 5
           },
@@ -1220,17 +1227,17 @@
           "audio": "assets/sfx/da335f0b3b62f6f91f6620067afcb237.mp3"
         },
         {
-          "x": 0.62,
-          "y": 0.08,
+          "x": 0.72,
+          "y": 0.17,
           "align": "center",
           "size": 26,
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
           "scale": 1.0,
-          "maxWidth": 0.28,
+          "maxWidth": 0.24,
           "bubble": {
-            "tail": "bottom",
+            "tail": "bottom-left",
             "opacity": 0.75,
             "strokeWidth": 5
           },
@@ -1243,10 +1250,10 @@
           "audio": "assets/sfx/ea96eaf87603d48c91174078e559cfbb.mp3"
         },
         {
-          "x": 0.13,
-          "y": 0.395,
+          "x": 0.18,
+          "y": 0.455,
           "align": "center",
-          "size": 22,
+          "size": 24,
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
@@ -1254,52 +1261,6 @@
           "maxWidth": 0.22,
           "bubble": {
             "tail": "bottom-right",
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
-          "text": {
-            "en": "Chrome doesn't drink.",
-            "it": "Il cromo non beve.",
-            "de": "Chrom trinkt nicht.",
-            "fr": "Le chrome ne boit pas."
-          },
-          "audio": "assets/sfx/cf61cf2d96615d8ebc82b08c1b01b707.mp3"
-        },
-        {
-          "x": 0.78,
-          "y": 0.38,
-          "align": "center",
-          "size": 24,
-          "variant": "bubble",
-          "color": "#111111",
-          "angle": 4,
-          "scale": 1.0,
-          "maxWidth": 0.32,
-          "bubble": {
-            "tail": "left",
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
-          "text": {
-            "en": "Looking for\nsomeone.",
-            "it": "Cerco\nqualcuno.",
-            "de": "Suche\njemanden.",
-            "fr": "Je cherche\nquelqu'un."
-          },
-          "audio": "assets/sfx/7131d784b220ae5e55ee55b4e6f3647d.mp3"
-        },
-        {
-          "x": 0.48,
-          "y": 0.4,
-          "align": "center",
-          "size": 24,
-          "variant": "bubble",
-          "color": "#111111",
-          "angle": -2,
-          "scale": 1.0,
-          "maxWidth": 0.28,
-          "bubble": {
-            "tail": "bottom",
             "opacity": 0.75,
             "strokeWidth": 5
           },
@@ -1312,17 +1273,86 @@
           "audio": "assets/sfx/a15008b53f0b6ce0845f39a54093f779.mp3"
         },
         {
-          "x": 0.28,
-          "y": 0.7,
+          "x": 0.42,
+          "y": 0.4,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.22,
+          "bubble": {
+            "tail": "bottom-left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Looking for\nsomeone.",
+            "it": "Cerco\nqualcuno.",
+            "de": "Suche\njemanden.",
+            "fr": "Je cherche\nquelqu'un."
+          },
+          "audio": "assets/sfx/134303a34d1e7d543ac2aeb9ed69d97c.mp3"
+        },
+        {
+          "x": 0.83,
+          "y": 0.465,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.0,
+          "maxWidth": 0.2,
+          "bubble": {
+            "tail": "bottom-left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Everyone in here is.",
+            "it": "Lo cercano tutti, qui.",
+            "de": "Das tun hier alle.",
+            "fr": "Ici, tout le monde en cherche un."
+          },
+          "audio": "assets/sfx/689fa8b06eddd07b2b0aa8390832dd7a.mp3"
+        },
+        {
+          "x": 0.84,
+          "y": 0.605,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.2,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Top of\nthe stairs.",
+            "it": "In cima\nalle scale.",
+            "de": "Oben an\nder Treppe.",
+            "fr": "En haut\nde l’escalier."
+          },
+          "audio": "assets/sfx/49b98969e213a76dcb528973d6974028.mp3"
+        },
+        {
+          "x": 0.2,
+          "y": 0.785,
           "align": "center",
           "size": 26,
           "variant": "bubble",
           "color": "#111111",
-          "angle": -3,
+          "angle": -2,
           "scale": 1.0,
-          "maxWidth": 0.26,
+          "maxWidth": 0.2,
           "bubble": {
-            "tail": "bottom",
+            "tail": "right",
             "opacity": 0.75,
             "strokeWidth": 5
           },
@@ -1335,17 +1365,17 @@
           "audio": "assets/sfx/71a5b719e332b1c7c35bc98e0e61a4ac.mp3"
         },
         {
-          "x": 0.68,
-          "y": 0.7,
+          "x": 0.81,
+          "y": 0.805,
           "align": "center",
           "size": 26,
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
           "scale": 1.0,
-          "maxWidth": 0.26,
+          "maxWidth": 0.2,
           "bubble": {
-            "tail": "bottom",
+            "tail": "left",
             "opacity": 0.75,
             "strokeWidth": 5
           },
