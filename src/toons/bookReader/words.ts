@@ -145,7 +145,7 @@ function resolveStroke(w) {
  *   background shape only — text size is unaffected; ignored on plain (non-bubble) words
  * @property {'plain'|'bubble'} [variant] - "bubble" = sketchy dialog balloon
  * @property {'plain'|'bubble'} [mode] - alias of variant
- * @property {string} [tail] - bubble tail: none|bottom|bottom-left|bottom-right|left|right
+ * @property {string} [tail] - bubble tail: none|bottom|bottom-left|bottom-right|top|top-left|top-right|left|right
  * @property {Object} [bubble] - { fill, stroke, strokeWidth, tail, padX, padY }
  * @property {Object|string} text - { en, it, de, fr } or string
  */
@@ -342,8 +342,12 @@ export class WordOverlay {
           textEl.style.color = w.color || (variant === "ai" ? "#f5f5f5" : variant === "badai" ? "#0a0a0a" : "#111111");
           const padX = `${bubbleStyle.padX}em`;
           const padY = `${bubbleStyle.padY}em`;
-          textEl.style.padding = `${padY} ${padX} ${
-            bubbleStyle.tail === "none" ? padY : `calc(${padY} + 0.35em)`
+          // The tail eats into the balloon on its own side, so pad that side out.
+          const tailPad = `calc(${padY} + 0.35em)`;
+          const isTopTail = bubbleStyle.tail.startsWith("top");
+          const hasTail = bubbleStyle.tail !== "none";
+          textEl.style.padding = `${isTopTail ? tailPad : padY} ${padX} ${
+            hasTail && !isTopTail ? tailPad : padY
           } ${padX}`;
         } else {
           el.appendChild(textEl);
@@ -433,18 +437,14 @@ export class WordOverlay {
       slot.classList.remove("is-captions-pending");
     };
 
-    const tryPaint = (): void => {
-      paint();
-    };
-
     if (img.complete && (img.naturalWidth || img.clientWidth)) {
-      tryPaint();
+      paint();
     } else {
-      img.addEventListener("load", tryPaint, { once: true });
+      img.addEventListener("load", paint, { once: true });
       if (typeof img.decode === "function") {
         img
           .decode()
-          .then(tryPaint)
+          .then(paint)
           .catch(() => {
             /* load listener is the fallback */
           });
@@ -457,7 +457,7 @@ export class WordOverlay {
       if (prev) prev.disconnect();
       const ro = new ResizeObserver(() => {
         painted = false;
-        tryPaint();
+        paint();
       });
       ro.observe(slot);
       if (img) ro.observe(img);

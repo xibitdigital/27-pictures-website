@@ -147,6 +147,15 @@ export function sketchyBubblePath(tail: string, seed?: number): string {
     attachA = 0;
     tip = [116, 52];
     halfW = 0.26;
+  } else if (t === "top") {
+    attachA = -Math.PI / 2;
+    tip = [50, -18];
+  } else if (t === "top-left") {
+    attachA = -Math.PI / 2 - 0.4;
+    tip = [28, -16];
+  } else if (t === "top-right") {
+    attachA = -Math.PI / 2 + 0.4;
+    tip = [72, -16];
   }
 
   const a0 = attachA + halfW;

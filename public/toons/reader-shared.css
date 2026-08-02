@@ -1257,6 +1257,12 @@ body.view-vertical.is-fullscreen .reader {
   height: calc(100% + 1.15em);
 }
 
+/* Top tails point up, so the extra room goes above the glyph box, not below. */
+.jax-word--bubble[data-tail^="top"] .jax-bubble-svg {
+  top: -0.85em;
+  height: calc(100% + 1.15em);
+}
+
 .jax-word--bubble[data-tail="left"] .jax-bubble-svg {
   left: -0.95em;
   width: calc(100% + 1.3em);
