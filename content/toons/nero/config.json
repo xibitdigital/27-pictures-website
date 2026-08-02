@@ -1565,6 +1565,136 @@
           "audio": "assets/sfx/8d981e7559085a213f674b4d4a105570.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/fe9c5ed9c939fcc78479eb1397a4ec56.png",
+      "words": [
+        {
+          "x": 0.16,
+          "y": 0.105,
+          "align": "center",
+          "size": 38,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -10,
+          "maxWidth": 0.18,
+          "text": {
+            "en": "SHNK",
+            "it": "SHNK",
+            "de": "SHNK",
+            "fr": "SHNK"
+          }
+        },
+        {
+          "x": 0.17,
+          "y": 0.495,
+          "align": "center",
+          "size": 30,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -6,
+          "maxWidth": 0.18,
+          "text": {
+            "en": "SHFFF",
+            "it": "SHFFF",
+            "de": "SHFFF",
+            "fr": "SHFFF"
+          }
+        },
+        {
+          "x": 0.2,
+          "y": 0.875,
+          "align": "center",
+          "size": 44,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -8,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "THUKK",
+            "it": "THUKK",
+            "de": "THUKK",
+            "fr": "THUKK"
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/f3da1761768e057bff4631541ca1c48d.png",
+      "words": [
+        {
+          "x": 0.74,
+          "y": 0.395,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.22,
+          "bubble": {
+            "tail": "top",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "The barman.",
+            "it": "Il barista.",
+            "de": "Der Barkeeper.",
+            "fr": "Le barman."
+          },
+          "audio": "assets/sfx/bee7b5ec57d242c26c64d7708a9f1299.mp3"
+        },
+        {
+          "x": 0.21,
+          "y": 0.605,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "He wasn't\nworking alone.",
+            "it": "Non agiva\nda solo.",
+            "de": "Er war nicht\nallein.",
+            "fr": "Il n'agissait\npas seul."
+          },
+          "audio": "assets/sfx/3e7979f0ebbf2448d38e194ea55433db.mp3"
+        },
+        {
+          "x": 0.19,
+          "y": 0.745,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "He won't be\nthe last.\nLet's move.",
+            "it": "Non sarà\nl'ultimo.\nAndiamo.",
+            "de": "Er wird nicht\nder Letzte sein.\nGehen wir.",
+            "fr": "Il ne sera pas\nle dernier.\nOn y va."
+          },
+          "audio": "assets/sfx/51a3dbc799081013683ac29d9c627fc0.mp3"
+        }
+      ]
     }
   ]
 }

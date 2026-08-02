@@ -173,5 +173,20 @@
     "slug": "nero-ricochet-spanng",
     "prompt": "Bullet ricochet off thick steel plate, hard metallic spang with bright ringing tail",
     "duration": 1.6
+  },
+  {
+    "slug": "nero-knife-shnk",
+    "prompt": "Combat knife drawn fast from a leather sheath, sharp metallic scrape of steel on leather",
+    "duration": 0.9
+  },
+  {
+    "slug": "nero-knife-shfff",
+    "prompt": "Thrown knife spinning through the air, fast blade whoosh cutting through space",
+    "duration": 0.8
+  },
+  {
+    "slug": "nero-knife-thukk",
+    "prompt": "Thrown knife striking flesh and body armour, deep solid thud with a short wet edge, no ring",
+    "duration": 1.1
   }
 ]

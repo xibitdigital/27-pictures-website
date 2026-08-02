@@ -62,6 +62,8 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | **13** | **Cerberus interior** | Floor crowd → bar / bartender → grand staircase |
 | **14** | **Upstairs room** | Eve's glasses scan → fingerprint on the door handle → Nero reads traces on the floor |
 | **15** | **Ambush** | Door kicked in, suppressed rifle → Nero shoves Eve clear, steel forearm up → bullet strikes the plating |
+| **16** | **Knife** | Nero draws from the waistband → blade in flight, shooter small in the doorway → hit in the neck gap above the vest |
+| **17** | **Unmasked** | Mask pulled off → the shooter is the Cerberus **bartender** → Nero lifts a blank keycard from his vest |
 
 Asset for page 4: `assets/f6e5abea5751b52ecd7f6fc07c40dbb4.png` (diagonal interstitial).
 Asset for page 11: `assets/8c0cf8ac2ade39ab94d5754fb0381887.jpg`.
@@ -96,3 +98,5 @@ Asset for page 12: `assets/46d12d33ef9b8f743d479fc841e00f3d.png` (panels 2–3 m
 Asset for page 13: `assets/9259129bcd03fb78b3d9f4b3ce022057.png` (Victorian + holo Cerberus interior).
 Asset for page 14: `assets/97ee861fbf230ef8c8a143aceb412883.png` (upstairs room, forensic scan).
 Asset for page 15: `assets/4cd4970454d400d7a90f6345b1fcaf60.png` (ambush; panels 2–3 split on a diagonal).
+Asset for page 16: `assets/fe9c5ed9c939fcc78479eb1397a4ec56.png` (knife throw; panels 1–2 split on a diagonal).
+Asset for page 17: `assets/f3da1761768e057bff4631541ca1c48d.png` (unmasking; the bartender is the shooter).
