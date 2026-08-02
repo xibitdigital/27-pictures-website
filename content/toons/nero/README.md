@@ -61,6 +61,7 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | **12** | **Cerberus club** | Drop-off → Eve distracts bouncer → Nero invites Eve in |
 | **13** | **Cerberus interior** | Floor crowd → bar / bartender → grand staircase |
 | **14** | **Upstairs room** | Eve's glasses scan → fingerprint on the door handle → Nero reads traces on the floor |
+| **15** | **Ambush** | Door kicked in, suppressed rifle → Nero shoves Eve clear, steel forearm up → bullet strikes the plating |
 
 Asset for page 4: `assets/f6e5abea5751b52ecd7f6fc07c40dbb4.png` (diagonal interstitial).
 Asset for page 11: `assets/8c0cf8ac2ade39ab94d5754fb0381887.jpg`.
@@ -94,3 +95,4 @@ Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `top` | `top-
 Asset for page 12: `assets/46d12d33ef9b8f743d479fc841e00f3d.png` (panels 2–3 mirrored).
 Asset for page 13: `assets/9259129bcd03fb78b3d9f4b3ce022057.png` (Victorian + holo Cerberus interior).
 Asset for page 14: `assets/97ee861fbf230ef8c8a143aceb412883.png` (upstairs room, forensic scan).
+Asset for page 15: `assets/4cd4970454d400d7a90f6345b1fcaf60.png` (ambush; panels 2–3 split on a diagonal).

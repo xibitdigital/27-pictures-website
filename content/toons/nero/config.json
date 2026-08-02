@@ -1462,6 +1462,109 @@
           "audio": "assets/sfx/6ef9301febd043b29949678cd82fa0ef.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/4cd4970454d400d7a90f6345b1fcaf60.png",
+      "words": [
+        {
+          "x": 0.3,
+          "y": 0.16,
+          "align": "center",
+          "size": 46,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -8,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "KRAKK",
+            "it": "KRAKK",
+            "de": "KRAKK",
+            "fr": "KRAKK"
+          },
+          "audio": "assets/sfx/29a5e1f26c4c7fa525dd6cf8df1d80cc.mp3"
+        },
+        {
+          "x": 0.85,
+          "y": 0.1,
+          "align": "center",
+          "size": 26,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": 4,
+          "maxWidth": 0.16,
+          "text": {
+            "en": "THPP",
+            "it": "THPP",
+            "de": "THPP",
+            "fr": "THPP"
+          },
+          "audio": "assets/sfx/d3956e42cf6b3b6df42547376d2b3ea6.mp3"
+        },
+        {
+          "x": 0.23,
+          "y": 0.335,
+          "align": "center",
+          "size": 20,
+          "variant": "ai",
+          "color": "#f5f5f5",
+          "angle": -2,
+          "maxWidth": 0.3,
+          "bubble": {
+            "fill": "#0a0a0a",
+            "stroke": "#0a0a0a",
+            "strokeWidth": 5,
+            "tail": "none",
+            "scratches": 6,
+            "retrace": 2,
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "N› BAD MAN AT\nTHE DOOR! MOVE!",
+            "it": "N› UOMO ARMATO\nALLA PORTA! VIA!",
+            "de": "N› MANN AN DER\nTÜR! WEG DA!",
+            "fr": "N› HOMME À LA\nPORTE ! BOUGE !"
+          },
+          "audio": "assets/sfx/db6e5b1011a5fea1a95e735261b4ca39.mp3"
+        },
+        {
+          "x": 0.31,
+          "y": 0.425,
+          "align": "center",
+          "size": 30,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -6,
+          "maxWidth": 0.18,
+          "text": {
+            "en": "VMMP",
+            "it": "VMMP",
+            "de": "VMMP",
+            "fr": "VMMP"
+          },
+          "audio": "assets/sfx/7e55d3304898473dd60b4b3e838da41c.mp3"
+        },
+        {
+          "x": 0.6,
+          "y": 0.765,
+          "align": "center",
+          "size": 50,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -6,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "SPANNG",
+            "it": "SPANNG",
+            "de": "SPANNG",
+            "fr": "SPANNG"
+          },
+          "audio": "assets/sfx/8d981e7559085a213f674b4d4a105570.mp3"
+        }
+      ]
     }
   ]
 }
