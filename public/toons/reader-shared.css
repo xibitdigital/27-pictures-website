@@ -1272,6 +1272,16 @@ body.view-vertical.is-fullscreen .reader {
   width: calc(100% + 1.3em);
 }
 
+/* Thought bubbles have no pointed lobe — the dotted trail is drawn outside the
+   viewBox and painted via overflow:visible. Undo the per-tail box offsets so the
+   ellipse body stays centred on the glyphs instead of drifting toward the tail. */
+.jax-word--thought .jax-bubble-svg {
+  left: -0.35em;
+  top: -0.3em;
+  width: calc(100% + 0.7em);
+  height: calc(100% + 0.6em);
+}
+
 .jax-word--bubble .jax-word-text {
   position: relative;
   z-index: 1;

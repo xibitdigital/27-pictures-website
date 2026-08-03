@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { WordOverlay, toFraction, imageContentBox, loadWords, LANG_STORAGE_KEY } from "./words";
+import { WordOverlay, toFraction, imageContentBox, loadWords, resolveVariant, LANG_STORAGE_KEY } from "./words";
 import { clearConfigCache } from "./loadConfig";
 import type { WordsConfig } from "./types";
 
@@ -55,6 +55,30 @@ describe("toFraction", () => {
     // Values >1 are design pixels → 2/1008
     expect(toFraction(2, 1008)).toBeCloseTo(2 / 1008);
     expect(toFraction(99999, 1008)).toBe(1);
+  });
+});
+
+describe("resolveVariant", () => {
+  it("maps every variant + alias, and only unknown words fall back to plain", () => {
+    const cases: Record<string, string[]> = {
+      thought: ["thought", "think", "cloud"],
+      bubble: ["bubble", "dialog", "speech"],
+      burst: ["burst", "spiky", "star", "shout"],
+      ai: ["ai", "hud", "terminal", "caption"],
+      badai: ["badai", "bad-ai", "ai-inverted", "ai-bad"],
+      credit: ["credit", "credits"],
+    };
+    for (const [expected, aliases] of Object.entries(cases)) {
+      for (const alias of aliases) {
+        // Every alias must survive — a missing case silently degrades to "plain",
+        // which drops the bubble chrome entirely (thought did exactly that).
+        expect(resolveVariant({ variant: alias }), alias).toBe(expected);
+        expect(resolveVariant({ variant: alias.toUpperCase() }), alias).toBe(expected);
+        expect(resolveVariant({ mode: alias }), `mode:${alias}`).toBe(expected);
+      }
+    }
+    expect(resolveVariant({})).toBe("plain");
+    expect(resolveVariant({ variant: "nonsense" })).toBe("plain");
   });
 });
 

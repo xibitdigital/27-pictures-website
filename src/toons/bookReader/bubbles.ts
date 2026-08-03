@@ -3,10 +3,11 @@
  *
  * SVG paths (viewBox 0–100) stretched over the text box:
  * - organic  — sketchy speech balloon + integrated tail
+ * - thought  — scalloped cloud body + trailing bubble dots (no pointed tail)
  * - box/clean — AI HUD / torn-paper panels
  * - star     — impact / shout burst
  *
- * Used by WordOverlay (`variant: "bubble" | "ai" | "badai" | "burst"`).
+ * Used by WordOverlay (`variant: "bubble" | "thought" | "ai" | "badai" | "burst"`).
  */
 // @ts-nocheck — matches words.ts imperative style
 
@@ -183,6 +184,105 @@ export function sketchyBubblePath(tail: string, seed?: number): string {
   return d;
 }
 
+/** Tail tip coordinates shared by the pointed (sketchy) and dotted (thought) bubble tails. */
+const BUBBLE_TAIL_TIPS: Record<string, [number, number]> = {
+  bottom: [50, 118],
+  "bottom-left": [28, 116],
+  "bottom-right": [72, 116],
+  left: [-16, 52],
+  right: [116, 52],
+  top: [50, -18],
+  "top-left": [28, -16],
+  "top-right": [72, -16],
+};
+
+/** Thought-body geometry — shared by the outline and the trailing-dot spacing. */
+const THOUGHT_BODY = { cx: 50, cy: 50, rx: 46, ry: 44, anchors: 8 };
+/** Per-anchor jitter of the body spline: the outline can bulge this far past rx/ry. */
+const THOUGHT_WOBBLE = 1.2;
+/** Clear air left between body↔dot and dot↔dot outlines (viewBox units). */
+const THOUGHT_GAP = 3.5;
+
+/**
+ * Trailing "thinking" dots for a thought bubble, walking outward from the body
+ * along the tail direction. Each dot starts where the previous outline ends
+ * plus `THOUGHT_GAP`, so **nothing ever intersects the body or another dot** —
+ * and because the caption box applies an affine (if non-uniform) stretch,
+ * disjoint here stays disjoint on screen.
+ *
+ * Exported for tests; `thoughtBubblePath` is the render path.
+ */
+export function thoughtTailDots(tail: string, seed?: number): Array<{ x: number; y: number; r: number }> {
+  const t = tail || "bottom";
+  if (t === "none") return [];
+
+  const rnd = mulberry32((seed || 1) + 733);
+  const j = (amp: number) => (rnd() - 0.5) * 2 * amp;
+  const { cx, cy, rx, ry } = THOUGHT_BODY;
+
+  const tip = BUBBLE_TAIL_TIPS[t] || BUBBLE_TAIL_TIPS.bottom;
+  const len = Math.hypot(tip[0] - cx, tip[1] - cy) || 1;
+  const ux = (tip[0] - cx) / len;
+  const uy = (tip[1] - cy) / len;
+  // Jitter runs *across* the trail only. Perpendicular offset can never shorten
+  // the centre distance between two dots, so the spacing solved below holds.
+  const nx = -uy;
+  const ny = ux;
+
+  // Where the body outline sits along the trail: ray/ellipse hit, with rx/ry
+  // padded by the spline wobble so the bulges between anchors are covered too.
+  const edge = 1 / Math.hypot(ux / (rx + THOUGHT_WOBBLE), uy / (ry + THOUGHT_WOBBLE));
+
+  const dots: Array<{ x: number; y: number; r: number }> = [];
+  let reach = edge;
+  for (const base of [7, 4.2]) {
+    const r = Math.max(2, base + j(base * 0.12));
+    const dist = reach + THOUGHT_GAP + r;
+    const off = j(1.2);
+    dots.push({ x: cx + ux * dist + nx * off, y: cy + uy * dist + ny * off, r });
+    reach = dist + r;
+  }
+  return dots;
+}
+
+/**
+ * Thought bubble in viewBox 0–100: a plain closed ellipse body — same
+ * geometry as the tailless organic bubble, which is already proven safe
+ * under the non-uniform `preserveAspectRatio="none"` stretch every caption
+ * box applies — plus 2 shrinking trailing dots standing in for a pointed
+ * tail, the classic "thinking" trail toward the speaker.
+ *
+ * A scalloped cloud outline was tried first and rejected: at a wide/short
+ * caption aspect the lobes cross over each other (the spline self-
+ * intersects), which reads as a jagged burst instead of a soft cloud.
+ *
+ * Dots are spaced off the body outline (see `thoughtTailDots`), never off a
+ * fraction of the centre→tip vector — that older scheme dropped the first dot
+ * *inside* the balloon on side tails, so the rim cut straight through it.
+ */
+export function thoughtBubblePath(tail: string, seed?: number): string {
+  const rnd = mulberry32(seed || 1);
+  const j = (amp: number) => (rnd() - 0.5) * 2 * amp;
+  const { cx, cy, rx, ry, anchors } = THOUGHT_BODY;
+
+  const pts: number[][] = [];
+  for (let i = 0; i < anchors; i++) {
+    const a = (i / anchors) * Math.PI * 2 - Math.PI / 2;
+    pts.push([cx + Math.cos(a) * (rx + j(THOUGHT_WOBBLE)), cy + Math.sin(a) * (ry + j(THOUGHT_WOBBLE))]);
+  }
+  let d = cubicSplineThrough(pts, true);
+
+  for (const { x, y, r } of thoughtTailDots(tail, seed)) {
+    const left = (x - r).toFixed(2);
+    const right = (x + r).toFixed(2);
+    const mid = y.toFixed(2);
+    const rr = r.toFixed(2);
+    d += ` M ${right} ${mid} A ${rr} ${rr} 0 1 0 ${left} ${mid} A ${rr} ${rr} 0 1 0 ${right} ${mid} Z`;
+  }
+
+  return d;
+}
+
 /**
  * Rough torn-paper rectangle path (viewBox 0-100 x 0-100) — no tail.
  * Used for "AI dialogue" caption boxes ("COMBAT MODE ACTIVATED" style).
@@ -344,10 +444,11 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
   const isBadai = variant === "badai";
   const isHud = isAi || isBadai;
   const isBurst = variant === "burst";
+  const isThought = variant === "thought";
   const shape = (
     (b.shape as string) ||
     (w.bubbleShape as string) ||
-    (isHud ? "box" : isBurst ? "star" : DEFAULT_ORGANIC_BUBBLE.shape)
+    (isHud ? "box" : isBurst ? "star" : isThought ? "thought" : DEFAULT_ORGANIC_BUBBLE.shape)
   )
     .toString()
     .toLowerCase();
@@ -393,6 +494,27 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
   };
 }
 
+/**
+ * Extra CSS class(es) a bubble variant needs beyond the base `jax-word--bubble`.
+ * `badai` gets both `jax-word--ai` and `jax-word--badai` (shares AI HUD rules,
+ * then overrides polarity). Leading space so callers can splice it straight
+ * into a className string without a separate join step.
+ */
+export function resolveBubbleVariantClass(variant: string): string {
+  switch (variant) {
+    case "badai":
+      return " jax-word--ai jax-word--badai";
+    case "ai":
+      return " jax-word--ai";
+    case "burst":
+      return " jax-word--burst";
+    case "thought":
+      return " jax-word--thought";
+    default:
+      return "";
+  }
+}
+
 /** Build the absolute SVG element that sits behind bubble/ai/burst text. */
 export function createBubbleChrome(seed: number, bubbleStyle: BubbleStyle, designScale: number): SVGSVGElement {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -410,7 +532,9 @@ export function createBubbleChrome(seed: number, bubbleStyle: BubbleStyle, desig
       ? boxPathForShape(shape, seed)
       : shape === "star"
         ? starBurstPath(seed)
-        : sketchyBubblePath(bubbleStyle.tail, seed)
+        : shape === "thought"
+          ? thoughtBubblePath(bubbleStyle.tail, seed)
+          : sketchyBubblePath(bubbleStyle.tail, seed)
   );
   path.setAttribute("fill", bubbleStyle.fill);
   // Body only: fill-opacity leaves stroke + caption text fully opaque.

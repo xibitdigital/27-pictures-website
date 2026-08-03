@@ -3,7 +3,7 @@
  * Caption overlays for ToonBook pages (Jax today; injectable sound + lang storage).
  */
 import { resolveAssetUrl } from "./assetUrl";
-import { hashSeed, resolveBubbleStyle, createBubbleChrome } from "./bubbles";
+import { hashSeed, resolveBubbleStyle, resolveBubbleVariantClass, createBubbleChrome } from "./bubbles";
 import { loadConfig } from "./loadConfig";
 import type { LangCode, LangOption, SoundGate, WordEntry, WordOverlayOptions, WordsConfig } from "./types";
 
@@ -47,11 +47,15 @@ function playSfx(url: string, sound: SoundGate, volume = 1): void {
   }
 }
 
-function resolveVariant(w) {
+/** Map a config `variant`/`mode` string (plus aliases) to a canonical variant. */
+export function resolveVariant(w) {
   const v = (w.variant || w.mode || "plain").toString().toLowerCase();
   if (v === "badai" || v === "bad-ai" || v === "ai-inverted" || v === "ai-bad") return "badai";
   if (v === "ai" || v === "hud" || v === "terminal" || v === "caption") return "ai";
   if (v === "burst" || v === "spiky" || v === "star" || v === "shout") return "burst";
+  // Before "bubble": a thought bubble is a bubble with a dotted trail instead of
+  // a pointed lobe. Missing this case dropped it all the way to "plain".
+  if (v === "thought" || v === "think" || v === "cloud") return "thought";
   if (v === "bubble" || v === "dialog" || v === "speech") return "bubble";
   if (v === "credit" || v === "credits") return "credit";
   return "plain";
@@ -98,7 +102,7 @@ function resolveText(entry, lang) {
  * Thickness is in design pixels (scaled to display).
  * @returns {{ color: string, thickness: number }|null}
  */
-function resolveStroke(w) {
+function resolveStroke(w: WordEntry) {
   if (!w) return null;
   let color = w.strokeColor || null;
   let thickness = w.strokeThickness != null ? Number(w.strokeThickness) : null;
@@ -298,20 +302,18 @@ export class WordOverlay {
         const sizePx = (w.size != null ? Number(w.size) : 22) * designScale;
         const maxW = w.maxWidth != null ? (w.maxWidth > 1 ? w.maxWidth / this.designWidth : w.maxWidth) * 100 : null;
         const variant = resolveVariant(w);
-        const isBubble = variant === "bubble" || variant === "ai" || variant === "badai" || variant === "burst";
+        const isBubble =
+          variant === "bubble" ||
+          variant === "thought" ||
+          variant === "ai" ||
+          variant === "badai" ||
+          variant === "burst";
         const isCredit = variant === "credit";
 
         const el = document.createElement("div");
         // Leading spaces on optional classes — never glue names together
         // (e.g. "jax-word--bubblejax-word--burst" broke burst/AI CSS).
-        const bubbleVariantClass =
-          variant === "badai"
-            ? " jax-word--ai jax-word--badai"
-            : variant === "ai"
-              ? " jax-word--ai"
-              : variant === "burst"
-                ? " jax-word--burst"
-                : "";
+        const bubbleVariantClass = resolveBubbleVariantClass(variant);
         el.className = [
           isBubble ? "jax-word jax-word--bubble" : "jax-word",
           bubbleVariantClass,
@@ -343,11 +345,13 @@ export class WordOverlay {
           const padX = `${bubbleStyle.padX}em`;
           const padY = `${bubbleStyle.padY}em`;
           // The tail eats into the balloon on its own side, so pad that side out.
+          // Thought bubbles have no lobe (dotted trail sits fully outside the
+          // body), so they take no tail padding and no side offset.
           const tailPad = `calc(${padY} + 0.35em)`;
-          const isTopTail = bubbleStyle.tail.startsWith("top");
-          const hasTail = bubbleStyle.tail !== "none";
+          const hasLobe = bubbleStyle.tail !== "none" && bubbleStyle.shape !== "thought";
+          const isTopTail = hasLobe && bubbleStyle.tail.startsWith("top");
           textEl.style.padding = `${isTopTail ? tailPad : padY} ${padX} ${
-            hasTail && !isTopTail ? tailPad : padY
+            hasLobe && !isTopTail ? tailPad : padY
           } ${padX}`;
         } else {
           el.appendChild(textEl);
