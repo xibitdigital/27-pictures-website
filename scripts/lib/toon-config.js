@@ -184,6 +184,35 @@ function appendPageToReference(toon, relAssetPath) {
   return { data, pages, already: false };
 }
 
+/**
+ * Replace an existing page's `file` in place (1-based `pageNum`), keeping its
+ * `words` untouched. `pageNum === pages.length + 1` appends a new page
+ * instead — same one-past-the-end convention as a normal array push.
+ * @returns {{ data: object, oldFile: string|null, appended: boolean }}
+ */
+function replacePageInReference(toon, pageNum, relAssetPath) {
+  const data = readConfig(toon);
+  if (!data) {
+    throw new Error(`no reference config for "${toon}"`);
+  }
+  const pages = Array.isArray(data.pages) ? data.pages : (data.pages = []);
+  if (!Number.isInteger(pageNum) || pageNum < 1 || pageNum > pages.length + 1) {
+    throw new Error(
+      `page ${pageNum} out of range — ${toon} has ${pages.length} page(s), max valid is ${pages.length + 1}`
+    );
+  }
+  const idx = pageNum - 1;
+  if (idx === pages.length) {
+    pages.push({ file: relAssetPath, words: [] });
+    writeReferenceConfig(toon, data);
+    return { data, oldFile: null, appended: true };
+  }
+  const oldFile = pages[idx].file;
+  pages[idx] = { ...pages[idx], file: relAssetPath };
+  writeReferenceConfig(toon, data);
+  return { data, oldFile, appended: false };
+}
+
 module.exports = {
   ROOT,
   CONTENT_TOONS,
@@ -202,4 +231,5 @@ module.exports = {
   listToonsWithConfig,
   siteConfigPath,
   appendPageToReference,
+  replacePageInReference,
 };

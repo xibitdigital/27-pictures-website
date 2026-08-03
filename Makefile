@@ -138,6 +138,17 @@ convert-plates: ## Toon plates → WebP in converted/ (TOON=jax|erin|nero [QUALI
 		$(if $(filter 1 true yes,$(DRY)),--dry-run,) \
 		$(ARGS)
 
+.PHONY: swap-page
+swap-page: ## Replace/add one toon page: watermark → WebP → R2 → config.json (SRC=… TOON=… [PAGE=N] [QUALITY=90] [PUBLISH=1] [DRY=1])
+	@test -n "$(SRC)" || (echo "Usage: make swap-page SRC=path/to.png TOON=nero [PAGE=N] [QUALITY=90] [PUBLISH=1] [DRY=1]" && exit 1)
+	@test -n "$(TOON)" || (echo "Usage: make swap-page SRC=path/to.png TOON=nero [PAGE=N] [QUALITY=90] [PUBLISH=1] [DRY=1]" && exit 1)
+	$(NPM) run swap-page -- "$(SRC)" --toon "$(TOON)" \
+		$(if $(PAGE),--page "$(PAGE)",) \
+		--quality "$(or $(QUALITY),90)" \
+		$(if $(filter 1 true yes,$(PUBLISH)),--publish,) \
+		$(if $(filter 1 true yes,$(DRY)),--dry-run,) \
+		$(ARGS)
+
 .PHONY: create-assets-bucket
 create-assets-bucket: ## Create Cloudflare R2 bucket
 	$(NPM) run create-assets-bucket

@@ -23,7 +23,7 @@
   ],
   "pages": [
     {
-      "file": "assets/ba6da7dd5375b35e188f0f4c7507e7da.webp",
+      "file": "assets/9e8a4cb003cb66872583d1aa151a3a97.webp",
       "words": [
         {
           "x": 0.65,
@@ -935,7 +935,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "tail": "bottom",
@@ -958,7 +958,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -6,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "tail": "right",
@@ -981,7 +981,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 6,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.2,
           "bubble": {
             "tail": "left",
@@ -1004,7 +1004,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -4,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "tail": "right",
@@ -1027,7 +1027,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 3,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.28,
           "bubble": {
             "tail": "left",
@@ -1055,7 +1055,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "tail": "bottom",
@@ -1078,7 +1078,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.28,
           "bubble": {
             "tail": "left",
@@ -1101,7 +1101,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.3,
           "bubble": {
             "tail": "bottom",
@@ -1124,7 +1124,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.28,
           "bubble": {
             "tail": "left",
@@ -1147,7 +1147,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 0,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.28,
           "bubble": {
             "tail": "bottom",
@@ -1170,7 +1170,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "tail": "bottom",
@@ -1198,7 +1198,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "tail": "bottom-right",
@@ -1221,7 +1221,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "tail": "bottom-left",
@@ -1244,7 +1244,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.22,
           "bubble": {
             "tail": "bottom-right",
@@ -1267,7 +1267,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.22,
           "bubble": {
             "tail": "bottom-left",
@@ -1290,7 +1290,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 3,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.2,
           "bubble": {
             "tail": "bottom-left",
@@ -1313,7 +1313,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.2,
           "bubble": {
             "tail": "left",
@@ -1336,7 +1336,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.2,
           "bubble": {
             "tail": "right",
@@ -1359,7 +1359,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.2,
           "bubble": {
             "tail": "left",
@@ -1387,7 +1387,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "tail": "bottom-right",
@@ -1410,7 +1410,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "tail": "left",
@@ -1433,7 +1433,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "tail": "bottom-right",
@@ -1623,7 +1623,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.18,
           "bubble": {
             "tail": "top",
@@ -1646,7 +1646,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "tail": "left",
@@ -1669,7 +1669,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "tail": "left",

@@ -65,6 +65,7 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | **16** | **Knife** | Nero draws from the waistband → blade in flight, shooter small in the doorway → hit in the neck gap above the vest |
 | **17** | **Unmasked** | Mask pulled off → the shooter is the Cerberus **bartender** → Nero lifts a blank keycard from his vest |
 
+Asset for page 1: `assets/1a95711588bfb5605e628e073601f595.webp` (bottom panel replaced: wide alley shot instead of a fist close-up, to sidestep a six-finger render defect).
 Asset for page 4: `assets/27519b004e3802fa29dd5d2cc7556754.webp` (diagonal interstitial).
 Asset for page 11: `assets/cd9089a69917fa08aedeb80e4d8fc03d.webp`.
 
@@ -94,6 +95,57 @@ npm run upload-assets
 
 Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `top` | `top-left` | `top-right` | `left` | `right`
 (Use a `top*` tail when the speaker is *below* the bubble. Unknown values silently fall back to `bottom`.)
+
+## Replacing or adding one page's plate (WebP + watermark, no `public/`)
+
+`make add-image` is for *new* pages with the classic JPG/PNG + `--config`
+flow. For a single WebP page swap or addition — watermark, WebP, content
+hash, straight to R2, update `config.json` — use the one-shot script:
+
+```bash
+# Replace page 1's art, keeping its existing captions
+node scripts/swap-toon-page.js ~/Downloads/new-plate.png --toon nero --page 1
+# or: make swap-page SRC=~/Downloads/new-plate.png TOON=nero PAGE=1
+
+# Omit --page (or pass count+1) to append a brand new page instead
+node scripts/swap-toon-page.js ~/Downloads/new-plate.png --toon nero
+
+# See what it would do first — writes and uploads nothing
+node scripts/swap-toon-page.js ~/Downloads/new-plate.png --toon nero --page 1 --dry-run
+
+# Publish the config to R2 in the same run instead of doing it separately
+node scripts/swap-toon-page.js ~/Downloads/new-plate.png --toon nero --page 1 --publish
+```
+
+It warns (doesn't block) if the source's dimensions don't match the book's
+`designWidth`/`designHeight`, replaces `pages[N-1].file` while leaving that
+page's `words[]` untouched, and — without `--publish` — prints the
+`publish-toon-config` command instead of running it, so a batch of edits can
+be reviewed before going live. It never touches `public/toons/<toon>/assets/`
+— that directory is dev-serving + `add-image` staging only, not a CDN detour.
+
+**Captions don't move themselves.** Replacing a page's art keeps its old
+`x`/`y` positions; if the new plate's panel gutters land somewhere else,
+captions can drift onto the wrong panel or a face. Check before trusting them:
+
+```bash
+magick new-plate.png -colorspace gray -resize 1x1424! -depth 8 txt:- \
+  | awk -F'[(),]' 'NR>1 && $2<30 {print}'   # rows darker than 30/255 = likely gutter
+```
+
+Compare against the old plate's bands (same command) — if they differ by
+more than a few px, reposition the affected captions by hand (there's no
+script for this yet).
+
+Superseded R2 objects are **not** deleted automatically — `swap-toon-page.js`
+prints the old key as a note. They're orphaned but harmless until purged
+(see `scripts/purge-r2-objects.js`, and keep a `npm run backup-cdn` snapshot
+before deleting anything from R2 — it's irreversible).
+
+For converting a *whole toon's* existing plates to WebP in bulk (not a
+one-off swap), see `scripts/convert-toon-plates.js`
+(`make convert-plates TOON=nero`) instead — it works from `cdn-backup/`
+and can hash + upload every page in one pass with `--upload`.
 Asset for page 12: `assets/1b47ed56a7bf10c527e7b62ef3dd14ca.webp` (panels 2–3 mirrored).
 Asset for page 13: `assets/abca70594fb25e9ba093ba48d3965938.webp` (Victorian + holo Cerberus interior).
 Asset for page 14: `assets/94c4ceac33c898f4ad5bfb3a2d861a78.webp` (upstairs room, forensic scan).
