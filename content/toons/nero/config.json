@@ -1557,8 +1557,8 @@
       "file": "assets/72089337f0ac4334436127317b9f81fa.webp",
       "words": [
         {
-          "x": 0.16,
-          "y": 0.105,
+          "x": 0.7,
+          "y": 0.33,
           "align": "center",
           "size": 38,
           "color": "#111111",
@@ -1575,8 +1575,8 @@
           "audio": "assets/sfx/bbab7c4d0f5e07f826d8b00f1fda14ba.mp3"
         },
         {
-          "x": 0.17,
-          "y": 0.495,
+          "x": 0.27,
+          "y": 0.43,
           "align": "center",
           "size": 30,
           "color": "#111111",
@@ -1593,7 +1593,7 @@
           "audio": "assets/sfx/10c5586dd81b2ddea0ded7352933f433.mp3"
         },
         {
-          "x": 0.2,
+          "x": 0.4,
           "y": 0.875,
           "align": "center",
           "size": 44,
