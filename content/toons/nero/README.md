@@ -98,5 +98,5 @@ Asset for page 12: `assets/1b47ed56a7bf10c527e7b62ef3dd14ca.webp` (panels 2–3 
 Asset for page 13: `assets/abca70594fb25e9ba093ba48d3965938.webp` (Victorian + holo Cerberus interior).
 Asset for page 14: `assets/94c4ceac33c898f4ad5bfb3a2d861a78.webp` (upstairs room, forensic scan).
 Asset for page 15: `assets/5bb0e9e737adc372181810c9f89a3272.webp` (ambush; panels 2–3 split on a diagonal).
-Asset for page 16: `assets/cb61234b19178e8110de28c2002b1162.webp` (knife throw; straight horizontal panels).
+Asset for page 16: `assets/72089337f0ac4334436127317b9f81fa.webp` (knife throw; straight horizontal panels).
 Asset for page 17: `assets/3124bcdc7106f49cf07712c411e44cfd.webp` (unmasking; the bartender is the shooter).
