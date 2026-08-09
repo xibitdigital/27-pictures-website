@@ -83,6 +83,12 @@ export interface AutoReadController {
   registerLayer: (opts: AutoReadLayerOptions) => AutoReadLayerHandle;
   /** Stop everything (page change, unmount, manual takeover). */
   stop: () => void;
+  /**
+   * Call on every window scroll (vertical strip). Hard-cuts audio while the
+   * user is flinging so play()/decode work cannot freeze the main thread, and
+   * restarts after idle once a plate settles in view.
+   */
+  notifyScroll: () => void;
   /** True after a user gesture unlocked browser autoplay for this page load. */
   unlocked: Ref<boolean>;
   /** One-shot “OK to enable caption sound” dialog. */
@@ -97,6 +103,11 @@ export interface AutoReadController {
 
 /** Coalesce the two halves of a spread — they become visible a frame apart. */
 const SETTLE_MS = 220;
+/**
+ * After the last scroll event, wait this long before starting auto-read.
+ * Shorter than a page turn feels snappy; longer keeps flings free of play().
+ */
+const SCROLL_IDLE_MS = 320;
 /** Hard cap so a hung clip (no `ended` on flaky mobile WebViews) cannot freeze the queue. */
 const SPEAK_MAX_MS = 16000;
 /** If play() neither starts nor rejects (some emulator WebViews), fail open. */
@@ -128,6 +139,9 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
 
   const layers = new Set<LayerRecord>();
   let settleTimer: ReturnType<typeof setTimeout> | null = null;
+  let scrollIdleTimer: ReturnType<typeof setTimeout> | null = null;
+  /** True while the user is actively scrolling the vertical strip. */
+  let scrolling = false;
   /** Bumped on every stop/start — in-flight sequences die when it moves. */
   let seq = 0;
   let running = false;
@@ -369,11 +383,42 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
 
   function schedule(): void {
     if (!enabled) return;
+    // Do not queue play() while the finger is still flinging — iOS Safari
+    // drops momentum when Audio construction/play hits the main thread.
+    if (scrolling) return;
     if (settleTimer != null) clearTimeout(settleTimer);
     settleTimer = setTimeout(() => {
       settleTimer = null;
+      if (scrolling) return;
       sync();
     }, SETTLE_MS);
+  }
+
+  /**
+   * Vertical-strip scroll handler. Stops the current clip immediately (cheap)
+   * and re-schedules after the fling settles on a plate.
+   */
+  function notifyScroll(): void {
+    if (!enabled) return;
+    scrolling = true;
+    if (settleTimer != null) {
+      clearTimeout(settleTimer);
+      settleTimer = null;
+    }
+    if (scrollIdleTimer != null) clearTimeout(scrollIdleTimer);
+    // Hard-cut so decode/play work cannot jank the fling mid-frame.
+    // Drop coverage so the plate under the finger is re-read after idle —
+    // otherwise sync() sees the same key as still “current” and no-ops.
+    if (running || audio || currentKey) {
+      stop();
+      resetCoverage();
+      doneKey = "";
+    }
+    scrollIdleTimer = setTimeout(() => {
+      scrollIdleTimer = null;
+      scrolling = false;
+      schedule();
+    }, SCROLL_IDLE_MS);
   }
 
   /** Forget what has been read, so the next sync treats the view as new. */
@@ -416,6 +461,7 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   }
 
   function sync(): void {
+    if (scrolling) return;
     // Don't thrash play() before the browser has a user gesture — on iOS that
     // spam + rejected promises can jank the main thread. Wait for unlock prompt.
     if (requireGesture && !unlocked.value) {
@@ -674,6 +720,7 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   return {
     registerLayer,
     stop,
+    notifyScroll,
     unlocked,
     promptOpen,
     enableFromPrompt,

@@ -1139,14 +1139,17 @@ body.view-vertical .controls {
 }
 
 /*
- * Vertical mode: window/document scroll only.
- * iOS Safari freezes when html{overflow:hidden} + body{height:100dvh;
- * overflow-y:auto}. !important beats HeadlessUI leftover inline overflow.
+ * Vertical mode: true window/document scroll only.
+ * Do NOT put height:100% + overflow-y:scroll on html — that makes html a
+ * nested scrollport. Fast flings on iOS Safari then die mid-momentum when
+ * plates reflow (lazy images) or audio work hits the main thread.
+ * Classic freeze: html{overflow:hidden} + body{height:100dvh;overflow-y:auto}.
+ * !important beats HeadlessUI leftover inline overflow after dialogs.
  */
 html:has(body.toons-reader.view-vertical) {
   overflow-x: hidden !important;
-  overflow-y: scroll !important;
-  height: 100% !important;
+  overflow-y: visible !important;
+  height: auto !important;
   min-height: 100%;
   -webkit-overflow-scrolling: touch;
 }
@@ -1155,12 +1158,13 @@ body.view-vertical.toons-reader {
   height: auto !important;
   min-height: 100%;
   max-width: 100%;
-  overflow: visible !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
   justify-content: flex-start;
   align-items: center;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
-  /* Prevent iOS rubber-band from trapping scroll on nested layers */
+  /* contain traps flings when content reflows under the finger */
+  overscroll-behavior-y: auto;
   position: relative !important;
   top: auto !important;
   width: auto !important;
@@ -1177,9 +1181,15 @@ body.view-vertical .reader {
   touch-action: pan-y;
 }
 
-/* Page images: allow vertical pan (default touch-action can fight scroll) */
+/*
+ * Page plates + caption bubbles: pan-y so a finger that starts on a bubble
+ * still scrolls. Default touch-action on clickable nodes delays the fling
+ * until the browser decides it is not a tap — feels “stuck” on fast scrolls.
+ */
 body.view-vertical .vertical-page,
-body.view-vertical .vertical-page img {
+body.view-vertical .vertical-page img,
+body.view-vertical .jax-word-layer,
+body.view-vertical .jax-word {
   touch-action: pan-y;
 }
 
@@ -1209,6 +1219,9 @@ body.view-vertical.is-fullscreen .reader {
 .vertical-page.page-slot {
   position: relative;
   width: 100%;
+  /* Reserve plate height before lazy images decode — without this, fast
+     flings jump/stop as each plate expands from 0 under the scroll position. */
+  aspect-ratio: 1008 / 1792;
   height: auto;
   min-height: 0;
   flex: none;
@@ -1217,10 +1230,10 @@ body.view-vertical.is-fullscreen .reader {
 }
 
 .vertical-page.page-slot > img {
-  position: relative;
-  inset: auto;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto !important;
+  height: 100% !important;
   max-height: none;
   object-fit: contain;
 }

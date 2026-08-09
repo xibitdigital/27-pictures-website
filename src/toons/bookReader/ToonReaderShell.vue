@@ -252,6 +252,14 @@ function onMobileMq(): void {
   syncMobileUi();
 }
 
+/** Vertical-strip scroll: pause auto-read + clear any leftover body lock. */
+function onWindowScroll(): void {
+  if (!viewMode.isVertical.value) return;
+  // HeadlessUI can re-stick overflow:hidden mid-session; clear on motion.
+  releaseBodyScrollLock();
+  autoRead.notifyScroll();
+}
+
 onMounted(() => {
   syncMobileUi();
   if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
@@ -261,6 +269,10 @@ onMounted(() => {
     } else {
       mobileMq.addListener(onMobileMq);
     }
+  }
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("scroll", onWindowScroll, { passive: true });
   }
 
   // Auto-show story/guide once per session on mobile (or vertical scroll).
@@ -287,6 +299,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  if (typeof window !== "undefined") {
+    window.removeEventListener("scroll", onWindowScroll);
+  }
   if (!mobileMq) return;
   if (typeof mobileMq.removeEventListener === "function") {
     mobileMq.removeEventListener("change", onMobileMq);

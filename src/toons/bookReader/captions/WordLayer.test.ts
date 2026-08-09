@@ -542,4 +542,49 @@ describe("WordLayer", () => {
     expect(played).toEqual(["once-a.mp3", "once-b.mp3"]);
     controller.stop();
   });
+
+  it("pauses auto-read during scroll and resumes after idle (mobile fling path)", async () => {
+    stubIntersectionObserver();
+    const played: string[] = [];
+    const open: HTMLAudioElement[] = [];
+    let autoEnd = false;
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const file = (this.src || "").split("/").pop() || "";
+      if (file === "scroll-a.mp3" || file === "scroll-b.mp3") {
+        played.push(file);
+        open.push(this);
+        if (autoEnd) setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    mount(WordLayer, {
+      props: {
+        pageNum: 1,
+        words: [
+          { x: 0.5, y: 0.2, text: "A", audio: "sfx/scroll-a.mp3" },
+          { x: 0.5, y: 0.8, text: "B", audio: "sfx/scroll-b.mp3" },
+        ] as WordEntry[],
+        imageEl: makeImage(),
+      },
+      attachTo: document.body,
+      global: { provide: { [AUTO_READ_KEY as symbol]: controller } },
+    });
+
+    // First clip starts and stays open (mid-speak).
+    await vi.waitFor(() => expect(played).toEqual(["scroll-a.mp3"]), { timeout: 3000 });
+
+    // Mid-clip fling: hard-cut — no further clips while the finger is moving.
+    controller.notifyScroll();
+    await new Promise((r) => setTimeout(r, 200));
+    expect(played).toEqual(["scroll-a.mp3"]);
+
+    // After idle, resume from the top of the settled plate.
+    autoEnd = true;
+    await vi.waitFor(() => expect(played.filter((p) => p === "scroll-a.mp3").length).toBeGreaterThanOrEqual(2), {
+      timeout: 3000,
+    });
+    controller.stop();
+  });
 });
