@@ -19,9 +19,10 @@
  * queue so stale clips from pages the user already left never pile up.
  *
  * Browsers block Audio.play() until a user gesture. Auto-read often starts
- * after a settle timer (outside the gesture stack), so we unlock media on the
- * first pointer/key event anywhere in the document — typically the first page
- * turn or Story-dismiss — then restart the sequence without a second tap.
+ * after a settle timer (outside the gesture stack), so we unlock media on OK
+ * (or a later page-turn if the user dismissed the prompt). Unlock must play a
+ * real HTMLAudioElement during the gesture — AudioContext.resume() alone does
+ * not unlock HTML5 audio on iOS Safari.
  */
 import { inject, provide, ref, type InjectionKey, type Ref } from "vue";
 import { readingOrder } from "./captionModel";
@@ -100,6 +101,24 @@ const SETTLE_MS = 220;
 const SPEAK_MAX_MS = 16000;
 /** If play() neither starts nor rejects (some emulator WebViews), fail open. */
 const PLAY_START_MS = 4000;
+/**
+ * Tiny silent WAV (data URI). iOS Safari only unlocks *HTMLAudioElement* when
+ * a media element actually plays inside a user gesture — AudioContext.resume()
+ * alone is not enough (Chrome sticky activation is more forgiving).
+ */
+const SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+
+/** iOS needs playsinline on every element that will call play(). */
+function configureMediaEl(el: HTMLAudioElement): void {
+  el.preload = "auto";
+  try {
+    el.setAttribute("playsinline", "true");
+    el.setAttribute("webkit-playsinline", "true");
+    (el as HTMLAudioElement & { playsInline?: boolean }).playsInline = true;
+  } catch {
+    /* ignore */
+  }
+}
 
 export function createAutoReadController(options: AutoReadOptions = {}): AutoReadController {
   // Default gap was 2000ms — felt "stuck" between lines on mobile emulators.
@@ -155,9 +174,89 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   }
 
   /**
+   * Play a silent HTMLAudioElement *synchronously* from the gesture stack.
+   * Required on iOS Safari — AudioContext.resume() does not unlock HTML5 audio.
+   * Returns a promise that settles after play succeeds/fails (never rejects).
+   */
+  function primeHtmlAudioUnlock(): Promise<void> {
+    if (typeof window === "undefined") return Promise.resolve();
+    try {
+      const el = new Audio(SILENT_WAV);
+      configureMediaEl(el);
+      // Not fully muted: some WebKit builds treat muted play as a separate
+      // autoplay bucket that does not unlock audible playback later.
+      el.volume = 0.01;
+      const p = el.play();
+      if (p && typeof p.then === "function") {
+        return p
+          .then(() => {
+            try {
+              el.pause();
+              el.removeAttribute("src");
+              el.load();
+            } catch {
+              /* ignore */
+            }
+          })
+          .catch(() => undefined);
+      }
+    } catch {
+      /* ignore */
+    }
+    return Promise.resolve();
+  }
+
+  /** Chrome sticky-activation path (does not alone unlock iOS HTMLAudio). */
+  function resumeAudioContext(): Promise<void> {
+    type Ctx = {
+      resume: () => Promise<void>;
+      close: () => Promise<void>;
+      state: string;
+      createBuffer?: (channels: number, length: number, sampleRate: number) => { length: number };
+      createBufferSource?: () => {
+        buffer: unknown;
+        connect: (dest: unknown) => void;
+        start: (when?: number) => void;
+      };
+      destination?: unknown;
+    };
+    type CtxCtor = new () => Ctx;
+    const w = typeof window !== "undefined" ? window : null;
+    const AC =
+      w &&
+      ((w as unknown as { AudioContext?: CtxCtor }).AudioContext ||
+        (w as unknown as { webkitAudioContext?: CtxCtor }).webkitAudioContext);
+    if (!AC) return Promise.resolve();
+    try {
+      const ctx = new AC();
+      // One-sample silent buffer: extra unlock signal for WebKit Web Audio.
+      try {
+        if (ctx.createBuffer && ctx.createBufferSource && ctx.destination) {
+          const buf = ctx.createBuffer(1, 1, 22050);
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          src.connect(ctx.destination);
+          src.start(0);
+        }
+      } catch {
+        /* optional */
+      }
+      return ctx
+        .resume()
+        .catch(() => undefined)
+        .then(() => ctx.close().catch(() => undefined));
+    } catch {
+      return Promise.resolve();
+    }
+  }
+
+  /**
    * First intentional OK (or any pointer/key if they skip the dialog) unlocks
    * Audio for later async play() calls. Without a gesture the browser rejects
    * play() after settle timers — users had to tap the plate twice.
+   *
+   * On iOS, unlock *must* play an HTMLAudioElement inside this call; resuming
+   * AudioContext alone is not sticky for later `new Audio().play()`.
    */
   function unlockAudioFromGesture(): void {
     const alreadyUnlocked = unlocked.value;
@@ -182,35 +281,16 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     };
 
     if (alreadyUnlocked) {
-      restart();
+      // Re-prime on repeat gestures (iOS can re-lock after long background).
+      void primeHtmlAudioUnlock().then(() => restart());
       return;
     }
 
-    // Resume AudioContext inside the gesture so later async HTMLAudioElement
-    // play() calls are allowed (Chrome sticky activation).
-    type Ctx = { resume: () => Promise<void>; close: () => Promise<void>; state: string };
-    type CtxCtor = new () => Ctx;
-    const w = typeof window !== "undefined" ? window : null;
-    const AC =
-      w &&
-      ((w as unknown as { AudioContext?: CtxCtor }).AudioContext ||
-        (w as unknown as { webkitAudioContext?: CtxCtor }).webkitAudioContext);
-
-    if (AC) {
-      try {
-        const ctx = new AC();
-        void ctx
-          .resume()
-          .catch(() => undefined)
-          .then(() => ctx.close().catch(() => undefined))
-          .then(() => restart());
-        return;
-      } catch {
-        /* fall through */
-      }
-    }
-
-    setTimeout(restart, 0);
+    // Start both unlocks while still on the user-gesture stack. play() must be
+    // invoked synchronously here; awaiting only comes after.
+    const htmlPrime = primeHtmlAudioUnlock();
+    const acPrime = resumeAudioContext();
+    void Promise.all([htmlPrime, acPrime]).then(() => restart());
   }
 
   function enableFromPrompt(): void {
@@ -224,9 +304,11 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     const onGesture = (): void => {
       unlockAudioFromGesture();
     };
+    // touchend/pointerup: iOS sometimes only keeps activation through the full
+    // touch; pointerdown alone was not always enough for later HTMLAudio play.
     document.addEventListener("pointerdown", onGesture, opts);
+    document.addEventListener("touchend", onGesture, opts);
     document.addEventListener("keydown", onGesture, opts);
-    document.addEventListener("touchstart", onGesture, opts);
   }
 
   // Do NOT unlock on every first tap at startup — that made "Start reading"
@@ -407,7 +489,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     const v = Number(caption.volume);
     el.volume = Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 1;
     // Helps mobile/emulator decode start without waiting for a full buffer.
-    el.preload = "auto";
+    // playsinline is required for reliable HTMLAudio on iOS Safari.
+    configureMediaEl(el);
     audio = el;
     clearHighlight();
     if (layer) {
@@ -558,6 +641,13 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
         if (record.visible) schedule();
       },
       playOne(caption: AutoReadCaptionRef): void {
+        // Bubble tap is a user gesture — unlock autoplay for later auto-read too.
+        if (!unlocked.value) {
+          unlocked.value = true;
+          promptOpen.value = false;
+          // Fire silent prime in the same gesture so subsequent page clips work.
+          void primeHtmlAudioUnlock();
+        }
         // The user took over this view — don't let it start reading itself again.
         stop();
         doneKey = currentKey;

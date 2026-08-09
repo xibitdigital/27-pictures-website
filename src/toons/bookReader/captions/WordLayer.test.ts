@@ -318,13 +318,27 @@ describe("WordLayer", () => {
       close() {
         return Promise.resolve();
       }
+      createBuffer() {
+        return { length: 1 };
+      }
+      createBufferSource() {
+        return {
+          buffer: null as unknown,
+          connect() {},
+          start() {},
+        };
+      }
+      destination = {};
     }
     vi.stubGlobal("AudioContext", FakeAC);
 
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      // Silent unlock WAV must succeed during the gesture even while real clips are blocked.
+      const src = this.src || "";
+      if (src.startsWith("data:audio/wav")) return Promise.resolve();
       // Browsers reject play() until the page has seen a user gesture.
       if (blocked) return Promise.reject(new Error("NotAllowedError"));
-      const file = this.src.split("/").pop() || "";
+      const file = src.split("/").pop() || "";
       // Only track this test's clips — other tests' async Audio may still fire.
       if (file === "a.mp3" || file === "b.mp3") {
         played.push(file);
@@ -333,7 +347,8 @@ describe("WordLayer", () => {
       return Promise.resolve();
     });
 
-    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    // Production default: wait for a gesture (OK prompt / page turn).
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: true });
     const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
@@ -342,11 +357,13 @@ describe("WordLayer", () => {
     l1.setVisible(true);
 
     await new Promise((r) => setTimeout(r, 400));
+    // Gated — no clips until unlock.
     expect(played).toEqual([]);
+    expect(controller.promptOpen.value).toBe(true);
 
     blocked = false;
-    // First real interaction with the reader (page turn, Story close, etc.).
-    document.dispatchEvent(new Event("pointerdown"));
+    // OK / first interaction: HTMLAudio silent prime + restart auto-read.
+    controller.enableFromPrompt();
 
     await vi.waitFor(
       () => {
@@ -356,6 +373,40 @@ describe("WordLayer", () => {
       },
       { timeout: 3000 }
     );
+    controller.stop();
+  });
+
+  it("bubble tap unlocks auto-read for later async clips (iOS gesture path)", async () => {
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const src = this.src || "";
+      if (src.startsWith("data:audio/wav")) return Promise.resolve();
+      const file = src.split("/").pop() || "";
+      if (file === "tap.mp3" || file === "next.mp3") {
+        played.push(file);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: true });
+    const rect = (): DOMRect => ({ top: 0, left: 0, right: 100, bottom: 100 }) as DOMRect;
+    const layer = controller.registerLayer({ id: "1", getRect: rect });
+    layer.setCaptions([
+      { index: 0, audio: "sfx/tap.mp3", volume: 1, x: 0.5, y: 0.2 },
+      { index: 1, audio: "sfx/next.mp3", volume: 1, x: 0.5, y: 0.8 },
+    ]);
+    layer.setVisible(true);
+
+    await new Promise((r) => setTimeout(r, 300));
+    expect(played).toEqual([]);
+    expect(controller.unlocked.value).toBe(false);
+
+    // User taps a bubble — unlock + play that clip inside the gesture.
+    layer.playOne({ index: 0, audio: "sfx/tap.mp3", volume: 1, x: 0.5, y: 0.2 });
+    await vi.waitFor(() => expect(played).toContain("tap.mp3"), { timeout: 2000 });
+    expect(controller.unlocked.value).toBe(true);
+    controller.stop();
   });
 
   it("hard-cuts on rapid page swaps instead of stacking every intermediate page", async () => {
@@ -452,15 +503,19 @@ describe("WordLayer", () => {
     stubIntersectionObserver();
     const played: string[] = [];
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
-      played.push(this.src.split("/").pop() || "");
-      setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      const file = (this.src || "").split("/").pop() || "";
+      // Ignore silent-unlock WAV and other suites' in-flight clips.
+      if (file === "once-a.mp3" || file === "once-b.mp3") {
+        played.push(file);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
       return Promise.resolve();
     });
 
     const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const words = [
-      { x: 0.5, y: 0.2, text: "A", audio: "sfx/a.mp3" },
-      { x: 0.5, y: 0.8, text: "B", audio: "sfx/b.mp3" },
+      { x: 0.5, y: 0.2, text: "A", audio: "sfx/once-a.mp3" },
+      { x: 0.5, y: 0.8, text: "B", audio: "sfx/once-b.mp3" },
     ] as WordEntry[];
     // A flipping leaf carries the same page as the slot it covers. Without
     // dedup the key goes "3" → "3|3", which restarts the sequence, and the
@@ -484,6 +539,7 @@ describe("WordLayer", () => {
     await vi.waitFor(() => expect(played.length).toBeGreaterThanOrEqual(2), { timeout: 3000 });
     // Settle well past the gap so a duplicate pass would have shown up.
     await new Promise((r) => setTimeout(r, 250));
-    expect(played).toEqual(["a.mp3", "b.mp3"]);
+    expect(played).toEqual(["once-a.mp3", "once-b.mp3"]);
+    controller.stop();
   });
 });

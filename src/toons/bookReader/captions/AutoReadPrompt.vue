@@ -1,8 +1,9 @@
 <script setup lang="ts">
 /**
  * One-shot dialog: browsers block caption autoplay until a click.
- * OK runs inside the user gesture so FlipFrame can unlock AudioContext and
- * auto-read the page without a second tap on the art.
+ * OK runs inside the user gesture so FlipFrame can unlock HTMLAudio (iOS needs
+ * a real play() here — AudioContext alone is not enough) and auto-read without
+ * a second tap on the art.
  */
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 
