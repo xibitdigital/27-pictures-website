@@ -11,10 +11,15 @@ Usage:
   python3 scripts/generate-jax-voice.py "Too slow, man!"                # default voice (jax)
   python3 scripts/generate-jax-voice.py "Get down!" --voice riu         # named voice from jax-voices.json
   python3 scripts/generate-jax-voice.py "..." --voice-id <raw voice id> # bypass the name map
+  python3 scripts/generate-jax-voice.py "..." --voice eve --toon nero   # write under public/toons/nero/
 
 Prints the output path and md5 hash; paste
   "audio": "assets/sfx/<hash>.mp3"
 into the matching word entry in words.json yourself.
+
+`--toon` picks the output directory. It matters: captions resolve audio
+through the reader's `asset-page-dir`, so a Nero clip written under jax/
+uploads to the wrong R2 key and 404s in the reader.
 
 Voice names are locked in scripts/jax-voices.json (name -> ElevenLabs
 voice_id) so the same character keeps the same voice across generations.
@@ -34,9 +39,16 @@ import sys
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT_DIR = os.path.join(ROOT, "public", "toons", "jax", "assets", "sfx")
-VOICES_FILE = os.path.join(ROOT, "scripts", "jax-voices.json")
-DEFAULT_VOICE_NAME = "jax"
+VOICES_FILE = os.path.join(ROOT, 'scripts', 'jax-voices.json')
+DEFAULT_VOICE_NAME = 'jax'
+DEFAULT_TOON = 'jax'
+
+
+def out_dir_for(toon):
+    """Clips must live under the toon that plays them — `asset-page-dir` is what
+    resolves "assets/sfx/<hash>.mp3" on the CDN, so a Nero line parked in jax/
+    404s there."""
+    return os.path.join(ROOT, 'public', 'toons', toon, 'assets', 'sfx')
 
 
 def load_voices():
@@ -48,7 +60,7 @@ def load_voices():
 
 def main():
     args = sys.argv[1:]
-    if not args or args[0].startswith("--"):
+    if not args or args[0].startswith('--'):
         print(
             'usage: generate-jax-voice.py "text" [--voice NAME] [--voice-id ID] [--stability N] [--similarity N]',
             file=sys.stderr,
@@ -59,21 +71,25 @@ def main():
     text = args[0]
     voice_name = DEFAULT_VOICE_NAME
     voice_id = None
+    toon = DEFAULT_TOON
     stability = 0.45
     similarity = 0.8
 
     i = 1
     while i < len(args):
-        if args[i] == "--voice":
+        if args[i] == '--voice':
             voice_name = args[i + 1]
             i += 2
-        elif args[i] == "--voice-id":
+        elif args[i] == '--voice-id':
             voice_id = args[i + 1]
             i += 2
-        elif args[i] == "--stability":
+        elif args[i] == '--toon':
+            toon = args[i + 1]
+            i += 2
+        elif args[i] == '--stability':
             stability = float(args[i + 1])
             i += 2
-        elif args[i] == "--similarity":
+        elif args[i] == '--similarity':
             similarity = float(args[i + 1])
             i += 2
         else:
@@ -88,24 +104,24 @@ def main():
             )
             sys.exit(1)
 
-    api_key = os.environ.get("ELEVENLABS_API_KEY")
+    api_key = os.environ.get('ELEVENLABS_API_KEY')
     if not api_key:
-        print("error: ELEVENLABS_API_KEY not set (source .env first)", file=sys.stderr)
+        print('error: ELEVENLABS_API_KEY not set (source .env first)', file=sys.stderr)
         sys.exit(1)
 
     body = json.dumps(
         {
-            "text": text,
-            "model_id": "eleven_multilingual_v2",
-            "voice_settings": {"stability": stability, "similarity_boost": similarity},
+            'text': text,
+            'model_id': 'eleven_multilingual_v2',
+            'voice_settings': {'stability': stability, 'similarity_boost': similarity},
         }
-    ).encode("utf-8")
+    ).encode('utf-8')
 
     req = urllib.request.Request(
         f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}",
         data=body,
-        method="POST",
-        headers={"xi-api-key": api_key, "Content-Type": "application/json"},
+        method='POST',
+        headers={'xi-api-key': api_key, 'Content-Type': 'application/json'},
     )
     try:
         with urllib.request.urlopen(req) as resp:
@@ -115,14 +131,15 @@ def main():
         sys.exit(1)
 
     h = hashlib.md5(audio).hexdigest()
-    os.makedirs(OUT_DIR, exist_ok=True)
-    out_path = os.path.join(OUT_DIR, f"{h}.mp3")
-    with open(out_path, "wb") as f:
+    out_dir = out_dir_for(toon)
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, f"{h}.mp3")
+    with open(out_path, 'wb') as f:
         f.write(audio)
 
-    print(f"ok: {out_path} ({len(audio)} bytes) — voice={voice_name} ({voice_id})")
+    print(f"ok: {out_path} ({len(audio)} bytes) — voice={voice_name} ({voice_id}) toon={toon}")
     print(f'  "audio": "assets/sfx/{h}.mp3"')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

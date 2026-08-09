@@ -695,11 +695,12 @@
             "de": "Unter das Mikroskop.",
             "fr": "Sous le microscope."
           },
-          "audio": "assets/sfx/be9094c9c32edc16f58b7dbde22a563f.mp3",
+          "audio": "assets/sfx/683e8c9776d32c7e97cbefd2a4a62e42.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
-          }
+          },
+          "speaker": "eve"
         },
         {
           "x": 0.16,
@@ -743,12 +744,13 @@
             "de": "Messwerte sind sauber.",
             "fr": "Les relevés sont nets."
           },
-          "audio": "assets/sfx/3d96922315e19633e4c66df736b1100c.mp3",
+          "audio": "assets/sfx/bc205113cee1267deb51d0a2afa9602d.mp3",
           "bubble": {
             "tail": "top",
             "opacity": 0.75,
             "strokeWidth": 5
-          }
+          },
+          "speaker": "eve"
         },
         {
           "x": 0.86,
@@ -766,14 +768,15 @@
             "de": "Fast unsichtbare\nHirntechnik.",
             "fr": "Tech cérébrale\nquasi invisible."
           },
-          "audio": "assets/sfx/70d46ff8b0bcce7250cc7d11d37a010b.mp3",
+          "audio": "assets/sfx/54c5158acb9c6e40c7203f1dedcc64d4.mp3",
           "bubble": {
             "tail": "left",
             "padX": 1,
             "padY": 1,
             "opacity": 0.75,
             "strokeWidth": 5
-          }
+          },
+          "speaker": "eve"
         }
       ]
     },
@@ -796,12 +799,13 @@
             "de": "Kostüm aus.",
             "fr": "Costume retiré."
           },
-          "audio": "assets/sfx/3828e57822967eeb0bfa87ac413165bf.mp3",
+          "audio": "assets/sfx/d03f6a4b5520bf5136c9b42b4b7bf357.mp3",
           "bubble": {
             "tail": "right",
             "opacity": 0.75,
             "strokeWidth": 5
-          }
+          },
+          "speaker": "eve"
         },
         {
           "x": 0.88,
@@ -841,12 +845,13 @@
             "de": "Markieren Gesichter.\nUnd Materialien.",
             "fr": "Ils taguent les visages.\nEt les matériaux."
           },
-          "audio": "assets/sfx/2cc9ae28b004905dc407432af00fd8ff.mp3",
+          "audio": "assets/sfx/e05111a01d45294c54756cc32c82cba5.mp3",
           "bubble": {
             "tail": "left",
             "opacity": 0.75,
             "strokeWidth": 5
-          }
+          },
+          "speaker": "eve"
         },
         {
           "x": 0.35,
@@ -890,12 +895,13 @@
             "de": "Wenn es wie der Kristall\nglüht, sehe ich es.",
             "fr": "S'il brille comme ce\ncristal, je le verrai."
           },
-          "audio": "assets/sfx/9e335afd4705b7d540a2618dcca00bf7.mp3",
+          "audio": "assets/sfx/f75305ad04e781164eaa5d66d54a1c49.mp3",
           "bubble": {
             "tail": "bottom",
             "opacity": 0.75,
             "strokeWidth": 5
-          }
+          },
+          "speaker": "eve"
         },
         {
           "x": 0.88,
@@ -948,7 +954,8 @@
             "de": "Taxi ist da.",
             "fr": "Le taxi est là."
           },
-          "audio": "assets/sfx/189e6263352f65c4157a8c04562f7b22.mp3"
+          "audio": "assets/sfx/b28370863152c5623b1f580a094ef855.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.14,
@@ -1017,7 +1024,8 @@
             "de": "Kein Fahrer.",
             "fr": "Pas de chauffeur."
           },
-          "audio": "assets/sfx/cb2649f580fe0e1e991832a8d657dee8.mp3"
+          "audio": "assets/sfx/78e75bebd257d39d716499548c2db671.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.88,
@@ -1114,7 +1122,8 @@
             "de": "Ein Freund ist\ndrin — er kommt\ngleich raus.",
             "fr": "Un ami est\ndedans — il sort\nbientôt."
           },
-          "audio": "assets/sfx/c1620ff5eefb8b757014ab164ca89a08.mp3"
+          "audio": "assets/sfx/abed8e6980553ecb8aa574378703c24a.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.81,
@@ -1183,7 +1192,8 @@
             "de": "Komme.",
             "fr": "J'arrive."
           },
-          "audio": "assets/sfx/26258e80fb4659fde45869d934a131cc.mp3"
+          "audio": "assets/sfx/1682e70ff5f71f86e8f41c720c8f5828.mp3",
+          "speaker": "eve"
         }
       ]
     },
@@ -1257,7 +1267,8 @@
             "de": "Vorsicht.",
             "fr": "Prudence."
           },
-          "audio": "assets/sfx/a15008b53f0b6ce0845f39a54093f779.mp3"
+          "audio": "assets/sfx/433d15d5177754903d6f496ccec4d9b0.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.42,
@@ -1400,7 +1411,8 @@
             "de": "Gib mir\neine Sekunde.",
             "fr": "Donne-moi\nune seconde."
           },
-          "audio": "assets/sfx/c8d0afa2740268881cb19e8a7265afdf.mp3"
+          "audio": "assets/sfx/19f964f8253f3f35fbb4348dafa360f2.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.21,
@@ -1423,7 +1435,8 @@
             "de": "Das ist die Hand\nunseres Opfers.",
             "fr": "C’est la main\nde la victime."
           },
-          "audio": "assets/sfx/e5f3bc4fb1a39bcd8ed19d16ac0959fe.mp3"
+          "audio": "assets/sfx/0e4e5b60e119dafa1660b3ead045a82d.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.56,
@@ -1659,7 +1672,8 @@
             "de": "Er war nicht\nallein.",
             "fr": "Il n'agissait\npas seul."
           },
-          "audio": "assets/sfx/3e7979f0ebbf2448d38e194ea55433db.mp3"
+          "audio": "assets/sfx/0c535ad4334bff517aa993f065607fa4.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.19,

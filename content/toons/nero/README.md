@@ -29,7 +29,7 @@ Detective and **ex-military**. Lost a hand in a **terrorist attack** and now fig
 
 **Forensic specialist** and Nero’s friend; works for **Scotland Yard**. Lab coat by day, field suit and **AI-enhanced glasses** when the case leaves the lab. Glasses can **tag faces and materials**. Professional, sharp, the scientific half of the pair.
 
-- Voice lock: `eve` (`fgDJOgmENIR82PueQrVs`)
+- Voice lock: `eve` (`jv41DhCf464zw0TI7I1w`)
 
 ### The Dog
 
