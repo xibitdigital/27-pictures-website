@@ -1677,8 +1677,8 @@
             "de": "Er war nicht\nallein.",
             "fr": "Il n'agissait\npas seul."
           },
-          "audio": "assets/sfx/0c535ad4334bff517aa993f065607fa4.mp3",
-          "speaker": "eve"
+          "audio": "assets/sfx/941a0fc4d5e401c66a6a96ef6460feca.mp3",
+          "speaker": "nero"
         },
         {
           "x": 0.19,
@@ -1703,6 +1703,143 @@
           },
           "audio": "assets/sfx/67fe80935c407e8dae5ca788a8ce294c.mp3",
           "speaker": "eve"
+        }
+      ]
+    },
+    {
+      "file": "assets/2fde040bdf3aaf5aeddba3dbc0e542dd.webp",
+      "words": [
+        {
+          "x": 0.78,
+          "y": 0.07,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1,
+          "maxWidth": 0.22,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Window!",
+            "it": "La finestra!",
+            "de": "Fenster!",
+            "fr": "La fenêtre!"
+          },
+          "speaker": "eve",
+          "audio": "assets/sfx/cfc74bc53caff44073950e162ef917ea.mp3"
+        },
+        {
+          "x": 0.2,
+          "y": 0.13,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1,
+          "maxWidth": 0.24,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Don't stop!",
+            "it": "Non fermarti!",
+            "de": "Nicht anhalten!",
+            "fr": "N'arrête pas!"
+          },
+          "speaker": "nero",
+          "audio": "assets/sfx/7212c1534dd72485f21f66c6ef52f205.mp3"
+        },
+        {
+          "x": 0.16,
+          "y": 0.42,
+          "align": "center",
+          "size": 50,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -14,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "KRASHH",
+            "it": "KRASHH",
+            "de": "KRASHH",
+            "fr": "KRASHH"
+          },
+          "audio": "assets/sfx/8ee46a474805102bde9987d6157ac57d.mp3"
+        },
+        {
+          "x": 0.12,
+          "y": 0.7,
+          "align": "center",
+          "size": 36,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -10,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "WHOOSH",
+            "it": "WHOOSH",
+            "de": "WHOOSH",
+            "fr": "WHOOSH"
+          },
+          "audio": "assets/sfx/9c1326ca22c3ff2da34948abe2d50dd0.mp3"
+        },
+        {
+          "x": 0.84,
+          "y": 0.78,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1,
+          "maxWidth": 0.22,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Nero—!",
+            "it": "Nero—!",
+            "de": "Nero—!",
+            "fr": "Nero—!"
+          },
+          "speaker": "eve",
+          "audio": "assets/sfx/302ff3f63102c372364973a690f61631.mp3"
+        },
+        {
+          "x": 0.28,
+          "y": 0.9,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "top",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Soft landing.\nMaybe.",
+            "it": "Atterraggio\nmorbido.\nForse.",
+            "de": "Weiche Landung.\nVielleicht.",
+            "fr": "Atterrissage\nen douceur.\nPeut-être."
+          },
+          "speaker": "nero",
+          "audio": "assets/sfx/af0463bfa469a6e280f925e80ec4ea8c.mp3"
         }
       ]
     }

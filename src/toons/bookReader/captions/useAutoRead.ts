@@ -13,6 +13,10 @@
  * the slot underneath). Sequences are keyed by page id + a caption snapshot,
  * not by a particular component instance, so an unmount mid-clip cannot kill
  * the rest of the page.
+ *
+ * Rapid page turns hard-cut to the settled view: only a pure spread expansion
+ * (right half arriving after the left) appends. Anything else replaces the
+ * queue so stale clips from pages the user already left never pile up.
  */
 import { inject, provide, ref, type InjectionKey, type Ref } from "vue";
 import { readingOrder } from "./captionModel";
@@ -71,7 +75,7 @@ export interface AutoReadController {
 }
 
 /** Coalesce the two halves of a spread — they become visible a frame apart. */
-const SETTLE_MS = 180;
+const SETTLE_MS = 220;
 
 export function createAutoReadController(options: AutoReadOptions = {}): AutoReadController {
   const gapMs = options.gapMs != null ? Number(options.gapMs) : 2000;
@@ -86,6 +90,11 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   let doneKey = "";
   /** Page ids the current sequence covers — see the subset check in `sync`. */
   let coveredIds = new Set<string>();
+  /**
+   * Pages the last settled sync wants spoken. The pump drops jobs that fall
+   * out of this set (page left the view) without waiting for stop().
+   */
+  let wantedIds = new Set<string>();
   /** Remaining pages to speak (snapshot of captions, resolved by page id). */
   let playQueue: PageJob[] = [];
   let audio: HTMLAudioElement | null = null;
@@ -162,6 +171,7 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   function resetCoverage(): void {
     currentKey = "";
     coveredIds = new Set();
+    wantedIds = new Set();
   }
 
   function jobsFrom(layersList: LayerRecord[]): PageJob[] {
@@ -170,6 +180,30 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
       // Snapshot now: the component instance may unmount mid-sequence.
       captions: readingOrder(l.captions),
     }));
+  }
+
+  function parseKey(key: string): string[] {
+    return key ? key.split("|").filter(Boolean) : [];
+  }
+
+  function isPureSuperset(nextIds: string[], prevIds: string[]): boolean {
+    if (!prevIds.length || nextIds.length <= prevIds.length) return false;
+    return prevIds.every((id) => nextIds.includes(id));
+  }
+
+  function isPureSubset(nextIds: string[], prevIds: string[]): boolean {
+    if (!nextIds.length || nextIds.length >= prevIds.length) return false;
+    return nextIds.every((id) => prevIds.includes(id));
+  }
+
+  function startJobs(jobs: PageJob[], key: string, ids: string[]): void {
+    stop();
+    playQueue = jobs;
+    currentKey = key;
+    coveredIds = new Set(ids);
+    wantedIds = new Set(ids);
+    doneKey = "";
+    void pump(key);
   }
 
   function sync(): void {
@@ -187,33 +221,47 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     const key = ids.join("|");
     // Same pages, still reading (or already read) — leave it alone.
     if (key === currentKey && (running || doneKey === key)) return;
-    // A page turn is not a clean swap — the halves arrive and leave one at a
-    // time, so the visible set passes through 8|9 → 8 → 8|10|11 → 10|11. Both
-    // intermediate states used to look like a new view and restart the
-    // sequence on page 8. Read only what has actually appeared, and treat a
-    // view with nothing new in it as the reading already in progress.
-    const prevCovered = coveredIds;
-    const fresh = ordered.filter((l) => !prevCovered.has(l.id));
-    if (!fresh.length) return;
-    currentKey = key;
-    // Everything on screen counts as covered, including a page on its way out,
-    // so it can't come back around as "fresh" while it finishes unmounting.
-    coveredIds = new Set(ids);
-    const jobs = jobsFrom(fresh);
 
-    // Right half of a spread often lands after the left is already speaking.
-    // Stopping here used to kill the left page mid-sequence and only play the
-    // new half. If a page we were already covering is still on screen, this is
-    // an expansion of the same view — append and keep going.
-    if (running && ordered.some((l) => prevCovered.has(l.id))) {
-      playQueue.push(...jobs);
+    const prevIds = parseKey(currentKey);
+    const fresh = ordered.filter((l) => !coveredIds.has(l.id));
+
+    // Pages leaving only (8|9 → 8 mid-flip): prune jobs for pages that left,
+    // keep speaking whatever is still wanted. Do not restart the remaining half.
+    if (prevIds.length && isPureSubset(ids, prevIds)) {
+      currentKey = key;
+      wantedIds = new Set(ids);
+      playQueue = playQueue.filter((j) => wantedIds.has(j.id));
+      // Keep coveredIds as-is so a page that briefly left cannot re-queue as fresh.
       return;
     }
 
-    stop();
-    // stop() cleared the queue — load the fresh jobs and start.
-    playQueue = jobs;
-    void pump(key);
+    // Pure expansion by exactly one page (10 → 10|11): the missing half of a
+    // spread landed after the left was already speaking. Append only — never
+    // re-read the left. A jump that piles on two+ pages (rapid turn while the
+    // old plate is still on screen) is navigation, not expansion.
+    if (prevIds.length && isPureSuperset(ids, prevIds) && ids.length === prevIds.length + 1 && fresh.length === 1) {
+      currentKey = key;
+      coveredIds = new Set(ids);
+      wantedIds = new Set(ids);
+      const jobs = jobsFrom(fresh);
+      if (running) {
+        playQueue.push(...jobs);
+        return;
+      }
+      // Left page already finished; just read the newcomer.
+      playQueue = jobs;
+      doneKey = "";
+      void pump(key);
+      return;
+    }
+
+    // Real navigation (or first paint). Hard-cut so rapid skips do not stack
+    // every intermediate page onto the queue. Speak only pages that were not
+    // already in the previous key — the plate the user left must go silent,
+    // even if it is still on screen for a frame during the flip.
+    const newcomers = prevIds.length ? ordered.filter((l) => !prevIds.includes(l.id)) : ordered;
+    const toRead = newcomers.length ? newcomers : ordered;
+    startJobs(jobsFrom(toRead), key, ids);
   }
 
   function speak(layer: LayerRecord | null, caption: AutoReadCaptionRef): Promise<boolean> {
@@ -265,23 +313,24 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
       while (playQueue.length) {
         if (seq !== mySeq) return;
         const job = playQueue.shift()!;
+        // Page left the settled view (subset prune / rapid turn) — skip it.
+        if (!wantedIds.has(job.id)) continue;
         for (const caption of job.captions) {
-          // Only a view change (seq bump) ends the sequence. A leaf unmounting
-          // mid-clip used to set layer.released and bail after the first
-          // sound — the settled slot under the leaf still had the same page,
-          // but coverage already marked it read, so nothing ever resumed.
           if (seq !== mySeq) return;
+          if (!wantedIds.has(job.id)) break;
           const layer = liveLayer(job.id);
           const played = await speak(layer, caption);
           if (seq !== mySeq) return;
           if (!played) {
             // Blocked by the autoplay policy — retry after the first gesture.
-            // Put the failed clip + remaining queue back so the retry can
-            // start from here… simpler: re-arm whole view via coverage reset.
             armRetry(key);
             return;
           }
-          await new Promise<void>((resolve) => setTimeout(resolve, gapMs));
+          if (gapMs > 0) {
+            await new Promise<void>((resolve) => setTimeout(resolve, gapMs));
+            if (seq !== mySeq) return;
+            if (!wantedIds.has(job.id)) break;
+          }
         }
       }
       if (seq === mySeq) doneKey = currentKey || key;

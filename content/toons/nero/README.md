@@ -2,12 +2,12 @@
 
 Interactive FlipFrame short. Deep-link pages: `/toons/nero/?page=N` (1-based).
 
-| | |
-|--|--|
-| Config | `content/toons/nero/config.json` → publish to R2 |
-| Lock | `src/toons/config-lock.json` → `nero` key |
-| Design size | 800 × 1424 (portrait) |
-| Pages | **10** (including time-gap plate) |
+|             |                                                  |
+| ----------- | ------------------------------------------------ |
+| Config      | `content/toons/nero/config.json` → publish to R2 |
+| Lock        | `src/toons/config-lock.json` → `nero` key        |
+| Design size | 800 × 1424 (portrait)                            |
+| Pages       | **18** (including time-gap plate)                |
 
 ## Synopsis
 
@@ -45,25 +45,26 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 
 ## Page map (reading order)
 
-| `#` | Beat | Notes |
-|-----|------|--------|
-| 1 | Nero — alley / eye / punch | “Wrong alley.” |
-| 2 | Break-in / drawer / gun | “No more hiding.” |
-| 3 | Bench / load / fire | “Steady hands.” / “You're done.” |
-| **4** | **Time gap** | Diagonal plate: black title zone + city from above. Captions: **HOURS EARLIER** · **THE DOG** · subline. Flashback: Dog’s story **before** page 3. |
-| 5 | The Dog — rooftop / scope / alley | “Found you.” |
-| 6 | Shot / blood / dead hand | BANG / Paid. / THUD… |
-| 7 | Nero — bang / victim / crystal | Composition HUD (germanium + unknown) |
-| 8 | Scotland Yard run / gates | “I'll ask Eve.” |
-| 9 | Lab with Eve | Si spin qubits / CMOS + photonics / implants |
-| 10 | Eve drops coat, glasses, leave | AI glasses tag faces & materials |
-| **11** | **Cybercab** | Eve hails driverless cab → both jump in → ECU faces inside |
-| **12** | **Cerberus club** | Drop-off → Eve distracts bouncer → Nero invites Eve in |
-| **13** | **Cerberus interior** | Floor crowd → bar / bartender → grand staircase |
-| **14** | **Upstairs room** | Eve's glasses scan → fingerprint on the door handle → Nero reads traces on the floor |
-| **15** | **Ambush** | Door kicked in, suppressed rifle → Nero shoves Eve clear, steel forearm up → bullet strikes the plating |
-| **16** | **Knife** | Nero draws from the waistband → blade in flight, shooter small in the doorway → hit in the neck gap above the vest |
-| **17** | **Unmasked** | Mask pulled off → the shooter is the Cerberus **bartender** → Nero lifts a blank keycard from his vest |
+| `#`    | Beat                              | Notes                                                                                                                                              |
+| ------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1      | Nero — alley / eye / punch        | “Wrong alley.”                                                                                                                                     |
+| 2      | Break-in / drawer / gun           | “No more hiding.”                                                                                                                                  |
+| 3      | Bench / load / fire               | “Steady hands.” / “You're done.”                                                                                                                   |
+| **4**  | **Time gap**                      | Diagonal plate: black title zone + city from above. Captions: **HOURS EARLIER** · **THE DOG** · subline. Flashback: Dog’s story **before** page 3. |
+| 5      | The Dog — rooftop / scope / alley | “Found you.”                                                                                                                                       |
+| 6      | Shot / blood / dead hand          | BANG / Paid. / THUD…                                                                                                                               |
+| 7      | Nero — bang / victim / crystal    | Composition HUD (germanium + unknown)                                                                                                              |
+| 8      | Scotland Yard run / gates         | “I'll ask Eve.”                                                                                                                                    |
+| 9      | Lab with Eve                      | Si spin qubits / CMOS + photonics / implants                                                                                                       |
+| 10     | Eve drops coat, glasses, leave    | AI glasses tag faces & materials                                                                                                                   |
+| **11** | **Cybercab**                      | Eve hails driverless cab → both jump in → ECU faces inside                                                                                         |
+| **12** | **Cerberus club**                 | Drop-off → Eve distracts bouncer → Nero invites Eve in                                                                                             |
+| **13** | **Cerberus interior**             | Floor crowd → bar / bartender → grand staircase                                                                                                    |
+| **14** | **Upstairs room**                 | Eve's glasses scan → fingerprint on the door handle → Nero reads traces on the floor                                                               |
+| **15** | **Ambush**                        | Door kicked in, suppressed rifle → Nero shoves Eve clear, steel forearm up → bullet strikes the plating                                            |
+| **16** | **Knife**                         | Nero draws from the waistband → blade in flight, shooter small in the doorway → hit in the neck gap above the vest                                 |
+| **17** | **Unmasked**                      | Mask pulled off → the shooter is the Cerberus **bartender** → Nero lifts a blank keycard from his vest                                             |
+| **18** | **Exit**                          | Hallway sprint to the glass → Nero's steel fist shatters the pane → both leap into the rainy night                                                 |
 
 Asset for page 1: `assets/1a95711588bfb5605e628e073601f595.webp` (bottom panel replaced: wide alley shot instead of a fist close-up, to sidestep a six-finger render defect).
 Asset for page 4: `assets/27519b004e3802fa29dd5d2cc7556754.webp` (diagonal interstitial).
@@ -86,19 +87,31 @@ npm run publish-toon-config -- --toon nero
 make add-image SRC=~/Downloads/page.png TOON=nero UPLOAD=1
 # then edit config pages[] order / captions, publish again
 
-# Voice
+# Voice (always --toon nero so the clip lands under asset-page-dir)
 set -a; source .env; set +a
-python3 scripts/generate-jax-voice.py "Line." --voice nero   # or eve | thedog | nova
-# copy mp3 under public/toons/nero/assets/sfx/ if generated under jax
+python3 scripts/generate-jax-voice.py "Line." --voice nero --toon nero   # or eve | thedog | nova
+
+# Emotional line — audio tags need Eleven v3 (multilingual_v2 ignores them)
+python3 scripts/generate-jax-voice.py "[gasps] [scared] Nero—!" \
+  --voice eve --toon nero --model eleven_v3 --stability 0.3
+# Display text in config stays clean ("Nero—!"); tags are TTS input only
+
 npm run upload-assets
+npm run publish-toon-config -- --toon nero
 ```
 
+| Flag                   | Notes                                                      |
+| ---------------------- | ---------------------------------------------------------- |
+| `--toon nero`          | Required — writes `public/toons/nero/assets/sfx/<md5>.mp3` |
+| `--model eleven_v3`    | Required for `[scared]`, `[worried]`, `[gasps]`, …         |
+| `--stability 0.2–0.35` | More expressive / tag-responsive (Creative–Natural)        |
+
 Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `top` | `top-left` | `top-right` | `left` | `right`
-(Use a `top*` tail when the speaker is *below* the bubble. Unknown values silently fall back to `bottom`.)
+(Use a `top*` tail when the speaker is _below_ the bubble. Unknown values silently fall back to `bottom`.)
 
 ## Replacing or adding one page's plate (WebP + watermark, no `public/`)
 
-`make add-image` is for *new* pages with the classic JPG/PNG + `--config`
+`make add-image` is for _new_ pages with the classic JPG/PNG + `--config`
 flow. For a single WebP page swap or addition — watermark, WebP, content
 hash, straight to R2, update `config.json` — use the one-shot script:
 
@@ -142,7 +155,7 @@ prints the old key as a note. They're orphaned but harmless until purged
 (see `scripts/purge-r2-objects.js`, and keep a `npm run backup-cdn` snapshot
 before deleting anything from R2 — it's irreversible).
 
-For converting a *whole toon's* existing plates to WebP in bulk (not a
+For converting a _whole toon's_ existing plates to WebP in bulk (not a
 one-off swap), see `scripts/convert-toon-plates.js`
 (`make convert-plates TOON=nero`) instead — it works from `cdn-backup/`
 and can hash + upload every page in one pass with `--upload`.

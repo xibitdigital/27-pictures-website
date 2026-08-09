@@ -17,27 +17,27 @@ npm run format
 
 ```css
 :root {
-    /* Backgrounds */
-    --bg: #030303;           /* Main background */
-    --bg-dark: #000;         /* Pure black sections */
-    --bg-card: #111;         /* Card/frame backgrounds */
-    --bg-assembly: #050505;  /* Assembly section */
+  /* Backgrounds */
+  --bg: #030303; /* Main background */
+  --bg-dark: #000; /* Pure black sections */
+  --bg-card: #111; /* Card/frame backgrounds */
+  --bg-assembly: #050505; /* Assembly section */
 
-    /* Text */
-    --text: #fff;            /* Primary text */
-    --text-muted: #ccc;      /* Secondary/muted text */
-    --silver: #888;          /* Tertiary text */
+  /* Text */
+  --text: #fff; /* Primary text */
+  --text-muted: #ccc; /* Secondary/muted text */
+  --silver: #888; /* Tertiary text */
 
-    /* Accent Colors */
-    --red-smile: #b30000;    /* Primary accent (brand red) */
-    --success: #4caf50;      /* Success states */
+  /* Accent Colors */
+  --red-smile: #b30000; /* Primary accent (brand red) */
+  --success: #4caf50; /* Success states */
 
-    /* Borders */
-    --border: #222;          /* Dark borders */
-    --border-light: #333;    /* Light borders (forms) */
+  /* Borders */
+  --border: #222; /* Dark borders */
+  --border-light: #333; /* Light borders (forms) */
 
-    /* Animation */
-    --transition: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Animation */
+  --transition: cubic-bezier(0.16, 1, 0.3, 1);
 }
 ```
 
@@ -45,10 +45,16 @@ npm run format
 
 ```css
 /* Good */
-.element { color: var(--text); background: var(--bg-card); }
+.element {
+  color: var(--text);
+  background: var(--bg-card);
+}
 
 /* Bad - never do this */
-.element { color: #fff; background: #111; }
+.element {
+  color: #fff;
+  background: #111;
+}
 ```
 
 ## Project Structure
@@ -253,20 +259,20 @@ npm run generate-qr
 
 Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 
-| Path | Role |
-|------|------|
-| `src/toons/bookReader/` | FlipFrame package: engine, shell, chrome, captions, audio |
-| `src/toons/jax/` · `erin/` · `nero/` | App entry + `ToonReaderShell` config |
-| `content/toons/<name>/config.json` | **Edit here** — pages list, captions, audio paths |
-| `src/toons/config-lock.json` | Points prod at `config.<md5>.json` on R2 |
-| `public/toons/reader-shared.css` | Shared book chrome + word/bubble CSS (all toons) |
-| `public/toons/**/assets/` | **Gitignored** — load via `VITE_ASSET_BASE` |
+| Path                                 | Role                                                      |
+| ------------------------------------ | --------------------------------------------------------- |
+| `src/toons/bookReader/`              | FlipFrame package: engine, shell, chrome, captions, audio |
+| `src/toons/jax/` · `erin/` · `nero/` | App entry + `ToonReaderShell` config                      |
+| `content/toons/<name>/config.json`   | **Edit here** — pages list, captions, audio paths         |
+| `src/toons/config-lock.json`         | Points prod at `config.<md5>.json` on R2                  |
+| `public/toons/reader-shared.css`     | Shared book chrome + word/bubble CSS (all toons)          |
+| `public/toons/**/assets/`            | **Gitignored** — load via `VITE_ASSET_BASE`               |
 
-| Toon | URL | Notes |
-|------|-----|--------|
-| Erin | `/toons/erin/` | Page-turner prototype |
-| Jax | `/toons/jax/` | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`) |
-| Nero | `/toons/nero/` | Scotland Yard case — Nero, Eve, The Dog; page 4 = *HOURS EARLIER* flashback plate (see `content/toons/nero/README.md`) |
+| Toon | URL            | Notes                                                                                                                  |
+| ---- | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Erin | `/toons/erin/` | Page-turner prototype                                                                                                  |
+| Jax  | `/toons/jax/`  | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)             |
+| Nero | `/toons/nero/` | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`) |
 
 Wire-up pattern:
 
@@ -329,13 +335,13 @@ that want an opt-in SFX prompt.
 
 **Bubble variants (word overlays):**
 
-| `variant` | Look | Use |
-|-----------|------|-----|
-| `bubble` | Organic speech balloon | Character dialogue |
-| `burst` | Spiky shout | Impact lines |
-| `ai` | Dark HUD + optional `N›` prefix | Nova / good system |
-| `badai` | Inverted light HUD + `!›` prefix | Hostile AI |
-| `credit` | Bangers, muted | End-card colophon |
+| `variant` | Look                             | Use                |
+| --------- | -------------------------------- | ------------------ |
+| `bubble`  | Organic speech balloon           | Character dialogue |
+| `burst`   | Spiky shout                      | Impact lines       |
+| `ai`      | Dark HUD + optional `N›` prefix  | Nova / good system |
+| `badai`   | Inverted light HUD + `!›` prefix | Hostile AI         |
+| `credit`  | Bangers, muted                   | End-card colophon  |
 
 **Word-layer z-index matters**: `.nav-zone` (the full-height page-turn click
 areas) sits at `z-index: 30`. The word overlay layer must stay above it
@@ -369,24 +375,57 @@ Onomatopoeia (`CLANK`, `WHOOSH`, …) go through `generate-jax-sfx.py` (Sound
 Effects API — non-verbal). Actual dialogue should be Text-to-Speech:
 
 1. Voices are locked by name in `scripts/jax-voices.json` (`name ->
-   voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
-   `badai`, `nero`, `thedog`, `eve`. To add a new one: open the voice on
-   `elevenlabs.io/app/voice-library?voiceId=...`, copy the ID from the URL,
+voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
+   `badai`, `nero`, `thedog`, `eve`, `barman`. To add a new one: open the voice
+   on `elevenlabs.io/app/voice-library?voiceId=...`, copy the ID from the URL,
    add `"name": "voiceId"` to that file. (Listing/searching voices via
    `GET /v1/voices` needs a separate `voices_read` scope — grab the ID from
    the dashboard URL instead.)
 2. Run:
+
    ```bash
    set -a; source .env; set +a
+   # Plain line (default model: eleven_multilingual_v2)
    python3 scripts/generate-jax-voice.py "Too slow, man!" --voice jax
-   python3 scripts/generate-jax-voice.py "Contract closed." --voice thedog
+   python3 scripts/generate-jax-voice.py "Contract closed." --voice thedog --toon nero
+
+   # Emotional / directed delivery — MUST use Eleven v3 + audio tags
+   python3 scripts/generate-jax-voice.py "[scared] Nero—!" \
+     --voice eve --toon nero --model eleven_v3 --stability 0.3
    ```
-   Writes under `public/toons/jax/assets/sfx/<md5>.mp3` by default and prints
-   the `"audio": "assets/sfx/<hash>.mp3"` line. For Nero, copy the file into
-   `public/toons/nero/assets/sfx/` (or re-upload under that key) so
-   `asset-page-dir` resolves on the CDN, then `npm run upload-assets`.
+
+   `--toon` writes under `public/toons/<toon>/assets/sfx/<md5>.mp3` so
+   `asset-page-dir` resolves on the CDN (default toon is `jax`). Prints the
+   `"audio": "assets/sfx/<hash>.mp3"` line to paste into config.
+
 3. Paste into `content/toons/<toon>/config.json`, then
-   `npm run publish-toon-config -- --toon <toon>`.
+   `npm run upload-assets` and `npm run publish-toon-config -- --toon <toon>`.
+
+#### Eleven v3 audio tags (emotion / delivery)
+
+Bracketed tags are **performance direction**, not spoken words. They only work
+with **`model_id: eleven_v3`** (`--model eleven_v3`). On
+`eleven_multilingual_v2` / turbo they are ignored (or may be read aloud).
+
+| Kind      | Examples                                                                             |
+| --------- | ------------------------------------------------------------------------------------ |
+| Emotions  | `[scared]`, `[worried]`, `[nervously]`, `[excited]`, `[angry]`, `[sad]`, `[curious]` |
+| Delivery  | `[whispers]`, `[shouts]`, `[softly]`, `[flatly]`                                     |
+| Reactions | `[gasps]`, `[sighs]`, `[laughs]`, `[gulps]`, `[exhales]`                             |
+
+Combine tags for layered delivery:
+
+```bash
+python3 scripts/generate-jax-voice.py "[gasps] [scared] Nero—!" \
+  --voice eve --toon nero --model eleven_v3 --stability 0.3
+```
+
+- **Stability:** lower / Creative (~0.2–0.35) is more responsive to tags;
+  higher / Robust is flatter and less tag-sensitive.
+- Caption **display text** in `config.json` stays clean (`"Nero—!"`); only the
+  TTS input string carries tags.
+- Official docs: [TTS best practices → Prompting Eleven v3 → Audio tags](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices)
+  and [Audio tags 101](https://elevenlabs.io/blog/v3-audiotags).
 
 ### Replacing the background track
 
@@ -404,6 +443,7 @@ Do not commit the binary.
 ## SEO State
 
 ### Completed
+
 - Page title: `27 Pictures | AI Horror Shorts & Cinematic Cosplay Production`
 - Meta description updated (matches YouTube channel description)
 - JSON-LD schema: Organization, WebSite, WebPage, CreativeWorkSeries, 6× VideoObject, 2× Service
@@ -412,17 +452,17 @@ Do not commit the binary.
 - IndexNow key deployed + submitted (`bdd5e80e21a8430d9316de0deacdb208`)
 - All VideoObject uploadDates and durations use real YouTube values
 - `public/llms.txt` — AI crawler allow-list + key pages (aligned with robots)
-- `public/robots.txt` — search + AI *citation* crawlers allowed; QR landing blocked
+- `public/robots.txt` — search + AI _citation_ crawlers allowed; QR landing blocked
 
 ### Crawlers / AI search policy (2026-07)
 
 **Intent:** maximize classic search + AI search / citation visibility. Block only aggressive bulk scrapers.
 
-| File | Role |
-|------|------|
-| `public/robots.txt` | Authoritative crawl rules shipped in `dist/` |
-| `public/llms.txt` | Human/AI policy note; must stay consistent with robots |
-| Cloudflare **AI Crawl Control** | Per-bot **Block** toggles (leave **off** for GPT/Claude/Google/Perplexity) |
+| File                              | Role                                                                                                                                            |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `public/robots.txt`               | Authoritative crawl rules shipped in `dist/`                                                                                                    |
+| `public/llms.txt`                 | Human/AI policy note; must stay consistent with robots                                                                                          |
+| Cloudflare **AI Crawl Control**   | Per-bot **Block** toggles (leave **off** for GPT/Claude/Google/Perplexity)                                                                      |
 | Cloudflare **managed robots.txt** | **Must stay disabled** — when enabled it prepends `Disallow: /` for GPTBot, ClaudeBot, Google-Extended, etc. and conflicts with our Allow rules |
 
 **Allowed explicitly in robots:** GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-User, anthropic-ai, PerplexityBot, Google-Extended, Applebot-Extended, meta-externalagent (+ default `User-agent: * Allow: /`).
@@ -439,16 +479,18 @@ curl -sS https://twentyseven.pictures/robots.txt
 **Do not re-enable** Cloudflare “Block AI scrapers” / managed robots for this zone without updating both files and this section.
 
 ### Video ID → Title Map (as of 2026-05)
-| YouTube ID | Title | Duration | Upload |
-|---|---|---|---|
-| `J-iZl-XkVxg` | The Doll Moved Again. No One Was Home. | PT1M20S | 2026-04-27 |
-| `qjBL4zRIFbg` | She's Not Running Away. She's Hunting. | PT1M7S | 2026-04-23 |
-| `BOtFWCENtTc` | She Asked for Directions. She Should've Run. | PT1M25S | 2026-04-15 |
-| `VEmf9eq62zo` | Something Is Wrong With My Reflection | PT2M19S | 2026-04-26 |
-| `QMRlBqAdNGg` | He Streamed the Challenge. The Monster Streamed Back. | PT39S | 2026-04-30 |
-| `nuMPi_Rnxg0` | Cosplay showcase (unlisted) | — | — |
+
+| YouTube ID    | Title                                                 | Duration | Upload     |
+| ------------- | ----------------------------------------------------- | -------- | ---------- |
+| `J-iZl-XkVxg` | The Doll Moved Again. No One Was Home.                | PT1M20S  | 2026-04-27 |
+| `qjBL4zRIFbg` | She's Not Running Away. She's Hunting.                | PT1M7S   | 2026-04-23 |
+| `BOtFWCENtTc` | She Asked for Directions. She Should've Run.          | PT1M25S  | 2026-04-15 |
+| `VEmf9eq62zo` | Something Is Wrong With My Reflection                 | PT2M19S  | 2026-04-26 |
+| `QMRlBqAdNGg` | He Streamed the Challenge. The Monster Streamed Back. | PT39S    | 2026-04-30 |
+| `nuMPi_Rnxg0` | Cosplay showcase (unlisted)                           | —        | —          |
 
 ### Remaining TODOs
+
 - Update VideoObject entries when new Shorts are published
 - Add more indexable hub pages (series / cosplay) when ready — sitemap is still thin
 - Submit new URLs to IndexNow after each public URL change:

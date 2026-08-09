@@ -188,5 +188,15 @@
     "slug": "nero-knife-thukk",
     "prompt": "Thrown knife striking flesh and body armour, deep solid thud with a short wet edge, no ring",
     "duration": 1.1
+  },
+  {
+    "slug": "nero-window-krashh",
+    "prompt": "Heavy cybernetic fist smashing through thick plate glass window, violent shatter of glass with crystal fragments cascading, deep impact thud then bright cascading glass crash",
+    "duration": 1.8
+  },
+  {
+    "slug": "nero-leap-whoosh",
+    "prompt": "Two people leaping from a high window into open air, powerful wind whoosh rush of air past the body in freefall, rainy night atmosphere, no impact",
+    "duration": 1.4
   }
 ]

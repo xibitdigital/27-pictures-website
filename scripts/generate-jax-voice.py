@@ -12,10 +12,16 @@ Usage:
   python3 scripts/generate-jax-voice.py "Get down!" --voice riu         # named voice from jax-voices.json
   python3 scripts/generate-jax-voice.py "..." --voice-id <raw voice id> # bypass the name map
   python3 scripts/generate-jax-voice.py "..." --voice eve --toon nero   # write under public/toons/nero/
+  # Emotional delivery (Eleven v3 audio tags only — ignored on multilingual_v2):
+  python3 scripts/generate-jax-voice.py "[scared] Nero—!" --voice eve --toon nero --model eleven_v3
 
 Prints the output path and md5 hash; paste
   "audio": "assets/sfx/<hash>.mp3"
 into the matching word entry in words.json yourself.
+
+Audio tags ([scared], [worried], [gasps], [whispers], …) require
+`--model eleven_v3`. See ElevenLabs docs: Text to Speech → Best practices
+→ Prompting Eleven v3 → Audio tags.
 
 `--toon` picks the output directory. It matters: captions resolve audio
 through the reader's `asset-page-dir`, so a Nero clip written under jax/
@@ -62,7 +68,8 @@ def main():
     args = sys.argv[1:]
     if not args or args[0].startswith('--'):
         print(
-            'usage: generate-jax-voice.py "text" [--voice NAME] [--voice-id ID] [--stability N] [--similarity N]',
+            'usage: generate-jax-voice.py "text" [--voice NAME] [--voice-id ID] [--toon TOON] '
+            '[--model MODEL] [--stability N] [--similarity N]',
             file=sys.stderr,
         )
         sys.exit(1)
@@ -72,6 +79,8 @@ def main():
     voice_name = DEFAULT_VOICE_NAME
     voice_id = None
     toon = DEFAULT_TOON
+    # multilingual_v2 for plain dialogue; eleven_v3 when using [audio tags]
+    model_id = 'eleven_multilingual_v2'
     stability = 0.45
     similarity = 0.8
 
@@ -85,6 +94,9 @@ def main():
             i += 2
         elif args[i] == '--toon':
             toon = args[i + 1]
+            i += 2
+        elif args[i] == '--model':
+            model_id = args[i + 1]
             i += 2
         elif args[i] == '--stability':
             stability = float(args[i + 1])
@@ -112,7 +124,7 @@ def main():
     body = json.dumps(
         {
             'text': text,
-            'model_id': 'eleven_multilingual_v2',
+            'model_id': model_id,
             'voice_settings': {'stability': stability, 'similarity_boost': similarity},
         }
     ).encode('utf-8')
@@ -137,7 +149,10 @@ def main():
     with open(out_path, 'wb') as f:
         f.write(audio)
 
-    print(f"ok: {out_path} ({len(audio)} bytes) — voice={voice_name} ({voice_id}) toon={toon}")
+    print(
+        f"ok: {out_path} ({len(audio)} bytes) — voice={voice_name} ({voice_id}) "
+        f"toon={toon} model={model_id}"
+    )
     print(f'  "audio": "assets/sfx/{h}.mp3"')
 
 

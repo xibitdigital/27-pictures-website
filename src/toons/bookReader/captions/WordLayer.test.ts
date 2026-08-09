@@ -333,6 +333,54 @@ describe("WordLayer", () => {
     await vi.waitFor(() => expect(played).toEqual(["a.mp3", "b.mp3"]), { timeout: 3000 });
   });
 
+  it("hard-cuts on rapid page swaps instead of stacking every intermediate page", async () => {
+    // Regression: flipping 1→2→3 quickly used to append each new page onto the
+    // still-running queue, so clips from pages the user already left kept playing.
+    const played: string[] = [];
+    const clips: HTMLAudioElement[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      played.push(this.src.split("/").pop() || "");
+      clips.push(this);
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
+    const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
+
+    const p1 = controller.registerLayer({ id: "1", getRect: () => rect(0) });
+    p1.setCaptions([clip("p1a", 0), clip("p1b", 1), clip("p1c", 2)]);
+    p1.setVisible(true);
+
+    await vi.waitFor(() => expect(played).toEqual(["p1a.mp3"]), { timeout: 3000 });
+
+    // Rapid skip: page 1 still on screen for a beat while 2 and 3 flash through.
+    const p2 = controller.registerLayer({ id: "2", getRect: () => rect(0) });
+    p2.setCaptions([clip("p2a", 0)]);
+    p2.setVisible(true);
+    await new Promise((r) => setTimeout(r, 50)); // before settle
+    p1.setVisible(false);
+    p2.setVisible(false);
+    p2.release();
+    const p3 = controller.registerLayer({ id: "3", getRect: () => rect(0) });
+    p3.setCaptions([clip("p3a", 0), clip("p3b", 1)]);
+    p3.setVisible(true);
+    p1.release();
+
+    // Settle + first clip of the final page only.
+    await vi.waitFor(() => expect(played).toContain("p3a.mp3"), { timeout: 3000 });
+    // Page 1 must not keep speaking after the skip; page 2 was only a flash.
+    expect(played.filter((s) => s.startsWith("p1")).length).toBe(1); // only the first clip before the cut
+    expect(played).not.toContain("p1b.mp3");
+    expect(played).not.toContain("p1c.mp3");
+    expect(played).not.toContain("p2a.mp3");
+
+    const p3Start = played.indexOf("p3a.mp3");
+    clips[p3Start].dispatchEvent(new Event("ended"));
+    await vi.waitFor(() => expect(played).toContain("p3b.mp3"), { timeout: 3000 });
+    expect(played.slice(p3Start)).toEqual(["p3a.mp3", "p3b.mp3"]);
+  });
+
   it("does not restart the spread when a page turn tears it down one half at a time", async () => {
     const played: string[] = [];
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {

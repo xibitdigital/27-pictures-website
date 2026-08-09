@@ -2,18 +2,18 @@
 
 Editable source of truth for toon page lists + captions. **Not deployed** with the site.
 
-| Path | Role |
-|------|------|
-| `content/toons/<toon>/config.json` | Edit this (git reference) |
-| R2 `toons/<toon>/config.<md5>.json` | Runtime (CDN only) |
-| `src/toons/config-lock.json` | App pointer to current hash |
+| Path                                | Role                        |
+| ----------------------------------- | --------------------------- |
+| `content/toons/<toon>/config.json`  | Edit this (git reference)   |
+| R2 `toons/<toon>/config.<md5>.json` | Runtime (CDN only)          |
+| `src/toons/config-lock.json`        | App pointer to current hash |
 
 ## Current toons
 
-| Toon | Directory | Notes |
-|------|-----------|--------|
-| `erin` | `content/toons/erin/` | Interactive manga reader |
-| `jax` | `content/toons/jax/` | Netrunner chronicles — synopsis on cover; multilingual SFX/music (see `jax/README.md`) |
+| Toon   | Directory             | Notes                                                                                           |
+| ------ | --------------------- | ----------------------------------------------------------------------------------------------- |
+| `erin` | `content/toons/erin/` | Interactive manga reader                                                                        |
+| `jax`  | `content/toons/jax/`  | Netrunner chronicles — synopsis on cover; multilingual SFX/music (see `jax/README.md`)          |
 | `nero` | `content/toons/nero/` | Scotland Yard case: Nero / Eve / The Dog; `?page=N` deep-links; full manual in `nero/README.md` |
 
 ```bash
@@ -37,12 +37,24 @@ Deploy the site after `config-lock.json` changes so production picks up the new 
 
 Word overlays live in each page’s `words[]` (`variant`, `text`, optional `audio`).
 Locked ElevenLabs names: `scripts/jax-voices.json` (`jax`, `riu`, `nova`, `ripperdoc`,
-`badai`, `nero`, `thedog`, …).
+`badai`, `nero`, `thedog`, `eve`, `barman`, …).
 
 ```bash
 set -a; source .env; set +a
-python3 scripts/generate-jax-voice.py "Line here." --voice nero
-# paste printed audio path into config, copy mp3 under public/toons/<toon>/assets/sfx/ if needed
+
+# Plain dialogue (default: eleven_multilingual_v2)
+python3 scripts/generate-jax-voice.py "Line here." --voice nero --toon nero
+
+# Emotion / delivery — audio tags require Eleven v3 (ignored on multilingual_v2)
+python3 scripts/generate-jax-voice.py "[scared] Nero—!" \
+  --voice eve --toon nero --model eleven_v3 --stability 0.3
+# Tags are TTS-only direction; config display text stays "Nero—!" (no brackets)
+
+# paste printed "audio": "assets/sfx/<hash>.mp3" into config
 npm run upload-assets
 npm run publish-toon-config -- --toon nero
 ```
+
+Useful tags: `[scared]`, `[worried]`, `[nervously]`, `[gasps]`, `[whispers]`,
+`[shouts]`, `[excited]`, `[sighs]`. Combine: `"[gasps] [scared] Nero—!"`.
+Docs: ElevenLabs TTS best practices → Prompting Eleven v3 → Audio tags.
