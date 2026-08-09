@@ -116,6 +116,11 @@ function repaintCover(): void {
 }
 
 function onViewModeClick(): void {
+  // Mobile book mode locks overflow and feels frozen — keep the strip.
+  if (isMobileUi.value) {
+    void viewMode.setVertical(true);
+    return;
+  }
   void viewMode.toggle();
 }
 
@@ -314,6 +319,7 @@ defineExpose<ToonReaderShellExpose>({
     :is-vertical="viewMode.isVertical.value"
     :highlight-pulse="highlightPulse"
     :after-fullscreen-change="refreshCaptions"
+    :hide-view-toggle="isMobileUi"
     @toggle-view="onViewModeClick"
   >
     <template #start>

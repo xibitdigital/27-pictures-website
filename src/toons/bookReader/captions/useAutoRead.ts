@@ -150,6 +150,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   function dismissPrompt(): void {
     promptOpen.value = false;
     promptSoftDismissed = true;
+    // User skipped the dialog — next page-turn / tap may unlock instead.
+    if (requireGesture && !unlocked.value) armGestureUnlock();
   }
 
   /**
@@ -220,7 +222,6 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     if (typeof document === "undefined") return;
     const opts: AddEventListenerOptions = { capture: true, once: true, passive: true };
     const onGesture = (): void => {
-      // OK button also fires pointerdown — unlock once is enough.
       unlockAudioFromGesture();
     };
     document.addEventListener("pointerdown", onGesture, opts);
@@ -228,8 +229,9 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     document.addEventListener("touchstart", onGesture, opts);
   }
 
-  // Fallback unlock if they dismiss the dialog and turn a page instead.
-  if (enabled && requireGesture) armGestureUnlock();
+  // Do NOT unlock on every first tap at startup — that made "Start reading"
+  // consume the gesture and skip the sound prompt. Arm passive unlock only
+  // after "Not now", so page-turn still enables audio without the dialog.
   // Unit tests skip the gesture gate so clips can play under jsdom mocks.
   if (enabled && !requireGesture) unlocked.value = true;
 

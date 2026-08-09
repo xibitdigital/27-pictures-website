@@ -1139,41 +1139,47 @@ body.view-vertical .controls {
 }
 
 /*
- * Vertical mode scrolls the *document* (window), not a nested body port.
- * iOS Safari freezes touch when html{overflow:hidden} + body{height:100dvh;
- * overflow-y:auto} — classic “page stuck, can’t scroll” bug.
+ * Vertical mode: window/document scroll only.
+ * iOS Safari freezes when html{overflow:hidden} + body{height:100dvh;
+ * overflow-y:auto}. !important beats HeadlessUI leftover inline overflow.
  */
 html:has(body.toons-reader.view-vertical) {
-  overflow-x: hidden;
-  overflow-y: auto;
-  height: auto;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+  height: 100% !important;
   min-height: 100%;
   -webkit-overflow-scrolling: touch;
 }
 
 body.view-vertical.toons-reader {
-  /* Undo book-mode lock: let the page grow and scroll on the window. */
-  height: auto;
-  min-height: 100dvh;
+  height: auto !important;
+  min-height: 100%;
   max-width: 100%;
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow: visible !important;
   justify-content: flex-start;
   align-items: center;
   -webkit-overflow-scrolling: touch;
-  /* HeadlessUI Dialog can leave these inline after close — clear via JS too. */
   overscroll-behavior-y: contain;
+  /* Prevent iOS rubber-band from trapping scroll on nested layers */
+  position: relative !important;
+  top: auto !important;
+  width: auto !important;
 }
 
 body.view-vertical .reader {
   justify-content: flex-start;
-  overflow: visible;
+  overflow: visible !important;
   min-height: auto;
-  height: auto;
+  height: auto !important;
   width: 100%;
   padding-top: 4.5rem;
   padding-bottom: 3rem;
-  /* Avoid creating a second scrollport on iOS */
+  touch-action: pan-y;
+}
+
+/* Page images: allow vertical pan (default touch-action can fight scroll) */
+body.view-vertical .vertical-page,
+body.view-vertical .vertical-page img {
   touch-action: pan-y;
 }
 
