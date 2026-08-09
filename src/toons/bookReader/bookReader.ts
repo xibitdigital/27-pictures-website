@@ -21,7 +21,7 @@ import {
   type SlotModel,
 } from "./bookModels";
 import type { ToonBookApi, ToonBookOptions } from "./types";
-import { contentPageToViewIndex, parsePageQuery } from "./pageQuery";
+import { contentPageToViewIndex, parsePageQuery, writePageQuery } from "./pageQuery";
 
 const FLIP_MS = 700;
 const FLIP_SAFETY_MS = FLIP_MS + 200;
@@ -75,6 +75,12 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
   const loadPages = resolvePages(opts);
 
   let destroyed = false;
+  /**
+   * URL mirroring stays off until init has applied the deep-link. `syncChrome`
+   * runs at least once before that, on the cover, and writing then would
+   * rewrite `?page=5` to `?page=1` before anything got to read the real value.
+   */
+  let querySyncArmed = false;
   let flipId = 0;
   let flipSafetyTimer: ReturnType<typeof setTimeout> | null = null;
   /** Target view index waiting for flip animation to finish. */
@@ -120,11 +126,22 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     return state.singlePage ? totalSingleViews(state.pages.length) - 1 : Math.max(0, totalSpreads() - 1);
   }
 
+  /**
+   * 1-based content page currently on screen, or null on either cover.
+   * Spread mode reuses `spreadToSingle` — the same mapping a layout switch
+   * uses — so the URL can't drift from where a resize would land you.
+   */
+  function currentContentPage(): number | null {
+    const n = state.singlePage ? state.viewIndex : spreadToSingle(state.pages, totalSpreads(), state.viewIndex);
+    return n >= 1 && n <= state.pages.length ? n : null;
+  }
+
   function syncChrome(): void {
     state.indicator = indicatorText(state.pages, state.viewIndex, state.singlePage, totalSpreads());
     state.canPrev = state.viewIndex > 0;
     state.canNext = state.viewIndex < maxIndex();
     document.body.classList.toggle("single-page", state.singlePage);
+    if (querySyncArmed) writePageQuery(currentContentPage());
   }
 
   function paintSpread(spread: number): void {
@@ -385,6 +402,9 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
       state.viewIndex = 0;
     }
     updateView(false);
+    // Armed only now, and after the first paint: the incoming `?page=` survives
+    // verbatim until the reader is actually moved off it.
+    querySyncArmed = true;
     highlightTopControls();
 
     document.addEventListener("keydown", onKeydown);

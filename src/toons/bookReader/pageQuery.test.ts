@@ -1,5 +1,11 @@
-import { describe, it, expect } from "vitest";
-import { parsePageQuery, contentPageToViewIndex } from "./pageQuery";
+import { describe, it, expect, beforeEach } from "vitest";
+import { parsePageQuery, contentPageToViewIndex, writePageQuery, resetPageQueryCache } from "./pageQuery";
+
+/** Put the jsdom window on a given URL without touching the module cache. */
+function setUrl(search: string): void {
+  window.history.replaceState(null, "", `/toons/nero/${search}`);
+  resetPageQueryCache();
+}
 
 describe("parsePageQuery", () => {
   it("parses 1-based page from search string", () => {
@@ -19,6 +25,53 @@ describe("parsePageQuery", () => {
 
   it("floors decimals", () => {
     expect(parsePageQuery("?page=3.9")).toBe(3);
+  });
+});
+
+describe("writePageQuery", () => {
+  beforeEach(() => setUrl(""));
+
+  it("writes, updates and removes the param without adding history entries", () => {
+    const before = window.history.length;
+    writePageQuery(3);
+    expect(window.location.search).toBe("?page=3");
+    writePageQuery(4);
+    expect(window.location.search).toBe("?page=4");
+    writePageQuery(null);
+    expect(window.location.search).toBe("");
+    // replaceState, not pushState — Back must leave the book, not walk it.
+    expect(window.history.length).toBe(before);
+  });
+
+  it("keeps other params and the hash intact", () => {
+    setUrl("?lang=it#top");
+    writePageQuery(7);
+    expect(window.location.search).toContain("lang=it");
+    expect(window.location.search).toContain("page=7");
+    expect(window.location.hash).toBe("#top");
+  });
+
+  it("ignores pages below 1 rather than clamping them", () => {
+    writePageQuery(0);
+    expect(window.location.search).toBe("");
+  });
+
+  it("does not clobber the load-time page for a later reader", () => {
+    // The regression: flip engine lands on the cover and clears ?page=, then
+    // the vertical strip resolves its deep-link and finds nothing.
+    setUrl("?page=12");
+    expect(parsePageQuery()).toBe(12);
+    writePageQuery(null); // engine reaches the cover
+    expect(window.location.search).toBe("");
+    // A consumer that reads later still sees the page the document loaded with.
+    expect(parsePageQuery()).toBe(12);
+  });
+
+  it("still parses an explicit search string uncached", () => {
+    setUrl("?page=12");
+    expect(parsePageQuery()).toBe(12);
+    expect(parsePageQuery("?page=4")).toBe(4);
+    expect(parsePageQuery()).toBe(12);
   });
 });
 
