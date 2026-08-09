@@ -1233,6 +1233,31 @@ body.view-vertical.is-fullscreen .reader {
   transform: var(--jax-transform) scale(1.22);
 }
 
+/* Auto-read: the caption currently being spoken. Same zoom as hover plus a
+   soft brand-red glow, so the eye follows the page as it reads itself. */
+.jax-word.is-speaking {
+  transform: var(--jax-transform) scale(1.18);
+  filter: drop-shadow(0 0 0.5em color-mix(in srgb, var(--red-smile) 85%, transparent));
+  animation: jax-word-speaking 1.1s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes jax-word-speaking {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0.35em color-mix(in srgb, var(--red-smile) 70%, transparent));
+  }
+  50% {
+    filter: drop-shadow(0 0 0.85em color-mix(in srgb, var(--red-smile) 95%, transparent));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jax-word.is-speaking {
+    animation: none;
+  }
+}
+
 /* Sketchy dialog bubble variant (also base for ai / badai / burst) */
 .jax-word--bubble {
   display: inline-block;
@@ -1473,10 +1498,13 @@ body.single-page .flip-page.flipping.from-left {
   }
 }
 
-/* Headless UI Dialog root for sound prompt (portal) */
+/* Headless UI Dialog root for sound prompt (portal).
+   Must outrank .cover-guide-dialog (220): on mobile the About dialog is opened
+   from inside the cover guide and portals as a SIBLING in #headlessui-portal-root,
+   so a lower z-index paints it behind the guide backdrop. */
 .sound-prompt-dialog {
   position: relative;
-  z-index: 200;
+  z-index: 240;
 }
 .sound-prompt-enter,
 .sound-prompt-leave {

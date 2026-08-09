@@ -55,8 +55,39 @@ export {
 } from "./audio";
 
 // Captions
-export { WordOverlay, loadWords, resolveWordsAssets, LANG_STORAGE_KEY } from "./words";
+export { loadWords, resolveWordsAssets, LANG_STORAGE_KEY } from "./words";
 export { default as LangSwitcher } from "./LangSwitcher.vue";
+export { default as PageCaptions } from "./captions/PageCaptions.vue";
+export { default as WordLayer } from "./captions/WordLayer.vue";
+export { default as WordCaption } from "./captions/WordCaption.vue";
+export { default as BubbleChrome } from "./captions/BubbleChrome.vue";
+export {
+  buildCaption,
+  buildCaptions,
+  imageContentBox,
+  readingOrder,
+  resolveStroke,
+  resolveText,
+  resolveVariant,
+  toFraction,
+  type CaptionModel,
+  type CaptionContext,
+} from "./captions/captionModel";
+export { buildBubbleChrome, type BubbleChromeModel } from "./captions/bubbleChrome";
+export {
+  createAutoReadController,
+  provideAutoRead,
+  useAutoReadController,
+  type AutoReadController,
+  type AutoReadOptions,
+} from "./captions/useAutoRead";
+export {
+  createToonCaptions,
+  provideToonCaptions,
+  useToonCaptions,
+  type ToonCaptionsStore,
+  type ToonCaptionsOptions,
+} from "./captions/useToonCaptions";
 
 // Bubble chrome (speech balloons, AI panels, burst stars)
 export {
@@ -69,7 +100,6 @@ export {
   cleanBoxPath,
   starBurstPath,
   resolveBubbleStyle,
-  createBubbleChrome,
   type BubbleTail,
   type BubbleStyle,
 } from "./bubbles";

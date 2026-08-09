@@ -1,47 +1,38 @@
 <script setup lang="ts">
 /**
  * Caption language dropdown for FlipFrame toons (Jax, Nero, …).
- * Languages come from WordOverlay / config.json.
+ * Languages come from the injected toon captions store (config.json).
  */
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
-import type { WordOverlay } from "./words";
-
-const props = defineProps<{
-  overlay: WordOverlay | null;
-}>();
+import { useToonCaptions } from "./captions/useToonCaptions";
 
 const emit = defineEmits<{
   change: [];
 }>();
 
-const lang = ref("en");
+const captions = useToonCaptions();
 
-const languages = computed(() => props.overlay?.getLanguages() ?? []);
+const languages = computed(() => captions?.languages.value ?? []);
+const lang = computed(() => captions?.lang.value ?? "en");
 
 const currentLabel = computed(() => {
   const hit = languages.value.find((l) => l.code === lang.value);
   return hit?.label ?? lang.value.toUpperCase();
 });
 
-watch(
-  () => props.overlay,
-  (o) => {
-    if (o) lang.value = o.getLang();
-  },
-  { immediate: true }
-);
+/** Nothing to switch between until the config lands (or for caption-less toons). */
+const visible = computed(() => !!captions && languages.value.length > 1);
 
 function onLangUpdate(code: string): void {
-  if (!props.overlay) return;
-  props.overlay.setLang(code);
-  lang.value = code;
+  if (!captions) return;
+  captions.setLang(code);
   emit("change");
 }
 </script>
 
 <template>
-  <div v-if="overlay" class="toon-lang-switcher">
+  <div v-if="visible" class="toon-lang-switcher">
     <Listbox v-slot="{ open }" :model-value="lang" @update:model-value="onLangUpdate">
       <div class="toon-lang-dropdown" :class="{ 'is-open': open }">
         <ListboxButton class="toon-fs-btn toon-lang-toggle" type="button" :title="`Language: ${currentLabel}`">

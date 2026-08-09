@@ -2,10 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { resolveAssetUrl } from "../bookReader/assetUrl";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
-import { collectWordAudioUrls, preloadAudioUrls } from "../bookReader/audio/preloadAudio";
-import { resolveConfigUrl } from "../bookReader/loadConfig";
-import { WordOverlay, loadWords } from "../bookReader/words";
-import type { ToonReaderShellExpose, ToonShellBookOptions } from "../bookReader/types";
+import type { ToonShellBookOptions } from "../bookReader/types";
 import LangSwitcher from "../bookReader/LangSwitcher.vue";
 import { toonConfigUrl } from "../configUrls";
 
@@ -16,10 +13,8 @@ const CONFIG_URL = toonConfigUrl("jax");
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
 const BG_MUSIC = resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3");
 
-const shellRef = ref<ToonReaderShellExpose | null>(null);
 const bgMusicEl = ref<HTMLAudioElement | null>(null);
 const musicEnabled = ref(false);
-const wordOverlay = ref<WordOverlay | null>(null);
 
 /** Bumps on every stop so an in-flight play() cannot restart audio after off. */
 let musicPlayGen = 0;
@@ -71,32 +66,14 @@ function onMusicClick(): void {
   }
 }
 
-function onLangChange(): void {
-  shellRef.value?.refreshCaptions();
-}
-
 /** Front-cover story — full manual in content/toons/jax/README.md */
 const COVER_SYNOPSIS =
   "In a neon city that sells minds by the megacorp, Jax is a netrunner dying by inches: a rare sickness eats his body while his code still cuts like a blade. He does not rob banks — he steals mind-control tech from the corporations that build it, then turns their own weapons against the leash. A future Robin Hood in a trench coat and chrome, racing the clock inside his own skull: liberate the street, stay human long enough to finish the run.";
 
-/** Stable options — shell owns page source and cover identity. */
+/** Stable options — shell owns page source, captions, and cover identity. */
 const bookOptions: ToonShellBookOptions = {
   coverSubtitle: "Cyberpunk Chronicles",
   coverSynopsis: COVER_SYNOPSIS,
-  onPagePaint(slot, pageNum) {
-    wordOverlay.value?.render(slot, pageNum);
-  },
-  onPageClear(slot) {
-    wordOverlay.value?.render(slot, null);
-  },
-  async beforeStart() {
-    // Same resolved URL as ToonReaderShell → one shared config fetch.
-    const wordsConfig = await loadWords(resolveConfigUrl(CONFIG_URL, ASSET_PAGE_DIR), ASSET_PAGE_DIR);
-    // Captions play on tap with no mute gate (DEFAULT_SOUND_GATE always on).
-    wordOverlay.value = new WordOverlay(wordsConfig);
-    void preloadAudioUrls(collectWordAudioUrls(wordsConfig));
-    // Shell calls refreshCaptions after beforeStart.
-  },
 };
 
 onMounted(() => {
@@ -124,7 +101,6 @@ onMounted(() => {
 
 <template>
   <ToonReaderShell
-    ref="shellRef"
     alt-prefix="Jax"
     :config-url="CONFIG_URL"
     :asset-page-dir="ASSET_PAGE_DIR"
@@ -137,7 +113,7 @@ onMounted(() => {
     </template>
 
     <template #top-controls-start>
-      <LangSwitcher :overlay="wordOverlay" @change="onLangChange" />
+      <LangSwitcher />
     </template>
 
     <template #top-controls-mid>

@@ -1,19 +1,36 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
+import { computed, ref } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
 import LangSwitcher from "./LangSwitcher.vue";
-import type { WordOverlay } from "./words";
+import { TOON_CAPTIONS_KEY, type ToonCaptionsStore } from "./captions/useToonCaptions";
 
-function mockOverlay(lang = "en"): WordOverlay {
+function mockCaptions(lang = "en"): ToonCaptionsStore {
+  const current = ref(lang);
   return {
-    getLang: vi.fn(() => lang),
-    setLang: vi.fn(),
-    getLanguages: vi.fn(() => [
+    ready: ref(true),
+    lang: current,
+    languages: computed(() => [
       { code: "en", label: "EN" },
       { code: "it", label: "IT" },
       { code: "de", label: "DE" },
       { code: "fr", label: "FR" },
     ]),
-  } as unknown as WordOverlay;
+    designWidth: computed(() => 1008),
+    designHeight: computed(() => 1792),
+    fontFamily: computed(() => '"Bangers", cursive'),
+    wordsForPage: () => [],
+    setLang: vi.fn((code: string) => {
+      current.value = code;
+    }),
+    load: vi.fn(async () => {}),
+  };
+}
+
+function mountSwitcher(store: ToonCaptionsStore | null) {
+  return mount(LangSwitcher, {
+    attachTo: document.body,
+    global: { provide: store ? { [TOON_CAPTIONS_KEY as symbol]: store } : {} },
+  });
 }
 
 describe("LangSwitcher", () => {
@@ -21,30 +38,19 @@ describe("LangSwitcher", () => {
     document.body.innerHTML = "";
   });
 
-  it("renders nothing when overlay is null", () => {
-    const wrapper = mount(LangSwitcher, {
-      props: { overlay: null },
-      attachTo: document.body,
-    });
+  it("renders nothing without a captions store (toons with no captions)", () => {
+    const wrapper = mountSwitcher(null);
     expect(wrapper.find(".toon-lang-switcher").exists()).toBe(false);
   });
 
-  it("shows current language label from overlay", () => {
-    const overlay = mockOverlay("it");
-    const wrapper = mount(LangSwitcher, {
-      props: { overlay },
-      attachTo: document.body,
-    });
+  it("shows the current caption language", () => {
+    const wrapper = mountSwitcher(mockCaptions("it"));
     expect(wrapper.find(".toon-lang-toggle-label").text()).toBe("IT");
-    expect(overlay.getLang).toHaveBeenCalled();
   });
 
-  it("calls setLang and emits change when a language is chosen", async () => {
-    const overlay = mockOverlay("en");
-    const wrapper = mount(LangSwitcher, {
-      props: { overlay },
-      attachTo: document.body,
-    });
+  it("sets the language and emits change when one is chosen", async () => {
+    const store = mockCaptions("en");
+    const wrapper = mountSwitcher(store);
 
     await wrapper.find(".toon-lang-toggle").trigger("click");
     await flushPromises();
@@ -56,7 +62,7 @@ describe("LangSwitcher", () => {
     await itBtn!.trigger("click");
     await flushPromises();
 
-    expect(overlay.setLang).toHaveBeenCalledWith("it");
+    expect(store.setLang).toHaveBeenCalledWith("it");
     expect(wrapper.emitted("change")).toBeTruthy();
     expect(wrapper.find(".toon-lang-toggle-label").text()).toBe("IT");
   });

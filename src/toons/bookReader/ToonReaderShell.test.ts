@@ -126,7 +126,7 @@ describe("ToonReaderShell", () => {
             template: `<div class="book-surface-stub" :data-synopsis="coverSynopsis || ''"></div>`,
           },
           VerticalStrip: {
-            props: ["pages", "altPrefix", "onPagePaint"],
+            props: ["pages", "altPrefix"],
             emits: ["ready"],
             template: `<div class="strip-stub"></div>`,
           },
@@ -185,10 +185,9 @@ describe("ToonReaderShell", () => {
     expect(loadPages).toHaveBeenCalled();
   });
 
-  it("runs beforeStart then refresh path without parent slot reach-in", async () => {
+  it("runs beforeStart without parent slot reach-in", async () => {
     const beforeStart = vi.fn().mockResolvedValue(undefined);
-    const onPagePaint = vi.fn();
-    mountShell({ beforeStart, onPagePaint });
+    mountShell({ beforeStart });
     await flushPromises();
 
     await (lastBookOpts?.beforeStart as () => Promise<void>)();

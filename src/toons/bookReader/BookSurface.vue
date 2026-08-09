@@ -7,7 +7,6 @@ import { ref } from "vue";
 import BookSlot from "./BookSlot.vue";
 import FlipLeaf from "./FlipLeaf.vue";
 import type { BookEngine } from "./bookReader";
-import type { PageClearHandler, PagePaintHandler } from "./types";
 
 const props = defineProps<{
   engine: BookEngine;
@@ -21,8 +20,6 @@ const props = defineProps<{
   soundEnabled?: boolean;
   backHref?: string;
   backLabel?: string;
-  onPagePaint?: PagePaintHandler;
-  onPageClear?: PageClearHandler;
 }>();
 
 const emit = defineEmits<{
@@ -62,8 +59,6 @@ function onTouchEnd(e: TouchEvent): void {
           :sound-enabled="soundEnabled"
           :back-href="backHref"
           :back-label="backLabel"
-          :on-page-paint="onPagePaint"
-          :on-page-clear="onPageClear"
           @sound-toggle="emit('soundToggle')"
         />
         <BookSlot
@@ -79,8 +74,6 @@ function onTouchEnd(e: TouchEvent): void {
           :sound-enabled="soundEnabled"
           :back-href="backHref"
           :back-label="backLabel"
-          :on-page-paint="onPagePaint"
-          :on-page-clear="onPageClear"
           @sound-toggle="emit('soundToggle')"
         />
         <FlipLeaf
@@ -97,7 +90,6 @@ function onTouchEnd(e: TouchEvent): void {
           :sound-enabled="soundEnabled"
           :back-href="backHref"
           :back-label="backLabel"
-          :on-page-paint="onPagePaint"
           @done="engine.onFlipComplete()"
           @sound-toggle="emit('soundToggle')"
         />

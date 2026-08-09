@@ -4,11 +4,11 @@
  * and listens for @done when CSS animation ends.
  * Page faces get caption paint so bubbles travel with the flipping plate.
  */
-import { nextTick, onMounted, onUpdated, ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import CoverFirstPage from "./CoverFirstPage.vue";
 import BackCoverLink from "./BackCoverLink.vue";
+import PageCaptions from "./captions/PageCaptions.vue";
 import type { FlipFaceModel, FlipModel } from "./bookModels";
-import type { PagePaintHandler } from "./types";
 
 const props = withDefaults(
   defineProps<{
@@ -23,7 +23,6 @@ const props = withDefaults(
     soundEnabled?: boolean;
     backHref?: string;
     backLabel?: string;
-    onPagePaint?: PagePaintHandler;
   }>(),
   {
     coverTexture: null,
@@ -46,35 +45,19 @@ const emit = defineEmits<{
 
 const flipping = ref(false);
 const rootEl = ref<HTMLElement | null>(null);
-const frontFaceEl = ref<HTMLElement | null>(null);
-const backFaceEl = ref<HTMLElement | null>(null);
+const frontImgEl = ref<HTMLImageElement | null>(null);
+const backImgEl = ref<HTMLImageElement | null>(null);
 
 function faceIsCover(face: FlipFaceModel): boolean {
   return face.kind === "front" || face.kind === "back" || face.kind === "cover";
 }
 
-function paintFace(el: HTMLElement | null, face: FlipFaceModel | undefined): void {
-  if (!el || !face || face.kind !== "page" || !props.onPagePaint) return;
-  el.dataset.pageNum = String(face.pageNum);
-  props.onPagePaint(el, face.pageNum);
-}
-
-function paintFaces(): void {
-  paintFace(frontFaceEl.value, props.flip.front);
-  paintFace(backFaceEl.value, props.flip.back);
-}
-
 onMounted(() => {
   void nextTick(() => {
-    paintFaces();
     requestAnimationFrame(() => {
       flipping.value = true;
     });
   });
-});
-
-onUpdated(() => {
-  void nextTick(paintFaces);
 });
 
 function onAnimationEnd(e: AnimationEvent): void {
@@ -91,7 +74,6 @@ function onAnimationEnd(e: AnimationEvent): void {
     @animationend="onAnimationEnd"
   >
     <div
-      ref="frontFaceEl"
       class="flip-face front"
       :class="{
         'inside-cover': faceIsCover(flip.front),
@@ -110,9 +92,17 @@ function onAnimationEnd(e: AnimationEvent): void {
       <img
         v-if="flip.front.kind === 'page'"
         :key="`f-${flip.front.pageNum}`"
+        ref="frontImgEl"
         :src="flip.front.src"
         alt=""
         draggable="false"
+      />
+      <!-- Captions travel with the flipping plate. -->
+      <PageCaptions
+        v-if="flip.front.kind === 'page'"
+        :key="`fc-${flip.front.pageNum}`"
+        :page-num="flip.front.pageNum"
+        :image-el="frontImgEl"
       />
       <CoverFirstPage
         v-else-if="flip.front.kind === 'front'"
@@ -131,7 +121,6 @@ function onAnimationEnd(e: AnimationEvent): void {
 
     <div
       v-if="flip.mode === 'desktop' && flip.back"
-      ref="backFaceEl"
       class="flip-face back"
       :class="{
         'inside-cover': faceIsCover(flip.back),
@@ -150,9 +139,16 @@ function onAnimationEnd(e: AnimationEvent): void {
       <img
         v-if="flip.back.kind === 'page'"
         :key="`b-${flip.back.pageNum}`"
+        ref="backImgEl"
         :src="flip.back.src"
         alt=""
         draggable="false"
+      />
+      <PageCaptions
+        v-if="flip.back.kind === 'page'"
+        :key="`bc-${flip.back.pageNum}`"
+        :page-num="flip.back.pageNum"
+        :image-el="backImgEl"
       />
       <CoverFirstPage
         v-else-if="flip.back.kind === 'front'"

@@ -3,11 +3,11 @@
  * One half of a spread (or the single-page face). Vue owns all markup —
  * no createElement / appendChild in the engine.
  */
-import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import CoverFirstPage from "./CoverFirstPage.vue";
 import BackCoverLink from "./BackCoverLink.vue";
+import PageCaptions from "./captions/PageCaptions.vue";
 import type { SlotModel } from "./bookModels";
-import type { PageClearHandler, PagePaintHandler } from "./types";
 
 const props = withDefaults(
   defineProps<{
@@ -23,8 +23,6 @@ const props = withDefaults(
     soundEnabled?: boolean;
     backHref?: string;
     backLabel?: string;
-    onPagePaint?: PagePaintHandler;
-    onPageClear?: PageClearHandler;
   }>(),
   {
     side: "right",
@@ -46,6 +44,9 @@ const emit = defineEmits<{
 }>();
 
 const rootEl = ref<HTMLElement | null>(null);
+const pageImgEl = ref<HTMLImageElement | null>(null);
+/** Plate art stays hidden until captions are placed (no bare-art flash). */
+const captionsPending = ref(false);
 
 const isCover = computed(
   () => props.model.kind === "front" || props.model.kind === "back" || props.model.kind === "cover"
@@ -53,29 +54,9 @@ const isCover = computed(
 const isBlank = computed(() => props.model.kind === "blank");
 const pageNum = computed(() => (props.model.kind === "page" ? props.model.pageNum : undefined));
 
-function notifyPaint(): void {
-  const el = rootEl.value;
-  if (!el) return;
-  if (props.model.kind === "page") {
-    props.onPagePaint?.(el, props.model.pageNum);
-  } else {
-    props.onPageClear?.(el);
-  }
+function onCaptionsMeasured(ready: boolean): void {
+  captionsPending.value = !ready;
 }
-
-onMounted(() => {
-  // First mount: wait one tick so the <img> exists under rootEl.
-  void nextTick(notifyPaint);
-});
-
-watch(
-  () => props.model,
-  () => {
-    // Same-tick paint after Vue patches the slot — avoids a bare-page frame after flips.
-    void nextTick(notifyPaint);
-  },
-  { deep: true, flush: "post" }
-);
 </script>
 
 <template>
@@ -88,6 +69,7 @@ watch(
         blank: isBlank,
         'inside-cover': isCover,
         'has-cover-texture': isCover && !!coverTexture,
+        'is-captions-pending': captionsPending,
       },
     ]"
     :data-page-num="pageNum != null ? String(pageNum) : undefined"
@@ -104,9 +86,18 @@ watch(
     <img
       v-if="model.kind === 'page'"
       :key="`${model.pageNum}:${model.src}`"
+      ref="pageImgEl"
       :src="model.src"
       :alt="`${altPrefix} — page ${model.pageNum}`"
       draggable="false"
+    />
+
+    <PageCaptions
+      v-if="model.kind === 'page'"
+      :key="`captions-${model.pageNum}`"
+      :page-num="model.pageNum"
+      :image-el="pageImgEl"
+      @measured="onCaptionsMeasured"
     />
 
     <CoverFirstPage

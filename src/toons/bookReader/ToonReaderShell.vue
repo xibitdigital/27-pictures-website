@@ -12,6 +12,8 @@ import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
 import { parsePageQuery } from "./pageQuery";
 import VerticalStrip from "./VerticalStrip.vue";
+import { provideAutoRead } from "./captions/useAutoRead";
+import { provideToonCaptions } from "./captions/useToonCaptions";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
 import { prefersSinglePage } from "./bookModels";
 
@@ -37,9 +39,14 @@ const props = withDefaults(
      */
     bookOptions?: ToonShellBookOptions;
     mobileDefault?: boolean;
+    /** localStorage key for caption language; defaults to `<altPrefix>-toon-lang`. */
+    captionLangStorageKey?: string;
+    /** Silence between auto-read caption clips, in ms. */
+    autoReadGapMs?: number;
   }>(),
   {
     mobileDefault: true,
+    autoReadGapMs: 2000,
   }
 );
 
@@ -60,6 +67,14 @@ const loadSharedPages = createConfigLoader(resolvedConfigUrl, {
   pageDir: props.assetPageDir,
 });
 
+/** Captions + auto-read live in components — slots inject these. */
+const captions = provideToonCaptions({
+  configUrl: resolvedConfigUrl,
+  pageDir: props.assetPageDir,
+  langStorageKey: props.captionLangStorageKey || `${props.altPrefix.toLowerCase()}-toon-lang`,
+});
+provideAutoRead({ gapMs: props.autoReadGapMs });
+
 const bookOpts = computed(() => ({
   ...props.bookOptions,
   altPrefix: props.altPrefix,
@@ -67,8 +82,7 @@ const bookOpts = computed(() => ({
   coverTexture: props.coverTexture,
   getPages: loadSharedPages,
   async beforeStart() {
-    await props.bookOptions?.beforeStart?.();
-    refreshCaptions();
+    await Promise.all([props.bookOptions?.beforeStart?.(), captions.load()]);
   },
 }));
 
@@ -81,33 +95,17 @@ const viewMode = useViewMode({
   mobileDefault: props.mobileDefault,
   reader: readerEl,
   loadPages: loadSharedPages,
-  onEnterScroll: () => {
-    paintStripSlots();
-    emit("enter-scroll");
-  },
-  onEnterBook: () => {
-    paintBookCaptions();
-    emit("enter-book");
-  },
+  onEnterScroll: () => emit("enter-scroll"),
+  onEnterBook: () => emit("enter-book"),
 });
 
-function paintBookCaptions(): void {
-  // Slots re-notify via BookSlot watchers when models change; force a cover refresh.
-  getApi()?.updateView(false);
-}
-
-function paintStripSlots(): void {
-  const paint = props.bookOptions?.onPagePaint;
-  if (!paint) return;
-  for (const slot of stripSlots.value) {
-    const n = Number(slot.dataset.pageNum);
-    if (n) paint(slot, n);
-  }
-}
-
+/**
+ * Captions are components now — they re-measure themselves on resize and
+ * follow the language reactively. Kept so parents/chrome can force the book
+ * view to re-evaluate (e.g. after leaving fullscreen).
+ */
 function refreshCaptions(): void {
-  if (viewMode.isVertical.value) paintStripSlots();
-  else paintBookCaptions();
+  if (!viewMode.isVertical.value) getApi()?.updateView(false);
 }
 
 function repaintCover(): void {
@@ -118,15 +116,10 @@ function onViewModeClick(): void {
   void viewMode.toggle();
 }
 
-function onStripPagePaint(slot: HTMLElement, pageNum: number): void {
-  props.bookOptions?.onPagePaint?.(slot, pageNum);
-}
-
 function onStripReady(slots: HTMLElement[]): void {
   const prev = stripSlots.value;
   const same = prev.length === slots.length && prev.every((el, i) => el === slots[i]);
   if (!same) stripSlots.value = slots;
-  paintStripSlots();
   // Deep-link: scroll vertical strip to ?page=N once slots exist
   scrollVerticalToQueryPage();
 }
@@ -297,8 +290,6 @@ defineExpose<ToonReaderShellExpose>({
       :sound-enabled="soundEnabled"
       :back-href="bookOptions?.backHref"
       :back-label="bookOptions?.backLabel"
-      :on-page-paint="bookOptions?.onPagePaint"
-      :on-page-clear="bookOptions?.onPageClear"
       @sound-toggle="bookOptions?.onSoundToggle?.()"
     />
 
@@ -307,7 +298,6 @@ defineExpose<ToonReaderShellExpose>({
         v-if="viewMode.isVertical.value && viewMode.pages.value.length"
         :pages="viewMode.pages.value"
         :alt-prefix="altPrefix"
-        :on-page-paint="onStripPagePaint"
         @ready="onStripReady"
       />
     </div>

@@ -1,0 +1,414 @@
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { defineComponent, h, nextTick } from "vue";
+import { mount, flushPromises } from "@vue/test-utils";
+import WordLayer from "./WordLayer.vue";
+import { AUTO_READ_KEY, createAutoReadController } from "./useAutoRead";
+import type { WordEntry } from "../types";
+
+/** jsdom ships an IntersectionObserver that never fires — report everything visible. */
+function stubIntersectionObserver(): void {
+  class ImmediateIO {
+    constructor(private cb: IntersectionObserverCallback) {}
+    observe(el: Element): void {
+      setTimeout(() => {
+        this.cb(
+          [{ target: el, isIntersecting: true, intersectionRatio: 1 } as unknown as IntersectionObserverEntry],
+          this as unknown as IntersectionObserver
+        );
+      }, 0);
+    }
+    unobserve(): void {}
+    disconnect(): void {}
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  }
+  vi.stubGlobal("IntersectionObserver", ImmediateIO);
+}
+
+function makeImage(): HTMLImageElement {
+  const img = document.createElement("img");
+  Object.defineProperty(img, "naturalWidth", { value: 1008 });
+  Object.defineProperty(img, "naturalHeight", { value: 1792 });
+  Object.defineProperty(img, "clientWidth", { value: 504 });
+  Object.defineProperty(img, "clientHeight", { value: 896 });
+  Object.defineProperty(img, "complete", { value: true });
+  document.body.appendChild(img);
+  return img;
+}
+
+function mountLayer(words: WordEntry[], extra: Record<string, unknown> = {}) {
+  return mount(WordLayer, {
+    props: { pageNum: 1, words, imageEl: makeImage(), ...extra },
+    attachTo: document.body,
+  });
+}
+
+describe("WordLayer", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    document.body.innerHTML = "";
+  });
+
+  it("renders one caption per word, sized to the plate's content box", async () => {
+    const wrapper = mountLayer([
+      { x: 0.5, y: 0.2, size: 40, text: "HELLO" },
+      { x: 0.3, y: 0.8, size: 30, variant: "ai", text: "WE ARE IN!" },
+    ] as WordEntry[]);
+    await nextTick();
+
+    const captions = wrapper.findAll(".jax-word");
+    expect(captions).toHaveLength(2);
+    expect(captions[0].text()).toBe("HELLO");
+    expect(captions[1].classes()).toContain("jax-word--ai");
+    // AI/bubble variants carry their SVG chrome as a child component.
+    expect(captions[1].find("svg.jax-bubble-svg").exists()).toBe(true);
+    expect(wrapper.find(".jax-word-layer").attributes("style")).toContain("width: 504px");
+  });
+
+  it("plays a caption's SFX on click and does not let the click turn the page", async () => {
+    const playSpy = vi.spyOn(window.HTMLAudioElement.prototype, "play").mockResolvedValue(undefined);
+    const controller = createAutoReadController({ gapMs: 0 });
+    const parentClick = vi.fn();
+
+    const Host = defineComponent({
+      setup() {
+        return () =>
+          h("div", { onClick: parentClick }, [
+            h(WordLayer, {
+              pageNum: 1,
+              words: [{ x: 0.5, y: 0.5, text: "BOOM", audio: "sfx/x.mp3" }] as WordEntry[],
+              imageEl: makeImage(),
+            }),
+          ]);
+      },
+    });
+
+    const wrapper = mount(Host, {
+      attachTo: document.body,
+      global: { provide: { [AUTO_READ_KEY as symbol]: controller } },
+    });
+    await nextTick();
+
+    await wrapper.find(".jax-word--sfx").trigger("click");
+    expect(playSpy).toHaveBeenCalled();
+    expect(parentClick).not.toHaveBeenCalled();
+  });
+
+  it("auto-reads the page top→bottom, highlighting the caption that is speaking", async () => {
+    stubIntersectionObserver();
+    const played: string[] = [];
+    const clips: HTMLAudioElement[] = [];
+    // Clips stay open so the highlight can be inspected mid-playback.
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      played.push(this.src.split("/").pop() || "");
+      clips.push(this);
+      return Promise.resolve();
+    });
+    const speaking = (): string =>
+      wrapper
+        .findAll(".jax-word.is-speaking")
+        .map((w) => w.text())
+        .join("|");
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const wrapper = mount(WordLayer, {
+      props: {
+        pageNum: 1,
+        // Deliberately out of reading order in the config.
+        words: [
+          { x: 0.5, y: 0.8, text: "BOTTOM", audio: "sfx/b.mp3" },
+          { x: 0.5, y: 0.2, text: "TOP", audio: "sfx/t.mp3" },
+        ] as WordEntry[],
+        imageEl: makeImage(),
+      },
+      attachTo: document.body,
+      global: { provide: { [AUTO_READ_KEY as symbol]: controller } },
+    });
+
+    // Top caption first, highlighted while its clip runs.
+    await vi.waitFor(() => expect(played).toEqual(["t.mp3"]), { timeout: 3000 });
+    await nextTick();
+    expect(speaking()).toBe("TOP");
+
+    clips[0].dispatchEvent(new Event("ended"));
+    await vi.waitFor(() => expect(played).toEqual(["t.mp3", "b.mp3"]), { timeout: 3000 });
+    await nextTick();
+    expect(speaking()).toBe("BOTTOM");
+
+    clips[1].dispatchEvent(new Event("ended"));
+    await vi.waitFor(async () => {
+      await nextTick();
+      expect(speaking()).toBe("");
+    });
+  });
+
+  it("reads a book spread left page top→bottom, then the right page", async () => {
+    stubIntersectionObserver();
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      played.push(this.src.split("/").pop() || "");
+      setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      return Promise.resolve();
+    });
+    // Layers report their slot's x offset so the spread has a real left/right.
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+      const left = Number((this.closest("[data-slot-left]") as HTMLElement | null)?.dataset.slotLeft || 0);
+      return {
+        top: 0,
+        left,
+        right: left + 100,
+        bottom: 100,
+        width: 100,
+        height: 100,
+        x: left,
+        y: 0,
+        toJSON: () => ({}),
+      } as DOMRect;
+    });
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const Spread = defineComponent({
+      setup() {
+        // Right half is rendered first — position decides, not mount order.
+        return () =>
+          h("div", [
+            h("div", { "data-slot-left": "500" }, [
+              h(WordLayer, {
+                pageNum: 2,
+                words: [{ x: 0.5, y: 0.4, text: "R", audio: "sfx/r1.mp3" }] as WordEntry[],
+                imageEl: makeImage(),
+              }),
+            ]),
+            h("div", { "data-slot-left": "0" }, [
+              h(WordLayer, {
+                pageNum: 1,
+                words: [
+                  { x: 0.5, y: 0.2, text: "L1", audio: "sfx/l1.mp3" },
+                  { x: 0.5, y: 0.8, text: "L2", audio: "sfx/l2.mp3" },
+                ] as WordEntry[],
+                imageEl: makeImage(),
+              }),
+            ]),
+          ]);
+      },
+    });
+
+    mount(Spread, {
+      attachTo: document.body,
+      global: { provide: { [AUTO_READ_KEY as symbol]: controller } },
+    });
+    await flushPromises();
+
+    await vi.waitFor(() => expect(played.length).toBe(3), { timeout: 3000 });
+    expect(played).toEqual(["l1.mp3", "l2.mp3", "r1.mp3"]);
+  });
+
+  it("keeps reading when the flip drops the layer below the visibility threshold", async () => {
+    const played: string[] = [];
+    const clips: HTMLAudioElement[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      played.push(this.src.split("/").pop() || "");
+      clips.push(this);
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
+    const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
+
+    const l = controller.registerLayer({ id: "10", getRect: () => rect(0) });
+    l.setCaptions([clip("a", 0), clip("b", 1), clip("c", 2)]);
+    l.setVisible(true);
+
+    await vi.waitFor(() => expect(played).toEqual(["a.mp3"]), { timeout: 3000 });
+
+    // The leaf sweeps across: the layer stops intersecting while the first clip
+    // finishes, and is still below threshold when the loop comes back around.
+    l.setVisible(false);
+    clips[0].dispatchEvent(new Event("ended"));
+    await new Promise((r) => setTimeout(r, 50));
+    l.setVisible(true);
+
+    // The rest of the page still gets read — a dip is not an unmount.
+    await vi.waitFor(() => expect(played).toEqual(["a.mp3", "b.mp3"]), { timeout: 3000 });
+    clips[1].dispatchEvent(new Event("ended"));
+    await vi.waitFor(() => expect(played).toEqual(["a.mp3", "b.mp3", "c.mp3"]), { timeout: 3000 });
+  });
+
+  it("keeps reading after the flip leaf unmounts (same page remounts on the slot)", async () => {
+    // Regression: first SFX played, then silence — the leaf's WordLayer released
+    // mid-sequence, stop()'d audio, and coverage blocked the settled slot from
+    // restarting the rest of the page.
+    const played: string[] = [];
+    const clips: HTMLAudioElement[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      played.push(this.src.split("/").pop() || "");
+      clips.push(this);
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
+    const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
+    const captions = [clip("a", 0), clip("b", 1), clip("c", 2)];
+
+    // Leaf mounts first (only thing on screen during the flip).
+    const leaf = controller.registerLayer({ id: "12", getRect: () => rect(0) });
+    leaf.setCaptions(captions);
+    leaf.setVisible(true);
+
+    await vi.waitFor(() => expect(played).toEqual(["a.mp3"]), { timeout: 3000 });
+
+    // Flip settles: slot mounts under the leaf, then the leaf unmounts.
+    const slot = controller.registerLayer({ id: "12", getRect: () => rect(0) });
+    slot.setCaptions(captions);
+    slot.setVisible(true);
+    leaf.release();
+
+    clips[0].dispatchEvent(new Event("ended"));
+    await vi.waitFor(() => expect(played).toEqual(["a.mp3", "b.mp3"]), { timeout: 3000 });
+    clips[1].dispatchEvent(new Event("ended"));
+    await vi.waitFor(() => expect(played).toEqual(["a.mp3", "b.mp3", "c.mp3"]), { timeout: 3000 });
+  });
+
+  it("appends the right half when it arrives after the left is already speaking", async () => {
+    const played: string[] = [];
+    const clips: HTMLAudioElement[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      played.push(this.src.split("/").pop() || "");
+      clips.push(this);
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
+    const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
+
+    const left = controller.registerLayer({ id: "20", getRect: () => rect(0) });
+    left.setCaptions([clip("l1", 0), clip("l2", 1)]);
+    left.setVisible(true);
+
+    await vi.waitFor(() => expect(played).toEqual(["l1.mp3"]), { timeout: 3000 });
+
+    // Right page of the spread mounts a beat later (book settle).
+    const right = controller.registerLayer({ id: "21", getRect: () => rect(500) });
+    right.setCaptions([clip("r1", 0)]);
+    right.setVisible(true);
+    await new Promise((r) => setTimeout(r, 250));
+
+    // Left page must finish — not be aborted so only the right half plays.
+    clips[0].dispatchEvent(new Event("ended"));
+    await vi.waitFor(() => expect(played).toEqual(["l1.mp3", "l2.mp3"]), { timeout: 3000 });
+    clips[1].dispatchEvent(new Event("ended"));
+    await vi.waitFor(() => expect(played).toEqual(["l1.mp3", "l2.mp3", "r1.mp3"]), { timeout: 3000 });
+  });
+
+  it("retries the whole view after autoplay blocks the first clip", async () => {
+    const played: string[] = [];
+    let blocked = true;
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      // Browsers reject play() until the page has seen a user gesture.
+      if (blocked) return Promise.reject(new Error("NotAllowedError"));
+      played.push(this.src.split("/").pop() || "");
+      setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
+    const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
+
+    const l1 = controller.registerLayer({ id: "1", getRect: () => rect(0) });
+    l1.setCaptions([clip("a", 0), clip("b", 1)]);
+    l1.setVisible(true);
+
+    await new Promise((r) => setTimeout(r, 400));
+    expect(played).toEqual([]);
+
+    blocked = false;
+    document.dispatchEvent(new Event("pointerdown"));
+
+    await vi.waitFor(() => expect(played).toEqual(["a.mp3", "b.mp3"]), { timeout: 3000 });
+  });
+
+  it("does not restart the spread when a page turn tears it down one half at a time", async () => {
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      played.push(this.src.split("/").pop() || "");
+      setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
+    const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
+
+    const l8 = controller.registerLayer({ id: "8", getRect: () => rect(0) });
+    const l9 = controller.registerLayer({ id: "9", getRect: () => rect(500) });
+    l8.setCaptions([clip("p8a", 0), clip("p8b", 1)]);
+    l9.setCaptions([clip("p9a", 0)]);
+    l8.setVisible(true);
+    l9.setVisible(true);
+
+    await vi.waitFor(() => expect(played).toEqual(["p8a.mp3", "p8b.mp3", "p9a.mp3"]), { timeout: 3000 });
+
+    // The turn: 9 unmounts first, leaving 8 alone for a beat, then the incoming
+    // spread mounts while 8 is still on its way out.
+    l9.release();
+    await new Promise((r) => setTimeout(r, 250));
+    const l10 = controller.registerLayer({ id: "10", getRect: () => rect(0) });
+    const l11 = controller.registerLayer({ id: "11", getRect: () => rect(500) });
+    l10.setCaptions([clip("p10a", 0)]);
+    l11.setCaptions([clip("p11a", 0)]);
+    l10.setVisible(true);
+    l11.setVisible(true);
+    await new Promise((r) => setTimeout(r, 250));
+    l8.release();
+
+    await vi.waitFor(() => expect(played).toContain("p10a.mp3"), { timeout: 3000 });
+    await new Promise((r) => setTimeout(r, 300));
+    // Page 8 is never read a second time, and the new spread does get read.
+    expect(played).toEqual(["p8a.mp3", "p8b.mp3", "p9a.mp3", "p10a.mp3", "p11a.mp3"]);
+  });
+
+  it("reads a page once when it is mounted twice (flip leaf over its slot)", async () => {
+    stubIntersectionObserver();
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      played.push(this.src.split("/").pop() || "");
+      setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0 });
+    const words = [
+      { x: 0.5, y: 0.2, text: "A", audio: "sfx/a.mp3" },
+      { x: 0.5, y: 0.8, text: "B", audio: "sfx/b.mp3" },
+    ] as WordEntry[];
+    // A flipping leaf carries the same page as the slot it covers. Without
+    // dedup the key goes "3" → "3|3", which restarts the sequence, and the
+    // page reads twice over.
+    const Flipping = defineComponent({
+      setup() {
+        return () =>
+          h("div", [
+            h(WordLayer, { pageNum: 3, words, imageEl: makeImage() }),
+            h(WordLayer, { pageNum: 3, words, imageEl: makeImage() }),
+          ]);
+      },
+    });
+
+    mount(Flipping, {
+      attachTo: document.body,
+      global: { provide: { [AUTO_READ_KEY as symbol]: controller } },
+    });
+    await flushPromises();
+
+    await vi.waitFor(() => expect(played.length).toBeGreaterThanOrEqual(2), { timeout: 3000 });
+    // Settle well past the gap so a duplicate pass would have shown up.
+    await new Promise((r) => setTimeout(r, 250));
+    expect(played).toEqual(["a.mp3", "b.mp3"]);
+  });
+});

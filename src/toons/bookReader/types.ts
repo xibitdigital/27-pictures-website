@@ -1,8 +1,5 @@
 /** Shared types for FlipFrame / toon readers. */
 
-export type PagePaintHandler = (slot: HTMLElement, pageNum: number) => void;
-export type PageClearHandler = (slot: HTMLElement) => void;
-
 /**
  * DOM nodes the flip engine needs. Prefer Vue template refs over getElementById.
  */
@@ -48,8 +45,6 @@ export interface ToonBookOptions {
   /** Front-cover sound button click (no querySelector needed later). */
   onSoundToggle?: () => void;
   coverTexture?: string | null;
-  onPagePaint?: PagePaintHandler;
-  onPageClear?: PageClearHandler;
   /**
    * Fired when the user successfully turns a page (next/prev), after bounds
    * checks pass. Not fired for the initial paint or programmatic repaints.
@@ -72,9 +67,9 @@ export type ToonShellBookOptions = Omit<
   "altPrefix" | "frontCoverLogo" | "coverTexture" | "pages" | "getPages" | "configUrl" | "manifestUrl"
 >;
 
-/** Minimal shell surface for parent apps (lang switch, sound cover re-paint). */
+/** Minimal shell surface for parent apps (sound cover re-paint, re-layout). */
 export interface ToonReaderShellExpose {
-  /** Re-paint captions on the active view (book slots or vertical strip). */
+  /** Force the book view to re-render (captions re-measure themselves). */
   refreshCaptions: () => void;
   /** Re-render the current book view (e.g. front-cover sound button state). */
   repaintCover: () => void;
@@ -199,4 +194,8 @@ export interface WordOverlayOptions {
   sound?: SoundGate;
   /** localStorage key for language; default keeps legacy Jax key. */
   langStorageKey?: string;
+  /** Auto-read a page's SFX captions in order once the page is on screen. Default true. */
+  autoRead?: boolean;
+  /** Silence between auto-read clips, in ms. Default 2000. */
+  autoReadGapMs?: number;
 }

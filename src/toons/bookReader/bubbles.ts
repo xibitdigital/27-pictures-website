@@ -7,7 +7,7 @@
  * - box/clean — AI HUD / torn-paper panels
  * - star     — impact / shout burst
  *
- * Used by WordOverlay (`variant: "bubble" | "thought" | "ai" | "badai" | "burst"`).
+ * Used by the caption components (`variant: "bubble" | "thought" | "ai" | "badai" | "burst"`).
  */
 // @ts-nocheck — matches words.ts imperative style
 
@@ -513,87 +513,4 @@ export function resolveBubbleVariantClass(variant: string): string {
     default:
       return "";
   }
-}
-
-/** Build the absolute SVG element that sits behind bubble/ai/burst text. */
-export function createBubbleChrome(seed: number, bubbleStyle: BubbleStyle, designScale: number): SVGSVGElement {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("class", "jax-bubble-svg");
-  svg.setAttribute("viewBox", "0 0 100 100");
-  svg.setAttribute("preserveAspectRatio", "none");
-  svg.setAttribute("aria-hidden", "true");
-
-  const shape = bubbleStyle.shape;
-  const isBoxy = shape === "box" || shape === "clean" || shape === "frame" || shape === "rect";
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute(
-    "d",
-    isBoxy
-      ? boxPathForShape(shape, seed)
-      : shape === "star"
-        ? starBurstPath(seed)
-        : shape === "thought"
-          ? thoughtBubblePath(bubbleStyle.tail, seed)
-          : sketchyBubblePath(bubbleStyle.tail, seed)
-  );
-  path.setAttribute("fill", bubbleStyle.fill);
-  // Body only: fill-opacity leaves stroke + caption text fully opaque.
-  const fillOp = bubbleStyle.opacity != null && Number.isFinite(bubbleStyle.opacity) ? bubbleStyle.opacity : 1;
-  if (fillOp < 1) {
-    path.setAttribute("fill-opacity", String(Math.max(0, Math.min(1, fillOp))));
-  }
-  path.setAttribute("stroke", bubbleStyle.stroke);
-  // Config strokeWidth is design-space weight (like caption size), not raw CSS px.
-  // With non-scaling-stroke we still convert via designScale so:
-  //   strokeWidth 5 @ ~0.55 scale ≈ 2.75px (original default look)
-  //   strokeWidth 8 ≈ 4.4px (clearly thicker)
-  // Do NOT map 1:1 to CSS px — that made strokeWidth:5 read as a heavy 5px rim.
-  // No artificial 1.4 cap (that used to crush 5 vs 6 to ~0.5px).
-  const configured =
-    bubbleStyle.strokeWidth != null && Number.isFinite(Number(bubbleStyle.strokeWidth))
-      ? Math.max(0.5, Number(bubbleStyle.strokeWidth))
-      : BUBBLE_STROKE_WIDTH;
-  const scale = Number.isFinite(designScale) && designScale > 0 ? designScale : 1;
-  const sw = Math.max(1, configured * scale);
-  path.setAttribute("stroke-width", String(sw));
-  path.setAttribute("data-stroke-configured", String(configured));
-  path.setAttribute("data-stroke-px", String(sw));
-  path.setAttribute("stroke-linejoin", "round");
-  path.setAttribute("stroke-linecap", "round");
-  // Draw stroke first, then fill on top → only the outer half of the rim shows
-  // (inner half is covered by fill). Avoids a fat black band over semi-transparent body.
-  path.setAttribute("paint-order", "stroke fill");
-  path.setAttribute("vector-effect", "non-scaling-stroke");
-  svg.appendChild(path);
-
-  if (isBoxy) {
-    const retraceN = Math.max(0, Math.min(3, bubbleStyle.retrace | 0));
-    for (let i = 0; i < retraceN; i++) {
-      const retrace = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      retrace.setAttribute("d", boxPathForShape(shape, (seed || 1) + 97 + i * 114));
-      retrace.setAttribute("fill", "none");
-      retrace.setAttribute("stroke", bubbleStyle.stroke);
-      retrace.setAttribute("stroke-width", String(Math.max(0.8, sw * (0.65 - i * 0.15))));
-      retrace.setAttribute("stroke-linejoin", "round");
-      retrace.setAttribute("stroke-linecap", "round");
-      retrace.setAttribute("vector-effect", "non-scaling-stroke");
-      svg.appendChild(retrace);
-    }
-
-    const scratchN = Math.max(0, Math.min(16, bubbleStyle.scratches | 0));
-    if (scratchN > 0) {
-      scribbleScratches((seed || 1) + 401, scratchN).forEach((d, i) => {
-        const scratch = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        scratch.setAttribute("d", d);
-        scratch.setAttribute("fill", "none");
-        scratch.setAttribute("stroke", bubbleStyle.stroke);
-        scratch.setAttribute("stroke-width", String(Math.max(0.9, sw * (0.4 + (i % 3) * 0.18))));
-        scratch.setAttribute("stroke-linecap", "round");
-        scratch.setAttribute("vector-effect", "non-scaling-stroke");
-        svg.appendChild(scratch);
-      });
-    }
-  }
-
-  return svg;
 }

@@ -31,8 +31,6 @@ async function readyBook(
           soundEnabled: opts.getSoundEnabled?.() ?? false,
           backHref: opts.backHref,
           backLabel: opts.backLabel,
-          onPagePaint: opts.onPagePaint,
-          onPageClear: opts.onPageClear,
           onSoundToggle: opts.onSoundToggle,
         });
     },
@@ -183,36 +181,30 @@ describe("FlipFrame reader (desktop / reduced-motion)", () => {
     expect(wrapper.find("#indicator").text()).toMatch(/2\s*[–-]\s*3\s*\/\s*4/);
   });
 
-  it("calls onPagePaint with 1-based page numbers", async () => {
-    const painted: number[] = [];
-    const { api } = await readyBook(FOUR_PAGES, {
-      onPagePaint(_slot, n) {
-        painted.push(n);
-      },
-    });
-    await vi.waitFor(() => expect(painted).toContain(1));
+  it("renders slots tagged with 1-based page numbers", async () => {
+    const { api, wrapper } = await readyBook(FOUR_PAGES);
+    const pageNums = () =>
+      wrapper
+        .findAll(".page-slot")
+        .map((s) => s.attributes("data-page-num"))
+        .filter(Boolean);
 
-    painted.length = 0;
+    await vi.waitFor(() => expect(pageNums()).toContain("1"));
+
     api.goNext();
     await vi.waitFor(() => {
-      expect(painted).toEqual(expect.arrayContaining([2, 3]));
+      expect(pageNums()).toEqual(expect.arrayContaining(["2", "3"]));
     });
   });
 
-  it("calls beforeStart before the first paint", async () => {
+  it("calls beforeStart before the book becomes ready", async () => {
     const order: string[] = [];
     const { wrapper } = await readyBook(["a.jpg", "b.jpg"], {
       async beforeStart() {
         order.push("before");
       },
-      onPagePaint() {
-        order.push("paint");
-      },
     });
-    await vi.waitFor(() => {
-      expect(order[0]).toBe("before");
-      expect(order).toContain("paint");
-    });
+    expect(order).toEqual(["before"]);
     expect(wrapper.find(".page-slot").exists()).toBe(true);
   });
 
