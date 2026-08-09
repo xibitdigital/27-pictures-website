@@ -1077,7 +1077,8 @@
             "de": "Wir sind da.",
             "fr": "On y est."
           },
-          "audio": "assets/sfx/78c281088e2bfbac1bf4d7f49a26636f.mp3"
+          "audio": "assets/sfx/8a62ef111d5387ed671bf6d5c1f63801.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.6,
@@ -1222,7 +1223,8 @@
             "de": "Bleib nah.",
             "fr": "Reste près."
           },
-          "audio": "assets/sfx/da335f0b3b62f6f91f6620067afcb237.mp3"
+          "audio": "assets/sfx/3c1f7a0402915101c8bf9b2bf72f4c83.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.72,
