@@ -1294,7 +1294,8 @@
             "de": "Suche\njemanden.",
             "fr": "Je cherche\nquelqu'un."
           },
-          "audio": "assets/sfx/134303a34d1e7d543ac2aeb9ed69d97c.mp3"
+          "audio": "assets/sfx/83d38d51e5f00ad46486657cda546fc7.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.83,
@@ -1386,7 +1387,8 @@
             "de": "Nach dir.",
             "fr": "Après toi."
           },
-          "audio": "assets/sfx/31761be0e45236298574dbaa5a17e769.mp3"
+          "audio": "assets/sfx/01e0227ff0c6dac463dc2c666ab14046.mp3",
+          "speaker": "eve"
         }
       ]
     },
