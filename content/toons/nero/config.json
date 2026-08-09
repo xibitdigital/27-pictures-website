@@ -1701,7 +1701,8 @@
             "de": "Er wird nicht\nder Letzte sein.\nGehen wir.",
             "fr": "Il ne sera pas\nle dernier.\nOn y va."
           },
-          "audio": "assets/sfx/51a3dbc799081013683ac29d9c627fc0.mp3"
+          "audio": "assets/sfx/67fe80935c407e8dae5ca788a8ce294c.mp3",
+          "speaker": "eve"
         }
       ]
     }
