@@ -52,10 +52,15 @@ export interface AutoReadLayerHandle {
 }
 
 export interface AutoReadOptions {
-  /** Silence after each clip, in ms. Default 2000. */
+  /** Silence after each clip, in ms. Default 600. */
   gapMs?: number;
   /** Turn the whole feature off (kept for tests / opt-out). */
   enabled?: boolean;
+  /**
+   * Wait for a user gesture before play() (browser autoplay policy).
+   * Default true in production; unit tests pass false.
+   */
+  requireGesture?: boolean;
 }
 
 interface LayerRecord {
@@ -100,6 +105,7 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   // Default gap was 2000ms — felt "stuck" between lines on mobile emulators.
   const gapMs = options.gapMs != null ? Number(options.gapMs) : 600;
   const enabled = options.enabled !== false;
+  const requireGesture = options.requireGesture !== false;
 
   const layers = new Set<LayerRecord>();
   let settleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -223,7 +229,9 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   }
 
   // Fallback unlock if they dismiss the dialog and turn a page instead.
-  if (enabled) armGestureUnlock();
+  if (enabled && requireGesture) armGestureUnlock();
+  // Unit tests skip the gesture gate so clips can play under jsdom mocks.
+  if (enabled && !requireGesture) unlocked.value = true;
 
   function stop(): void {
     seq++;
@@ -324,6 +332,12 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   }
 
   function sync(): void {
+    // Don't thrash play() before the browser has a user gesture — on iOS that
+    // spam + rejected promises can jank the main thread. Wait for unlock prompt.
+    if (requireGesture && !unlocked.value) {
+      maybeShowPrompt();
+      return;
+    }
     const ordered = orderedVisibleLayers();
     if (!ordered.length) {
       // Mid-flip both halves can be below the threshold at once. Tearing the

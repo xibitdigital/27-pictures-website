@@ -69,7 +69,7 @@ describe("WordLayer", () => {
 
   it("plays a caption's SFX on click and does not let the click turn the page", async () => {
     const playSpy = vi.spyOn(window.HTMLAudioElement.prototype, "play").mockResolvedValue(undefined);
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const parentClick = vi.fn();
 
     const Host = defineComponent({
@@ -112,7 +112,7 @@ describe("WordLayer", () => {
         .map((w) => w.text())
         .join("|");
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const wrapper = mount(WordLayer, {
       props: {
         pageNum: 1,
@@ -168,7 +168,7 @@ describe("WordLayer", () => {
       } as DOMRect;
     });
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const Spread = defineComponent({
       setup() {
         // Right half is rendered first — position decides, not mount order.
@@ -214,7 +214,7 @@ describe("WordLayer", () => {
       return Promise.resolve();
     });
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
@@ -249,7 +249,7 @@ describe("WordLayer", () => {
       return Promise.resolve();
     });
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
     const captions = [clip("a", 0), clip("b", 1), clip("c", 2)];
@@ -282,7 +282,7 @@ describe("WordLayer", () => {
       return Promise.resolve();
     });
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
@@ -333,7 +333,7 @@ describe("WordLayer", () => {
       return Promise.resolve();
     });
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
@@ -369,7 +369,7 @@ describe("WordLayer", () => {
       return Promise.resolve();
     });
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
@@ -414,7 +414,7 @@ describe("WordLayer", () => {
       return Promise.resolve();
     });
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
@@ -457,7 +457,7 @@ describe("WordLayer", () => {
       return Promise.resolve();
     });
 
-    const controller = createAutoReadController({ gapMs: 0 });
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
     const words = [
       { x: 0.5, y: 0.2, text: "A", audio: "sfx/a.mp3" },
       { x: 0.5, y: 0.8, text: "B", audio: "sfx/b.mp3" },

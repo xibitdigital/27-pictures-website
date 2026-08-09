@@ -128,13 +128,29 @@ function onStripReady(slots: HTMLElement[]): void {
 }
 
 /**
+ * iOS Safari / HeadlessUI: Dialog leaves body with overflow:hidden + position
+ * fixed, which freezes the whole page after “Start reading”. Clear always.
+ */
+function releaseBodyScrollLock(): void {
+  if (typeof document === "undefined") return;
+  const b = document.body;
+  const h = document.documentElement;
+  b.style.removeProperty("overflow");
+  b.style.removeProperty("position");
+  b.style.removeProperty("top");
+  b.style.removeProperty("left");
+  b.style.removeProperty("right");
+  b.style.removeProperty("width");
+  b.style.removeProperty("padding-right");
+  h.style.removeProperty("overflow");
+}
+
+/**
  * Scroll vertical mode to 1-based content page from `?page=`.
  *
- * Mobile vertical mode uses `body` as the scrollport (`overflow-y: auto` +
- * `html { overflow: hidden }`). A single `scrollIntoView` at strip mount is not
- * enough: plate images still have height 0, so the target sits near the top,
- * then images load and the strip expands under a stuck scrollTop. Retry after
- * the target plate's image has dimensions (and once more after layout).
+ * Vertical mode scrolls the *window* (see reader-shared.css). Nested body
+ * scrollports freeze touch on iPhone. Retry after the target plate's image
+ * has height so deep-links don't stick at the top of an empty strip.
  */
 function scrollVerticalToQueryPage(): void {
   if (!viewMode.isVertical.value) return;
@@ -147,14 +163,8 @@ function scrollVerticalToQueryPage(): void {
 
   const apply = (): void => {
     if (!viewMode.isVertical.value) return;
-    // Prefer body — confirmed scrollport in vertical mode; fall back to window.
-    const body = document.body;
-    const top = el.getBoundingClientRect().top + (body.scrollTop || window.scrollY || 0);
-    if (body.scrollHeight > body.clientHeight + 1) {
-      body.scrollTop = Math.max(0, top - 4);
-    } else {
-      el.scrollIntoView({ block: "start" });
-    }
+    const top = el.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0);
+    window.scrollTo(0, Math.max(0, top - 4));
   };
 
   const img = el.querySelector("img");
@@ -208,7 +218,9 @@ function onGuideOpenUpdate(open: boolean): void {
   }
   // Story popup blocked the first paint — re-apply ?page= deep-link after close.
   if (!open) {
+    releaseBodyScrollLock();
     void nextTick(() => {
+      releaseBodyScrollLock();
       scrollVerticalToQueryPage();
       // After Story, invite one click so browser autoplay unlocks for captions.
       autoRead.maybeShowPrompt();
@@ -218,10 +230,12 @@ function onGuideOpenUpdate(open: boolean): void {
 
 function onAutoReadEnable(): void {
   autoRead.enableFromPrompt();
+  releaseBodyScrollLock();
 }
 
 function onAutoReadDismiss(): void {
   autoRead.dismissPrompt();
+  releaseBodyScrollLock();
 }
 
 function syncMobileUi(): void {
