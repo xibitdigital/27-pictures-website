@@ -1024,8 +1024,8 @@
             "de": "Kein Fahrer.",
             "fr": "Pas de chauffeur."
           },
-          "audio": "assets/sfx/78e75bebd257d39d716499548c2db671.mp3",
-          "speaker": "eve"
+          "audio": "assets/sfx/3e24af87b56f5c754a64581c1919df6b.mp3",
+          "speaker": "nero"
         },
         {
           "x": 0.88,
@@ -1048,7 +1048,8 @@
             "de": "Genau darum.",
             "fr": "C'est le but."
           },
-          "audio": "assets/sfx/bc7aa9e5062993341e83b06367adfd92.mp3"
+          "audio": "assets/sfx/c6498b93d6e39e8a27f6001ccdf429ba.mp3",
+          "speaker": "eve"
         }
       ]
     },

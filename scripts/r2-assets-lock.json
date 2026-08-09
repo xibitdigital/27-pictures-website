@@ -1924,6 +1924,18 @@
     "toons/nero/config.2055214f7215756f5cc65bd4b7b2279e.json": {
       "size": 45763,
       "uploadedAt": "2026-08-09T08:17:35.179Z"
+    },
+    "toons/nero/assets/sfx/3e24af87b56f5c754a64581c1919df6b.mp3": {
+      "size": 16762,
+      "uploadedAt": "2026-08-09T08:21:52.649Z"
+    },
+    "toons/nero/assets/sfx/c6498b93d6e39e8a27f6001ccdf429ba.mp3": {
+      "size": 20524,
+      "uploadedAt": "2026-08-09T08:21:55.486Z"
+    },
+    "toons/nero/config.7ef4d06b17ca64ec970c72b652a09f66.json": {
+      "size": 45792,
+      "uploadedAt": "2026-08-09T08:21:58.220Z"
     }
   }
 }
