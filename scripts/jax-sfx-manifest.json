@@ -198,5 +198,15 @@
     "slug": "nero-leap-whoosh",
     "prompt": "Two people leaping from a high window into open air, powerful wind whoosh rush of air past the body in freefall, rainy night atmosphere, no impact",
     "duration": 1.4
+  },
+  {
+    "slug": "nero-wall-skreee",
+    "prompt": "Cybernetic metal fingers scraping and gouging down a concrete brick wall at high speed, harsh screech of steel on stone with sparks, long continuous scrape trail, rainy night, no speech",
+    "duration": 1.6
+  },
+  {
+    "slug": "nero-landing-thud",
+    "prompt": "Person landing hard in a crouch on wet sidewalk under a fabric awning, solid body thud with soft fabric flap, rainy street, no speech",
+    "duration": 1.0
   }
 ]

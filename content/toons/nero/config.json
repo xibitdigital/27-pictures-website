@@ -1842,6 +1842,143 @@
           "audio": "assets/sfx/af0463bfa469a6e280f925e80ec4ea8c.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/169a3977f8f2c67892005bb992d6ae33.webp",
+      "words": [
+        {
+          "x": 0.12,
+          "y": 0.1,
+          "align": "center",
+          "size": 36,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -14,
+          "maxWidth": 0.28,
+          "text": {
+            "en": "SKREEE",
+            "it": "SKREEE",
+            "de": "SKREEE",
+            "fr": "SKREEE"
+          },
+          "audio": "assets/sfx/b36e4f1defc5ed8138542bca27f2b4e1.mp3"
+        },
+        {
+          "x": 0.72,
+          "y": 0.06,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1,
+          "maxWidth": 0.24,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Hang on!",
+            "it": "Reggiti!",
+            "de": "Festhalten!",
+            "fr": "Accroche-toi!"
+          },
+          "speaker": "nero",
+          "audio": "assets/sfx/71a077d07c33be56b3781e16014e6baf.mp3"
+        },
+        {
+          "x": 0.18,
+          "y": 0.52,
+          "align": "center",
+          "size": 32,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -6,
+          "maxWidth": 0.2,
+          "text": {
+            "en": "THUD",
+            "it": "THUD",
+            "de": "THUD",
+            "fr": "THUD"
+          },
+          "audio": "assets/sfx/75339e53e20ecd75329086405196fb1b.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.48,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1,
+          "maxWidth": 0.24,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "I'm good—\ngo!",
+            "it": "Sto bene—\nvai!",
+            "de": "Mir geht's—\nlauf!",
+            "fr": "Ça va—\nvas-y!"
+          },
+          "speaker": "eve",
+          "audio": "assets/sfx/8d42bf492e24a5e0c4e26dd4b74a2afd.mp3"
+        },
+        {
+          "x": 0.22,
+          "y": 0.78,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1,
+          "maxWidth": 0.22,
+          "bubble": {
+            "tail": "bottom",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Alley!",
+            "it": "Vicolo!",
+            "de": "Gasse!",
+            "fr": "Ruelle!"
+          },
+          "speaker": "eve",
+          "audio": "assets/sfx/bf7a6a00e861b1814b496b345fe866e8.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.88,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1,
+          "maxWidth": 0.22,
+          "bubble": {
+            "tail": "top",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Stay low.",
+            "it": "Stai bassa.",
+            "de": "Bleib unten.",
+            "fr": "Reste basse."
+          },
+          "speaker": "nero",
+          "audio": "assets/sfx/40296d7cb7b14fe0c9fb23d87769b4fa.mp3"
+        }
+      ]
     }
   ]
 }

@@ -2268,6 +2268,38 @@
     "toons/nero/config.8b1266a427f268265fab22f1a80e29fb.json": {
       "size": 49560,
       "uploadedAt": "2026-08-09T11:03:48.882Z"
+    },
+    "toons/nero/assets/169a3977f8f2c67892005bb992d6ae33.webp": {
+      "size": 406444,
+      "uploadedAt": "2026-08-09T12:36:28.089Z"
+    },
+    "toons/nero/assets/sfx/40296d7cb7b14fe0c9fb23d87769b4fa.mp3": {
+      "size": 16344,
+      "uploadedAt": "2026-08-09T12:38:46.655Z"
+    },
+    "toons/nero/assets/sfx/71a077d07c33be56b3781e16014e6baf.mp3": {
+      "size": 23031,
+      "uploadedAt": "2026-08-09T12:38:49.224Z"
+    },
+    "toons/nero/assets/sfx/75339e53e20ecd75329086405196fb1b.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-09T12:38:51.504Z"
+    },
+    "toons/nero/assets/sfx/8d42bf492e24a5e0c4e26dd4b74a2afd.mp3": {
+      "size": 62319,
+      "uploadedAt": "2026-08-09T12:38:54.576Z"
+    },
+    "toons/nero/assets/sfx/b36e4f1defc5ed8138542bca27f2b4e1.mp3": {
+      "size": 26793,
+      "uploadedAt": "2026-08-09T12:38:56.913Z"
+    },
+    "toons/nero/assets/sfx/bf7a6a00e861b1814b496b345fe866e8.mp3": {
+      "size": 21359,
+      "uploadedAt": "2026-08-09T12:38:59.196Z"
+    },
+    "toons/nero/config.b51c4987b1051e0e3ebf0520193950bd.json": {
+      "size": 53118,
+      "uploadedAt": "2026-08-09T12:39:01.536Z"
     }
   }
 }
