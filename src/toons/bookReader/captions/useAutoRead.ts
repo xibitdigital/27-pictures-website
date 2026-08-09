@@ -91,9 +91,14 @@ export interface AutoReadController {
 
 /** Coalesce the two halves of a spread — they become visible a frame apart. */
 const SETTLE_MS = 220;
+/** Hard cap so a hung clip (no `ended` on flaky mobile WebViews) cannot freeze the queue. */
+const SPEAK_MAX_MS = 16000;
+/** If play() neither starts nor rejects (some emulator WebViews), fail open. */
+const PLAY_START_MS = 4000;
 
 export function createAutoReadController(options: AutoReadOptions = {}): AutoReadController {
-  const gapMs = options.gapMs != null ? Number(options.gapMs) : 2000;
+  // Default gap was 2000ms — felt "stuck" between lines on mobile emulators.
+  const gapMs = options.gapMs != null ? Number(options.gapMs) : 600;
   const enabled = options.enabled !== false;
 
   const layers = new Set<LayerRecord>();
@@ -123,6 +128,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   const promptOpen = ref(false);
   /** User closed the prompt with “Not now” — don’t nag again this load. */
   let promptSoftDismissed = false;
+  /** Coalesce double unlock (OK click = pointerdown + enableFromPrompt). */
+  let restartTimer: ReturnType<typeof setTimeout> | null = null;
 
   function clearHighlight(): void {
     if (speakingLayer) speakingLayer.speakingIndex.value = null;
@@ -151,17 +158,23 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     retryArmed = false;
 
     const restart = (): void => {
-      // Only restart if nothing is already speaking (playOne owns the view).
-      if (running) return;
-      pendingRetryKey = "";
-      // Coverage must clear: a blocked attempt marked pages covered with nothing
-      // spoken, and sync would skip them as "nothing fresh".
-      resetCoverage();
-      sync();
+      // pointerdown + OK click both unlock — one restart after the burst.
+      if (restartTimer != null) clearTimeout(restartTimer);
+      restartTimer = setTimeout(() => {
+        restartTimer = null;
+        pendingRetryKey = "";
+        // Force-cut any hung speak/gap so unlock always recovers the reader
+        // (emulators sometimes never fire "ended", leaving running=true forever).
+        stop();
+        // Coverage must clear: a blocked attempt marked pages covered with nothing
+        // spoken, and sync would skip them as "nothing fresh".
+        resetCoverage();
+        sync();
+      }, 40);
     };
 
     if (alreadyUnlocked) {
-      setTimeout(restart, 0);
+      restart();
       return;
     }
 
@@ -377,6 +390,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     }
     const v = Number(caption.volume);
     el.volume = Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 1;
+    // Helps mobile/emulator decode start without waiting for a full buffer.
+    el.preload = "auto";
     audio = el;
     clearHighlight();
     if (layer) {
@@ -386,19 +401,48 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
 
     return new Promise<boolean>((resolve) => {
       let done = false;
+      let playStarted = false;
+      let startTimer: ReturnType<typeof setTimeout> | null = null;
+      let maxTimer: ReturnType<typeof setTimeout> | null = null;
+
       const finish = (ok: boolean): void => {
         if (done) return;
         done = true;
+        if (startTimer != null) clearTimeout(startTimer);
+        if (maxTimer != null) clearTimeout(maxTimer);
         if (speakFinish === finish) speakFinish = null;
         if (layer && layer.speakingIndex.value === caption.index) layer.speakingIndex.value = null;
         if (speakingLayer === layer) speakingLayer = null;
         if (audio === el) audio = null;
+        try {
+          el.pause();
+        } catch {
+          /* ignore */
+        }
         resolve(ok);
       };
       speakFinish = finish;
       el.addEventListener("ended", () => finish(true), { once: true });
       // A broken clip must not stall the page — count it as read and move on.
       el.addEventListener("error", () => finish(true), { once: true });
+      el.addEventListener(
+        "playing",
+        () => {
+          playStarted = true;
+          if (startTimer != null) {
+            clearTimeout(startTimer);
+            startTimer = null;
+          }
+        },
+        { once: true }
+      );
+
+      // Emulator / flaky networks: never wait forever for ended/playing.
+      maxTimer = setTimeout(() => finish(true), SPEAK_MAX_MS);
+      startTimer = setTimeout(() => {
+        if (!playStarted) finish(false);
+      }, PLAY_START_MS);
+
       try {
         const p = el.play();
         if (p && typeof p.catch === "function") p.catch(() => finish(false));

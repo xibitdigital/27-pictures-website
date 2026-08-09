@@ -1737,7 +1737,7 @@
             "fr": "La fenêtre!"
           },
           "speaker": "eve",
-          "audio": "assets/sfx/cfc74bc53caff44073950e162ef917ea.mp3"
+          "audio": "assets/sfx/3ad03b9a77be73a74b877c80013896c2.mp3"
         },
         {
           "x": 0.2,
@@ -2037,6 +2037,157 @@
           },
           "speaker": "nero",
           "audio": "assets/sfx/40296d7cb7b14fe0c9fb23d87769b4fa.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/cf8ae190fc69aa9ca6a327d2e467d322.webp",
+      "words": [
+        {
+          "x": 0.18,
+          "y": 0.06,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1,
+          "maxWidth": 0.26,
+          "bubble": {
+            "tail": "right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Talk to me.",
+            "it": "Parlami.",
+            "de": "Rede mit mir.",
+            "fr": "Parle-moi."
+          },
+          "speaker": "nero",
+          "audio": "assets/sfx/5992c179ae583126fef0a389234ab0c7.mp3"
+        },
+        {
+          "x": 0.82,
+          "y": 0.1,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "He's in\nthe glass.",
+            "it": "È nel\nvetro.",
+            "de": "Er ist\nim Glas.",
+            "fr": "Il est\ndans le verre."
+          },
+          "speaker": "eve",
+          "audio": "assets/sfx/10727c662b1a5f29455c304893b12595.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.36,
+          "align": "center",
+          "size": 18,
+          "variant": "ai",
+          "color": "#f5f5f5",
+          "angle": -2,
+          "maxWidth": 0.42,
+          "bubble": {
+            "fill": "#0a0a0a",
+            "stroke": "#0a0a0a",
+            "strokeWidth": 5,
+            "tail": "none",
+            "scratches": 6,
+            "retrace": 2,
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "E› SCAN ONLINE\nMOVEMENT · UPPER FLOORS",
+            "it": "E› SCAN ONLINE\nMOVIMENTO · PIANI ALTI",
+            "de": "E› SCAN ONLINE\nBEWEGUNG · OBERE ETAGEN",
+            "fr": "E› SCAN ONLINE\nMOUVEMENT · ÉTAGES HAUTS"
+          },
+          "speaker": "eve",
+          "audio": "assets/sfx/6ac60caa04c3aab5b4227bdd1f3ac2f3.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.58,
+          "align": "center",
+          "size": 24,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1,
+          "maxWidth": 0.26,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Got you.",
+            "it": "Ti ho.",
+            "de": "Hab dich.",
+            "fr": "Je t'ai."
+          },
+          "speaker": "eve",
+          "audio": "assets/sfx/aaaf1b0b62620430e5e36b912d6295cb.mp3"
+        },
+        {
+          "x": 0.2,
+          "y": 0.82,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "none",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "The Dog.",
+            "it": "The Dog.",
+            "de": "The Dog.",
+            "fr": "The Dog."
+          },
+          "speaker": "nero",
+          "audio": "assets/sfx/c5d6787dcc663b183d21084da6b9c906.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.9,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1,
+          "maxWidth": 0.28,
+          "bubble": {
+            "tail": "none",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Don't move.",
+            "it": "Non muoverti.",
+            "de": "Nicht bewegen.",
+            "fr": "Ne bouge pas."
+          },
+          "speaker": "eve",
+          "audio": "assets/sfx/19b2c0ac32e5ce757f2c90b2acecb254.mp3"
         }
       ]
     }

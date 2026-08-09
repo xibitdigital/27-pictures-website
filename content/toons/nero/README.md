@@ -7,7 +7,7 @@ Interactive FlipFrame short. Deep-link pages: `/toons/nero/?page=N` (1-based).
 | Config      | `content/toons/nero/config.json` → publish to R2 |
 | Lock        | `src/toons/config-lock.json` → `nero` key        |
 | Design size | 800 × 1424 (portrait)                            |
-| Pages       | **19** (including time-gap plate)                |
+| Pages       | **20** (including time-gap plate)                |
 
 ## Synopsis
 
@@ -66,6 +66,7 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | **17** | **Unmasked**                      | Mask pulled off → the shooter is the Cerberus **bartender** → Nero lifts a blank keycard from his vest                                             |
 | **18** | **Exit**                          | Hallway sprint to the glass → Nero's steel fist shatters the pane → both leap into the rainy night                                                 |
 | **19** | **Wall grab**                     | Nero decelerates freefall — steel fingers gouge the wall → drops Eve under a bar awning → both run into a dark alley                               |
+| **20** | **Scan / sniper**                 | Face to face after the alley → Eve's glasses scan the tower → window silhouette: The Dog (the killer) with the rifle                               |
 
 Asset for page 1: `assets/1a95711588bfb5605e628e073601f595.webp` (bottom panel replaced: wide alley shot instead of a fist close-up, to sidestep a six-finger render defect).
 Asset for page 4: `assets/27519b004e3802fa29dd5d2cc7556754.webp` (diagonal interstitial).

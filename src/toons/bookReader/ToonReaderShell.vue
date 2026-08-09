@@ -47,7 +47,7 @@ const props = withDefaults(
   }>(),
   {
     mobileDefault: true,
-    autoReadGapMs: 2000,
+    autoReadGapMs: 600,
   }
 );
 
