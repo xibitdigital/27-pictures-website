@@ -3,7 +3,7 @@
  * Shared FlipFrame chrome for Erin, Jax, and future toons.
  * Owns view-mode, config load, strip, captions, and the Vue book surface.
  */
-import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, toRef } from "vue";
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import CoverGuideDialog from "./CoverGuideDialog.vue";
@@ -12,6 +12,7 @@ import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
 import { parsePageQuery } from "./pageQuery";
 import VerticalStrip from "./VerticalStrip.vue";
+import AutoReadPrompt from "./captions/AutoReadPrompt.vue";
 import { provideAutoRead } from "./captions/useAutoRead";
 import { provideToonCaptions } from "./captions/useToonCaptions";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
@@ -73,7 +74,9 @@ const captions = provideToonCaptions({
   pageDir: props.assetPageDir,
   langStorageKey: props.captionLangStorageKey || `${props.altPrefix.toLowerCase()}-toon-lang`,
 });
-provideAutoRead({ gapMs: props.autoReadGapMs });
+const autoRead = provideAutoRead({ gapMs: props.autoReadGapMs });
+/** Nested ref — bind via toRef so the dialog stays reactive. */
+const autoReadPromptOpen = toRef(autoRead, "promptOpen");
 
 const bookOpts = computed(() => ({
   ...props.bookOptions,
@@ -124,17 +127,56 @@ function onStripReady(slots: HTMLElement[]): void {
   scrollVerticalToQueryPage();
 }
 
-/** Scroll vertical mode to 1-based content page from `?page=`. */
+/**
+ * Scroll vertical mode to 1-based content page from `?page=`.
+ *
+ * Mobile vertical mode uses `body` as the scrollport (`overflow-y: auto` +
+ * `html { overflow: hidden }`). A single `scrollIntoView` at strip mount is not
+ * enough: plate images still have height 0, so the target sits near the top,
+ * then images load and the strip expands under a stuck scrollTop. Retry after
+ * the target plate's image has dimensions (and once more after layout).
+ */
 function scrollVerticalToQueryPage(): void {
   if (!viewMode.isVertical.value) return;
   const page = parsePageQuery();
   if (page == null) return;
   const root = readerEl.value;
   if (!root) return;
-  const el = root.querySelector(`.vertical-page.page-slot[data-page-num="${page}"]`);
-  if (el) {
-    el.scrollIntoView({ block: "start" });
+  const el = root.querySelector(`.vertical-page.page-slot[data-page-num="${page}"]`) as HTMLElement | null;
+  if (!el) return;
+
+  const apply = (): void => {
+    if (!viewMode.isVertical.value) return;
+    // Prefer body — confirmed scrollport in vertical mode; fall back to window.
+    const body = document.body;
+    const top = el.getBoundingClientRect().top + (body.scrollTop || window.scrollY || 0);
+    if (body.scrollHeight > body.clientHeight + 1) {
+      body.scrollTop = Math.max(0, top - 4);
+    } else {
+      el.scrollIntoView({ block: "start" });
+    }
+  };
+
+  const img = el.querySelector("img");
+  if (img && !img.complete) {
+    img.addEventListener(
+      "load",
+      () => {
+        requestAnimationFrame(() => {
+          apply();
+          window.setTimeout(apply, 50);
+        });
+      },
+      { once: true }
+    );
   }
+
+  requestAnimationFrame(() => {
+    apply();
+    // Images that were already cached still reflow a frame later.
+    window.setTimeout(apply, 80);
+    window.setTimeout(apply, 320);
+  });
 }
 
 const soundEnabled = computed(() => !!props.bookOptions?.getSoundEnabled?.());
@@ -164,6 +206,22 @@ function onGuideOpenUpdate(open: boolean): void {
       /* ignore */
     }
   }
+  // Story popup blocked the first paint — re-apply ?page= deep-link after close.
+  if (!open) {
+    void nextTick(() => {
+      scrollVerticalToQueryPage();
+      // After Story, invite one click so browser autoplay unlocks for captions.
+      autoRead.maybeShowPrompt();
+    });
+  }
+}
+
+function onAutoReadEnable(): void {
+  autoRead.enableFromPrompt();
+}
+
+function onAutoReadDismiss(): void {
+  autoRead.dismissPrompt();
 }
 
 function syncMobileUi(): void {
@@ -188,7 +246,11 @@ onMounted(() => {
 
   // Auto-show story/guide once per session on mobile (or vertical scroll).
   void nextTick(() => {
-    if (!isMobileUi.value && !viewMode.isVertical.value) return;
+    if (!isMobileUi.value && !viewMode.isVertical.value) {
+      // Desktop book: no Story modal — still need one click for caption audio.
+      autoRead.maybeShowPrompt();
+      return;
+    }
     let seen = false;
     try {
       seen = sessionStorage.getItem(guideStorageKey()) === "1";
@@ -196,6 +258,7 @@ onMounted(() => {
       seen = false;
     }
     if (!seen) guideOpen.value = true;
+    else autoRead.maybeShowPrompt();
   });
 
   void viewMode.loadPages().then(async () => {
@@ -275,6 +338,13 @@ defineExpose<ToonReaderShellExpose>({
     :subtitle="coverSubtitle"
     :synopsis="coverSynopsis"
     @update:open="onGuideOpenUpdate"
+  />
+
+  <AutoReadPrompt
+    :open="autoReadPromptOpen && !guideOpen"
+    @update:open="(v) => !v && onAutoReadDismiss()"
+    @enable="onAutoReadEnable"
+    @dismiss="onAutoReadDismiss"
   />
 
   <main class="reader" id="main-content" ref="readerEl" role="main">

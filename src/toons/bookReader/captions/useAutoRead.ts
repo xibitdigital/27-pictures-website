@@ -17,6 +17,11 @@
  * Rapid page turns hard-cut to the settled view: only a pure spread expansion
  * (right half arriving after the left) appends. Anything else replaces the
  * queue so stale clips from pages the user already left never pile up.
+ *
+ * Browsers block Audio.play() until a user gesture. Auto-read often starts
+ * after a settle timer (outside the gesture stack), so we unlock media on the
+ * first pointer/key event anywhere in the document — typically the first page
+ * turn or Story-dismiss — then restart the sequence without a second tap.
  */
 import { inject, provide, ref, type InjectionKey, type Ref } from "vue";
 import { readingOrder } from "./captionModel";
@@ -72,6 +77,16 @@ export interface AutoReadController {
   registerLayer: (opts: AutoReadLayerOptions) => AutoReadLayerHandle;
   /** Stop everything (page change, unmount, manual takeover). */
   stop: () => void;
+  /** True after a user gesture unlocked browser autoplay for this page load. */
+  unlocked: Ref<boolean>;
+  /** One-shot “OK to enable caption sound” dialog. */
+  promptOpen: Ref<boolean>;
+  /** OK on the prompt — unlocks media and starts (or restarts) auto-read. */
+  enableFromPrompt: () => void;
+  /** Dismiss without enabling (page turn can still unlock later). */
+  dismissPrompt: () => void;
+  /** Open the prompt if still locked (e.g. after Story guide closes). */
+  maybeShowPrompt: () => void;
 }
 
 /** Coalesce the two halves of a spread — they become visible a frame apart. */
@@ -102,11 +117,100 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   /** Resolves the in-flight `speak()` when stop() aborts it. */
   let speakFinish: ((ok: boolean) => void) | null = null;
   let retryArmed = false;
+  /** Key to re-read once unlock lands (autoplay was blocked). */
+  let pendingRetryKey = "";
+  const unlocked = ref(false);
+  const promptOpen = ref(false);
+  /** User closed the prompt with “Not now” — don’t nag again this load. */
+  let promptSoftDismissed = false;
 
   function clearHighlight(): void {
     if (speakingLayer) speakingLayer.speakingIndex.value = null;
     speakingLayer = null;
   }
+
+  function maybeShowPrompt(): void {
+    if (!enabled || unlocked.value || promptSoftDismissed) return;
+    promptOpen.value = true;
+  }
+
+  function dismissPrompt(): void {
+    promptOpen.value = false;
+    promptSoftDismissed = true;
+  }
+
+  /**
+   * First intentional OK (or any pointer/key if they skip the dialog) unlocks
+   * Audio for later async play() calls. Without a gesture the browser rejects
+   * play() after settle timers — users had to tap the plate twice.
+   */
+  function unlockAudioFromGesture(): void {
+    const alreadyUnlocked = unlocked.value;
+    unlocked.value = true;
+    promptOpen.value = false;
+    retryArmed = false;
+
+    const restart = (): void => {
+      // Only restart if nothing is already speaking (playOne owns the view).
+      if (running) return;
+      pendingRetryKey = "";
+      // Coverage must clear: a blocked attempt marked pages covered with nothing
+      // spoken, and sync would skip them as "nothing fresh".
+      resetCoverage();
+      sync();
+    };
+
+    if (alreadyUnlocked) {
+      setTimeout(restart, 0);
+      return;
+    }
+
+    // Resume AudioContext inside the gesture so later async HTMLAudioElement
+    // play() calls are allowed (Chrome sticky activation).
+    type Ctx = { resume: () => Promise<void>; close: () => Promise<void>; state: string };
+    type CtxCtor = new () => Ctx;
+    const w = typeof window !== "undefined" ? window : null;
+    const AC =
+      w &&
+      ((w as unknown as { AudioContext?: CtxCtor }).AudioContext ||
+        (w as unknown as { webkitAudioContext?: CtxCtor }).webkitAudioContext);
+
+    if (AC) {
+      try {
+        const ctx = new AC();
+        void ctx
+          .resume()
+          .catch(() => undefined)
+          .then(() => ctx.close().catch(() => undefined))
+          .then(() => restart());
+        return;
+      } catch {
+        /* fall through */
+      }
+    }
+
+    setTimeout(restart, 0);
+  }
+
+  function enableFromPrompt(): void {
+    // Must run in the click handler so the browser treats it as a user gesture.
+    unlockAudioFromGesture();
+  }
+
+  function armGestureUnlock(): void {
+    if (typeof document === "undefined") return;
+    const opts: AddEventListenerOptions = { capture: true, once: true, passive: true };
+    const onGesture = (): void => {
+      // OK button also fires pointerdown — unlock once is enough.
+      unlockAudioFromGesture();
+    };
+    document.addEventListener("pointerdown", onGesture, opts);
+    document.addEventListener("keydown", onGesture, opts);
+    document.addEventListener("touchstart", onGesture, opts);
+  }
+
+  // Fallback unlock if they dismiss the dialog and turn a page instead.
+  if (enabled) armGestureUnlock();
 
   function stop(): void {
     seq++;
@@ -322,7 +426,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
           const played = await speak(layer, caption);
           if (seq !== mySeq) return;
           if (!played) {
-            // Blocked by the autoplay policy — retry after the first gesture.
+            // Blocked by the autoplay policy — wait for unlock (or retry if
+            // unlock already happened in a race with settle).
             armRetry(key);
             return;
           }
@@ -339,26 +444,34 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     }
   }
 
-  /** One-shot: the first user gesture unblocks audio, so try this view again. */
+  /**
+   * Autoplay blocked this view. Remember it and rely on armGestureUnlock (or a
+   * late gesture if unlock already ran) to restart — no second special tap on
+   * the plate beyond the normal first interaction with the reader.
+   */
   function armRetry(key: string): void {
+    pendingRetryKey = key;
+    if (unlocked.value) {
+      // Unlock already happened; re-try next tick (settle / silent-play race).
+      setTimeout(() => {
+        if (running || (currentKey !== key && pendingRetryKey !== key)) return;
+        pendingRetryKey = "";
+        resetCoverage();
+        sync();
+      }, 0);
+      return;
+    }
+    // Explain + offer one-click unlock (also keeps passive gesture listeners).
+    maybeShowPrompt();
     if (retryArmed || typeof document === "undefined") return;
     retryArmed = true;
     document.addEventListener(
       "pointerdown",
       () => {
         retryArmed = false;
-        // A tap on a caption plays that caption instead — it stops us first.
-        setTimeout(() => {
-          if (running || currentKey !== key) return;
-          // Coverage has to go too, not just the key: these pages were marked
-          // covered by the attempt that autoplay blocked, and `sync` skips a
-          // view with nothing fresh in it — so clearing the key alone left the
-          // retry a no-op and nothing ever spoke.
-          resetCoverage();
-          sync();
-        }, 0);
+        unlockAudioFromGesture();
       },
-      { once: true }
+      { once: true, capture: true }
     );
   }
 
@@ -408,7 +521,15 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     };
   }
 
-  return { registerLayer, stop };
+  return {
+    registerLayer,
+    stop,
+    unlocked,
+    promptOpen,
+    enableFromPrompt,
+    dismissPrompt,
+    maybeShowPrompt,
+  };
 }
 
 export const AUTO_READ_KEY: InjectionKey<AutoReadController> = Symbol("flipframe-auto-read");

@@ -47,8 +47,8 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 
 | `#`    | Beat                              | Notes                                                                                                                                              |
 | ------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1      | Nero — alley / eye / punch        | “Wrong alley.”                                                                                                                                     |
-| 2      | Break-in / drawer / gun           | “No more hiding.”                                                                                                                                  |
+| 1      | Nero — alley / eye / rooftop      | “Wrong alley. Right hunt.” / “On the roof.” / “Your move.”                                                                                         |
+| 2      | Break-in / drawer / gun           | “I'm through.” / “Come on… where is it.” / “There you are.”                                                                                        |
 | 3      | Bench / load / fire               | “Steady hands.” / “You're done.”                                                                                                                   |
 | **4**  | **Time gap**                      | Diagonal plate: black title zone + city from above. Captions: **HOURS EARLIER** · **THE DOG** · subline. Flashback: Dog’s story **before** page 3. |
 | 5      | The Dog — rooftop / scope / alley | “Found you.”                                                                                                                                       |

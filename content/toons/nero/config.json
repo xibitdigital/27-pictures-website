@@ -29,19 +29,20 @@
           "x": 0.65,
           "y": 0.05,
           "align": "center",
-          "size": 29,
+          "size": 26,
           "variant": "bubble",
           "color": "#111111",
           "angle": -4,
-          "scale": 1.15,
-          "maxWidth": 0.32,
+          "scale": 1.1,
+          "maxWidth": 0.36,
           "text": {
-            "en": "Wrong alley.",
-            "it": "Vicolo sbagliato.",
-            "de": "Falsche Gasse.",
-            "fr": "Mauvaise ruelle."
+            "en": "Wrong alley.\nRight hunt.",
+            "it": "Vicolo sbagliato.\nCaccia giusta.",
+            "de": "Falsche Gasse.\nRichtige Jagd.",
+            "fr": "Mauvaise ruelle.\nBonne chasse."
           },
-          "audio": "assets/sfx/1d280e95727138af95d24644d6e7a15b.mp3",
+          "audio": "assets/sfx/190e1b7656901702c1f5e547f8edefe3.mp3",
+          "speaker": "nero",
           "bubble": {
             "tail": "bottom-left",
             "opacity": 0.75,
@@ -52,19 +53,20 @@
           "x": 0.8,
           "y": 0.3,
           "align": "center",
-          "size": 35,
+          "size": 32,
           "variant": "thought",
           "color": "#111111",
           "angle": 3,
           "scale": 1.1,
           "maxWidth": 0.28,
           "text": {
-            "en": "I see you.",
-            "it": "Ti vedo.",
-            "de": "Ich sehe dich.",
-            "fr": "Je te vois."
+            "en": "On the roof.",
+            "it": "Sul tetto.",
+            "de": "Auf dem Dach.",
+            "fr": "Sur le toit."
           },
-          "audio": "assets/sfx/f8e0c5c59087420c3393cc16e725404d.mp3",
+          "audio": "assets/sfx/ee8dd2b71b373020ec9dd79c56a650ac.mp3",
+          "speaker": "nero",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -74,19 +76,20 @@
           "x": 0.86,
           "y": 0.7,
           "align": "center",
-          "size": 36,
+          "size": 34,
           "variant": "burst",
           "color": "#111111",
           "angle": -8,
-          "scale": 1.4,
+          "scale": 1.3,
           "maxWidth": 0.3,
           "text": {
-            "en": "Come on\nthen!",
-            "it": "Forza\nallora!",
-            "de": "Komm schon!",
-            "fr": "Allez\nvoyons!"
+            "en": "Your move.",
+            "it": "A te.",
+            "de": "Dein Zug.",
+            "fr": "À toi."
           },
-          "audio": "assets/sfx/6380c12db8777ce04715f1fce22eba6c.mp3",
+          "audio": "assets/sfx/d717afe80e8e0317042b3d8310d52f2c.mp3",
+          "speaker": "nero",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -108,12 +111,13 @@
           "scale": 1.1,
           "maxWidth": 0.34,
           "text": {
-            "en": "No more hiding.",
-            "it": "Basta nascondersi.",
-            "de": "Kein Versteck mehr.",
-            "fr": "Plus de cachette."
+            "en": "I'm through.",
+            "it": "Sono dentro.",
+            "de": "Ich bin durch.",
+            "fr": "Je suis passé."
           },
-          "audio": "assets/sfx/6b14c0b40e53f7fe028c45268940156d.mp3",
+          "audio": "assets/sfx/e27b9010b241e97fff1d850b397bae4e.mp3",
+          "speaker": "nero",
           "bubble": {
             "tail": "left",
             "opacity": 0.75,
@@ -124,19 +128,20 @@
           "x": 0.2,
           "y": 0.5,
           "align": "center",
-          "size": 32,
+          "size": 28,
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
           "scale": 1.05,
-          "maxWidth": 0.28,
+          "maxWidth": 0.32,
           "text": {
-            "en": "Come on…",
-            "it": "Dai…",
-            "de": "Komm schon…",
-            "fr": "Allez…"
+            "en": "Come on…\nwhere is it.",
+            "it": "Dai…\ndov'è.",
+            "de": "Komm schon…\nwo ist es.",
+            "fr": "Allez…\noù c'est."
           },
-          "audio": "assets/sfx/3c6a460d7413bbdc911d251a3adf682a.mp3",
+          "audio": "assets/sfx/011c187b2a2801427fc3e9ff3fdff1fa.mp3",
+          "speaker": "nero",
           "bubble": {
             "tail": "right",
             "opacity": 0.75,
@@ -159,7 +164,8 @@
             "de": "Da bist du.",
             "fr": "Te voilà."
           },
-          "audio": "assets/sfx/7b18268884c64e2eec83cdbc36bf0d22.mp3",
+          "audio": "assets/sfx/76f34c18ea94c987bed33d484b80861d.mp3",
+          "speaker": "nero",
           "bubble": {
             "tail": "none",
             "opacity": 0.75,
@@ -1250,30 +1256,6 @@
           "audio": "assets/sfx/ea96eaf87603d48c91174078e559cfbb.mp3"
         },
         {
-          "x": 0.18,
-          "y": 0.455,
-          "align": "center",
-          "size": 24,
-          "variant": "bubble",
-          "color": "#111111",
-          "angle": -3,
-          "scale": 1,
-          "maxWidth": 0.22,
-          "bubble": {
-            "tail": "bottom-right",
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
-          "text": {
-            "en": "Be careful.",
-            "it": "Attento.",
-            "de": "Vorsicht.",
-            "fr": "Prudence."
-          },
-          "audio": "assets/sfx/433d15d5177754903d6f496ccec4d9b0.mp3",
-          "speaker": "eve"
-        },
-        {
           "x": 0.42,
           "y": 0.4,
           "align": "center",
@@ -1319,6 +1301,30 @@
             "fr": "Ici, tout le monde en cherche un."
           },
           "audio": "assets/sfx/689fa8b06eddd07b2b0aa8390832dd7a.mp3"
+        },
+        {
+          "x": 0.18,
+          "y": 0.455,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1,
+          "maxWidth": 0.22,
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "Be careful.",
+            "it": "Attento.",
+            "de": "Vorsicht.",
+            "fr": "Prudence."
+          },
+          "audio": "assets/sfx/433d15d5177754903d6f496ccec4d9b0.mp3",
+          "speaker": "eve"
         },
         {
           "x": 0.84,
@@ -1758,6 +1764,33 @@
           "audio": "assets/sfx/7212c1534dd72485f21f66c6ef52f205.mp3"
         },
         {
+          "x": 0.72,
+          "y": 0.28,
+          "align": "center",
+          "size": 18,
+          "variant": "ai",
+          "color": "#f5f5f5",
+          "angle": -2,
+          "maxWidth": 0.28,
+          "bubble": {
+            "fill": "#0a0a0a",
+            "stroke": "#0a0a0a",
+            "strokeWidth": 5,
+            "tail": "none",
+            "scratches": 6,
+            "retrace": 2,
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "N› PATH OPEN:\nWINDOW AHEAD\nCLEAR DROP",
+            "it": "N› VIA LIBERA:\nFINESTRA AVANTI\nCADUTA PULITA",
+            "de": "N› WEG FREI:\nFENSTER VORAUS\nKLARE FALLLINIE",
+            "fr": "N› VOIE LIBRE:\nFENÊTRE DEVANT\nCHUTE NETTE"
+          },
+          "audio": "assets/sfx/70bcc50f520fbb5e45b252ab96a6d7d5.mp3",
+          "speaker": "nova"
+        },
+        {
           "x": 0.16,
           "y": 0.42,
           "align": "center",
@@ -1865,8 +1898,35 @@
           "audio": "assets/sfx/b36e4f1defc5ed8138542bca27f2b4e1.mp3"
         },
         {
-          "x": 0.72,
-          "y": 0.06,
+          "x": 0.78,
+          "y": 0.14,
+          "align": "center",
+          "size": 18,
+          "variant": "ai",
+          "color": "#f5f5f5",
+          "angle": -2,
+          "maxWidth": 0.28,
+          "bubble": {
+            "fill": "#0a0a0a",
+            "stroke": "#0a0a0a",
+            "strokeWidth": 5,
+            "tail": "none",
+            "scratches": 6,
+            "retrace": 2,
+            "opacity": 0.75
+          },
+          "text": {
+            "en": "N› DECELERATE:\nLEFT ARM → WALL\nDIG IN. HOLD HER.",
+            "it": "N› RALLENTA:\nBRACCIO SX → MURO\nAFFONDA. TIENILA.",
+            "de": "N› ABBREMSEN:\nLINKER ARM → WAND\nGRAB. HALT SIE.",
+            "fr": "N› FREINE:\nBRAS G → MUR\nENFONCE. TIENS-LA."
+          },
+          "audio": "assets/sfx/3188701205f6e89eabcaf687a6dd73b3.mp3",
+          "speaker": "nova"
+        },
+        {
+          "x": 0.52,
+          "y": 0.22,
           "align": "center",
           "size": 24,
           "variant": "bubble",
@@ -1875,7 +1935,7 @@
           "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
-            "tail": "bottom",
+            "tail": "top-left",
             "opacity": 0.75,
             "strokeWidth": 5
           },
@@ -1907,8 +1967,8 @@
           "audio": "assets/sfx/75339e53e20ecd75329086405196fb1b.mp3"
         },
         {
-          "x": 0.78,
-          "y": 0.48,
+          "x": 0.68,
+          "y": 0.55,
           "align": "center",
           "size": 22,
           "variant": "bubble",
@@ -1931,8 +1991,8 @@
           "audio": "assets/sfx/8d42bf492e24a5e0c4e26dd4b74a2afd.mp3"
         },
         {
-          "x": 0.22,
-          "y": 0.78,
+          "x": 0.1,
+          "y": 0.73,
           "align": "center",
           "size": 22,
           "variant": "bubble",
@@ -1941,7 +2001,7 @@
           "scale": 1,
           "maxWidth": 0.22,
           "bubble": {
-            "tail": "bottom",
+            "tail": "right",
             "opacity": 0.75,
             "strokeWidth": 5
           },
@@ -1965,7 +2025,7 @@
           "scale": 1,
           "maxWidth": 0.22,
           "bubble": {
-            "tail": "top",
+            "tail": "top-left",
             "opacity": 0.75,
             "strokeWidth": 5
           },

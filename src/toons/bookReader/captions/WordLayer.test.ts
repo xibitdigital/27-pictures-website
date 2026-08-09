@@ -308,11 +308,28 @@ describe("WordLayer", () => {
   it("retries the whole view after autoplay blocks the first clip", async () => {
     const played: string[] = [];
     let blocked = true;
+    // Stub AudioContext so unlock runs the same path as production (gesture → resume → restart).
+    class FakeAC {
+      state = "suspended";
+      resume() {
+        this.state = "running";
+        return Promise.resolve();
+      }
+      close() {
+        return Promise.resolve();
+      }
+    }
+    vi.stubGlobal("AudioContext", FakeAC);
+
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
       // Browsers reject play() until the page has seen a user gesture.
       if (blocked) return Promise.reject(new Error("NotAllowedError"));
-      played.push(this.src.split("/").pop() || "");
-      setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      const file = this.src.split("/").pop() || "";
+      // Only track this test's clips — other tests' async Audio may still fire.
+      if (file === "a.mp3" || file === "b.mp3") {
+        played.push(file);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
       return Promise.resolve();
     });
 
@@ -328,6 +345,7 @@ describe("WordLayer", () => {
     expect(played).toEqual([]);
 
     blocked = false;
+    // First real interaction with the reader (page turn, Story close, etc.).
     document.dispatchEvent(new Event("pointerdown"));
 
     await vi.waitFor(() => expect(played).toEqual(["a.mp3", "b.mp3"]), { timeout: 3000 });
