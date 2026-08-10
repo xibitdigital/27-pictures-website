@@ -3,13 +3,13 @@
  * Caption layer for one plate. Sits over the page image, matched to the
  * image's object-fit:contain content box, and renders the page's captions.
  *
- * The layer itself ignores pointer events so page-turn clicks still reach
- * `.nav-zone` (z-index 30) underneath — individual captions opt back in.
+ * Visibility for auto-read is owned by the controller (geometry via getRect).
+ * This component only reports layout changes — no parallel IO visibility policy.
  */
 import { computed, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from "vue";
 import WordCaption from "./WordCaption.vue";
 import { buildCaptions, imageContentBox, type CaptionModel } from "./captionModel";
-import { useAutoReadController, VISIBLE_RATIO, type AutoReadCaptionRef } from "./useAutoRead";
+import { useAutoReadController, type AutoReadCaptionRef } from "./useAutoRead";
 import type { LangCode, WordEntry } from "../types";
 
 const props = withDefaults(
@@ -33,7 +33,6 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  /** False until the plate has a size and the captions can be placed. */
   measured: [ready: boolean];
 }>();
 
@@ -62,8 +61,6 @@ const layerStyle = computed<CSSProperties>(() => ({
   height: `${box.value?.height ?? 0}px`,
   pointerEvents: "none",
   overflow: "visible",
-  // Above .nav-zone (z-index 30, full-page turn areas) so caption
-  // hover/click targets actually receive events.
   zIndex: 35,
 }));
 
@@ -86,44 +83,13 @@ function measure(): void {
     box.value = { left: next.left, top: next.top, width: next.width, height: next.height };
   }
   emit("measured", true);
-  // After size lands, re-check visibility without waiting for a scroll event
-  // (IntersectionObserver often missed the first layout under Story/OK dialogs).
-  requestAnimationFrame(() => updateVisibilityFromLayout());
+  layer?.layoutChanged();
 }
 
-/** Geometry-based visibility — same bar as auto-read VISIBLE_RATIO. */
-function updateVisibilityFromLayout(): void {
-  if (!layer) return;
-  const el = rootEl.value;
-  if (!el) return;
-  const r = el.getBoundingClientRect();
-  // jsdom / pre-layout often reports 0×0 — do not clobber a good IO result.
-  if (r.width < 2 || r.height < 2) return;
-  const vh = typeof window !== "undefined" ? window.innerHeight || 0 : 0;
-  if (vh < 1) {
-    layer.setVisible(true);
-    return;
-  }
-  const visibleH = Math.min(r.bottom, vh) - Math.max(r.top, 0);
-  if (visibleH <= 0) {
-    layer.setVisible(false);
-    return;
-  }
-  const ratio = visibleH / r.height;
-  layer.setVisible(ratio >= VISIBLE_RATIO || visibleH >= Math.min(120, vh * 0.35));
-}
-
-// ── Auto-read ─────────────────────────────────────────────────────────────
 const autoRead = useAutoReadController();
 const layer = autoRead
   ? autoRead.registerLayer({
       id: String(props.pageNum),
-      /**
-       * Prefer the plate image rect: the word layer is often 0×0 until measure
-       * finishes (and under Story/OK dialogs). Image layout is stable from
-       * aspect-ratio on `.vertical-page`, so promote/auto-read can start
-       * without a scroll.
-       */
       getRect: () => {
         const layerRect = rootEl.value?.getBoundingClientRect() ?? null;
         if (layerRect && layerRect.width >= 2 && layerRect.height >= 2) return layerRect;
@@ -158,9 +124,7 @@ function onCaptionPlay(caption: CaptionModel): void {
   });
 }
 
-// ── Measurement / visibility observers ────────────────────────────────────
 let resizeObserver: ResizeObserver | null = null;
-let intersectionObserver: IntersectionObserver | null = null;
 
 function observeImage(img: HTMLImageElement | null): void {
   resizeObserver?.disconnect();
@@ -173,33 +137,13 @@ function observeImage(img: HTMLImageElement | null): void {
   if (!img.complete || (!img.naturalWidth && !img.clientWidth)) {
     img.addEventListener("load", measure, { once: true });
   }
-  if (typeof ResizeObserver !== "undefined") {
-    resizeObserver = new ResizeObserver(() => measure());
-    resizeObserver.observe(img);
-    if (img.parentElement) resizeObserver.observe(img.parentElement);
-  }
+  resizeObserver = new ResizeObserver(() => measure());
+  resizeObserver.observe(img);
+  if (img.parentElement) resizeObserver.observe(img.parentElement);
 }
 
 onMounted(() => {
   observeImage(props.imageEl);
-
-  if (typeof IntersectionObserver !== "undefined" && rootEl.value) {
-    intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          // Soft bar — tall plates rarely reach 0.55 of their height in view.
-          layer?.setVisible(entry.isIntersecting && entry.intersectionRatio >= VISIBLE_RATIO);
-        }
-      },
-      { threshold: [0, VISIBLE_RATIO, 0.5, 1] }
-    );
-    intersectionObserver.observe(rootEl.value);
-    // First paint under a dialog often reports 0; layout pass fixes it.
-    requestAnimationFrame(() => updateVisibilityFromLayout());
-  } else {
-    // No IntersectionObserver (jsdom, old browsers): treat as on screen.
-    layer?.setVisible(true);
-  }
 });
 
 watch(
@@ -209,7 +153,6 @@ watch(
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
-  intersectionObserver?.disconnect();
   layer?.release();
 });
 </script>

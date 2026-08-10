@@ -5,25 +5,69 @@ import WordLayer from "./WordLayer.vue";
 import { AUTO_READ_KEY, createAutoReadController } from "./useAutoRead";
 import type { WordEntry } from "../types";
 
-/** jsdom ships an IntersectionObserver that never fires — report everything visible. */
-function stubIntersectionObserver(): void {
-  class ImmediateIO {
-    constructor(private cb: IntersectionObserverCallback) {}
-    observe(el: Element): void {
-      setTimeout(() => {
-        this.cb(
-          [{ target: el, isIntersecting: true, intersectionRatio: 1 } as unknown as IntersectionObserverEntry],
-          this as unknown as IntersectionObserver
-        );
-      }, 0);
-    }
-    unobserve(): void {}
-    disconnect(): void {}
-    takeRecords(): IntersectionObserverEntry[] {
-      return [];
-    }
+/**
+ * jsdom getBoundingClientRect is 0×0 — give plates a real on-screen box so
+ * controller geometry visibility can mark them readable without setVisible.
+ */
+function stubViewportGeometry(): void {
+  vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function () {
+    return {
+      x: 0,
+      y: 0,
+      top: 0,
+      left: 0,
+      right: 400,
+      bottom: 700,
+      width: 400,
+      height: 700,
+      toJSON: () => ({}),
+    } as DOMRect;
+  });
+}
+
+/** On-screen (or off-screen) rect for geometry-owned visibility. */
+function makeRect(left = 0, on = true): DOMRect {
+  if (!on) {
+    return {
+      top: 9000,
+      left,
+      right: left + 100,
+      bottom: 9100,
+      width: 100,
+      height: 100,
+      x: left,
+      y: 9000,
+      toJSON: () => ({}),
+    } as DOMRect;
   }
-  vi.stubGlobal("IntersectionObserver", ImmediateIO);
+  return {
+    top: 0,
+    left,
+    right: left + 100,
+    bottom: 100,
+    width: 100,
+    height: 100,
+    x: left,
+    y: 0,
+    toJSON: () => ({}),
+  } as DOMRect;
+}
+
+/** Mutable getRect so tests can show/hide without setVisible. */
+function trackRect(left = 0) {
+  const state = { on: true, left };
+  return {
+    state,
+    getRect: () => makeRect(state.left, state.on),
+    show(h: { layoutChanged: () => void }) {
+      state.on = true;
+      h.layoutChanged();
+    },
+    hide(h: { layoutChanged: () => void }) {
+      state.on = false;
+      h.layoutChanged();
+    },
+  };
 }
 
 function makeImage(): HTMLImageElement {
@@ -94,16 +138,20 @@ describe("WordLayer", () => {
     await wrapper.find(".jax-word--sfx").trigger("click");
     expect(playSpy).toHaveBeenCalled();
     expect(parentClick).not.toHaveBeenCalled();
+    controller.stop();
   });
 
   it("auto-reads the page top→bottom, highlighting the caption that is speaking", async () => {
-    stubIntersectionObserver();
+    stubViewportGeometry();
     const played: string[] = [];
     const clips: HTMLAudioElement[] = [];
     // Clips stay open so the highlight can be inspected mid-playback.
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
-      played.push(this.src.split("/").pop() || "");
-      clips.push(this);
+      const file = (this.src || "").split("/").pop() || "";
+      if (file === "t.mp3" || file === "b.mp3") {
+        played.push(file);
+        clips.push(this);
+      }
       return Promise.resolve();
     });
     const speaking = (): string =>
@@ -142,10 +190,11 @@ describe("WordLayer", () => {
       await nextTick();
       expect(speaking()).toBe("");
     });
+    controller.stop();
   });
 
   it("reads a book spread left page top→bottom, then the right page", async () => {
-    stubIntersectionObserver();
+    stubViewportGeometry();
     const played: string[] = [];
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
       played.push(this.src.split("/").pop() || "");
@@ -215,21 +264,20 @@ describe("WordLayer", () => {
     });
 
     const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
-    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
+    const track = trackRect(0);
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
-    const l = controller.registerLayer({ id: "10", getRect: () => rect(0) });
+    const l = controller.registerLayer({ id: "10", getRect: track.getRect });
     l.setCaptions([clip("a", 0), clip("b", 1), clip("c", 2)]);
-    l.setVisible(true);
 
     await vi.waitFor(() => expect(played).toEqual(["a.mp3"]), { timeout: 3000 });
 
     // The leaf sweeps across: the layer stops intersecting while the first clip
     // finishes, and is still below threshold when the loop comes back around.
-    l.setVisible(false);
+    track.hide(l);
     clips[0].dispatchEvent(new Event("ended"));
     await new Promise((r) => setTimeout(r, 50));
-    l.setVisible(true);
+    track.show(l);
 
     // The rest of the page still gets read — a dip is not an unmount.
     await vi.waitFor(() => expect(played).toEqual(["a.mp3", "b.mp3"]), { timeout: 3000 });
@@ -250,21 +298,18 @@ describe("WordLayer", () => {
     });
 
     const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
-    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
     const captions = [clip("a", 0), clip("b", 1), clip("c", 2)];
 
     // Leaf mounts first (only thing on screen during the flip).
-    const leaf = controller.registerLayer({ id: "12", getRect: () => rect(0) });
+    const leaf = controller.registerLayer({ id: "12", getRect: () => makeRect(0) });
     leaf.setCaptions(captions);
-    leaf.setVisible(true);
 
     await vi.waitFor(() => expect(played).toEqual(["a.mp3"]), { timeout: 3000 });
 
     // Flip settles: slot mounts under the leaf, then the leaf unmounts.
-    const slot = controller.registerLayer({ id: "12", getRect: () => rect(0) });
+    const slot = controller.registerLayer({ id: "12", getRect: () => makeRect(0) });
     slot.setCaptions(captions);
-    slot.setVisible(true);
     leaf.release();
 
     clips[0].dispatchEvent(new Event("ended"));
@@ -283,19 +328,16 @@ describe("WordLayer", () => {
     });
 
     const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
-    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
-    const left = controller.registerLayer({ id: "20", getRect: () => rect(0) });
+    const left = controller.registerLayer({ id: "20", getRect: () => makeRect(0) });
     left.setCaptions([clip("l1", 0), clip("l2", 1)]);
-    left.setVisible(true);
 
     await vi.waitFor(() => expect(played).toEqual(["l1.mp3"]), { timeout: 3000 });
 
     // Right page of the spread mounts a beat later (book settle).
-    const right = controller.registerLayer({ id: "21", getRect: () => rect(500) });
+    const right = controller.registerLayer({ id: "21", getRect: () => makeRect(500) });
     right.setCaptions([clip("r1", 0)]);
-    right.setVisible(true);
     await new Promise((r) => setTimeout(r, 250));
 
     // Left page must finish — not be aborted so only the right half plays.
@@ -349,12 +391,10 @@ describe("WordLayer", () => {
 
     // Production default: wait for a gesture (OK prompt / page turn).
     const controller = createAutoReadController({ gapMs: 0, requireGesture: true });
-    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
-    const l1 = controller.registerLayer({ id: "1", getRect: () => rect(0) });
+    const l1 = controller.registerLayer({ id: "1", getRect: () => makeRect(0) });
     l1.setCaptions([clip("a", 0), clip("b", 1)]);
-    l1.setVisible(true);
 
     await new Promise((r) => setTimeout(r, 400));
     // Gated — no clips until unlock.
@@ -390,13 +430,11 @@ describe("WordLayer", () => {
     });
 
     const controller = createAutoReadController({ gapMs: 0, requireGesture: true });
-    const rect = (): DOMRect => ({ top: 0, left: 0, right: 100, bottom: 100 }) as DOMRect;
-    const layer = controller.registerLayer({ id: "1", getRect: rect });
+    const layer = controller.registerLayer({ id: "1", getRect: () => makeRect(0) });
     layer.setCaptions([
       { index: 0, audio: "sfx/tap.mp3", volume: 1, x: 0.5, y: 0.2 },
       { index: 1, audio: "sfx/next.mp3", volume: 1, x: 0.5, y: 0.8 },
     ]);
-    layer.setVisible(true);
 
     await new Promise((r) => setTimeout(r, 300));
     expect(played).toEqual([]);
@@ -421,26 +459,25 @@ describe("WordLayer", () => {
     });
 
     const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
-    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
+    const t1 = trackRect(0);
+    const t2 = trackRect(0);
+    const t3 = trackRect(0);
 
-    const p1 = controller.registerLayer({ id: "1", getRect: () => rect(0) });
+    const p1 = controller.registerLayer({ id: "1", getRect: t1.getRect });
     p1.setCaptions([clip("p1a", 0), clip("p1b", 1), clip("p1c", 2)]);
-    p1.setVisible(true);
 
     await vi.waitFor(() => expect(played).toEqual(["p1a.mp3"]), { timeout: 3000 });
 
     // Rapid skip: page 1 still on screen for a beat while 2 and 3 flash through.
-    const p2 = controller.registerLayer({ id: "2", getRect: () => rect(0) });
+    const p2 = controller.registerLayer({ id: "2", getRect: t2.getRect });
     p2.setCaptions([clip("p2a", 0)]);
-    p2.setVisible(true);
     await new Promise((r) => setTimeout(r, 50)); // before settle
-    p1.setVisible(false);
-    p2.setVisible(false);
+    t1.hide(p1);
+    t2.hide(p2);
     p2.release();
-    const p3 = controller.registerLayer({ id: "3", getRect: () => rect(0) });
+    const p3 = controller.registerLayer({ id: "3", getRect: t3.getRect });
     p3.setCaptions([clip("p3a", 0), clip("p3b", 1)]);
-    p3.setVisible(true);
     p1.release();
 
     // Settle + first clip of the final page only.
@@ -466,15 +503,12 @@ describe("WordLayer", () => {
     });
 
     const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
-    const rect = (left: number): DOMRect => ({ top: 0, left, right: left + 100, bottom: 100 }) as DOMRect;
     const clip = (id: string, index: number) => ({ index, audio: `sfx/${id}.mp3`, volume: 1, x: 0.5, y: 0.2 + index });
 
-    const l8 = controller.registerLayer({ id: "8", getRect: () => rect(0) });
-    const l9 = controller.registerLayer({ id: "9", getRect: () => rect(500) });
+    const l8 = controller.registerLayer({ id: "8", getRect: () => makeRect(0) });
+    const l9 = controller.registerLayer({ id: "9", getRect: () => makeRect(500) });
     l8.setCaptions([clip("p8a", 0), clip("p8b", 1)]);
     l9.setCaptions([clip("p9a", 0)]);
-    l8.setVisible(true);
-    l9.setVisible(true);
 
     await vi.waitFor(() => expect(played).toEqual(["p8a.mp3", "p8b.mp3", "p9a.mp3"]), { timeout: 3000 });
 
@@ -482,12 +516,10 @@ describe("WordLayer", () => {
     // spread mounts while 8 is still on its way out.
     l9.release();
     await new Promise((r) => setTimeout(r, 250));
-    const l10 = controller.registerLayer({ id: "10", getRect: () => rect(0) });
-    const l11 = controller.registerLayer({ id: "11", getRect: () => rect(500) });
+    const l10 = controller.registerLayer({ id: "10", getRect: () => makeRect(0) });
+    const l11 = controller.registerLayer({ id: "11", getRect: () => makeRect(500) });
     l10.setCaptions([clip("p10a", 0)]);
     l11.setCaptions([clip("p11a", 0)]);
-    l10.setVisible(true);
-    l11.setVisible(true);
     await new Promise((r) => setTimeout(r, 250));
     l8.release();
 
@@ -500,7 +532,7 @@ describe("WordLayer", () => {
   });
 
   it("reads a page once when it is mounted twice (flip leaf over its slot)", async () => {
-    stubIntersectionObserver();
+    stubViewportGeometry();
     const played: string[] = [];
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
       const file = (this.src || "").split("/").pop() || "";
@@ -544,7 +576,7 @@ describe("WordLayer", () => {
   });
 
   it("pauses auto-read during scroll and resumes after idle (mobile fling path)", async () => {
-    stubIntersectionObserver();
+    stubViewportGeometry();
     const played: string[] = [];
     let autoEnd = false;
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
@@ -588,10 +620,9 @@ describe("WordLayer", () => {
     controller.stop();
   });
 
-  it("starts auto-read after unlock without requiring a scroll (promote geometry)", async () => {
-    // Layer is registered with geometry but never setVisible(true) — as when
-    // IntersectionObserver never fires under Story/OK. Unlock must promote
-    // from getRect and start reading (no scroll, no DOM class queries).
+  it("starts auto-read after unlock without requiring a scroll (geometry visibility)", async () => {
+    // Layer supplies on-screen getRect but never setVisible — unlock + geometry
+    // must start reading (controller owns visibility).
     const played: string[] = [];
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
       const file = (this.src || "").split("/").pop() || "";
@@ -617,7 +648,6 @@ describe("WordLayer", () => {
 
     const layer = controller.registerLayer({ id: "1", getRect: () => onScreen });
     layer.setCaptions([{ index: 0, audio: "sfx/noscroll-a.mp3", volume: 1, x: 0.5, y: 0.2 }]);
-    // Intentionally leave setVisible(false) — only geometry promote after OK.
 
     controller.enableFromPrompt();
     await vi.waitFor(() => expect(played).toContain("noscroll-a.mp3"), { timeout: 3000 });
@@ -625,7 +655,7 @@ describe("WordLayer", () => {
   });
 
   it("does not spin infinite retries when play() keeps failing after a fling", async () => {
-    stubIntersectionObserver();
+    stubViewportGeometry();
     let playCalls = 0;
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
       playCalls++;

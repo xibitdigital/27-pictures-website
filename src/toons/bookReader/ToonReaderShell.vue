@@ -137,7 +137,6 @@ function onStripReady(slots: HTMLElement[]): void {
  * fixed, which freezes the whole page after “Start reading”. Clear always.
  */
 function releaseBodyScrollLock(): void {
-  if (typeof document === "undefined") return;
   const b = document.body;
   const h = document.documentElement;
   b.style.removeProperty("overflow");
@@ -236,7 +235,7 @@ function onGuideOpenUpdate(open: boolean): void {
 function onAutoReadEnable(): void {
   autoRead.enableFromPrompt();
   releaseBodyScrollLock();
-  // Dialog leave reflow: kick again so page 1 auto-reads without a scroll.
+  // Single post-dialog reflow kick (controller does not schedule a second one).
   void nextTick(() => {
     releaseBodyScrollLock();
     autoRead.kick();
@@ -259,37 +258,53 @@ function onMobileMq(): void {
 
 /**
  * Vertical-strip scroll → auto-read pause.
- * rAF-throttle: flings fire 100+ scroll events/s; each must stay dirt-cheap
- * (no style writes, no Audio work — notifyScroll only arms a timer once).
+ * Throttled: flings fire 100+ scroll events/s; notifyScroll must stay cheap.
  */
-let scrollRaf = 0;
-function onWindowScroll(): void {
-  if (!viewMode.isVertical.value) return;
-  if (scrollRaf) return;
-  scrollRaf =
-    typeof requestAnimationFrame === "function"
-      ? requestAnimationFrame(() => {
-          scrollRaf = 0;
-          autoRead.notifyScroll();
-        })
-      : 0;
-  if (!scrollRaf) autoRead.notifyScroll();
+function throttleTrailing(fn: () => void, waitMs: number): (() => void) & { cancel: () => void } {
+  let last = 0;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const wrapped = (): void => {
+    const now = Date.now();
+    const remaining = waitMs - (now - last);
+    if (remaining <= 0) {
+      if (timer != null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      last = now;
+      fn();
+      return;
+    }
+    if (timer == null) {
+      timer = setTimeout(() => {
+        timer = null;
+        last = Date.now();
+        fn();
+      }, remaining);
+    }
+  };
+  wrapped.cancel = (): void => {
+    if (timer != null) clearTimeout(timer);
+    timer = null;
+  };
+  return wrapped;
 }
+
+const onWindowScroll = throttleTrailing(() => {
+  if (!viewMode.isVertical.value) return;
+  autoRead.notifyScroll();
+}, 32);
 
 onMounted(() => {
   syncMobileUi();
-  if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
-    mobileMq = window.matchMedia("(max-width: 768px)");
-    if (typeof mobileMq.addEventListener === "function") {
-      mobileMq.addEventListener("change", onMobileMq);
-    } else {
-      mobileMq.addListener(onMobileMq);
-    }
+  mobileMq = window.matchMedia("(max-width: 768px)");
+  if (typeof mobileMq.addEventListener === "function") {
+    mobileMq.addEventListener("change", onMobileMq);
+  } else {
+    mobileMq.addListener(onMobileMq);
   }
 
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", onWindowScroll, { passive: true });
-  }
+  window.addEventListener("scroll", onWindowScroll, { passive: true });
 
   // Auto-show story/guide once per session on mobile (or vertical scroll).
   void nextTick(() => {
@@ -315,13 +330,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (typeof window !== "undefined") {
-    window.removeEventListener("scroll", onWindowScroll);
-    if (scrollRaf && typeof cancelAnimationFrame === "function") {
-      cancelAnimationFrame(scrollRaf);
-      scrollRaf = 0;
-    }
-  }
+  window.removeEventListener("scroll", onWindowScroll);
+  onWindowScroll.cancel();
   autoRead.stop();
   if (!mobileMq) return;
   if (typeof mobileMq.removeEventListener === "function") {
