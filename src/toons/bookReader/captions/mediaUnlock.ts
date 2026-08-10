@@ -2,15 +2,15 @@
  * Browser autoplay unlock for FlipFrame captions.
  * iOS Safari needs a real HTMLAudioElement.play() inside a user gesture;
  * AudioContext.resume() alone is not enough.
+ *
+ * Prefer SharedAudioPlayer.unlockFromGesture() so the **same** element used
+ * for caption speak() is unlocked. This helper is a fallback for paths that
+ * only need a one-shot prime.
  */
 
-import { configureMediaEl } from "./sharedAudio";
+import { configureMediaEl, SILENT_WAV } from "./sharedAudio";
 
-/**
- * Tiny silent WAV (data URI). Allowed via CSP media-src data: on the site.
- * Not fully muted: some WebKit builds treat muted play as a separate bucket.
- */
-export const SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+export { SILENT_WAV } from "./sharedAudio";
 
 /** Play silent HTMLAudio on the gesture stack. Never rejects. */
 export function primeHtmlAudioUnlock(): Promise<void> {

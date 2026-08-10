@@ -2,6 +2,7 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import basicSsl from "@vitejs/plugin-basic-ssl";
+import { execSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { cdnMediaPlugin } from "./vite/plugins/cdnMedia";
@@ -11,6 +12,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(__dirname, "src");
 const distDir = path.resolve(__dirname, "dist");
 const isTest = !!process.env.VITEST;
+
+/** Short id shown under FlipFrame on covers (override with VITE_FLIPFRAME_BUILD). */
+function flipframeBuildId(): string {
+  const fromEnv = process.env.VITE_FLIPFRAME_BUILD?.trim();
+  if (fromEnv) return fromEnv;
+  try {
+    return execSync("git rev-parse --short HEAD", {
+      cwd: __dirname,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "dev";
+  }
+}
+
+const flipframeBuild = flipframeBuildId();
 
 /**
  * Multi-page Vue + TypeScript frontend.
@@ -29,6 +47,9 @@ export default defineConfig({
   envDir: __dirname,
   publicDir: path.resolve(__dirname, "public"),
   appType: "mpa",
+  define: {
+    "import.meta.env.VITE_FLIPFRAME_BUILD": JSON.stringify(flipframeBuild),
+  },
   plugins: [
     // Local HTTPS for hosts name outside twentyseven.pictures (prod HSTS includeSubDomains
     // blocks self-signed certs on *.twentyseven.pictures). Use local.twentyseven.test.

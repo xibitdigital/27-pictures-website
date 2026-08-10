@@ -93,6 +93,7 @@ describe("WordLayer", () => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
     document.body.innerHTML = "";
+    document.body.classList.remove("view-vertical");
   });
 
   it("renders one caption per word, sized to the plate's content box", async () => {
@@ -447,6 +448,82 @@ describe("WordLayer", () => {
     controller.stop();
   });
 
+  it("bubble tap wins over pending scroll-idle auto-read restart", async () => {
+    // Regression: after a fling, scroll idle always schedule()s; if that
+    // settle fires mid-tap, pausePlayback() killed the gesture clip.
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const src = this.src || "";
+      if (src.startsWith("data:audio/wav")) return Promise.resolve();
+      const file = src.split("/").pop() || "";
+      if (file === "auto.mp3" || file === "tap.mp3") {
+        played.push(file);
+        // Keep clips open so a late pausePlayback would cut them mid-play.
+      }
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    const layer = controller.registerLayer({ id: "1", getRect: () => makeRect(0) });
+    layer.setCaptions([
+      { index: 0, audio: "sfx/auto.mp3", volume: 1, x: 0.5, y: 0.2 },
+      { index: 1, audio: "sfx/tap.mp3", volume: 1, x: 0.5, y: 0.8 },
+    ]);
+
+    await vi.waitFor(() => expect(played).toContain("auto.mp3"), { timeout: 3000 });
+
+    // Start a fling (releases media + arms scroll idle).
+    controller.notifyScroll();
+    // Tap during the scroll-idle window — must own the player, not lose to settle.
+    layer.playOne({ index: 1, audio: "sfx/tap.mp3", volume: 1, x: 0.5, y: 0.8 });
+    await vi.waitFor(() => expect(played).toContain("tap.mp3"), { timeout: 2000 });
+
+    const tapAt = played.lastIndexOf("tap.mp3");
+    // Wait past scroll idle (700) + settle (220) — auto-read must not clobber the tap.
+    await new Promise((r) => setTimeout(r, 1100));
+    expect(played.slice(tapAt)).toEqual(["tap.mp3"]);
+    controller.stop();
+  });
+
+  it("bubble tap still plays after scroll thrash (fresh Audio element)", async () => {
+    const played: string[] = [];
+    const elements: HTMLAudioElement[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const src = this.src || "";
+      if (src.startsWith("data:audio/wav")) return Promise.resolve();
+      const file = src.split("/").pop() || "";
+      if (file === "p1.mp3" || file === "manual.mp3") {
+        played.push(file);
+        elements.push(this);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    const layer = controller.registerLayer({ id: "1", getRect: () => makeRect(0) });
+    layer.setCaptions([
+      { index: 0, audio: "sfx/p1.mp3", volume: 1, x: 0.5, y: 0.2 },
+      { index: 1, audio: "sfx/manual.mp3", volume: 1, x: 0.5, y: 0.8 },
+    ]);
+
+    await vi.waitFor(() => expect(played).toContain("p1.mp3"), { timeout: 3000 });
+    const before = elements.length;
+
+    // Simulate the half-dead path: several flings release/recreate the player.
+    controller.notifyScroll();
+    await new Promise((r) => setTimeout(r, 50));
+    controller.notifyScroll();
+    await new Promise((r) => setTimeout(r, 50));
+    controller.notifyScroll();
+
+    layer.playOne({ index: 1, audio: "sfx/manual.mp3", volume: 1, x: 0.5, y: 0.2 });
+    await vi.waitFor(() => expect(played).toContain("manual.mp3"), { timeout: 2000 });
+    // Tap must allocate a new HTMLAudioElement (release() dropped the old one).
+    expect(elements.length).toBeGreaterThan(before);
+    controller.stop();
+  });
+
   it("hard-cuts on rapid page swaps instead of stacking every intermediate page", async () => {
     // Regression: flipping 1→2→3 quickly used to append each new page onto the
     // still-running queue, so clips from pages the user already left kept playing.
@@ -612,11 +689,10 @@ describe("WordLayer", () => {
     await new Promise((r) => setTimeout(r, 300));
     expect(played).toEqual(["scroll-a.mp3"]);
 
-    // After scroll idle (~700ms) + settle, resume from the settled plate.
+    // After scroll idle + settle: interrupted A is marked heard; resume with B.
     autoEnd = true;
-    await vi.waitFor(() => expect(played.filter((p) => p === "scroll-a.mp3").length).toBeGreaterThanOrEqual(2), {
-      timeout: 4000,
-    });
+    await vi.waitFor(() => expect(played).toContain("scroll-b.mp3"), { timeout: 4000 });
+    expect(played.filter((p) => p === "scroll-a.mp3")).toHaveLength(1);
     controller.stop();
   });
 
@@ -665,6 +741,203 @@ describe("WordLayer", () => {
 
     expect(played.filter((p) => p === "p3.mp3").length).toBeGreaterThanOrEqual(1);
     controller.stop();
+  });
+
+  it("auto-reads only captions in the top 80% of the viewport (focus band)", async () => {
+    // Mobile strip: only caption screen Y in the top 80% — plate need not be aligned.
+    document.body.classList.add("view-vertical");
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const file = (this.src || "").split("/").pop() || "";
+      if (file === "top.mp3" || file === "bottom.mp3") {
+        played.push(file);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
+      return Promise.resolve();
+    });
+    // Viewport 400px → focus band [0, 320).
+    vi.stubGlobal("innerHeight", 400);
+    Object.defineProperty(window, "visualViewport", {
+      configurable: true,
+      value: { height: 400 },
+    });
+
+    // Plate top=-100, height=800 → anchors: y=0.2 → screen 60 (in), y=0.75 → screen 500 (out).
+    // Also covers the mobile-emulator case where the plate "fits" (height < 1.05×vh would
+    // previously expand to full-page band and play everything).
+    const plate = {
+      top: -100,
+      left: 0,
+      right: 300,
+      bottom: 700,
+      width: 300,
+      height: 800,
+      x: 0,
+      y: -100,
+      toJSON: () => ({}),
+    } as DOMRect;
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    const layer = controller.registerLayer({ id: "1", getRect: () => plate });
+    layer.setCaptions([
+      { index: 0, audio: "sfx/top.mp3", volume: 1, x: 0.5, y: 0.2 },
+      { index: 1, audio: "sfx/bottom.mp3", volume: 1, x: 0.5, y: 0.75 },
+    ]);
+
+    await vi.waitFor(() => expect(played).toContain("top.mp3"), { timeout: 3000 });
+    await new Promise((r) => setTimeout(r, 200));
+    expect(played).toEqual(["top.mp3"]);
+    expect(played).not.toContain("bottom.mp3");
+    controller.stop();
+    document.body.classList.remove("view-vertical");
+  });
+
+  it("does not restart a mid-speak caption after a scroll interrupt", async () => {
+    // Fling while a bubble is speaking used to finish(false) without marking it
+    // played, so settle re-read the same line from the top of the band.
+    document.body.classList.add("view-vertical");
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const file = (this.src || "").split("/").pop() || "";
+      if (file === "slow-a.mp3" || file === "slow-b.mp3") {
+        played.push(file);
+        // Do not end — simulate a long clip cut by scroll.
+      }
+      return Promise.resolve();
+    });
+    vi.stubGlobal("innerHeight", 400);
+    Object.defineProperty(window, "visualViewport", { configurable: true, value: { height: 400 } });
+
+    const plate = {
+      top: 0,
+      left: 0,
+      right: 300,
+      bottom: 800,
+      width: 300,
+      height: 800,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    } as DOMRect;
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    const layer = controller.registerLayer({ id: "1", getRect: () => plate });
+    layer.setCaptions([
+      { index: 0, audio: "sfx/slow-a.mp3", volume: 1, x: 0.5, y: 0.1 }, // in band
+      { index: 1, audio: "sfx/slow-b.mp3", volume: 1, x: 0.5, y: 0.9 }, // out
+    ]);
+
+    await vi.waitFor(() => expect(played).toContain("slow-a.mp3"), { timeout: 3000 });
+    // Interrupt while still speaking (no "ended" yet).
+    controller.notifyScroll();
+    await new Promise((r) => setTimeout(r, 1100));
+    expect(played.filter((p) => p === "slow-a.mp3")).toHaveLength(1);
+    expect(played).not.toContain("slow-b.mp3");
+    controller.stop();
+    document.body.classList.remove("view-vertical");
+  });
+
+  it("does not re-read a caption that is still on screen after a scroll settle", async () => {
+    // Mobile strip regression: every scroll stop reset coverage, so bubbles left
+    // sitting in the band spoke again on each settle.
+    document.body.classList.add("view-vertical");
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const file = (this.src || "").split("/").pop() || "";
+      if (file === "keep-a.mp3" || file === "keep-b.mp3") {
+        played.push(file);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
+      return Promise.resolve();
+    });
+    // Viewport 400 → band [0, 240).
+    vi.stubGlobal("innerHeight", 400);
+    Object.defineProperty(window, "visualViewport", { configurable: true, value: { height: 400 } });
+
+    const plate = { top: 0, height: 800, width: 300, left: 0 };
+    const getRect = (): DOMRect =>
+      ({
+        top: plate.top,
+        left: plate.left,
+        right: plate.left + plate.width,
+        bottom: plate.top + plate.height,
+        width: plate.width,
+        height: plate.height,
+        x: plate.left,
+        y: plate.top,
+        toJSON: () => ({}),
+      }) as DOMRect;
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    const layer = controller.registerLayer({ id: "1", getRect });
+    layer.setCaptions([
+      { index: 0, audio: "sfx/keep-a.mp3", volume: 1, x: 0.5, y: 0.1 }, // screen 80 → in band
+      { index: 1, audio: "sfx/keep-b.mp3", volume: 1, x: 0.5, y: 0.9 }, // screen 720 → out
+    ]);
+
+    await vi.waitFor(() => expect(played).toEqual(["keep-a.mp3"]), { timeout: 3000 });
+
+    // Scroll stop with the same geometry → nothing new to read.
+    controller.notifyScroll();
+    await new Promise((r) => setTimeout(r, 1100));
+    expect(played).toEqual(["keep-a.mp3"]);
+
+    // Scroll on: A leaves the screen (-520), B enters the band (120).
+    plate.top = -600;
+    controller.notifyScroll();
+    await vi.waitFor(() => expect(played).toEqual(["keep-a.mp3", "keep-b.mp3"]), { timeout: 4000 });
+
+    // Scroll back up: A is on screen again → re-reads once.
+    plate.top = 0;
+    controller.notifyScroll();
+    await vi.waitFor(() => expect(played).toEqual(["keep-a.mp3", "keep-b.mp3", "keep-a.mp3"]), { timeout: 4000 });
+    controller.stop();
+    document.body.classList.remove("view-vertical");
+  });
+
+  it("mobile: plate that fits the viewport still only plays captions in the top 80%", async () => {
+    // Emulator/phone case: portrait plate height < viewport (fits), so the old
+    // plate-height heuristic expanded to full-page and required “page align”.
+    // Vertical mode must stay caption-position based.
+    document.body.classList.add("view-vertical");
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const file = (this.src || "").split("/").pop() || "";
+      if (file === "fit-top.mp3" || file === "fit-bot.mp3") {
+        played.push(file);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
+      return Promise.resolve();
+    });
+    vi.stubGlobal("innerHeight", 800);
+    Object.defineProperty(window, "visualViewport", { configurable: true, value: { height: 800 } });
+
+    // Plate height 700 < 800 — fits. Band [0, 640).
+    // y=0.2 → 140 in; y=0.95 → 665 out.
+    const plate = {
+      top: 0,
+      left: 0,
+      right: 300,
+      bottom: 700,
+      width: 300,
+      height: 700,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    } as DOMRect;
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    const layer = controller.registerLayer({ id: "1", getRect: () => plate });
+    layer.setCaptions([
+      { index: 0, audio: "sfx/fit-top.mp3", volume: 1, x: 0.5, y: 0.2 },
+      { index: 1, audio: "sfx/fit-bot.mp3", volume: 1, x: 0.5, y: 0.95 },
+    ]);
+
+    await vi.waitFor(() => expect(played).toEqual(["fit-top.mp3"]), { timeout: 3000 });
+    await new Promise((r) => setTimeout(r, 200));
+    expect(played).not.toContain("fit-bot.mp3");
+    controller.stop();
+    document.body.classList.remove("view-vertical");
   });
 
   it("starts auto-read after unlock without requiring a scroll (geometry visibility)", async () => {

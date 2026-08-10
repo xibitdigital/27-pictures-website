@@ -103,7 +103,7 @@ describe("ErinApp", () => {
     const back = wrapper.find(".toons-back");
     expect(back.attributes("href")).toBe("/");
     expect(back.find("img.toons-back-logo, img.nav-logo-img").exists()).toBe(true);
-    expect(back.find("img").attributes("src")).toBe("/logo.png");
+    expect(back.find("img").attributes("src")).toBe("/logosquare.png");
     expect(wrapper.find("#book").exists()).toBe(true);
     expect(wrapper.find("#btn-prev").exists()).toBe(true);
     expect(wrapper.find("#btn-next").exists()).toBe(true);

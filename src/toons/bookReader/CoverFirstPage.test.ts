@@ -37,6 +37,12 @@ describe("CoverFirstPage", () => {
     expect(wrapper.find(".front-cover-synopsis").text()).toMatch(/netrunner/i);
     expect(wrapper.findAll(".front-cover-separator").length).toBe(2);
     expect(wrapper.find(".front-cover-brand-word").text()).toBe("FlipFrame");
+    // Build id is injected at Vite config time (git short SHA or VITE_FLIPFRAME_BUILD).
+    const buildEl = wrapper.find(".front-cover-brand-build");
+    if (import.meta.env.VITE_FLIPFRAME_BUILD) {
+      expect(buildEl.exists()).toBe(true);
+      expect(buildEl.text()).toMatch(/^build\s+\S+/);
+    }
     expect(wrapper.find(".front-cover-howto").exists()).toBe(true);
     expect(wrapper.find(".front-cover-howto-keys").exists()).toBe(true);
     expect(wrapper.find(".front-cover-howto-click").exists()).toBe(true);

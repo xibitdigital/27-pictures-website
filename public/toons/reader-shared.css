@@ -75,9 +75,10 @@ body.toons-reader {
 .toons-back .nav-logo-img {
   display: block;
   height: var(--nav-logo-h, 40px);
-  width: auto;
+  width: var(--nav-logo-h, 40px);
+  object-fit: contain;
   border: 1px solid var(--red-smile);
-  padding: 6px;
+  padding: 4px;
   box-sizing: border-box;
   background: var(--bg-dark);
 }
@@ -808,6 +809,19 @@ img.cover-texture-img {
   outline-offset: 2px;
 }
 
+.front-cover-brand-build {
+  display: block;
+  margin: 0.2rem 0 0;
+  font-family: "Inter", ui-monospace, monospace;
+  font-weight: 500;
+  font-size: clamp(0.55rem, 0.52rem + 0.1vw, 0.62rem);
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: none;
+  color: var(--silver);
+  opacity: 0.85;
+}
+
 .front-cover-brand-by {
   display: block;
   margin: 0.25rem 0 0;
@@ -1185,12 +1199,29 @@ body.view-vertical .reader {
  * Page plates + caption bubbles: pan-y so a finger that starts on a bubble
  * still scrolls. Default touch-action on clickable nodes delays the fling
  * until the browser decides it is not a tap — feels “stuck” on fast scrolls.
+ * Interactive bubbles still use pan-y; WordCaption plays on pointerup with a
+ * movement slop so a slightly jittery tap is not lost when click is cancelled.
  */
 body.view-vertical .vertical-page,
 body.view-vertical .vertical-page img,
 body.view-vertical .jax-word-layer,
 body.view-vertical .jax-word {
   touch-action: pan-y;
+  /* Stop iOS long-press “Save Image / Share” sheet eating scroll gestures */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Larger finger hit target on mobile strip (visual box stays small via inset). */
+body.view-vertical .jax-word[role="button"]::after {
+  content: "";
+  position: absolute;
+  /* ~44px min target without shifting glyph/bubble layout */
+  inset: -0.65em;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  margin: auto;
 }
 
 body.view-vertical.is-fullscreen .reader {
@@ -1212,7 +1243,9 @@ body.view-vertical.is-fullscreen .reader {
   height: auto;
   vertical-align: top;
   user-select: none;
+  -webkit-user-select: none;
   -webkit-user-drag: none;
+  -webkit-touch-callout: none;
 }
 
 /* Book page-slots position images absolutely; vertical pages must not */
@@ -1475,6 +1508,12 @@ body.single-page .flip-page.flipping.from-left {
   .reader {
     padding: 3.25rem 0.75rem 1.5rem;
     gap: 1.15rem;
+  }
+
+  /* Mobile: plates run edge to edge — no page frame line (book or scroll mode) */
+  .spread,
+  .vertical-page {
+    border: none;
   }
 
   .toons-back {

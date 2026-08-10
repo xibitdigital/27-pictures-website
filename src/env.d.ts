@@ -8,6 +8,11 @@ interface ImportMetaEnv {
    * Example: `https://assets.twentyseven.pictures`
    */
   readonly VITE_ASSET_BASE?: string;
+  /**
+   * FlipFrame build id (git short SHA by default; override with VITE_FLIPFRAME_BUILD).
+   * Shown under the FlipFrame name on cover / guide.
+   */
+  readonly VITE_FLIPFRAME_BUILD?: string;
 }
 
 interface ImportMeta {

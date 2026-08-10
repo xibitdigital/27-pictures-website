@@ -1,12 +1,22 @@
 /**
  * One shared HTMLAudioElement for FlipFrame caption auto-read.
- * Allocating a new Audio() per clip + rapid stop/start exhausts iOS media slots.
+ *
+ * iOS Safari unlock is sticky on the **same** HTMLMediaElement that received a
+ * gesture-time play(). Destroying that node on every scroll (release → new
+ * Audio) makes post-scroll auto-read silent until the next tap. Keep one
+ * element for the controller lifetime; only hard-drop it on full stop().
  */
 
 /** Hard cap so a hung clip cannot freeze the queue forever. */
 export const SPEAK_MAX_MS = 16000;
 /** If play() neither starts nor rejects, fail open. */
 export const PLAY_START_MS = 4000;
+
+/**
+ * Tiny silent WAV (data URI). CSP media-src allows data: on the site.
+ * Used to sticky-unlock the shared element on a real user gesture.
+ */
+export const SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
 
 function clamp01(n: number): number {
   if (!Number.isFinite(n)) return 1;
@@ -25,7 +35,7 @@ export function configureMediaEl(el: HTMLAudioElement): void {
   }
 }
 
-/** Release decoder buffers — required on iOS after rapid pause/src thrash. */
+/** Clear src/buffers without discarding the element (keeps iOS unlock). */
 export function releaseMediaEl(el: HTMLAudioElement): void {
   try {
     el.pause();
@@ -45,8 +55,20 @@ export interface SharedAudioPlayer {
   busy: () => boolean;
   /** Stop in-flight speak (resolve false) and pause the element. */
   stopCurrent: () => void;
-  /** stopCurrent + drop src/buffers. */
+  /**
+   * stopCurrent + clear src/buffers. Keeps the same HTMLAudioElement so iOS
+   * gesture unlock survives scroll pauses.
+   */
   release: () => void;
+  /**
+   * Full teardown (controller stop). Next speak() allocates a new element.
+   */
+  destroy: () => void;
+  /**
+   * Play a silent clip on the shared element during a user gesture so later
+   * async speak() calls stay allowed on iOS Safari.
+   */
+  unlockFromGesture: () => Promise<void>;
   speak: (url: string, volume: number) => Promise<boolean>;
 }
 
@@ -82,14 +104,40 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
 
   function release(): void {
     stopCurrent();
+    if (el) releaseMediaEl(el);
+    // Keep `el` — iOS unlock is tied to this node.
+  }
+
+  function destroy(): void {
+    stopCurrent();
     if (el) {
       releaseMediaEl(el);
-      // Drop the node so the next speak() builds a fresh HTMLAudioElement.
-      // After repeated scroll pause/src/load thrash, a single element can
-      // resolve play() without producing sound or "ended" — highlight moves,
-      // audio does not.
       el = null;
     }
+  }
+
+  async function unlockFromGesture(): Promise<void> {
+    const media = getEl();
+    configureMediaEl(media);
+    try {
+      media.pause();
+    } catch {
+      /* ignore */
+    }
+    try {
+      media.src = SILENT_WAV;
+      media.volume = 0.01;
+      await media.play();
+    } catch {
+      /* ignore — still better than nothing */
+    }
+    try {
+      media.pause();
+    } catch {
+      /* ignore */
+    }
+    // Leave a clean pipeline; do not drop the element.
+    releaseMediaEl(media);
   }
 
   function speak(url: string, volume: number): Promise<boolean> {
@@ -104,15 +152,18 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
         /* ignore */
       }
       configureMediaEl(media);
-      // Always assign src for a clean load between clips. Reusing the element
-      // after "ended" without a fresh load is a common book-mode stall: the
-      // first caption plays, then play() never reaches "playing"/"ended" again.
-      media.src = url;
-      try {
-        media.load();
-      } catch {
-        /* ignore */
+      // Assign src only — do NOT call load() after. src= already starts the
+      // resource fetch; an extra load() aborts it and makes the following
+      // play() reject (bubble tap fails silently on the user-gesture stack).
+      if (media.src) {
+        try {
+          media.removeAttribute("src");
+          media.load();
+        } catch {
+          /* ignore */
+        }
       }
+      media.src = url;
       media.volume = clamp01(Number(volume));
     } catch {
       return Promise.resolve(false);
@@ -187,6 +238,8 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
     busy: () => speakFinish != null,
     stopCurrent,
     release,
+    destroy,
+    unlockFromGesture,
     speak,
   };
 }

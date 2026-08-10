@@ -37,10 +37,14 @@ describe("CoverGuideDialog", () => {
     expect(wrapper.find(".front-cover-synopsis").text()).toMatch(/Detective Nero/i);
     expect(wrapper.find(".front-cover-story").exists()).toBe(true);
     expect(wrapper.find(".front-cover-brand-word").text()).toBe("FlipFrame");
+    if (import.meta.env.VITE_FLIPFRAME_BUILD) {
+      expect(wrapper.find(".front-cover-brand-build").text()).toMatch(/^build\s+\S+/);
+    }
     expect(wrapper.find(".front-cover-howto").exists()).toBe(true);
     expect(wrapper.find(".front-cover-howto-keys").exists()).toBe(true);
     expect(wrapper.find(".front-cover-howto-click").exists()).toBe(true);
-    expect(wrapper.find(".front-cover-howto-caption").text()).toMatch(/arrow keys|click on a page/i);
+    // Modal guide is the mobile/vertical entry — scroll-oriented howto, not book keys.
+    expect(wrapper.find(".front-cover-howto-caption").text()).toMatch(/scroll|tap/i);
     expect(wrapper.find(".cover-first-page--modal").exists()).toBe(true);
     expect(wrapper.find(".cover-guide-cta").text()).toMatch(/Start reading/i);
   });

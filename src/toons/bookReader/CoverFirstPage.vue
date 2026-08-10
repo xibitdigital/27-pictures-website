@@ -46,6 +46,8 @@ const soundLabel = computed(() => (props.soundEnabled ? "Sound on" : props.sound
 const storyText = computed(() => resolveCoverStory(props.synopsis));
 const isModal = computed(() => props.variant === "modal");
 const displayTitle = computed(() => props.title || (isModal.value ? "Story" : ""));
+/** Build id from Vite (git short SHA or VITE_FLIPFRAME_BUILD). */
+const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
 </script>
 
 <template>
@@ -93,6 +95,7 @@ const displayTitle = computed(() => props.title || (isModal.value ? "Story" : ""
             </svg>
           </button>
         </p>
+        <p v-if="buildId" class="front-cover-brand-build" :title="`FlipFrame build ${buildId}`">build {{ buildId }}</p>
         <p class="front-cover-brand-by">by twentyseven.pictures</p>
       </div>
 
@@ -164,7 +167,13 @@ const displayTitle = computed(() => props.title || (isModal.value ? "Story" : ""
             <circle class="front-cover-howto-click-dot" cx="63.5" cy="30" r="2.25" />
           </svg>
         </div>
-        <p class="front-cover-howto-caption">Use the arrow keys, or click on a page, to turn</p>
+        <p class="front-cover-howto-caption">
+          {{
+            isModal
+              ? "Scroll to read. Captions in view play themselves — tap any bubble to replay."
+              : "Use the arrow keys, or click on a page, to turn"
+          }}
+        </p>
       </div>
     </div>
 

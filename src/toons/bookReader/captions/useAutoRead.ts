@@ -1,19 +1,28 @@
 /**
- * Auto-read: whatever is on screen reads itself out loud.
+ * Auto-read: play captions by **anchor position**, not page alignment.
  *
- * Layers register id + getRect + captions. Visibility is owned here via
- * geometry (visibility.ts). Queue transitions live in queuePolicy.ts.
- * Scroll uses pausePlayback(); unmount uses stop(). Unlock primes media then
- * one microtask sync; the shell owns the single post-dialog kick after OK.
+ * - Vertical / mobile strip (`body.view-vertical`): only balloons whose screen
+ *   Y sits in the top 80% of the viewport (FOCUS_BAND_END). Scroll to bring
+ *   lower balloons into the band — the plate does not need to snap/align.
+ * - Book mode: full viewport band so every on-screen balloon on a spread can
+ *   speak (no vertical scroll of the plate).
+ *
+ * Layers register id + getRect + captions. Clip selection lives in
+ * visibility.ts (collectFocusClips). Queue transitions use queuePolicy.ts on
+ * caption keys (`pageId:index`).
+ *
+ * A caption plays **once while it stays on screen**: played keys are remembered
+ * and only forgotten when the anchor scrolls out of the viewport (or its plate
+ * unmounts). Without that, every scroll stop reset coverage and re-read the
+ * bubbles still sitting in the band.
  */
 import { inject, provide, ref, type InjectionKey, type Ref } from "vue";
-import { readingOrder } from "./captionModel";
 import { unlockMediaFromGesture, primeHtmlAudioUnlock } from "./mediaUnlock";
 import { createSharedAudioPlayer } from "./sharedAudio";
-import { orderedOnScreenLayers, VISIBLE_RATIO } from "./visibility";
-import { diffVisiblePages } from "./queuePolicy";
+import { collectFocusClips, keysOutOfView, FOCUS_BAND_END, VISIBLE_RATIO, type FocusClip } from "./visibility";
+import { diffVisiblePages, pageKey } from "./queuePolicy";
 
-export { VISIBLE_RATIO } from "./visibility";
+export { VISIBLE_RATIO, FOCUS_BAND_END } from "./visibility";
 
 export interface AutoReadCaptionRef {
   index: number;
@@ -40,6 +49,12 @@ export interface AutoReadOptions {
   gapMs?: number;
   enabled?: boolean;
   requireGesture?: boolean;
+  /**
+   * End of the focus band as a fraction of viewport height for **vertical /
+   * mobile scroll mode** (default 0.8 = top 80%). Clips below the band wait
+   * until scroll brings them up. Book mode always uses the full viewport (1).
+   */
+  focusBandEnd?: number;
 }
 
 interface LayerRecord {
@@ -50,9 +65,11 @@ interface LayerRecord {
   speakingIndex: Ref<number | null>;
 }
 
-interface PageJob {
-  id: string;
-  captions: AutoReadCaptionRef[];
+/** One speakable clip — queue is caption-level, not whole-page. */
+interface ClipJob {
+  key: string;
+  layerId: string;
+  caption: AutoReadCaptionRef;
 }
 
 export interface AutoReadController {
@@ -72,10 +89,24 @@ const SCROLL_IDLE_MS = 700;
 const MAX_PLAY_FAILS = 2;
 const PLAY_FAIL_BACKOFF_MS = 400;
 
+function viewportHeight(): number {
+  try {
+    const vv = window.visualViewport?.height;
+    if (vv != null && vv > 1) return vv;
+  } catch {
+    /* ignore */
+  }
+  return window.innerHeight || 0;
+}
+
 export function createAutoReadController(options: AutoReadOptions = {}): AutoReadController {
   const gapMs = options.gapMs != null ? Number(options.gapMs) : 600;
   const enabled = options.enabled !== false;
   const requireGesture = options.requireGesture !== false;
+  const focusBandEnd =
+    options.focusBandEnd != null && Number.isFinite(Number(options.focusBandEnd))
+      ? Math.max(0.15, Math.min(1, Number(options.focusBandEnd)))
+      : FOCUS_BAND_END;
 
   const layers = new Set<LayerRecord>();
   const player = createSharedAudioPlayer();
@@ -91,9 +122,12 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   let running = false;
   let currentKey = "";
   let doneKey = "";
+  /** Caption keys (`layerId:index`) covered / wanted for the current view. */
   let coveredIds = new Set<string>();
   let wantedIds = new Set<string>();
-  let playQueue: PageJob[] = [];
+  let playQueue: ClipJob[] = [];
+  /** Caption keys already spoken and still on screen — never auto-repeat. */
+  const playedIds = new Set<string>();
   let speakingLayer: LayerRecord | null = null;
   let retryArmed = false;
   let pendingRetryKey = "";
@@ -117,6 +151,12 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
 
   /** Kill audio + pump. Does not touch scroll timers. */
   function pausePlayback(): void {
+    // Scroll / hard-cut often interrupts mid-clip. Count the active bubble as
+    // heard so settle does not restart it while it is still on screen (mobile
+    // fling thrash was re-reading the same line after every pause).
+    if (speakingLayer && speakingLayer.speakingIndex.value != null) {
+      playedIds.add(`${speakingLayer.id}:${speakingLayer.speakingIndex.value}`);
+    }
     seq++;
     running = false;
     playQueue = [];
@@ -132,7 +172,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     unlockTimer = clearTimer(unlockTimer);
     scrolling = false;
     scrollPaused = false;
-    player.release();
+    playedIds.clear();
+    player.destroy();
   }
 
   function maybeShowPrompt(): void {
@@ -166,6 +207,9 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     playFailStreak = 0;
     pendingRetryKey = "";
 
+    // Sticky-unlock the **shared** player element (not a throwaway Audio).
+    // Extra context resume still helps some WebKit builds.
+    void player.unlockFromGesture();
     unlockMediaFromGesture();
 
     // One gesture-adjacent restart. Shell owns post-dialog reflow via kick().
@@ -173,8 +217,10 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     unlockTimer = setTimeout(() => {
       unlockTimer = null;
       pausePlayback();
+      // Soft release only — keep the unlocked element for post-scroll speak().
       player.release();
       resetCoverage();
+      playedIds.clear();
       sync();
     }, 0);
   }
@@ -194,16 +240,53 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     wantedIds = new Set();
   }
 
-  /** Ordered on-screen layers with captions (geometry only). */
-  function readableLayers(): LayerRecord[] {
-    return orderedOnScreenLayers(layers, window.innerHeight || 0, (l) => !l.released && l.captions.length > 0);
-  }
-
   function liveLayer(id: string): LayerRecord | null {
     for (const layer of layers) {
       if (layer.id === id && !layer.released) return layer;
     }
     return null;
+  }
+
+  /**
+   * Mobile strip → top 80% caption band. Book mode → full viewport so every
+   * balloon on a visible spread can speak. Detected via body.view-vertical
+   * (set by useViewMode) so plate height is never used as a proxy for mode —
+   * mobile plates often *fit* the emulator viewport and were wrongly treated
+   * as full-page before.
+   */
+  function activeBandEnd(): number {
+    try {
+      if (typeof document !== "undefined" && document.body?.classList.contains("view-vertical")) {
+        return focusBandEnd;
+      }
+    } catch {
+      /* ignore */
+    }
+    return 1;
+  }
+
+  /** Clips currently in the active focus band (caption screen Y only). */
+  function focusClips(): FocusClip[] {
+    return collectFocusClips(layers, viewportHeight(), activeBandEnd());
+  }
+
+  /** Jobs for clips not yet spoken in this on-screen pass. */
+  function clipJobs(clips: FocusClip[]): ClipJob[] {
+    return clips
+      .filter((c) => !playedIds.has(c.key))
+      .map((c) => ({
+        key: c.key,
+        layerId: c.layerId,
+        caption: c.caption,
+      }));
+  }
+
+  /** Forget played captions that scrolled off screen so they can read again. */
+  function prunePlayed(): void {
+    if (!playedIds.size) return;
+    for (const key of keysOutOfView(layers, viewportHeight(), playedIds)) {
+      playedIds.delete(key);
+    }
   }
 
   function schedule(): void {
@@ -222,21 +305,20 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     settleTimer = clearTimer(settleTimer);
     scrollIdleTimer = clearTimer(scrollIdleTimer);
 
-    // Hard-cut audio once per fling and fully release the media element so the
-    // next idle speak() does not reuse a half-dead Audio node (common after a
-    // few scroll pauses — highlight would advance with no sound).
+    // Hard-cut audio once per fling. Pause only — do not release()/load() the
+    // shared element. iOS Safari ties unlock to that node; clearing src mid-
+    // session made post-scroll auto-read silent on real devices / Simulator.
     if (!scrollPaused) {
       scrollPaused = true;
       if (running || player.busy()) pausePlayback();
-      player.release();
+      else player.stopCurrent();
     }
 
     scrollIdleTimer = setTimeout(() => {
       scrollIdleTimer = null;
       scrolling = false;
       scrollPaused = false;
-      // Always re-read whatever is under the viewport after a fling. Keeping a
-      // stale doneKey made sync() no-op or skip pages after several scrolls.
+      // Re-collect whatever sits in the focus band under the new scroll offset.
       resetCoverage();
       doneKey = "";
       playFailStreak = 0;
@@ -244,19 +326,12 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     }, SCROLL_IDLE_MS);
   }
 
-  function jobsFrom(layersList: LayerRecord[]): PageJob[] {
-    return layersList.map((l) => ({
-      id: l.id,
-      captions: readingOrder(l.captions),
-    }));
-  }
-
-  function startJobs(jobs: PageJob[], key: string, ids: string[]): void {
+  function startJobs(jobs: ClipJob[], key: string, allKeys: string[]): void {
     pausePlayback();
     playQueue = jobs;
     currentKey = key;
-    coveredIds = new Set(ids);
-    wantedIds = new Set(ids);
+    coveredIds = new Set(allKeys);
+    wantedIds = new Set(allKeys);
     doneKey = "";
     void pump(key);
   }
@@ -267,15 +342,19 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
       maybeShowPrompt();
       return;
     }
-    const ordered = readableLayers();
-    if (!ordered.length) {
+
+    prunePlayed();
+    const clips = focusClips();
+    if (!clips.length) {
       if (running && layers.size) return;
       resetCoverage();
       pausePlayback();
       return;
     }
 
-    const diff = diffVisiblePages(currentKey, ordered, coveredIds, {
+    // Treat each caption key as a “page id” for the pure queue policy.
+    const asPages = clips.map((c) => ({ id: c.key }));
+    const diff = diffVisiblePages(currentKey, asPages, coveredIds, {
       running,
       doneKey,
     });
@@ -285,27 +364,28 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     if (diff.kind === "subset") {
       currentKey = diff.key;
       wantedIds = new Set(diff.wantedIds);
-      playQueue = playQueue.filter((j) => wantedIds.has(j.id));
+      playQueue = playQueue.filter((j) => wantedIds.has(j.key));
       return;
     }
 
     if (diff.kind === "expand") {
+      const appendKeys = new Set(diff.append.map((p) => p.id));
+      const jobs = clipJobs(clips.filter((c) => appendKeys.has(c.key)));
       currentKey = diff.key;
       coveredIds = new Set(diff.allIds);
       wantedIds = new Set(diff.allIds);
-      const jobs = jobsFrom(diff.append);
       if (running) {
         playQueue.push(...jobs);
         return;
       }
-      playQueue = jobs;
-      doneKey = "";
-      void pump(diff.key);
+      startJobs(jobs, diff.key, diff.allIds);
       return;
     }
 
-    // replace
-    startJobs(jobsFrom(diff.toRead), diff.key, diff.allIds);
+    // replace — play newcomers (or full band on first paint / post-scroll reset)
+    const toReadKeys = new Set(diff.toRead.map((p) => p.id));
+    const jobs = clipJobs(clips.filter((c) => toReadKeys.has(c.key)));
+    startJobs(jobs, diff.key, diff.allIds);
   }
 
   async function speakLayer(layer: LayerRecord | null, caption: AutoReadCaptionRef): Promise<boolean> {
@@ -329,23 +409,21 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
       while (playQueue.length) {
         if (seq !== mySeq || scrolling) return;
         const job = playQueue.shift()!;
-        if (!wantedIds.has(job.id)) continue;
-        for (const caption of job.captions) {
+        if (!wantedIds.has(job.key)) continue;
+        const layer = liveLayer(job.layerId);
+        const played = await speakLayer(layer, job.caption);
+        if (seq !== mySeq || scrolling) return;
+        if (!played) {
+          armRetry(key);
+          return;
+        }
+        playFailStreak = 0;
+        // Spoken while on screen → do not re-read on the next scroll settle.
+        playedIds.add(job.key);
+        if (gapMs > 0) {
+          await new Promise<void>((resolve) => setTimeout(resolve, gapMs));
           if (seq !== mySeq || scrolling) return;
-          if (!wantedIds.has(job.id)) break;
-          const layer = liveLayer(job.id);
-          const played = await speakLayer(layer, caption);
-          if (seq !== mySeq || scrolling) return;
-          if (!played) {
-            armRetry(key);
-            return;
-          }
-          playFailStreak = 0;
-          if (gapMs > 0) {
-            await new Promise<void>((resolve) => setTimeout(resolve, gapMs));
-            if (seq !== mySeq || scrolling) return;
-            if (!wantedIds.has(job.id)) break;
-          }
+          if (!wantedIds.has(job.key)) continue;
         }
       }
       if (seq === mySeq) doneKey = currentKey || key;
@@ -379,6 +457,17 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     armNextGestureUnlock();
   }
 
+  function markViewOwned(): void {
+    const clips = focusClips();
+    if (clips.length) {
+      const keys = clips.map((c) => c.key);
+      currentKey = pageKey(keys);
+      coveredIds = new Set(keys);
+      wantedIds = new Set(keys);
+    }
+    doneKey = currentKey;
+  }
+
   function registerLayer(opts: AutoReadLayerOptions): AutoReadLayerHandle {
     const record: LayerRecord = {
       id: opts.id,
@@ -400,13 +489,31 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
         schedule();
       },
       playOne(caption: AutoReadCaptionRef): void {
+        // Cancel pending auto-read timers first. After scroll idle we always
+        // schedule(); if that fires mid-tap it pausePlayback()s and kills this
+        // gesture-driven clip (bubble “doesn’t play”).
+        settleTimer = clearTimer(settleTimer);
+        failRetryTimer = clearTimer(failRetryTimer);
+        unlockTimer = clearTimer(unlockTimer);
+        scrollIdleTimer = clearTimer(scrollIdleTimer);
+        scrolling = false;
+        scrollPaused = false;
+
         if (!unlocked.value) {
           unlocked.value = true;
           promptOpen.value = false;
+          // Unlock the shared element on this gesture (not a throwaway Audio).
+          void player.unlockFromGesture();
           void primeHtmlAudioUnlock();
         }
+        // Hard stop + soft-clear. Keep the same unlocked node for iOS; the
+        // tap itself is a user gesture so speak() is allowed either way.
         pausePlayback();
-        doneKey = currentKey;
+        player.release();
+        // Mark the current focus band as user-owned so a late sync() is a no-op.
+        markViewOwned();
+        // Tapped clip counts as read — auto-read must not repeat it in place.
+        playedIds.add(`${record.id}:${caption.index}`);
         void speakLayer(record, caption);
       },
       release(): void {

@@ -156,7 +156,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="rootEl" class="jax-word-layer" aria-hidden="true" :style="layerStyle" :data-page-num="pageNum">
+  <!-- Interactive SFX bubbles need to stay in the a11y tree (role=button on WordCaption). -->
+  <div ref="rootEl" class="jax-word-layer" :style="layerStyle" :data-page-num="pageNum">
     <WordCaption
       v-for="caption in captions"
       :key="caption.key"

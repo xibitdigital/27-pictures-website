@@ -352,7 +352,7 @@ defineExpose<ToonReaderShellExpose>({
 
   <a href="/" class="toons-back" title="27 Pictures" aria-label="27 Pictures - Return to homepage">
     <img
-      src="/logo.png"
+      src="/logosquare.png"
       class="nav-logo-img toons-back-logo"
       alt="27 Pictures"
       title="27 Pictures - Horror Film Production Studio"
