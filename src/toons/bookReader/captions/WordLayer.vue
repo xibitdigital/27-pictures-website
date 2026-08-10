@@ -73,17 +73,15 @@ function measure(): void {
   }
   const next = imageContentBox(img);
   const cur = box.value;
-  if (
-    !cur ||
-    cur.left !== next.left ||
-    cur.top !== next.top ||
-    cur.width !== next.width ||
-    cur.height !== next.height
-  ) {
+  const changed =
+    !cur || cur.left !== next.left || cur.top !== next.top || cur.width !== next.width || cur.height !== next.height;
+  if (changed) {
     box.value = { left: next.left, top: next.top, width: next.width, height: next.height };
   }
   emit("measured", true);
-  layer?.layoutChanged();
+  // Only notify auto-read when the plate box actually moves/resizes — not on
+  // every ResizeObserver tick (speaking highlight must not re-schedule the queue).
+  if (changed) layer?.layoutChanged();
 }
 
 const autoRead = useAutoReadController();

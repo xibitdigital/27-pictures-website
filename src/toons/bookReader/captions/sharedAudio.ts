@@ -41,14 +41,6 @@ export function releaseMediaEl(el: HTMLAudioElement): void {
   }
 }
 
-function resolveAbsUrl(url: string): string {
-  try {
-    return new URL(url, location.href).href;
-  } catch {
-    return url;
-  }
-}
-
 export interface SharedAudioPlayer {
   busy: () => boolean;
   /** Stop in-flight speak (resolve false) and pause the element. */
@@ -62,6 +54,8 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
   let el: HTMLAudioElement | null = null;
   let speakFinish: ((ok: boolean) => void) | null = null;
   let aborted = false;
+  /** Bump to invalidate in-flight event handlers after stop/next clip. */
+  let speakGen = 0;
 
   function getEl(): HTMLAudioElement {
     if (!el) {
@@ -73,6 +67,7 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
 
   function stopCurrent(): void {
     aborted = true;
+    speakGen++;
     const finish = speakFinish;
     speakFinish = null;
     if (finish) finish(false);
@@ -93,6 +88,8 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
   function speak(url: string, volume: number): Promise<boolean> {
     const media = getEl();
     aborted = false;
+    const gen = ++speakGen;
+
     try {
       try {
         media.pause();
@@ -100,15 +97,14 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
         /* ignore */
       }
       configureMediaEl(media);
-      const abs = resolveAbsUrl(url);
-      if (media.src !== abs) {
-        media.src = url;
-      } else {
-        try {
-          media.currentTime = 0;
-        } catch {
-          /* ignore */
-        }
+      // Always assign src for a clean load between clips. Reusing the element
+      // after "ended" without a fresh load is a common book-mode stall: the
+      // first caption plays, then play() never reaches "playing"/"ended" again.
+      media.src = url;
+      try {
+        media.load();
+      } catch {
+        /* ignore */
       }
       media.volume = clamp01(Number(volume));
     } catch {
@@ -122,10 +118,14 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
       let maxTimer: ReturnType<typeof setTimeout> | null = null;
 
       const finish = (ok: boolean): void => {
-        if (done) return;
+        if (done || gen !== speakGen) return;
         done = true;
         if (startTimer != null) clearTimeout(startTimer);
         if (maxTimer != null) clearTimeout(maxTimer);
+        media.removeEventListener("ended", onEnded);
+        media.removeEventListener("error", onError);
+        media.removeEventListener("playing", onPlaying);
+        media.removeEventListener("play", onPlaying);
         if (speakFinish === finish) speakFinish = null;
         try {
           media.pause();
@@ -134,21 +134,23 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
         }
         resolve(ok);
       };
-      speakFinish = finish;
 
-      media.addEventListener("ended", () => finish(true), { once: true });
-      media.addEventListener("error", () => finish(true), { once: true });
-      media.addEventListener(
-        "playing",
-        () => {
-          playStarted = true;
-          if (startTimer != null) {
-            clearTimeout(startTimer);
-            startTimer = null;
-          }
-        },
-        { once: true }
-      );
+      const onEnded = (): void => finish(true);
+      const onError = (): void => finish(true);
+      const onPlaying = (): void => {
+        playStarted = true;
+        if (startTimer != null) {
+          clearTimeout(startTimer);
+          startTimer = null;
+        }
+      };
+
+      speakFinish = finish;
+      // Listeners before play() so short/cached clips cannot race past them.
+      media.addEventListener("ended", onEnded);
+      media.addEventListener("error", onError);
+      media.addEventListener("playing", onPlaying);
+      media.addEventListener("play", onPlaying);
 
       maxTimer = setTimeout(() => finish(true), SPEAK_MAX_MS);
       startTimer = setTimeout(() => {
@@ -156,10 +158,18 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
       }, PLAY_START_MS);
 
       try {
-        void media.play().catch(() => {
-          if (aborted || speakFinish !== finish) return;
-          finish(false);
-        });
+        // play() resolves when playback *starts* — more reliable than the
+        // "playing" event alone (some book-mode paths never fire it).
+        void media
+          .play()
+          .then(() => {
+            if (gen !== speakGen) return;
+            onPlaying();
+          })
+          .catch(() => {
+            if (aborted || gen !== speakGen || speakFinish !== finish) return;
+            finish(false);
+          });
       } catch {
         finish(false);
       }
