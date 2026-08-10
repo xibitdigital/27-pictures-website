@@ -1598,7 +1598,11 @@ body.single-page .flip-page.flipping.from-left {
   opacity: 1;
 }
 
-/* ── Mobile cover guide (story + how-to popup) ── */
+/* ── Mobile cover guide (story + how-to popup) ──
+   Short phones (e.g. iPhone 13 mini): one outer scrollport must include
+   title, synopsis, FlipFrame brand, and how-to — not a nested story-only scroll.
+   Panel uses a definite max-height so flex children shrink and overflow-y works
+   on iOS WebKit (max-height alone is unreliable for that). */
 .cover-guide-dialog {
   position: relative;
   z-index: 220;
@@ -1619,15 +1623,21 @@ body.single-page .flip-page.flipping.from-left {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: max(0.75rem, env(safe-area-inset-top)) 0.85rem max(0.75rem, env(safe-area-inset-bottom));
+  /* Prefer svh so mobile browser chrome doesn’t steal the scroll region */
+  padding: max(0.5rem, env(safe-area-inset-top, 0px)) 0.75rem max(0.5rem, env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
+  /* Let the panel own vertical pan; avoid the page behind stealing gestures */
+  overscroll-behavior: none;
 }
 
 .cover-guide-panel {
   width: min(22rem, 100%);
-  max-height: min(86dvh, 640px);
+  /* Cap height so .cover-guide-scroll becomes the scrollport on short screens */
+  max-height: min(92svh, 92dvh, 720px);
+  max-height: min(92dvh, 720px);
   display: flex;
   flex-direction: column;
+  min-height: 0;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: 12px;
@@ -1663,76 +1673,99 @@ body.single-page .flip-page.flipping.from-left {
   border-color: var(--border-light);
 }
 
-/* Only this region scrolls — body is shared CoverFirstPage (modal variant) */
+/* Single scrollport for title + story + FlipFrame + how-to */
 .cover-guide-scroll {
   flex: 1 1 auto;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 1rem 1rem 0.5rem;
+  padding: 1rem 1rem 0.75rem;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   scrollbar-width: thin;
   scrollbar-color: var(--border-light) transparent;
 }
 
-/* Flow layout for CoverFirstPage inside the dialog (not absolute book fill) */
+/* Flow layout for CoverFirstPage inside the dialog (not absolute book fill).
+   Block layout avoids nested flex “story fills space, manual clipped” traps. */
 .front-cover-instructions--modal {
   position: relative;
   inset: auto;
   z-index: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.4rem;
-  padding: 0 0.25rem 0.5rem;
+  display: block;
+  padding: 0 0.25rem 0.75rem;
   overflow: visible;
   max-width: none;
   width: 100%;
+  height: auto;
+  max-height: none;
   --front-cover-col: 100%;
+  text-align: left;
+  color: var(--silver);
+  box-sizing: border-box;
 }
 
 .front-cover-instructions--modal .front-cover-title {
   padding-right: 2.5rem; /* room for absolute close */
   text-align: left;
-  align-self: stretch;
   max-width: none;
+  margin-bottom: 0.15rem;
 }
 
 .front-cover-instructions--modal .front-cover-subtitle {
   text-align: left;
-  align-self: stretch;
   max-width: none;
+  margin-bottom: 0.15rem;
 }
 
 .front-cover-instructions--modal .front-cover-story {
+  display: block;
   flex: none;
   min-height: 0;
+  max-height: none;
   max-width: none;
+  width: 100%;
+  padding-top: 0.35rem;
 }
 
 .front-cover-instructions--modal .front-cover-synopsis {
+  display: block;
   flex: none;
   overflow: visible;
   max-height: none;
-  padding-right: 0;
+  min-height: 0;
+  padding: 0.1rem 0 0.25rem;
   font-size: clamp(0.88rem, 0.82rem + 0.35vw, 1rem);
   line-height: 1.5;
 }
 
-.front-cover-instructions--modal .front-cover-separator,
+.front-cover-instructions--modal .front-cover-separator {
+  max-width: none;
+  width: 100%;
+  margin: 0.65rem 0;
+}
+
 .front-cover-instructions--modal .front-cover-manual,
 .front-cover-instructions--modal .front-cover-howto {
   max-width: none;
+  width: 100%;
 }
 
 .front-cover-instructions--modal .front-cover-manual {
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
+  flex: none;
+  flex-shrink: 0;
+  gap: 0.55rem;
+  padding-top: 0.15rem;
+  padding-bottom: 0.25rem;
 }
 
 .front-cover-instructions--modal .front-cover-brand {
   text-align: left;
+  flex-shrink: 0;
 }
 
 .front-cover-instructions--modal .front-cover-brand-line {
@@ -1741,7 +1774,10 @@ body.single-page .flip-page.flipping.from-left {
 }
 
 .front-cover-instructions--modal .front-cover-howto {
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
+  flex-shrink: 0;
 }
 
 .front-cover-instructions--modal .front-cover-howto-icons {
@@ -1753,10 +1789,12 @@ body.single-page .flip-page.flipping.from-left {
   max-width: none;
 }
 
+/* Sticky start CTA — stays visible while the body above scrolls */
 .cover-guide-footer {
   flex-shrink: 0;
-  padding: 0.75rem 1rem 1rem;
+  padding: 0.75rem 1rem max(0.85rem, env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--border);
+  background: var(--bg-card);
 }
 
 .cover-guide-cta {
@@ -1816,6 +1854,26 @@ body.single-page .flip-page.flipping.from-left {
 @media (max-width: 420px) {
   .cover-guide-toolbar-btn .toon-fs-label {
     display: none;
+  }
+
+  /* Extra room on small phones (13 mini / SE): taller panel, tighter chrome */
+  .cover-guide-panel {
+    max-height: min(94svh, 96dvh);
+    max-height: min(94dvh, 100%);
+    border-radius: 10px;
+  }
+
+  .cover-guide-scroll {
+    padding: 0.85rem 0.85rem 0.65rem;
+  }
+
+  .front-cover-instructions--modal .front-cover-howto-svg {
+    height: clamp(2.6rem, 2.3rem + 2vw, 3.25rem);
+  }
+
+  .front-cover-instructions--modal .front-cover-synopsis {
+    font-size: 0.9rem;
+    line-height: 1.48;
   }
 }
 

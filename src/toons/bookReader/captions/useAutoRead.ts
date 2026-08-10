@@ -20,7 +20,7 @@ import { inject, provide, ref, type InjectionKey, type Ref } from "vue";
 import { unlockMediaFromGesture, primeHtmlAudioUnlock } from "./mediaUnlock";
 import { createSharedAudioPlayer } from "./sharedAudio";
 import { collectFocusClips, keysOutOfView, FOCUS_BAND_END, VISIBLE_RATIO, type FocusClip } from "./visibility";
-import { diffVisiblePages, pageKey } from "./queuePolicy";
+import { pageKey } from "./queuePolicy";
 
 export { VISIBLE_RATIO, FOCUS_BAND_END } from "./visibility";
 
@@ -128,6 +128,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   let playQueue: ClipJob[] = [];
   /** Caption keys already spoken and still on screen — never auto-repeat. */
   const playedIds = new Set<string>();
+  /** Key of the clip currently inside speakLayer (not yet in playedIds). */
+  let activeJobKey = "";
   let speakingLayer: LayerRecord | null = null;
   let retryArmed = false;
   let pendingRetryKey = "";
@@ -328,6 +330,7 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
 
   function startJobs(jobs: ClipJob[], key: string, allKeys: string[]): void {
     pausePlayback();
+    activeJobKey = "";
     playQueue = jobs;
     currentKey = key;
     coveredIds = new Set(allKeys);
@@ -336,6 +339,12 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     void pump(key);
   }
 
+  /**
+   * Rebuild auto-read from the full in-band list in **config array order**.
+   * Avoid expand-append of one caption at a time — a later words[] entry
+   * (e.g. “Be careful.”) could start before an earlier one (“Everyone…”)
+   * when they entered the focus band a frame apart.
+   */
   function sync(): void {
     if (scrolling) return;
     if (requireGesture && !unlocked.value) {
@@ -348,44 +357,43 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     if (!clips.length) {
       if (running && layers.size) return;
       resetCoverage();
+      activeJobKey = "";
       pausePlayback();
       return;
     }
 
-    // Treat each caption key as a “page id” for the pure queue policy.
-    const asPages = clips.map((c) => ({ id: c.key }));
-    const diff = diffVisiblePages(currentKey, asPages, coveredIds, {
-      running,
-      doneKey,
-    });
+    const allKeys = clips.map((c) => c.key);
+    const key = pageKey(allKeys);
+    // Unplayed in config order; exclude the clip currently speaking.
+    const jobs = clipJobs(clips).filter((j) => j.key !== activeJobKey);
 
-    if (diff.kind === "noop") return;
+    wantedIds = new Set(allKeys);
+    coveredIds = new Set(allKeys);
 
-    if (diff.kind === "subset") {
-      currentKey = diff.key;
-      wantedIds = new Set(diff.wantedIds);
-      playQueue = playQueue.filter((j) => wantedIds.has(j.key));
-      return;
-    }
-
-    if (diff.kind === "expand") {
-      const appendKeys = new Set(diff.append.map((p) => p.id));
-      const jobs = clipJobs(clips.filter((c) => appendKeys.has(c.key)));
-      currentKey = diff.key;
-      coveredIds = new Set(diff.allIds);
-      wantedIds = new Set(diff.allIds);
-      if (running) {
-        playQueue.push(...jobs);
+    if (running) {
+      // Same plate growing mid-speak: keep the current clip, rebuild the rest
+      // in config order (never append a later words[] entry ahead of an earlier one).
+      // Different page / active clip left the band: hard-cut to the new list.
+      if (activeJobKey && allKeys.includes(activeJobKey)) {
+        currentKey = key;
+        playQueue = jobs;
         return;
       }
-      startJobs(jobs, diff.key, diff.allIds);
+      startJobs(jobs, key, allKeys);
       return;
     }
 
-    // replace — play newcomers (or full band on first paint / post-scroll reset)
-    const toReadKeys = new Set(diff.toRead.map((p) => p.id));
-    const jobs = clipJobs(clips.filter((c) => toReadKeys.has(c.key)));
-    startJobs(jobs, diff.key, diff.allIds);
+    currentKey = key;
+
+    if (!jobs.length) {
+      doneKey = key;
+      return;
+    }
+
+    // Same band already finished — do not restart.
+    if (doneKey === key) return;
+
+    startJobs(jobs, key, allKeys);
   }
 
   async function speakLayer(layer: LayerRecord | null, caption: AutoReadCaptionRef): Promise<boolean> {
@@ -410,8 +418,10 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
         if (seq !== mySeq || scrolling) return;
         const job = playQueue.shift()!;
         if (!wantedIds.has(job.key)) continue;
+        activeJobKey = job.key;
         const layer = liveLayer(job.layerId);
         const played = await speakLayer(layer, job.caption);
+        if (activeJobKey === job.key) activeJobKey = "";
         if (seq !== mySeq || scrolling) return;
         if (!played) {
           armRetry(key);

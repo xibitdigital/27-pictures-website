@@ -165,9 +165,44 @@ describe("visibility", () => {
         ],
       },
     ];
-    // Full band (book); left page fully before right.
+    // Full band (book); left page fully before right; within page, array order.
     const clips = collectFocusClips(layers, 800, 1);
     expect(clips.map((c) => c.caption.audio)).toEqual(["l1.mp3", "l2.mp3", "r1.mp3", "r2.mp3"]);
+  });
+
+  it("plays in-band captions in config array order, not geometric top→bottom", () => {
+    // Bottom bubble listed first in words[] — still plays first when both in band.
+    const plate = rect({ top: 0, left: 0, width: 300, height: 400 });
+    const layers = [
+      {
+        id: "1",
+        getRect: () => plate,
+        captions: [
+          { index: 0, audio: "first.mp3", volume: 1, x: 0.5, y: 0.85 },
+          { index: 1, audio: "second.mp3", volume: 1, x: 0.5, y: 0.15 },
+        ],
+      },
+    ];
+    const clips = collectFocusClips(layers, 800, 1);
+    expect(clips.map((c) => c.caption.audio)).toEqual(["first.mp3", "second.mp3"]);
+  });
+
+  it("Nero bar page: Everyone (index 3) before Be careful (index 4) despite left/right geometry", () => {
+    // Geometric LTR would play Be careful (x=0.18) first; array order must win.
+    const plate = rect({ top: 0, left: 0, width: 390, height: 700 });
+    const layers = [
+      {
+        id: "13",
+        getRect: () => plate,
+        captions: [
+          { index: 2, audio: "looking.mp3", volume: 1, x: 0.42, y: 0.4 },
+          { index: 3, audio: "everyone.mp3", volume: 1, x: 0.83, y: 0.465 },
+          { index: 4, audio: "careful.mp3", volume: 1, x: 0.18, y: 0.455 },
+        ],
+      },
+    ];
+    const clips = collectFocusClips(layers, 844, 0.8);
+    expect(clips.map((c) => c.caption.audio)).toEqual(["looking.mp3", "everyone.mp3", "careful.mp3"]);
   });
 
   it("splits the layer id off a caption key", () => {

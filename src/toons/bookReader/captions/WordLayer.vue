@@ -106,6 +106,9 @@ const speakingIndex = computed(() => layer?.speakingIndex.value ?? null);
 const spokenCaptions = computed<AutoReadCaptionRef[]>(() =>
   captions.value
     .filter((c) => !!c.audio)
+    .slice()
+    // Keep config words[] order for auto-read (not DOM/geometry order).
+    .sort((a, b) => a.index - b.index)
     .map((c) => ({ index: c.index, audio: c.audio as string, volume: c.volume, x: c.x, y: c.y }))
 );
 

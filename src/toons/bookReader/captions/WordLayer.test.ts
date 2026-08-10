@@ -142,7 +142,7 @@ describe("WordLayer", () => {
     controller.stop();
   });
 
-  it("auto-reads the page top→bottom, highlighting the caption that is speaking", async () => {
+  it("auto-reads in config array order, highlighting the caption that is speaking", async () => {
     stubViewportGeometry();
     const played: string[] = [];
     const clips: HTMLAudioElement[] = [];
@@ -165,7 +165,7 @@ describe("WordLayer", () => {
     const wrapper = mount(WordLayer, {
       props: {
         pageNum: 1,
-        // Deliberately out of reading order in the config.
+        // Array order wins over geometry (bottom entry is first in words[]).
         words: [
           { x: 0.5, y: 0.8, text: "BOTTOM", audio: "sfx/b.mp3" },
           { x: 0.5, y: 0.2, text: "TOP", audio: "sfx/t.mp3" },
@@ -176,15 +176,15 @@ describe("WordLayer", () => {
       global: { provide: { [AUTO_READ_KEY as symbol]: controller } },
     });
 
-    // Top caption first, highlighted while its clip runs.
-    await vi.waitFor(() => expect(played).toEqual(["t.mp3"]), { timeout: 3000 });
-    await nextTick();
-    expect(speaking()).toBe("TOP");
-
-    clips[0].dispatchEvent(new Event("ended"));
-    await vi.waitFor(() => expect(played).toEqual(["t.mp3", "b.mp3"]), { timeout: 3000 });
+    // First words[] entry first, highlighted while its clip runs.
+    await vi.waitFor(() => expect(played).toEqual(["b.mp3"]), { timeout: 3000 });
     await nextTick();
     expect(speaking()).toBe("BOTTOM");
+
+    clips[0].dispatchEvent(new Event("ended"));
+    await vi.waitFor(() => expect(played).toEqual(["b.mp3", "t.mp3"]), { timeout: 3000 });
+    await nextTick();
+    expect(speaking()).toBe("TOP");
 
     clips[1].dispatchEvent(new Event("ended"));
     await vi.waitFor(async () => {

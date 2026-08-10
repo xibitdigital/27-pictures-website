@@ -85,8 +85,9 @@ export function isInFocusBand(screenY: number, viewportHeight: number, bandEnd =
  * Plate height / page alignment are ignored; a partially scrolled plate still
  * yields whatever balloons sit in [0, viewportHeight * bandEnd).
  *
- * Order: plates top→bottom then left→right, then comic reading order within a
- * plate (book spread finishes the left page before the right). Dedupes layer ids.
+ * Order: plates top→bottom then left→right (spread: left page before right),
+ * then **config array order** within a plate (`caption.index` / words[] order).
+ * Dedupes layer ids.
  */
 export function collectFocusClips(
   layers: Iterable<FocusLayerInput>,
@@ -114,8 +115,8 @@ export function collectFocusClips(
     seenLayer.add(layer.id);
 
     const layerClips: FocusClip[] = [];
-    // Comic order within the plate, then keep only in-band anchors.
-    const ordered = layer.captions.slice().sort((a, b) => (Math.abs(a.y - b.y) > 0.06 ? a.y - b.y : a.x - b.x));
+    // Config `words[]` order (stable by index) — not geometric comic sort.
+    const ordered = layer.captions.slice().sort((a, b) => a.index - b.index);
     for (const caption of ordered) {
       if (!caption.audio) continue;
       const pt = captionScreenPoint(plate, caption.x, caption.y);

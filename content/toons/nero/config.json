@@ -964,29 +964,6 @@
           "speaker": "eve"
         },
         {
-          "x": 0.14,
-          "y": 0.34,
-          "align": "center",
-          "size": 28,
-          "variant": "bubble",
-          "color": "#111111",
-          "angle": -6,
-          "scale": 1,
-          "maxWidth": 0.24,
-          "bubble": {
-            "tail": "right",
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
-          "text": {
-            "en": "Get in!",
-            "it": "Sali!",
-            "de": "Rein!",
-            "fr": "Monte!"
-          },
-          "audio": "assets/sfx/13498ab1cac32324d66b20b2410e7f40.mp3"
-        },
-        {
           "x": 0.9,
           "y": 0.36,
           "align": "center",
