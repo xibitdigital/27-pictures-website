@@ -546,13 +546,11 @@ describe("WordLayer", () => {
   it("pauses auto-read during scroll and resumes after idle (mobile fling path)", async () => {
     stubIntersectionObserver();
     const played: string[] = [];
-    const open: HTMLAudioElement[] = [];
     let autoEnd = false;
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
       const file = (this.src || "").split("/").pop() || "";
       if (file === "scroll-a.mp3" || file === "scroll-b.mp3") {
         played.push(file);
-        open.push(this);
         if (autoEnd) setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
       }
       return Promise.resolve();
@@ -575,16 +573,81 @@ describe("WordLayer", () => {
     // First clip starts and stays open (mid-speak).
     await vi.waitFor(() => expect(played).toEqual(["scroll-a.mp3"]), { timeout: 3000 });
 
-    // Mid-clip fling: hard-cut — no further clips while the finger is moving.
+    // Rapid fling ticks: only the first should hard-cut; rest must stay cheap.
     controller.notifyScroll();
-    await new Promise((r) => setTimeout(r, 200));
+    controller.notifyScroll();
+    controller.notifyScroll();
+    await new Promise((r) => setTimeout(r, 300));
     expect(played).toEqual(["scroll-a.mp3"]);
 
-    // After idle, resume from the top of the settled plate.
+    // After scroll idle (~700ms) + settle, resume from the settled plate.
     autoEnd = true;
     await vi.waitFor(() => expect(played.filter((p) => p === "scroll-a.mp3").length).toBeGreaterThanOrEqual(2), {
-      timeout: 3000,
+      timeout: 4000,
     });
+    controller.stop();
+  });
+
+  it("starts auto-read after unlock without requiring a scroll (promote geometry)", async () => {
+    // Layer is registered with geometry but never setVisible(true) — as when
+    // IntersectionObserver never fires under Story/OK. Unlock must promote
+    // from getRect and start reading (no scroll, no DOM class queries).
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const file = (this.src || "").split("/").pop() || "";
+      if (file === "noscroll-a.mp3") {
+        played.push(file);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: true });
+    const onScreen: DOMRect = {
+      x: 0,
+      y: 40,
+      top: 40,
+      left: 0,
+      right: 300,
+      bottom: 500,
+      width: 300,
+      height: 460,
+      toJSON: () => ({}),
+    } as DOMRect;
+
+    const layer = controller.registerLayer({ id: "1", getRect: () => onScreen });
+    layer.setCaptions([{ index: 0, audio: "sfx/noscroll-a.mp3", volume: 1, x: 0.5, y: 0.2 }]);
+    // Intentionally leave setVisible(false) — only geometry promote after OK.
+
+    controller.enableFromPrompt();
+    await vi.waitFor(() => expect(played).toContain("noscroll-a.mp3"), { timeout: 3000 });
+    controller.stop();
+  });
+
+  it("does not spin infinite retries when play() keeps failing after a fling", async () => {
+    stubIntersectionObserver();
+    let playCalls = 0;
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      playCalls++;
+      return Promise.reject(new Error("NotAllowedError"));
+    });
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    mount(WordLayer, {
+      props: {
+        pageNum: 1,
+        words: [{ x: 0.5, y: 0.2, text: "A", audio: "sfx/fail-a.mp3" }] as WordEntry[],
+        imageEl: makeImage(),
+      },
+      attachTo: document.body,
+      global: { provide: { [AUTO_READ_KEY as symbol]: controller } },
+    });
+
+    // Let initial attempt + bounded retries settle (backoff 400 + 800ms).
+    await new Promise((r) => setTimeout(r, 2500));
+    // Without the cap this spun unbounded (thousands of play()s) and crashed the tab.
+    expect(playCalls).toBeGreaterThan(0);
+    expect(playCalls).toBeLessThan(20);
     controller.stop();
   });
 });

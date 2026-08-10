@@ -9,7 +9,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from "vue";
 import WordCaption from "./WordCaption.vue";
 import { buildCaptions, imageContentBox, type CaptionModel } from "./captionModel";
-import { useAutoReadController, type AutoReadCaptionRef } from "./useAutoRead";
+import { useAutoReadController, VISIBLE_RATIO, type AutoReadCaptionRef } from "./useAutoRead";
 import type { LangCode, WordEntry } from "../types";
 
 const props = withDefaults(
@@ -86,6 +86,31 @@ function measure(): void {
     box.value = { left: next.left, top: next.top, width: next.width, height: next.height };
   }
   emit("measured", true);
+  // After size lands, re-check visibility without waiting for a scroll event
+  // (IntersectionObserver often missed the first layout under Story/OK dialogs).
+  requestAnimationFrame(() => updateVisibilityFromLayout());
+}
+
+/** Geometry-based visibility — same bar as auto-read VISIBLE_RATIO. */
+function updateVisibilityFromLayout(): void {
+  if (!layer) return;
+  const el = rootEl.value;
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  // jsdom / pre-layout often reports 0×0 — do not clobber a good IO result.
+  if (r.width < 2 || r.height < 2) return;
+  const vh = typeof window !== "undefined" ? window.innerHeight || 0 : 0;
+  if (vh < 1) {
+    layer.setVisible(true);
+    return;
+  }
+  const visibleH = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+  if (visibleH <= 0) {
+    layer.setVisible(false);
+    return;
+  }
+  const ratio = visibleH / r.height;
+  layer.setVisible(ratio >= VISIBLE_RATIO || visibleH >= Math.min(120, vh * 0.35));
 }
 
 // ── Auto-read ─────────────────────────────────────────────────────────────
@@ -93,7 +118,22 @@ const autoRead = useAutoReadController();
 const layer = autoRead
   ? autoRead.registerLayer({
       id: String(props.pageNum),
-      getRect: () => rootEl.value?.getBoundingClientRect() ?? null,
+      /**
+       * Prefer the plate image rect: the word layer is often 0×0 until measure
+       * finishes (and under Story/OK dialogs). Image layout is stable from
+       * aspect-ratio on `.vertical-page`, so promote/auto-read can start
+       * without a scroll.
+       */
+      getRect: () => {
+        const layerRect = rootEl.value?.getBoundingClientRect() ?? null;
+        if (layerRect && layerRect.width >= 2 && layerRect.height >= 2) return layerRect;
+        const img = props.imageEl;
+        if (img) {
+          const ir = img.getBoundingClientRect();
+          if (ir.width >= 2 && ir.height >= 2) return ir;
+        }
+        return layerRect;
+      },
     })
   : null;
 
@@ -147,12 +187,15 @@ onMounted(() => {
     intersectionObserver = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          layer?.setVisible(entry.isIntersecting && entry.intersectionRatio >= 0.55);
+          // Soft bar — tall plates rarely reach 0.55 of their height in view.
+          layer?.setVisible(entry.isIntersecting && entry.intersectionRatio >= VISIBLE_RATIO);
         }
       },
-      { threshold: [0, 0.55, 1] }
+      { threshold: [0, VISIBLE_RATIO, 0.5, 1] }
     );
     intersectionObserver.observe(rootEl.value);
+    // First paint under a dialog often reports 0; layout pass fixes it.
+    requestAnimationFrame(() => updateVisibilityFromLayout());
   } else {
     // No IntersectionObserver (jsdom, old browsers): treat as on screen.
     layer?.setVisible(true);

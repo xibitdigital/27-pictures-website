@@ -89,6 +89,11 @@ export interface AutoReadController {
    * restarts after idle once a plate settles in view.
    */
   notifyScroll: () => void;
+  /**
+   * Re-promote on-screen layers and schedule auto-read. Call after Story/OK
+   * dialogs close so the first plate starts without the user scrolling.
+   */
+  kick: () => void;
   /** True after a user gesture unlocked browser autoplay for this page load. */
   unlocked: Ref<boolean>;
   /** One-shot “OK to enable caption sound” dialog. */
@@ -101,17 +106,31 @@ export interface AutoReadController {
   maybeShowPrompt: () => void;
 }
 
+/**
+ * Fraction of a plate that must sit in the viewport to count as “on screen”.
+ * 0.55 was too high for tall portrait plates (often taller than the mobile
+ * viewport), so auto-read never started until a scroll re-fired IO.
+ */
+export const VISIBLE_RATIO = 0.2;
 /** Coalesce the two halves of a spread — they become visible a frame apart. */
 const SETTLE_MS = 220;
 /**
  * After the last scroll event, wait this long before starting auto-read.
- * Shorter than a page turn feels snappy; longer keeps flings free of play().
+ * Fast flings fire hundreds of scroll events; short idle restarts play() mid-
+ * momentum and can exhaust iOS media (silent forever / tab crash).
  */
-const SCROLL_IDLE_MS = 320;
+const SCROLL_IDLE_MS = 700;
 /** Hard cap so a hung clip (no `ended` on flaky mobile WebViews) cannot freeze the queue. */
 const SPEAK_MAX_MS = 16000;
 /** If play() neither starts nor rejects (some emulator WebViews), fail open. */
 const PLAY_START_MS = 4000;
+/**
+ * Consecutive play() failures before we give up until a user gesture.
+ * Unbounded retries after a fling were spinning the main thread to death.
+ */
+const MAX_PLAY_FAILS = 2;
+/** Backoff base for play-failure retries (ms). */
+const PLAY_FAIL_BACKOFF_MS = 400;
 /**
  * Tiny silent WAV (data URI). iOS Safari only unlocks *HTMLAudioElement* when
  * a media element actually plays inside a user gesture — AudioContext.resume()
@@ -131,6 +150,23 @@ function configureMediaEl(el: HTMLAudioElement): void {
   }
 }
 
+/** Release decoder buffers — required on iOS after rapid pause/src swaps. */
+function releaseMediaEl(el: HTMLAudioElement): void {
+  try {
+    el.pause();
+  } catch {
+    /* ignore */
+  }
+  try {
+    el.removeAttribute("src");
+    // Empty assignment forces some WebKit builds to drop the resource.
+    el.src = "";
+    el.load();
+  } catch {
+    /* ignore */
+  }
+}
+
 export function createAutoReadController(options: AutoReadOptions = {}): AutoReadController {
   // Default gap was 2000ms — felt "stuck" between lines on mobile emulators.
   const gapMs = options.gapMs != null ? Number(options.gapMs) : 600;
@@ -142,6 +178,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   let scrollIdleTimer: ReturnType<typeof setTimeout> | null = null;
   /** True while the user is actively scrolling the vertical strip. */
   let scrolling = false;
+  /** Already hard-cut audio for this fling (avoid stop() on every scroll tick). */
+  let scrollPaused = false;
   /** Bumped on every stop/start — in-flight sequences die when it moves. */
   let seq = 0;
   let running = false;
@@ -156,19 +194,37 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   let wantedIds = new Set<string>();
   /** Remaining pages to speak (snapshot of captions, resolved by page id). */
   let playQueue: PageJob[] = [];
-  let audio: HTMLAudioElement | null = null;
+  /**
+   * One shared element for the whole reader. `new Audio()` per clip + rapid
+   * scroll stop/start exhausts iOS media slots → silent forever or tab kill.
+   */
+  let sharedAudio: HTMLAudioElement | null = null;
   let speakingLayer: LayerRecord | null = null;
   /** Resolves the in-flight `speak()` when stop() aborts it. */
   let speakFinish: ((ok: boolean) => void) | null = null;
+  /** True when the current speak was aborted by stop/scroll (not autoplay). */
+  let speakAborted = false;
   let retryArmed = false;
   /** Key to re-read once unlock lands (autoplay was blocked). */
   let pendingRetryKey = "";
+  let playFailStreak = 0;
+  let failRetryTimer: ReturnType<typeof setTimeout> | null = null;
   const unlocked = ref(false);
   const promptOpen = ref(false);
   /** User closed the prompt with “Not now” — don’t nag again this load. */
   let promptSoftDismissed = false;
   /** Coalesce double unlock (OK click = pointerdown + enableFromPrompt). */
   let restartTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Delayed post-unlock kicks — must clear on stop or they leak across tests. */
+  const kickTimers: ReturnType<typeof setTimeout>[] = [];
+
+  function getSharedAudio(): HTMLAudioElement {
+    if (!sharedAudio) {
+      sharedAudio = new Audio();
+      configureMediaEl(sharedAudio);
+    }
+    return sharedAudio;
+  }
 
   function clearHighlight(): void {
     if (speakingLayer) speakingLayer.speakingIndex.value = null;
@@ -271,45 +327,53 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
    *
    * On iOS, unlock *must* play an HTMLAudioElement inside this call; resuming
    * AudioContext alone is not sticky for later `new Audio().play()`.
+   *
+   * Critical: start auto-read on this call stack (or immediately after silent
+   * prime), not only after Promise.all — emulators drop sticky activation if
+   * the first real clip waits on async unlock work.
    */
   function unlockAudioFromGesture(): void {
-    const alreadyUnlocked = unlocked.value;
     unlocked.value = true;
     promptOpen.value = false;
     retryArmed = false;
+    playFailStreak = 0;
+    pendingRetryKey = "";
 
-    const restart = (): void => {
-      // pointerdown + OK click both unlock — one restart after the burst.
-      if (restartTimer != null) clearTimeout(restartTimer);
-      restartTimer = setTimeout(() => {
-        restartTimer = null;
-        pendingRetryKey = "";
-        // Force-cut any hung speak/gap so unlock always recovers the reader
-        // (emulators sometimes never fire "ended", leaving running=true forever).
-        stop();
-        // Coverage must clear: a blocked attempt marked pages covered with nothing
-        // spoken, and sync would skip them as "nothing fresh".
-        resetCoverage();
-        sync();
-      }, 40);
-    };
+    // Silent prime + AC resume *synchronously* on the gesture stack.
+    void primeHtmlAudioUnlock();
+    void resumeAudioContext();
 
-    if (alreadyUnlocked) {
-      // Re-prime on repeat gestures (iOS can re-lock after long background).
-      void primeHtmlAudioUnlock().then(() => restart());
-      return;
-    }
+    // Kick reading now (gesture-adjacent) and again after dialog reflow.
+    beginReadingAfterUnlock();
+    kickWhenIdle(50);
+    kickWhenIdle(200);
+    kickWhenIdle(600);
+    kickWhenIdle(1200);
+  }
 
-    // Start both unlocks while still on the user-gesture stack. play() must be
-    // invoked synchronously here; awaiting only comes after.
-    const htmlPrime = primeHtmlAudioUnlock();
-    const acPrime = resumeAudioContext();
-    void Promise.all([htmlPrime, acPrime]).then(() => restart());
+  function beginReadingAfterUnlock(): void {
+    if (restartTimer != null) clearTimeout(restartTimer);
+    restartTimer = setTimeout(() => {
+      restartTimer = null;
+      // Force-cut any hung speak/gap so unlock always recovers the reader
+      // (emulators sometimes never fire "ended", leaving running=true forever).
+      stop();
+      resetCoverage();
+      promoteVisibleFromRects();
+      sync();
+    }, 0);
   }
 
   function enableFromPrompt(): void {
     // Must run in the click handler so the browser treats it as a user gesture.
     unlockAudioFromGesture();
+  }
+
+  /** Public: shell calls this after Story/OK dialogs finish unmounting. */
+  function kick(): void {
+    if (!enabled || !unlocked.value || scrolling) return;
+    promoteVisibleFromRects();
+    schedule();
   }
 
   function armGestureUnlock(): void {
@@ -335,19 +399,34 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     seq++;
     running = false;
     playQueue = [];
-    const a = audio;
-    audio = null;
-    if (a) {
-      try {
-        a.pause();
-      } catch {
-        /* ignore */
-      }
+    speakAborted = true;
+    if (failRetryTimer != null) {
+      clearTimeout(failRetryTimer);
+      failRetryTimer = null;
+    }
+    if (restartTimer != null) {
+      clearTimeout(restartTimer);
+      restartTimer = null;
+    }
+    if (settleTimer != null) {
+      clearTimeout(settleTimer);
+      settleTimer = null;
+    }
+    if (scrollIdleTimer != null) {
+      clearTimeout(scrollIdleTimer);
+      scrollIdleTimer = null;
+    }
+    scrolling = false;
+    scrollPaused = false;
+    while (kickTimers.length) {
+      const t = kickTimers.pop();
+      if (t != null) clearTimeout(t);
     }
     // pause() does not fire "ended" — resolve so the pump is not stuck forever.
     const finish = speakFinish;
     speakFinish = null;
     if (finish) finish(false);
+    if (sharedAudio) releaseMediaEl(sharedAudio);
     clearHighlight();
   }
 
@@ -395,8 +474,9 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   }
 
   /**
-   * Vertical-strip scroll handler. Stops the current clip immediately (cheap)
-   * and re-schedules after the fling settles on a plate.
+   * Vertical-strip scroll handler (call at most once per frame from the shell).
+   * Pause audio once per fling — never stop/reset on every scroll event, and
+   * never start play() until the finger has been idle long enough.
    */
   function notifyScroll(): void {
     if (!enabled) return;
@@ -406,17 +486,25 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
       settleTimer = null;
     }
     if (scrollIdleTimer != null) clearTimeout(scrollIdleTimer);
-    // Hard-cut so decode/play work cannot jank the fling mid-frame.
-    // Drop coverage so the plate under the finger is re-read after idle —
-    // otherwise sync() sees the same key as still “current” and no-ops.
-    if (running || audio || currentKey) {
+    // One hard-cut for the whole fling. Do not resetCoverage here: that forced
+    // a full restart after every micro-pause and re-fired play() mid-scroll.
+    if (!scrollPaused && (running || speakFinish || sharedAudio?.src)) {
+      scrollPaused = true;
       stop();
-      resetCoverage();
-      doneKey = "";
     }
     scrollIdleTimer = setTimeout(() => {
       scrollIdleTimer = null;
       scrolling = false;
+      scrollPaused = false;
+      // Fresh view after a fling — re-evaluate whatever is on screen now.
+      // Clear done/current only when we actually interrupted playback so a
+      // fully-read page the user rests on is not re-spammed.
+      if (currentKey && doneKey !== currentKey) {
+        resetCoverage();
+        doneKey = "";
+      }
+      // Media pipeline may recover after a rest; allow a few play attempts again.
+      playFailStreak = 0;
       schedule();
     }, SCROLL_IDLE_MS);
   }
@@ -426,6 +514,66 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     currentKey = "";
     coveredIds = new Set();
     wantedIds = new Set();
+  }
+
+  /**
+   * Mark layers visible from geometry when IntersectionObserver has not (yet)
+   * reported — e.g. zero-size first paint under a dialog, or ratio below the
+   * old 0.55 bar. Does not schedule; caller runs sync/schedule after.
+   *
+   * Fallback: if nothing intersects (dialogs, pre-layout), pick the topmost
+   * captioned plate so page 1 still auto-reads without a user scroll.
+   */
+  function promoteVisibleFromRects(): void {
+    if (typeof window === "undefined") return;
+    const vh = window.innerHeight || 0;
+    let anyVisible = false;
+    let topmost: LayerRecord | null = null;
+    let topmostY = Infinity;
+    let firstById: LayerRecord | null = null;
+
+    for (const layer of layers) {
+      if (layer.released || !layer.captions.length) continue;
+      if (!firstById || Number.parseInt(layer.id, 10) < Number.parseInt(firstById.id, 10)) {
+        firstById = layer;
+      }
+      const r = layer.getRect();
+      if (!r || r.width < 2 || r.height < 2) continue;
+      if (r.top < topmostY) {
+        topmostY = r.top;
+        topmost = layer;
+      }
+      if (vh < 1) {
+        layer.visible = true;
+        anyVisible = true;
+        continue;
+      }
+      const visibleH = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+      if (visibleH <= 0) continue;
+      const ratio = visibleH / r.height;
+      // Any meaningful on-screen slice, or ratio past the soft bar.
+      if (ratio >= VISIBLE_RATIO || visibleH >= Math.min(120, vh * 0.35)) {
+        layer.visible = true;
+        anyVisible = true;
+      }
+    }
+
+    if (!anyVisible) {
+      const fallback = topmost || firstById;
+      if (fallback) fallback.visible = true;
+    }
+  }
+
+  /** Delayed re-sync after layout settles (unlock / dialog close). */
+  function kickWhenIdle(ms: number): void {
+    if (typeof window === "undefined") return;
+    const t = window.setTimeout(() => {
+      const i = kickTimers.indexOf(t);
+      if (i >= 0) kickTimers.splice(i, 1);
+      if (scrolling || !unlocked.value) return;
+      kick();
+    }, ms);
+    kickTimers.push(t);
   }
 
   function jobsFrom(layersList: LayerRecord[]): PageJob[] {
@@ -468,6 +616,8 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
       maybeShowPrompt();
       return;
     }
+    // IO may lag right after unlock; geometry is enough to start reading.
+    if (!orderedVisibleLayers().length) promoteVisibleFromRects();
     const ordered = orderedVisibleLayers();
     if (!ordered.length) {
       // Mid-flip both halves can be below the threshold at once. Tearing the
@@ -528,21 +678,43 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   function speak(layer: LayerRecord | null, caption: AutoReadCaptionRef): Promise<boolean> {
     let el: HTMLAudioElement;
     try {
-      el = new Audio(caption.audio);
+      el = getSharedAudio();
+      // Reuse the shared element: pause + swap src. Full releaseMediaEl() here
+      // (src="" + load) races decode on emulators and kills the first clip.
+      try {
+        el.pause();
+      } catch {
+        /* ignore */
+      }
+      configureMediaEl(el);
+      // el.src is absolute; caption.audio may be absolute or relative.
+      const abs = (() => {
+        try {
+          return new URL(caption.audio, typeof location !== "undefined" ? location.href : "http://local/").href;
+        } catch {
+          return caption.audio;
+        }
+      })();
+      if (el.src !== abs) {
+        el.src = caption.audio;
+      } else {
+        try {
+          el.currentTime = 0;
+        } catch {
+          /* ignore */
+        }
+      }
     } catch {
       return Promise.resolve(false);
     }
     const v = Number(caption.volume);
     el.volume = Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 1;
-    // Helps mobile/emulator decode start without waiting for a full buffer.
-    // playsinline is required for reliable HTMLAudio on iOS Safari.
-    configureMediaEl(el);
-    audio = el;
     clearHighlight();
     if (layer) {
       speakingLayer = layer;
       layer.speakingIndex.value = caption.index;
     }
+    speakAborted = false;
 
     return new Promise<boolean>((resolve) => {
       let done = false;
@@ -558,7 +730,7 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
         if (speakFinish === finish) speakFinish = null;
         if (layer && layer.speakingIndex.value === caption.index) layer.speakingIndex.value = null;
         if (speakingLayer === layer) speakingLayer = null;
-        if (audio === el) audio = null;
+        // Keep the shared element; just stop playback. Full release happens in stop().
         try {
           el.pause();
         } catch {
@@ -590,7 +762,13 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
 
       try {
         const p = el.play();
-        if (p && typeof p.catch === "function") p.catch(() => finish(false));
+        if (p && typeof p.catch === "function") {
+          p.catch(() => {
+            // Aborted by stop()/scroll — not an autoplay failure.
+            if (speakAborted || speakFinish !== finish) return;
+            finish(false);
+          });
+        }
       } catch {
         finish(false);
       }
@@ -605,24 +783,26 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     try {
       while (playQueue.length) {
         if (seq !== mySeq) return;
+        if (scrolling) return;
         const job = playQueue.shift()!;
         // Page left the settled view (subset prune / rapid turn) — skip it.
         if (!wantedIds.has(job.id)) continue;
         for (const caption of job.captions) {
           if (seq !== mySeq) return;
+          if (scrolling) return;
           if (!wantedIds.has(job.id)) break;
           const layer = liveLayer(job.id);
           const played = await speak(layer, caption);
-          if (seq !== mySeq) return;
+          if (seq !== mySeq || speakAborted || scrolling) return;
           if (!played) {
-            // Blocked by the autoplay policy — wait for unlock (or retry if
-            // unlock already happened in a race with settle).
+            // Blocked by autoplay or media pipeline failure — bounded retry.
             armRetry(key);
             return;
           }
+          playFailStreak = 0;
           if (gapMs > 0) {
             await new Promise<void>((resolve) => setTimeout(resolve, gapMs));
-            if (seq !== mySeq) return;
+            if (seq !== mySeq || scrolling) return;
             if (!wantedIds.has(job.id)) break;
           }
         }
@@ -634,20 +814,39 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
   }
 
   /**
-   * Autoplay blocked this view. Remember it and rely on armGestureUnlock (or a
-   * late gesture if unlock already ran) to restart — no second special tap on
-   * the plate beyond the normal first interaction with the reader.
+   * Autoplay / media blocked this view. Bounded retries only — unbounded
+   * setTimeout(0) loops after a fling were freezing the page.
    */
   function armRetry(key: string): void {
     pendingRetryKey = key;
     if (unlocked.value) {
-      // Unlock already happened; re-try next tick (settle / silent-play race).
-      setTimeout(() => {
-        if (running || (currentKey !== key && pendingRetryKey !== key)) return;
+      playFailStreak++;
+      if (playFailStreak > MAX_PLAY_FAILS) {
+        // Give up until the user taps something (unlock path re-primes media).
+        playFailStreak = 0;
+        if (!retryArmed && typeof document !== "undefined") {
+          retryArmed = true;
+          document.addEventListener(
+            "pointerdown",
+            () => {
+              retryArmed = false;
+              unlockAudioFromGesture();
+            },
+            { once: true, capture: true }
+          );
+        }
+        return;
+      }
+      if (failRetryTimer != null) clearTimeout(failRetryTimer);
+      const delay = PLAY_FAIL_BACKOFF_MS * playFailStreak;
+      failRetryTimer = setTimeout(() => {
+        failRetryTimer = null;
+        if (scrolling || running) return;
+        if (currentKey !== key && pendingRetryKey !== key) return;
         pendingRetryKey = "";
         resetCoverage();
         sync();
-      }, 0);
+      }, delay);
       return;
     }
     // Explain + offer one-click unlock (also keeps passive gesture listeners).
@@ -684,7 +883,12 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
       },
       setCaptions(captions: AutoReadCaptionRef[]): void {
         record.captions = captions;
-        if (record.visible) schedule();
+        if (!captions.length) return;
+        // Captions often land after OK (config fetch). Promote + schedule even
+        // when IO has not marked the plate visible yet — otherwise auto-read
+        // waits for a scroll forever on emulators.
+        if (!record.visible && unlocked.value) promoteVisibleFromRects();
+        if (record.visible || unlocked.value) schedule();
       },
       playOne(caption: AutoReadCaptionRef): void {
         // Bubble tap is a user gesture — unlock autoplay for later auto-read too.
@@ -721,6 +925,7 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     registerLayer,
     stop,
     notifyScroll,
+    kick,
     unlocked,
     promptOpen,
     enableFromPrompt,

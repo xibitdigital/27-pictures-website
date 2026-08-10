@@ -236,6 +236,11 @@ function onGuideOpenUpdate(open: boolean): void {
 function onAutoReadEnable(): void {
   autoRead.enableFromPrompt();
   releaseBodyScrollLock();
+  // Dialog leave reflow: kick again so page 1 auto-reads without a scroll.
+  void nextTick(() => {
+    releaseBodyScrollLock();
+    autoRead.kick();
+  });
 }
 
 function onAutoReadDismiss(): void {
@@ -252,12 +257,23 @@ function onMobileMq(): void {
   syncMobileUi();
 }
 
-/** Vertical-strip scroll: pause auto-read + clear any leftover body lock. */
+/**
+ * Vertical-strip scroll → auto-read pause.
+ * rAF-throttle: flings fire 100+ scroll events/s; each must stay dirt-cheap
+ * (no style writes, no Audio work — notifyScroll only arms a timer once).
+ */
+let scrollRaf = 0;
 function onWindowScroll(): void {
   if (!viewMode.isVertical.value) return;
-  // HeadlessUI can re-stick overflow:hidden mid-session; clear on motion.
-  releaseBodyScrollLock();
-  autoRead.notifyScroll();
+  if (scrollRaf) return;
+  scrollRaf =
+    typeof requestAnimationFrame === "function"
+      ? requestAnimationFrame(() => {
+          scrollRaf = 0;
+          autoRead.notifyScroll();
+        })
+      : 0;
+  if (!scrollRaf) autoRead.notifyScroll();
 }
 
 onMounted(() => {
@@ -301,7 +317,12 @@ onMounted(() => {
 onUnmounted(() => {
   if (typeof window !== "undefined") {
     window.removeEventListener("scroll", onWindowScroll);
+    if (scrollRaf && typeof cancelAnimationFrame === "function") {
+      cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+    }
   }
+  autoRead.stop();
   if (!mobileMq) return;
   if (typeof mobileMq.removeEventListener === "function") {
     mobileMq.removeEventListener("change", onMobileMq);
