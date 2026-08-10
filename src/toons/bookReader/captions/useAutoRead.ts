@@ -222,19 +222,23 @@ export function createAutoReadController(options: AutoReadOptions = {}): AutoRea
     settleTimer = clearTimer(settleTimer);
     scrollIdleTimer = clearTimer(scrollIdleTimer);
 
-    if (!scrollPaused && (running || player.busy())) {
+    // Hard-cut audio once per fling and fully release the media element so the
+    // next idle speak() does not reuse a half-dead Audio node (common after a
+    // few scroll pauses — highlight would advance with no sound).
+    if (!scrollPaused) {
       scrollPaused = true;
-      pausePlayback();
+      if (running || player.busy()) pausePlayback();
+      player.release();
     }
 
     scrollIdleTimer = setTimeout(() => {
       scrollIdleTimer = null;
       scrolling = false;
       scrollPaused = false;
-      if (currentKey && doneKey !== currentKey) {
-        resetCoverage();
-        doneKey = "";
-      }
+      // Always re-read whatever is under the viewport after a fling. Keeping a
+      // stale doneKey made sync() no-op or skip pages after several scrolls.
+      resetCoverage();
+      doneKey = "";
       playFailStreak = 0;
       schedule();
     }, SCROLL_IDLE_MS);

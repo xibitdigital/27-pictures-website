@@ -82,7 +82,14 @@ export function createSharedAudioPlayer(): SharedAudioPlayer {
 
   function release(): void {
     stopCurrent();
-    if (el) releaseMediaEl(el);
+    if (el) {
+      releaseMediaEl(el);
+      // Drop the node so the next speak() builds a fresh HTMLAudioElement.
+      // After repeated scroll pause/src/load thrash, a single element can
+      // resolve play() without producing sound or "ended" — highlight moves,
+      // audio does not.
+      el = null;
+    }
   }
 
   function speak(url: string, volume: number): Promise<boolean> {

@@ -620,6 +620,53 @@ describe("WordLayer", () => {
     controller.stop();
   });
 
+  it("resumes auto-read on a new page after several scroll flings", async () => {
+    // Regression: after a few scrolls, highlight could stick without sound
+    // because the shared Audio node was half-dead and doneKey blocked restart.
+    const played: string[] = [];
+    vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
+      const file = (this.src || "").split("/").pop() || "";
+      if (file === "p1.mp3" || file === "p2.mp3" || file === "p3.mp3") {
+        played.push(file);
+        setTimeout(() => this.dispatchEvent(new Event("ended")), 0);
+      }
+      return Promise.resolve();
+    });
+
+    const controller = createAutoReadController({ gapMs: 0, requireGesture: false });
+    const t1 = trackRect(0);
+    const t2 = trackRect(0);
+    const t3 = trackRect(0);
+    t2.state.on = false;
+    t3.state.on = false;
+
+    const p1 = controller.registerLayer({ id: "1", getRect: t1.getRect });
+    const p2 = controller.registerLayer({ id: "2", getRect: t2.getRect });
+    const p3 = controller.registerLayer({ id: "3", getRect: t3.getRect });
+    p1.setCaptions([{ index: 0, audio: "sfx/p1.mp3", volume: 1, x: 0.5, y: 0.2 }]);
+    p2.setCaptions([{ index: 0, audio: "sfx/p2.mp3", volume: 1, x: 0.5, y: 0.2 }]);
+    p3.setCaptions([{ index: 0, audio: "sfx/p3.mp3", volume: 1, x: 0.5, y: 0.2 }]);
+
+    await vi.waitFor(() => expect(played).toContain("p1.mp3"), { timeout: 3000 });
+
+    // Fling 1→2
+    t1.hide(p1);
+    t2.show(p2);
+    controller.notifyScroll();
+    await new Promise((r) => setTimeout(r, 950));
+    await vi.waitFor(() => expect(played).toContain("p2.mp3"), { timeout: 3000 });
+
+    // Fling 2→3 (second fling is where media used to die)
+    t2.hide(p2);
+    t3.show(p3);
+    controller.notifyScroll();
+    await new Promise((r) => setTimeout(r, 950));
+    await vi.waitFor(() => expect(played).toContain("p3.mp3"), { timeout: 3000 });
+
+    expect(played.filter((p) => p === "p3.mp3").length).toBeGreaterThanOrEqual(1);
+    controller.stop();
+  });
+
   it("starts auto-read after unlock without requiring a scroll (geometry visibility)", async () => {
     // Layer supplies on-screen getRect but never setVisible — unlock + geometry
     // must start reading (controller owns visibility).
