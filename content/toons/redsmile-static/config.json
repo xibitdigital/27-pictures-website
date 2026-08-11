@@ -61,7 +61,7 @@
           "text": {
             "en": "KSSHHHH"
           },
-          "audio": "assets/sfx/f8cf657d934eae1c296558c691524f04.mp3"
+          "audio": "assets/sfx/d88025ce66d197bb9ea12e222e899d3b.mp3"
         },
         {
           "x": 0.24,
@@ -137,7 +137,7 @@
           "text": {
             "en": "hhhhhh"
           },
-          "audio": "assets/sfx/4cee32a92b4f7f39d9384c48d6e4e001.mp3"
+          "audio": "assets/sfx/7819280bcaa3b73315e65b69244be24c.mp3"
         }
       ]
     },
@@ -165,6 +165,21 @@
           }
         },
         {
+          "x": 0.72,
+          "y": 0.45,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 5,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "kreeeee"
+          },
+          "audio": "assets/sfx/45b0cb4f19a1203533b72385b0475288.mp3"
+        },
+        {
           "x": 0.25,
           "y": 0.72,
           "align": "center",
@@ -184,21 +199,6 @@
             "opacity": 0.75,
             "strokeWidth": 5
           }
-        },
-        {
-          "x": 0.72,
-          "y": 0.45,
-          "align": "center",
-          "size": 26,
-          "variant": "burst",
-          "color": "#111111",
-          "angle": 5,
-          "scale": 1.0,
-          "maxWidth": 0.24,
-          "text": {
-            "en": "kreeeee"
-          },
-          "audio": "assets/sfx/45b0cb4f19a1203533b72385b0475288.mp3"
         }
       ]
     },
@@ -417,6 +417,21 @@
       "file": "assets/df2202b076befeafe6e551366ad34924.png",
       "words": [
         {
+          "x": 0.72,
+          "y": 0.1,
+          "align": "center",
+          "size": 28,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 5,
+          "scale": 1.0,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "NNNK"
+          },
+          "audio": "assets/sfx/acc976df7c4c18ccb6d808afb6bdbc01.mp3"
+        },
+        {
           "x": 0.22,
           "y": 0.38,
           "align": "center",
@@ -451,21 +466,6 @@
           },
           "audio": "assets/sfx/5932c9869335c5deb1907343a7365bc3.mp3",
           "speaker": "elena"
-        },
-        {
-          "x": 0.72,
-          "y": 0.1,
-          "align": "center",
-          "size": 28,
-          "variant": "burst",
-          "color": "#111111",
-          "angle": 5,
-          "scale": 1.0,
-          "maxWidth": 0.22,
-          "text": {
-            "en": "NNNK"
-          },
-          "audio": "assets/sfx/acc976df7c4c18ccb6d808afb6bdbc01.mp3"
         }
       ]
     }

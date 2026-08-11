@@ -211,8 +211,8 @@
   },
   {
     "slug": "rs-static-hiss",
-    "prompt": "Old CRT television static hiss, dead channel white noise, dry room tone, no music",
-    "duration": 2.4
+    "prompt": "Loud harsh analog TV static burst, dead channel white noise roar at full volume, abrasive hiss, close to the speaker, no music",
+    "duration": 2.2
   },
   {
     "slug": "rs-static-crackle",
