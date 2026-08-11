@@ -153,11 +153,11 @@
           "color": "#111111",
           "angle": -3,
           "scale": 1.05,
-          "maxWidth": 0.28,
+          "maxWidth": 0.32,
           "text": {
-            "en": "Don't move."
+            "en": "What the hell\nwas that!?"
           },
-          "audio": "assets/sfx/0b2621c67a7091a935a2897e545868bf.mp3",
+          "audio": "assets/sfx/a4cbbdbaa0cf35565107ba9eb10b7935.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,

@@ -36,7 +36,7 @@ the empty black doorway (p3) and the door swinging open (p7).
 
 **Auto-read plays `words[]` in array order**, so a panel's SFX has to sit ahead
 of the line it precedes. Current intent: `BZZT` opens page 1; `kreeeee` follows
-"Don't move."; `NNNK` opens page 7 before the shadow line.
+"What the hell was that!?"; `NNNK` opens page 7 before the shadow line.
 
 SFX slugs live in `scripts/jax-sfx-manifest.json` under the `rs-` prefix:
 
