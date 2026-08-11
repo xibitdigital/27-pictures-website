@@ -28,9 +28,11 @@
          music button styles if any). */
       :root {
         /* Spread aspect ≈ 0.89 (two 1008×1792 pages). Prefer height-fill.
-           Leave ~56px total for side page-nav buttons so they never stick
-           past the viewport (that overflow caused a resizing black band). */
-        --book-width: min(calc(100vw - 56px), 1200px, calc((100dvh - 160px) / 0.89));
+           Leave ~52px total for side page-nav buttons (they hang 22px past
+           each edge) so they never overflow the viewport — that overflow
+           caused a resizing black band. The vertical reserve only has to
+           clear the reader's own padding now that the page counter is gone. */
+        --book-width: min(calc(100vw - 52px), 1400px, calc((100dvh - 88px) / 0.89));
         --book-height: calc(var(--book-width) * 0.89);
         --page-bg: #0a0a0c;
         --spine: #1a1a22;
@@ -38,20 +40,20 @@
       }
 
       body.is-fullscreen .book-scene {
-        --book-width: min(calc(100vw - 24px), calc(92dvh / 0.89));
-        --book-height: min(88dvh, calc(var(--book-width) * 0.89));
+        --book-width: min(calc(100vw - 12px), calc(96dvh / 0.89));
+        --book-height: min(94dvh, calc(var(--book-width) * 0.89));
         width: var(--book-width);
         height: var(--book-height);
       }
 
       body.is-fullscreen.single-page .book-scene {
-        --book-width: min(94vw, calc(88dvh * 0.562));
-        --book-height: min(88dvh, calc(var(--book-width) * 1.778));
+        --book-width: min(97vw, calc(94dvh * 0.562));
+        --book-height: min(94dvh, calc(var(--book-width) * 1.778));
       }
 
       body.single-page {
-        --book-width: min(97vw, 520px);
-        --book-height: min(84dvh, calc(var(--book-width) * 1.778));
+        --book-width: min(99vw, 620px);
+        --book-height: min(90dvh, calc(var(--book-width) * 1.778));
       }
 
       /* Lang switcher styles live in reader-shared.css (.toon-lang-*). */

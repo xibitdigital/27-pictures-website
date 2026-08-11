@@ -31,7 +31,7 @@
            max width to reach the same on-screen height (was 900px / 0.72 and
            looked noticeably smaller than Jax). */
         /* Leave room for side page-nav buttons (see Jax note). */
-        --book-width: min(calc(100vw - 56px), 1200px, calc((100dvh - 160px) / 0.75));
+        --book-width: min(calc(100vw - 52px), 1400px, calc((100dvh - 88px) / 0.75));
         --book-height: calc(var(--book-width) * 0.75);
         --page-bg: #f8f4ec;
         --spine: #2a2218;
@@ -39,20 +39,20 @@
       }
 
       body.is-fullscreen .book-scene {
-        --book-width: min(calc(100vw - 24px), calc(92dvh / 0.75));
-        --book-height: min(88dvh, calc(var(--book-width) * 0.75));
+        --book-width: min(calc(100vw - 12px), calc(96dvh / 0.75));
+        --book-height: min(94dvh, calc(var(--book-width) * 0.75));
         width: var(--book-width);
         height: var(--book-height);
       }
 
       body.is-fullscreen.single-page .book-scene {
-        --book-width: min(94vw, calc(88dvh * 0.67));
-        --book-height: min(88dvh, calc(var(--book-width) * 1.5));
+        --book-width: min(97vw, calc(94dvh * 0.67));
+        --book-height: min(94dvh, calc(var(--book-width) * 1.5));
       }
 
       body.single-page {
-        --book-width: min(97vw, 520px);
-        --book-height: min(84dvh, calc(var(--book-width) * 1.5));
+        --book-width: min(99vw, 620px);
+        --book-height: min(90dvh, calc(var(--book-width) * 1.5));
       }
     </style>
   </head>

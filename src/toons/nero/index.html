@@ -25,7 +25,7 @@
       /* Book-only tokens — portrait pages (~800×1424). Shared shell chrome in reader-shared.css. */
       :root {
         /* Spread aspect ≈ 0.89 for two portrait pages (same family as Jax). */
-        --book-width: min(calc(100vw - 56px), 1200px, calc((100dvh - 160px) / 0.89));
+        --book-width: min(calc(100vw - 52px), 1400px, calc((100dvh - 88px) / 0.89));
         --book-height: calc(var(--book-width) * 0.89);
         --page-bg: #0a0a0c;
         --spine: #1a1a22;
@@ -33,20 +33,20 @@
       }
 
       body.is-fullscreen .book-scene {
-        --book-width: min(calc(100vw - 24px), calc(92dvh / 0.89));
-        --book-height: min(88dvh, calc(var(--book-width) * 0.89));
+        --book-width: min(calc(100vw - 12px), calc(96dvh / 0.89));
+        --book-height: min(94dvh, calc(var(--book-width) * 0.89));
         width: var(--book-width);
         height: var(--book-height);
       }
 
       body.is-fullscreen.single-page .book-scene {
-        --book-width: min(94vw, calc(88dvh * 0.562));
-        --book-height: min(88dvh, calc(var(--book-width) * 1.78));
+        --book-width: min(97vw, calc(94dvh * 0.562));
+        --book-height: min(94dvh, calc(var(--book-width) * 1.78));
       }
 
       body.single-page {
-        --book-width: min(97vw, 520px);
-        --book-height: min(84dvh, calc(var(--book-width) * 1.78));
+        --book-width: min(99vw, 620px);
+        --book-height: min(90dvh, calc(var(--book-width) * 1.78));
       }
     </style>
   </head>
