@@ -237,11 +237,12 @@
             "de": "Du bist erledigt.",
             "fr": "C'est fini."
           },
-          "audio": "assets/sfx/74581dafe13139b784e315b18b6cb480.mp3",
+          "audio": "assets/sfx/7c67bdff83a2b01964314aaf4e53365b.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
-          }
+          },
+          "speaker": "nero"
         }
       ]
     },
