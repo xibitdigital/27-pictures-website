@@ -455,16 +455,16 @@
           "x": 0.22,
           "y": 0.79,
           "align": "center",
-          "size": 38,
+          "size": 44,
           "variant": "burst",
           "color": "#111111",
           "angle": -7,
-          "scale": 1.15,
-          "maxWidth": 0.26,
+          "scale": 1.25,
+          "maxWidth": 0.34,
           "text": {
-            "en": "NO—"
+            "en": "NOOOOO—!"
           },
-          "audio": "assets/sfx/5932c9869335c5deb1907343a7365bc3.mp3",
+          "audio": "assets/sfx/ca2fb00bb5afb3902d590b8862a8f4b1.mp3",
           "speaker": "elena"
         }
       ]
