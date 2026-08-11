@@ -7,7 +7,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref, toRef } from "vue";
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import CoverGuideDialog from "./CoverGuideDialog.vue";
-import { ReaderTopBar } from "./chrome";
+import { ReaderTopBar, ReadingProgress } from "./chrome";
 import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
 import { parsePageQuery } from "./pageQuery";
@@ -290,13 +290,31 @@ function throttleTrailing(fn: () => void, waitMs: number): (() => void) & { canc
   return wrapped;
 }
 
+/**
+ * Reading position for the top bar. Book mode reads the engine's view index;
+ * scroll mode has no view index, so it tracks document scroll instead.
+ */
+const scrollProgress = ref(0);
+
+function syncScrollProgress(): void {
+  const doc = document.documentElement;
+  const span = doc.scrollHeight - window.innerHeight;
+  scrollProgress.value = span > 0 ? Math.min(1, Math.max(0, window.scrollY / span)) : 0;
+}
+
+const readingProgress = computed(() => (viewMode.isVertical.value ? scrollProgress.value : engine.state.progress));
+
+const readingProgressLabel = computed(() => (viewMode.isVertical.value ? "" : engine.state.indicator));
+
 const onWindowScroll = throttleTrailing(() => {
+  syncScrollProgress();
   if (!viewMode.isVertical.value) return;
   autoRead.notifyScroll();
 }, 32);
 
 onMounted(() => {
   syncMobileUi();
+  syncScrollProgress();
   mobileMq = window.matchMedia("(max-width: 768px)");
   if (typeof mobileMq.addEventListener === "function") {
     mobileMq.addEventListener("change", onMobileMq);
@@ -360,6 +378,8 @@ defineExpose<ToonReaderShellExpose>({
       width="40"
     />
   </a>
+
+  <ReadingProgress :value="readingProgress" :label="readingProgressLabel" />
 
   <ReaderTopBar
     :is-vertical="viewMode.isVertical.value"

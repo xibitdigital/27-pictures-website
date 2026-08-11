@@ -123,7 +123,8 @@ function onTouchEnd(e: TouchEvent): void {
     </button>
   </div>
 
-  <div class="controls">
-    <span class="page-indicator" id="indicator" aria-live="polite">{{ engine.state.indicator }}</span>
+  <!-- Position lives in the top progress bar now; this only surfaces load failures. -->
+  <div v-if="engine.state.error" class="controls">
+    <span class="page-indicator" id="indicator" aria-live="polite">{{ engine.state.error }}</span>
   </div>
 </template>

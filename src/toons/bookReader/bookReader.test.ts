@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
-import { createBookEngine, initToonBook } from "./bookReader";
+import { createBookEngine, initToonBook, type BookEngine } from "./bookReader";
 import BookSurface from "./BookSurface.vue";
 import { stubReaderMatchMedia, stubImagePreload, stubManifestFetch, FOUR_PAGES } from "@/test/bookFixture";
 import type { ToonBookApi, ToonBookOptions } from "./types";
@@ -9,7 +9,7 @@ import type { ToonBookApi, ToonBookOptions } from "./types";
 async function readyBook(
   files = FOUR_PAGES,
   opts: ToonBookOptions = {}
-): Promise<{ api: ToonBookApi; wrapper: ReturnType<typeof mount> }> {
+): Promise<{ api: ToonBookApi; engine: BookEngine; wrapper: ReturnType<typeof mount> }> {
   stubManifestFetch(files);
   const engine = createBookEngine({ ...opts, pages: files });
 
@@ -40,7 +40,7 @@ async function readyBook(
   await flushPromises();
   await vi.waitFor(() => expect(engine.state.ready).toBe(true));
   await nextTick();
-  return { api: engine, wrapper };
+  return { api: engine, engine, wrapper };
 }
 
 describe("FlipFrame reader (desktop / reduced-motion)", () => {
@@ -172,13 +172,17 @@ describe("FlipFrame reader (desktop / reduced-motion)", () => {
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(0));
   });
 
-  it("updates the page indicator for spreads", async () => {
-    const { api, wrapper } = await readyBook();
-    expect(wrapper.find("#indicator").text()).toMatch(/1\s*\/\s*4/);
+  it("tracks reading position for spreads (progress + spoken label)", async () => {
+    const { api, engine, wrapper } = await readyBook();
+    // The numeric indicator is no longer painted — the top progress bar is.
+    expect(wrapper.find("#indicator").exists()).toBe(false);
+    expect(engine.state.indicator).toMatch(/1\s*\/\s*4/);
+    expect(engine.state.progress).toBe(0);
 
     api.goNext();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(1));
-    expect(wrapper.find("#indicator").text()).toMatch(/2\s*[–-]\s*3\s*\/\s*4/);
+    expect(engine.state.indicator).toMatch(/2\s*[–-]\s*3\s*\/\s*4/);
+    expect(engine.state.progress).toBeCloseTo(1 / 2);
   });
 
   it("renders slots tagged with 1-based page numbers", async () => {
@@ -294,22 +298,22 @@ describe("FlipFrame reader (single-page / mobile)", () => {
   });
 
   it("opens on ?page= / initialPage in single-page mode (page N → viewIndex N)", async () => {
-    const { api, wrapper } = await readyBook(["a.jpg", "b.jpg", "c.jpg"], { initialPage: 2 });
+    const { api, engine, wrapper } = await readyBook(["a.jpg", "b.jpg", "c.jpg"], { initialPage: 2 });
     expect(api.getViewIndex()).toBe(2);
     expect(wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")).toBe("b.jpg");
-    expect(wrapper.find("#indicator").text()).toMatch(/2\s*\/\s*3/);
+    expect(engine.state.indicator).toMatch(/2\s*\/\s*3/);
     api.goToPage(99);
     expect(api.getViewIndex()).toBe(3); // clamp to last content page
   });
 
   it("steps through cover → pages → end in single-page mode", async () => {
     const files = ["a.jpg", "b.jpg"];
-    const { api, wrapper } = await readyBook(files);
+    const { api, engine, wrapper } = await readyBook(files);
 
     api.goNext();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(1));
     expect(wrapper.find(".page-slot.right img:not(.cover-texture-img)").attributes("src")).toBe("a.jpg");
-    expect(wrapper.find("#indicator").text()).toMatch(/1\s*\/\s*2/);
+    expect(engine.state.indicator).toMatch(/1\s*\/\s*2/);
 
     api.goNext();
     await vi.waitFor(() => expect(api.getViewIndex()).toBe(2));

@@ -35,6 +35,8 @@ export interface BookEngineState {
   rightSlot: SlotModel;
   flip: FlipModel | null;
   indicator: string;
+  /** 0–1 reading position, drives the top progress bar. */
+  progress: number;
   canPrev: boolean;
   canNext: boolean;
   isFlipping: boolean;
@@ -99,6 +101,7 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     rightSlot: { kind: "blank" },
     flip: null,
     indicator: "…",
+    progress: 0,
     canPrev: false,
     canNext: false,
     isFlipping: false,
@@ -138,6 +141,8 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
 
   function syncChrome(): void {
     state.indicator = indicatorText(state.pages, state.viewIndex, state.singlePage, totalSpreads());
+    const last = maxIndex();
+    state.progress = last > 0 ? Math.min(1, Math.max(0, state.viewIndex / last)) : 0;
     state.canPrev = state.viewIndex > 0;
     state.canNext = state.viewIndex < maxIndex();
     document.body.classList.toggle("single-page", state.singlePage);
