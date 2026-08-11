@@ -1,103 +1,94 @@
 ---
 name: horror-toon-page
 description: >
-  Build a ByteDance Seedream 5.0 Pro (image-to-image) prompt for a full
+  Build a ByteDance Seedream 5.0 Pro (text-to-image) prompt for a full
   black-and-white multi-panel horror manga page (default 3 horizontal panels,
   1008×1792) for 27 Pictures dark / body-horror / occult FlipFrame plates.
-  Same prompt skeleton as toon-page, but horror ink style. Always saves the
-  prompt as a .txt in the user's Downloads folder; generates only when the user
-  explicitly asks. Use when the user says "horror toon", "horror toon page",
-  "/horror-toon-page", "horror manga page", "seedream horror", "dark manga page",
-  or wants a horror FlipFrame plate prompt.
+  Same prompt skeleton as toon-page, but horror ink style and pure t2i (no refs
+  required). Always saves the prompt as a .txt in the user's Downloads folder;
+  generates only when the user explicitly asks. Use when the user says "horror
+  toon", "horror toon page", "/horror-toon-page", "horror manga page",
+  "seedream horror", "dark manga page", or wants a horror FlipFrame plate prompt.
 user-invokable: true
 argument-hint: "[beat / scene for the horror page]"
 ---
 
-# Horror Toon Page — Seedream 5.0 Pro (image-to-image) Prompt Generator
+# Horror Toon Page — Seedream 5.0 Pro (text-to-image) Prompt Generator
 
-Target model: **`bytedance/seedream-5.0-pro` · image-to-image** (not pure t2i, not Grok Imagine).
+Target model: **`bytedance/seedream-5.0-pro` · text-to-image** (not i2i, not Grok Imagine).
 
-Take the user's beat/scene and output a **complete Seedream i2i prompt** for one vertical multi-panel **horror** manga page.
+Take the user's beat/scene and output a **complete Seedream t2i prompt** for one vertical multi-panel **horror** manga page.
 
-Sibling skill: `/toon-page` is cyberpunk **i2i**. This skill is the same engine/mode with **horror** ink and atmosphere.
+Sibling skill: `/toon-page` is cyberpunk **i2i** with character refs. This skill is **horror t2i** — prose carries style and identity; optional later i2i polish is out of scope unless the user switches to `/toon-page`.
 
 ## Output rules (strict)
 
 - Build the full prompt, then **always save it as a `.txt` file** in the user's Downloads folder
 - Also show the prompt in chat as a single copyable fenced code block
 - **Length: stay under ~550 English words** (Seedream sweet spot <600; longer prompts scatter detail)
-- **Default is prompt-only.** Write the `.txt` and stop. User usually attaches refs in ComfyUI / RunComfy and generates there.
+- **Default is prompt-only.** Write the `.txt` and stop. User usually generates in ComfyUI / RunComfy web UI.
 - **Only generate when the user explicitly asks** — "generate it", "run it", "make the image". A beat alone is never a generate request.
 - If the user gives no beat/scene, ask once, then wait
 
-## Model & workflow (Seedream i2i)
+## Model & workflow (Seedream t2i)
 
 | Item | Value |
 |------|--------|
 | Model | `bytedance/seedream-5.0-pro` |
-| Mode | **image-to-image** (prefer refs over pure prose for identity / layout / ink style) |
+| Mode | **text-to-image** |
 | Max attention | Keep prompt **<600 English words** |
-| Structure | Layer: **format → PIN (keep) → subject → panels → CHANGE** |
+| Structure | Layer: **format → subject → composition → lighting/style → atmosphere → panel beats** |
 
-### Input schema (RunComfy `/v1/models/bytedance/seedream-5.0-pro/image-to-image`)
+### Input schema (RunComfy `/v1/models/bytedance/seedream-5.0-pro/text-to-image`)
 
 | Field | Notes |
 |-------|-------|
 | `prompt` | required. >600 English words → model scatters detail and drops elements |
-| `image` | required, **1–10** refs. JPEG/PNG/WEBP/BMP/TIFF/GIF/HEIC/HEIF, <30 MB each |
-| `resolution` | **use `1K`** ($0.05/image) — project default. Set explicitly |
+| `resolution` | **use `1K`** ($0.05/image) — project default. `2K` ($0.10) is often the API default; set `1K` explicitly |
 | `output_format` | `png` (default) or `jpeg` |
 
-**There is no width/height parameter.** Always spell out `vertical 1008x1792` and `three stacked horizontal panels` in the FORMAT line.
+**There is no width/height parameter.** The model infers shape from the aspect ratio **described in the prompt** — always spell out `vertical 1008x1792` and `three stacked horizontal panels` in the FORMAT line.
 
-Cap refs at 10. Prefer identity / style / layout sheets over redundant mood shots.
-
-### Reference images (when available)
-
-Tell the user to attach in Seedream i2i:
-
-1. **Layout ref** (optional): prior 3-panel page for gutters / stack
-2. **Character refs**: face/outfit sheets for the cast
-3. **Style ref**: B&W horror / bande dessinée ink page they already like
-
-Always include a **PIN clause** when refs are used, e.g.:
-
-```
-PIN from references: keep [face/hair/outfit] from Image [char]; keep B&W horror ink, heavy blacks, three-panel vertical stack from Image [style/layout] if provided.
-```
-
-Name what must **not** change vs what must **change** (i2i rule: unmentioned elements drift).
+No `image` / reference fields for pure t2i. If the user wants identity locks from photos, point them at `/toon-page` (i2i) instead.
 
 ## Save prompt to Downloads (required)
 
-1. Write UTF-8 `.txt` under `~/Downloads/`
+After assembling the prompt body (plain text, no markdown fences inside the file):
+
+1. Write a UTF-8 `.txt` under the user's Downloads directory (`$HOME/Downloads/` / `~/Downloads/`)
 2. Filename: `horror-toon-page-<slug>-YYYYMMDD-HHMMSS.txt`
-3. Contents = **prompt only** (optional ≤4-line `#` header)
-4. Chat: fenced prompt + `Saved: ~/Downloads/...`
+   - `slug`: lowercase ASCII from the first ~40 chars of the beat; spaces → `-`; strip non `[a-z0-9-]`; collapse `--`; default `page`
+3. File contents = **the prompt only** (no ``` fences, no commentary)
+4. Chat reply: fenced prompt + one line `Saved: ~/Downloads/...`
+
+Optional header (≤4 lines; still counts toward word budget if you keep it short):
 
 ```
 # model: bytedance/seedream-5.0-pro
-# mode: image-to-image
+# mode: text-to-image
 # style: horror manga B&W
-# refs: [list what to attach]
 ```
 
 ## Generating (opt-in — never by default)
 
-Only when the user explicitly asks.
+Only when the user explicitly asks for the image.
+
+**Preferred:** paste the prompt into RunComfy / ComfyUI **Seedream 5.0 Pro text-to-image**, resolution `1K`.
+
+**CLI** (if the project script supports t2i without refs):
 
 ```bash
 set -a; source .env; set +a
+# Only if generate-toon-page.py accepts --mode text-to-image with no --ref.
+# If the script still requires refs, use the web UI for t2i — do not invent flags.
 python3 scripts/generate-toon-page.py \
   --prompt-file ~/Downloads/horror-toon-page-<slug>-<stamp>.txt \
-  --mode image-to-image \
-  --ref-asset toons/<toon>/assets/<md5>.png \
-  --ref https://…/style-ref.png
+  --mode text-to-image \
+  --resolution 1K
 ```
 
-- **Costs real money** — $0.05 per `1K` image. State cost before firing.
-- Refs must be **public HTTPS** (or `--ref-asset` via `VITE_ASSET_BASE`). Local-only files: user attaches in web UI.
-- After success: `make add-image …` only if asked.
+- **Costs real money** — $0.05 per `1K` image. State cost before firing; do not re-roll casually.
+- After generation: `make add-image SRC=~/Downloads/<file>.jpg TOON=<toon> UPLOAD=1` only if the user asks to ship into FlipFrame.
 
 ## Defaults (encode inside the prompt)
 
@@ -105,111 +96,107 @@ python3 scripts/generate-toon-page.py \
 |------|---------|
 | Size | Vertical **1008×1792** |
 | Panels | **3** stacked **horizontal** panels, thick black gutters, black outer border |
-| Color | Pure **B&W** horror / bande dessinée ink — deep blacks, grey midtones, harsh contrast |
+| Color | Pure **B&W** horror manga ink — deep blacks, sparse white, harsh contrast |
 | Balloons | **None** by default |
 | Text in art | **None** by default |
 | Layout ban | No diagonal slash panels, no triangle crops |
-| Anatomy | Exactly **two arms and two legs** (or one clear stated mutation) |
+| Anatomy | Every person has **exactly two arms and two legs** (unless the user asks for deliberate body-horror mutation — then state the mutation once, clearly) |
+
+Change panel count only if the user asks.
 
 ## Horror style lock (always include)
 
-- Dark horror manga / gekiga or European bande dessinée ink — not cute shōnen
-- Heavy blacks, ink washes, solid shadow pools, selective white rims
-- Cross-hatching, sparse screentone grain
+Bake these into FORMAT / STYLE (keep compact):
+
+- Dark horror manga / gekiga ink, not cute or shōnen sparkle
+- Heavy blacks, crushed shadows, selective white rims
+- Cross-hatching, dense blacks in voids, sparse screentone grain
 - Unsettling negative space; light is scarce and hostile
-- **No** cyberpunk neon, no teal-orange grade, no photoreal ARRI
+- Mood refs (words only, do not name living artists as “style of”): late-night alley dread, wet concrete, clinical fluorescent panic, occult residue, body-horror restraint (suggest, do not gore-spam unless asked)
+- **No** cyberpunk neon, no teal-orange grade, no photoreal ARRI / film still look
 
 ## Default story rhythm (3 panels)
 
-1. **TOP (~35%)** — Establish dread
+1. **TOP (~35%)** — Establish dread (space, isolation, wrong quiet)
 2. **MID (~30%)** — Intrusion / reveal / action
-3. **BOTTOM (~35%)** — Payoff ECU or aftermath
+3. **BOTTOM (~35%)** — Payoff ECU or aftermath beat
 
-## Prompt skeleton (Seedream i2i, short)
+Map the user sequence one beat per panel in order.
+
+## Prompt skeleton (Seedream t2i, short)
 
 ```
 # model: bytedance/seedream-5.0-pro
-# mode: image-to-image
-# style: horror manga / bande dessinée B&W
-# refs: attach character [and style / layout] if available
+# mode: text-to-image
+# style: horror manga B&W
 
-FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy dark ink washes, strong solid blacks, high-contrast shadows, grey midtones. No color, no speech/thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text in the art.
+FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, deep crushed blacks, sparse screentone, light speed lines only if impact. No color, no speech/thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text in the art.
 
-PIN (keep from refs): [faces, outfit, ink style, 3-panel stack if layout ref]. Do not redesign identity.
-
-STYLE: Dark psychological horror ink — crushed shadows, sparse hostile light. Not cyberpunk neon. Not photoreal 3D.
+STYLE: Dark horror manga / gekiga atmosphere — wet night, clinical or occult dread, heavy shadow pools, unsettling empty space. Not cyberpunk neon. Not photoreal 3D.
 
 TOP (~35%): [1 sentence — establish dread]
 MIDDLE (~30%): [1 sentence — intrusion / action; clear limbs]
-BOTTOM (~35%): [1 sentence — ECU or aftermath]
+BOTTOM (~35%): [1 sentence — ECU or aftermath payoff]
 
-SUBJECT LOCK: [compact locks if no ref, or reinforce ref identity]
+SUBJECT LOCK: [compact character locks if any — faces/outfits consistent all panels]
 
-ANATOMY: exactly two arms and two legs per person unless a single stated mutation. Horizontal panels only, pure B&W horror ink, no empty balloon shapes.
-
-CHANGE: only the scene/action described above; preserve identity and ink style from pins.
+ANATOMY: exactly two arms and two legs per person unless a single stated mutation. No extra hands. Horizontal panels only, pure B&W horror ink, no empty balloon shapes.
 ```
 
-**Brevity:** 2–3 in-panel cues max; trim if over ~550 words.
+**Brevity:** do not restate the full style lock in every panel; 2–3 in-panel cues max. Trim filler if over ~550 words.
 
 ## Character locks
 
-### Eve + Nero (if cast reappears)
+If the user names project cast, reuse compact locks (prose only — no refs in t2i):
 
-Prefer **refs** over prose. Compact fallbacks:
-
-```
-Eve: long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses always on, fitted dark blazer, slim trousers
-```
+### Eve + Nero (if horror beat reuses Scotland Yard cast)
 
 ```
-Nero: lean detective, short dark hair, dark coat, LEFT arm cracked-porcelain upper arm + steel forearm from elbow, RIGHT arm flesh + metal hand at wrist, two legs
+Eve: long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses always on, fitted dark blazer, slim trousers, composed but terrified forensic analyst
 ```
 
-Left/right = **subject's** left/right.
+```
+Nero: lean hard-bitten detective, short dark hair, intense eyes, dark coat, LEFT arm cracked-porcelain bare upper arm with segmented steel forearm from the elbow, RIGHT arm flesh with metal hand at the wrist, two legs, combat boots
+```
+
+Left/right = **subject's** left/right. Do not invent dual chrome forearms.
 
 ### Original horror cast
 
-Short lock (face, silhouette, prop); hold across panels. Prefer a face/style ref when available.
+Invent a short lock from the beat (face, silhouette, signature prop); hold across all three panels.
 
 ## How to expand the user beat
 
-1. Split into 3 concrete visual beats
+1. Split into 3 concrete visual beats (dread → pressure → payoff)
 2. Each panel: **1 short sentence**
-3. Prefer implication over gore
-4. Balloons off unless asked
-5. Always PIN when refs are used
-6. Word-count → trim → save Downloads txt → show fenced prompt + Saved line
+3. Prefer implication over gore; escalate only if the user asks
+4. Balloons off unless user asks
+5. No UI chrome / empty speech circles
+6. Always include two-arms / two-legs (or one clear mutation)
+7. Word-count → trim → save Downloads txt → show fenced prompt + Saved line
 
-## Fix mode (user attaches a bad generation)
+## Optional intensifiers (only if user asks)
 
-```
-# model: bytedance/seedream-5.0-pro
-# mode: image-to-image
-# refs: Image 1 = current page to fix; Image 2+ = character/style refs if any
-
-PIN from Image 1: keep three-panel layout, B&W horror ink, [identity].
-
-CHANGE / FIX:
-- [specific panel fixes]
-- each person exactly two arms and two legs
-- Do not restyle faces into different people.
-
-FORMAT: same vertical 1008x1792 B&W horror page, three horizontal panels, no balloons, no text in art.
-```
+- Berserk-level intensity, heavy cross-hatching
+- Quiet cosmic dread (less detail, more black field)
+- Body-horror: one controlled mutation, stated once
+- Dense speed lines / impact for a single panel only
 
 ## After the prompt (only if user asks how to ship)
 
-1. Seedream 5.0 Pro **i2i** + prompt + refs → download
-2. `make add-image SRC=… TOON=<toon> UPLOAD=1`
-3. Update config + `publish-toon-config` if needed
-4. Deploy only if asked
+1. User runs **Seedream 5.0 Pro t2i** with prompt → downloads art
+2. `make add-image SRC=~/Downloads/<file>.jpg TOON=<toon> UPLOAD=1`
+3. Update `content/toons/<toon>/config.json`
+4. `npm run publish-toon-config -- --toon <toon>`
+5. Deploy only if they ask
 
 ## Anti-patterns
 
-- Do not default to pure text-to-image when the user has refs (use i2i + PIN)
-- Do not target Grok Imagine / photoreal ARRI (`/jax`)
+- Do not default to image-to-image or require character refs (that is `/toon-page`)
+- Do not target Grok Imagine / photoreal ARRI teal-orange (`/jax` skill)
 - Do not ship over ~550 words
-- Do not omit limb count
-- Do not forget i2i **PIN** when a reference is attached
+- Do not split into three separate image prompts
+- Do not make all panels the same shot scale
+- Do not add neon cyberpunk city candy unless the user mixes genres on purpose
+- Do not fill the page with text, balloons, or watermarks
 - Do not gore-spam; keep horror readable as ink storytelling
