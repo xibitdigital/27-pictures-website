@@ -38,7 +38,7 @@ Deploy the site after `config-lock.json` changes so production picks up the new 
 
 Word overlays live in each page’s `words[]` (`variant`, `text`, optional `audio`).
 Locked ElevenLabs names: `scripts/jax-voices.json` (`jax`, `riu`, `nova`, `ripperdoc`,
-`badai`, `nero`, `thedog`, `eve`, `barman`, …).
+`badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, …).
 
 ```bash
 set -a; source .env; set +a

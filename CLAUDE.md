@@ -370,6 +370,29 @@ don't reintroduce it. Bubbles (and any word with audio) must capture clicks
    `content/toons/…/config.json`.
 4. Update the matching word entry/entries (multiple entries can share one clip).
 
+> **`--force` regenerates every slug in the manifest, not just the new one**,
+> and the script deletes the previous file whenever a hash changes. That wipes
+> locally staged clips other toons' configs still point at (R2 is untouched, so
+> production keeps working). To redo a single clip: change its `prompt`, delete
+> just that slug's entry from `scripts/jax-sfx-lock.json`, and run **without**
+> `--force`. If `--force` already ran, restore with
+> `git checkout scripts/jax-sfx-lock.json` + `npm run backup-cdn` files from
+> `cdn-backup/`.
+
+Clips land in `public/toons/jax/assets/sfx/` regardless of which toon needs
+them — move them to `public/toons/<toon>/assets/sfx/` before referencing, or
+`asset-page-dir` 404s on the CDN.
+
+**Audibility:** ambient beds (static, breath, drones) often come back too quiet
+to hear under playback. Check before shipping and boost anything below ~-20 dB
+mean:
+
+```bash
+ffmpeg -hide_banner -nostats -i clip.mp3 -filter:a volumedetect -f null /dev/null 2>&1 | grep mean_volume
+ffmpeg -y -i clip.mp3 -af "volume=12dB" -codec:a libmp3lame -b:a 192k /tmp/out.mp3
+# rename to md5 of the new bytes, update config, re-upload
+```
+
 ### Generating a spoken voice line (dialogue, not onomatopoeia)
 
 Onomatopoeia (`CLANK`, `WHOOSH`, …) go through `generate-jax-sfx.py` (Sound
@@ -377,7 +400,7 @@ Effects API — non-verbal). Actual dialogue should be Text-to-Speech:
 
 1. Voices are locked by name in `scripts/jax-voices.json` (`name ->
 voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
-   `badai`, `nero`, `thedog`, `eve`, `barman`. To add a new one: open the voice
+   `badai`, `nero`, `thedog`, `eve`, `barman`, `elena`. To add a new one: open the voice
    on `elevenlabs.io/app/voice-library?voiceId=...`, copy the ID from the URL,
    add `"name": "voiceId"` to that file. (Listing/searching voices via
    `GET /v1/voices` needs a separate `voices_read` scope — grab the ID from
