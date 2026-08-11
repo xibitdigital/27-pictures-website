@@ -41,7 +41,11 @@
             "de": "BRRZ",
             "fr": "BZZT"
           },
-          "audio": "assets/sfx/8a6e925d73c30b5bf68912e2b06527cf.mp3"
+          "audio": "assets/sfx/8a6e925d73c30b5bf68912e2b06527cf.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         },
         {
           "x": 0.2,
@@ -63,7 +67,8 @@
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5
+            "strokeWidth": 5,
+            "tail": "bottom-right"
           }
         },
         {
@@ -82,11 +87,15 @@
             "de": "KSSCHHH",
             "fr": "KSSHHHH"
           },
-          "audio": "assets/sfx/d88025ce66d197bb9ea12e222e899d3b.mp3"
+          "audio": "assets/sfx/d88025ce66d197bb9ea12e222e899d3b.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         },
         {
           "x": 0.24,
-          "y": 0.79,
+          "y": 0.69,
           "align": "center",
           "size": 26,
           "variant": "thought",
@@ -104,7 +113,8 @@
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5
+            "strokeWidth": 5,
+            "tail": "right"
           }
         }
       ]
@@ -128,7 +138,11 @@
             "de": "KRRK",
             "fr": "KRRK"
           },
-          "audio": "assets/sfx/5f1aa7c88c08abe8e3e5877860b401f8.mp3"
+          "audio": "assets/sfx/5f1aa7c88c08abe8e3e5877860b401f8.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         },
         {
           "x": 0.24,
@@ -149,7 +163,7 @@
           "audio": "assets/sfx/f185d250a723c6a7ac9bdd9dda7bd172.mp3",
           "speaker": "elena",
           "bubble": {
-            "tail": "bottom-right",
+            "tail": "right",
             "opacity": 0.75,
             "strokeWidth": 5
           }
@@ -170,7 +184,11 @@
             "de": "hhhhhh",
             "fr": "hhhhhh"
           },
-          "audio": "assets/sfx/7819280bcaa3b73315e65b69244be24c.mp3"
+          "audio": "assets/sfx/7819280bcaa3b73315e65b69244be24c.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         }
       ]
     },
@@ -197,7 +215,8 @@
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5
+            "strokeWidth": 5,
+            "tail": "bottom-right"
           }
         },
         {
@@ -216,7 +235,11 @@
             "de": "knaaarr",
             "fr": "griiince"
           },
-          "audio": "assets/sfx/45b0cb4f19a1203533b72385b0475288.mp3"
+          "audio": "assets/sfx/45b0cb4f19a1203533b72385b0475288.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         },
         {
           "x": 0.25,
@@ -263,7 +286,11 @@
             "de": "KLICK",
             "fr": "CLIC"
           },
-          "audio": "assets/sfx/c2bc915abad9a0740bf9996dfe728735.mp3"
+          "audio": "assets/sfx/c2bc915abad9a0740bf9996dfe728735.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         },
         {
           "x": 0.85,
@@ -285,7 +312,8 @@
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5
+            "strokeWidth": 5,
+            "tail": "top-left"
           }
         },
         {
@@ -308,7 +336,8 @@
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5
+            "strokeWidth": 5,
+            "tail": "bottom-left"
           }
         },
         {
@@ -327,7 +356,11 @@
             "de": "hnnnnn",
             "fr": "hnnnnn"
           },
-          "audio": "assets/sfx/4ae6261d2b715847e22573cc8e6a0e35.mp3"
+          "audio": "assets/sfx/4ae6261d2b715847e22573cc8e6a0e35.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         }
       ]
     },
@@ -350,7 +383,11 @@
             "de": "KNARR",
             "fr": "CRAAC"
           },
-          "audio": "assets/sfx/8718353718af6b9de9278e26efd7cee0.mp3"
+          "audio": "assets/sfx/8718353718af6b9de9278e26efd7cee0.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         },
         {
           "x": 0.2,
@@ -372,7 +409,8 @@
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5
+            "strokeWidth": 5,
+            "tail": "bottom-right"
           }
         },
         {
@@ -391,7 +429,11 @@
             "de": "tk… tk…",
             "fr": "tk… tk…"
           },
-          "audio": "assets/sfx/00c68a4a21ddbd21d4692c79112fc043.mp3"
+          "audio": "assets/sfx/00c68a4a21ddbd21d4692c79112fc043.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         }
       ]
     },
@@ -442,7 +484,8 @@
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5
+            "strokeWidth": 5,
+            "tail": "bottom-right"
           }
         },
         {
@@ -485,7 +528,11 @@
             "de": "SHKK",
             "fr": "SHKK"
           },
-          "audio": "assets/sfx/bd2a1cc5fb666a0c1aaff005a1800b10.mp3"
+          "audio": "assets/sfx/bd2a1cc5fb666a0c1aaff005a1800b10.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         }
       ]
     },
@@ -508,7 +555,11 @@
             "de": "NNNK",
             "fr": "NNNK"
           },
-          "audio": "assets/sfx/acc976df7c4c18ccb6d808afb6bdbc01.mp3"
+          "audio": "assets/sfx/acc976df7c4c18ccb6d808afb6bdbc01.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         },
         {
           "x": 0.25,
@@ -529,7 +580,7 @@
           "audio": "assets/sfx/d27d8692fc91794be60d170590453116.mp3",
           "speaker": "elena",
           "bubble": {
-            "tail": "right",
+            "tail": "bottom-right",
             "opacity": 0.75,
             "strokeWidth": 5
           }
@@ -551,7 +602,11 @@
             "fr": "NOOOOON—!"
           },
           "audio": "assets/sfx/ca2fb00bb5afb3902d590b8862a8f4b1.mp3",
-          "speaker": "elena"
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
         }
       ]
     }
