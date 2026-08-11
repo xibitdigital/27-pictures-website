@@ -228,5 +228,40 @@
     "slug": "rs-stair-creak",
     "prompt": "Single long wooden staircase step creak under slow weight, old dry timber",
     "duration": 1.6
+  },
+  {
+    "slug": "rs-phone-buzz",
+    "prompt": "Short phone vibration buzz, muffled haptic rattle in a hand, single message alert, no music",
+    "duration": 1.0
+  },
+  {
+    "slug": "rs-breath-dark",
+    "prompt": "Slow low inhuman exhale in a dark empty room, breathy dry rasp, no words, no music",
+    "duration": 2.6
+  },
+  {
+    "slug": "rs-door-creak",
+    "prompt": "Old wooden door creaking slowly open, dry hinge, long single creak, empty house",
+    "duration": 2.4
+  },
+  {
+    "slug": "rs-house-groan",
+    "prompt": "Deep low groan of old house timber settling, distant structural moan, subtle dread drone",
+    "duration": 3.0
+  },
+  {
+    "slug": "rs-footstep-thud",
+    "prompt": "Single soft bare footstep on old wooden floorboards, distant in an empty corridor",
+    "duration": 1.0
+  },
+  {
+    "slug": "rs-handle-turn",
+    "prompt": "Old brass door handle turning slowly, metallic latch scrape and click, close up",
+    "duration": 1.6
+  },
+  {
+    "slug": "rs-hinge-whine",
+    "prompt": "Rusty hinge whine as a bedroom door swings open, thin metallic squeal, no music",
+    "duration": 2.0
   }
 ]

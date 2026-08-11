@@ -14,6 +14,21 @@
       "file": "assets/c1cdf266ee648090db2223aace768567.png",
       "words": [
         {
+          "x": 0.28,
+          "y": 0.19,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 6,
+          "scale": 1.0,
+          "maxWidth": 0.2,
+          "text": {
+            "en": "BZZT"
+          },
+          "audio": "assets/sfx/8a6e925d73c30b5bf68912e2b06527cf.mp3"
+        },
+        {
           "x": 0.2,
           "y": 0.09,
           "align": "center",
@@ -108,6 +123,21 @@
             "opacity": 0.75,
             "strokeWidth": 5
           }
+        },
+        {
+          "x": 0.63,
+          "y": 0.74,
+          "align": "center",
+          "size": 24,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "hhhhhh"
+          },
+          "audio": "assets/sfx/4cee32a92b4f7f39d9384c48d6e4e001.mp3"
         }
       ]
     },
@@ -154,6 +184,21 @@
             "opacity": 0.75,
             "strokeWidth": 5
           }
+        },
+        {
+          "x": 0.72,
+          "y": 0.45,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 5,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "kreeeee"
+          },
+          "audio": "assets/sfx/45b0cb4f19a1203533b72385b0475288.mp3"
         }
       ]
     },
@@ -214,6 +259,21 @@
             "opacity": 0.75,
             "strokeWidth": 5
           }
+        },
+        {
+          "x": 0.72,
+          "y": 0.8,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "hnnnnn"
+          },
+          "audio": "assets/sfx/4ae6261d2b715847e22573cc8e6a0e35.mp3"
         }
       ]
     },
@@ -254,6 +314,21 @@
             "opacity": 0.75,
             "strokeWidth": 5
           }
+        },
+        {
+          "x": 0.72,
+          "y": 0.86,
+          "align": "center",
+          "size": 24,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "tk… tk…"
+          },
+          "audio": "assets/sfx/00c68a4a21ddbd21d4692c79112fc043.mp3"
         }
       ]
     },
@@ -320,6 +395,21 @@
             "opacity": 0.75,
             "strokeWidth": 5
           }
+        },
+        {
+          "x": 0.28,
+          "y": 0.9,
+          "align": "center",
+          "size": 30,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -6,
+          "scale": 1.0,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "SHKK"
+          },
+          "audio": "assets/sfx/bd2a1cc5fb666a0c1aaff005a1800b10.mp3"
         }
       ]
     },
@@ -361,6 +451,21 @@
           },
           "audio": "assets/sfx/5932c9869335c5deb1907343a7365bc3.mp3",
           "speaker": "elena"
+        },
+        {
+          "x": 0.72,
+          "y": 0.1,
+          "align": "center",
+          "size": 28,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 5,
+          "scale": 1.0,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "NNNK"
+          },
+          "audio": "assets/sfx/acc976df7c4c18ccb6d808afb6bdbc01.mp3"
         }
       ]
     }
