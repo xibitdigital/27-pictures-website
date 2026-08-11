@@ -400,12 +400,12 @@
           "scale": 1.05,
           "maxWidth": 0.3,
           "text": {
-            "en": "It's already\nupstairs.",
-            "it": "È già\ndi sopra.",
-            "de": "Es ist schon\noben.",
-            "fr": "C'est déjà\nen haut."
+            "en": "It turned\nwhen I turned.",
+            "it": "Si è girata\nquando mi sono girata.",
+            "de": "Er hat sich gedreht,\nals ich mich drehte.",
+            "fr": "Elle s'est tournée\nquand je me suis tournée."
           },
-          "audio": "assets/sfx/6a12c01819a0ceba7ff384f085208eab.mp3",
+          "audio": "assets/sfx/4d84341af5e66f6b72c7071b8a74c810.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -485,7 +485,7 @@
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5,
-            "tail": "bottom-right"
+            "tail": "bottom-left"
           }
         },
         {
@@ -580,7 +580,7 @@
           "audio": "assets/sfx/d27d8692fc91794be60d170590453116.mp3",
           "speaker": "elena",
           "bubble": {
-            "tail": "bottom-right",
+            "tail": "right",
             "opacity": 0.75,
             "strokeWidth": 5
           }
