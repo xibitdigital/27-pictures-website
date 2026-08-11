@@ -101,7 +101,7 @@ body.toons-reader {
 }
 
 /* ── Reading progress ──
-   Hairline bar replacing the numeric page indicator. Above the top-right
+   Slim bar replacing the numeric page indicator. Above the top-right
    controls' stacking context so it survives fullscreen, where the rest of
    the chrome hides. Desktop pins it to the top; mobile moves it to the very
    bottom, clear of the notch and out of thumb range. */
@@ -110,7 +110,7 @@ body.toons-reader {
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 4px;
   z-index: 60;
   background: color-mix(in srgb, var(--text) 8%, transparent);
   pointer-events: none;
@@ -1556,12 +1556,12 @@ body.single-page .flip-page.flipping.from-left {
     content: "";
     position: absolute;
     inset: 0 0 auto;
-    height: 2px;
+    height: 4px;
     background: color-mix(in srgb, var(--text) 8%, transparent);
   }
 
   .toon-progress .toon-progress-fill {
-    height: 2px;
+    height: 4px;
   }
 
   /* Mobile: plates run edge to edge — no page frame line (book or scroll mode) */
