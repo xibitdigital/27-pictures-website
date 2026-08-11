@@ -7,7 +7,7 @@ import { toonConfigUrl } from "../configUrls";
 const ASSET_PAGE_DIR = "/toons/redsmile-static/";
 /** Content-hashed config from config-lock.json. */
 const CONFIG_URL = toonConfigUrl("redsmile-static");
-const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
+const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
 
 /** Front-cover story — see content/toons/redsmile-static/README.md */
 const COVER_SYNOPSIS = "Elena waits alone at home. A strange image flickers on the TV. Something starts watching back.";

@@ -10,7 +10,7 @@ import { toonConfigUrl } from "../configUrls";
 const ASSET_PAGE_DIR = "/toons/jax/";
 /** Content-hashed config from config-lock.json (changes when config bytes change). */
 const CONFIG_URL = toonConfigUrl("jax");
-const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
+const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
 const BG_MUSIC = resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3");
 
 const bgMusicEl = ref<HTMLAudioElement | null>(null);

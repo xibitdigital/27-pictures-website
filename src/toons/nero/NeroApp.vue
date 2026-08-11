@@ -8,7 +8,7 @@ import { toonConfigUrl } from "../configUrls";
 const ASSET_PAGE_DIR = "/toons/nero/";
 /** Content-hashed config from config-lock.json. */
 const CONFIG_URL = toonConfigUrl("nero");
-const COVER_TEXTURE = resolveAssetUrl("/toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg");
+const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
 
 /** Front-cover story — full cast/synopsis in content/toons/nero/README.md */
 const COVER_SYNOPSIS =
