@@ -13,7 +13,18 @@ Something starts watching back.
 | Config    | `content/toons/redsmile-static/config.json`        |
 | App       | `src/toons/redsmile-static/`                       |
 | Card art  | `card-art/redsmile-static.jpg`                     |
-| Languages | `en` only                                          |
+| Languages | `en` · `it` · `de` · `fr` (LangSwitcher in the top bar) |
+
+## Languages
+
+Captions carry `en` / `it` / `de` / `fr`; the switcher is wired in
+`RedSmileStaticApp.vue` and remembers the choice under
+`redsmile-static-toon-lang`.
+
+**Voice-over stays English.** A word's `audio` is a single clip — the schema
+has no per-language variant — so switching language re-letters the captions
+but plays the same Elena take, the same way Jax works. Localised VO would
+need a config-schema change first.
 
 ## Cast / voices
 

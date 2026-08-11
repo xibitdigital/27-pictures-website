@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { resolveAssetUrl } from "../bookReader/assetUrl";
+import LangSwitcher from "../bookReader/LangSwitcher.vue";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "../bookReader/types";
 import { toonConfigUrl } from "../configUrls";
@@ -26,6 +27,11 @@ const bookOptions: ToonShellBookOptions = {
     :asset-page-dir="ASSET_PAGE_DIR"
     front-cover-logo="/logosquare.png"
     :cover-texture="COVER_TEXTURE"
+    caption-lang-storage-key="redsmile-static-toon-lang"
     :book-options="bookOptions"
-  />
+  >
+    <template #top-controls-start>
+      <LangSwitcher />
+    </template>
+  </ToonReaderShell>
 </template>

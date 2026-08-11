@@ -7,6 +7,18 @@
     {
       "code": "en",
       "label": "EN"
+    },
+    {
+      "code": "it",
+      "label": "IT"
+    },
+    {
+      "code": "de",
+      "label": "DE"
+    },
+    {
+      "code": "fr",
+      "label": "FR"
     }
   ],
   "pages": [
@@ -24,7 +36,10 @@
           "scale": 1.0,
           "maxWidth": 0.2,
           "text": {
-            "en": "BZZT"
+            "en": "BZZT",
+            "it": "BZZT",
+            "de": "BRRZ",
+            "fr": "BZZT"
           },
           "audio": "assets/sfx/8a6e925d73c30b5bf68912e2b06527cf.mp3"
         },
@@ -39,7 +54,10 @@
           "scale": 1.05,
           "maxWidth": 0.3,
           "text": {
-            "en": "An hour of traffic.\nSure."
+            "en": "An hour of traffic.\nSure.",
+            "it": "Un'ora di traffico.\nCerto.",
+            "de": "Eine Stunde Stau.\nKlar.",
+            "fr": "Une heure de bouchons.\nBien sûr."
           },
           "audio": "assets/sfx/f8352dd3b6c81e3b86eb545192221317.mp3",
           "speaker": "elena",
@@ -59,7 +77,10 @@
           "scale": 1.1,
           "maxWidth": 0.28,
           "text": {
-            "en": "KSSHHHH"
+            "en": "KSSHHHH",
+            "it": "KSSHHHH",
+            "de": "KSSCHHH",
+            "fr": "KSSHHHH"
           },
           "audio": "assets/sfx/d88025ce66d197bb9ea12e222e899d3b.mp3"
         },
@@ -74,7 +95,10 @@
           "scale": 1.05,
           "maxWidth": 0.32,
           "text": {
-            "en": "…what channel\nis this?"
+            "en": "…what channel\nis this?",
+            "it": "…che canale\nè questo?",
+            "de": "…welcher Sender\nist das?",
+            "fr": "…c'est quelle\nchaîne, ça ?"
           },
           "audio": "assets/sfx/538779375f165f68ec597f6f3781ed54.mp3",
           "speaker": "elena",
@@ -99,7 +123,10 @@
           "scale": 1.05,
           "maxWidth": 0.24,
           "text": {
-            "en": "KRRK"
+            "en": "KRRK",
+            "it": "KRRK",
+            "de": "KRRK",
+            "fr": "KRRK"
           },
           "audio": "assets/sfx/5f1aa7c88c08abe8e3e5877860b401f8.mp3"
         },
@@ -114,7 +141,10 @@
           "scale": 1.05,
           "maxWidth": 0.26,
           "text": {
-            "en": "Hello?"
+            "en": "Hello?",
+            "it": "C'è nessuno?",
+            "de": "Hallo?",
+            "fr": "Il y a quelqu'un ?"
           },
           "audio": "assets/sfx/f185d250a723c6a7ac9bdd9dda7bd172.mp3",
           "speaker": "elena",
@@ -135,7 +165,10 @@
           "scale": 1.0,
           "maxWidth": 0.24,
           "text": {
-            "en": "hhhhhh"
+            "en": "hhhhhh",
+            "it": "hhhhhh",
+            "de": "hhhhhh",
+            "fr": "hhhhhh"
           },
           "audio": "assets/sfx/7819280bcaa3b73315e65b69244be24c.mp3"
         }
@@ -155,7 +188,10 @@
           "scale": 1.05,
           "maxWidth": 0.32,
           "text": {
-            "en": "What the hell\nwas that!?"
+            "en": "What the hell\nwas that!?",
+            "it": "Ma che cavolo\nera?!",
+            "de": "Was zum Teufel\nwar das?!",
+            "fr": "C'était quoi,\nbon sang ?!"
           },
           "audio": "assets/sfx/a4cbbdbaa0cf35565107ba9eb10b7935.mp3",
           "speaker": "elena",
@@ -175,7 +211,10 @@
           "scale": 1.0,
           "maxWidth": 0.24,
           "text": {
-            "en": "kreeeee"
+            "en": "kreeeee",
+            "it": "scriiic",
+            "de": "knaaarr",
+            "fr": "griiince"
           },
           "audio": "assets/sfx/45b0cb4f19a1203533b72385b0475288.mp3"
         },
@@ -190,7 +229,10 @@
           "scale": 1.05,
           "maxWidth": 0.3,
           "text": {
-            "en": "Who's there…?"
+            "en": "Who's there…?",
+            "it": "Chi è là…?",
+            "de": "Wer ist da…?",
+            "fr": "Qui est là… ?"
           },
           "audio": "assets/sfx/f5058af057b914753eb6ea2340fbe5f9.mp3",
           "speaker": "elena",
@@ -216,7 +258,10 @@
           "scale": 1.05,
           "maxWidth": 0.22,
           "text": {
-            "en": "CLICK"
+            "en": "CLICK",
+            "it": "CLICK",
+            "de": "KLICK",
+            "fr": "CLIC"
           },
           "audio": "assets/sfx/c2bc915abad9a0740bf9996dfe728735.mp3"
         },
@@ -231,7 +276,10 @@
           "scale": 1,
           "maxWidth": 0.22,
           "text": {
-            "en": "No power."
+            "en": "No power.",
+            "it": "Niente corrente.",
+            "de": "Kein Strom.",
+            "fr": "Pas de courant."
           },
           "audio": "assets/sfx/c79f05dd2262e63a003686aae926ca4a.mp3",
           "speaker": "elena",
@@ -251,7 +299,10 @@
           "scale": 1.05,
           "maxWidth": 0.3,
           "text": {
-            "en": "That's not\nmy reflection."
+            "en": "That's not\nmy reflection.",
+            "it": "Quello non è\nil mio riflesso.",
+            "de": "Das ist nicht\nmein Spiegelbild.",
+            "fr": "Ce n'est pas\nmon reflet."
           },
           "audio": "assets/sfx/327a76d31be0f6cde778e2f9d0b6fcd5.mp3",
           "speaker": "elena",
@@ -271,7 +322,10 @@
           "scale": 1.0,
           "maxWidth": 0.24,
           "text": {
-            "en": "hnnnnn"
+            "en": "hnnnnn",
+            "it": "hnnnnn",
+            "de": "hnnnnn",
+            "fr": "hnnnnn"
           },
           "audio": "assets/sfx/4ae6261d2b715847e22573cc8e6a0e35.mp3"
         }
@@ -291,7 +345,10 @@
           "scale": 1.05,
           "maxWidth": 0.24,
           "text": {
-            "en": "KREE-K"
+            "en": "KREE-K",
+            "it": "SCRIIC",
+            "de": "KNARR",
+            "fr": "CRAAC"
           },
           "audio": "assets/sfx/8718353718af6b9de9278e26efd7cee0.mp3"
         },
@@ -306,7 +363,10 @@
           "scale": 1.05,
           "maxWidth": 0.3,
           "text": {
-            "en": "It's already\nupstairs."
+            "en": "It's already\nupstairs.",
+            "it": "È già\ndi sopra.",
+            "de": "Es ist schon\noben.",
+            "fr": "C'est déjà\nen haut."
           },
           "audio": "assets/sfx/6a12c01819a0ceba7ff384f085208eab.mp3",
           "speaker": "elena",
@@ -326,7 +386,10 @@
           "scale": 1.0,
           "maxWidth": 0.24,
           "text": {
-            "en": "tk… tk…"
+            "en": "tk… tk…",
+            "it": "tk… tk…",
+            "de": "tk… tk…",
+            "fr": "tk… tk…"
           },
           "audio": "assets/sfx/00c68a4a21ddbd21d4692c79112fc043.mp3"
         }
@@ -336,27 +399,31 @@
       "file": "assets/db17d04bbf5fd4d9b2241212f644c436.png",
       "words": [
         {
-          "x": 0.26,
-          "y": 0.1,
+          "x": 0.36,
+          "y": 0.04,
           "align": "center",
-          "size": 25,
+          "size": 24,
           "variant": "thought",
           "color": "#111111",
           "angle": -3,
           "scale": 1.05,
           "maxWidth": 0.34,
           "text": {
-            "en": "Three doors.\nI only ever close two."
+            "en": "I closed these.\nI know I closed these.",
+            "it": "Le avevo chiuse.\nSo che le avevo chiuse.",
+            "de": "Ich hab sie zugemacht.\nIch weiß, dass ich sie zugemacht habe.",
+            "fr": "Je les avais fermées.\nJe sais que je les avais fermées."
           },
-          "audio": "assets/sfx/d4f3458813207f66b45d7782ae413c9a.mp3",
+          "audio": "assets/sfx/63b9d89f2a88a72168c71ea2af2e74af.mp3",
           "speaker": "elena",
           "bubble": {
+            "tail": "bottom-right",
             "opacity": 0.75,
             "strokeWidth": 5
           }
         },
         {
-          "x": 0.23,
+          "x": 0.63,
           "y": 0.41,
           "align": "center",
           "size": 26,
@@ -366,7 +433,10 @@
           "scale": 1.05,
           "maxWidth": 0.28,
           "text": {
-            "en": "Those aren't mine."
+            "en": "Those aren't mine.",
+            "it": "Quelle non sono mie.",
+            "de": "Die gehören nicht mir.",
+            "fr": "Elles ne sont pas à moi."
           },
           "audio": "assets/sfx/1a2775b1f86c6ff9885a3af1e2ce5c5e.mp3",
           "speaker": "elena",
@@ -376,8 +446,8 @@
           }
         },
         {
-          "x": 0.27,
-          "y": 0.78,
+          "x": 0.77,
+          "y": 0.68,
           "align": "center",
           "size": 27,
           "variant": "bubble",
@@ -386,7 +456,10 @@
           "scale": 1.05,
           "maxWidth": 0.3,
           "text": {
-            "en": "Please be empty."
+            "en": "Please be empty.",
+            "it": "Ti prego, sia vuota.",
+            "de": "Bitte sei leer.",
+            "fr": "Pitié, qu'elle soit vide."
           },
           "audio": "assets/sfx/40a62be46fa97f613c300f5eb4a784d0.mp3",
           "speaker": "elena",
@@ -407,7 +480,10 @@
           "scale": 1.0,
           "maxWidth": 0.22,
           "text": {
-            "en": "SHKK"
+            "en": "SHKK",
+            "it": "SHKK",
+            "de": "SHKK",
+            "fr": "SHKK"
           },
           "audio": "assets/sfx/bd2a1cc5fb666a0c1aaff005a1800b10.mp3"
         }
@@ -427,12 +503,15 @@
           "scale": 1.0,
           "maxWidth": 0.22,
           "text": {
-            "en": "NNNK"
+            "en": "NNNK",
+            "it": "NNNK",
+            "de": "NNNK",
+            "fr": "NNNK"
           },
           "audio": "assets/sfx/acc976df7c4c18ccb6d808afb6bdbc01.mp3"
         },
         {
-          "x": 0.22,
+          "x": 0.25,
           "y": 0.38,
           "align": "center",
           "size": 25,
@@ -442,18 +521,22 @@
           "scale": 1.05,
           "maxWidth": 0.32,
           "text": {
-            "en": "My shadow is facing\nthe wrong way."
+            "en": "My shadow is facing\nthe wrong way.",
+            "it": "La mia ombra è girata\ndalla parte sbagliata.",
+            "de": "Mein Schatten zeigt\nin die falsche Richtung.",
+            "fr": "Mon ombre est tournée\ndu mauvais côté."
           },
           "audio": "assets/sfx/d27d8692fc91794be60d170590453116.mp3",
           "speaker": "elena",
           "bubble": {
+            "tail": "right",
             "opacity": 0.75,
             "strokeWidth": 5
           }
         },
         {
           "x": 0.22,
-          "y": 0.79,
+          "y": 0.89,
           "align": "center",
           "size": 44,
           "variant": "burst",
@@ -462,7 +545,10 @@
           "scale": 1.25,
           "maxWidth": 0.34,
           "text": {
-            "en": "NOOOOO—!"
+            "en": "NOOOOO—!",
+            "it": "NOOOOO—!",
+            "de": "NEIIIIN—!",
+            "fr": "NOOOOON—!"
           },
           "audio": "assets/sfx/ca2fb00bb5afb3902d590b8862a8f4b1.mp3",
           "speaker": "elena"
