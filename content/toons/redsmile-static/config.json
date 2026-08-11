@@ -1,0 +1,368 @@
+{
+  "title": "RED SMILE: static",
+  "designWidth": 800,
+  "designHeight": 1424,
+  "defaultLang": "en",
+  "languages": [
+    {
+      "code": "en",
+      "label": "EN"
+    }
+  ],
+  "pages": [
+    {
+      "file": "assets/c1cdf266ee648090db2223aace768567.png",
+      "words": [
+        {
+          "x": 0.2,
+          "y": 0.09,
+          "align": "center",
+          "size": 26,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "An hour of traffic.\nSure."
+          },
+          "audio": "assets/sfx/f8352dd3b6c81e3b86eb545192221317.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.74,
+          "y": 0.37,
+          "align": "center",
+          "size": 34,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -6,
+          "scale": 1.1,
+          "maxWidth": 0.28,
+          "text": {
+            "en": "KSSHHHH"
+          },
+          "audio": "assets/sfx/f8cf657d934eae1c296558c691524f04.mp3"
+        },
+        {
+          "x": 0.24,
+          "y": 0.79,
+          "align": "center",
+          "size": 26,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.05,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "…what channel\nis this?"
+          },
+          "audio": "assets/sfx/538779375f165f68ec597f6f3781ed54.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/cefa587b599ad5cfaa5afbdcb2817bc2.png",
+      "words": [
+        {
+          "x": 0.73,
+          "y": 0.13,
+          "align": "center",
+          "size": 32,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 5,
+          "scale": 1.05,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "KRRK"
+          },
+          "audio": "assets/sfx/5f1aa7c88c08abe8e3e5877860b401f8.mp3"
+        },
+        {
+          "x": 0.24,
+          "y": 0.42,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.05,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "Hello?"
+          },
+          "audio": "assets/sfx/f185d250a723c6a7ac9bdd9dda7bd172.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/4865a0449ecca5f11b42abc6c1e6f74f.png",
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.07,
+          "align": "center",
+          "size": 26,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.28,
+          "text": {
+            "en": "Don't move."
+          },
+          "audio": "assets/sfx/0b2621c67a7091a935a2897e545868bf.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.25,
+          "y": 0.72,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.05,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Who's there…?"
+          },
+          "audio": "assets/sfx/f5058af057b914753eb6ea2340fbe5f9.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/e022f7e43b4957fc071800e19533366f.png",
+      "words": [
+        {
+          "x": 0.63,
+          "y": 0.07,
+          "align": "center",
+          "size": 32,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -5,
+          "scale": 1.05,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "CLICK"
+          },
+          "audio": "assets/sfx/c2bc915abad9a0740bf9996dfe728735.mp3"
+        },
+        {
+          "x": 0.85,
+          "y": 0.17,
+          "align": "center",
+          "size": 24,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "No power."
+          },
+          "audio": "assets/sfx/c79f05dd2262e63a003686aae926ca4a.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.81,
+          "y": 0.38,
+          "align": "center",
+          "size": 26,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "That's not\nmy reflection."
+          },
+          "audio": "assets/sfx/327a76d31be0f6cde778e2f9d0b6fcd5.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/72007d4b8de52e794e4a3ffb78b2128f.png",
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.09,
+          "align": "center",
+          "size": 30,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -6,
+          "scale": 1.05,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "KREE-K"
+          },
+          "audio": "assets/sfx/8718353718af6b9de9278e26efd7cee0.mp3"
+        },
+        {
+          "x": 0.2,
+          "y": 0.38,
+          "align": "center",
+          "size": 26,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.05,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "It's already\nupstairs."
+          },
+          "audio": "assets/sfx/6a12c01819a0ceba7ff384f085208eab.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/db17d04bbf5fd4d9b2241212f644c436.png",
+      "words": [
+        {
+          "x": 0.26,
+          "y": 0.1,
+          "align": "center",
+          "size": 25,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.34,
+          "text": {
+            "en": "Three doors.\nI only ever close two."
+          },
+          "audio": "assets/sfx/d4f3458813207f66b45d7782ae413c9a.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.23,
+          "y": 0.41,
+          "align": "center",
+          "size": 26,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1.05,
+          "maxWidth": 0.28,
+          "text": {
+            "en": "Those aren't mine."
+          },
+          "audio": "assets/sfx/1a2775b1f86c6ff9885a3af1e2ce5c5e.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.27,
+          "y": 0.78,
+          "align": "center",
+          "size": 27,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Please be empty."
+          },
+          "audio": "assets/sfx/40a62be46fa97f613c300f5eb4a784d0.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/df2202b076befeafe6e551366ad34924.png",
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.38,
+          "align": "center",
+          "size": 25,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.05,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "My shadow is facing\nthe wrong way."
+          },
+          "audio": "assets/sfx/d27d8692fc91794be60d170590453116.mp3",
+          "speaker": "elena",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.79,
+          "align": "center",
+          "size": 38,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -7,
+          "scale": 1.15,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "NO—"
+          },
+          "audio": "assets/sfx/5932c9869335c5deb1907343a7365bc3.mp3",
+          "speaker": "elena"
+        }
+      ]
+    }
+  ]
+}

@@ -76,6 +76,7 @@ export default defineConfig({
         jax: path.resolve(srcDir, "toons/jax/index.html"),
         erin: path.resolve(srcDir, "toons/erin/index.html"),
         nero: path.resolve(srcDir, "toons/nero/index.html"),
+        "redsmile-static": path.resolve(srcDir, "toons/redsmile-static/index.html"),
       },
     },
   },

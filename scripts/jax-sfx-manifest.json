@@ -208,5 +208,25 @@
     "slug": "nero-landing-thud",
     "prompt": "Person landing hard in a crouch on wet sidewalk under a fabric awning, solid body thud with soft fabric flap, rainy street, no speech",
     "duration": 1.0
+  },
+  {
+    "slug": "rs-static-hiss",
+    "prompt": "Old CRT television static hiss, dead channel white noise, dry room tone, no music",
+    "duration": 2.4
+  },
+  {
+    "slug": "rs-static-crackle",
+    "prompt": "Short sharp electrical crackle from an old TV set, single pop of interference",
+    "duration": 1.0
+  },
+  {
+    "slug": "rs-switch-click",
+    "prompt": "Old wall light switch flicked, single dry plastic click, no hum, no light",
+    "duration": 0.8
+  },
+  {
+    "slug": "rs-stair-creak",
+    "prompt": "Single long wooden staircase step creak under slow weight, old dry timber",
+    "duration": 1.6
   }
 ]

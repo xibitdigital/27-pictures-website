@@ -37,4 +37,10 @@ describe("toon entry modules", () => {
     expect(createApp).toHaveBeenCalled();
     expect(mount).toHaveBeenCalledWith("#app");
   });
+
+  it("redsmile-static/main.ts mounts RedSmileStaticApp on #app", async () => {
+    await import("./redsmile-static/main");
+    expect(createApp).toHaveBeenCalled();
+    expect(mount).toHaveBeenCalledWith("#app");
+  });
 });

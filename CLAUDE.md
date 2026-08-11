@@ -273,6 +273,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Erin | `/toons/erin/` | Page-turner prototype                                                                                                  |
 | Jax  | `/toons/jax/`  | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)             |
 | Nero | `/toons/nero/` | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`) |
+| RED SMILE: static | `/toons/redsmile-static/` | B&W horror short — Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page` |
 
 Wire-up pattern:
 

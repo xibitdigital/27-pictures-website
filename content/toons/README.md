@@ -15,6 +15,7 @@ Editable source of truth for toon page lists + captions. **Not deployed** with t
 | `erin` | `content/toons/erin/` | Interactive manga reader                                                                        |
 | `jax`  | `content/toons/jax/`  | Netrunner chronicles — synopsis on cover; multilingual SFX/music (see `jax/README.md`)          |
 | `nero` | `content/toons/nero/` | Scotland Yard case: Nero / Eve / The Dog; `?page=N` deep-links; full manual in `nero/README.md` |
+| `redsmile-static` | `content/toons/redsmile-static/` | RED SMILE: static — B&W horror short; Elena alone at home, the TV starts watching back |
 
 ```bash
 # After editing config.json

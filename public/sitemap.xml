@@ -46,4 +46,16 @@
       <image:caption>Cover art for Nero, a cyberpunk sicario interactive toon prototype by 27 Pictures</image:caption>
     </image:image>
   </url>
+  <url>
+    <loc>https://twentyseven.pictures/toons/redsmile-static/</loc>
+    <lastmod>2026-08-11</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/redsmile-static.jpg</image:loc>
+      <image:title>RED SMILE: static interactive horror toon — 27 Pictures Experiments</image:title>
+      <image:caption
+        >Cover art for RED SMILE: static — Elena waits alone at home while something watches back, an interactive horror
+        toon by 27 Pictures</image:caption
+      >
+    </image:image>
+  </url>
 </urlset>
