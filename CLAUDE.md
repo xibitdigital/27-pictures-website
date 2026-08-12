@@ -63,10 +63,12 @@ npm run format
 27-pictures-website/
 ├── src/                     # Vite root (Vue 3 + TS MPA entries)
 │   ├── index.html           # Homepage
-│   ├── experiments/         # Experiments lab
-│   ├── site/                # SiteNav, ContactForm, directives
+│   ├── cosplay/             # /cosplay/ service page
+│   ├── horror-shorts/       # /horror-shorts/ Red Smile hub
+│   ├── site/                # SiteNav, ContactForm, per-page entries
+│   ├── toons/index.html     # /toons/ — Interactive Toons index (was /experiments/)
 │   ├── toons/bookReader/    # FlipFrame package
-│   ├── toons/jax|erin|nero/ # Toon apps
+│   ├── toons/jax|erin|nero|redsmile-static/  # Toon apps
 │   └── test/setup.ts        # Vitest (forces empty VITE_ASSET_BASE)
 ├── content/toons/           # Editable config.json per toon (publish → R2)
 ├── public/                  # Static → site root in dist/
@@ -75,12 +77,17 @@ npm run format
 │   │   └── **/assets/       # gitignored (R2 only)
 │   ├── card-art/            # gitignored posters (R2)
 │   ├── sitemap.xml          # uses %VITE_ASSET_BASE% for card images
+│   ├── _redirects           # 301 /experiments* → /toons/
 │   └── _headers             # CSP + cache (allow R2 + CF Insights)
 ├── vite/plugins/cdnMedia.ts # hard CDN gate + token expand + strip media
 ├── scripts/
 │   ├── lib/r2-media.js      # shared R2 put/lock
 │   ├── upload-r2-assets.js
 │   ├── add-toon-image.js
+│   ├── swap-toon-page.js       # replace a plate, keep its captions
+│   ├── normalise-toon-audio.py # EBU R128 + true-peak levelling
+│   ├── purge-r2-objects.js     # delete superseded CDN objects
+│   ├── backup-cdn-assets.js    # cdn-backup/ before any purge
 │   ├── serve-protected.js
 │   ├── hash-assets.js
 │   └── generate-qr.js
@@ -266,17 +273,6 @@ To receive emails at `info@twentyseven.pictures`:
 2. Add route: `info` → forward to personal email
 3. Add MX records if prompted
 
-## Experiments Page
-
-`public/experiments/index.html` carries the **same main site nav** as the
-homepage (`<header><nav>...</nav></header>` + mobile menu overlay), copied
-from `public/index.html` with the hash links rewritten to be homepage-
-relative (`/#darkroom` instead of `#darkroom`, since this page isn't the
-homepage). It also loads `../script.js` (burger menu + magnetic hover) —
-keep both the nav markup and that script tag if this page is ever
-regenerated or restructured; the page's own top padding (140px desktop) was
-already sized to clear a fixed header, they just weren't in sync before.
-
 ## QR Code Landing Page
 
 - **URL:** `https://twentyseven.pictures/qr.html`
@@ -290,6 +286,42 @@ already sized to clear a fixed header, they just weren't in sync before.
 npm run generate-qr
 # Output: ~/Downloads/27pictures-qr.pdf
 ```
+
+## Site pages
+
+| URL               | Source                     | Role                                                        |
+| ----------------- | -------------------------- | ----------------------------------------------------------- |
+| `/`               | `src/index.html`           | Studio homepage — sections + summaries that link out         |
+| `/horror-shorts/` | `src/horror-shorts/`       | The Red Smile anthology hub; all five films with writeups    |
+| `/cosplay/`       | `src/cosplay/`             | Cosplay production service page + FAQ                        |
+| `/toons/`         | `src/toons/index.html`     | Interactive Toons index (readers live at `/toons/<name>/`)   |
+| `/qr.html`        | `public/qr.html`           | Printed-QR landing page (`noindex`)                          |
+
+Each page mounts the same Vue chrome via its own entry in `src/site/`
+(`main.ts`, `toonsMain.ts`, `cosplayMain.ts`, `horrorShortsMain.ts`) and needs a
+matching `rollupOptions.input` entry in `vite.config.ts`. `SiteNav`'s `page`
+prop drives `aria-current` and whether section anchors are bare (`#contact`) or
+homepage-relative (`/#contact`).
+
+**Schema lives with its subject, never duplicated.** The homepage graph keeps
+Organization, WebSite, WebPage, the founders and the VFX Service.
+`CreativeWorkSeries` + the five short `VideoObject`s belong to
+`/horror-shorts/`; the cosplay `Service` and `FAQPage` to `/cosplay/`. Both
+split pages add `BreadcrumbList` and reference the org by `@id`.
+
+**`/experiments/` is gone** — renamed Interactive Toons and moved to `/toons/`,
+which was already the parent of every reader URL. `public/_redirects` 301s
+`/experiments`, `/experiments/` and `/experiments/*`. Keep those redirects.
+
+**Homepage sections stay as summaries.** `#cosplay` and `#darkroom` were
+trimmed rather than deleted, because fragments cannot be redirected — removing
+them would break every existing `/#cosplay` link. Each summary links to its
+page.
+
+**Shared page furniture:** split pages use the homepage's `THE RED SMILE`
+heading treatment (Playfair, `7vw`, `15vw` under 768px) and its `10%` side
+gutter, so they read as one site. Card grids carry no borders — separation is
+background only.
 
 ## Toon Reader (FlipFrame — Erin, Jax, Nero, …)
 
@@ -349,8 +381,8 @@ index), scroll mode from document scroll.
 - The old `.controls` / `#indicator` element now renders **only** when
   `engine.state.error` is set; it is the sole surface for "Failed to load" /
   "No pages found".
-- The top-left logo links to `/experiments/`, not the homepage — readers are
-  reached from the lab, and the back cover already pointed there.
+- The top-left logo links to `/toons/`, not the homepage — readers are reached
+  from the toons index, and the back cover already pointed there.
 - Prev/next arrows are red-outlined discs with a red glyph that invert to a
   solid red fill with white outline and glyph on hover, focus or press.
 - Content pages carry a small folio (page number) bottom-left, drawn purely in
@@ -612,13 +644,15 @@ Do not commit the binary.
 
 - Page title: `27 Pictures | AI Horror Shorts & Cinematic Cosplay Production`
 - Meta description updated (matches YouTube channel description)
-- JSON-LD schema: Organization, WebSite, WebPage, CreativeWorkSeries, 6× VideoObject, 2× Service
+- JSON-LD schema split across pages (2026-08): homepage keeps Organization, WebSite, WebPage, 3× Person, the cosplay-showcase + Jax VideoObjects and the VFX Service; `/horror-shorts/` owns CreativeWorkSeries + ItemList of 5 VideoObjects; `/cosplay/` owns the cosplay Service + FAQPage; both add BreadcrumbList
 - Person schema: 3 founders (Sonia, Marco, Daniele Sangalli) with `jobTitle`/`description`/`worksFor`, linked from `Organization.founder`
 - Organization location: Switzerland & United Kingdom
 - IndexNow key deployed + submitted (`bdd5e80e21a8430d9316de0deacdb208`)
 - All VideoObject uploadDates and durations use real YouTube values
 - `public/llms.txt` — AI crawler allow-list + key pages (aligned with robots)
 - `public/robots.txt` — search + AI _citation_ crawlers allowed; QR landing blocked
+- Indexable hub pages added (2026-08): `/horror-shorts/` and `/cosplay/`, each 800+ words of unique copy; sitemap now lists them with 1200×630 OG art
+- `/experiments/` → `/toons/` with 301s in `public/_redirects`
 
 ### Crawlers / AI search policy (2026-07)
 
@@ -657,8 +691,10 @@ curl -sS https://twentyseven.pictures/robots.txt
 
 ### Remaining TODOs
 
-- Update VideoObject entries when new Shorts are published
-- Add more indexable hub pages (series / cosplay) when ready — sitemap is still thin
+- Update VideoObject entries when new Shorts are published (homepage Watch strip + `/horror-shorts/` ItemList)
+- Submit `/toons/`, `/cosplay/`, `/horror-shorts/` (and the retired `/experiments/`) to IndexNow once live on production
+- Watch GSC for homepage vs `/cosplay/` cannibalisation; trim the homepage summary further if both rank for the same query
+- A `/studio/` page for the assembly/beyond copy once it passes ~400 words
 - Submit new URLs to IndexNow after each public URL change:
   ```bash
   curl -X POST "https://api.indexnow.org/indexnow" \
