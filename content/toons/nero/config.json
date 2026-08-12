@@ -2173,10 +2173,10 @@
       "file": "assets/29ed2bce62e07a577a9bde789ea24192.png",
       "words": [
         {
-          "x": 0.5,
+          "x": 0.48,
           "y": 0.11,
           "align": "center",
-          "size": 34,
+          "size": 54,
           "color": "#111111",
           "angle": -5,
           "scale": 1.05,
@@ -2187,6 +2187,8 @@
             "de": "KRAK",
             "fr": "KRAK"
           },
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "audio": "assets/sfx/08ece334aec22a1f96b6c2d5420f3542.mp3",
           "bubble": {
             "opacity": 0.75,
@@ -2246,6 +2248,8 @@
           "angle": -7,
           "scale": 1.1,
           "maxWidth": 0.24,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "THKK",
             "it": "THKK",
