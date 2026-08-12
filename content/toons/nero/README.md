@@ -75,7 +75,7 @@ Asset for page 1: `assets/1a95711588bfb5605e628e073601f595.webp` (bottom panel r
 Asset for page 4: `assets/27519b004e3802fa29dd5d2cc7556754.webp` (diagonal interstitial).
 Asset for page 11: `assets/cd9089a69917fa08aedeb80e4d8fc03d.webp`.
 Asset for page 21: `assets/29ed2bce62e07a577a9bde789ea24192.png` (4 panels — the only Nero plate that is not 3).
-Asset for page 22: `assets/afa6a6a97c61666916dda59ac4537bb6.png` (middle panel re-rolled: the first pass drew entry and exit on the same visible surface).
+Asset for page 22: `assets/28f76ba97848377fb5c3517a3d50457c.webp` (re-rolled; an earlier pass drew entry and exit on the same visible surface).
 Asset for page 23: `assets/46579a6abcecfddba8521a2ef4e6e026.webp` (shot/reverse ECU pair, then the wide; re-rolled plate, captions kept via `npm run swap-page`).
 
 ## Reader UX

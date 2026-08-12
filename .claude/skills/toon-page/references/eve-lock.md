@@ -7,18 +7,18 @@ Reference look: cyber-forensics specialist — long wavy dark hair, black-rimmed
 ## Lock (compact — prefer this in prompts; keep whole prompt under ~550 words)
 
 ```
-Eve: long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses, fitted dark blazer over dark top, slim trousers, belt, slim wristwatch, composed forensic analyst look
+Eve: long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses, fitted dark blazer over dark top, slim trousers, belt, slim wristwatch, pointed-toe black stiletto heels, composed forensic analyst look
 ```
 
 ## Lock (full — only if user needs max detail and prompt is still short)
 
 ```
-Eve: striking Scotland Yard cyber-forensics woman, long wavy dark hair past the shoulders with soft volume and side-swept face frame, fair skin, full lips, confident half-lidded gaze, rectangular black-rimmed glasses (smart/AI forensic HUD frames, not thick nerd goggles), fitted dark tailored blazer over dark top, matching slim trousers, thin belt with metal buckle, slim tech wristwatch on left wrist, professional lab-chic silhouette, analytical and composed expression
+Eve: striking Scotland Yard cyber-forensics woman, long wavy dark hair past the shoulders with soft volume and side-swept face frame, fair skin, full lips, confident half-lidded gaze, rectangular black-rimmed glasses (smart/AI forensic HUD frames, not thick nerd goggles), fitted dark tailored blazer over dark top, matching slim trousers, thin belt with metal buckle, slim tech wristwatch on left wrist, pointed-toe black leather stiletto court heels (never combat boots — she came from the lab, not a tactical team), professional lab-chic silhouette, analytical and composed expression
 ```
 
 ## Anti-drift
 
-Do **not** draw Eve as: short bob, messy punk hair, tactical combat armor, bare midriff, **missing glasses in any panel (including ECU close-ups)**, generic agent trench coat, or blonde.
+Do **not** draw Eve as: short bob, messy punk hair, tactical combat armor, bare midriff, **missing glasses in any panel (including ECU close-ups)**, generic agent trench coat, blonde, or **in flat/combat boots** — her footwear is pointed stiletto heels, and she works, runs and kneels in them (see pages 22-23).
 
 ## Companion — Nero (when both appear)
 

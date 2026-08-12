@@ -168,14 +168,14 @@ Jax: lean cyberpunk male, messy spiky black hair, cracked porcelain-like skin on
 See `references/eve-lock.md`. Prefer **user reference image** for Eve over prose. Use compact locks in the prompt:
 
 ```
-Eve: long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses always on, fitted dark blazer over dark top, slim trousers, belt, slim wristwatch, composed forensic analyst
+Eve: long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses always on, fitted dark blazer over dark top, slim trousers, belt, slim wristwatch, pointed-toe black stiletto heels, composed forensic analyst
 ```
 
 ```
 Nero: lean hard-bitten detective, short dark hair, intense eyes, dark coat, LEFT arm cracked-porcelain bare upper arm with a segmented steel forearm and metal hand from the elbow down, RIGHT arm flesh ending in a metal cybernetic hand at the wrist, two legs, combat boots
 ```
 
-Eve anti-drift: no short bob, no missing glasses (including ECU), no tactical armor, no bare midriff.
+Eve anti-drift: no short bob, no missing glasses (including ECU), no tactical armor, no bare midriff, no combat/flat boots — she is in pointed stiletto heels in every panel, including kneeling and running.
 
 **Nero's cyber limbs — both sides, asymmetric:**
 
