@@ -144,6 +144,42 @@ Local workflow for **new** plates:
 - Shared put/lock: `scripts/lib/r2-media.js`
 - One-time: `npm run create-assets-bucket` && `npm run upload-assets -- --setup-cors`
 
+### Plate colour: keep toons neutral greyscale
+
+Seedream returns a faint colour cast on every generation — measured 0.3-1.2
+(of 255) mean per-pixel deviation from grey across Nero, which reads as a blue
+tone on dark plates. Flatten before publishing:
+
+```bash
+magick <src> -colorspace Gray -colorspace sRGB /tmp/flat.png
+# check any plate: 0 = truly neutral
+magick <file> \( +clone -colorspace Gray \) -compose difference -composite \
+  -colorspace Gray -format "%[fx:mean*255]\n" info:
+```
+
+Re-swapping an already-published plate uses `--no-watermark`, or the site
+stamp gets baked in twice:
+
+```bash
+node scripts/swap-toon-page.js /tmp/flat.png --toon nero --page 7 --no-watermark
+npm run publish-toon-config -- --toon nero   # once, after a batch of swaps
+```
+
+### Purging superseded plates from R2
+
+`swap-page` never deletes the plate it replaces, so re-rolls accumulate.
+Purge them in a batch, and only ever after a fresh backup:
+
+```bash
+npm run backup-cdn                              # must cover every key first
+node scripts/purge-r2-objects.js --file keys.txt
+```
+
+Build `keys.txt` by diffing `scripts/r2-assets-lock.json` against everything
+referenced by `content/toons/*/config.json`, `src/toons/config-lock.json` and
+`grep`-able paths in `src/` + `public/`. Verify each key exists under
+`cdn-backup/` before deleting — the bucket delete is irreversible.
+
 ### Adding a new toon page image
 
 Images are content-hashed (`md5.ext`) under `public/toons/<toon>/assets/` — same convention as
