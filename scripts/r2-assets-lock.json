@@ -1,10 +1,6 @@
 {
   "bucket": "twentyseven-assets",
   "keys": {
-    "toons/assets/3d2d90aafc6ae28a9cb9f841a3b7183f.jpg": {
-      "size": 393546,
-      "uploadedAt": "2026-07-29T16:26:35.174Z"
-    },
     "toons/erin/assets/030a969138ba5de5a5366272c66bf72d.jpg": {
       "size": 522898,
       "uploadedAt": "2026-07-29T16:26:38.718Z"
@@ -121,10 +117,6 @@
       "size": 776506,
       "uploadedAt": "2026-07-29T16:28:12.381Z"
     },
-    "toons/jax/assets/28558a37d2c085f9a514fd5b49a89906.jpg": {
-      "size": 778363,
-      "uploadedAt": "2026-07-29T16:28:15.714Z"
-    },
     "toons/jax/assets/305881205875c4c3566e633f3c7559fc.jpg": {
       "size": 844975,
       "uploadedAt": "2026-07-29T16:28:19.150Z"
@@ -164,10 +156,6 @@
     "toons/jax/assets/7d610505abdd5c8151b7af5114d81755.jpg": {
       "size": 689732,
       "uploadedAt": "2026-07-29T16:28:49.446Z"
-    },
-    "toons/jax/assets/89164b8e96a3dd8838d17635bd6da907.jpg": {
-      "size": 10765,
-      "uploadedAt": "2026-07-29T16:28:52.638Z"
     },
     "toons/jax/assets/8fb2ea3370141467d36ecf0eb82ecc56.jpg": {
       "size": 683895,
@@ -357,10 +345,6 @@
       "size": 488191,
       "uploadedAt": "2026-07-29T16:46:39.499Z"
     },
-    "toons/jax/assets/137b0d3dea7510d07e2a10c50686cece.jpg": {
-      "size": 679473,
-      "uploadedAt": "2026-07-30T14:47:32.017Z"
-    },
     "toons/jax/assets/sfx/0c4464149074d6bcbc0b9fe22963c530.mp3": {
       "size": 27211,
       "uploadedAt": "2026-07-30T15:28:32.614Z"
@@ -380,10 +364,6 @@
     "toons/jax/config.37a47448d7a75731a3fa184080227f62.json": {
       "size": 33230,
       "uploadedAt": "2026-07-30T16:46:37.720Z"
-    },
-    "toons/jax/assets/89d5fda369c043dc22e4ca327cb37bb8.jpg": {
-      "size": 738337,
-      "uploadedAt": "2026-07-30T16:53:27.414Z"
     },
     "toons/jax/config.08391672a233e1e276f185dfa4464f42.json": {
       "size": 33230,
@@ -1809,14 +1789,6 @@
       "size": 414472,
       "uploadedAt": "2026-08-02T21:54:11.148Z"
     },
-    "toons/nero/assets/ba6da7dd5375b35e188f0f4c7507e7da.webp": {
-      "size": 507688,
-      "uploadedAt": "2026-08-02T21:54:14.286Z"
-    },
-    "toons/nero/assets/cb61234b19178e8110de28c2002b1162.webp": {
-      "size": 446068,
-      "uploadedAt": "2026-08-02T21:54:17.427Z"
-    },
     "toons/nero/assets/cd9089a69917fa08aedeb80e4d8fc03d.webp": {
       "size": 425356,
       "uploadedAt": "2026-08-02T21:54:20.535Z"
@@ -1844,10 +1816,6 @@
     "toons/nero/config.2ccd2b5573c8905167a2b0e224ab8f75.json": {
       "size": 45369,
       "uploadedAt": "2026-08-03T20:48:27.138Z"
-    },
-    "toons/nero/assets/1a95711588bfb5605e628e073601f595.webp": {
-      "size": 427626,
-      "uploadedAt": "2026-08-03T21:28:01.103Z"
     },
     "toons/nero/config.32ea7dab6c0988c028eeed442a571319.json": {
       "size": 45369,
@@ -2613,10 +2581,6 @@
       "size": 16139,
       "uploadedAt": "2026-08-11T15:19:02.821Z"
     },
-    "toons/nero/assets/29ed2bce62e07a577a9bde789ea24192.png": {
-      "size": 3200024,
-      "uploadedAt": "2026-08-12T07:39:34.905Z"
-    },
     "toons/nero/config.660a03e188f9ade36547c522d90ae290.json": {
       "size": 58729,
       "uploadedAt": "2026-08-12T07:39:38.192Z"
@@ -2656,10 +2620,6 @@
     "toons/nero/config.e5aeefa07f5766ec50d0fac8f99a7d2a.json": {
       "size": 62475,
       "uploadedAt": "2026-08-12T08:02:44.127Z"
-    },
-    "toons/nero/assets/afa6a6a97c61666916dda59ac4537bb6.png": {
-      "size": 3413585,
-      "uploadedAt": "2026-08-12T08:43:24.252Z"
     },
     "toons/nero/config.16bdb7bbb042749a07d74d2147130bda.json": {
       "size": 62567,
@@ -2804,10 +2764,6 @@
     "toons/nero/config.475cca3c874a310c062095a11b818768.json": {
       "size": 67156,
       "uploadedAt": "2026-08-12T09:10:52.429Z"
-    },
-    "toons/nero/assets/25ffdbcd814e47f1583a782236ef057f.png": {
-      "size": 3332618,
-      "uploadedAt": "2026-08-12T09:29:07.472Z"
     },
     "toons/nero/config.ae3e3e79ad45d37debe0c961c6ec9584.json": {
       "size": 67248,
