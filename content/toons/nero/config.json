@@ -2308,6 +2308,164 @@
           }
         }
       ]
+    },
+    {
+      "file": "assets/afa6a6a97c61666916dda59ac4537bb6.png",
+      "words": [
+        {
+          "x": 0.2,
+          "y": 0.08,
+          "align": "center",
+          "size": 21,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Apply this one.\nPresent from the army.",
+            "it": "Usa questo.\nRegalo dell'esercito.",
+            "de": "Nimm das hier.\nGeschenk der Armee.",
+            "fr": "Utilise celui-là.\nCadeau de l'armée."
+          },
+          "audio": "assets/sfx/dad7ce80d0edd0d7432f3a5bcab3cde9.mp3",
+          "speaker": "nero",
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.79,
+          "y": 0.08,
+          "align": "center",
+          "size": 21,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "Coat open.\nLet me see.",
+            "it": "Apri il cappotto.\nFammi vedere.",
+            "de": "Mantel auf.\nLass mich sehen.",
+            "fr": "Ouvre ton manteau.\nLaisse-moi voir."
+          },
+          "audio": "assets/sfx/c4dda4ed7067e4ae60cb108c544a54ea.mp3",
+          "speaker": "eve",
+          "bubble": {
+            "tail": "bottom-left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.75,
+          "y": 0.52,
+          "align": "center",
+          "size": 17,
+          "variant": "ai",
+          "color": "#f5f5f5",
+          "maxWidth": 0.28,
+          "text": {
+            "en": "E› THROUGH AND THROUGH\nNO ARTERIAL BLEED\nSEAL RECOMMENDED",
+            "it": "E› PASSANTE\nNESSUNA EMORRAGIA ARTERIOSA\nSIGILLATURA CONSIGLIATA",
+            "de": "E› DURCHSCHUSS\nKEINE ARTERIELLE BLUTUNG\nVERSIEGELN EMPFOHLEN",
+            "fr": "E› TRANSFIXIANT\nPAS D'HÉMORRAGIE ARTÉRIELLE\nSCELLEMENT CONSEILLÉ"
+          },
+          "audio": "assets/sfx/c5b8d94324795c59dd8e3922b9666660.mp3",
+          "speaker": "eve",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.24,
+          "y": 0.53,
+          "align": "center",
+          "size": 20,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "It went through.\nThat's the good news.",
+            "it": "È passato da parte a parte.\nQuella è la buona notizia.",
+            "de": "Glatt durch.\nDas ist die gute Nachricht.",
+            "fr": "Il est ressorti.\nÇa, c'est la bonne nouvelle."
+          },
+          "audio": "assets/sfx/06f14cfeb2af78432abf453631e6815f.mp3",
+          "speaker": "eve",
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.2,
+          "y": 0.75,
+          "align": "center",
+          "size": 30,
+          "color": "#111111",
+          "angle": -6,
+          "maxWidth": 0.24,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "text": {
+            "en": "SSSHK",
+            "it": "SSSHK",
+            "de": "SSSHK",
+            "fr": "SSSHK"
+          },
+          "audio": "assets/sfx/41ec5d92a061cac8cb319d86da23c43c.mp3"
+        },
+        {
+          "x": 0.84,
+          "y": 0.75,
+          "align": "center",
+          "size": 22,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 4,
+          "maxWidth": 0.2,
+          "text": {
+            "en": "HNNGH—",
+            "it": "HNNGH—",
+            "de": "HNNGH—",
+            "fr": "HNNGH—"
+          },
+          "audio": "assets/sfx/196631e89b49d0c639b071f4159305fb.mp3",
+          "speaker": "nero",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.5,
+          "y": 0.76,
+          "align": "center",
+          "size": 21,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "Hold still.",
+            "it": "Stai fermo.",
+            "de": "Halt still.",
+            "fr": "Ne bouge pas."
+          },
+          "audio": "assets/sfx/00e567c51c2009ea6fd0d80c47ff3405.mp3",
+          "speaker": "eve",
+          "bubble": {
+            "tail": "bottom-left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
     }
   ]
 }

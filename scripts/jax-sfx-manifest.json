@@ -273,5 +273,10 @@
     "slug": "nero-bullet-hit-thkk",
     "prompt": "Single heavy bullet impact into a body, wet meaty thud with a short punch of air, close and dry, no music",
     "duration": 1.0
+  },
+  {
+    "slug": "nero-gel-hiss",
+    "prompt": "Pressurised medical gel hissing out of a small metal applicator into a wound, wet foaming sizzle, close up, no music",
+    "duration": 1.6
   }
 ]
