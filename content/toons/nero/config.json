@@ -263,7 +263,9 @@
             "it": "ORE\nPRIMA",
             "de": "STUNDEN\nZUVOR",
             "fr": "DES HEURES\nPLUS TÔT"
-          }
+          },
+          "audio": "assets/sfx/ae7ecb91cec9c4ef1a8ffe7b54eef4ed.mp3",
+          "speaker": "narrator"
         },
         {
           "x": 0.3,
@@ -278,7 +280,9 @@
             "it": "THE DOG",
             "de": "THE DOG",
             "fr": "THE DOG"
-          }
+          },
+          "audio": "assets/sfx/d6fe2dea36737c27106eb5144947a0a0.mp3",
+          "speaker": "narrator"
         },
         {
           "x": 0.3,
@@ -293,7 +297,9 @@
             "it": "Prima che Nero carichi la pistola,\nun contratto è già in volo.",
             "de": "Bevor Nero die Waffe lädt,\nist ein Auftrag bereits unterwegs.",
             "fr": "Avant que Nero charge l'arme,\nun contrat est déjà en l'air."
-          }
+          },
+          "audio": "assets/sfx/657d221bf167527be3bb90dbb46f183c.mp3",
+          "speaker": "narrator"
         }
       ]
     },
@@ -2581,7 +2587,9 @@
             "it": "CONTINUA",
             "de": "FORTSETZUNG\nFOLGT",
             "fr": "À SUIVRE"
-          }
+          },
+          "audio": "assets/sfx/9d8f0eaf5929363b19c284a706453e63.mp3",
+          "speaker": "narrator"
         },
         {
           "x": 0.34,
@@ -2596,7 +2604,9 @@
             "it": "NERO TORNERÀ",
             "de": "NERO KEHRT ZURÜCK",
             "fr": "NERO REVIENDRA"
-          }
+          },
+          "audio": "assets/sfx/e3a560a18560e8aa068990bc2930a47a.mp3",
+          "speaker": "narrator"
         },
         {
           "x": 0.34,
@@ -2611,7 +2621,9 @@
             "it": "La città si tiene la pioggia.\nIl contratto si tiene il suo nome.",
             "de": "Die Stadt behält den Regen.\nDer Auftrag behält seinen Namen.",
             "fr": "La ville garde la pluie.\nLe contrat garde son nom."
-          }
+          },
+          "audio": "assets/sfx/86deac433e82cc250bacb67fe4552452.mp3",
+          "speaker": "narrator"
         }
       ]
     }

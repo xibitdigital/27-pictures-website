@@ -447,7 +447,7 @@ Effects API — non-verbal). Actual dialogue should be Text-to-Speech:
 
 1. Voices are locked by name in `scripts/jax-voices.json` (`name ->
 voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
-   `badai`, `nero`, `thedog`, `eve`, `barman`, `elena`. To add a new one: open the voice
+   `badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, `narrator`. To add a new one: open the voice
    on `elevenlabs.io/app/voice-library?voiceId=...`, copy the ID from the URL,
    add `"name": "voiceId"` to that file. (Listing/searching voices via
    `GET /v1/voices` needs a separate `voices_read` scope — grab the ID from

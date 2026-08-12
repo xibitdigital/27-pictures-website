@@ -74,7 +74,9 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 
 Asset for page 1: `assets/9e8a4cb003cb66872583d1aa151a3a97.webp` (bottom panel replaced: wide alley shot instead of a fist close-up, to sidestep a six-finger render defect).
 Asset for page 4: `assets/27519b004e3802fa29dd5d2cc7556754.webp` (diagonal interstitial).
-Asset for page 24: `assets/d3649b7f49523ff618eb5a196f8d64cd.png` (same interstitial construction, diagonal flipped so the black title field sits at the bottom; captions use the `credit` variant and stay silent, like page 4).
+Asset for page 24: `assets/d3649b7f49523ff618eb5a196f8d64cd.png` (same interstitial construction, diagonal flipped so the black title field sits at the bottom; captions use the `credit` variant).
+
+The two interstitials (pages 4 and 24) are read by the `narrator` voice — every caption in the book now has audio.
 Asset for page 11: `assets/cd9089a69917fa08aedeb80e4d8fc03d.webp`.
 Asset for page 21: `assets/f27fc2d4e29346cf8677da529dc288f2.webp` (4 panels — the only Nero plate that is not 3; re-rolled several times over Nero's right arm, which the model keeps drawing as a full prosthetic in camera-facing shots instead of flesh-to-the-wrist).
 Asset for page 22: `assets/28f76ba97848377fb5c3517a3d50457c.webp` (re-rolled; an earlier pass drew entry and exit on the same visible surface).

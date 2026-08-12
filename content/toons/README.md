@@ -49,7 +49,7 @@ a line must sit before it in the array. Full notes in the root `CLAUDE.md`.
 
 Word overlays live in each page’s `words[]` (`variant`, `text`, optional `audio`).
 Locked ElevenLabs names: `scripts/jax-voices.json` (`jax`, `riu`, `nova`, `ripperdoc`,
-`badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, …).
+`badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, `narrator`, …).
 
 ```bash
 set -a; source .env; set +a
