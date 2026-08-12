@@ -60,7 +60,7 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=cebaabb502" />
+    <link rel="stylesheet" href="/styles.css?v=fc7914346e" />
     <style>
       /* Breadcrumb markup for crawlers; the visible trail is the nav. */
       .sr-only-seo {
@@ -138,11 +138,23 @@
         margin-bottom: 20px;
       }
 
+      /* Break out of the .series-body copy column so the cards span the page. */
       .stage-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 24px;
-        margin-top: 32px;
+        grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 22vw, 320px), 1fr));
+        gap: 28px;
+        margin-top: 40px;
+        max-width: none;
+        width: 100%;
+      }
+
+      .stage-card {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stage-card h3 {
+        font-family: "Playfair Display", serif;
       }
 
       .stage-card {
@@ -210,14 +222,29 @@
         border: 0;
       }
 
+      /* Two columns of cards on wide screens, one below 900px. */
+      .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-top: 40px;
+      }
+
       .faq-item {
-        border-top: 1px solid var(--border);
-        padding: 24px 0;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 26px 28px;
+        transition: border-color 0.3s var(--transition);
+      }
+
+      .faq-item:hover {
+        border-color: var(--border-light);
       }
 
       .faq-item h3 {
-        font-size: 1rem;
-        margin-bottom: 10px;
+        font-family: "Playfair Display", serif;
+        font-size: 1.08rem;
+        margin-bottom: 12px;
       }
 
       .faq-item p {
@@ -275,6 +302,12 @@
 
       .service-footer-nav a:hover {
         color: var(--red-smile);
+      }
+
+      @media (max-width: 900px) {
+        .faq-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (max-width: 768px) {
@@ -504,39 +537,43 @@
         </figure>
       </section>
 
-      <section class="service-section service-body" aria-labelledby="process-title">
+      <section class="service-section" aria-labelledby="process-title">
         <p class="service-section-label">How a session runs</p>
-        <h2 id="process-title">Four stages, one day of shooting</h2>
+        <h2 id="process-title" class="service-body">Four stages, one day of shooting</h2>
+        <p class="service-body">
+          One shooting day, four stages around it. The consultation happens before you travel, the neural work happens
+          after you leave — the day itself is spent entirely on camera.
+        </p>
 
         <div class="stage-grid">
           <article class="stage-card">
             <h3><span class="stage-num">01</span>Costume consultation</h3>
             <p>
-              We go through the build before the shoot: materials, weak seams, how the silhouette reads in motion, which
-              details earn a close-up. This is also where we agree the character's world, so the environment work starts
-              before you arrive.
+              Before you travel: photos of the build, materials, weak seams, how the silhouette reads in motion. We
+              agree the character's world here, so environment work is already underway on the day — and we tell you
+              which details deserve a close-up and which need hiding under shadow.
             </p>
           </article>
           <article class="stage-card">
             <h3><span class="stage-num">02</span>Directed shoot</h3>
             <p>
-              Hard key light, controlled dark, and a camera on the move. You are directed like an actor — posture,
-              weight, where the character's attention sits — because a costume standing still photographs as a costume,
-              not a character.
+              Hard key, controlled dark, camera on the move. You are directed like an actor: posture, weight, where the
+              character's attention sits. A costume standing still photographs as a costume — movement is what turns it
+              into someone.
             </p>
           </article>
           <article class="stage-card">
             <h3><span class="stage-num">03</span>Neural post</h3>
             <p>
-              Compositing, environment mapping and atmosphere: rain, smoke, embers, falling ash. The grade is built for
-              the character rather than the venue, which is where most convention footage loses its mood.
+              Compositing, environment mapping and atmosphere — rain, smoke, embers, falling ash. The grade is built for
+              the character rather than the room you stood in, which is where most convention footage loses its mood.
             </p>
           </article>
           <article class="stage-card">
             <h3><span class="stage-num">04</span>Delivery</h3>
             <p>
-              A finished 4K edit with sound design, plus a graded still set pulled from the same footage — sized for
-              social, portfolio and print, so nothing needs reshooting later.
+              A finished 4K edit with sound design, a vertical cut for social, and a graded still set pulled from the
+              same footage at print resolution. One session, every format — nothing needs reshooting later.
             </p>
           </article>
         </div>
@@ -574,43 +611,45 @@
         <p class="service-section-label">Questions</p>
         <h2 id="faq-title" class="service-body">Before you book</h2>
 
-        <div class="faq-item">
-          <h3>Do I need to bring my own costume?</h3>
-          <p>
-            Yes — the costume is yours, and it is the starting point. We consult on it beforehand: how it reads under
-            hard light, which angles hold up in motion, which details deserve a close-up and which need hiding. We do
-            not build costumes.
-          </p>
-        </div>
-        <div class="faq-item">
-          <h3>Is this photography or video?</h3>
-          <p>
-            Both, from the same session. The shoot is lit and directed for motion, so the deliverable is a 4K edit; the
-            stills are pulled and graded from that footage, which is why they match the film instead of looking like a
-            separate shoot.
-          </p>
-        </div>
-        <div class="faq-item">
-          <h3>Where do you shoot?</h3>
-          <p>
-            Across Switzerland and the United Kingdom. Environments are largely built in post, so location matters less
-            than light — most sessions happen in a controlled dark space rather than out on location.
-          </p>
-        </div>
-        <div class="faq-item">
-          <h3>What are the AI environments, exactly?</h3>
-          <p>
-            Generative environment mapping. Your performance is captured for real, then composited into a world that is
-            rendered rather than built. The character in frame is always you; only what is behind you is synthetic.
-          </p>
-        </div>
-        <div class="faq-item">
-          <h3>Who owns the finished work?</h3>
-          <p>
-            You get full personal and portfolio usage of the edit and stills, including social and print. We keep the
-            right to show the work in our own showreel and channels. Commercial or brand licensing is agreed separately,
-            before the shoot.
-          </p>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <h3>Do I need to bring my own costume?</h3>
+            <p>
+              Yes — the costume is yours, and it is the starting point. We consult on it beforehand: how it reads under
+              hard light, which angles hold up in motion, which details deserve a close-up and which need hiding. We do
+              not build costumes.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Is this photography or video?</h3>
+            <p>
+              Both, from the same session. The shoot is lit and directed for motion, so the deliverable is a 4K edit;
+              the stills are pulled and graded from that footage, which is why they match the film instead of looking
+              like a separate shoot.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Where do you shoot?</h3>
+            <p>
+              Across Switzerland and the United Kingdom. Environments are largely built in post, so location matters
+              less than light — most sessions happen in a controlled dark space rather than out on location.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>What are the AI environments, exactly?</h3>
+            <p>
+              Generative environment mapping. Your performance is captured for real, then composited into a world that
+              is rendered rather than built. The character in frame is always you; only what is behind you is synthetic.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Who owns the finished work?</h3>
+            <p>
+              You get full personal and portfolio usage of the edit and stills, including social and print. We keep the
+              right to show the work in our own showreel and channels. Commercial or brand licensing is agreed
+              separately, before the shoot.
+            </p>
+          </div>
         </div>
       </section>
 
