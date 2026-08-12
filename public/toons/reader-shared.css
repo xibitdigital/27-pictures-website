@@ -615,11 +615,12 @@ body.is-fullscreen .reader {
   cursor: default;
 }
 
-/* Prev/next arrows sit just inside the page edges, above the full-page
+/* Prev/next arrows sit centred on the page edges, above the full-page
    .nav-zone click areas (z-index 30), instead of in a row below the book.
-   They used to hang 22px outside the book box, where the reader's own
-   overflow clipped the circle whenever the gutter got tight — inside the
-   edge nothing can crop them. */
+   Each disc straddles the page edge — centred on it, half over the plate and
+   half over the margin. That costs a gutter: .reader clips at its padding box,
+   so --book-width must leave at least the disc's radius on each side (see the
+   100vw - 64px term in every toon's <style>), or the outer half gets sliced. */
 .page-nav-btn {
   position: absolute;
   top: 50%;
@@ -648,11 +649,12 @@ body.is-fullscreen .reader {
 }
 
 .page-nav-btn.prev {
-  left: 10px;
+  /* Half the 44px disc — centres it on the page edge. */
+  left: -22px;
 }
 
 .page-nav-btn.next {
-  right: 10px;
+  right: -22px;
 }
 
 .page-indicator {
@@ -1631,11 +1633,12 @@ body.single-page .flip-page.flipping.from-left {
   }
 
   .page-nav-btn.prev {
-    left: 6px;
+    /* Half the 40px mobile disc. */
+    left: -20px;
   }
 
   .page-nav-btn.next {
-    right: 6px;
+    right: -20px;
   }
 
   .front-cover-instructions {

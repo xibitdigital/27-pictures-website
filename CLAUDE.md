@@ -324,9 +324,11 @@ index), scroll mode from document scroll.
   above `.nav-zone` (30), below the word overlay (35).
 - Reader padding is sized for that 4px bar, not for the old counter row. Book
   mode keeps ~2.75rem of top padding so the spread clears the fixed top-right
-  controls. The page-nav arrows sit *inside* the page edges (they used to hang
-  22px outside, where the reader's overflow clipped them), so the side gutter
-  is only there for breathing room.
+  controls. The page-nav arrows are centred **on** the page edges, half over
+  the plate and half over the margin, so `--book-width` must keep at least the
+  disc radius clear on each side — that is the `100vw - 64px` term in every
+  toon's `<style>`. Shrink that gutter and `.reader`'s overflow slices the
+  outer half of the disc off.
 
 ### What goes where (CSS)
 

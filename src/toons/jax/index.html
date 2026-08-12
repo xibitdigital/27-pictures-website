@@ -20,7 +20,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css?v=760afc80c0" />
-    <link rel="stylesheet" href="/toons/reader-shared.css?v=b688b4ec14" />
+    <link rel="stylesheet" href="/toons/reader-shared.css?v=94d3a4713f" />
     <style>
       /* Book-only tokens — portrait pages (1008×1792). Shared reader shell
          + word/bubble chrome live in reader-shared.css; this block only has
@@ -32,7 +32,7 @@
            each edge) so they never overflow the viewport — that overflow
            caused a resizing black band. The vertical reserve only has to
            clear the reader's own padding now that the page counter is gone. */
-        --book-width: min(calc(100vw - 24px), 1400px, calc((100dvh - 88px) / 0.89));
+        --book-width: min(calc(100vw - 64px), 1400px, calc((100dvh - 88px) / 0.89));
         --book-height: calc(var(--book-width) * 0.89);
         --page-bg: #0a0a0c;
         --spine: #1a1a22;
