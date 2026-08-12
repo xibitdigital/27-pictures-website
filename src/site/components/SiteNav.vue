@@ -5,19 +5,19 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 
 const props = withDefaults(
   defineProps<{
-    page?: "home" | "experiments";
+    page?: "home" | "experiments" | "cosplay";
   }>(),
   { page: "home" }
 );
 
 const menuOpen = ref(false);
 
-/** On experiments, section anchors must go to the homepage. */
+/** Away from the homepage, section anchors must point back at it. */
 const section = (hash: string) => (props.page === "home" ? hash : `/${hash}`);
 
 const links = computed(() => [
   { href: section("#darkroom"), label: "The Darkroom" },
-  { href: section("#cosplay"), label: "Cosplay" },
+  { href: "/cosplay/", label: "Cosplay", current: props.page === "cosplay" },
   { href: section("#beyond"), label: "Beyond the Mask" },
   { href: section("#assembly"), label: "Process" },
   { href: section("#latest"), label: "Watch" },

@@ -6,7 +6,7 @@ import ContactForm from "./components/ContactForm.vue";
 const props = withDefaults(
   defineProps<{
     /** Which marketing page is hosting the chrome. */
-    page?: "home" | "experiments";
+    page?: "home" | "experiments" | "cosplay";
   }>(),
   { page: "home" }
 );

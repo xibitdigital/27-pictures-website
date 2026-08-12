@@ -73,6 +73,7 @@ export default defineConfig({
       input: {
         main: path.resolve(srcDir, "index.html"),
         experiments: path.resolve(srcDir, "experiments/index.html"),
+        cosplay: path.resolve(srcDir, "cosplay/index.html"),
         jax: path.resolve(srcDir, "toons/jax/index.html"),
         erin: path.resolve(srcDir, "toons/erin/index.html"),
         nero: path.resolve(srcDir, "toons/nero/index.html"),

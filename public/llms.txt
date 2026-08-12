@@ -45,6 +45,7 @@ Allow: /
 
 # Key pages
 # - https://twentyseven.pictures/ — studio homepage (The Red Smile, JAX, cosplay, contact)
+# - https://twentyseven.pictures/cosplay/ — Cinematic cosplay production service
 # - https://twentyseven.pictures/experiments/ — Experiments lab
 # - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader
 # - https://twentyseven.pictures/toons/jax/ — Jax cyberpunk toon (EN/IT/DE/FR captions)
