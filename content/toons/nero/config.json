@@ -2466,6 +2466,103 @@
           }
         }
       ]
+    },
+    {
+      "file": "assets/25ffdbcd814e47f1583a782236ef057f.png",
+      "words": [
+        {
+          "x": 0.16,
+          "y": 0.05,
+          "align": "center",
+          "size": 21,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "maxWidth": 0.28,
+          "text": {
+            "en": "You stepped\ninto it.",
+            "it": "Ci sei entrato\ndentro apposta.",
+            "de": "Du bist\nreingetreten.",
+            "fr": "Tu t'es mis\ndevant."
+          },
+          "audio": "assets/sfx/2255998b34b735f7530aeb00d7dc79fd.mp3",
+          "speaker": "eve",
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.74,
+          "y": 0.45,
+          "align": "center",
+          "size": 21,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Rude to let it\nhit a lady.",
+            "it": "Scortese lasciarla\nprendere a una signora.",
+            "de": "Unhöflich, eine Dame\ntreffen zu lassen.",
+            "fr": "Impoli de laisser\nune dame le prendre."
+          },
+          "audio": "assets/sfx/abbe4520c3855f567465f630c19e2794.mp3",
+          "speaker": "nero",
+          "bubble": {
+            "tail": "bottom-left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.74,
+          "align": "center",
+          "size": 21,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "Up. Slow.",
+            "it": "Su. Piano.",
+            "de": "Hoch. Langsam.",
+            "fr": "Debout. Doucement."
+          },
+          "audio": "assets/sfx/170b08481d226717f3f4d2bec5be1198.mp3",
+          "speaker": "eve",
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.78,
+          "y": 0.74,
+          "align": "center",
+          "size": 21,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "He'll be moving.",
+            "it": "Si sta già spostando.",
+            "de": "Er ist schon\nunterwegs.",
+            "fr": "Il est déjà\nen train de bouger."
+          },
+          "audio": "assets/sfx/1b24fc64d8caf2568d1397d32dc30449.mp3",
+          "speaker": "nero",
+          "bubble": {
+            "tail": "bottom-left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
     }
   ]
 }

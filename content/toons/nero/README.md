@@ -69,12 +69,14 @@ HUD analysis on crystals / chips (composition, Si spin qubits, fab density, near
 | **20** | **Scan / sniper**                 | Face to face after the alley → Eve's glasses scan the tower → window silhouette: The Dog (the killer) with the rifle                               |
 | **21** | **The shot**                      | Muzzle flash upper floors → Nova reads the vector onto **Eve** and rotates Nero into it → round takes his chest off-midline → Eve drags him behind the corner |
 | **22** | **Field dressing**                | Nero down against the alley wall hands Eve his army sealing gel → her glasses read the wound: through and through → she seals it |
+| **23** | **On his feet**                   | Eve's hand on his face, wet eyes → Nero's tired smile through the pain → she hauls him upright and the hunt resumes |
 
 Asset for page 1: `assets/1a95711588bfb5605e628e073601f595.webp` (bottom panel replaced: wide alley shot instead of a fist close-up, to sidestep a six-finger render defect).
 Asset for page 4: `assets/27519b004e3802fa29dd5d2cc7556754.webp` (diagonal interstitial).
 Asset for page 11: `assets/cd9089a69917fa08aedeb80e4d8fc03d.webp`.
 Asset for page 21: `assets/29ed2bce62e07a577a9bde789ea24192.png` (4 panels — the only Nero plate that is not 3).
 Asset for page 22: `assets/afa6a6a97c61666916dda59ac4537bb6.png` (middle panel re-rolled: the first pass drew entry and exit on the same visible surface).
+Asset for page 23: `assets/25ffdbcd814e47f1583a782236ef057f.png` (shot/reverse ECU pair, then the wide).
 
 ## Reader UX
 
