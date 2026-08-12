@@ -790,24 +790,6 @@
           "audio": "assets/sfx/b2f1e10f5daf9c78db1a2364555a109e.mp3"
         },
         {
-          "x": 0.58,
-          "y": 0.82,
-          "align": "center",
-          "size": 83,
-          "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 10,
-          "angle": -14,
-          "maxWidth": 0.4,
-          "text": {
-            "en": "BOOOOM",
-            "it": "BOOOOM",
-            "de": "BOOOOM",
-            "fr": "BOOOOM"
-          },
-          "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
-        },
-        {
           "x": 0.78,
           "y": 0.52,
           "align": "center",
@@ -842,6 +824,24 @@
             "fr": "ALLUME-LE!"
           },
           "audio": "assets/sfx/97512b4e909b67c378164090b6ce3062.mp3"
+        },
+        {
+          "x": 0.58,
+          "y": 0.82,
+          "align": "center",
+          "size": 83,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 10,
+          "angle": -14,
+          "maxWidth": 0.4,
+          "text": {
+            "en": "BOOOOM",
+            "it": "BOOOOM",
+            "de": "BOOOOM",
+            "fr": "BOOOOM"
+          },
+          "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
         }
       ]
     },
@@ -926,24 +926,6 @@
           "audio": "assets/sfx/5b26b702d12fc87c5e8dbb3c197fff8e.mp3"
         },
         {
-          "x": 0.74,
-          "y": 0.82,
-          "align": "center",
-          "size": 68,
-          "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
-          "angle": -10,
-          "maxWidth": 0.35,
-          "text": {
-            "en": "BZZT",
-            "it": "BZZT",
-            "de": "BZZT",
-            "fr": "BZZT"
-          },
-          "audio": "assets/sfx/56648d1a28af2428b55a600e623515e5.mp3"
-        },
-        {
           "x": 0.22,
           "y": 0.48,
           "align": "center",
@@ -960,24 +942,6 @@
             "fr": "Ghh—!"
           },
           "audio": "assets/sfx/b65a6bb2ed6c8e71bf869f0b5179bdc2.mp3"
-        },
-        {
-          "x": 0.78,
-          "y": 0.4,
-          "align": "center",
-          "size": 28,
-          "variant": "bubble",
-          "color": "#111111",
-          "angle": 4,
-          "scale": 1.1,
-          "maxWidth": 0.36,
-          "text": {
-            "en": "Still standing.",
-            "it": "Ancora in piedi.",
-            "de": "Noch stehend.",
-            "fr": "Toujours debout."
-          },
-          "audio": "assets/sfx/4d648c0ed250a709892613aca218cdcc.mp3"
         },
         {
           "x": 0.22,
@@ -1005,6 +969,24 @@
           "audio": "assets/sfx/ba45e6ce259376c16e62219caec8d799.mp3"
         },
         {
+          "x": 0.78,
+          "y": 0.4,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 1.1,
+          "maxWidth": 0.36,
+          "text": {
+            "en": "Still standing.",
+            "it": "Ancora in piedi.",
+            "de": "Noch stehend.",
+            "fr": "Toujours debout."
+          },
+          "audio": "assets/sfx/4d648c0ed250a709892613aca218cdcc.mp3"
+        },
+        {
           "x": 0.28,
           "y": 0.88,
           "align": "center",
@@ -1021,6 +1003,24 @@
             "fr": "Jax!"
           },
           "audio": "assets/sfx/c40698415eda6d286fd735ce857c6bd0.mp3"
+        },
+        {
+          "x": 0.74,
+          "y": 0.82,
+          "align": "center",
+          "size": 68,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 9,
+          "angle": -10,
+          "maxWidth": 0.35,
+          "text": {
+            "en": "BZZT",
+            "it": "BZZT",
+            "de": "BZZT",
+            "fr": "BZZT"
+          },
+          "audio": "assets/sfx/56648d1a28af2428b55a600e623515e5.mp3"
         }
       ]
     },
