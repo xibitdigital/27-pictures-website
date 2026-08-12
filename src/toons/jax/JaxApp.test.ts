@@ -165,7 +165,7 @@ describe("JaxApp", () => {
     await flushPromises();
 
     const back = wrapper.find(".toons-back");
-    expect(back.attributes("href")).toBe("/");
+    expect(back.attributes("href")).toBe("/experiments/");
     expect(back.find("img").attributes("src")).toBe("/logosquare.png");
     expect(wrapper.find('button[title="Enable sound effects"]').exists()).toBe(false);
     expect(wrapper.find('button[title="Switch to vertical scroll view"]').exists()).toBe(true);
