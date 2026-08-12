@@ -366,6 +366,24 @@
           "audio": "assets/sfx/69ec9d59cdfae3d3550b766c8565a332.mp3"
         },
         {
+          "x": 0.78,
+          "y": 0.42,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.15,
+          "maxWidth": 0.36,
+          "text": {
+            "en": "Borrowing\nthis.",
+            "it": "Lo prendo\nin prestito.",
+            "de": "Leihe mir\ndas.",
+            "fr": "J'emprunte\nça."
+          },
+          "audio": "assets/sfx/6925b6eb005d95854f45bc4e7ac350f9.mp3"
+        },
+        {
           "x": 0.55,
           "y": 0.36,
           "align": "center",
@@ -418,24 +436,6 @@
             "fr": "CHTONG"
           },
           "audio": "assets/sfx/923903dde483c77d8070d43ac796e769.mp3"
-        },
-        {
-          "x": 0.78,
-          "y": 0.42,
-          "align": "center",
-          "size": 30,
-          "variant": "bubble",
-          "color": "#111111",
-          "angle": -4,
-          "scale": 1.15,
-          "maxWidth": 0.36,
-          "text": {
-            "en": "Borrowing\nthis.",
-            "it": "Lo prendo\nin prestito.",
-            "de": "Leihe mir\ndas.",
-            "fr": "J'emprunte\nça."
-          },
-          "audio": "assets/sfx/6925b6eb005d95854f45bc4e7ac350f9.mp3"
         },
         {
           "x": 0.78,
