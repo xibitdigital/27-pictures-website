@@ -2563,6 +2563,57 @@
           }
         }
       ]
+    },
+    {
+      "file": "assets/d3649b7f49523ff618eb5a196f8d64cd.png",
+      "words": [
+        {
+          "x": 0.34,
+          "y": 0.72,
+          "align": "center",
+          "size": 72,
+          "variant": "credit",
+          "color": "#e8e8e8",
+          "maxWidth": 0.9,
+          "letterSpacing": 0.08,
+          "text": {
+            "en": "TO BE\nCONTINUED",
+            "it": "CONTINUA",
+            "de": "FORTSETZUNG\nFOLGT",
+            "fr": "À SUIVRE"
+          }
+        },
+        {
+          "x": 0.34,
+          "y": 0.84,
+          "align": "center",
+          "size": 28,
+          "variant": "credit",
+          "color": "#aaaaaa",
+          "maxWidth": 0.7,
+          "text": {
+            "en": "NERO WILL RETURN",
+            "it": "NERO TORNERÀ",
+            "de": "NERO KEHRT ZURÜCK",
+            "fr": "NERO REVIENDRA"
+          }
+        },
+        {
+          "x": 0.34,
+          "y": 0.9,
+          "align": "center",
+          "size": 16,
+          "variant": "credit",
+          "color": "#777777",
+          "maxWidth": 0.72,
+          "text": {
+            "en": "The city keeps the rain.\nThe contract keeps its name.",
+            "it": "La città si tiene la pioggia.\nIl contratto si tiene il suo nome.",
+            "de": "Die Stadt behält den Regen.\nDer Auftrag behält seinen Namen.",
+            "fr": "La ville garde la pluie.\nLe contrat garde son nom."
+          }
+        }
+      ]
     }
   ]
 }
