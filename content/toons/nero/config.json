@@ -2046,7 +2046,7 @@
           "audio": "assets/sfx/5992c179ae583126fef0a389234ab0c7.mp3"
         },
         {
-          "x": 0.82,
+          "x": 0.86,
           "y": 0.1,
           "align": "center",
           "size": 22,
@@ -2098,7 +2098,7 @@
         },
         {
           "x": 0.78,
-          "y": 0.58,
+          "y": 0.48,
           "align": "center",
           "size": 24,
           "variant": "thought",
@@ -2174,7 +2174,7 @@
       "words": [
         {
           "x": 0.48,
-          "y": 0.11,
+          "y": 0.06,
           "align": "center",
           "size": 54,
           "color": "#111111",
@@ -2197,7 +2197,7 @@
         },
         {
           "x": 0.68,
-          "y": 0.29,
+          "y": 0.25,
           "align": "center",
           "size": 18,
           "variant": "ai",
@@ -2218,7 +2218,7 @@
         },
         {
           "x": 0.22,
-          "y": 0.4,
+          "y": 0.25,
           "align": "center",
           "size": 26,
           "variant": "bubble",
@@ -2264,7 +2264,7 @@
         },
         {
           "x": 0.82,
-          "y": 0.63,
+          "y": 0.53,
           "align": "center",
           "size": 24,
           "variant": "bubble",
@@ -2286,7 +2286,7 @@
         },
         {
           "x": 0.22,
-          "y": 0.88,
+          "y": 0.78,
           "align": "center",
           "size": 22,
           "variant": "bubble",
