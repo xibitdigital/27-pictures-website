@@ -1574,7 +1574,7 @@
             "de": "!› DU WIRST NICHT\nMEHR BENÖTIGT",
             "fr": "!› TU N'ES PLUS\nREQUIS"
           },
-          "audio": "assets/sfx/f338c67e18a78eed777e0f448b6aa46f.mp3"
+          "audio": "assets/sfx/2d5d1abdc138dff77cef11437ac5ff25.mp3"
         },
         {
           "x": 0.78,
@@ -1610,7 +1610,10 @@
             "de": "Noch nicht\nöffnen…",
             "fr": "N'ouvre pas\nencore…"
           },
-          "audio": "assets/sfx/9d4a656e1eb9cb56e0a776f6960e4229.mp3"
+          "audio": "assets/sfx/9d4a656e1eb9cb56e0a776f6960e4229.mp3",
+          "bubble": {
+            "tail": "none"
+          }
         },
         {
           "x": 0.22,
@@ -1679,7 +1682,7 @@
             "de": "!› WIEDEREINTRITT\nVERWEIGERT.",
             "fr": "!› RÉENTRÉE\nREFUSÉE."
           },
-          "audio": "assets/sfx/ffd5a4e2f71f6c64b85ae9739346c628.mp3"
+          "audio": "assets/sfx/8b8cdaca177673ae68abb71eab73c430.mp3"
         },
         {
           "x": 0.78,
@@ -1790,7 +1793,7 @@
             "de": "!› FEHLER—",
             "fr": "!› ERREUR—"
           },
-          "audio": "assets/sfx/aa56e94e4a4df7b41328df6f15a018db.mp3"
+          "audio": "assets/sfx/c212748c3f1c39e7c81a260130ab2021.mp3"
         },
         {
           "x": 0.78,
@@ -1899,7 +1902,7 @@
             "de": "!› STOPP—",
             "fr": "!› ARRÊTE—"
           },
-          "audio": "assets/sfx/70947dcaaad2203b2d0c042a5b937e34.mp3"
+          "audio": "assets/sfx/e5edfc01288d144aa07a3d4967016885.mp3"
         },
         {
           "x": 0.78,

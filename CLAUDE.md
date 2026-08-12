@@ -529,8 +529,21 @@ HASH=$(md5 -q /tmp/out.mp3)   # rename to <hash>.mp3, this is the config path
 
 The comb `aecho` at 5 ms is what reads as metal; `acrusher` adds the digital
 edge; `dynaudnorm` keeps it level with the spoken lines. Duration grows by the
-echo tail only (~25 ms). `badai` is deliberately left dry — the hostile AI
-should not share Nova's timbre.
+echo tail only (~25 ms).
+
+`badai` (the hostile AI) runs a harsher tilt of the same chain so it reads as
+the same kind of machine without sharing Nova's voice — pitched down 6%,
+crushed to 8 bits at 38% wet, tighter band and a longer comb:
+
+```bash
+ffmpeg -y -i in.mp3 -af "asetrate=44100*0.94,aresample=44100,\
+highpass=f=150,lowpass=f=5200,acrusher=bits=8:mode=log:mix=0.38,\
+chorus=0.7:0.9:22:0.55:0.4:2.4,aecho=0.85:0.75:7:0.42,\
+aphaser=type=t:speed=0.9:decay=0.35,dynaudnorm=f=200:g=5" \
+  -codec:a libmp3lame -b:a 192k /tmp/out.mp3
+```
+
+The pitch shift stretches these clips ~8% longer, unlike the `ai` pass.
 
 #### Eleven v3 audio tags (emotion / delivery)
 
