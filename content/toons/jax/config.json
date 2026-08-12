@@ -1364,6 +1364,23 @@
           "audio": "assets/sfx/384ceb8480b1e80a4fac3dbe422b661e.mp3"
         },
         {
+          "x": 0.22,
+          "y": 0.62,
+          "align": "center",
+          "size": 56,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -6,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "HURTS!!",
+            "it": "FA MALE!!",
+            "de": "TUT WEH!!",
+            "fr": "ÇA FAIT MAL!!"
+          },
+          "audio": "assets/sfx/c924ce6b02851e93be26e265d8ecbfc6.mp3"
+        },
+        {
           "x": 0.28,
           "y": 0.9,
           "align": "center",
@@ -1405,23 +1422,6 @@
             "scratches": 6,
             "retrace": 2
           }
-        },
-        {
-          "x": 0.22,
-          "y": 0.62,
-          "align": "center",
-          "size": 56,
-          "variant": "burst",
-          "color": "#111111",
-          "angle": -6,
-          "maxWidth": 0.32,
-          "text": {
-            "en": "HURTS!!",
-            "it": "FA MALE!!",
-            "de": "TUT WEH!!",
-            "fr": "ÇA FAIT MAL!!"
-          },
-          "audio": "assets/sfx/c924ce6b02851e93be26e265d8ecbfc6.mp3"
         }
       ]
     },
@@ -1646,7 +1646,10 @@
             "de": "Das ist noch\nmeine Hülle.",
             "fr": "C'est encore\nma coque."
           },
-          "audio": "assets/sfx/6ba4442ba23665c5af60adfb9ccec716.mp3"
+          "audio": "assets/sfx/6ba4442ba23665c5af60adfb9ccec716.mp3",
+          "bubble": {
+            "tail": "top-left"
+          }
         }
       ]
     },
