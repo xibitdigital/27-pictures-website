@@ -2210,7 +2210,9 @@
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
-          }
+          },
+          "audio": "assets/sfx/ce80999cd3639ff2ecb86742fbe173d9.mp3",
+          "speaker": "nova"
         },
         {
           "x": 0.22,

@@ -2640,6 +2640,14 @@
     "toons/nero/config.62d5a91a2116ce3b36babb5d163e8e4c.json": {
       "size": 62248,
       "uploadedAt": "2026-08-12T07:49:17.405Z"
+    },
+    "toons/nero/assets/sfx/ce80999cd3639ff2ecb86742fbe173d9.mp3": {
+      "size": 112475,
+      "uploadedAt": "2026-08-12T07:54:58.318Z"
+    },
+    "toons/nero/config.352c4f46f0e787f44d263188560bd98d.json": {
+      "size": 62347,
+      "uploadedAt": "2026-08-12T07:55:00.787Z"
     }
   }
 }
