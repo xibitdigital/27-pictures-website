@@ -315,6 +315,11 @@ index), scroll mode from document scroll.
   "No pages found".
 - The top-left logo links to `/experiments/`, not the homepage — readers are
   reached from the lab, and the back cover already pointed there.
+- Content pages carry a small folio (page number) bottom-left, drawn purely in
+  CSS from the `data-page-num` attribute that `BookSlot` / `FlipLeaf` /
+  `VerticalStrip` already set. Covers have no attribute, so they stay
+  unnumbered, and no plate on the CDN is modified. It sits at `z-index: 33` —
+  above `.nav-zone` (30), below the word overlay (35).
 - Reader padding is sized for that 4px bar, not for the old counter row. Book
   mode keeps ~2.75rem of top padding so the spread clears the fixed top-right
   controls; the side gutter stays >=52px because the page-nav buttons hang 22px
