@@ -615,27 +615,44 @@ body.is-fullscreen .reader {
   cursor: default;
 }
 
-/* Prev/next arrows sit on the page margins themselves, above the
-   full-page .nav-zone click areas (z-index 30), instead of in a
-   row below the book. */
+/* Prev/next arrows sit just inside the page edges, above the full-page
+   .nav-zone click areas (z-index 30), instead of in a row below the book.
+   They used to hang 22px outside the book box, where the reader's own
+   overflow clipped the circle whenever the gutter got tight — inside the
+   edge nothing can crop them. */
 .page-nav-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   z-index: 32;
-  opacity: 0.85;
+  opacity: 0.9;
+  /* Red outline + red glyph on a dark disc; inverts on hover/press. */
+  background: color-mix(in srgb, var(--bg-dark) 72%, transparent);
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+  transition:
+    background 0.18s var(--transition),
+    border-color 0.18s var(--transition),
+    color 0.18s var(--transition),
+    opacity 0.18s var(--transition);
 }
 
-.page-nav-btn:hover:not(:disabled) {
+/* Beat .reader-btn:hover, which only recolours the border and glyph. */
+.page-nav-btn:hover:not(:disabled),
+.page-nav-btn:focus-visible:not(:disabled),
+.page-nav-btn:active:not(:disabled) {
   opacity: 1;
+  background: var(--red-smile);
+  border-color: var(--text);
+  color: var(--text);
 }
 
 .page-nav-btn.prev {
-  left: -22px;
+  left: 10px;
 }
 
 .page-nav-btn.next {
-  right: -22px;
+  right: 10px;
 }
 
 .page-indicator {
@@ -1614,11 +1631,11 @@ body.single-page .flip-page.flipping.from-left {
   }
 
   .page-nav-btn.prev {
-    left: -20px;
+    left: 6px;
   }
 
   .page-nav-btn.next {
-    right: -20px;
+    right: 6px;
   }
 
   .front-cover-instructions {

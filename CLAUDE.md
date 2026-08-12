@@ -315,6 +315,8 @@ index), scroll mode from document scroll.
   "No pages found".
 - The top-left logo links to `/experiments/`, not the homepage — readers are
   reached from the lab, and the back cover already pointed there.
+- Prev/next arrows are red-outlined discs with a red glyph that invert to a
+  solid red fill with white outline and glyph on hover, focus or press.
 - Content pages carry a small folio (page number) bottom-left, drawn purely in
   CSS from the `data-page-num` attribute that `BookSlot` / `FlipLeaf` /
   `VerticalStrip` already set. Covers have no attribute, so they stay
@@ -322,8 +324,9 @@ index), scroll mode from document scroll.
   above `.nav-zone` (30), below the word overlay (35).
 - Reader padding is sized for that 4px bar, not for the old counter row. Book
   mode keeps ~2.75rem of top padding so the spread clears the fixed top-right
-  controls; the side gutter stays >=52px because the page-nav buttons hang 22px
-  past each edge.
+  controls. The page-nav arrows sit *inside* the page edges (they used to hang
+  22px outside, where the reader's overflow clipped them), so the side gutter
+  is only there for breathing room.
 
 ### What goes where (CSS)
 
