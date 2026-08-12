@@ -71,11 +71,41 @@
   "7": {
     "class_type": "SaveImage",
     "inputs": {
-      "images": ["6", 0],
+      "images": ["9", 0],
       "filename_prefix": "nero/page"
     },
     "_meta": {
       "title": "Save plate"
+    }
+  },
+  "8": {
+    "class_type": "ImageToMask",
+    "inputs": {
+      "image": ["10", 0],
+      "channel": "green"
+    },
+    "_meta": {
+      "title": "B&W: take one channel (green ~ luma)"
+    }
+  },
+  "9": {
+    "class_type": "MaskToImage",
+    "inputs": {
+      "mask": ["8", 0]
+    },
+    "_meta": {
+      "title": "B&W: back to RGB, now neutral (R=G=B)"
+    }
+  },
+  "10": {
+    "class_type": "ColorMatch",
+    "inputs": {
+      "image_ref": ["3", 0],
+      "image_target": ["6", 0],
+      "method": "mkl"
+    },
+    "_meta": {
+      "title": "Match tone/contrast to the previous Nero page (KJNodes)"
     }
   }
 }

@@ -13,10 +13,37 @@ Both build the same graph:
 
 ```
 LoadImage (Nero sheet)  ─┐
-LoadImage (Eve sheet)   ─┼→ ImageBatch → ImageBatch → ByteDanceSeedreamNode → SaveImage
-LoadImage (prev page)   ─┘                                  ▲
-                                       prompt widget (FORMAT / PIN / PANELS / ANATOMY)
+LoadImage (Eve sheet)   ─┼→ ImageBatch → ImageBatch → ByteDanceSeedreamNode ─┐
+LoadImage (prev page)   ─┴──────────────────────────────────┐                │
+                                                            ▼                ▼
+                                                 ColorMatch(ref, target) ────┘
+                                                            │
+                                          ImageToMask → MaskToImage → SaveImage
 ```
+
+## Post steps: tone match, then greyscale
+
+Two fixes that used to happen by hand now run in the graph, in this order:
+
+1. **`ColorMatch`** (ComfyUI-KJNodes) pulls the plate's tonal distribution
+   toward the **previous page** — the same `LoadImage` that feeds the
+   references — so a new plate does not land brighter or flatter than the page
+   before it. `method: mkl` is the safe default; `hm` matches the histogram
+   harder if a generation comes back badly off.
+2. **`ImageToMask` → `MaskToImage`** flattens to neutral grey. Seedream returns
+   a faint blue cast (measured 0.3–1.2 of 255 mean deviation across this book),
+   and taking a single channel back out as RGB forces `R=G=B`, so the cast
+   cannot survive. It runs *after* the match, so nothing the match introduces
+   gets through.
+
+Greyscale last is deliberate — swap the order and `ColorMatch` can put a tint
+back in.
+
+**Channel choice:** the pair uses the **green** channel, which carries most of
+the luma weight. It is a channel extraction, not a Rec.709 luma mix, which is
+fine here because the plate is already near-neutral. If you have
+`ComfyUI_essentials`, its `ImageDesaturate+` does a proper weighted mix and can
+replace both nodes.
 
 ## Reference order matters
 
@@ -60,12 +87,20 @@ node scripts/swap-toon-page.js ~/Downloads/plate.png --toon nero --page 21 --pub
 npm run add-image -- ~/Downloads/plate.png --toon nero --config --upload
 ```
 
-Then flatten the colour cast and re-level audio if the page brought new clips:
+The graph already flattens the cast, so the ImageMagick pass is only needed for
+plates generated elsewhere:
 
 ```bash
 magick <src> -colorspace Gray -colorspace sRGB /tmp/flat.png   # Seedream tints blue
-npm run normalise-audio -- nero
+npm run normalise-audio -- nero                                # if the page brought new clips
 ```
+
+## Dependencies
+
+`ColorMatch` comes from **ComfyUI-KJNodes** (install via Manager). Everything
+else is core. Without KJNodes the graph still loads — delete the ColorMatch
+node and wire Seedream straight into `ImageToMask`, then match tone by hand
+afterwards.
 
 ## Caveats
 

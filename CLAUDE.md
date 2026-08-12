@@ -197,7 +197,11 @@ Alternative to `scripts/generate-toon-page.py`, which calls the RunComfy
 | `workflows/nero-seedream.json`     | UI     | Drag onto the canvas, edit visually             |
 | `workflows/nero-seedream.api.json` | API    | `POST /prompt`; named inputs, no widget drift   |
 
-`LoadImage ×3 → ImageBatch → ImageBatch → ByteDanceSeedreamNode → SaveImage`.
+`LoadImage ×3 → ImageBatch ×2 → ByteDanceSeedreamNode → ColorMatch → ImageToMask
+→ MaskToImage → SaveImage`. The tail does in-graph what used to be manual:
+`ColorMatch` (ComfyUI-KJNodes) pulls tone/contrast toward the previous page,
+then the mask round-trip forces `R=G=B` and kills Seedream's blue cast.
+Greyscale runs **last**, or the match can put a tint back.
 The batch chain fixes the reference order as **Nero sheet, Eve sheet, previous
 page**, which is what the prompt's `Image 1/2/3` pins refer to — rewire it and
 the pins point at the wrong pictures. Full notes in `workflows/README.md`.

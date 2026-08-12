@@ -1,9 +1,9 @@
 {
-  "last_node_id": 7,
-  "last_link_id": 6,
+  "last_node_id": 10,
+  "last_link_id": 12,
   "version": 0.4,
   "extra": {
-    "note": "Nero plate — Seedream i2i. Reference order is Image 1 sheet, Image 2 sheet, Image 3 previous page; the ImageBatch chain preserves it."
+    "note": "Nero plate — Seedream i2i. Reference order is Image 1 sheet, Image 2 sheet, Image 3 previous page; the ImageBatch chain preserves it. Output is tone-matched to the previous page, then flattened to neutral greyscale before saving."
   },
   "nodes": [
     {
@@ -66,7 +66,7 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
-          "links": [4],
+          "links": [4, 11],
           "slot_index": 0
         }
       ],
@@ -163,7 +163,7 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
-          "links": [6],
+          "links": [10],
           "slot_index": 0
         }
       ],
@@ -188,7 +188,7 @@
       "id": 7,
       "type": "SaveImage",
       "title": "Save plate",
-      "pos": [1240, 40],
+      "pos": [1240, 620],
       "size": [400, 450],
       "flags": {},
       "order": 6,
@@ -197,7 +197,7 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 6
+          "link": 9
         }
       ],
       "outputs": [],
@@ -205,6 +205,98 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": ["nero/page"]
+    },
+    {
+      "id": 8,
+      "type": "ImageToMask",
+      "title": "B&W: channel → mask",
+      "pos": [1240, 150],
+      "size": [240, 58],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [8],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageToMask"
+      },
+      "widgets_values": ["green"]
+    },
+    {
+      "id": 9,
+      "type": "MaskToImage",
+      "title": "B&W: mask → neutral RGB",
+      "pos": [1240, 260],
+      "size": [240, 26],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [9],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MaskToImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 10,
+      "type": "ColorMatch",
+      "title": "Match contrast to previous page (KJNodes)",
+      "pos": [1240, 40],
+      "size": [280, 78],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_ref",
+          "type": "IMAGE",
+          "link": 11
+        },
+        {
+          "name": "image_target",
+          "type": "IMAGE",
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [12],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ColorMatch"
+      },
+      "widgets_values": ["mkl"]
     }
   ],
   "links": [
@@ -213,7 +305,11 @@
     [3, 4, 0, 5, 0, "IMAGE"],
     [4, 3, 0, 5, 1, "IMAGE"],
     [5, 5, 0, 6, 0, "IMAGE"],
-    [6, 6, 0, 7, 0, "IMAGE"]
+    [8, 8, 0, 9, 0, "MASK"],
+    [9, 9, 0, 7, 0, "IMAGE"],
+    [10, 6, 0, 10, 1, "IMAGE"],
+    [11, 3, 0, 10, 0, "IMAGE"],
+    [12, 10, 0, 8, 0, "IMAGE"]
   ],
   "groups": [],
   "config": {}
