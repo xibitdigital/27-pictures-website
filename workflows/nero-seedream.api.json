@@ -1,0 +1,81 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "nero-character-sheet.png",
+      "upload": "image"
+    },
+    "_meta": {
+      "title": "Image 1 — Nero character sheet"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "eve-character-sheet.png",
+      "upload": "image"
+    },
+    "_meta": {
+      "title": "Image 2 — Eve character sheet"
+    }
+  },
+  "3": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "nero-previous-page.png",
+      "upload": "image"
+    },
+    "_meta": {
+      "title": "Image 3 — previous page (layout / rain / ink)"
+    }
+  },
+  "4": {
+    "class_type": "ImageBatch",
+    "inputs": {
+      "image1": ["1", 0],
+      "image2": ["2", 0]
+    },
+    "_meta": {
+      "title": "Batch: sheets"
+    }
+  },
+  "5": {
+    "class_type": "ImageBatch",
+    "inputs": {
+      "image1": ["4", 0],
+      "image2": ["3", 0]
+    },
+    "_meta": {
+      "title": "Batch: sheets + previous page (order = Image 1,2,3)"
+    }
+  },
+  "6": {
+    "class_type": "ByteDanceSeedreamNode",
+    "inputs": {
+      "model": "seedream 5.0 lite",
+      "prompt": "FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, rain hatching, wet reflective surfaces. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no HUD lettering, no logos, no watermarks, no text anywhere in the art.\n\nPIN (keep from references): keep Nero's face, short dark hair, dark coat and asymmetric cyber arms from Image 1; keep Eve's face, long wavy dark hair, black rectangular smart glasses and dark blazer from Image 2; keep the rain-soaked night alley, panel proportions, gutter weight and B&W ink treatment of Image 3 (the previous page). Do not redesign identity.\n\nTOP (~35%): [beat 1 — establish]\nMIDDLE (~30%): [beat 2 — action; clear limbs]\nBOTTOM (~35%): [beat 3 — ECU payoff]\n\nSUBJECT LOCK: Nero — lean hard-bitten detective, short dark hair, dark coat, combat boots. Eve — fitted dark blazer over dark top, slim trousers, pointed-toe black stiletto heels, glasses on her face in every panel.\n\nANATOMY: exactly two arms and two legs per person, five fingers per hand, no extra limbs. Nero's LEFT arm is a bare cracked-porcelain upper arm with a segmented steel forearm and metal fingers from the elbow down; his RIGHT arm is ordinary flesh ending in a metal cybernetic hand at the wrist — never two chrome forearms, never a third arm. Left and right are his own: facing camera his steel forearm falls on the viewer's right, seen from behind on the viewer's left.\n\nCHANGE: only the scene described above; preserve identity, alley, rain and ink style from the pinned references.",
+      "image": ["5", 0],
+      "size_preset": "Custom",
+      "width": 1024,
+      "height": 1792,
+      "sequential_image_generation": "disabled",
+      "max_images": 1,
+      "seed": 0,
+      "watermark": false,
+      "fail_on_partial": true
+    },
+    "_meta": {
+      "title": "Seedream — Nero plate (i2i)"
+    }
+  },
+  "7": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["6", 0],
+      "filename_prefix": "nero/page"
+    },
+    "_meta": {
+      "title": "Save plate"
+    }
+  }
+}

@@ -187,6 +187,25 @@ referenced by `content/toons/*/config.json`, `src/toons/config-lock.json` and
 `grep`-able paths in `src/` + `public/`. Verify each key exists under
 `cdn-backup/` before deleting — the bucket delete is irreversible.
 
+### ComfyUI workflows (`workflows/`)
+
+Alternative to `scripts/generate-toon-page.py`, which calls the RunComfy
+**model API** rather than ComfyUI itself:
+
+| File                              | Format | Use                                             |
+| --------------------------------- | ------ | ----------------------------------------------- |
+| `workflows/nero-seedream.json`     | UI     | Drag onto the canvas, edit visually             |
+| `workflows/nero-seedream.api.json` | API    | `POST /prompt`; named inputs, no widget drift   |
+
+`LoadImage ×3 → ImageBatch → ImageBatch → ByteDanceSeedreamNode → SaveImage`.
+The batch chain fixes the reference order as **Nero sheet, Eve sheet, previous
+page**, which is what the prompt's `Image 1/2/3` pins refer to — rewire it and
+the pins point at the wrong pictures. Full notes in `workflows/README.md`.
+
+Two gotchas: the node's model list differs from the model API (check the
+dropdown for the Pro entry), and its minimum width is 1024, so the graph
+renders 1024×1792 while the prompt still says 1008×1792.
+
 ### Adding a new toon page image
 
 Images are content-hashed (`md5.ext`) under `public/toons/<toon>/assets/` — same convention as
