@@ -1119,24 +1119,6 @@
           "audio": "assets/sfx/67acf8d270ae24fb4048829498c536ee.mp3"
         },
         {
-          "x": 0.22,
-          "y": 0.8,
-          "align": "center",
-          "size": 78,
-          "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 11,
-          "angle": -16,
-          "maxWidth": 0.4,
-          "text": {
-            "en": "BOOOOM",
-            "it": "BOOOOM",
-            "de": "BOOOOM",
-            "fr": "BOOOOM"
-          },
-          "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
-        },
-        {
           "x": 0.78,
           "y": 0.72,
           "align": "center",
@@ -1160,6 +1142,24 @@
             "fr": "N› FRAPPE MAINTENANT!"
           },
           "audio": "assets/sfx/dd1d35490b6a9302bf4e0068b98864a2.mp3"
+        },
+        {
+          "x": 0.22,
+          "y": 0.8,
+          "align": "center",
+          "size": 78,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 11,
+          "angle": -16,
+          "maxWidth": 0.4,
+          "text": {
+            "en": "BOOOOM",
+            "it": "BOOOOM",
+            "de": "BOOOOM",
+            "fr": "BOOOOM"
+          },
+          "audio": "assets/sfx/4a008f73fe466629a3aa1e0ed5ad9152.mp3"
         }
       ]
     },
