@@ -169,24 +169,6 @@
           "audio": "assets/sfx/5b26b702d12fc87c5e8dbb3c197fff8e.mp3"
         },
         {
-          "x": 0.74,
-          "y": 0.84,
-          "align": "center",
-          "size": 48,
-          "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
-          "angle": 12,
-          "maxWidth": 0.38,
-          "text": {
-            "en": "KRR-CHUNK",
-            "it": "CLACK",
-            "de": "KLACK",
-            "fr": "CLAC"
-          },
-          "audio": "assets/sfx/8377a7f0c3aea6eaa8d7ed1a304797e0.mp3"
-        },
-        {
           "x": 0.78,
           "y": 0.38,
           "align": "center",
@@ -246,6 +228,24 @@
             "fr": "Je te vois."
           },
           "audio": "assets/sfx/5f8cf6c36b6fb832aa17ae176f5bf72b.mp3"
+        },
+        {
+          "x": 0.74,
+          "y": 0.84,
+          "align": "center",
+          "size": 48,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 7,
+          "angle": 12,
+          "maxWidth": 0.38,
+          "text": {
+            "en": "KRR-CHUNK",
+            "it": "CLACK",
+            "de": "KLACK",
+            "fr": "CLAC"
+          },
+          "audio": "assets/sfx/8377a7f0c3aea6eaa8d7ed1a304797e0.mp3"
         },
         {
           "x": 0.78,
