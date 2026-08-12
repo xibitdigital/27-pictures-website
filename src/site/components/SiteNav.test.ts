@@ -26,10 +26,13 @@ describe("SiteNav", () => {
     });
 
     const hrefs = wrapper.findAll(".nav-links a.magnetic").map((a) => a.attributes("href"));
-    expect(hrefs).toContain("#darkroom");
+    // Section anchors stay bare on the homepage; the split-out pages are absolute.
+    expect(hrefs).toContain("#assembly");
     expect(hrefs).toContain("#contact");
+    expect(hrefs).toContain("/horror-shorts/");
+    expect(hrefs).toContain("/cosplay/");
     expect(hrefs).toContain("/experiments/");
-    expect(hrefs).not.toContain("/#darkroom");
+    expect(hrefs).not.toContain("/#assembly");
   });
 
   it("prefixes homepage hashes when on experiments page", () => {
@@ -48,8 +51,11 @@ describe("SiteNav", () => {
     });
 
     const hrefs = wrapper.findAll(".nav-links a.magnetic").map((a) => a.attributes("href"));
-    expect(hrefs).toContain("/#darkroom");
+    expect(hrefs).toContain("/#assembly");
     expect(hrefs).toContain("/#contact");
+    // Dedicated pages are absolute from anywhere.
+    expect(hrefs).toContain("/horror-shorts/");
+    expect(hrefs).toContain("/cosplay/");
     const experiments = wrapper.findAll(".nav-links a.magnetic").find((a) => a.attributes("href") === "/experiments/");
     expect(experiments?.attributes("aria-current")).toBe("page");
   });

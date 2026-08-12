@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Horror Shorts — The Red Smile Anthology | 27 Pictures</title>
+
+    <meta
+      name="description"
+      content="The Red Smile: an anthology of psychological horror shorts built on deep-shadow cinematography, discordant sound and neural-generated environments. Watch every film, and read how each one was made."
+    />
+    <meta
+      name="keywords"
+      content="AI horror shorts, psychological horror short films, The Red Smile anthology, horror short film series, neural synthesis horror, deep shadow cinematography, indie horror studio"
+    />
+    <meta name="author" content="27 Pictures" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://twentyseven.pictures/horror-shorts/" />
+    <meta name="theme-color" content="#b30000" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="referrer" content="origin-when-cross-origin" />
+    <meta name="indexnow-key" content="bdd5e80e21a8430d9316de0deacdb208" />
+
+    <link rel="icon" type="image/png" href="/logosquare.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logosquare.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logosquare.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/logosquare.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://twentyseven.pictures/horror-shorts/" />
+    <meta property="og:title" content="AI Horror Shorts — The Red Smile Anthology | 27 Pictures" />
+    <meta
+      property="og:description"
+      content="An anthology of psychological horror shorts: deep shadow, discordant sound, and a red smile hidden in every film."
+    />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Red Smile horror short anthology by 27 Pictures" />
+    <meta property="og:site_name" content="27 Pictures" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@27pictures" />
+    <meta name="twitter:creator" content="@27pictures" />
+    <meta name="twitter:title" content="AI Horror Shorts — The Red Smile Anthology | 27 Pictures" />
+    <meta
+      name="twitter:description"
+      content="An anthology of psychological horror shorts: deep shadow, discordant sound, and a red smile hidden in every film."
+    />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg" />
+    <meta name="twitter:image:alt" content="The Red Smile horror short anthology by 27 Pictures" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css?v=cebaabb502" />
+    <style>
+      /* Breadcrumb markup for crawlers; the visible trail is the nav. */
+      .sr-only-seo {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .series-page {
+        padding: 150px 10% 100px;
+      }
+
+      .series-header {
+        margin-bottom: 48px;
+      }
+
+      .series-header .section-tag {
+        margin-bottom: 16px;
+      }
+
+      .series-header h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 7vw;
+        line-height: 0.9;
+        margin-bottom: 30px;
+      }
+
+      .series-header .lead {
+        max-width: 820px;
+        color: var(--text-muted);
+        line-height: 1.75;
+        font-weight: 300;
+        font-size: 1.05rem;
+      }
+
+      .series-body {
+        max-width: 820px;
+        color: var(--silver);
+        line-height: 1.8;
+        font-weight: 300;
+        font-size: 0.98rem;
+      }
+
+      .series-body p + p {
+        margin-top: 16px;
+      }
+
+      .series-body strong {
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+
+      .series-section {
+        margin-bottom: 64px;
+      }
+
+      .series-section-label {
+        font-size: 10px;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--red-smile);
+        margin-bottom: 20px;
+        font-weight: 700;
+      }
+
+      .series-section h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.5rem, 3.5vw, 2rem);
+        margin-bottom: 20px;
+      }
+
+      .films {
+        display: grid;
+        gap: 40px;
+        margin-top: 36px;
+      }
+
+      .film {
+        display: grid;
+        grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+      }
+
+      .film-frame {
+        margin: 0;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+      }
+
+      .film-frame iframe {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border: 0;
+      }
+
+      .film-meta {
+        font-size: 0.68rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--red-smile);
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .film h3 {
+        font-size: 1.15rem;
+        line-height: 1.3;
+        margin-bottom: 12px;
+      }
+
+      .film p {
+        color: var(--text-muted);
+        font-size: 0.92rem;
+        line-height: 1.7;
+        font-weight: 300;
+      }
+
+      .film .cta-link {
+        display: inline-block;
+        margin-top: 14px;
+      }
+
+      .craft-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+        margin-top: 32px;
+      }
+
+      .craft-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 24px;
+      }
+
+      .craft-card h3 {
+        font-size: 1.02rem;
+        margin-bottom: 10px;
+      }
+
+      .craft-card p {
+        color: var(--text-muted);
+        font-size: 0.88rem;
+        line-height: 1.65;
+        font-weight: 300;
+      }
+
+      .series-cta {
+        border: 1px solid var(--border-light);
+        background: var(--bg-card);
+        padding: 40px;
+        text-align: center;
+        margin-bottom: 72px;
+      }
+
+      .series-cta h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.4rem, 3vw, 1.9rem);
+        margin-bottom: 14px;
+      }
+
+      .series-cta p {
+        color: var(--text-muted);
+        font-weight: 300;
+        margin-bottom: 24px;
+        line-height: 1.7;
+      }
+
+      .series-footer {
+        border-top: 1px solid var(--border);
+        padding-top: 32px;
+        color: var(--silver);
+        font-size: 0.85rem;
+        font-weight: 300;
+        line-height: 1.7;
+      }
+
+      .series-footer-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin-top: 16px;
+      }
+
+      .series-footer-nav a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        transition: color 0.2s var(--transition);
+      }
+
+      .series-footer-nav a:hover {
+        color: var(--red-smile);
+      }
+
+      @media (max-width: 768px) {
+        .series-header h1 {
+          font-size: 15vw;
+        }
+
+        .series-page {
+          padding: 110px 24px 64px;
+        }
+
+        .film {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .series-cta {
+          padding: 28px 20px;
+        }
+      }
+    </style>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://twentyseven.pictures/horror-shorts/#webpage",
+            "url": "https://twentyseven.pictures/horror-shorts/",
+            "name": "AI Horror Shorts — The Red Smile Anthology | 27 Pictures",
+            "description": "An anthology of psychological horror shorts built on deep-shadow cinematography, discordant sound and neural-generated environments.",
+            "isPartOf": {
+              "@id": "https://twentyseven.pictures/#website"
+            },
+            "about": {
+              "@id": "https://twentyseven.pictures/#the-red-smile"
+            },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg"
+            },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://twentyseven.pictures/horror-shorts/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://twentyseven.pictures/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Horror Shorts",
+                "item": "https://twentyseven.pictures/horror-shorts/"
+              }
+            ]
+          },
+          {
+            "@type": "CreativeWorkSeries",
+            "@id": "https://twentyseven.pictures/#the-red-smile",
+            "name": "The Red Smile",
+            "url": "https://twentyseven.pictures/horror-shorts/",
+            "startDate": "2025",
+            "description": "A psychological horror short film series exploring the distortion of the human psyche through cinematic imagery, deep-shadow cinematography, and discordant soundscapes.",
+            "genre": ["Horror", "Psychological Horror", "Short Film"],
+            "inLanguage": "en",
+            "numberOfEpisodes": 5,
+            "creator": {
+              "@id": "https://twentyseven.pictures/#organization"
+            },
+            "image": {
+              "@type": "ImageObject",
+              "url": "%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg"
+            }
+          },
+          {
+            "@type": "ItemList",
+            "@id": "https://twentyseven.pictures/horror-shorts/#films",
+            "name": "The Red Smile — horror shorts",
+            "itemListOrder": "https://schema.org/ItemListOrderDescending",
+            "numberOfItems": 5,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                  "@type": "VideoObject",
+                  "@id": "https://twentyseven.pictures/horror-shorts/#short-QMRlBqAdNGg",
+                  "name": "He Streamed the Challenge. The Monster Streamed Back.",
+                  "description": "RED SMILE fragment — a livestream challenge answered by something on the other side of the feed. Psychological horror short by 27 Pictures.",
+                  "thumbnailUrl": "https://i.ytimg.com/vi/QMRlBqAdNGg/maxresdefault.jpg",
+                  "embedUrl": "https://www.youtube.com/embed/QMRlBqAdNGg",
+                  "url": "https://www.youtube.com/shorts/QMRlBqAdNGg",
+                  "uploadDate": "2026-04-30",
+                  "duration": "PT39S",
+                  "genre": "Horror",
+                  "publisher": { "@id": "https://twentyseven.pictures/#organization" },
+                  "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                  "@type": "VideoObject",
+                  "@id": "https://twentyseven.pictures/horror-shorts/#short-J-iZl-XkVxg",
+                  "name": "The Doll Moved Again. No One Was Home.",
+                  "description": "RED SMILE fragment 02 — The Tumbler. A psychological horror short by 27 Pictures. The doll moved again. The house was empty. It was not.",
+                  "thumbnailUrl": "https://i.ytimg.com/vi/J-iZl-XkVxg/maxresdefault.jpg",
+                  "embedUrl": "https://www.youtube.com/embed/J-iZl-XkVxg",
+                  "url": "https://www.youtube.com/shorts/J-iZl-XkVxg",
+                  "uploadDate": "2026-04-27",
+                  "duration": "PT1M20S",
+                  "genre": "Horror",
+                  "publisher": { "@id": "https://twentyseven.pictures/#organization" },
+                  "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                  "@type": "VideoObject",
+                  "@id": "https://twentyseven.pictures/horror-shorts/#short-VEmf9eq62zo",
+                  "name": "Something Is Wrong With My Reflection",
+                  "description": "RED SMILE fragment — the mirror keeps the timing, but not the movement. Psychological horror short by 27 Pictures.",
+                  "thumbnailUrl": "https://i.ytimg.com/vi/VEmf9eq62zo/maxresdefault.jpg",
+                  "embedUrl": "https://www.youtube.com/embed/VEmf9eq62zo",
+                  "url": "https://www.youtube.com/watch?v=VEmf9eq62zo",
+                  "uploadDate": "2026-04-26",
+                  "duration": "PT2M19S",
+                  "genre": "Horror",
+                  "publisher": { "@id": "https://twentyseven.pictures/#organization" },
+                  "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                  "@type": "VideoObject",
+                  "@id": "https://twentyseven.pictures/horror-shorts/#short-qjBL4zRIFbg",
+                  "name": "She's Not Running Away. She's Hunting.",
+                  "description": "RED SMILE fragment — the chase reverses direction. Psychological horror short by 27 Pictures.",
+                  "thumbnailUrl": "https://i.ytimg.com/vi/qjBL4zRIFbg/maxresdefault.jpg",
+                  "embedUrl": "https://www.youtube.com/embed/qjBL4zRIFbg",
+                  "url": "https://www.youtube.com/shorts/qjBL4zRIFbg",
+                  "uploadDate": "2026-04-23",
+                  "duration": "PT1M7S",
+                  "genre": "Horror",
+                  "publisher": { "@id": "https://twentyseven.pictures/#organization" },
+                  "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "item": {
+                  "@type": "VideoObject",
+                  "@id": "https://twentyseven.pictures/horror-shorts/#short-BOtFWCENtTc",
+                  "name": "She Asked for Directions. She Should've Run.",
+                  "description": "RED SMILE fragment — a wrong turn, politely answered. Psychological horror short by 27 Pictures.",
+                  "thumbnailUrl": "https://i.ytimg.com/vi/BOtFWCENtTc/maxresdefault.jpg",
+                  "embedUrl": "https://www.youtube.com/embed/BOtFWCENtTc",
+                  "url": "https://www.youtube.com/shorts/BOtFWCENtTc",
+                  "uploadDate": "2026-04-15",
+                  "duration": "PT1M25S",
+                  "genre": "Horror",
+                  "publisher": { "@id": "https://twentyseven.pictures/#organization" },
+                  "isPartOf": { "@id": "https://twentyseven.pictures/#the-red-smile" }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="site-app"></div>
+
+    <main class="series-page" id="main-content" role="main">
+      <nav aria-label="Breadcrumb" class="sr-only-seo">
+        <ol>
+          <li><a href="https://twentyseven.pictures/">Home</a></li>
+          <li aria-current="page">Horror Shorts</li>
+        </ol>
+      </nav>
+
+      <header class="series-header">
+        <p class="section-tag">Archive 01: The Red Smile</p>
+        <h1>AI Horror Shorts</h1>
+        <p class="lead">
+          The Red Smile is an anthology of psychological horror shorts. No jump-scares, no gore for its own sake — dread
+          built out of deep shadow, discordant sound, and the feeling that something in the frame has already noticed
+          you.
+        </p>
+      </header>
+
+      <section class="series-section series-body" aria-labelledby="premise-title">
+        <p class="series-section-label">The premise</p>
+        <h2 id="premise-title">A smile hidden in every film</h2>
+        <p>
+          Each short stands alone: a single situation, a few minutes, one thing going wrong. What links them is a motif
+          rather than a plot — somewhere in every film, a <strong>red smile</strong> appears. In a reflection, in the
+          grain of a wall, in a face held a beat too long. Viewers who watch once see a horror short. Viewers who watch
+          again start hunting for it.
+        </p>
+        <p>
+          We work in short form on purpose. A ninety-second film cannot afford a slow build or a reassuring ending, so
+          every element has to carry dread at once: the lighting, the sound design, the thing left just outside frame.
+          It is a discipline, not a limitation — the constraint is what keeps the work honest.
+        </p>
+      </section>
+
+      <section class="series-section" aria-labelledby="films-title">
+        <p class="series-section-label">The anthology</p>
+        <h2 id="films-title" class="series-body">Five films, newest first</h2>
+
+        <div class="films">
+          <article class="film">
+            <figure class="film-frame">
+              <iframe
+                src="https://www.youtube.com/embed/QMRlBqAdNGg"
+                title="He Streamed the Challenge. The Monster Streamed Back."
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </figure>
+            <div>
+              <p class="film-meta">Fragment 05 · 39 sec · April 2026</p>
+              <h3>He Streamed the Challenge. The Monster Streamed Back.</h3>
+              <p>
+                The shortest film in the anthology and the meanest. A creator takes an internet dare on camera, playing
+                to an audience that wants a reaction. Something on the other side of the feed obliges. Built almost
+                entirely from screen light — the only thing lighting his face is the thing watching him.
+              </p>
+              <a
+                href="https://www.youtube.com/shorts/QMRlBqAdNGg"
+                class="cta-link"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Watch on YouTube →</a
+              >
+            </div>
+          </article>
+
+          <article class="film">
+            <figure class="film-frame">
+              <iframe
+                src="https://www.youtube.com/embed/J-iZl-XkVxg"
+                title="The Doll Moved Again. No One Was Home."
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </figure>
+            <div>
+              <p class="film-meta">Fragment 02 · The Tumbler · 1 min 20 · April 2026</p>
+              <h3>The Doll Moved Again. No One Was Home.</h3>
+              <p>
+                An empty house, a doll that will not stay where it was left, and a camera that refuses to cut away when
+                you want it to. The horror is arithmetic: you are asked to remember where an object was, and then to
+                notice it is somewhere else. Nothing is ever shown moving.
+              </p>
+              <a
+                href="https://www.youtube.com/shorts/J-iZl-XkVxg"
+                class="cta-link"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Watch on YouTube →</a
+              >
+            </div>
+          </article>
+
+          <article class="film">
+            <figure class="film-frame">
+              <iframe
+                src="https://www.youtube.com/embed/VEmf9eq62zo"
+                title="Something Is Wrong With My Reflection"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </figure>
+            <div>
+              <p class="film-meta">Fragment 04 · 2 min 19 · April 2026</p>
+              <h3>Something Is Wrong With My Reflection</h3>
+              <p>
+                The longest film here, and the one that trusts patience most. A mirror keeps perfect time with its
+                subject — the timing is never wrong, only the movement is. Shot to make the viewer do the work of
+                comparison, frame by frame, until they would rather not.
+              </p>
+              <a
+                href="https://www.youtube.com/watch?v=VEmf9eq62zo"
+                class="cta-link"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Watch on YouTube →</a
+              >
+            </div>
+          </article>
+
+          <article class="film">
+            <figure class="film-frame">
+              <iframe
+                src="https://www.youtube.com/embed/qjBL4zRIFbg"
+                title="She's Not Running Away. She's Hunting."
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </figure>
+            <div>
+              <p class="film-meta">Fragment 03 · 1 min 7 · April 2026</p>
+              <h3>She's Not Running Away. She's Hunting.</h3>
+              <p>
+                A chase filmed to be misread. Every convention of the pursuit — the breathing, the handheld camera, the
+                glance over the shoulder — points one way until the geometry of the scene quietly reverses. The reveal
+                is a change of direction, not a monster.
+              </p>
+              <a
+                href="https://www.youtube.com/shorts/qjBL4zRIFbg"
+                class="cta-link"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Watch on YouTube →</a
+              >
+            </div>
+          </article>
+
+          <article class="film">
+            <figure class="film-frame">
+              <iframe
+                src="https://www.youtube.com/embed/BOtFWCENtTc"
+                title="She Asked for Directions. She Should've Run."
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </figure>
+            <div>
+              <p class="film-meta">Fragment 01 · 1 min 25 · April 2026</p>
+              <h3>She Asked for Directions. She Should've Run.</h3>
+              <p>
+                The first film in the anthology, and the template for the rest: an ordinary exchange, politely
+                conducted, that stays ordinary several seconds longer than it should. The threat is never announced. It
+                is simply already present, and the scene keeps going.
+              </p>
+              <a
+                href="https://www.youtube.com/shorts/BOtFWCENtTc"
+                class="cta-link"
+                rel="noopener noreferrer"
+                target="_blank"
+                >Watch on YouTube →</a
+              >
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="series-section series-body" aria-labelledby="craft-title">
+        <p class="series-section-label">How they are made</p>
+        <h2 id="craft-title">Atmosphere over jump-scares</h2>
+        <p>
+          Every frame starts as high-bitrate 4K RAW so the grade can go as dark as the story needs without falling
+          apart. From there the pipeline diverges from conventional production: neural synthesis builds environments
+          that were never constructed, and compositing marries them to performances that were.
+        </p>
+
+        <div class="craft-grid">
+          <article class="craft-card">
+            <h3>Deep-shadow cinematography</h3>
+            <p>
+              Light is treated as something withheld. Most of the frame stays black, and what is lit is lit hard —
+              because the eye searching the dark does more work than any reveal.
+            </p>
+          </article>
+          <article class="craft-card">
+            <h3>Discordant sound</h3>
+            <p>
+              Score and design are built to sit slightly wrong: tuning that drifts, room tone that does not match the
+              room. Audiences feel it before they can name it.
+            </p>
+          </article>
+          <article class="craft-card">
+            <h3>Neural environments</h3>
+            <p>
+              Generative environment mapping puts real performances inside places that cannot be built or permitted —
+              and lets a two-person crew shoot at a scale that normally needs a unit.
+            </p>
+          </article>
+          <article class="craft-card">
+            <h3>No cheap scares</h3>
+            <p>
+              No stingers, no loud-noise punchlines. If a moment only works at full volume with the lights off, it does
+              not go in the film.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="series-section series-body" aria-labelledby="more-title">
+        <p class="series-section-label">Elsewhere</p>
+        <h2 id="more-title">Beyond the shorts</h2>
+        <p>
+          The same pipeline drives our other work. <a href="/cosplay/">Cinematic cosplay production</a> applies the
+          lighting and environment process to characters our clients have built themselves, and the
+          <a href="/experiments/">Experiments lab</a> is where narrative interfaces get tested before they graduate —
+          including <a href="/toons/redsmile-static/">RED SMILE: static</a>, an interactive horror short you read rather
+          than watch.
+        </p>
+      </section>
+
+      <section class="series-cta" aria-labelledby="cta-title">
+        <h2 id="cta-title">New fragments as they land</h2>
+        <p>Shorts premiere on YouTube first. Subscribe there, or get in touch about production work.</p>
+        <a
+          href="https://www.youtube.com/@twentyseven.pictures"
+          class="cta-link"
+          rel="noopener noreferrer"
+          target="_blank"
+          >Watch on YouTube →</a
+        >
+      </section>
+
+      <footer class="series-footer">
+        <p>
+          27 Pictures is a horror film and cinematic cosplay production studio working across Switzerland and the United
+          Kingdom.
+        </p>
+        <nav class="series-footer-nav" aria-label="Related links">
+          <a href="/">Home</a>
+          <a href="/cosplay/">Cosplay</a>
+          <a href="/experiments/">Experiments</a>
+          <a href="/#contact">Contact</a>
+          <a href="https://www.youtube.com/@twentyseven.pictures" rel="noopener noreferrer" target="_blank">YouTube</a>
+          <a href="https://www.instagram.com/27pictures_production" rel="noopener noreferrer" target="_blank"
+            >Instagram</a
+          >
+        </nav>
+      </footer>
+    </main>
+    <script type="module" src="/site/horrorShortsMain.ts"></script>
+  </body>
+</html>

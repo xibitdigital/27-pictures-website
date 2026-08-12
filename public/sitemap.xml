@@ -16,6 +16,17 @@
     </image:image>
   </url>
   <url>
+    <loc>https://twentyseven.pictures/horror-shorts/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
+      <image:title>The Red Smile horror short anthology — 27 Pictures</image:title>
+      <image:caption>Psychological horror shorts by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://twentyseven.pictures/cosplay/</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>

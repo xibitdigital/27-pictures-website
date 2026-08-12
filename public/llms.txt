@@ -45,6 +45,7 @@ Allow: /
 
 # Key pages
 # - https://twentyseven.pictures/ — studio homepage (The Red Smile, JAX, cosplay, contact)
+# - https://twentyseven.pictures/horror-shorts/ — The Red Smile horror short anthology
 # - https://twentyseven.pictures/cosplay/ — Cinematic cosplay production service
 # - https://twentyseven.pictures/experiments/ — Experiments lab
 # - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader
