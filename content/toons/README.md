@@ -34,6 +34,17 @@ make add-image SRC=~/page.jpg TOON=nero CONFIG=1 UPLOAD=1
 **Prod:** readers load via `VITE_ASSET_BASE` + `config-lock.json` — never from Pages.
 Deploy the site after `config-lock.json` changes so production picks up the new hash.
 
+## Caption placement
+
+Captions go in the **top band of their own panel** (`panel_top + ~0.04`),
+hugged to the outer edge, never over a face. `bubble.tail` points back at the
+sound source — all eight directions including diagonals. Every variant carries
+`"opacity": 0.75` / `"strokeWidth": 5`; onomatopoeia over dark plates add
+`"stroke": "#ffffff"` + `"strokeThickness": 8`.
+
+**Auto-read plays `words[]` in array order**, so an SFX that should land before
+a line must sit before it in the array. Full notes in the root `CLAUDE.md`.
+
 ## Captions / voices
 
 Word overlays live in each page’s `words[]` (`variant`, `text`, optional `audio`).

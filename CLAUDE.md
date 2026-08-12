@@ -299,6 +299,27 @@ npm run publish-toon-config -- --toon jax   # or erin | nero
 # Deploy site so config-lock.json is live
 ```
 
+### Reader chrome (progress bar, back link)
+
+There is **no page-number indicator**. Reading position is a fixed hairline
+progress bar (`chrome/ReadingProgress.vue`, `.toon-progress` in
+`reader-shared.css`): 4px, top of the viewport on desktop, **bottom edge under
+768px** (safe-area inset on `padding-bottom`, so the fill clears the home
+indicator). Book mode drives it from `engine.state.progress` (view index / last
+index), scroll mode from document scroll.
+
+- `state.indicator` still holds "3 / 20" — it feeds `aria-valuetext`, so the
+  count stays available to screen readers. Do not delete it.
+- The old `.controls` / `#indicator` element now renders **only** when
+  `engine.state.error` is set; it is the sole surface for "Failed to load" /
+  "No pages found".
+- The top-left logo links to `/experiments/`, not the homepage — readers are
+  reached from the lab, and the back cover already pointed there.
+- Reader padding is sized for that 4px bar, not for the old counter row. Book
+  mode keeps ~2.75rem of top padding so the spread clears the fixed top-right
+  controls; the side gutter stays >=52px because the page-nav buttons hang 22px
+  past each edge.
+
 ### What goes where (CSS)
 
 A toon entry’s own `<style>` should contain **only**:
@@ -343,6 +364,27 @@ that want an opt-in SFX prompt.
 | `ai`      | Dark HUD + optional `N›` prefix  | Nova / good system |
 | `badai`   | Inverted light HUD + `!›` prefix | Hostile AI         |
 | `credit`  | Bangers, muted                   | End-card colophon  |
+
+**Caption placement:** put each caption in the **top band of its own panel**
+(`panel_top + ~0.04` in page-normalised `y`) and hug `x` to the outer edge —
+never over a face, never centred on the speaker. Work out the panel bands
+first: a 3-panel plate is roughly `.03–.31 / .34–.63 / .66–.97`, a 4-panel one
+`.03–.24 / .26–.47 / .50–.71 / .73–.97`.
+
+**Tails do the pointing.** `bubble.tail` aims back at whatever makes the sound
+— the speaker's head, the hand on the object, the TV — using all eight values
+(`top`, `bottom`, `left`, `right` + the four diagonals, see `BUBBLE_TAIL_TIPS`
+in `bubbles.ts`). Diagonals are the common case; a caption in the top band
+almost always wants `bottom-left` / `bottom-right`.
+
+**Chrome to match the book:** every variant carries
+`bubble: { "opacity": 0.75, "strokeWidth": 5 }` (bursts included) so lettering
+never sits on flat white. Onomatopoeia over dark plates also take
+`"stroke": "#ffffff"`, `"strokeThickness": 8` to lift off the ink.
+
+**Auto-read follows array order**, not position on the page. An SFX that should
+land before a line has to sit before it in `words[]` — e.g. the phone buzz
+opens RED SMILE page 1, the hinge whine opens its page 7.
 
 **Word-layer z-index matters**: `.nav-zone` (the full-height page-turn click
 areas) sits at `z-index: 30`. The word overlay layer must stay above it
