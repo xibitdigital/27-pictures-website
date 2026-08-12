@@ -33,7 +33,7 @@ const props = withDefaults(
     altPrefix: "Page",
     soundHint: null,
     soundEnabled: false,
-    backHref: "/experiments/",
+    backHref: "/toons/",
     backLabel: "← experiments",
   }
 );

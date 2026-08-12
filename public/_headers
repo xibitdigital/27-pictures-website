@@ -23,7 +23,7 @@
 /the-red-smile.jpg
   Cache-Control: public, max-age=31536000, immutable
 
-/experiments/*.jpg
+/toons/*.jpg
   Cache-Control: public, max-age=31536000, immutable
 
 /card-art/*

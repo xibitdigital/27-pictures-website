@@ -101,7 +101,7 @@ describe("ErinApp", () => {
     await flushPromises();
 
     const back = wrapper.find(".toons-back");
-    expect(back.attributes("href")).toBe("/experiments/");
+    expect(back.attributes("href")).toBe("/toons/");
     expect(back.find("img.toons-back-logo, img.nav-logo-img").exists()).toBe(true);
     expect(back.find("img").attributes("src")).toBe("/logosquare.png");
     expect(wrapper.find("#book").exists()).toBe(true);

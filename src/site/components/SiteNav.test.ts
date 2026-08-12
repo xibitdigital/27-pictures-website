@@ -31,13 +31,13 @@ describe("SiteNav", () => {
     expect(hrefs).toContain("#contact");
     expect(hrefs).toContain("/horror-shorts/");
     expect(hrefs).toContain("/cosplay/");
-    expect(hrefs).toContain("/experiments/");
+    expect(hrefs).toContain("/toons/");
     expect(hrefs).not.toContain("/#assembly");
   });
 
-  it("prefixes homepage hashes when on experiments page", () => {
+  it("prefixes homepage hashes when on the toons page", () => {
     const wrapper = mount(SiteNav, {
-      props: { page: "experiments" },
+      props: { page: "toons" },
       attachTo: document.body,
       global: {
         stubs: {
@@ -56,8 +56,8 @@ describe("SiteNav", () => {
     // Dedicated pages are absolute from anywhere.
     expect(hrefs).toContain("/horror-shorts/");
     expect(hrefs).toContain("/cosplay/");
-    const experiments = wrapper.findAll(".nav-links a.magnetic").find((a) => a.attributes("href") === "/experiments/");
-    expect(experiments?.attributes("aria-current")).toBe("page");
+    const toons = wrapper.findAll(".nav-links a.magnetic").find((a) => a.attributes("href") === "/toons/");
+    expect(toons?.attributes("aria-current")).toBe("page");
   });
 
   it("toggles burger active class when opened", async () => {

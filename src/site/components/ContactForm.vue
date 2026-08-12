@@ -162,8 +162,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- No .reveal on the form — it mounts after IntersectionObserver setup;
-       parent #contact-form-app owns the reveal animation. -->
   <form class="contact-form" :action="action" method="POST" aria-label="Contact form" @submit="onSubmit">
     <div class="form-group">
       <label for="name" class="sr-only">Your Name</label>

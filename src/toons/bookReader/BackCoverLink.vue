@@ -5,7 +5,7 @@ withDefaults(
     label?: string;
   }>(),
   {
-    href: "/experiments/",
+    href: "/toons/",
     label: "← experiments",
   }
 );

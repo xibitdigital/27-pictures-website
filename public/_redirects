@@ -1,0 +1,4 @@
+# The experiments lab became /toons/ — keep old links and search results working.
+/experiments      /toons/   301
+/experiments/     /toons/   301
+/experiments/*    /toons/   301

@@ -34,7 +34,7 @@ const props = withDefaults(
     frontCoverLogo: null,
     soundHint: null,
     soundEnabled: false,
-    backHref: "/experiments/",
+    backHref: "/toons/",
     backLabel: "← experiments",
   }
 );

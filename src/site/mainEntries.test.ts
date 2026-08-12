@@ -33,13 +33,12 @@ describe("site entry modules", () => {
     await import("./main");
     expect(createApp).toHaveBeenCalledWith(expect.anything(), { page: "home" });
     expect(directive).toHaveBeenCalledWith("magnetic", expect.anything());
-    expect(directive).toHaveBeenCalledWith("reveal", expect.anything());
     expect(mount).toHaveBeenCalledWith("#site-app");
   });
 
-  it("experimentsMain.ts mounts SiteApp(experiments) on #site-app", async () => {
-    await import("./experimentsMain");
-    expect(createApp).toHaveBeenCalledWith(expect.anything(), { page: "experiments" });
+  it("toonsMain.ts mounts SiteApp(toons) on #site-app", async () => {
+    await import("./toonsMain");
+    expect(createApp).toHaveBeenCalledWith(expect.anything(), { page: "toons" });
     expect(mount).toHaveBeenCalledWith("#site-app");
   });
 });

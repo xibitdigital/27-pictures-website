@@ -604,40 +604,6 @@ footer {
 }
 
 /* --- ANIMATIONS --- */
-/* Scroll reveal without JS. Base styles MUST stay at the end-state (opacity:1)
-   so other animations (e.g. projector-breath on :hover) can replace
-   animation-name without snapping content back to opacity:0. */
-@keyframes reveal-in {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.reveal {
-  opacity: 1;
-  transform: none;
-}
-@supports (animation-timeline: view()) {
-  .reveal {
-    /* End-state as cascade base — hover must not un-reveal embeds. */
-    opacity: 1;
-    transform: none;
-    animation: reveal-in 1.2s var(--transition) both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 35%;
-  }
-}
-@media (max-width: 768px) {
-  .reveal {
-    opacity: 1;
-    transform: none;
-    animation: none;
-  }
-}
 .magnetic {
   transition: transform 0.3s var(--transition);
   display: inline-block;
@@ -756,8 +722,7 @@ button:focus-visible {
   );
 }
 
-/* Projector pulse on a pseudo layer so it never steals/cancels .reveal’s
-   animation (which previously set opacity:0 and hid the YouTube iframe). */
+/* Projector pulse on a pseudo layer so hover never touches iframe opacity. */
 .clown-hero-frame::after,
 .video-frame::after,
 .latest-card-frame::after {
@@ -1242,15 +1207,11 @@ button:focus-visible {
 
 .lab-card {
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  transition:
-    transform 0.35s var(--transition),
-    border-color 0.35s var(--transition);
+  transition: transform 0.35s var(--transition);
 }
 
 .lab-card:hover {
   transform: var(--card-lift);
-  border-color: var(--border-light);
 }
 
 .lab-card-link {
@@ -1265,7 +1226,6 @@ button:focus-visible {
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--bg-dark);
-  border-bottom: 1px solid var(--border);
 }
 
 .lab-card-media img {
@@ -1397,4 +1357,17 @@ button:focus-visible {
 
 .cta-link--muted:hover {
   color: var(--text);
+}
+
+.lab-commission {
+  max-width: 820px;
+  color: var(--text-muted);
+  font-weight: 300;
+  line-height: 1.75;
+  margin-bottom: 28px;
+}
+
+.lab-commission strong {
+  color: var(--text);
+  font-weight: 700;
 }

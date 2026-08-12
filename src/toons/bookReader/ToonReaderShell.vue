@@ -368,14 +368,9 @@ defineExpose<ToonReaderShellExpose>({
 <template>
   <slot name="overlays" />
 
-  <!-- Back to the lab, not the homepage: the reader is reached from /experiments/,
+  <!-- Back to the lab, not the homepage: the reader is reached from /toons/,
        and the back cover's own link already points there (BookSlot backHref). -->
-  <a
-    href="/experiments/"
-    class="toons-back"
-    title="27 Pictures — Experiments"
-    aria-label="27 Pictures - Back to Experiments"
-  >
+  <a href="/toons/" class="toons-back" title="27 Pictures — Experiments" aria-label="27 Pictures - Back to Experiments">
     <img
       src="/logosquare.png"
       class="nav-logo-img toons-back-logo"

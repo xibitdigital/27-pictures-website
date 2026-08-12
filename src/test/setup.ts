@@ -33,10 +33,6 @@ config.global.directives = {
     mounted() {},
     unmounted() {},
   },
-  reveal: {
-    mounted() {},
-    unmounted() {},
-  },
 };
 
 afterEach(() => {

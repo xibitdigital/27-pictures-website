@@ -5,7 +5,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 
 const props = withDefaults(
   defineProps<{
-    page?: "home" | "experiments" | "cosplay" | "horror-shorts";
+    page?: "home" | "toons" | "cosplay" | "horror-shorts";
   }>(),
   { page: "home" }
 );
@@ -21,12 +21,12 @@ const links = computed(() => [
   { href: section("#beyond"), label: "Beyond the Mask" },
   { href: section("#assembly"), label: "Process" },
   { href: section("#latest"), label: "Watch" },
-  { href: section("#contact"), label: "Contact" },
   {
-    href: "/experiments/",
-    label: "Experiments",
-    current: props.page === "experiments",
+    href: "/toons/",
+    label: "Toons",
+    current: props.page === "toons",
   },
+  { href: section("#contact"), label: "Contact" },
 ]);
 
 watch(menuOpen, (open) => {

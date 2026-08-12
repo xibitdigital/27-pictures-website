@@ -60,7 +60,7 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=32b7a62faa" />
+    <link rel="stylesheet" href="/styles.css?v=583216ec94" />
     <style>
       /* Breadcrumb markup for crawlers; the visible trail is the nav. */
       .sr-only-seo {
@@ -119,6 +119,21 @@
         font-weight: 700;
       }
 
+      .series-body a {
+        color: var(--text-muted);
+        text-decoration: none;
+        border-bottom: 1px solid var(--border-light);
+        transition:
+          color 0.2s var(--transition),
+          border-color 0.2s var(--transition);
+      }
+
+      .series-body a:hover,
+      .series-body a:focus-visible {
+        color: var(--red-smile);
+        border-color: var(--red-smile);
+      }
+
       .series-section {
         margin-bottom: 64px;
       }
@@ -153,7 +168,6 @@
 
       .film-frame {
         margin: 0;
-        border: 1px solid var(--border);
         background: var(--bg-dark);
         aspect-ratio: 16 / 9;
         overflow: hidden;
@@ -202,7 +216,6 @@
 
       .craft-card {
         background: var(--bg-card);
-        border: 1px solid var(--border);
         padding: 24px;
       }
 
@@ -680,7 +693,7 @@
         <p>
           The same pipeline drives our other work. <a href="/cosplay/">Cinematic cosplay production</a> applies the
           lighting and environment process to characters our clients have built themselves, and the
-          <a href="/experiments/">Experiments lab</a> is where narrative interfaces get tested before they graduate —
+          <a href="/toons/">Experiments lab</a> is where narrative interfaces get tested before they graduate —
           including <a href="/toons/redsmile-static/">RED SMILE: static</a>, an interactive horror short you read rather
           than watch.
         </p>
@@ -706,7 +719,7 @@
         <nav class="series-footer-nav" aria-label="Related links">
           <a href="/">Home</a>
           <a href="/cosplay/">Cosplay</a>
-          <a href="/experiments/">Experiments</a>
+          <a href="/toons/">Experiments</a>
           <a href="/#contact">Contact</a>
           <a href="https://www.youtube.com/@twentyseven.pictures" rel="noopener noreferrer" target="_blank">YouTube</a>
           <a href="https://www.instagram.com/27pictures_production" rel="noopener noreferrer" target="_blank"

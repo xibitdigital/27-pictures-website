@@ -38,7 +38,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://twentyseven.pictures/experiments/</loc>
+    <loc>https://twentyseven.pictures/toons/</loc>
     <lastmod>2026-07-25</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin.jpg</image:loc>

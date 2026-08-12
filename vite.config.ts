@@ -72,7 +72,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: path.resolve(srcDir, "index.html"),
-        experiments: path.resolve(srcDir, "experiments/index.html"),
+        toons: path.resolve(srcDir, "toons/index.html"),
         cosplay: path.resolve(srcDir, "cosplay/index.html"),
         "horror-shorts": path.resolve(srcDir, "horror-shorts/index.html"),
         jax: path.resolve(srcDir, "toons/jax/index.html"),
