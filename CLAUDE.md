@@ -425,6 +425,25 @@ voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
 3. Paste into `content/toons/<toon>/config.json`, then
    `npm run upload-assets` and `npm run publish-toon-config -- --toon <toon>`.
 
+#### Metallic voice pass for `ai` captions
+
+HUD/AI readouts (`variant: "ai"` — Nova's `N›`, Eve's glasses `E›`) run their
+TTS through an ffmpeg chain so the machine voices do not sound human. Apply it
+to a fresh clip before pasting the hash into config:
+
+```bash
+ffmpeg -y -i in.mp3 -af "highpass=f=180,lowpass=f=7000,\
+acrusher=bits=10:mode=log:mix=0.22,chorus=0.7:0.9:14:0.5:0.35:2,\
+aecho=0.85:0.7:5:0.32,aphaser=type=t:speed=1.1:decay=0.28,dynaudnorm=f=200:g=5" \
+  -codec:a libmp3lame -b:a 192k /tmp/out.mp3
+HASH=$(md5 -q /tmp/out.mp3)   # rename to <hash>.mp3, this is the config path
+```
+
+The comb `aecho` at 5 ms is what reads as metal; `acrusher` adds the digital
+edge; `dynaudnorm` keeps it level with the spoken lines. Duration grows by the
+echo tail only (~25 ms). `badai` is deliberately left dry — the hostile AI
+should not share Nova's timbre.
+
 #### Eleven v3 audio tags (emotion / delivery)
 
 Bracketed tags are **performance direction**, not spoken words. They only work

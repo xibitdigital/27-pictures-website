@@ -587,7 +587,7 @@
             "de": "N› ZUSAMMENSETZUNG:\nGERMANIUM +\nUNBEKANNTES MATERIAL",
             "fr": "N› COMPOSITION:\nGERMANIUM +\nMATÉRIAU INCONNU"
           },
-          "audio": "assets/sfx/165aec44845ba5257eb1dee0507b2f62.mp3"
+          "audio": "assets/sfx/d383e384c6ce6a7d8500be751e513c22.mp3"
         }
       ]
     },
@@ -733,7 +733,7 @@
             "de": "N› Si-SPIN-QUBITS\nCMOS + PHOTONIK\nFAB-DICHTE\nFAST UNSICHTB. IMPLANTS",
             "fr": "N› QUBITS SPIN Si\nCMOS + PHOTONIQUE\nDENSITÉ FAB\nIMPLANTS QUASI INVIS."
           },
-          "audio": "assets/sfx/f0a237dca456772e3a795530528040a6.mp3"
+          "audio": "assets/sfx/3f2cf31f91a359ca62a478f4b8188319.mp3"
         },
         {
           "x": 0.16,
@@ -884,7 +884,7 @@
             "de": "E› SCAN ONLINE",
             "fr": "E› SCAN ONLINE"
           },
-          "audio": "assets/sfx/021c920e7cfd7a6181fd0843058b7c6b.mp3"
+          "audio": "assets/sfx/e633c5f53689e47a76934ce77aa02b35.mp3"
         },
         {
           "x": 0.4,
@@ -1515,7 +1515,7 @@
             "de": "N› MANN AN DER\nTÜR! WEG DA!",
             "fr": "N› HOMME À LA\nPORTE ! BOUGE !"
           },
-          "audio": "assets/sfx/db6e5b1011a5fea1a95e735261b4ca39.mp3"
+          "audio": "assets/sfx/d977892b8764793fabbc6408411cd9d6.mp3"
         },
         {
           "x": 0.47,
@@ -1765,7 +1765,7 @@
             "de": "N› WEG FREI:\nFENSTER VORAUS\nKLARE FALLLINIE",
             "fr": "N› VOIE LIBRE:\nFENÊTRE DEVANT\nCHUTE NETTE"
           },
-          "audio": "assets/sfx/70bcc50f520fbb5e45b252ab96a6d7d5.mp3",
+          "audio": "assets/sfx/f51eee2e59ee6dc3806d37bf1aa37d3b.mp3",
           "speaker": "nova"
         },
         {
@@ -1899,7 +1899,7 @@
             "de": "N› ABBREMSEN:\nLINKER ARM → WAND\nGRAB. HALT SIE.",
             "fr": "N› FREINE:\nBRAS G → MUR\nENFONCE. TIENS-LA."
           },
-          "audio": "assets/sfx/3188701205f6e89eabcaf687a6dd73b3.mp3",
+          "audio": "assets/sfx/de187b8f91a8593e70f9143440bf3c93.mp3",
           "speaker": "nova"
         },
         {
@@ -2094,7 +2094,7 @@
             "fr": "E› SCAN ONLINE\nMOUVEMENT · ÉTAGES HAUTS"
           },
           "speaker": "eve",
-          "audio": "assets/sfx/6ac60caa04c3aab5b4227bdd1f3ac2f3.mp3"
+          "audio": "assets/sfx/90aeda012578ba7afc122758600d60e9.mp3"
         },
         {
           "x": 0.78,
@@ -2213,7 +2213,7 @@
             "opacity": 0.75,
             "strokeWidth": 5
           },
-          "audio": "assets/sfx/ce80999cd3639ff2ecb86742fbe173d9.mp3",
+          "audio": "assets/sfx/1b40c399f6bcf2f0d2b578d1e50d7aa1.mp3",
           "speaker": "nova"
         },
         {
@@ -2372,7 +2372,7 @@
             "de": "E› DURCHSCHUSS\nKEINE ARTERIELLE BLUTUNG\nVERSIEGELN EMPFOHLEN",
             "fr": "E› TRANSFIXIANT\nPAS D'HÉMORRAGIE ARTÉRIELLE\nSCELLEMENT CONSEILLÉ"
           },
-          "audio": "assets/sfx/c5b8d94324795c59dd8e3922b9666660.mp3",
+          "audio": "assets/sfx/34f32bd310dd81fa6f76a8d2849ac6c3.mp3",
           "speaker": "eve",
           "bubble": {
             "opacity": 0.75,
@@ -2422,7 +2422,7 @@
         },
         {
           "x": 0.84,
-          "y": 0.75,
+          "y": 0.87,
           "align": "center",
           "size": 22,
           "variant": "burst",

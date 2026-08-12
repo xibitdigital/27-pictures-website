@@ -107,7 +107,7 @@
             "de": "N› WIR SIND DRIN!",
             "fr": "N› ON Y EST!"
           },
-          "audio": "assets/sfx/eb6ef2562b828e184ff9a1daf88659d1.mp3"
+          "audio": "assets/sfx/cfc8766ababab09b5ba8522a5062d52b.mp3"
         }
       ]
     },
@@ -227,7 +227,7 @@
             "de": "N› FEINDE:\nMEHRERE.",
             "fr": "N› HOSTILES:\nMULTIPLES."
           },
-          "audio": "assets/sfx/90a21cd6ecdec615ce29ed6aa67b0397.mp3"
+          "audio": "assets/sfx/821c21d0ac759995613100e25fc72d1e.mp3"
         },
         {
           "x": 0.28,
@@ -743,7 +743,7 @@
             "de": "N› KAMPFMODUS\nAKTIVIERT",
             "fr": "N› MODE COMBAT\nACTIVÉ"
           },
-          "audio": "assets/sfx/e8c38f7bc195ba7fa25819c5cd2df790.mp3"
+          "audio": "assets/sfx/f0d9e9a9d03cf936e55cc2791ef46a3a.mp3"
         }
       ]
     },
@@ -999,7 +999,7 @@
             "de": "N› ARMSCHADEN:\nKRITISCH.",
             "fr": "N› DÉGÂTS BRAS:\nCRITIQUES."
           },
-          "audio": "assets/sfx/8761b1c0bcc15db8d68f95685b169ae4.mp3"
+          "audio": "assets/sfx/ba45e6ce259376c16e62219caec8d799.mp3"
         },
         {
           "x": 0.28,
@@ -1047,7 +1047,7 @@
             "de": "N› NANOBOTS\nAKTIVIERT",
             "fr": "N› NANOBOTS\nACTIVÉS"
           },
-          "audio": "assets/sfx/59f01d185c22445d705240332b5f937f.mp3"
+          "audio": "assets/sfx/7977c6d5b395c517d6150a3851f020ff.mp3"
         },
         {
           "x": 0.68,
@@ -1072,7 +1072,7 @@
             "de": "N› HAUT WIRD\nREPARIERT",
             "fr": "N› RÉPARATION\nPEAU"
           },
-          "audio": "assets/sfx/8f7af8ef6d3f69518d7d21a7a04826cb.mp3"
+          "audio": "assets/sfx/16dfc638749a2ad990f80cee305fdc2b.mp3"
         }
       ]
     },
@@ -1156,7 +1156,7 @@
             "de": "N› JETZT SCHLAGEN!",
             "fr": "N› FRAPPE MAINTENANT!"
           },
-          "audio": "assets/sfx/ba6c620b0bfe0cc85e6f3af4ef987150.mp3"
+          "audio": "assets/sfx/dd1d35490b6a9302bf4e0068b98864a2.mp3"
         }
       ]
     },
@@ -1317,7 +1317,7 @@
             "de": "N› Irgendetwas\nstimmt nicht.",
             "fr": "N› Quelque chose\nne va pas."
           },
-          "audio": "assets/sfx/48c0aa6cd2e0f8a2c648e41cb62cc321.mp3"
+          "audio": "assets/sfx/80e6955595920381f27c156788f38d1a.mp3"
         }
       ]
     },
@@ -1393,7 +1393,7 @@
             "de": "N› Der neue Chip\nübernimmt die Kontrolle",
             "fr": "N› La nouvelle puce\nprend le contrôle"
           },
-          "audio": "assets/sfx/0c4464149074d6bcbc0b9fe22963c530.mp3",
+          "audio": "assets/sfx/c2c9bd063b46a7ba34b3ad9d42544b88.mp3",
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1448,7 +1448,7 @@
             "de": "N› JAX-LINK\nOFFEN.",
             "fr": "N› LIEN JAX\nOUVERT."
           },
-          "audio": "assets/sfx/20dee906994320de871d14d9a9499fcf.mp3"
+          "audio": "assets/sfx/7c5c6a7b382c68b464fe94dba9e84257.mp3"
         },
         {
           "x": 0.74,
@@ -1698,7 +1698,7 @@
             "de": "N› OVERRIDE\nVERFÜGBAR.",
             "fr": "N› OVERRIDE\nDISPONIBLE."
           },
-          "audio": "assets/sfx/632a50602047a67fd5a32344b79273fb.mp3"
+          "audio": "assets/sfx/e4ab8dfebbda06508e15b631a329430a.mp3"
         },
         {
           "x": 0.2,
@@ -1741,7 +1741,7 @@
             "de": "N› LINK OFFEN.\nLOS.",
             "fr": "N› LIEN OUVERT.\nVAS-Y."
           },
-          "audio": "assets/sfx/b8e000937839402a0dcfd81533e59a45.mp3"
+          "audio": "assets/sfx/a70a659a281e5356032cb896819339cc.mp3"
         },
         {
           "x": 0.28,
@@ -1850,7 +1850,7 @@
             "de": "N› NEURALLINK\nSTABIL.",
             "fr": "N› LIEN NEURAL\nSTABLE."
           },
-          "audio": "assets/sfx/7e025401d936528a769a9344b4ae9e73.mp3"
+          "audio": "assets/sfx/f3481a7ff848e4058fff5684a294feb5.mp3"
         },
         {
           "x": 0.55,
@@ -1954,7 +1954,7 @@
             "de": "N› BEDROHUNG\nNEUTRALISIERT.",
             "fr": "N› MENACE\nNEUTRALISÉE."
           },
-          "audio": "assets/sfx/06293e5c3f0b14c4293d8275defd14dd.mp3"
+          "audio": "assets/sfx/2052a0eb6d31c2b3e5b01b515b70f02b.mp3"
         },
         {
           "x": 0.22,
@@ -2020,7 +2020,7 @@
             "de": "N› HALTE.",
             "fr": "N› EN MAINTIEN."
           },
-          "audio": "assets/sfx/d88d826bd83c5da6cee2b36e09d3e130.mp3"
+          "audio": "assets/sfx/ff8ccedab1b0dd8a4f850b05ddf89916.mp3"
         },
         {
           "x": 0.78,
@@ -2086,7 +2086,7 @@
             "de": "FORTSETZUNG\nFOLGT...",
             "fr": "À SUIVRE..."
           },
-          "audio": "assets/sfx/f062999c721f23def34752881ab8ab24.mp3"
+          "audio": "assets/sfx/1e5fbff4eb0b8e4671a937b5b3286f69.mp3"
         },
         {
           "x": 0.5,
