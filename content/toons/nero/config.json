@@ -41,7 +41,7 @@
             "de": "Falsche Gasse.\nRichtige Jagd.",
             "fr": "Mauvaise ruelle.\nBonne chasse."
           },
-          "audio": "assets/sfx/190e1b7656901702c1f5e547f8edefe3.mp3",
+          "audio": "assets/sfx/54dd346f2a35c9e657364de559c0f08f.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "bottom-left",
@@ -65,7 +65,7 @@
             "de": "Auf dem Dach.",
             "fr": "Sur le toit."
           },
-          "audio": "assets/sfx/ee8dd2b71b373020ec9dd79c56a650ac.mp3",
+          "audio": "assets/sfx/bdf24bfdb9524e80dc2086d74f66200c.mp3",
           "speaker": "nero",
           "bubble": {
             "opacity": 0.75,
@@ -88,7 +88,7 @@
             "de": "Dein Zug.",
             "fr": "À toi."
           },
-          "audio": "assets/sfx/d717afe80e8e0317042b3d8310d52f2c.mp3",
+          "audio": "assets/sfx/88d0316396a9d34729a12fd862f421d9.mp3",
           "speaker": "nero",
           "bubble": {
             "opacity": 0.75,
@@ -116,7 +116,7 @@
             "de": "Ich bin durch.",
             "fr": "Je suis passé."
           },
-          "audio": "assets/sfx/e27b9010b241e97fff1d850b397bae4e.mp3",
+          "audio": "assets/sfx/ba635c99b1a59f029ddf9d2aa2aa5d83.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "left",
@@ -140,7 +140,7 @@
             "de": "Komm schon…\nwo ist es.",
             "fr": "Allez…\noù c'est."
           },
-          "audio": "assets/sfx/011c187b2a2801427fc3e9ff3fdff1fa.mp3",
+          "audio": "assets/sfx/08a66918414105be61a1cba2c21bf67a.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "right",
@@ -164,7 +164,7 @@
             "de": "Da bist du.",
             "fr": "Te voilà."
           },
-          "audio": "assets/sfx/76f34c18ea94c987bed33d484b80861d.mp3",
+          "audio": "assets/sfx/f32bb0daf77b8cf16120520ec17678ab.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "none",
@@ -193,7 +193,7 @@
             "de": "Ruhige Hände.",
             "fr": "Mains stables."
           },
-          "audio": "assets/sfx/58aa09458452a4f54c375b0793d3d1c3.mp3",
+          "audio": "assets/sfx/2e11e80b1b5b6774b405ebf79abd5fb3.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -215,7 +215,7 @@
             "de": "Geladen.",
             "fr": "Chargée."
           },
-          "audio": "assets/sfx/bd1ae74e4673e5147fd033b038ef6699.mp3",
+          "audio": "assets/sfx/ae63ff4a16147bb7910d306838efe908.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -237,7 +237,7 @@
             "de": "Du bist erledigt.",
             "fr": "C'est fini."
           },
-          "audio": "assets/sfx/7c67bdff83a2b01964314aaf4e53365b.mp3",
+          "audio": "assets/sfx/7839d30f70e10f4cf34907949ce2c0b9.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -264,7 +264,7 @@
             "de": "STUNDEN\nZUVOR",
             "fr": "DES HEURES\nPLUS TÔT"
           },
-          "audio": "assets/sfx/ae7ecb91cec9c4ef1a8ffe7b54eef4ed.mp3",
+          "audio": "assets/sfx/99ca41878d2176b66acc5e1c38723fde.mp3",
           "speaker": "narrator"
         },
         {
@@ -281,7 +281,7 @@
             "de": "THE DOG",
             "fr": "THE DOG"
           },
-          "audio": "assets/sfx/d6fe2dea36737c27106eb5144947a0a0.mp3",
+          "audio": "assets/sfx/e2215b6904c345d2a34bf8bc393db509.mp3",
           "speaker": "narrator"
         },
         {
@@ -298,7 +298,7 @@
             "de": "Bevor Nero die Waffe lädt,\nist ein Auftrag bereits unterwegs.",
             "fr": "Avant que Nero charge l'arme,\nun contrat est déjà en l'air."
           },
-          "audio": "assets/sfx/657d221bf167527be3bb90dbb46f183c.mp3",
+          "audio": "assets/sfx/71740aeca55d161dddf4a6fe7711e59e.mp3",
           "speaker": "narrator"
         }
       ]
@@ -322,7 +322,7 @@
             "de": "Gefunden.",
             "fr": "Je t'ai trouvé."
           },
-          "audio": "assets/sfx/ed91e85d5f512d1615c41fead8184e75.mp3",
+          "audio": "assets/sfx/2f2164fb09b867262f52f2190cde7710.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -344,7 +344,7 @@
             "de": "Ausatmen.",
             "fr": "Expire."
           },
-          "audio": "assets/sfx/f33953d9c75a49a7e42e7ada95911f85.mp3",
+          "audio": "assets/sfx/f064e7d56aa153d3561300967b0e858b.mp3",
           "bubble": {
             "tail": "none",
             "opacity": 0.75,
@@ -367,7 +367,7 @@
             "de": "Licht aus.",
             "fr": "Lumières éteintes."
           },
-          "audio": "assets/sfx/202f0b2145c1d26e192c0d4482bd94b5.mp3",
+          "audio": "assets/sfx/5d5b21f4d28edc98c4b1f03ef9e04474.mp3",
           "bubble": {
             "tail": "none",
             "opacity": 0.75,
@@ -395,7 +395,7 @@
             "de": "BANG",
             "fr": "BANG"
           },
-          "audio": "assets/sfx/a3791c639af3b7d7549994d50c843105.mp3"
+          "audio": "assets/sfx/3c6b9380e4cd105979d65d77cb7660f4.mp3"
         },
         {
           "x": 0.88,
@@ -413,7 +413,7 @@
             "de": "Bezahlt.",
             "fr": "Payé."
           },
-          "audio": "assets/sfx/346ccac24bff2bf6cc7672dab9dbe746.mp3",
+          "audio": "assets/sfx/565caf19818bc200a0fb523c4e25262c.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -435,7 +435,7 @@
             "de": "THUD",
             "fr": "THUD"
           },
-          "audio": "assets/sfx/0cafb4a794cb2d50bba63b9ea5bb40bc.mp3"
+          "audio": "assets/sfx/e0d4116e08b131757d8a9c71a65c9148.mp3"
         },
         {
           "x": 0.86,
@@ -453,7 +453,7 @@
             "de": "Nichts Persönliches.",
             "fr": "Rien de personnel."
           },
-          "audio": "assets/sfx/056dc9fe0da410504c0ebc1fd58c09be.mp3",
+          "audio": "assets/sfx/84b99d6b3b7d29f28189d22039cf965b.mp3",
           "bubble": {
             "tail": "top",
             "opacity": 0.75,
@@ -476,7 +476,7 @@
             "de": "DRIP",
             "fr": "DRIP"
           },
-          "audio": "assets/sfx/a4e3b2c3b8c64222a21bdb1e5d3cfcfc.mp3"
+          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3"
         }
       ]
     },
@@ -499,7 +499,7 @@
             "de": "BANG",
             "fr": "BANG"
           },
-          "audio": "assets/sfx/a3791c639af3b7d7549994d50c843105.mp3"
+          "audio": "assets/sfx/3c6b9380e4cd105979d65d77cb7660f4.mp3"
         },
         {
           "x": 0.88,
@@ -517,7 +517,7 @@
             "de": "Ein Schuss.",
             "fr": "Un tir."
           },
-          "audio": "assets/sfx/7fd973469847796da9046939123ad867.mp3",
+          "audio": "assets/sfx/2623d109a7a212e70dadfea29f27a60e.mp3",
           "bubble": {
             "tail": "left",
             "opacity": 0.75,
@@ -540,7 +540,7 @@
             "de": "Gesicht nach unten.",
             "fr": "Face contre terre."
           },
-          "audio": "assets/sfx/9da242c83b8899e34e98052b1c9cbc1a.mp3",
+          "audio": "assets/sfx/ada5279054aac6f64133327b063d2306.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -562,7 +562,7 @@
             "de": "Was ist das?",
             "fr": "Qu'est-ce que c'est?"
           },
-          "audio": "assets/sfx/30fcd638c704e5f869b28e86b43b2420.mp3",
+          "audio": "assets/sfx/f14eefcc65d4a3adb819b13c77f9fedf.mp3",
           "bubble": {
             "tail": "left",
             "opacity": 0.75,
@@ -593,7 +593,7 @@
             "de": "N› ZUSAMMENSETZUNG:\nGERMANIUM +\nUNBEKANNTES MATERIAL",
             "fr": "N› COMPOSITION:\nGERMANIUM +\nMATÉRIAU INCONNU"
           },
-          "audio": "assets/sfx/d383e384c6ce6a7d8500be751e513c22.mp3"
+          "audio": "assets/sfx/7a7a5796dc25e25c22ba679f6d0e4bdd.mp3"
         }
       ]
     },
@@ -616,7 +616,7 @@
             "de": "DASH",
             "fr": "DASH"
           },
-          "audio": "assets/sfx/17ac29ef35976e67e6b3c7670120bdf7.mp3"
+          "audio": "assets/sfx/a5cfaf9c85fe4a65803f956a05a19add.mp3"
         },
         {
           "x": 0.26,
@@ -634,7 +634,7 @@
             "de": "Ich frage Eve.",
             "fr": "Je vais demander à Eve."
           },
-          "audio": "assets/sfx/47e8fa5f9d881d4dcd4f348364e4f623.mp3",
+          "audio": "assets/sfx/758e3a53ff85e3fd3d92b61918534e06.mp3",
           "bubble": {
             "tail": "right",
             "opacity": 0.75,
@@ -657,7 +657,7 @@
             "de": "Guten Abend, Herren.",
             "fr": "Bonsoir, messieurs."
           },
-          "audio": "assets/sfx/967a68961dba4e9a861dc4ad3d6a7534.mp3",
+          "audio": "assets/sfx/0bc1d1ccfd11923880024941bf5f714d.mp3",
           "bubble": {
             "tail": "bottom-left",
             "opacity": 0.75,
@@ -685,7 +685,7 @@
             "de": "Hab' einen Kristall\nfür dich.",
             "fr": "J'ai un cristal\npour toi."
           },
-          "audio": "assets/sfx/c74cca79249a4b791632b04e8b2d4053.mp3",
+          "audio": "assets/sfx/2e89a5f666ca108096a5f3a74034ed7c.mp3",
           "bubble": {
             "tail": "bottom-left",
             "opacity": 0.75,
@@ -708,7 +708,7 @@
             "de": "Unter das Mikroskop.",
             "fr": "Sous le microscope."
           },
-          "audio": "assets/sfx/683e8c9776d32c7e97cbefd2a4a62e42.mp3",
+          "audio": "assets/sfx/ad4184766a847bcf1699deac74bbf245.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -739,7 +739,7 @@
             "de": "N› Si-SPIN-QUBITS\nCMOS + PHOTONIK\nFAB-DICHTE\nFAST UNSICHTB. IMPLANTS",
             "fr": "N› QUBITS SPIN Si\nCMOS + PHOTONIQUE\nDENSITÉ FAB\nIMPLANTS QUASI INVIS."
           },
-          "audio": "assets/sfx/3f2cf31f91a359ca62a478f4b8188319.mp3"
+          "audio": "assets/sfx/79acc16a67bbaee50fc81e0e1a1a1966.mp3"
         },
         {
           "x": 0.16,
@@ -757,7 +757,7 @@
             "de": "Messwerte sind sauber.",
             "fr": "Les relevés sont nets."
           },
-          "audio": "assets/sfx/bc205113cee1267deb51d0a2afa9602d.mp3",
+          "audio": "assets/sfx/ff4178f72dc69e75ab8cae4b744c8e3b.mp3",
           "bubble": {
             "tail": "top",
             "opacity": 0.75,
@@ -781,7 +781,7 @@
             "de": "Fast unsichtbare\nHirntechnik.",
             "fr": "Tech cérébrale\nquasi invisible."
           },
-          "audio": "assets/sfx/7df2baff1a9a38542d74f2bba4b2d904.mp3",
+          "audio": "assets/sfx/6cfec8f6218c5dbabb83e7dffabc25bf.mp3",
           "bubble": {
             "tail": "left",
             "padX": 1,
@@ -812,7 +812,7 @@
             "de": "Kostüm aus.",
             "fr": "Costume retiré."
           },
-          "audio": "assets/sfx/d03f6a4b5520bf5136c9b42b4b7bf357.mp3",
+          "audio": "assets/sfx/00acbdda3ca2c4834f3df1880281bfca.mp3",
           "bubble": {
             "tail": "right",
             "opacity": 0.75,
@@ -836,7 +836,7 @@
             "de": "…Du siehst\nwunderschön aus.",
             "fr": "…Tu es\nmagnifique."
           },
-          "audio": "assets/sfx/1e5ed16f605e272b4444faa052d33299.mp3",
+          "audio": "assets/sfx/2d2a135ded1229fbcd95b7c804b2e881.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -858,7 +858,7 @@
             "de": "Markieren Gesichter.\nUnd Materialien.",
             "fr": "Ils taguent les visages.\nEt les matériaux."
           },
-          "audio": "assets/sfx/e05111a01d45294c54756cc32c82cba5.mp3",
+          "audio": "assets/sfx/fec6eba77ac50e21a135c93094d08b2b.mp3",
           "bubble": {
             "tail": "left",
             "opacity": 0.75,
@@ -890,7 +890,7 @@
             "de": "E› SCAN ONLINE",
             "fr": "E› SCAN ONLINE"
           },
-          "audio": "assets/sfx/e633c5f53689e47a76934ce77aa02b35.mp3"
+          "audio": "assets/sfx/e02227e03faa49f98d71dcf3f69c9a93.mp3"
         },
         {
           "x": 0.4,
@@ -908,7 +908,7 @@
             "de": "Wenn es wie der Kristall\nglüht, sehe ich es.",
             "fr": "S'il brille comme ce\ncristal, je le verrai."
           },
-          "audio": "assets/sfx/f75305ad04e781164eaa5d66d54a1c49.mp3",
+          "audio": "assets/sfx/02fbfbd4f2701d3c195a6e53e7c3346d.mp3",
           "bubble": {
             "tail": "bottom",
             "opacity": 0.75,
@@ -932,7 +932,7 @@
             "de": "Dann jagen wir dichtere\nGeister.",
             "fr": "Alors on chasse des\nfantomes plus denses."
           },
-          "audio": "assets/sfx/54310827fb158f6f1e99c4d9586b2235.mp3",
+          "audio": "assets/sfx/9a236df92c12a48703c882a567ce5209.mp3",
           "bubble": {
             "tail": "left",
             "padX": 1,
@@ -967,7 +967,7 @@
             "de": "Taxi ist da.",
             "fr": "Le taxi est là."
           },
-          "audio": "assets/sfx/b28370863152c5623b1f580a094ef855.mp3",
+          "audio": "assets/sfx/e544bb7daa5b8e769f97dca77691abea.mp3",
           "speaker": "eve"
         },
         {
@@ -991,7 +991,7 @@
             "de": "Beweg dich.",
             "fr": "Bouge."
           },
-          "audio": "assets/sfx/afba5df6619668f4e3f43e5374c7d171.mp3"
+          "audio": "assets/sfx/173e618a6fbfe55be18217ba81c6d4cf.mp3"
         },
         {
           "x": 0.12,
@@ -1014,7 +1014,7 @@
             "de": "Kein Fahrer.",
             "fr": "Pas de chauffeur."
           },
-          "audio": "assets/sfx/3e24af87b56f5c754a64581c1919df6b.mp3",
+          "audio": "assets/sfx/89e53ded8684cd65fd91f24e73c758ad.mp3",
           "speaker": "nero"
         },
         {
@@ -1038,7 +1038,7 @@
             "de": "Genau darum.",
             "fr": "C'est le but."
           },
-          "audio": "assets/sfx/c6498b93d6e39e8a27f6001ccdf429ba.mp3",
+          "audio": "assets/sfx/24c307b6989e7c31564365234716e4c9.mp3",
           "speaker": "eve"
         }
       ]
@@ -1067,7 +1067,7 @@
             "de": "Wir sind da.",
             "fr": "On y est."
           },
-          "audio": "assets/sfx/8a62ef111d5387ed671bf6d5c1f63801.mp3",
+          "audio": "assets/sfx/ba67bae71180599a0215c7be91d8dea2.mp3",
           "speaker": "eve"
         },
         {
@@ -1091,7 +1091,7 @@
             "de": "Zwei Hunde\nan der Tür.",
             "fr": "Deux chiens\nà la porte."
           },
-          "audio": "assets/sfx/db38377b1853af6a372e6e04ba0e2a28.mp3"
+          "audio": "assets/sfx/001a30cdf06a201ffeb44702791307de.mp3"
         },
         {
           "x": 0.81,
@@ -1114,7 +1114,7 @@
             "de": "Ein Freund ist\ndrin — er kommt\ngleich raus.",
             "fr": "Un ami est\ndedans — il sort\nbientôt."
           },
-          "audio": "assets/sfx/abed8e6980553ecb8aa574378703c24a.mp3",
+          "audio": "assets/sfx/94e7be20568a5684148983a3e8ef47a1.mp3",
           "speaker": "eve"
         },
         {
@@ -1138,7 +1138,7 @@
             "de": "Da bist du.",
             "fr": "Te voilà."
           },
-          "audio": "assets/sfx/fdfa0b45fec21c4c7c6b8709d2deb17a.mp3"
+          "audio": "assets/sfx/ae44d2b53cc868e0558fcff6767b655b.mp3"
         },
         {
           "x": 0.636,
@@ -1161,7 +1161,7 @@
             "de": "Sie ist bei mir.",
             "fr": "Elle est avec moi."
           },
-          "audio": "assets/sfx/6b3f995e4af0b308f3e6d8d4ab7ef26e.mp3"
+          "audio": "assets/sfx/e7f05b78f5fcbd663bf957c222616050.mp3"
         },
         {
           "x": 0.326,
@@ -1184,7 +1184,7 @@
             "de": "Komme.",
             "fr": "J'arrive."
           },
-          "audio": "assets/sfx/1682e70ff5f71f86e8f41c720c8f5828.mp3",
+          "audio": "assets/sfx/c7e989bad2c38809a97b5912695d33aa.mp3",
           "speaker": "eve"
         }
       ]
@@ -1213,7 +1213,7 @@
             "de": "Bleib nah.",
             "fr": "Reste près."
           },
-          "audio": "assets/sfx/3c1f7a0402915101c8bf9b2bf72f4c83.mp3",
+          "audio": "assets/sfx/3d338d1f2dc619cb4712501859735144.mp3",
           "speaker": "eve"
         },
         {
@@ -1237,7 +1237,7 @@
             "de": "Augen auf.",
             "fr": "Yeux ouverts."
           },
-          "audio": "assets/sfx/ea96eaf87603d48c91174078e559cfbb.mp3"
+          "audio": "assets/sfx/13fae9152951b1c3bfd19fa055b42bac.mp3"
         },
         {
           "x": 0.42,
@@ -1260,7 +1260,7 @@
             "de": "Suche\njemanden.",
             "fr": "Je cherche\nquelqu'un."
           },
-          "audio": "assets/sfx/83d38d51e5f00ad46486657cda546fc7.mp3",
+          "audio": "assets/sfx/ffc5c9a77fc86525e017d27046763a90.mp3",
           "speaker": "eve"
         },
         {
@@ -1284,7 +1284,7 @@
             "de": "Das tun hier alle.",
             "fr": "Ici, tout le monde en cherche un."
           },
-          "audio": "assets/sfx/689fa8b06eddd07b2b0aa8390832dd7a.mp3"
+          "audio": "assets/sfx/9fa196406c79ada1626ec5251d4b13fc.mp3"
         },
         {
           "x": 0.18,
@@ -1307,7 +1307,7 @@
             "de": "Vorsicht.",
             "fr": "Prudence."
           },
-          "audio": "assets/sfx/433d15d5177754903d6f496ccec4d9b0.mp3",
+          "audio": "assets/sfx/1e5a3ea9c9eeb52c23f986728bb0572b.mp3",
           "speaker": "eve"
         },
         {
@@ -1331,7 +1331,7 @@
             "de": "Oben an\nder Treppe.",
             "fr": "En haut\nde l’escalier."
           },
-          "audio": "assets/sfx/49b98969e213a76dcb528973d6974028.mp3"
+          "audio": "assets/sfx/3ba4552d847fec82192e71b42a2c1c4c.mp3"
         },
         {
           "x": 0.2,
@@ -1354,7 +1354,7 @@
             "de": "Nach oben.",
             "fr": "À l'étage."
           },
-          "audio": "assets/sfx/71a5b719e332b1c7c35bc98e0e61a4ac.mp3"
+          "audio": "assets/sfx/f24a18ff156e7d2f602fc397474f433b.mp3"
         },
         {
           "x": 0.81,
@@ -1377,7 +1377,7 @@
             "de": "Nach dir.",
             "fr": "Après toi."
           },
-          "audio": "assets/sfx/01e0227ff0c6dac463dc2c666ab14046.mp3",
+          "audio": "assets/sfx/ca06b643d9cc8d7494efe19b9fe1503f.mp3",
           "speaker": "eve"
         }
       ]
@@ -1406,7 +1406,7 @@
             "de": "Gib mir\neine Sekunde.",
             "fr": "Donne-moi\nune seconde."
           },
-          "audio": "assets/sfx/19f964f8253f3f35fbb4348dafa360f2.mp3",
+          "audio": "assets/sfx/7216e18c38feda0a58609fbb47674c95.mp3",
           "speaker": "eve"
         },
         {
@@ -1430,7 +1430,7 @@
             "de": "Das ist die Hand\nunseres Opfers.",
             "fr": "C’est la main\nde la victime."
           },
-          "audio": "assets/sfx/0e4e5b60e119dafa1660b3ead045a82d.mp3",
+          "audio": "assets/sfx/89928e188e1bec487f8a790d25d5cb40.mp3",
           "speaker": "eve"
         },
         {
@@ -1454,7 +1454,7 @@
             "de": "Derselbe Staub\nwie am Kristall.",
             "fr": "La même poussière\nque le cristal."
           },
-          "audio": "assets/sfx/6ef9301febd043b29949678cd82fa0ef.mp3"
+          "audio": "assets/sfx/a0c9aa7e1d637e583f9681c8fa0f6ce4.mp3"
         }
       ]
     },
@@ -1477,7 +1477,7 @@
             "de": "KRAKK",
             "fr": "KRAKK"
           },
-          "audio": "assets/sfx/29a5e1f26c4c7fa525dd6cf8df1d80cc.mp3"
+          "audio": "assets/sfx/ef2f1b69e04806e7f4864ad106f815dc.mp3"
         },
         {
           "x": 0.86,
@@ -1495,7 +1495,7 @@
             "de": "THPP",
             "fr": "THPP"
           },
-          "audio": "assets/sfx/d3956e42cf6b3b6df42547376d2b3ea6.mp3"
+          "audio": "assets/sfx/4dd64dcfcb58a653ec375b7bdba29f85.mp3"
         },
         {
           "x": 0.22,
@@ -1521,7 +1521,7 @@
             "de": "N› MANN AN DER\nTÜR! WEG DA!",
             "fr": "N› HOMME À LA\nPORTE ! BOUGE !"
           },
-          "audio": "assets/sfx/d977892b8764793fabbc6408411cd9d6.mp3"
+          "audio": "assets/sfx/40a198d3a5c44d33435a9eaa2e3eaefa.mp3"
         },
         {
           "x": 0.47,
@@ -1539,7 +1539,7 @@
             "de": "VMMP",
             "fr": "VMMP"
           },
-          "audio": "assets/sfx/7e55d3304898473dd60b4b3e838da41c.mp3"
+          "audio": "assets/sfx/df48f796d08bcbe351526a734bc48fd3.mp3"
         },
         {
           "x": 0.26,
@@ -1557,7 +1557,7 @@
             "de": "SPANNG",
             "fr": "SPANNG"
           },
-          "audio": "assets/sfx/8d981e7559085a213f674b4d4a105570.mp3"
+          "audio": "assets/sfx/864c06740d1881753b6cdc0fbd7c076e.mp3"
         }
       ]
     },
@@ -1580,7 +1580,7 @@
             "de": "SHNK",
             "fr": "SHNK"
           },
-          "audio": "assets/sfx/bbab7c4d0f5e07f826d8b00f1fda14ba.mp3"
+          "audio": "assets/sfx/99a4efe80883ad7a495d5d23d51d8345.mp3"
         },
         {
           "x": 0.27,
@@ -1598,7 +1598,7 @@
             "de": "SHFFF",
             "fr": "SHFFF"
           },
-          "audio": "assets/sfx/10c5586dd81b2ddea0ded7352933f433.mp3"
+          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3"
         },
         {
           "x": 0.4,
@@ -1616,7 +1616,7 @@
             "de": "THUKK",
             "fr": "THUKK"
           },
-          "audio": "assets/sfx/5644df234aa6dd08fca718264a66788f.mp3"
+          "audio": "assets/sfx/d0e90aa65be8aa27f325256f9530709a.mp3"
         }
       ]
     },
@@ -1644,7 +1644,7 @@
             "de": "Der Barkeeper.",
             "fr": "Le barman."
           },
-          "audio": "assets/sfx/bee7b5ec57d242c26c64d7708a9f1299.mp3"
+          "audio": "assets/sfx/54173227e48d13d8f7fc53e8900664cf.mp3"
         },
         {
           "x": 0.84,
@@ -1667,7 +1667,7 @@
             "de": "Er war nicht\nallein.",
             "fr": "Il n'agissait\npas seul."
           },
-          "audio": "assets/sfx/941a0fc4d5e401c66a6a96ef6460feca.mp3",
+          "audio": "assets/sfx/12c27130e15a1f8720f7612a90e9e568.mp3",
           "speaker": "nero"
         },
         {
@@ -1691,7 +1691,7 @@
             "de": "Er wird nicht\nder Letzte sein.\nGehen wir.",
             "fr": "Il ne sera pas\nle dernier.\nOn y va."
           },
-          "audio": "assets/sfx/67fe80935c407e8dae5ca788a8ce294c.mp3",
+          "audio": "assets/sfx/f313093b055d39fb7503f96385d6db6d.mp3",
           "speaker": "eve"
         }
       ]
@@ -1721,7 +1721,7 @@
             "fr": "La fenêtre!"
           },
           "speaker": "eve",
-          "audio": "assets/sfx/3ad03b9a77be73a74b877c80013896c2.mp3"
+          "audio": "assets/sfx/3a8de0eb590cf73bb928eff725bda410.mp3"
         },
         {
           "x": 0.2,
@@ -1745,7 +1745,7 @@
             "fr": "N'arrête pas!"
           },
           "speaker": "nero",
-          "audio": "assets/sfx/7212c1534dd72485f21f66c6ef52f205.mp3"
+          "audio": "assets/sfx/3d39e7b443c96a8867201c8ea818c81d.mp3"
         },
         {
           "x": 0.72,
@@ -1771,7 +1771,7 @@
             "de": "N› WEG FREI:\nFENSTER VORAUS\nKLARE FALLLINIE",
             "fr": "N› VOIE LIBRE:\nFENÊTRE DEVANT\nCHUTE NETTE"
           },
-          "audio": "assets/sfx/f51eee2e59ee6dc3806d37bf1aa37d3b.mp3",
+          "audio": "assets/sfx/6fffaa26f3937263973678af73a0ab0b.mp3",
           "speaker": "nova"
         },
         {
@@ -1790,7 +1790,7 @@
             "de": "KRASHH",
             "fr": "KRASHH"
           },
-          "audio": "assets/sfx/8ee46a474805102bde9987d6157ac57d.mp3"
+          "audio": "assets/sfx/5ee727ae3c4263a4a020f6999e78db43.mp3"
         },
         {
           "x": 0.12,
@@ -1808,7 +1808,7 @@
             "de": "WHOOSH",
             "fr": "WHOOSH"
           },
-          "audio": "assets/sfx/9c1326ca22c3ff2da34948abe2d50dd0.mp3"
+          "audio": "assets/sfx/6a036548ce1c658cbae98bef2449581b.mp3"
         },
         {
           "x": 0.84,
@@ -1832,7 +1832,7 @@
             "fr": "Nero—!"
           },
           "speaker": "eve",
-          "audio": "assets/sfx/302ff3f63102c372364973a690f61631.mp3"
+          "audio": "assets/sfx/6e444c9c7102c487892e7bbf6db654c7.mp3"
         },
         {
           "x": 0.28,
@@ -1856,7 +1856,7 @@
             "fr": "Atterrissage\nen douceur.\nPeut-être."
           },
           "speaker": "nero",
-          "audio": "assets/sfx/af0463bfa469a6e280f925e80ec4ea8c.mp3"
+          "audio": "assets/sfx/fb6e583f25904b070ee21c2f717857b1.mp3"
         }
       ]
     },
@@ -1879,7 +1879,7 @@
             "de": "SKREEE",
             "fr": "SKREEE"
           },
-          "audio": "assets/sfx/b36e4f1defc5ed8138542bca27f2b4e1.mp3"
+          "audio": "assets/sfx/75e24f6427db63a529dd69c0db2707b4.mp3"
         },
         {
           "x": 0.78,
@@ -1905,7 +1905,7 @@
             "de": "N› ABBREMSEN:\nLINKER ARM → WAND\nGRAB. HALT SIE.",
             "fr": "N› FREINE:\nBRAS G → MUR\nENFONCE. TIENS-LA."
           },
-          "audio": "assets/sfx/de187b8f91a8593e70f9143440bf3c93.mp3",
+          "audio": "assets/sfx/39c619ac419a43a7d88d09f19cdd952f.mp3",
           "speaker": "nova"
         },
         {
@@ -1930,7 +1930,7 @@
             "fr": "Accroche-toi!"
           },
           "speaker": "nero",
-          "audio": "assets/sfx/71a077d07c33be56b3781e16014e6baf.mp3"
+          "audio": "assets/sfx/fe247b6e61c3e682a03579bfa7c0ee6d.mp3"
         },
         {
           "x": 0.18,
@@ -1948,7 +1948,7 @@
             "de": "THUD",
             "fr": "THUD"
           },
-          "audio": "assets/sfx/75339e53e20ecd75329086405196fb1b.mp3"
+          "audio": "assets/sfx/f34cea6722951d3064f9f5ade66c4f74.mp3"
         },
         {
           "x": 0.68,
@@ -1972,7 +1972,7 @@
             "fr": "Ça va—\nvas-y!"
           },
           "speaker": "eve",
-          "audio": "assets/sfx/8d42bf492e24a5e0c4e26dd4b74a2afd.mp3"
+          "audio": "assets/sfx/d640dcb3b4e5a690989fd0312d83596c.mp3"
         },
         {
           "x": 0.1,
@@ -1996,7 +1996,7 @@
             "fr": "Ruelle!"
           },
           "speaker": "eve",
-          "audio": "assets/sfx/bf7a6a00e861b1814b496b345fe866e8.mp3"
+          "audio": "assets/sfx/996e5d192013d7042d9efa5ddd811d3e.mp3"
         },
         {
           "x": 0.78,
@@ -2020,7 +2020,7 @@
             "fr": "Reste basse."
           },
           "speaker": "nero",
-          "audio": "assets/sfx/40296d7cb7b14fe0c9fb23d87769b4fa.mp3"
+          "audio": "assets/sfx/7ca70c1d163da23fcf18c0a18e3ad7b7.mp3"
         }
       ]
     },
@@ -2049,7 +2049,7 @@
             "fr": "Parle-moi."
           },
           "speaker": "nero",
-          "audio": "assets/sfx/5992c179ae583126fef0a389234ab0c7.mp3"
+          "audio": "assets/sfx/51e51738f9c4ae767a8b57d77fdb5f25.mp3"
         },
         {
           "x": 0.86,
@@ -2073,7 +2073,7 @@
             "fr": "Il est\ndans le verre."
           },
           "speaker": "eve",
-          "audio": "assets/sfx/10727c662b1a5f29455c304893b12595.mp3"
+          "audio": "assets/sfx/43c96201519d27df8393b7d1f396cb09.mp3"
         },
         {
           "x": 0.5,
@@ -2100,7 +2100,7 @@
             "fr": "E› SCAN ONLINE\nMOUVEMENT · ÉTAGES HAUTS"
           },
           "speaker": "eve",
-          "audio": "assets/sfx/90aeda012578ba7afc122758600d60e9.mp3"
+          "audio": "assets/sfx/8180f42f8136605799317568bf959d57.mp3"
         },
         {
           "x": 0.78,
@@ -2123,7 +2123,7 @@
             "fr": "Je t'ai."
           },
           "speaker": "eve",
-          "audio": "assets/sfx/aaaf1b0b62620430e5e36b912d6295cb.mp3"
+          "audio": "assets/sfx/44a53a60fd3358e93823fa9c371a5055.mp3"
         },
         {
           "x": 0.2,
@@ -2147,7 +2147,7 @@
             "fr": "The Dog."
           },
           "speaker": "nero",
-          "audio": "assets/sfx/c5d6787dcc663b183d21084da6b9c906.mp3"
+          "audio": "assets/sfx/00ce74eabc6015acc95f9753d9791ac1.mp3"
         },
         {
           "x": 0.78,
@@ -2171,7 +2171,7 @@
             "fr": "Ne bouge pas."
           },
           "speaker": "eve",
-          "audio": "assets/sfx/19b2c0ac32e5ce757f2c90b2acecb254.mp3"
+          "audio": "assets/sfx/afdbaa88e353652aa6c9b2f174cfde2f.mp3"
         }
       ]
     },
@@ -2195,7 +2195,7 @@
           },
           "stroke": "#ffffff",
           "strokeThickness": 8,
-          "audio": "assets/sfx/08ece334aec22a1f96b6c2d5420f3542.mp3",
+          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -2219,7 +2219,7 @@
             "opacity": 0.75,
             "strokeWidth": 5
           },
-          "audio": "assets/sfx/1b40c399f6bcf2f0d2b578d1e50d7aa1.mp3",
+          "audio": "assets/sfx/a748807991c99b211f13aad482ed27ee.mp3",
           "speaker": "nova"
         },
         {
@@ -2237,7 +2237,7 @@
             "de": "Runter!",
             "fr": "À terre!"
           },
-          "audio": "assets/sfx/38d6517f5fb9dc9210fcdbe5e251159e.mp3",
+          "audio": "assets/sfx/c0c109d1bafb53c1ad3ac0af462aab71.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "bottom-right",
@@ -2262,7 +2262,7 @@
             "de": "THKK",
             "fr": "THKK"
           },
-          "audio": "assets/sfx/d81d3d70bb56fa642d6726f07c8a5138.mp3",
+          "audio": "assets/sfx/80608c46d3cea3386d51d8e2ea838a43.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -2282,7 +2282,7 @@
             "de": "Nero—!",
             "fr": "Nero—!"
           },
-          "audio": "assets/sfx/302ff3f63102c372364973a690f61631.mp3",
+          "audio": "assets/sfx/6e444c9c7102c487892e7bbf6db654c7.mp3",
           "speaker": "eve",
           "bubble": {
             "tail": "bottom-left",
@@ -2305,7 +2305,7 @@
             "de": "Er zielte\nauf dich.",
             "fr": "C'est toi\nqu'il visait."
           },
-          "audio": "assets/sfx/cd49f5ee4b62f29bf428652df0744814.mp3",
+          "audio": "assets/sfx/c852cab3b6d0a86f0e21df0f44f0224a.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "right",
@@ -2333,7 +2333,7 @@
             "de": "Nimm das hier.\nGeschenk der Armee.",
             "fr": "Utilise celui-là.\nCadeau de l'armée."
           },
-          "audio": "assets/sfx/dad7ce80d0edd0d7432f3a5bcab3cde9.mp3",
+          "audio": "assets/sfx/0a0379c6a1e7234c95280242a5cffc1b.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "bottom-right",
@@ -2356,7 +2356,7 @@
             "de": "Mantel auf.\nLass mich sehen.",
             "fr": "Ouvre ton manteau.\nLaisse-moi voir."
           },
-          "audio": "assets/sfx/c4dda4ed7067e4ae60cb108c544a54ea.mp3",
+          "audio": "assets/sfx/8e97dca971a4729c250a373fb5d3482b.mp3",
           "speaker": "eve",
           "bubble": {
             "tail": "bottom-left",
@@ -2378,7 +2378,7 @@
             "de": "E› DURCHSCHUSS\nKEINE ARTERIELLE BLUTUNG\nVERSIEGELN EMPFOHLEN",
             "fr": "E› TRANSFIXIANT\nPAS D'HÉMORRAGIE ARTÉRIELLE\nSCELLEMENT CONSEILLÉ"
           },
-          "audio": "assets/sfx/34f32bd310dd81fa6f76a8d2849ac6c3.mp3",
+          "audio": "assets/sfx/5a50b60ae1c8115dcd8e6ad9cb80f550.mp3",
           "speaker": "eve",
           "bubble": {
             "opacity": 0.75,
@@ -2400,7 +2400,7 @@
             "de": "Glatt durch.\nDas ist die gute Nachricht.",
             "fr": "Il est ressorti.\nÇa, c'est la bonne nouvelle."
           },
-          "audio": "assets/sfx/06f14cfeb2af78432abf453631e6815f.mp3",
+          "audio": "assets/sfx/fc6ac26cad107a7d2fef950f91db4150.mp3",
           "speaker": "eve",
           "bubble": {
             "tail": "bottom-right",
@@ -2424,7 +2424,7 @@
             "de": "SSSHK",
             "fr": "SSSHK"
           },
-          "audio": "assets/sfx/41ec5d92a061cac8cb319d86da23c43c.mp3"
+          "audio": "assets/sfx/0cdbd0d7cc2cc19a0bb269868b96e39f.mp3"
         },
         {
           "x": 0.84,
@@ -2441,7 +2441,7 @@
             "de": "HNNGH—",
             "fr": "HNNGH—"
           },
-          "audio": "assets/sfx/196631e89b49d0c639b071f4159305fb.mp3",
+          "audio": "assets/sfx/e0bf4e77a4e3e04f24eb57a33f0fff71.mp3",
           "speaker": "nero",
           "bubble": {
             "opacity": 0.75,
@@ -2463,7 +2463,7 @@
             "de": "Halt still.",
             "fr": "Ne bouge pas."
           },
-          "audio": "assets/sfx/00e567c51c2009ea6fd0d80c47ff3405.mp3",
+          "audio": "assets/sfx/63e63773a4d705c2f84ecaf564cdbe28.mp3",
           "speaker": "eve",
           "bubble": {
             "tail": "bottom-left",
@@ -2491,7 +2491,7 @@
             "de": "Du bist\nreingetreten.",
             "fr": "Tu t'es mis\ndevant."
           },
-          "audio": "assets/sfx/2255998b34b735f7530aeb00d7dc79fd.mp3",
+          "audio": "assets/sfx/83b4394d70818000e815bd5658f5e1a2.mp3",
           "speaker": "eve",
           "bubble": {
             "tail": "bottom-right",
@@ -2514,7 +2514,7 @@
             "de": "Unhöflich, eine Dame\ntreffen zu lassen.",
             "fr": "Impoli de laisser\nune dame le prendre."
           },
-          "audio": "assets/sfx/abbe4520c3855f567465f630c19e2794.mp3",
+          "audio": "assets/sfx/5364c183d5054bd7a9e7bbbca3fde9c9.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "bottom-left",
@@ -2537,7 +2537,7 @@
             "de": "Hoch. Langsam.",
             "fr": "Debout. Doucement."
           },
-          "audio": "assets/sfx/170b08481d226717f3f4d2bec5be1198.mp3",
+          "audio": "assets/sfx/00d30fa920e32c03cd262b92da74f62e.mp3",
           "speaker": "eve",
           "bubble": {
             "tail": "bottom-right",
@@ -2560,7 +2560,7 @@
             "de": "Er ist schon\nunterwegs.",
             "fr": "Il est déjà\nen train de bouger."
           },
-          "audio": "assets/sfx/1b24fc64d8caf2568d1397d32dc30449.mp3",
+          "audio": "assets/sfx/e5621a444e7a16a925a224cc80a4875f.mp3",
           "speaker": "nero",
           "bubble": {
             "tail": "bottom-left",
@@ -2588,7 +2588,7 @@
             "de": "FORTSETZUNG\nFOLGT",
             "fr": "À SUIVRE"
           },
-          "audio": "assets/sfx/9d8f0eaf5929363b19c284a706453e63.mp3",
+          "audio": "assets/sfx/e2c1cf7b1e7d7f3cad8dd93bdba83a6c.mp3",
           "speaker": "narrator"
         },
         {
@@ -2605,7 +2605,7 @@
             "de": "NERO KEHRT ZURÜCK",
             "fr": "NERO REVIENDRA"
           },
-          "audio": "assets/sfx/e3a560a18560e8aa068990bc2930a47a.mp3",
+          "audio": "assets/sfx/b49d828eb2a1e45e9ffcfe00627ea3a7.mp3",
           "speaker": "narrator"
         },
         {
@@ -2622,7 +2622,7 @@
             "de": "Die Stadt behält den Regen.\nDer Auftrag behält seinen Namen.",
             "fr": "La ville garde la pluie.\nLe contrat garde son nom."
           },
-          "audio": "assets/sfx/86deac433e82cc250bacb67fe4552452.mp3",
+          "audio": "assets/sfx/74a06288be5977bf36b41c8301c85f48.mp3",
           "speaker": "narrator"
         }
       ]

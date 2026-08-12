@@ -513,6 +513,28 @@ voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
 3. Paste into `content/toons/<toon>/config.json`, then
    `npm run upload-assets` and `npm run publish-toon-config -- --toon <toon>`.
 
+#### Levelling caption audio (EBU R128 + true peak)
+
+ElevenLabs returns inconsistent levels: HUD readouts landed ~9 dB under
+dialogue (-28 vs -19 LUFS), and generated SFX regularly peaked **above 0 dBFS**
+(measured +2.4 dBTP), which clips on playback. Level a whole toon in one pass:
+
+```bash
+npm run normalise-audio -- jax                 # or: nero redsmile-static
+npm run normalise-audio -- jax --dry-run       # measure only, touch nothing
+npm run normalise-audio -- jax --voice -18 --sfx -15 --tp -1.5
+```
+
+Two-pass `loudnorm` (measure, then apply with `measured_*` + `linear=true`), so
+the gain is one linear move — no pumping, and dynamics inside a clip survive.
+Voices target **-18 LUFS**, onomatopoeia **-15 LUFS** so they still punch, and
+everything shares a **-1.5 dBTP** ceiling. The script rewrites each `audio`
+path to the new content hash and deletes superseded local files; follow with
+`npm run upload-assets` and `publish-toon-config`.
+
+Run it **after** the metallic passes below — those change level, so normalise
+last.
+
 #### Metallic voice pass for `ai` captions
 
 HUD/AI readouts (`variant: "ai"` — Nova's `N›`, Eve's glasses `E›`) run their

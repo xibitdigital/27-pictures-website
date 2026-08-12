@@ -12,6 +12,7 @@
     "hash-assets:check": "node scripts/hash-assets.js --check",
     "hash-toon-config": "node scripts/hash-toon-config.js",
     "publish-toon-config": "node scripts/publish-toon-config.js",
+    "normalise-audio": "python3 scripts/normalise-toon-audio.py",
     "download-toon-config": "node scripts/download-toon-config.js",
     "create-assets-bucket": "node scripts/upload-r2-assets.js --create-bucket",
     "upload-assets": "node scripts/upload-r2-assets.js",
