@@ -381,7 +381,10 @@
             "de": "Leihe mir\ndas.",
             "fr": "J'emprunte\nça."
           },
-          "audio": "assets/sfx/6925b6eb005d95854f45bc4e7ac350f9.mp3"
+          "audio": "assets/sfx/6925b6eb005d95854f45bc4e7ac350f9.mp3",
+          "bubble": {
+            "tail": "none"
+          }
         },
         {
           "x": 0.55,
@@ -667,6 +670,31 @@
           "audio": "assets/sfx/384ceb8480b1e80a4fac3dbe422b661e.mp3"
         },
         {
+          "x": 0.76,
+          "y": 0.41,
+          "align": "center",
+          "size": 39,
+          "variant": "ai",
+          "color": "#f5f5f5",
+          "angle": -1,
+          "maxWidth": 0.27,
+          "bubble": {
+            "fill": "#0a0a0a",
+            "stroke": "#0a0a0a",
+            "strokeWidth": 2.2,
+            "tail": "none",
+            "scratches": 6,
+            "retrace": 2
+          },
+          "text": {
+            "en": "N› COMBAT MODE\nACTIVATED",
+            "it": "N› MODALITÀ COMBATTIMENTO\nATTIVATA",
+            "de": "N› KAMPFMODUS\nAKTIVIERT",
+            "fr": "N› MODE COMBAT\nACTIVÉ"
+          },
+          "audio": "assets/sfx/f0d9e9a9d03cf936e55cc2791ef46a3a.mp3"
+        },
+        {
           "x": 0.22,
           "y": 0.42,
           "align": "center",
@@ -719,31 +747,6 @@
             "fr": "FOOM"
           },
           "audio": "assets/sfx/bebc69ebcc44de24db8e4bf6fe312f66.mp3"
-        },
-        {
-          "x": 0.76,
-          "y": 0.41,
-          "align": "center",
-          "size": 39,
-          "variant": "ai",
-          "color": "#f5f5f5",
-          "angle": -1,
-          "maxWidth": 0.27,
-          "bubble": {
-            "fill": "#0a0a0a",
-            "stroke": "#0a0a0a",
-            "strokeWidth": 2.2,
-            "tail": "none",
-            "scratches": 6,
-            "retrace": 2
-          },
-          "text": {
-            "en": "N› COMBAT MODE\nACTIVATED",
-            "it": "N› MODALITÀ COMBATTIMENTO\nATTIVATA",
-            "de": "N› KAMPFMODUS\nAKTIVIERT",
-            "fr": "N› MODE COMBAT\nACTIVÉ"
-          },
-          "audio": "assets/sfx/f0d9e9a9d03cf936e55cc2791ef46a3a.mp3"
         }
       ]
     },
