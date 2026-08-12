@@ -2168,6 +2168,140 @@
           "audio": "assets/sfx/19b2c0ac32e5ce757f2c90b2acecb254.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/29ed2bce62e07a577a9bde789ea24192.png",
+      "words": [
+        {
+          "x": 0.5,
+          "y": 0.11,
+          "align": "center",
+          "size": 34,
+          "color": "#111111",
+          "angle": -5,
+          "scale": 1.05,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "KRAK",
+            "it": "KRAK",
+            "de": "KRAK",
+            "fr": "KRAK"
+          },
+          "audio": "assets/sfx/08ece334aec22a1f96b6c2d5420f3542.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.68,
+          "y": 0.29,
+          "align": "center",
+          "size": 18,
+          "variant": "ai",
+          "color": "#f5f5f5",
+          "maxWidth": 0.28,
+          "text": {
+            "en": "N› VECTOR LOCKED:\nTARGET → HER\nINTERPOSE. ROTATE 40°.",
+            "it": "N› VETTORE FISSATO:\nBERSAGLIO → LEI\nFRAPPONITI. RUOTA 40°.",
+            "de": "N› VEKTOR FIXIERT:\nZIEL → SIE\nDAZWISCHEN. DREH 40°.",
+            "fr": "N› VECTEUR VERROUILLÉ:\nCIBLE → ELLE\nINTERPOSE-TOI. PIVOTE 40°."
+          },
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.4,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "maxWidth": 0.2,
+          "text": {
+            "en": "Down!",
+            "it": "Giù!",
+            "de": "Runter!",
+            "fr": "À terre!"
+          },
+          "audio": "assets/sfx/38d6517f5fb9dc9210fcdbe5e251159e.mp3",
+          "speaker": "nero",
+          "bubble": {
+            "tail": "bottom-right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.28,
+          "y": 0.56,
+          "align": "center",
+          "size": 40,
+          "color": "#111111",
+          "angle": -7,
+          "scale": 1.1,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "THKK",
+            "it": "THKK",
+            "de": "THKK",
+            "fr": "THKK"
+          },
+          "audio": "assets/sfx/d81d3d70bb56fa642d6726f07c8a5138.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.82,
+          "y": 0.63,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.2,
+          "text": {
+            "en": "Nero—!",
+            "it": "Nero—!",
+            "de": "Nero—!",
+            "fr": "Nero—!"
+          },
+          "audio": "assets/sfx/302ff3f63102c372364973a690f61631.mp3",
+          "speaker": "eve",
+          "bubble": {
+            "tail": "bottom-left",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.88,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "He aimed\nat you.",
+            "it": "Mirava\na te.",
+            "de": "Er zielte\nauf dich.",
+            "fr": "C'est toi\nqu'il visait."
+          },
+          "audio": "assets/sfx/cd49f5ee4b62f29bf428652df0744814.mp3",
+          "speaker": "nero",
+          "bubble": {
+            "tail": "right",
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        }
+      ]
     }
   ]
 }

@@ -263,5 +263,15 @@
     "slug": "rs-hinge-whine",
     "prompt": "Rusty hinge whine as a bedroom door swings open, thin metallic squeal, no music",
     "duration": 2.0
+  },
+  {
+    "slug": "nero-rifle-crack",
+    "prompt": "Distant high-powered rifle shot cracking across a wet city street at night, sharp report with a short reverb tail, rain ambience",
+    "duration": 1.8
+  },
+  {
+    "slug": "nero-bullet-hit-thkk",
+    "prompt": "Single heavy bullet impact into a body, wet meaty thud with a short punch of air, close and dry, no music",
+    "duration": 1.0
   }
 ]
