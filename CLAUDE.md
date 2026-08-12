@@ -210,6 +210,14 @@ Two gotchas: the node's model list differs from the model API (check the
 dropdown for the Pro entry), and its minimum width is 1024, so the graph
 renders 1024×1792 while the prompt still says 1008×1792.
 
+Deploy the API file on RunComfy (Deployments → *Deploy workflow as API*) and
+drive it with `scripts/run-comfy-workflow.py` — overrides target node ids, and
+`LoadImage` takes a public URL, so `--ref-prev-asset toons/nero/assets/<md5>`
+uses a published plate as the reference with no upload. Needs
+`RUNCOMFY_DEPLOYMENT` + `COMFY_API_KEY` in `.env`. Unlike
+`generate-toon-page.py` (model API, Seedream alone), this runs the tone match
+and greyscale server-side, so the plate comes back ready for `swap-page`.
+
 ### Adding a new toon page image
 
 Images are content-hashed (`md5.ext`) under `public/toons/<toon>/assets/` — same convention as

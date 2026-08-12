@@ -95,6 +95,58 @@ magick <src> -colorspace Gray -colorspace sRGB /tmp/flat.png   # Seedream tints 
 npm run normalise-audio -- nero                                # if the page brought new clips
 ```
 
+## Running it on RunComfy (serverless)
+
+The API file is already in the format RunComfy wants (ComfyUI's
+**Workflow → Export (API)**), so it deploys as-is:
+
+1. Deployments → **Deploy workflow as API** → upload
+   `workflows/nero-seedream.api.json` → Instant Deploy.
+2. Copy the `deployment_id` into `.env` as `RUNCOMFY_DEPLOYMENT`.
+3. Token from the Profile page goes in `COMFY_API_KEY` (same one
+   `generate-toon-page.py` uses).
+
+Then drive it from the repo:
+
+```bash
+set -a; source .env; set +a
+
+python3 scripts/run-comfy-workflow.py \
+  --prompt-file ~/Downloads/toon-page-nero-25-....txt \
+  --ref-prev-asset toons/nero/assets/<md5>.webp      # last published plate
+
+python3 scripts/run-comfy-workflow.py --prompt-file … --dry-run   # free
+```
+
+`--ref-*-asset` expands an R2 key against `VITE_ASSET_BASE`, and `LoadImage`
+accepts a public URL as an override — so published plates are usable as
+references without uploading anything to ComfyUI first.
+
+**Overrides map to node ids**, which is why the API file's numbering must not
+drift:
+
+| Node | id | Overridable |
+| ---- | -- | ----------- |
+| LoadImage — Nero sheet | `1` | `image` (URL) |
+| LoadImage — Eve sheet | `2` | `image` (URL) |
+| LoadImage — previous page | `3` | `image` (URL) |
+| ByteDanceSeedreamNode | `6` | `prompt`, `seed`, `width`, `height`, `model` |
+| ColorMatch | `10` | `method` |
+
+Re-number the graph and update `NODES` in `scripts/run-comfy-workflow.py` to
+match.
+
+**Results expire after 7 days** on RunComfy — the script downloads them
+immediately to `~/Downloads`, so treat that copy as the original.
+
+### Model API vs this
+
+`scripts/generate-toon-page.py` calls the **model API** and runs Seedream
+alone: one call, no deployment, but the tone match and greyscale flatten then
+happen locally (or not at all). This workflow runs those steps server-side, so
+the plate comes back ready for `swap-page`. Same Seedream underneath, same
+$0.05 at 1K.
+
 ## Dependencies
 
 `ColorMatch` comes from **ComfyUI-KJNodes** (install via Manager). Everything
