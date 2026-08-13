@@ -1147,7 +1147,9 @@ button:focus-visible {
 .latest-card-frame {
   position: relative;
   width: 100%;
-  aspect-ratio: 9 / 16;
+  /* Square: the façade thumbnails are 16:9, so a 9:16 box cropped them to a
+     sliver and left the play button stranded in a tall black field. */
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background: #000;
 }
