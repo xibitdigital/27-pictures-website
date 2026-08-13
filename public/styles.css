@@ -1555,43 +1555,65 @@ button:focus-visible {
   margin-bottom: 20px;
 }
 
-/* Break out of the .series-body copy column so the cards span the page. */
+/* Break out of the .service-body copy column so the cards span the page, and
+   wear the homepage assembly-box treatment: rule above, numbered reel label,
+   red title, no panel. */
 .stage-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 22vw, 320px), 1fr));
-  gap: 28px;
-  margin-top: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 60px;
+  margin-top: 48px;
   max-width: none;
   width: 100%;
+  counter-reset: stage;
 }
 
 .stage-card {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--border);
+  padding: 32px 0 0;
+  transition: border-top-color 0.5s var(--transition);
+}
+
+.stage-card:hover {
+  border-top-color: var(--red-smile);
+}
+
+.stage-card::before {
+  counter-increment: stage;
+  content: "REEL 0" counter(stage);
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 5px;
+  font-weight: 700;
+  color: var(--red-smile);
+  opacity: 0.9;
 }
 
 .stage-card h3 {
   font-family: "Playfair Display", serif;
-}
-
-.stage-card {
-  background: var(--bg-card);
-  padding: 24px;
-}
-
-.stage-card h3 {
-  font-size: 1.05rem;
-  margin-bottom: 10px;
-}
-
-.stage-card .stage-num {
-  display: block;
-  font-size: 0.65rem;
-  letter-spacing: 3px;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
   color: var(--red-smile);
-  font-weight: 700;
-  margin-bottom: 10px;
+  transition: color 0.4s var(--transition);
 }
+
+.stage-card:hover h3 {
+  color: var(--text);
+}
+
+.stage-card p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--silver);
+}
+
+/* .stage-card styling lives with .stage-grid above (assembly treatment). */
 
 .stage-card p {
   color: var(--text-muted);
@@ -1867,41 +1889,65 @@ button:focus-visible {
 }
 
 /* Break out of the .series-body copy column so the cards span the page —
-   inside it, four cards wrapped 3 + 1 with half the row empty. */
+   inside it, four cards wrapped 3 + 1 with half the row empty. Styled as the
+   homepage's assembly boxes: rule above, red title, numbered reel label — no
+   panel background, so it reads as the same studio voice. */
 .craft-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 22vw, 320px), 1fr));
-  gap: 28px;
-  margin-top: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 60px;
+  margin-top: 48px;
   max-width: none;
   width: 100%;
+  counter-reset: craft;
 }
 
 .craft-card {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--border);
+  padding: 32px 0 0;
+  transition: border-top-color 0.5s var(--transition);
+}
+
+.craft-card:hover {
+  border-top-color: var(--red-smile);
+}
+
+.craft-card::before {
+  counter-increment: craft;
+  content: "REEL 0" counter(craft);
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 5px;
+  font-weight: 700;
+  color: var(--red-smile);
+  opacity: 0.9;
 }
 
 .craft-card h3 {
   font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--red-smile);
+  transition: color 0.4s var(--transition);
 }
 
-.craft-card {
-  background: var(--bg-card);
-  padding: 24px;
-}
-
-.craft-card h3 {
-  font-size: 1.02rem;
-  margin-bottom: 10px;
+.craft-card:hover h3 {
+  color: var(--text);
 }
 
 .craft-card p {
-  color: var(--text-muted);
-  font-size: 0.88rem;
-  line-height: 1.65;
-  font-weight: 300;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--silver);
 }
+
+/* .craft-card styling lives with .craft-grid above (assembly treatment). */
 
 .series-cta {
   background: var(--bg-card);
@@ -2283,4 +2329,23 @@ button:focus-visible {
 
 .notfound-links a:hover {
   color: var(--red-smile);
+}
+
+/* In-progress marker on toon cards — a toon can be published and still be
+   mid-run, and a reader landing on 7 pages should know that up front. */
+.lab-card-wip {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.6rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--red-smile);
+  border: 1px solid var(--red-smile);
+  border-radius: 2px;
+  padding: 0.25em 0.55em;
+  white-space: nowrap;
+  transform: translateY(-0.15em);
 }
