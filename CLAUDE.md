@@ -694,6 +694,53 @@ Do not commit the binary.
 - Indexable hub pages added (2026-08): `/horror-shorts/` and `/cosplay/`, each 800+ words of unique copy; sitemap now lists them with 1200×630 OG art
 - `/experiments/` → `/toons/` with 301s in `public/_redirects`
 
+### Sitemap + getting new URLs indexed
+
+**URL:** `https://twentyseven.pictures/sitemap.xml` (in Search Console paste just
+`sitemap.xml`). Source is `public/sitemap.xml` — hand-maintained, referenced
+from `robots.txt`, and shipped in `dist/`. Image URLs use the
+`%VITE_ASSET_BASE%` token, expanded at build by `vite/plugins/cdnMedia.ts`.
+
+**Adding a page** — every new indexable URL needs three edits, or it exists but
+nothing points at it:
+
+1. `public/sitemap.xml` — `<url>` block with `<lastmod>` and an `<image:image>`
+   when there is card art
+2. `public/llms.txt` — the key-pages list
+3. an internal link from somewhere real (nav, homepage section, footer)
+
+**Then tell the engines:**
+
+```bash
+# IndexNow — Bing, Yandex, Seznam, Naver. NOT Google.
+curl -X POST "https://api.indexnow.org/indexnow" \
+  -H "Content-Type: application/json" \
+  -d '{"host":"twentyseven.pictures",
+       "key":"bdd5e80e21a8430d9316de0deacdb208",
+       "keyLocation":"https://twentyseven.pictures/bdd5e80e21a8430d9316de0deacdb208.txt",
+       "urlList":["https://twentyseven.pictures/<new-page>/"]}'
+```
+
+Include the **old** URL too when a page moves, so the 301 gets crawled.
+
+**Google needs Search Console — there is no API-free ping.** The old
+`google.com/ping?sitemap=` endpoint returns **404** and Bing's returns **410**;
+both were retired in 2023. Submitting the sitemap requires signing in, so it is
+a human step:
+
+1. [search.google.com/search-console](https://search.google.com/search-console)
+   → add a **Domain** property (`twentyseven.pictures`) → add the TXT record it
+   gives you to the Cloudflare DNS zone → Verify.
+   File verification also works: drop the `google<hash>.html` into `public/` and
+   deploy.
+2. **Sitemaps** → submit `sitemap.xml`.
+3. **URL Inspection → Request indexing** for anything urgent; the sitemap alone
+   can take days.
+
+**After a URL move**, keep the `public/_redirects` 301 in place — Google needs
+to crawl the old URL to transfer signals, and removing the redirect too early
+strands them.
+
 ### Crawlers / AI search policy (2026-07)
 
 **Intent:** maximize classic search + AI search / citation visibility. Block only aggressive bulk scrapers.
