@@ -1371,3 +1371,99 @@ button:focus-visible {
   color: var(--text);
   font-weight: 700;
 }
+
+/* ── YouTube façades ──
+   Placeholders keep the same box as the iframes they replace, so the frames
+   around them (.clown-hero-frame, .latest-card-frame, .video-frame,
+   .latest-feature-frame) need no changes. */
+.yt-facade {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background: var(--bg-dark);
+}
+
+.yt-facade iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.yt-facade-btn {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--bg-dark);
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+}
+
+.yt-facade-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.85;
+  transition:
+    opacity 0.3s var(--transition),
+    transform 0.5s var(--transition);
+}
+
+.yt-facade-btn:hover img,
+.yt-facade-btn:focus-visible img {
+  opacity: 1;
+  transform: scale(1.03);
+}
+
+.yt-facade-btn:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: -4px;
+}
+
+.yt-facade-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 48px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-dark) 78%, transparent);
+  border: 1px solid var(--red-smile);
+  transition:
+    background 0.25s var(--transition),
+    transform 0.25s var(--transition);
+}
+
+.yt-facade-play::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 54%;
+  transform: translate(-50%, -50%);
+  border-style: solid;
+  border-width: 9px 0 9px 15px;
+  border-color: transparent transparent transparent var(--text);
+}
+
+.yt-facade-btn:hover .yt-facade-play,
+.yt-facade-btn:focus-visible .yt-facade-play {
+  background: var(--red-smile);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+/* Title is for assistive tech and no-image fallback; the card already has one. */
+.yt-facade-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
