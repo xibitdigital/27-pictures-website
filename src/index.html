@@ -69,7 +69,7 @@
     />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/styles.css?v=2750b1fc10" />
+    <link rel="stylesheet" href="/styles.css?v=f415ca093e" />
 
     <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -252,7 +252,34 @@
     <main id="main-content" role="main">
       <!-- HERO SECTION -->
       <section class="section hero-section" aria-labelledby="hero-title">
-        <h1 id="hero-title" class="hero-title hero-title--bleed"><span class="logo-27">27</span><br />PICTURES</h1>
+        <!-- The "27" is Luminari, converted to outlines: the font ships only with
+             macOS, so on phones the mark used to fall back to generic cursive. -->
+        <svg class="logo-27-defs" aria-hidden="true" focusable="false">
+          <symbol id="logo-27-mark" viewBox="0 0 1029 672">
+            <g transform="translate(0 652) scale(1 -1)">
+              <path
+                transform="translate(0 0)"
+                d="M499 -20Q489 -17 466.0 -14.5Q443 -12 412.0 -9.5Q381 -7 345.0 -4.5Q309 -2 272.5 -0.5Q236 1 202.0 2.0Q168 3 142 3Q117 3 101.0 2.0Q85 1 73.5 0.0Q62 -1 54.0 -2.5Q46 -4 36 -5Q35 -5 32.0 -3.5Q29 -2 29 0Q29 3 27.5 7.0Q26 11 25.5 14.5Q25 18 28.0 22.0Q31 26 40 31Q65 50 100.0 77.0Q135 104 172.0 136.5Q209 169 246.0 204.5Q283 240 312.0 276.5Q341 313 359.0 348.5Q377 384 378 416Q378 450 369.5 482.0Q361 514 344.0 538.5Q327 563 302.0 577.5Q277 592 244 592Q215 592 191.0 579.0Q167 566 149.5 547.0Q132 528 122.0 505.0Q112 482 112 463Q112 458 111.0 455.5Q110 453 105 453Q100 453 92.5 458.5Q85 464 78.5 472.5Q72 481 67.0 491.0Q62 501 62 511Q62 540 88.5 560.5Q115 581 166 606Q209 626 256.0 639.0Q303 652 339 652Q371 652 398.5 639.5Q426 627 446.5 604.0Q467 581 478.5 548.5Q490 516 490 476Q490 440 472.5 403.0Q455 366 426.5 328.5Q398 291 362.0 255.0Q326 219 288.5 186.5Q251 154 216.0 125.5Q181 97 154 75Q164 71 204.0 65.0Q244 59 307 59Q346 59 382.0 60.0Q418 61 448.0 67.5Q478 74 500.0 90.0Q522 106 534 136Q535 137 538.0 138.0Q541 139 544.0 137.5Q547 136 549.0 132.0Q551 128 549 121Q545 111 541.0 95.5Q537 80 533.5 63.0Q530 46 526.0 29.0Q522 12 518 0Q513 -20 499 -20Z"
+              />
+              <path
+                transform="translate(551 0)"
+                d="M268 550Q180 552 136.0 547.5Q92 543 73 537Q61 533 55.0 522.5Q49 512 45 499Q44 496 39.5 494.5Q35 493 30.0 493.5Q25 494 22.0 496.5Q19 499 22 503Q33 527 42.0 553.5Q51 580 58.5 602.0Q66 624 72.5 638.0Q79 652 87 651Q163 640 246.0 634.5Q329 629 406 629Q444 629 469.0 631.0Q494 633 517 637Q519 637 520.5 635.0Q522 633 522 632Q522 628 520.5 624.5Q519 621 513 616Q490 603 465.0 576.5Q440 550 417.0 518.5Q394 487 376.0 454.5Q358 422 348 397Q331 355 311.5 303.5Q292 252 275.5 199.5Q259 147 247.5 98.5Q236 50 236 15Q236 0 239 -4Q241 -6 237.5 -8.0Q234 -10 229 -8Q226 -7 210.5 -6.0Q195 -5 175 -5Q176 -5 166.0 -5.5Q156 -6 142.0 -7.0Q128 -8 114.5 -10.0Q101 -12 96 -15Q94 -17 91.0 -14.5Q88 -12 89 -9Q96 16 114.5 59.5Q133 103 158.0 155.5Q183 208 212.5 265.5Q242 323 271.5 376.5Q301 430 328.0 475.0Q355 520 375 548Z"
+              />
+            </g>
+          </symbol>
+        </svg>
+        <h1 id="hero-title" class="hero-title hero-title--bleed">
+          <span class="hero-word"
+            ><span class="logo-27"
+              ><svg class="logo-27-mark" role="img" aria-label="27"><use href="#logo-27-mark" /></svg></span
+            ><br />PICTURES</span
+          >
+          <span class="hero-word hero-word--blood" aria-hidden="true"
+            ><span class="logo-27"
+              ><svg class="logo-27-mark" role="img" aria-label="27"><use href="#logo-27-mark" /></svg></span
+            ><br />PICTURES</span
+          >
+        </h1>
         <p class="hero-tagline">Cinema. Horror. Neural Synthesis.</p>
         <div class="scroll-arrow" aria-hidden="true">
           <svg

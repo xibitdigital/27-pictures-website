@@ -295,13 +295,31 @@ body > header nav,
   font-weight: 900;
 }
 
-/* Logo 27 font */
+/* The "27" mark.
+   Was type set in "Luminari", a font bundled with macOS and absent everywhere
+   else — phones fell through to generic cursive and the mark looked nothing
+   like the desktop one. It is now the same Luminari glyphs converted to
+   outlines and inlined as an SVG symbol, so every device renders the identical
+   shape with no font to download. */
 .logo-27 {
-  font-family: "Luminari", "Apple Chancery", "Brush Script MT", cursive;
-  font-style: normal;
-  font-size: 1.1em;
-  font-weight: 900;
+  display: inline-block;
   line-height: 0;
+}
+
+.logo-27-mark {
+  /* Sized off the title's own font-size, matching the old 1.1em type. */
+  height: 0.78em;
+  width: auto;
+  fill: currentColor;
+  display: block;
+}
+
+/* Symbol definitions never render themselves. */
+.logo-27-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 /* Title font - easy to swap */
@@ -2351,52 +2369,49 @@ button:focus-visible {
 }
 
 /* ── Hero: the lettering bleeds ──
-   A gradient clipped to the glyphs slides downward once on load, so red creeps
-   through "27 PICTURES" and holds. No loop: a hero that animates forever pulls
-   the eye off the copy every cycle. Skipped under prefers-reduced-motion,
-   which lands straight on the red end state. */
-.hero-title--bleed {
-  /* Image is twice the box: top half white, bottom half blood, with a short
-     blend so the boundary reads wet rather than as a hard line. At
-     background-position 0% only the white half is in view — the title starts
-     white, then red enters at the top of the letters and runs down. Once,
-     then it holds.
+   A red duplicate of the title is layered over the white one and revealed
+   top-down with clip-path. This replaced an animated background-clip: text
+   gradient, which renders but does not reliably repaint on iOS Safari — the
+   phone showed a static title while desktop animated.
 
-     Fill is flat --red-smile, not a ramp: a gradient left the lower half of
-     the glyphs darker than the brand red and closer to the background. */
-  background-image: linear-gradient(
-    to bottom,
-    var(--red-smile) 0%,
-    var(--red-smile) 49%,
-    var(--text) 51%,
-    var(--text) 100%
-  );
-  background-size: 100% 200%;
-  background-position: 0% 100%;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  /* Once, then hold red — a hero that animates on a loop pulls the eye off the
-     copy every cycle. */
-  animation: hero-bleed-fill 1.6s ease-out 1s 1 both;
+   The duplicate is aria-hidden, so screen readers and crawlers still see one
+   h1. Runs once, then holds: a hero that animates on a loop pulls the eye off
+   the copy below. */
+.hero-title--bleed {
+  position: relative;
+  display: inline-block;
+}
+
+.hero-word {
+  display: block;
+}
+
+.hero-word--blood {
+  position: absolute;
+  inset: 0;
+  color: var(--red-smile);
+  pointer-events: none;
+  -webkit-clip-path: inset(0 0 100% 0);
+  clip-path: inset(0 0 100% 0);
+  animation: hero-bleed-fill 1.6s ease-out 0.25s 1 both;
 }
 
 @keyframes hero-bleed-fill {
-  /* Red enters at the top of the glyphs and runs down. */
   from {
-    background-position: 0% 100%;
+    -webkit-clip-path: inset(0 0 100% 0);
+    clip-path: inset(0 0 100% 0);
   }
   to {
-    background-position: 0% 0%;
+    -webkit-clip-path: inset(0 0 0 0);
+    clip-path: inset(0 0 0 0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-title--bleed {
-    /* Skip the run, but keep the end state so the brand still reads red. */
+  .hero-word--blood {
+    /* Skip the run, keep the end state so the brand still reads red. */
     animation: none;
-    background-position: 0% 0%;
+    -webkit-clip-path: inset(0 0 0 0);
+    clip-path: inset(0 0 0 0);
   }
 }
