@@ -2349,3 +2349,54 @@ button:focus-visible {
   white-space: nowrap;
   transform: translateY(-0.15em);
 }
+
+/* ── Hero: the lettering bleeds ──
+   A gradient clipped to the glyphs slides downward once on load, so red creeps
+   through "27 PICTURES" and holds. No loop: a hero that animates forever pulls
+   the eye off the copy every cycle. Skipped under prefers-reduced-motion,
+   which lands straight on the red end state. */
+.hero-title--bleed {
+  /* Image is twice the box: top half white, bottom half blood, with a short
+     blend so the boundary reads wet rather than as a hard line. At
+     background-position 0% only the white half is in view — the title starts
+     white, then red enters at the top of the letters and runs down. Once,
+     then it holds.
+
+     Fill is flat --red-smile, not a ramp: a gradient left the lower half of
+     the glyphs darker than the brand red and closer to the background. */
+  background-image: linear-gradient(
+    to bottom,
+    var(--red-smile) 0%,
+    var(--red-smile) 49%,
+    var(--text) 51%,
+    var(--text) 100%
+  );
+  background-size: 100% 200%;
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  /* Once, then hold red — a hero that animates on a loop pulls the eye off the
+     copy every cycle. */
+  animation: hero-bleed-fill 1.6s ease-out 1s 1 both;
+}
+
+@keyframes hero-bleed-fill {
+  /* Red enters at the top of the glyphs and runs down. */
+  from {
+    background-position: 0% 100%;
+  }
+  to {
+    background-position: 0% 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title--bleed {
+    /* Skip the run, but keep the end state so the brand still reads red. */
+    animation: none;
+    background-position: 0% 0%;
+  }
+}
