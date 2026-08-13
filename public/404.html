@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page not found | 27 Pictures</title>
+    <meta name="description" content="This page does not exist at 27 Pictures." />
+    <!-- Never index the error page itself; Cloudflare Pages serves it with a real 404 status. -->
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#b30000" />
+
+    <link rel="icon" type="image/png" href="/logosquare.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logosquare.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css?v=578e6ccce6" />
+    <style>
+      .notfound {
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 4rem 1.5rem;
+        gap: 0;
+      }
+
+      .notfound-logo {
+        height: 56px;
+        width: 56px;
+        object-fit: contain;
+        border: 1px solid var(--red-smile);
+        padding: 6px;
+        background: var(--bg-dark);
+        margin-bottom: 2.5rem;
+      }
+
+      .notfound-code {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(5rem, 22vw, 12rem);
+        line-height: 0.85;
+        color: var(--text);
+        margin-bottom: 1rem;
+      }
+
+      .notfound h1 {
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--red-smile);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+      }
+
+      .notfound p {
+        max-width: 34rem;
+        color: var(--text-muted);
+        font-weight: 300;
+        line-height: 1.75;
+        margin-bottom: 2.5rem;
+      }
+
+      .notfound-home {
+        display: inline-block;
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--text);
+        background: var(--red-smile);
+        border: 1px solid var(--red-smile);
+        padding: 1rem 2.25rem;
+        text-decoration: none;
+        transition:
+          background 0.25s var(--transition),
+          color 0.25s var(--transition);
+      }
+
+      .notfound-home:hover,
+      .notfound-home:focus-visible {
+        background: transparent;
+        color: var(--red-smile);
+      }
+
+      .notfound-home:focus-visible {
+        outline: 2px solid var(--text);
+        outline-offset: 3px;
+      }
+
+      .notfound-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 3rem;
+      }
+
+      .notfound-links a {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--silver);
+        text-decoration: none;
+        transition: color 0.2s var(--transition);
+      }
+
+      .notfound-links a:hover {
+        color: var(--red-smile);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="notfound" id="main-content" role="main">
+      <a href="/" aria-label="27 Pictures — home">
+        <img src="/logosquare.png" class="notfound-logo" alt="27 Pictures" width="56" height="56" />
+      </a>
+
+      <p class="notfound-code" aria-hidden="true">404</p>
+      <h1>Page not found</h1>
+      <p>
+        This one is not in the archive. It may have been moved, renamed, or it never existed — the darkroom eats things
+        occasionally.
+      </p>
+
+      <a href="/" class="notfound-home">Back to the homepage</a>
+
+      <nav class="notfound-links" aria-label="Elsewhere on the site">
+        <a href="/horror-shorts/">Horror shorts</a>
+        <a href="/cosplay/">Cosplay</a>
+        <a href="/toons/">Interactive toons</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </main>
+  </body>
+</html>
