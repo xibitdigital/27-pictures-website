@@ -386,6 +386,31 @@ npm run publish-toon-config -- --toon jax   # or erin | nero
 # Deploy site so config-lock.json is live
 ```
 
+### YouTube embeds: click-to-play façades
+
+No page embeds a player on load. Each video is a placeholder that builds the
+iframe on click (`src/site/ytFacade.ts`, styles under `.yt-facade` in
+`styles.css`):
+
+```html
+<div class="yt-facade" data-embed="https://www.youtube.com/embed/<id>"
+     data-poster="<video id>" data-title="…"></div>
+```
+
+Call `initYouTubeFacades()` from the page's entry module — `main.ts`,
+`horrorShortsMain.ts` and `cosplayMain.ts` all do. **Add an embed and you must
+add the init call**, or the placeholder renders empty.
+
+- Six players on the homepage cost ~1MB each before anyone pressed play; a cold
+  load now fetches nothing from youtube.com, only lazy thumbnails from
+  `i.ytimg.com` (already allowed by the CSP in `public/_headers`).
+- The generated iframe carries `autoplay=1`, so the click that reveals it also
+  starts the video.
+- **Playlists have no thumbnail of their own** — `data-poster` takes a
+  representative video id instead.
+- `hq720.jpg`, not `maxresdefault.jpg`: maxres is missing on some uploads and
+  would leave blank cards.
+
 ### Reader SEO (crawlable fallback)
 
 The readers are client-rendered: without this, `/toons/<name>/` serves an empty
@@ -437,6 +462,20 @@ index), scroll mode from document scroll.
   disc radius clear on each side — that is the `100vw - 64px` term in every
   toon's `<style>`. Shrink that gutter and `.reader`'s overflow slices the
   outer half of the disc off.
+
+### One stylesheet for site pages
+
+`/cosplay/`, `/horror-shorts/`, `/toons/` and `404.html` each carried their own
+`<style>` block — the same footer, section labels and breadcrumb rule copied
+four times, none of it cached across pages. It all lives in
+`public/styles.css` now, under `Site page styles`, and those pages have no
+inline CSS at all.
+
+**Reader pages keep their `<style>` blocks**: those are per-toon book tokens
+(`--book-width`, `--page-bg`, fullscreen overrides), not site chrome.
+
+Anything shared by more than one page belongs in `styles.css`; run
+`npm run hash-assets` after touching it so the `?v=` links update.
 
 ### What goes where (CSS)
 
@@ -693,6 +732,22 @@ Do not commit the binary.
 - `public/robots.txt` — search + AI _citation_ crawlers allowed; QR landing blocked
 - Indexable hub pages added (2026-08): `/horror-shorts/` and `/cosplay/`, each 800+ words of unique copy; sitemap now lists them with 1200×630 OG art
 - `/experiments/` → `/toons/` with 301s in `public/_redirects`
+
+### 404s
+
+`public/404.html` exists so Cloudflare Pages returns a **real 404**. Without it
+Pages served `index.html` at HTTP 200 for every unknown path, which made each
+typo an indexable duplicate of the homepage and a soft-404 in Search Console.
+
+Verify after any deploy that changes routing:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' https://twentyseven.pictures/nope-1234   # 404
+curl -s -o /dev/null -w '%{http_code}\n' https://twentyseven.pictures/toons/      # 200
+```
+
+Statuses take ~30s to propagate after a deploy; check twice before concluding
+anything is wrong.
 
 ### Sitemap + getting new URLs indexed
 
