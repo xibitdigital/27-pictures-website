@@ -3,12 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Erin | Experiments | 27 Pictures</title>
+    <title>Erin — Half-Vampire Horror Toon | 27 Pictures</title>
     <meta
       name="description"
-      content="Erin — half human, half vampire in a small town between the goblin world and the human one. An interactive FlipFrame reader from 27 Pictures."
+      content="Erin — half human, half vampire, keeper of a town that is really a doorway between the goblin world and ours. A 27-page interactive horror comic you read in the browser."
     />
     <link rel="canonical" href="https://twentyseven.pictures/toons/erin/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta
+      name="keywords"
+      content="vampire comic, goblin horror comic, interactive comic, dark fantasy webtoon, read online free"
+    />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://twentyseven.pictures/toons/erin/" />
+    <meta property="og:title" content="Erin — Half-Vampire Horror Toon | 27 Pictures" />
+    <meta
+      property="og:description"
+      content="Erin — half human, half vampire, keeper of a town that is really a doorway between the goblin world and ours. A 27-page interactive horror comic you read in the browser."
+    />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/erin.jpg" />
+    <meta property="og:site_name" content="27 Pictures" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Erin — Half-Vampire Horror Toon | 27 Pictures" />
+    <meta
+      name="twitter:description"
+      content="Erin — half human, half vampire, keeper of a town that is really a doorway between the goblin world and ours. A 27-page interactive horror comic you read in the browser."
+    />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/erin.jpg" />
 
     <link rel="icon" type="image/png" href="/logosquare.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logosquare.png" />
@@ -20,7 +42,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css?v=583216ec94" />
-    <link rel="stylesheet" href="/toons/reader-shared.css?v=11d8c5052e" />
+    <link rel="stylesheet" href="/toons/reader-shared.css?v=d35b6947cf" />
     <style>
       /* Book-only tokens (page paper / spine — not site chrome). Shared
          reader shell chrome lives in ../reader-shared.css; this block only
@@ -55,9 +77,97 @@
         --book-height: min(90dvh, calc(var(--book-width) * 1.5));
       }
     </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://twentyseven.pictures/toons/erin/#webpage",
+            "url": "https://twentyseven.pictures/toons/erin/",
+            "name": "Erin — Half-Vampire Horror Toon | 27 Pictures",
+            "description": "Erin — half human, half vampire, keeper of a town that is really a doorway between the goblin world and ours. A 27-page interactive horror comic you read in the browser.",
+            "isPartOf": {
+              "@id": "https://twentyseven.pictures/#website"
+            },
+            "about": {
+              "@id": "https://twentyseven.pictures/toons/erin/#toon"
+            },
+            "inLanguage": ["en"]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://twentyseven.pictures/toons/erin/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://twentyseven.pictures/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Interactive Toons",
+                "item": "https://twentyseven.pictures/toons/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Erin",
+                "item": "https://twentyseven.pictures/toons/erin/"
+              }
+            ]
+          },
+          {
+            "@type": "CreativeWork",
+            "@id": "https://twentyseven.pictures/toons/erin/#toon",
+            "name": "Erin",
+            "url": "https://twentyseven.pictures/toons/erin/",
+            "description": "Erin is half human, half vampire — too much of each world to belong fully to either. She lives in a small town that is not really a town at all: a thin place, a passage between the goblin world and the human one, where roads fold wrong at night and doors open onto forests that do not appear on any map. Blood, bargains, and old names move through her streets. She is the threshold’s keeper — and its most dangerous secret.",
+            "genre": ["Horror", "Dark Fantasy", "Comic"],
+            "inLanguage": ["en"],
+            "creator": {
+              "@id": "https://twentyseven.pictures/#organization"
+            },
+            "publisher": {
+              "@id": "https://twentyseven.pictures/#organization"
+            },
+            "isAccessibleForFree": true,
+            "image": {
+              "@type": "ImageObject",
+              "url": "%VITE_ASSET_BASE%/card-art/erin.jpg"
+            },
+            "isPartOf": {
+              "@id": "https://twentyseven.pictures/toons/#webpage"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body class="toons-reader">
-    <div id="app"></div>
+    <div id="app">
+      <article class="reader-fallback">
+        <p class="reader-fallback-tag">Interactive toon · 27 pages · English</p>
+        <h1>Erin</h1>
+        <p class="reader-fallback-sub">Between two worlds</p>
+        <p>
+          Erin is half human, half vampire — too much of each world to belong fully to either. She lives in a small town
+          that is not really a town at all: a thin place, a passage between the goblin world and the human one, where
+          roads fold wrong at night and doors open onto forests that do not appear on any map. Blood, bargains, and old
+          names move through her streets. She is the threshold’s keeper — and its most dangerous secret.
+        </p>
+        <p>
+          This is a FlipFrame reader: full-screen plates you turn like a book, with captions that read themselves aloud.
+          It needs JavaScript — the pages and audio stream from our CDN as you read.
+        </p>
+        <p>
+          <a href="/toons/">All interactive toons</a> · <a href="/horror-shorts/">Horror shorts</a> ·
+          <a href="/#contact">Commission one</a>
+        </p>
+      </article>
+    </div>
     <script type="module" src="/toons/erin/main.ts"></script>
   </body>
 </html>

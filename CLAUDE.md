@@ -386,6 +386,27 @@ npm run publish-toon-config -- --toon jax   # or erin | nero
 # Deploy site so config-lock.json is live
 ```
 
+### Reader SEO (crawlable fallback)
+
+The readers are client-rendered: without this, `/toons/<name>/` serves an empty
+`<body>` and the story text arrives from a CDN JSON, so crawlers see nothing on
+the four most distinctive URLs on the site.
+
+Each `src/toons/<name>/index.html` therefore carries:
+
+- a **fallback article inside `#app`** — premise, page count, languages, links
+  out. Vue replaces it on mount (verified: `.reader-fallback` is gone once
+  `.book-scene` exists), so it is a genuine no-JS view, not hidden text. Style
+  lives in `reader-shared.css` under `.reader-fallback`.
+- **`WebPage` + `BreadcrumbList` + `CreativeWork`** JSON-LD. The CreativeWork
+  description reuses the app's `COVER_SYNOPSIS`, so cover copy and schema
+  cannot drift.
+- **og/twitter tags** pointing at `card-art/<toon>.jpg`, and a title built from
+  the hook rather than "… | Experiments", which no one searches.
+
+Keep the fallback in step with the synopsis when a toon's story changes, and
+keep it inside `#app` — moved outside, it would render twice.
+
 ### Reader chrome (progress bar, back link)
 
 There is **no page-number indicator**. Reading position is a fixed hairline
