@@ -33,7 +33,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": 6,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.2,
           "text": {
             "en": "BZZT",
@@ -41,7 +41,7 @@
             "de": "BRRZ",
             "fr": "BZZT"
           },
-          "audio": "assets/sfx/d430a2b69c867054474eb72209e58a84.mp3",
+          "audio": "assets/sfx/b239edad0a9b2c46e8199531fd1b124c.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -63,7 +63,7 @@
             "de": "Eine Stunde Stau.\nKlar.",
             "fr": "Une heure de bouchons.\nBien sûr."
           },
-          "audio": "assets/sfx/11d0a910cd23df270c994d8decb6a3c4.mp3",
+          "audio": "assets/sfx/b4f5236aef359566bd9fee5e9efb0553.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -87,7 +87,7 @@
             "de": "KSSCHHH",
             "fr": "KSSHHHH"
           },
-          "audio": "assets/sfx/68fedc70f8b5af67657d38e7f58387eb.mp3",
+          "audio": "assets/sfx/b3ee39d24507046e892bcc4872c19e7e.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -109,7 +109,7 @@
             "de": "…welcher Sender\nist das?",
             "fr": "…c'est quelle\nchaîne, ça ?"
           },
-          "audio": "assets/sfx/ed243bba20758f99ebe955e3e2d737cb.mp3",
+          "audio": "assets/sfx/ee16137385e673e3de991ced7a9be5b9.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -138,7 +138,7 @@
             "de": "KRRK",
             "fr": "KRRK"
           },
-          "audio": "assets/sfx/184597e9253a59841a7434bf4d3d2e85.mp3",
+          "audio": "assets/sfx/37e244f7a9d0ed26ec36bc5055cc135e.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -160,7 +160,7 @@
             "de": "Hallo?",
             "fr": "Il y a quelqu'un ?"
           },
-          "audio": "assets/sfx/ff2a0753a263d56e0fdd83349df9ab06.mp3",
+          "audio": "assets/sfx/63da0572a4b662c5e95b1e50fd22821d.mp3",
           "speaker": "elena",
           "bubble": {
             "tail": "right",
@@ -176,7 +176,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": -4,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "text": {
             "en": "hhhhhh",
@@ -184,7 +184,7 @@
             "de": "hhhhhh",
             "fr": "hhhhhh"
           },
-          "audio": "assets/sfx/d6f83d5c4b91c39bde9d20860867e090.mp3",
+          "audio": "assets/sfx/ab96165dc491a66ef12eafc25e175028.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -211,7 +211,7 @@
             "de": "Was zum Teufel\nwar das?!",
             "fr": "C'était quoi,\nbon sang ?!"
           },
-          "audio": "assets/sfx/500539dd0e4d99304bfb1bbcf6100ad1.mp3",
+          "audio": "assets/sfx/9ecda1556ccb4f13fcaa84022c92f821.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -227,7 +227,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": 5,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "text": {
             "en": "kreeeee",
@@ -235,7 +235,7 @@
             "de": "knaaarr",
             "fr": "griiince"
           },
-          "audio": "assets/sfx/23d22d2b2102f56675403c2727a94dfa.mp3",
+          "audio": "assets/sfx/a91e6a4e57825ffe4f67a6e553cedbf6.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -257,7 +257,7 @@
             "de": "Wer ist da…?",
             "fr": "Qui est là… ?"
           },
-          "audio": "assets/sfx/a03671ed8c1b69d272765cbc7effd706.mp3",
+          "audio": "assets/sfx/325dbbaff835605477872dcfa5aadfd2.mp3",
           "speaker": "elena",
           "bubble": {
             "tail": "bottom-right",
@@ -286,7 +286,7 @@
             "de": "KLICK",
             "fr": "CLIC"
           },
-          "audio": "assets/sfx/d9b9864d893a37c932541511a407de4e.mp3",
+          "audio": "assets/sfx/49c39d4273a301c0333fd6b6839b7848.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -308,7 +308,7 @@
             "de": "Kein Strom.",
             "fr": "Pas de courant."
           },
-          "audio": "assets/sfx/c663f78f67bf5af750e248d39a117fde.mp3",
+          "audio": "assets/sfx/a7baab29efe6583fcd460ed60357abe8.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -332,7 +332,7 @@
             "de": "Das ist nicht\nmein Spiegelbild.",
             "fr": "Ce n'est pas\nmon reflet."
           },
-          "audio": "assets/sfx/3fc686fbbd1dcfbb5e749f28647c08f1.mp3",
+          "audio": "assets/sfx/cc2976a2dd4b4cef2a42879fd05997a1.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -348,7 +348,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": -4,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "text": {
             "en": "hnnnnn",
@@ -356,7 +356,7 @@
             "de": "hnnnnn",
             "fr": "hnnnnn"
           },
-          "audio": "assets/sfx/b9ba12d1dbe04316a97546c356f0eb59.mp3",
+          "audio": "assets/sfx/ae351661b9ec202e99f038d3f34b84fa.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -383,7 +383,7 @@
             "de": "KNARR",
             "fr": "CRAAC"
           },
-          "audio": "assets/sfx/e83d5a56856f5cd6e2b4eec7be81c381.mp3",
+          "audio": "assets/sfx/bebd2e134cd857f2449becab597d6f67.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -405,7 +405,7 @@
             "de": "Er hat sich gedreht,\nals ich mich drehte.",
             "fr": "Elle s'est tournée\nquand je me suis tournée."
           },
-          "audio": "assets/sfx/dfb49283e0968ce21d006a9fbed15fbb.mp3",
+          "audio": "assets/sfx/7bd708ab991b8c341e00db5b0c12d428.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -421,7 +421,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": 4,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "text": {
             "en": "tk… tk…",
@@ -429,7 +429,7 @@
             "de": "tk… tk…",
             "fr": "tk… tk…"
           },
-          "audio": "assets/sfx/b8c5f3d98e54484e3eff127a67f4e6ed.mp3",
+          "audio": "assets/sfx/205e4873b8327c19a6aa83d8071c9c55.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -456,7 +456,7 @@
             "de": "Ich hab sie zugemacht.\nIch weiß, dass ich sie zugemacht habe.",
             "fr": "Je les avais fermées.\nJe sais que je les avais fermées."
           },
-          "audio": "assets/sfx/1084166f6ef2ab7751830161a7955e85.mp3",
+          "audio": "assets/sfx/24c39410861ecabce01a567fbde16813.mp3",
           "speaker": "elena",
           "bubble": {
             "tail": "bottom-right",
@@ -480,7 +480,7 @@
             "de": "Die gehören nicht mir.",
             "fr": "Elles ne sont pas à moi."
           },
-          "audio": "assets/sfx/fd3b1f05aeb9d07330f459cd18637a45.mp3",
+          "audio": "assets/sfx/f00eb41a0bbb46df4c347be394347d84.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -504,7 +504,7 @@
             "de": "Bitte sei leer.",
             "fr": "Pitié, qu'elle soit vide."
           },
-          "audio": "assets/sfx/c33c553f0e704e2e8cd17ebb0891c9fd.mp3",
+          "audio": "assets/sfx/da4c36bca7863bb0c52081a9c0cfd504.mp3",
           "speaker": "elena",
           "bubble": {
             "tail": "bottom-right",
@@ -520,7 +520,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": -6,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.22,
           "text": {
             "en": "SHKK",
@@ -528,7 +528,7 @@
             "de": "SHKK",
             "fr": "SHKK"
           },
-          "audio": "assets/sfx/769cafed2bdab16ac802c28b95f1f6fc.mp3",
+          "audio": "assets/sfx/28b3c44c57330c2f69195b44d337b4c2.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -547,7 +547,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": 5,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.22,
           "text": {
             "en": "NNNK",
@@ -555,7 +555,7 @@
             "de": "NNNK",
             "fr": "NNNK"
           },
-          "audio": "assets/sfx/88bbd90099ac0285d2e72052b0fddbb7.mp3",
+          "audio": "assets/sfx/d701e4d5628e14ce9b057ea803ebb089.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5
@@ -577,7 +577,7 @@
             "de": "Mein Schatten zeigt\nin die falsche Richtung.",
             "fr": "Mon ombre est tournée\ndu mauvais côté."
           },
-          "audio": "assets/sfx/be5b62d1da2e86500b518b68798edc3f.mp3",
+          "audio": "assets/sfx/890a5071a7540d888e3ceae9a3d66438.mp3",
           "speaker": "elena",
           "bubble": {
             "tail": "right",
@@ -601,7 +601,7 @@
             "de": "NEIIIIN—!",
             "fr": "NOOOOON—!"
           },
-          "audio": "assets/sfx/3a112f1202d06521d34ff7ff050ce01e.mp3",
+          "audio": "assets/sfx/9d9ab7f1e21519edffe849ab01cf07a9.mp3",
           "speaker": "elena",
           "bubble": {
             "opacity": 0.75,
@@ -609,6 +609,274 @@
           }
         }
       ]
+    },
+    {
+      "file": "assets/8a8152144c09cc3910283b9a88e66e23.png",
+      "words": [
+        {
+          "x": 0.21,
+          "y": 0.07,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "ELENA'S NOT\nHOME RIGHT NOW.",
+            "it": "ELENA NON È\nIN CASA ADESSO.",
+            "de": "ELENA IST\nGERADE NICHT DA.",
+            "fr": "ELENA N'EST\nPAS LÀ POUR L'INSTANT."
+          },
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          },
+          "audio": "assets/sfx/474b12107e54125d18840b02cc626d21.mp3"
+        },
+        {
+          "x": 0.8,
+          "y": 0.4,
+          "align": "center",
+          "size": 24,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 5,
+          "scale": 1,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "VVVMMM",
+            "it": "VVVMMM",
+            "de": "VVVMMM",
+            "fr": "VVVMMM"
+          },
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "audio": "assets/sfx/426611c0f7c1694e2a87ee6d6d717f07.mp3"
+        },
+        {
+          "x": 0.26,
+          "y": 0.7,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.05,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "Elena? I'm home.",
+            "it": "Elena? Sono a casa.",
+            "de": "Elena? Ich bin's.",
+            "fr": "Elena ? Je suis rentrée."
+          },
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          },
+          "audio": "assets/sfx/6abab142c242b35b98224f3549a7bb13.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/875346564336ad9f4f5ad3b1ebd55b36.png",
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.07,
+          "align": "center",
+          "size": 26,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.32,
+          "text": {
+            "en": "Sorry, sorry —\nthe traffic.",
+            "it": "Scusa, scusa —\nil traffico.",
+            "de": "Tut mir leid —\nder Verkehr.",
+            "fr": "Pardon, pardon —\nles bouchons."
+          },
+          "audio": "assets/sfx/2d20075000221aa8d1a04d5be6ff6747.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          }
+        },
+        {
+          "x": 0.72,
+          "y": 0.38,
+          "align": "center",
+          "size": 25,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 3,
+          "scale": 1.05,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Why are you standing\nin the dark, love?",
+            "it": "Perché sei al buio,\namore?",
+            "de": "Warum stehst du\nim Dunkeln, Schatz?",
+            "fr": "Pourquoi tu restes\ndans le noir, ma puce ?"
+          },
+          "audio": "assets/sfx/2a431de971c95eab22ccfa4278a9f92a.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
+        },
+        {
+          "x": 0.74,
+          "y": 0.7,
+          "align": "center",
+          "size": 27,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.05,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "COME IN.\nCLOSE THE DOOR.",
+            "it": "ENTRA.\nCHIUDI LA PORTA.",
+            "de": "KOMM REIN.\nMACH DIE TÜR ZU.",
+            "fr": "ENTRE.\nFERME LA PORTE."
+          },
+          "audio": "assets/sfx/8c07068f8dcbf9f0c50f8cd15d5f88f9.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/0ed3ed05e728a94b5931ad32e9de6253.png",
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.08,
+          "align": "center",
+          "size": 34,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -5,
+          "scale": 1,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "ELENA—!",
+            "it": "ELENA—!",
+            "de": "ELENA—!",
+            "fr": "ELENA—!"
+          },
+          "audio": "assets/sfx/fda1655aa6ebaaa899f48358909e8ef7.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.78,
+          "y": 0.38,
+          "align": "center",
+          "size": 24,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 6,
+          "scale": 1,
+          "maxWidth": 0.22,
+          "text": {
+            "en": "sssshhhkk",
+            "it": "sssshhhkk",
+            "de": "sssshhhkk",
+            "fr": "sssshhhkk"
+          },
+          "audio": "assets/sfx/35ae987de5d4a4efa25ec01b13d74d29.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.84,
+          "y": 0.55,
+          "align": "center",
+          "size": 34,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 8,
+          "scale": 1,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "AAAAHH—!",
+            "it": "AAAAHH—!",
+            "de": "AAAAHH—!",
+            "fr": "AAAAHH—!"
+          },
+          "audio": "assets/sfx/8661f6f7aedcb79f7af7bec7d9cfda1d.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          }
+        },
+        {
+          "x": 0.24,
+          "y": 0.4,
+          "align": "center",
+          "size": 25,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.05,
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Shh.\nIt's quick.",
+            "it": "Shh.\nÈ veloce.",
+            "de": "Schh.\nEs geht schnell.",
+            "fr": "Chut.\nC'est rapide."
+          },
+          "audio": "assets/sfx/203fdb28592f58c78fdc18786661f923.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          }
+        },
+        {
+          "x": 0.74,
+          "y": 0.72,
+          "align": "center",
+          "size": 24,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "…mum.",
+            "it": "…mamma.",
+            "de": "…Mama.",
+            "fr": "…maman."
+          },
+          "audio": "assets/sfx/025730c219a80ba2728d06ea45351960.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "top-left"
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/b3998657c538be56314fd5905745e035.png",
+      "words": []
     }
   ]
 }
