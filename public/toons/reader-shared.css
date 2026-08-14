@@ -247,6 +247,33 @@ body.toons-reader {
   color: var(--red-smile);
 }
 
+/* Like heart: filled + brand red once this reader has voted. */
+.toon-like-btn.is-liked {
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+}
+
+.toon-like-btn.is-pending {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Count is opt-in (?stats=true) and stacks under the heart, so the top bar
+   keeps its one-icon-per-control rhythm. */
+.toon-like-btn.has-stats {
+  flex-direction: column;
+  gap: 0.05rem;
+  padding: 0.35rem 0.45rem 0.3rem;
+  line-height: 1;
+}
+
+.toon-like-btn .toon-like-count {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Sound icon: hide wave arcs until enabled (matches front-cover control). */
 .toon-fs-btn .toon-fs-sound-waves {
   display: none;
@@ -1051,7 +1078,9 @@ a.sound-prompt__btn {
   text-align: left;
   text-wrap: pretty;
   color: color-mix(in srgb, var(--text) 82%, transparent);
-  white-space: normal;
+  /* pre-line so a synopsis can break into paragraphs (CoverFirstPage documents
+     newlines as preserved); spaces still collapse, so single-line copy is safe */
+  white-space: pre-line;
   overflow-wrap: break-word;
   box-sizing: border-box;
 }

@@ -3,8 +3,7 @@
 Black-and-white horror short in the **RED SMILE** series. FlipFrame reader at
 `/toons/redsmile-static/`.
 
-**Logline:** Elena waits alone at home. A strange image flickers on the TV.
-Something starts watching back.
+**Logline:** The first episode of the Elena series: psychological horror drawn in heavy black-and-white gekiga ink — crushed shadows, hand-inked plates, light that never quite reaches the corners. Elena is alone in the flat when the television finds a channel that should not exist.
 
 | Item      | Value                                              |
 | --------- | -------------------------------------------------- |

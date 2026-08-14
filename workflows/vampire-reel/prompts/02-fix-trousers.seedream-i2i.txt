@@ -1,0 +1,15 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = current red-hair hero still (full body, wet street)
+
+PIN from Image 1: keep the same woman exactly — face, deep auburn-red hair and its rim light, freckles, winged eyeliner, glossy deep-red lips, closed mouth, grey-green eyes with catchlights, choker, silver rings, ear cuffs. Keep the long open black leather coat, the black leather corset top, the wide belt, the heavy buckled boots. Keep the contrapposto pose, hand on hip, the wet night street, the streetlight from upper left, the neon bokeh and the reflections. Same 9:16 vertical framing, same photoreal cinematic grade.
+
+CHANGE — trousers only:
+- Replace the baggy leather trousers with slim high-waisted black leather trousers, fitted through the hip and thigh and tapering to the ankle, tucked into the boot shafts.
+- The leg line must read clearly against the dark street: a defined thigh and calf silhouette, the leather catching specular highlights along the front of the thigh and the shin, a soft rim of light down the outer edge of the leading leg from the shopfront kicker behind.
+- Keep the waist cinched by the same wide belt, high enough that the leg line starts at the natural waist.
+- Natural fabric behaviour — slight creasing at the hip and behind the knee, no painted-on latex look, no wrinkles pooling at the ankle.
+
+KEEP: same leg positions and weight distribution as Image 1, same boots at the same angle, feet planted in the same spots.
+
+NEGATIVE: no change to the face, no change to hair colour or length, no nudity or lingerie, no exaggerated proportions, no plastic or latex sheen, no extra limbs or fingers, no text, no watermark, no motion blur.

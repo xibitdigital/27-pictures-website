@@ -4,6 +4,7 @@ import { resolveAssetUrl } from "../bookReader/assetUrl";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "../bookReader/types";
 import LangSwitcher from "../bookReader/LangSwitcher.vue";
+import { LikeButton } from "../bookReader/chrome";
 import { toonConfigUrl } from "../configUrls";
 
 /** Reader media root — explicit pageDir for CDN relative paths. */
@@ -68,7 +69,9 @@ function onMusicClick(): void {
 
 /** Front-cover story — full manual in content/toons/jax/README.md */
 const COVER_SYNOPSIS =
-  "In a neon city that sells minds by the megacorp, Jax is a netrunner dying by inches: a rare sickness eats his body while his code still cuts like a blade. He does not rob banks — he steals mind-control tech from the corporations that build it, then turns their own weapons against the leash. A future Robin Hood in a trench coat and chrome, racing the clock inside his own skull: liberate the street, stay human long enough to finish the run.";
+  "In a neon city that sells minds by the megacorp, Jax is a netrunner dying by inches: a rare sickness eats his body while his code still cuts like a blade.\n\n" +
+  "He does not rob banks — he steals mind-control tech from the corporations that build it, then turns their own weapons against the leash.\n\n" +
+  "A future Robin Hood in a trench coat and chrome, racing the clock inside his own skull: liberate the street, stay human long enough to finish the run.";
 
 /** Stable options — shell owns page source, captions, and cover identity. */
 const bookOptions: ToonShellBookOptions = {
@@ -114,6 +117,7 @@ onMounted(() => {
 
     <template #top-controls-start>
       <LangSwitcher />
+      <LikeButton toon-id="jax" />
     </template>
 
     <template #top-controls-mid>

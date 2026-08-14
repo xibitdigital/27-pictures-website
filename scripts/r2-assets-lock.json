@@ -5888,6 +5888,30 @@
     "toons/erin-ep2/config.d88f8af0612ccda0bd310afb4395ea61.json": {
       "size": 32827,
       "uploadedAt": "2026-08-14T13:07:11.241Z"
+    },
+    "toons/redsmile-static/assets/cb65710f545e84bdef4b9d91d9c2a175.png": {
+      "size": 420566,
+      "uploadedAt": "2026-08-14T20:35:36.106Z"
+    },
+    "toons/redsmile-static/config.5bec5ebea50bfe20f6d4b73dc4cb5142.json": {
+      "size": 25383,
+      "uploadedAt": "2026-08-14T20:35:38.038Z"
+    },
+    "toons/redsmile-static/assets/sfx/b185550cdd557a1cb849f3c23b399327.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-14T20:36:55.026Z"
+    },
+    "toons/redsmile-static/config.deb9fb3a6a73535881a1ffec82916fe3.json": {
+      "size": 25842,
+      "uploadedAt": "2026-08-14T20:37:23.277Z"
+    },
+    "toons/redsmile-static/config.64a66c55b2647a4af48db7789afd91b3.json": {
+      "size": 26310,
+      "uploadedAt": "2026-08-14T20:41:45.499Z"
+    },
+    "toons/redsmile-static/config.3e2f03c6843a07ea13314afb97472b21.json": {
+      "size": 26299,
+      "uploadedAt": "2026-08-14T20:43:03.961Z"
     }
   }
 }

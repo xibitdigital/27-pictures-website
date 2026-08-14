@@ -1,0 +1,18 @@
+name = "toon-likes"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Comma-separated toon ids the counter will accept. Anything else 400s, so a
+# bot cannot mint unbounded KV keys by inventing toon names.
+[vars]
+ALLOWED_TOONS = "erin,erin-ep2,jax,nero,redsmile-static"
+ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures,https://staging.twentyseven-pictures.pages.dev"
+
+# One-time setup:
+#   npx wrangler kv namespace create TOON_LIKES
+#   npx wrangler kv namespace create TOON_LIKES --preview
+# then paste the ids below and `npx wrangler deploy`.
+[[kv_namespaces]]
+binding = "TOON_LIKES"
+id = "93c35eab211248119d253a815cc00b84"
+preview_id = "86e716a2339c4ab29bf57f1cf1ed5c94"

@@ -52,5 +52,5 @@ Allow: /
 # - https://twentyseven.pictures/toons/erin-ep2/ — Erin EP 2: The Revenge, B&W dark fantasy toon (EN/IT/DE/FR captions)
 # - https://twentyseven.pictures/toons/jax/ — Jax cyberpunk toon (EN/IT/DE/FR captions)
 # - https://twentyseven.pictures/toons/nero/ — Nero detective toon (EN/IT/DE/FR captions)
-# - https://twentyseven.pictures/toons/redsmile-static/ — RED SMILE: static, B&W possession horror toon (EN/IT/DE/FR captions)
+# - https://twentyseven.pictures/toons/redsmile-static/ — STATIC — Elena series ep.1, psychological horror in B&W gekiga ink (EN/IT/DE/FR captions)
 # - https://www.youtube.com/@twentyseven.pictures — primary video distribution
