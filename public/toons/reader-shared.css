@@ -247,6 +247,33 @@ body.toons-reader {
   color: var(--red-smile);
 }
 
+/* Like heart: filled + brand red once this reader has voted. */
+.toon-like-btn.is-liked {
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+}
+
+.toon-like-btn.is-pending {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Count is opt-in (?stats=true) and stacks under the heart, so the top bar
+   keeps its one-icon-per-control rhythm. */
+.toon-like-btn.has-stats {
+  flex-direction: column;
+  gap: 0.05rem;
+  padding: 0.35rem 0.45rem 0.3rem;
+  line-height: 1;
+}
+
+.toon-like-btn .toon-like-count {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Sound icon: hide wave arcs until enabled (matches front-cover control). */
 .toon-fs-btn .toon-fs-sound-waves {
   display: none;
@@ -364,17 +391,21 @@ body.is-fullscreen .reader {
 .page-slot[data-page-num]::after {
   content: attr(data-page-num);
   position: absolute;
-  left: 0.55rem;
-  bottom: 0.4rem;
+  /* Flush into the plate's bottom-left corner — the chip is the corner. */
+  left: 0;
+  bottom: 0;
   z-index: 33;
   font-family: "VT323", monospace;
   font-size: clamp(11px, 1.5vh, 16px);
   line-height: 1;
   letter-spacing: 0.08em;
-  color: color-mix(in srgb, var(--text) 52%, transparent);
-  text-shadow:
-    0 1px 2px color-mix(in srgb, var(--bg-dark) 85%, transparent),
-    0 0 6px color-mix(in srgb, var(--bg-dark) 60%, transparent);
+  /* Solid black chip: a translucent glyph with a text-shadow vanished into the
+     plate wherever the art was busy or already black, which is most of a dark
+     toon. The chip carries its own ground so the number reads on any plate. */
+  color: var(--text);
+  background: var(--bg-dark);
+  padding: 0.25em 0.55em 0.2em;
+  border-radius: 0 3px 0 0;
   pointer-events: none;
   user-select: none;
 }
@@ -1047,7 +1078,9 @@ a.sound-prompt__btn {
   text-align: left;
   text-wrap: pretty;
   color: color-mix(in srgb, var(--text) 82%, transparent);
-  white-space: normal;
+  /* pre-line so a synopsis can break into paragraphs (CoverFirstPage documents
+     newlines as preserved); spaces still collapse, so single-line copy is safe */
+  white-space: pre-line;
   overflow-wrap: break-word;
   box-sizing: border-box;
 }
@@ -1203,10 +1236,13 @@ a.sound-prompt__btn {
 
 /* ── Vertical scroll reading mode ──
    Match (or beat) single-page book width so pages don’t look shrunk vs flip view.
-   Portrait plates read well up to ~720–800px wide on desktop. */
+   The cap has to follow the plate shape: 720px suits a 9:16 page, but a wider
+   2:3 plate hits it long before it fills the screen and the strip reads as
+   locked to a narrow column next to the same book in flip view. Toons with
+   wide plates raise --strip-width; the fallback is the 9:16 value. */
 .vertical-strip {
   display: none;
-  width: min(98vw, 720px);
+  width: var(--strip-width, min(98vw, 720px));
   margin: 0 auto;
   flex-direction: column;
   gap: 1rem;
@@ -1331,8 +1367,11 @@ body.view-vertical.is-fullscreen .reader {
   position: relative;
   width: 100%;
   /* Reserve plate height before lazy images decode — without this, fast
-     flings jump/stop as each plate expands from 0 under the scroll position. */
-  aspect-ratio: 1008 / 1792;
+     flings jump/stop as each plate expands from 0 under the scroll position.
+     Must match the toon's real plate ratio, or the slot is taller than the
+     image and every page scrolls with bands above and below it. Each toon
+     sets --plate-aspect next to its book tokens; the fallback is Jax's. */
+  aspect-ratio: var(--plate-aspect, 1008 / 1792);
   height: auto;
   min-height: 0;
   flex: none;
@@ -1584,8 +1623,8 @@ body.single-page .flip-page.flipping.from-left {
 
 @media (max-width: 768px) {
   .page-slot[data-page-num]::after {
-    left: 0.4rem;
-    bottom: 0.3rem;
+    left: 0;
+    bottom: 0;
     font-size: 11px;
   }
 

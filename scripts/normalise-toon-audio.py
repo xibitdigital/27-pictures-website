@@ -11,6 +11,12 @@ the superseded local files.
   python3 scripts/normalise-toon-audio.py jax nero redsmile-static
   python3 scripts/normalise-toon-audio.py jax --dry-run
   python3 scripts/normalise-toon-audio.py jax --voice -18 --sfx -15 --tp -1.5
+  python3 scripts/normalise-toon-audio.py jax --all      # relevel everything
+
+Clips already within `--tolerance` LU of target (and under the peak ceiling)
+are left untouched: re-encoding them changes the content hash for no audible
+reason, which forces a re-upload of the whole toon and a fresh config publish.
+So a run after adding two clips levels those two.
 
 Voices sit 3 dB under the SFX on purpose, so onomatopoeia still punch while
 dialogue stays even. Both share the true-peak ceiling.
@@ -63,7 +69,7 @@ def measure(path, target_i, tp):
     return json.loads(m.group(0)) if m else None
 
 
-def normalise(toon, targets, tp, dry_run=False):
+def normalise(toon, targets, tp, dry_run=False, tol=0.5, force_all=False):
     cfg_path = config_path(toon)
     if not os.path.exists(cfg_path):
         print(f"error: no config at {os.path.relpath(cfg_path, ROOT)}", file=sys.stderr)
@@ -82,6 +88,7 @@ def normalise(toon, targets, tp, dry_run=False):
             kind[rel] = 'voice' if kind.get(rel) == 'voice' or k == 'voice' else k
 
     mapping, report, missing = {}, [], []
+    kept = 0
     for rel, k in sorted(kind.items()):
         src = os.path.join(root, rel)
         if not os.path.exists(src):
@@ -92,7 +99,20 @@ def normalise(toon, targets, tp, dry_run=False):
         if not stats:
             print(f"  measure failed: {rel}", file=sys.stderr)
             continue
-        report.append((k, float(stats['input_i']), float(stats['input_tp'])))
+        loud, peak = float(stats['input_i']), float(stats['input_tp'])
+        # Leave a clip alone when there is nothing to gain, so a re-run does not
+        # churn the content hash and force a pointless re-upload:
+        #   - it already sits on target, or
+        #   - it is quieter than target but already at the peak ceiling. A punchy
+        #     SFX or a scream has a high peak-to-loudness ratio, so `linear=true`
+        #     caps the gain to protect the ceiling and the clip can never reach
+        #     the target — without this it would be re-encoded on every run.
+        on_target = abs(loud - target_i) <= tol and peak <= tp + 0.1
+        peak_limited = loud < target_i and peak >= tp - 0.75
+        if not force_all and (on_target or peak_limited):
+            kept += 1
+            continue
+        report.append((k, loud, peak))
         if dry_run:
             continue
         af = (
@@ -129,7 +149,8 @@ def normalise(toon, targets, tp, dry_run=False):
     for k, loud, peak in report:
         grouped[k].append((loud, peak))
     prefix = '[dry-run] ' if dry_run else ''
-    print(f"{prefix}{toon}: {len(report)} clips, {words} words repointed")
+    print(f"{prefix}{toon}: {len(report)} clip(s) relevelled, {kept} already on target, "
+          f"{words} words repointed")
     for k, vals in sorted(grouped.items()):
         avg = sum(v[0] for v in vals) / len(vals)
         print(f"  {k:>5}: was {avg:6.1f} LUFS avg, peaks to {max(v[1] for v in vals):+5.1f} dBTP"
@@ -148,12 +169,16 @@ def main():
     ap.add_argument('--sfx', type=float, default=-15.0, help='target LUFS for onomatopoeia (default -15)')
     ap.add_argument('--tp', type=float, default=-1.5, help='true-peak ceiling in dBTP (default -1.5)')
     ap.add_argument('--dry-run', action='store_true', help='measure and report; touch nothing')
+    ap.add_argument('--tolerance', type=float, default=0.5,
+                    help='leave a clip alone if it is already within this many LU of target (default 0.5)')
+    ap.add_argument('--all', dest='force_all', action='store_true',
+                    help='relevel every clip, even those already on target (changes every hash)')
     args = ap.parse_args()
 
     targets = {'voice': args.voice, 'sfx': args.sfx}
     rc = 0
     for toon in args.toons:
-        rc |= normalise(toon, targets, args.tp, args.dry_run)
+        rc |= normalise(toon, targets, args.tp, args.dry_run, args.tolerance, args.force_all)
     if not args.dry_run:
         print('\nNext: npm run upload-assets && npm run publish-toon-config -- --toon <toon>')
     return rc

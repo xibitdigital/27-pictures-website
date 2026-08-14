@@ -171,6 +171,11 @@ backup-cdn: ## Download CDN/R2 lock keys into cdn-backup/ (use ARGS=--images-onl
 
 PAGES_PROJECT ?= twentyseven-pictures
 PAGES_BRANCH  ?= main
+# Staging is its own Pages project: a custom domain always serves a project's
+# production branch, so staging.twentyseven.pictures cannot point at a preview
+# branch of the main project. functions/_middleware.js basic-auths every host
+# that is not twentyseven.pictures.
+STAGING_PROJECT ?= twentyseven-pictures-staging
 PREVIEW_BRANCH ?= staging
 
 .PHONY: deploy
@@ -194,11 +199,13 @@ preview-deploy: require-cdn-base ## Build + deploy Pages preview branch
 	@echo "→ CDN media: $(VITE_ASSET_BASE)"
 	$(NPM) run build
 	@find dist -name .DS_Store -delete 2>/dev/null || true
+	@echo "→ Deploying dist/ → $(STAGING_PROJECT) ($(PREVIEW_BRANCH))"
 	$(NPX) wrangler pages deploy dist \
-		--project-name=$(PAGES_PROJECT) \
+		--project-name=$(STAGING_PROJECT) \
 		--branch=$(PREVIEW_BRANCH) \
 		--commit-dirty=true \
 		--commit-message="preview: vue frontend MPA"
+	@echo "✓ Staging: https://staging.twentyseven.pictures (admin / see Pages secrets)"
 
 .PHONY: preview-cdn
 preview-cdn: preview-deploy ## Alias for preview-deploy (CDN required)

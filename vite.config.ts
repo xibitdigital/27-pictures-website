@@ -77,6 +77,7 @@ export default defineConfig({
         "horror-shorts": path.resolve(srcDir, "horror-shorts/index.html"),
         jax: path.resolve(srcDir, "toons/jax/index.html"),
         erin: path.resolve(srcDir, "toons/erin/index.html"),
+        "erin-ep2": path.resolve(srcDir, "toons/erin-ep2/index.html"),
         nero: path.resolve(srcDir, "toons/nero/index.html"),
         "redsmile-static": path.resolve(srcDir, "toons/redsmile-static/index.html"),
       },
@@ -101,9 +102,11 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     setupFiles: ["src/test/setup.ts"],
     css: true,
-    // Do not inherit VITE_ASSET_BASE from developer .env — unit tests use relative paths.
+    // Do not inherit these from developer .env — unit tests use relative paths
+    // and must exercise the no-counter path unless a case stubs it.
     env: {
       VITE_ASSET_BASE: "",
+      VITE_LIKES_API: "",
     },
   },
 });

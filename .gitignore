@@ -41,3 +41,4 @@ cdn-backup/
 
 # Local WebP conversion staging (npm run convert-plates)
 converted/
+worker/likes/.wrangler/

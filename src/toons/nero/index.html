@@ -42,13 +42,15 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css?v=f415ca093e" />
-    <link rel="stylesheet" href="/toons/reader-shared.css?v=d35b6947cf" />
+    <link rel="stylesheet" href="/toons/reader-shared.css?v=b5c52e10f8" />
     <style>
       /* Book-only tokens — portrait pages (~800×1424). Shared shell chrome in reader-shared.css. */
       :root {
         /* Spread aspect ≈ 0.89 for two portrait pages (same family as Jax). */
         --book-width: min(calc(100vw - 64px), 1400px, calc((100dvh - 88px) / 0.89));
         --book-height: calc(var(--book-width) * 0.89);
+        /* Real plate ratio — sizes the vertical-scroll slots. */
+        --plate-aspect: 800 / 1424;
         --page-bg: #0a0a0c;
         --spine: #1a1a22;
         --cover: #0a0a0c;
