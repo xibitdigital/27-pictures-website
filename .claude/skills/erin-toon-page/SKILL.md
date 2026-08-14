@@ -30,9 +30,11 @@ the art**.
   narration plates, onomatopoeia / SFX lettering, title text, credits.
 - No empty balloon shapes either — the model likes to leave white ovals
   "for text"; ban them explicitly.
-- Page 3 and the KRAK/BOOM plate in the existing book have lettering **baked
-  in**. That is legacy. Do not copy it, and do not use those plates as style
-  refs without the ban clause below.
+- Several shipped plates have lettering **baked in** — page 3 (`646efa4c…`),
+  the KRAK/BOOM Goblin King plate (`0fc4824c…`), `80cb37d9…` ("where is
+  she???") and `45febe7c…` ("It's time… / Open."). That is legacy. Those plates are still the best refs
+  for **border grammar**, so attach them freely — but never without the ban
+  clause below, or the model copies their balloons too.
 - Words arrive later as FlipFrame overlays: `words[]` entries in
   `content/toons/erin/config.json`, with `variant: bubble | burst`, tails
   aimed at the sound source. See the caption rules in `CLAUDE.md`.
@@ -78,8 +80,11 @@ page the reader letterboxes.
 | Erin character sheet | `toons/erin/assets/c363b4d490e8b574c61f92716bdc7dd4.jpg` | **Always** — face, hair, outfit, boots |
 | Cover | `toons/erin/assets/6bfcd46718a6a8defd3b22e4998c7ddf.jpg` | Goblin design + title-page look (colour — do not pin colour from it) |
 | Goblin pack | `toons/erin/assets/b19084ec3aa6db1355311aea48adfd23.jpg` | Goblin anatomy in B&W ink |
-| Goblin King | `toons/erin/assets/1f45add7e288635d156651e19f9122b9.jpg` | Crowned armoured boss |
+| Goblin King | `toons/erin/assets/0fc4824cf93e4f6b20131f9817b89ef0.jpg` | Crowned armoured boss (has baked KRAK/BOOM lettering — ban clause required) |
+| Portal / magic FX | `toons/erin/assets/1f45add7e288635d156651e19f9122b9.jpg` | How energy and light are inked |
 | Ink/style + layout | any prior page, e.g. `toons/erin/assets/8cc09933d67fea64fb14a8d81f430edc.jpg` | Line weight, screentone, panel stack |
+| Forest pages | `toons/erin/assets/67227f9cd34af508125aa2aeac592031.jpg`, `toons/erin/assets/1856ff73321fdad84ccee2a4f3161336.jpg` | Woodland ink + wedge-band / frame-break layouts |
+| Border grammar | `toons/erin/assets/c6b050b7505fd0d514de8f8b57857697.jpg` (lightning outline), `toons/erin/assets/80cb37d9cc1abdab82ecae25676626ec.jpg` (bolt divider + overlap) | Attach when the page wants a non-straight border |
 
 Local copies live in `cdn-backup/toons/erin/assets/`. Character sheet first —
 identity drifts fastest.
@@ -111,11 +116,11 @@ PIN from references: keep Erin's face, short choppy dark bob with straight fring
 | Spec | Default |
 |------|---------|
 | Size | Vertical **1152×1728** (2:3) |
-| Panels | **1–3**, horizontal stack; splash for big beats (see rhythm) |
-| Gutters | Thin white gutters, thin black panel keylines, white page margin |
+| Panels | **1–3**, stacked; splash for big beats (see rhythm) |
+| Gutters | Thin white gutters, thin black keylines, white page margin — **borders are not always straight**, see below |
 | Colour | Pure **B&W** ink + grey screentone/wash — the cover is the only colour piece |
 | Balloons / text | **None**, always — see the bubble rule |
-| Layout ban | Diagonal slash panels only for shock beats; never triangle crops |
+| Layout ban | No triangle crops, no more than one effect border per page |
 | Anatomy | Two arms, two legs per human; goblins keep four limbs |
 
 ## Style lock (always include)
@@ -150,6 +155,33 @@ Anti-drift: Erin never gets long hair, a skirt, colour, a cape or armour; she
 is in the same black track suit and boots every page. Goblins stay grey-green
 ink-toned gremlins — no orcs, no trolls, no humanoid warriors.
 
+## Panel borders — the page grammar
+
+Panels stack, but **the borders are rarely plain rectangles**. The shipped
+book uses a specific vocabulary; name the one you want in the FORMAT line or
+the model defaults to a boring grid.
+
+| Border | Look | Use it for | Seen in |
+|--------|------|------------|---------|
+| **Straight rectangles** | Thin black keyline, thin white gutter | Quiet, observational beats | `cd789256…` |
+| **Full bleed** | Panel runs off the page edge, keyline only on the inner sides | Establishing shots, deep forest | `67227f9c…` |
+| **Tilted panels** | Whole panel rotated a few degrees; gutters stop being parallel | Rising tension, unsteady ground | `c6b050b7…` |
+| **Wedge / parallelogram band** | Panel narrows across the page, edges converge — a slanted band, not a box | ECU cut-ins between two wide panels | `67227f9c…`, `8cc09933…` |
+| **Lightning-bolt border** | The whole panel outlined in jagged electric spikes | Shock, a scream, magic firing | `c6b050b7…` |
+| **Zigzag bolt divider** | A lightning slash cuts diagonally across the page and *is* the gutter between two panels | Hard cut, a reveal, an impact landing | `80cb37d9…`, `d53879ae…` |
+| **Overlap / frame break** | Inset panel sits over its neighbour, or art bursts past the keyline | Faces, fists, anything that should feel closer than the page | `80cb37d9…`, `1856ff73…` |
+| **Tilted strip of small panels** | Row of 3 narrow slanted panels across the top | Fast staccato beats before a splash | `1856ff73…` |
+
+Rules that keep it readable:
+
+- **One effect border per page, maximum.** A bolt divider *and* a lightning
+  outline *and* a tilt is noise; the energy stops meaning anything.
+- Quiet pages stay rectangular. Earn the jagged frame.
+- Reading order must survive the tilt — top-to-bottom, left-to-right always.
+- A frame-break needs somewhere to break into: keep white margin on that side.
+- Panels can be non-rectangular; **crops must not be triangles**, and no
+  panel may cut a face in half at the keyline.
+
 ## Page rhythm
 
 Pick the layout from the beat, do not force three panels:
@@ -157,10 +189,11 @@ Pick the layout from the beat, do not force three panels:
 | Beat | Layout |
 |------|--------|
 | Establish / discovery | Single full-bleed splash |
-| Move → react | 2 stacked horizontal panels (~50/50) |
-| Setup → turn → payoff | 3 stacked horizontals (~35/30/35) |
-| Ambush / shock | Splash with one tilted inset panel over a corner |
-| Impact | Splash, radial burst lines, subject dead centre |
+| Move → react | 2 stacked panels (~50/50), straight or lightly tilted |
+| Setup → turn → payoff | 3 stacked; middle one often a **wedge band** cutting across |
+| Ambush / shock | Splash with one tilted inset panel over a corner, or a **bolt divider** |
+| Impact | Splash, radial burst lines, subject dead centre; **lightning-bolt border** |
+| Staccato → reveal | Tilted strip of 3 small panels over a full-bleed splash |
 
 One short sentence per panel. Vary shot scale — never three identical mediums.
 
@@ -172,7 +205,9 @@ One short sentence per panel. Vary shot scale — never three identical mediums.
 # style: Erin & the Goblins — B&W dark fantasy manga, no lettering
 # refs: Image 1 = Erin sheet, Image 2 = goblins, Image 3 = prior page (style)
 
-FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, [N] stacked horizontal panels / full-bleed splash, thin white gutters, thin black keylines. Crisp ink linework, cross-hatching, grey screentone, deep solid blacks, speed lines. No colour.
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, [N] stacked panels / full-bleed splash, thin white gutters, thin black keylines, white page margin. Crisp ink linework, cross-hatching, grey screentone, deep solid blacks, speed lines. No colour.
+
+PANEL BORDERS: [pick ONE — straight rectangles / top panel full-bleed to the page edge / panels tilted a few degrees / the middle panel a slanted wedge band narrowing across the page / the whole panel outlined in a jagged lightning-bolt border / a zigzag lightning slash running diagonally across the page as the gutter between two panels / one inset panel overlapping its neighbour and breaking past the keyline]. Reading order stays top to bottom. No triangle panels.
 
 NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
 
@@ -251,5 +286,7 @@ FORMAT: same vertical 1152x1728 B&W manga page, no text of any kind.
 - Do not add colour outside the cover
 - Do not ship over ~550 words
 - Do not drop the Erin character sheet ref — prose alone drifts her face
+- Do not default to three plain rectangles — say which border the page wants
+- Do not stack two or more effect borders on one page
 - Do not turn goblins into orcs or the town into a modern city
 - Do not target Grok Imagine / photoreal (`/jax`)

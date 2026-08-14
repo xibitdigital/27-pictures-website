@@ -43,7 +43,8 @@ firearms.
 
 ## Goblin King
 
-**Ref plate:** `1f45add7e288635d156651e19f9122b9.jpg`.
+**Ref plate:** `0fc4824cf93e4f6b20131f9817b89ef0.jpg` (carries baked KRAK/BOOM
+lettering — always attach it with the no-text ban clause).
 
 - Twice Erin's mass, broad shoulders, same goblin face scaled up and brutal
 - Jagged bone/iron crown, long pale hair
@@ -65,7 +66,10 @@ firearms.
 - Erin's room: cracked plaster walls papered with notes, maps, sigils and
   clippings; bare hanging bulb; iron bed; desk buried in newspapers and books
 - Portal beat: white rip of light with a spiral vortex, papers blown into the
-  air (`1f45add7…` is the boss; the portal plate is `0fc4824c…`)
+  air (`1f45add7…`, Erin's room); the forest portal with a runic stone arch is
+  `1856ff73…`
+- Forest: enormous gnarled trunks, exposed root tangles, ferns, moss, low mist,
+  a cave mouth swallowed by roots (`67227f9c…`, `1856ff73…`)
 - Underground: goblin tunnels, crates, cave halls, stalactites, torchlight
 - Night is the default; the moon is the usual key light
 
@@ -75,6 +79,24 @@ firearms.
 - Deep solid blacks, harsh white highlights, strong figure-ground separation
 - Speed lines for motion, radial burst lines for impact
 - Thin white gutters, thin black keylines, white page margin
+
+## Panel borders
+
+The book does not use a fixed grid. Observed vocabulary, one effect per page:
+
+| Border | Plate |
+|--------|-------|
+| Straight rectangles (quiet beats) | `cd789256…` |
+| Full-bleed panel running off the page edge | `67227f9c…` |
+| Whole panel tilted a few degrees, gutters non-parallel | `c6b050b7…` |
+| Slanted wedge / parallelogram band narrowing across the page | `67227f9c…`, `8cc09933…` |
+| Panel outlined in a jagged lightning-bolt border | `c6b050b7…` |
+| Zigzag lightning slash *as* the gutter between two panels | `80cb37d9…`, `d53879ae…`, `646efa4c…` |
+| Inset panel overlapping its neighbour / art breaking the keyline | `80cb37d9…`, `1856ff73…` |
+| Tilted strip of three narrow panels over a splash | `1856ff73…` |
+
+Reading order stays top-to-bottom whatever the tilt. No triangle panels, and
+no keyline cutting a face in half.
 - Menace without gore — this is a young-reader dark fantasy
 
 ## Lettering
