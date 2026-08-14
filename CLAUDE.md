@@ -108,8 +108,20 @@ npm run format
 # .env must set VITE_ASSET_BASE or `vite build` fails
 make deploy        # require base → build → Pages production (main)
 make deploy-cdn    # upload R2, then make deploy
-make preview-deploy  # CDN build → preview branch
+make preview-deploy  # CDN build → staging branch
 ```
+
+**Staging is `https://staging.twentyseven.pictures` and is password gated** —
+it answers 401 without credentials (Cloudflare Pages secrets), so `curl` checks
+against it need auth. To verify a deploy without credentials, grep the built
+`dist/assets/*.js` instead. The old `staging.twentyseven-pictures.pages.dev`
+alias is gone.
+
+**A published toon config does not reach production on its own.**
+`publish-toon-config` puts the JSON on R2 and updates `src/toons/config-lock.json`
+in the repo, but the hash the reader asks for is compiled into the JS bundle.
+Until `make deploy` runs, production keeps requesting the previous hash — which
+is how RED SMILE sat at 7 live pages while the repo had 12.
 
 ### Local
 
@@ -361,6 +373,15 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Jax  | `/toons/jax/`  | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)             |
 | Nero | `/toons/nero/` | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`) |
 | RED SMILE: static | `/toons/redsmile-static/` | B&W horror short — Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page` |
+| Erin EP 2 | `/toons/erin-ep2/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
+
+**Erin EP 2 is deliberately unlisted on `main`**: no card in `/toons/`, no
+sitemap or `llms.txt` entry, `noindex, nofollow` on the reader — a
+"Work in progress" badge does not stop Google ranking half a story. The URL
+still builds and answers, so it can be shared directly. The `staging` branch
+carries the reverse commit, so the card and `index, follow` are live there.
+Shipping the episode = revert that hide on `main` (card + `numberOfItems`,
+sitemap `<url>`, `llms.txt` line, robots).
 
 Wire-up pattern:
 
@@ -462,6 +483,36 @@ index), scroll mode from document scroll.
   disc radius clear on each side — that is the `100vw - 64px` term in every
   toon's `<style>`. Shrink that gutter and `.reader`'s overflow slices the
   outer half of the disc off.
+
+### Per-toon geometry tokens (`--plate-aspect`, `--strip-width`)
+
+`reader-shared.css` used to hardcode Jax's plate shape in two places, which
+silently mis-sized every other toon:
+
+| Token             | What it drives                                   | Default (fallback) |
+| ----------------- | ------------------------------------------------ | ------------------ |
+| `--plate-aspect`  | `aspect-ratio` of a vertical-scroll page slot     | `1008 / 1792`      |
+| `--strip-width`   | Width cap of the scroll strip                     | `min(98vw, 720px)` |
+
+Each toon declares its real values next to its book tokens: Erin and Erin EP 2
+are `1152 / 1728` and raise the strip to `900px`, Nero and RED SMILE are
+`800 / 1424`, Jax keeps the defaults. Get `--plate-aspect` wrong and every page
+scrolls with bands above and below it; leave `--strip-width` at the 9:16 value
+and a wider 2:3 book reads as a narrow locked column next to the same page in
+flip view.
+
+The slot keeps an `aspect-ratio` on purpose — it reserves plate height before
+lazy images decode, so a fast fling does not stall as pages expand under the
+finger.
+
+**Dark plates need dark paper.** `--page-bg` shows wherever the slot
+letterboxes (`object-fit: contain`), which on mobile is every page: a book of
+black plates on episode 1's cream paper is framed in white. Set `--page-bg`,
+`--spine` and `--cover` to the dark-toon values for such a book.
+
+The folio (page number) is white on a solid black chip flush into the
+bottom-left corner. It used to be a 52%-opacity glyph with a text-shadow, which
+vanished into any plate that was busy or already black.
 
 ### One stylesheet for site pages
 
@@ -599,7 +650,8 @@ Effects API — non-verbal). Actual dialogue should be Text-to-Speech:
 
 1. Voices are locked by name in `scripts/jax-voices.json` (`name ->
 voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
-   `badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, `erin`, `venus`, `narrator`. To add a new one: open the voice
+   `badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, `erin`, `venus`, `goblinking`,
+   `narrator`. To add a new one: open the voice
    on `elevenlabs.io/app/voice-library?voiceId=...`, copy the ID from the URL,
    add `"name": "voiceId"` to that file. (Listing/searching voices via
    `GET /v1/voices` needs a separate `voices_read` scope — grab the ID from
@@ -631,10 +683,19 @@ dialogue (-28 vs -19 LUFS), and generated SFX regularly peaked **above 0 dBFS**
 (measured +2.4 dBTP), which clips on playback. Level a whole toon in one pass:
 
 ```bash
-npm run normalise-audio -- jax                 # or: nero redsmile-static
+npm run normalise-audio -- jax                 # or: nero redsmile-static erin-ep2
 npm run normalise-audio -- jax --dry-run       # measure only, touch nothing
 npm run normalise-audio -- jax --voice -18 --sfx -15 --tp -1.5
+npm run normalise-audio -- jax --all           # relevel everything, even on-target clips
 ```
+
+**It only touches clips that need it.** Re-encoding an on-target clip changes
+its content hash and forces a full re-upload plus a config publish for the sake
+of two new sound effects. Clips within `--tolerance` (0.5 LU) are left alone,
+and so are **peak-limited** ones: a punchy SFX or a scream has a high
+peak-to-loudness ratio, so `linear=true` caps the gain to protect the -1.5 dBTP
+ceiling and the clip can never reach the LUFS target — without that rule it
+would be re-encoded on every run, forever.
 
 Two-pass `loudnorm` (measure, then apply with `measured_*` + `linear=true`), so
 the gain is one linear move — no pumping, and dynamics inside a clip survive.
@@ -677,6 +738,27 @@ aphaser=type=t:speed=0.9:decay=0.35,dynaudnorm=f=200:g=5" \
 ```
 
 The pitch shift stretches these clips ~8% longer, unlike the `ai` pass.
+
+#### One actor, several creatures (pitch shift)
+
+Erin EP 2 has three goblin voices and one voice id. The **Goblin King** is
+`goblinking` straight; the **rider** is the same clip pitched **up 12%**; the
+**captain** is pitched **down 6%**. Same species, different characters, no
+extra casting and no extra credits:
+
+```bash
+# rider: smaller, meaner
+ffmpeg -y -i in.mp3 -af "asetrate=44100*1.12,aresample=44100,highpass=f=170,\
+acrusher=bits=12:mode=log:mix=0.12,aphaser=type=t:speed=1.3:decay=0.2,\
+dynaudnorm=f=200:g=5" -codec:a libmp3lame -b:a 192k /tmp/out.mp3
+
+# captain: older, worn
+ffmpeg -y -i in.mp3 -af "asetrate=44100*0.94,aresample=44100,highpass=f=110,\
+dynaudnorm=f=200:g=5" -codec:a libmp3lame -b:a 192k /tmp/out.mp3
+```
+
+Pitch the **original** TTS clip, never an already-pitched one — the artefacts
+compound. To change the amount, regenerate the line and shift once.
 
 #### Eleven v3 audio tags (emotion / delivery)
 
@@ -846,7 +928,11 @@ curl -sS https://twentyseven.pictures/robots.txt
 
 ## Git Workflow
 
-- **Main branch:** `main`
+- **Main branch:** `main` — what production serves (`make deploy`)
+- **Staging branch:** `staging` — what `make preview-deploy` publishes to
+  `https://staging.twentyseven.pictures`. Carries work in review, plus the
+  revert that makes Erin EP 2 visible and indexable there while `main` keeps it
+  unlisted. Merge `staging` → `main` to ship.
 - **Remote:** `git@github.com:xibitdigital/27-pictures-website.git`
 - **Contributors:**
   - Marco Sangalli (sangalli.marco@gmail.com)
