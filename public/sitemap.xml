@@ -56,6 +56,15 @@
     </image:image>
   </url>
   <url>
+    <loc>https://twentyseven.pictures/toons/erin-ep2/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-ep2.jpg</image:loc>
+      <image:title>Erin EP 2: The Revenge — 27 Pictures interactive toon</image:title>
+      <image:caption>Cover art for Erin EP 2: The Revenge, a black-and-white interactive dark fantasy comic by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://twentyseven.pictures/toons/jax/</loc>
     <lastmod>2026-07-27</lastmod>
   </url>
