@@ -288,5 +288,20 @@
     "slug": "rs-life-drain",
     "prompt": "Life force being sucked out of a body, dry withering rush of air pulled inward, papery skin crackle and a thin reversed whistle, close up, no music",
     "duration": 2.5
+  },
+  {
+    "slug": "erin-ep2-krakoom",
+    "prompt": "Massive stone explosion impact, huge granite boulder shattering, deep concussive boom with sharp rock debris crack, single hit",
+    "duration": 2.2
+  },
+  {
+    "slug": "erin-ep2-graaam",
+    "prompt": "Heavy rumbling earth blast, ground erupting, low grinding rock avalanche roar with debris, single sustained hit",
+    "duration": 2.6
+  },
+  {
+    "slug": "erin-ep2-fire-crackle",
+    "prompt": "Small campfire crackling close up, dry wood snapping and popping, soft ember hiss, quiet night",
+    "duration": 3.0
   }
 ]

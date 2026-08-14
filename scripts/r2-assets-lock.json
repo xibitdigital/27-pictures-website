@@ -4568,6 +4568,1074 @@
     "toons/redsmile-static/config.82f36edeae0cab4c8041de2dba7b9a13.json": {
       "size": 23417,
       "uploadedAt": "2026-08-13T20:04:16.704Z"
+    },
+    "toons/redsmile-static/assets/sfx/048b205cc2532a3c93560f8bd4cb813b.mp3": {
+      "size": 20732,
+      "uploadedAt": "2026-08-13T20:07:49.674Z"
+    },
+    "toons/redsmile-static/assets/sfx/0b72615de4b3d14d89b00c3eaac715ac.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-13T20:07:51.828Z"
+    },
+    "toons/redsmile-static/assets/sfx/0ffd7ff2c4852f6accae00703b99fe7c.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-13T20:07:53.805Z"
+    },
+    "toons/redsmile-static/assets/sfx/126969c6ce9bcbcb80c8abf39a1c009a.mp3": {
+      "size": 139850,
+      "uploadedAt": "2026-08-13T20:07:55.868Z"
+    },
+    "toons/redsmile-static/assets/sfx/18dcf7d9a63f0d13704e7cfba5a4d4f8.mp3": {
+      "size": 55213,
+      "uploadedAt": "2026-08-13T20:07:57.820Z"
+    },
+    "toons/redsmile-static/assets/sfx/3812e8fcc58274223e583179961a8ef0.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-13T20:07:59.822Z"
+    },
+    "toons/redsmile-static/assets/sfx/3ae98a4cd46fab15f27c12ea3bdf4b13.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-13T20:08:01.904Z"
+    },
+    "toons/redsmile-static/assets/sfx/3cb77dcd9b2c8ab27d258942b761cf3e.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-13T20:08:03.893Z"
+    },
+    "toons/redsmile-static/assets/sfx/45feef3d5a668138e3f38c65841fc642.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-13T20:08:05.831Z"
+    },
+    "toons/redsmile-static/assets/sfx/4e22b92b995a81742e5b967de4a35403.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-13T20:08:07.880Z"
+    },
+    "toons/redsmile-static/assets/sfx/4f10113b800c2e8339a6064acafa0183.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-13T20:08:09.920Z"
+    },
+    "toons/redsmile-static/assets/sfx/5020884603d780bce73440de61ab7fd2.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-13T20:08:11.849Z"
+    },
+    "toons/redsmile-static/assets/sfx/5a54137b4efaadfc0abea3da65e3f192.mp3": {
+      "size": 53332,
+      "uploadedAt": "2026-08-13T20:08:13.901Z"
+    },
+    "toons/redsmile-static/assets/sfx/5f3e08f76bbd2b1dd795aeb9ede72f41.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-13T20:08:15.895Z"
+    },
+    "toons/redsmile-static/assets/sfx/629b2544fdcddbdd5d18274066b2cf9c.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-13T20:08:17.813Z"
+    },
+    "toons/redsmile-static/assets/sfx/694713b2f331bb73ab602adc8dbfe478.mp3": {
+      "size": 34524,
+      "uploadedAt": "2026-08-13T20:08:19.714Z"
+    },
+    "toons/redsmile-static/assets/sfx/742d63f71bfe393c3caeef4a0ca29130.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-13T20:08:21.740Z"
+    },
+    "toons/redsmile-static/assets/sfx/756870d9913d95df7d45944d9df37540.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-13T20:08:23.920Z"
+    },
+    "toons/redsmile-static/assets/sfx/77571aa301b7e59ecf1b976b6e3cc717.mp3": {
+      "size": 62736,
+      "uploadedAt": "2026-08-13T20:08:25.907Z"
+    },
+    "toons/redsmile-static/assets/sfx/79c33f5655f8b3d71bb8a294787c5fc4.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-13T20:08:27.804Z"
+    },
+    "toons/redsmile-static/assets/sfx/92d1bb7a5cdded20a9e4a18c92b485ab.mp3": {
+      "size": 53332,
+      "uploadedAt": "2026-08-13T20:08:30.173Z"
+    },
+    "toons/redsmile-static/assets/sfx/9f2c28aa8625deedeb2e2abd92814964.mp3": {
+      "size": 72768,
+      "uploadedAt": "2026-08-13T20:08:32.193Z"
+    },
+    "toons/redsmile-static/assets/sfx/a1c68f9cd92f9af024c79bbbbccde3ff.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-13T20:08:34.291Z"
+    },
+    "toons/redsmile-static/assets/sfx/a6c11ac3dd3af987d454f47c2214cb76.mp3": {
+      "size": 97845,
+      "uploadedAt": "2026-08-13T20:08:36.370Z"
+    },
+    "toons/redsmile-static/assets/sfx/adc3ba7ba6874849cdcda3604f432552.mp3": {
+      "size": 60856,
+      "uploadedAt": "2026-08-13T20:08:38.423Z"
+    },
+    "toons/redsmile-static/assets/sfx/b48a11faf19266c8d9d4e7a80088e42e.mp3": {
+      "size": 54586,
+      "uploadedAt": "2026-08-13T20:08:40.329Z"
+    },
+    "toons/redsmile-static/assets/sfx/ca823044b754c53424389d2497d05690.mp3": {
+      "size": 48944,
+      "uploadedAt": "2026-08-13T20:08:42.347Z"
+    },
+    "toons/redsmile-static/assets/sfx/d1f48a9418079510b43686bb8be1dbd8.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-13T20:08:46.547Z"
+    },
+    "toons/redsmile-static/assets/sfx/db59f0d0fec8f9948d0d2e3d0071b6c0.mp3": {
+      "size": 67125,
+      "uploadedAt": "2026-08-13T20:08:48.712Z"
+    },
+    "toons/redsmile-static/assets/sfx/de83cc6ddbc7d1c958045b27c6f13fa7.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-13T20:08:50.786Z"
+    },
+    "toons/redsmile-static/assets/sfx/e310a710495c27160bc7c9838be4f167.mp3": {
+      "size": 95964,
+      "uploadedAt": "2026-08-13T20:08:52.952Z"
+    },
+    "toons/redsmile-static/assets/sfx/e36b45aab1206b0db512340ba380cf31.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-13T20:08:54.940Z"
+    },
+    "toons/redsmile-static/assets/sfx/e97d988873ebe6610bbcb356df0c0b1b.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-13T20:08:57.041Z"
+    },
+    "toons/redsmile-static/assets/sfx/ee8e924abb8e6506daf320326a90e9ae.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-13T20:08:59.106Z"
+    },
+    "toons/redsmile-static/assets/sfx/f02ab5e8275a25efbd4c56731aa7967d.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-13T20:09:01.145Z"
+    },
+    "toons/redsmile-static/assets/sfx/f31d32d3a12d8522fcd8d5da6aca2ed4.mp3": {
+      "size": 34524,
+      "uploadedAt": "2026-08-13T20:09:03.125Z"
+    },
+    "toons/redsmile-static/assets/sfx/f3b94f4075e21e71f96a8f7955017789.mp3": {
+      "size": 52705,
+      "uploadedAt": "2026-08-13T20:09:05.583Z"
+    },
+    "toons/redsmile-static/config.b8cf81ec0bcdabd02c5992f6328fa590.json": {
+      "size": 25291,
+      "uploadedAt": "2026-08-13T20:09:15.049Z"
+    },
+    "toons/erin-ep2/assets/2bfcd964cab32377453bab9b8d58c054.jpg": {
+      "size": 763336,
+      "uploadedAt": "2026-08-14T11:22:57.420Z"
+    },
+    "toons/erin-ep2/assets/313de46170f64763cb387e2ea1ccf929.jpg": {
+      "size": 542016,
+      "uploadedAt": "2026-08-14T11:22:59.351Z"
+    },
+    "toons/erin-ep2/assets/36f142a94a865c393cae9c517ecc9eda.jpg": {
+      "size": 621143,
+      "uploadedAt": "2026-08-14T11:23:01.302Z"
+    },
+    "toons/erin-ep2/assets/521437fdaaea4a1461f725b790084603.jpg": {
+      "size": 658967,
+      "uploadedAt": "2026-08-14T11:23:03.474Z"
+    },
+    "toons/erin-ep2/assets/7bd9bab570fcbf28cea206ec9ee89f37.jpg": {
+      "size": 604213,
+      "uploadedAt": "2026-08-14T11:23:05.587Z"
+    },
+    "toons/erin-ep2/assets/874d3cb762df239a8666abc70e1268d4.jpg": {
+      "size": 758964,
+      "uploadedAt": "2026-08-14T11:23:07.631Z"
+    },
+    "toons/erin-ep2/assets/8f7219052bf1b0fb142cbc1783eb4842.jpg": {
+      "size": 673804,
+      "uploadedAt": "2026-08-14T11:23:09.586Z"
+    },
+    "toons/erin-ep2/assets/b01fa960596d3cd68b72e3773df638dd.jpg": {
+      "size": 750174,
+      "uploadedAt": "2026-08-14T11:23:11.803Z"
+    },
+    "toons/erin-ep2/assets/b9732ff67bd0ec2d7e4d014db6455b2b.jpg": {
+      "size": 677625,
+      "uploadedAt": "2026-08-14T11:23:13.754Z"
+    },
+    "toons/erin-ep2/assets/ceca59e0aaffe7393d77a5b45396cece.jpg": {
+      "size": 589202,
+      "uploadedAt": "2026-08-14T11:23:16.245Z"
+    },
+    "toons/erin-ep2/assets/e4ab938d6f2156b496fd7c119d32bfda.jpg": {
+      "size": 742001,
+      "uploadedAt": "2026-08-14T11:23:18.273Z"
+    },
+    "toons/erin-ep2/config.d2a708e39dad2de67a825c5ec23aecc4.json": {
+      "size": 1069,
+      "uploadedAt": "2026-08-14T11:23:32.406Z"
+    },
+    "toons/erin-ep2/assets/sfx/0421551f8c2580f9160b3a0c172c254a.mp3": {
+      "size": 94083,
+      "uploadedAt": "2026-08-14T11:31:38.790Z"
+    },
+    "toons/erin-ep2/assets/sfx/23ac57f56361f4726c51af0a1f3ad200.mp3": {
+      "size": 71514,
+      "uploadedAt": "2026-08-14T11:31:41.010Z"
+    },
+    "toons/erin-ep2/assets/sfx/23c570d19b6110eff01a15ffab09fc75.mp3": {
+      "size": 82799,
+      "uploadedAt": "2026-08-14T11:31:43.107Z"
+    },
+    "toons/erin-ep2/assets/sfx/245ca4e0231440a56d4f7902ebf7f1db.mp3": {
+      "size": 66498,
+      "uploadedAt": "2026-08-14T11:31:45.358Z"
+    },
+    "toons/erin-ep2/assets/sfx/2cecbb8d66ecca44cec3b1c23c58dd32.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-14T11:31:47.340Z"
+    },
+    "toons/erin-ep2/assets/sfx/30426451b21d7e9baf8d4c5c6b41f675.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:31:49.332Z"
+    },
+    "toons/erin-ep2/assets/sfx/46bfc3773e57c2df0c48355a70be82c3.mp3": {
+      "size": 33897,
+      "uploadedAt": "2026-08-14T11:31:51.341Z"
+    },
+    "toons/erin-ep2/assets/sfx/46cf5b45a6fe020519467e1f53a98cd6.mp3": {
+      "size": 31390,
+      "uploadedAt": "2026-08-14T11:31:53.311Z"
+    },
+    "toons/erin-ep2/assets/sfx/49b0cf3269c41b0c5420496364814ac0.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:31:55.320Z"
+    },
+    "toons/erin-ep2/assets/sfx/50abcd2fd3dacece053aea62df90c80a.mp3": {
+      "size": 50825,
+      "uploadedAt": "2026-08-14T11:31:57.318Z"
+    },
+    "toons/erin-ep2/assets/sfx/540ea0d1d88fd9f3ffb0eae665f835da.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-14T11:31:59.440Z"
+    },
+    "toons/erin-ep2/assets/sfx/5e3f757a77d0f1bf7b297e61dba64ff2.mp3": {
+      "size": 61483,
+      "uploadedAt": "2026-08-14T11:32:01.418Z"
+    },
+    "toons/erin-ep2/assets/sfx/5fb3971f7a6d2e9c05b9e18b8a97d628.mp3": {
+      "size": 40794,
+      "uploadedAt": "2026-08-14T11:32:03.578Z"
+    },
+    "toons/erin-ep2/assets/sfx/5fcd9bcb9ee5913464826b2c8015a53c.mp3": {
+      "size": 53332,
+      "uploadedAt": "2026-08-14T11:32:05.560Z"
+    },
+    "toons/erin-ep2/assets/sfx/6766514e74234697dc0a06e6668bf3c1.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-14T11:32:07.549Z"
+    },
+    "toons/erin-ep2/assets/sfx/6807b1115bc2994adc9b8438387bf458.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-14T11:32:09.649Z"
+    },
+    "toons/erin-ep2/assets/sfx/7d01b05a3ec43aff3f6e4bc5d73bea4c.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:32:11.623Z"
+    },
+    "toons/erin-ep2/assets/sfx/c1733b280024c13492dad8459e0f6dfe.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:32:13.647Z"
+    },
+    "toons/erin-ep2/assets/sfx/c9ec6b5ce0cf4949be48bcf685e04e41.mp3": {
+      "size": 56467,
+      "uploadedAt": "2026-08-14T11:32:15.593Z"
+    },
+    "toons/erin-ep2/assets/sfx/e679f06c7ba7d248fdf317a769477424.mp3": {
+      "size": 48317,
+      "uploadedAt": "2026-08-14T11:32:17.586Z"
+    },
+    "toons/erin-ep2/assets/sfx/eb7fea4e1e7366973e84de1adaebdeb7.mp3": {
+      "size": 23866,
+      "uploadedAt": "2026-08-14T11:32:19.497Z"
+    },
+    "toons/erin-ep2/assets/sfx/f4ca86ca231e42ff6daaba5aba74ce62.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-14T11:32:21.502Z"
+    },
+    "toons/erin-ep2/config.2f09422e0e19492e613365866111e2d1.json": {
+      "size": 13311,
+      "uploadedAt": "2026-08-14T11:32:23.595Z"
+    },
+    "toons/erin-ep2/assets/sfx/182755a3aa77537f279d36b208a42797.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-14T11:33:39.970Z"
+    },
+    "toons/erin-ep2/assets/sfx/1a0a774fb96430f59c8e5a449f92df0a.mp3": {
+      "size": 23866,
+      "uploadedAt": "2026-08-14T11:33:41.910Z"
+    },
+    "toons/erin-ep2/assets/sfx/1b9d25f8eea979ec3cf05d4783035f0b.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:33:44.019Z"
+    },
+    "toons/erin-ep2/assets/sfx/225617d814e4553676848a3b78b79215.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-14T11:33:45.969Z"
+    },
+    "toons/erin-ep2/assets/sfx/235c8962b994f89e5a367edcf31f3272.mp3": {
+      "size": 71514,
+      "uploadedAt": "2026-08-14T11:33:48.012Z"
+    },
+    "toons/erin-ep2/assets/sfx/2df5b6732ca59dd37f96b96480c04d41.mp3": {
+      "size": 40794,
+      "uploadedAt": "2026-08-14T11:33:50.050Z"
+    },
+    "toons/erin-ep2/assets/sfx/390b5f74a380a0ef2492202511c6043b.mp3": {
+      "size": 90949,
+      "uploadedAt": "2026-08-14T11:33:52.058Z"
+    },
+    "toons/erin-ep2/assets/sfx/3ee095551b5c4925a706effa6dbbc806.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-14T11:33:54.125Z"
+    },
+    "toons/erin-ep2/assets/sfx/51b5b4b9405476b9b6a3bf429d9b68f8.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:33:56.269Z"
+    },
+    "toons/erin-ep2/assets/sfx/5728f7ebcfd2302a45ffd910f455f9e1.mp3": {
+      "size": 57721,
+      "uploadedAt": "2026-08-14T11:33:58.285Z"
+    },
+    "toons/erin-ep2/assets/sfx/58e4c2e76da43c97381e69d53fec2d78.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:34:00.271Z"
+    },
+    "toons/erin-ep2/assets/sfx/6a3b9394f2728ad64f717e92f5e0a7c9.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-14T11:34:02.224Z"
+    },
+    "toons/erin-ep2/assets/sfx/741bece489500a873ef6d01d505b02b4.mp3": {
+      "size": 61483,
+      "uploadedAt": "2026-08-14T11:34:04.249Z"
+    },
+    "toons/erin-ep2/assets/sfx/782b4abb15a2eefab09030cb422d951e.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:34:06.306Z"
+    },
+    "toons/erin-ep2/assets/sfx/847508c3edab93547e660f902d7707fe.mp3": {
+      "size": 66498,
+      "uploadedAt": "2026-08-14T11:34:08.322Z"
+    },
+    "toons/erin-ep2/assets/sfx/a7d3ee5bbb00f49d48244c721f7b29d4.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-14T11:34:10.422Z"
+    },
+    "toons/erin-ep2/assets/sfx/ae385d68cb4fa11f363bc93a86314e9e.mp3": {
+      "size": 31390,
+      "uploadedAt": "2026-08-14T11:34:12.466Z"
+    },
+    "toons/erin-ep2/assets/sfx/b280c0123965a367094e894af3e0552e.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-14T11:34:14.587Z"
+    },
+    "toons/erin-ep2/assets/sfx/b8301f8a1470fa754b5719a93114f1ce.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-14T11:34:16.706Z"
+    },
+    "toons/erin-ep2/assets/sfx/c7005426e49d40d93f8c48375e01abfc.mp3": {
+      "size": 48317,
+      "uploadedAt": "2026-08-14T11:34:18.748Z"
+    },
+    "toons/erin-ep2/assets/sfx/e03397b65bc1b27a3c727d4215c031cf.mp3": {
+      "size": 82799,
+      "uploadedAt": "2026-08-14T11:34:20.769Z"
+    },
+    "toons/erin-ep2/assets/sfx/e83babd937b3fcf21b83d6ea5cbf115a.mp3": {
+      "size": 56467,
+      "uploadedAt": "2026-08-14T11:34:22.879Z"
+    },
+    "toons/erin-ep2/assets/sfx/eef2402c8cf4c5776718a1b61876e144.mp3": {
+      "size": 50825,
+      "uploadedAt": "2026-08-14T11:34:24.938Z"
+    },
+    "toons/erin-ep2/assets/sfx/f4cbb27333a49ed172450b793a6bf7c3.mp3": {
+      "size": 94083,
+      "uploadedAt": "2026-08-14T11:34:26.937Z"
+    },
+    "toons/erin-ep2/assets/sfx/fbb6943759b364ce496d479fb2d49952.mp3": {
+      "size": 33897,
+      "uploadedAt": "2026-08-14T11:34:28.917Z"
+    },
+    "toons/erin-ep2/assets/sfx/fd987ebc673a4d565cb553780a92e9b8.mp3": {
+      "size": 53332,
+      "uploadedAt": "2026-08-14T11:34:30.852Z"
+    },
+    "toons/erin-ep2/config.8b7a06f1a997f929cb754758025ad909.json": {
+      "size": 13591,
+      "uploadedAt": "2026-08-14T11:34:32.921Z"
+    },
+    "toons/erin-ep2/assets/sfx/04b3ce245703a669afc85f09da6815ce.mp3": {
+      "size": 53332,
+      "uploadedAt": "2026-08-14T11:38:36.605Z"
+    },
+    "toons/erin-ep2/assets/sfx/05234de4b506f94fc3ecc8793c2542fd.mp3": {
+      "size": 56467,
+      "uploadedAt": "2026-08-14T11:38:38.571Z"
+    },
+    "toons/erin-ep2/assets/sfx/0eae04457cca5760fa877e3c9ef7a58d.mp3": {
+      "size": 68379,
+      "uploadedAt": "2026-08-14T11:38:40.559Z"
+    },
+    "toons/erin-ep2/assets/sfx/0ff6d15e446aefee63fb170aef3b0af5.mp3": {
+      "size": 90949,
+      "uploadedAt": "2026-08-14T11:38:42.508Z"
+    },
+    "toons/erin-ep2/assets/sfx/11725869ed870c7fa9969ebb3053a463.mp3": {
+      "size": 31390,
+      "uploadedAt": "2026-08-14T11:38:44.536Z"
+    },
+    "toons/erin-ep2/assets/sfx/1b916d22d54dee66e2f592db9c4cb5f9.mp3": {
+      "size": 48317,
+      "uploadedAt": "2026-08-14T11:38:46.482Z"
+    },
+    "toons/erin-ep2/assets/sfx/2a30295bdc333e2ceaaf8c54c41ebe8a.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:38:48.548Z"
+    },
+    "toons/erin-ep2/assets/sfx/457e0b6b08158ef154e643c1bc291af7.mp3": {
+      "size": 61483,
+      "uploadedAt": "2026-08-14T11:38:50.570Z"
+    },
+    "toons/erin-ep2/assets/sfx/4b68fe4dd5384e93c33ffae5f8a255fa.mp3": {
+      "size": 23866,
+      "uploadedAt": "2026-08-14T11:38:52.630Z"
+    },
+    "toons/erin-ep2/assets/sfx/57ce379ddba98269f88b1a08890480b8.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:38:54.715Z"
+    },
+    "toons/erin-ep2/assets/sfx/58f07b8110cb4f472042bdaf2d2f5b4b.mp3": {
+      "size": 71514,
+      "uploadedAt": "2026-08-14T11:38:56.736Z"
+    },
+    "toons/erin-ep2/assets/sfx/5ddde32eb227ba0ad31b2f9a428cef9c.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-14T11:38:58.680Z"
+    },
+    "toons/erin-ep2/assets/sfx/60125b7ffd90eed1a977de1bcbd08029.mp3": {
+      "size": 94083,
+      "uploadedAt": "2026-08-14T11:39:00.832Z"
+    },
+    "toons/erin-ep2/assets/sfx/641159d312a41cdf90113c6acca533a1.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:39:02.866Z"
+    },
+    "toons/erin-ep2/assets/sfx/6c40156eef52b7b81996bc48d9077fa2.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-14T11:39:04.788Z"
+    },
+    "toons/erin-ep2/assets/sfx/82f4ee721f33623380239cc901505a08.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-14T11:39:06.821Z"
+    },
+    "toons/erin-ep2/assets/sfx/9e03ca862c3599b8ac88d50b98aae1c3.mp3": {
+      "size": 40794,
+      "uploadedAt": "2026-08-14T11:39:08.786Z"
+    },
+    "toons/erin-ep2/assets/sfx/a729952ab561afa5d64715bb955435a7.mp3": {
+      "size": 50825,
+      "uploadedAt": "2026-08-14T11:39:10.732Z"
+    },
+    "toons/erin-ep2/assets/sfx/b4a7b1edaeffcf6f3b06dd773847249f.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:39:13.295Z"
+    },
+    "toons/erin-ep2/assets/sfx/be60487c8aebe58c4ffb43b98b9bc442.mp3": {
+      "size": 82799,
+      "uploadedAt": "2026-08-14T11:39:15.147Z"
+    },
+    "toons/erin-ep2/assets/sfx/cf9a5131f07b788869d8abf475c32729.mp3": {
+      "size": 66498,
+      "uploadedAt": "2026-08-14T11:39:17.366Z"
+    },
+    "toons/erin-ep2/assets/sfx/d1108cd3b610193694288c9b48b964ae.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-14T11:39:19.367Z"
+    },
+    "toons/erin-ep2/assets/sfx/d68f9e28a1c18feb78c813b3eac9ee03.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-14T11:39:21.360Z"
+    },
+    "toons/erin-ep2/assets/sfx/e329fa95e227e4d814fdcd50f5eca786.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-14T11:39:23.390Z"
+    },
+    "toons/erin-ep2/assets/sfx/e5b9c8a9e8f73ff1889a9b7993a91101.mp3": {
+      "size": 33897,
+      "uploadedAt": "2026-08-14T11:39:25.529Z"
+    },
+    "toons/erin-ep2/assets/sfx/edce4399ec5c2a1c8abaa372767952c0.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-14T11:39:27.504Z"
+    },
+    "toons/erin-ep2/config.e0d5d98675760f94725ed4cbf274966d.json": {
+      "size": 18835,
+      "uploadedAt": "2026-08-14T11:39:29.624Z"
+    },
+    "toons/erin-ep2/assets/sfx/0a6ca3005a46c83c3efb85b0127a678c.mp3": {
+      "size": 90949,
+      "uploadedAt": "2026-08-14T11:44:25.833Z"
+    },
+    "toons/erin-ep2/assets/sfx/0fe3b66e58aaa49fbbf8875e865edac3.mp3": {
+      "size": 31390,
+      "uploadedAt": "2026-08-14T11:44:27.745Z"
+    },
+    "toons/erin-ep2/assets/sfx/14e3b671418ad9a72792625ef19a397a.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-14T11:44:29.791Z"
+    },
+    "toons/erin-ep2/assets/sfx/1d04ee8525fee0a134ab3850727f754a.mp3": {
+      "size": 71514,
+      "uploadedAt": "2026-08-14T11:44:31.752Z"
+    },
+    "toons/erin-ep2/assets/sfx/273da7624451a2830d18ff86dfe44869.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-14T11:44:33.783Z"
+    },
+    "toons/erin-ep2/assets/sfx/2b7040b855be718bd1068c6fab46b918.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-14T11:44:35.837Z"
+    },
+    "toons/erin-ep2/assets/sfx/4e7ed35be7dcce32b6845e2ae62c05cc.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-14T11:44:37.825Z"
+    },
+    "toons/erin-ep2/assets/sfx/555162acab2a962ab00981f86f0b6cbb.mp3": {
+      "size": 94083,
+      "uploadedAt": "2026-08-14T11:44:40.189Z"
+    },
+    "toons/erin-ep2/assets/sfx/5d3cd7e213d373f2b323d4c74f7ce8c5.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:44:42.126Z"
+    },
+    "toons/erin-ep2/assets/sfx/620437b641b4e54d5ba69338ff0b5b72.mp3": {
+      "size": 40794,
+      "uploadedAt": "2026-08-14T11:44:44.091Z"
+    },
+    "toons/erin-ep2/assets/sfx/6cdb6048fdf2dd471a22b1d057f58afc.mp3": {
+      "size": 50825,
+      "uploadedAt": "2026-08-14T11:44:46.078Z"
+    },
+    "toons/erin-ep2/assets/sfx/716987618d2c688d74d46b955045f6fb.mp3": {
+      "size": 62736,
+      "uploadedAt": "2026-08-14T11:44:48.129Z"
+    },
+    "toons/erin-ep2/assets/sfx/755a54183f1176de1fc2d713dedc3b42.mp3": {
+      "size": 68379,
+      "uploadedAt": "2026-08-14T11:44:50.144Z"
+    },
+    "toons/erin-ep2/assets/sfx/78193f1e9a3e4a9599f9c6c121518495.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-14T11:44:52.250Z"
+    },
+    "toons/erin-ep2/assets/sfx/8130ddf265aaf682ef68c3754b0722b7.mp3": {
+      "size": 48317,
+      "uploadedAt": "2026-08-14T11:44:54.140Z"
+    },
+    "toons/erin-ep2/assets/sfx/832b905e76330ae6a39960812a82eca9.mp3": {
+      "size": 33897,
+      "uploadedAt": "2026-08-14T11:44:56.227Z"
+    },
+    "toons/erin-ep2/assets/sfx/933576d380bbf6c68d132fc41b4fed34.mp3": {
+      "size": 82799,
+      "uploadedAt": "2026-08-14T11:44:58.439Z"
+    },
+    "toons/erin-ep2/assets/sfx/9840b5a8d0f5fa0a932cb5ffda4656bb.mp3": {
+      "size": 53332,
+      "uploadedAt": "2026-08-14T11:45:00.437Z"
+    },
+    "toons/erin-ep2/assets/sfx/9ff5d328f470d0ebfceab26adfe4e5d5.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:45:03.780Z"
+    },
+    "toons/erin-ep2/assets/sfx/a36a60a793b18e83427cd1b6b76026c2.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:45:06.017Z"
+    },
+    "toons/erin-ep2/assets/sfx/bd61a77383e9a30f9f03417cded2c4ab.mp3": {
+      "size": 61483,
+      "uploadedAt": "2026-08-14T11:45:07.951Z"
+    },
+    "toons/erin-ep2/assets/sfx/bf7eff94334d348c58868232f82461f0.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:45:09.924Z"
+    },
+    "toons/erin-ep2/assets/sfx/c566fe1a94d23478cb6b3ea91f7d73ce.mp3": {
+      "size": 54586,
+      "uploadedAt": "2026-08-14T11:45:11.940Z"
+    },
+    "toons/erin-ep2/assets/sfx/c5711f21d8a9a4aff9911d733205c749.mp3": {
+      "size": 56467,
+      "uploadedAt": "2026-08-14T11:45:13.863Z"
+    },
+    "toons/erin-ep2/assets/sfx/ca24cfbd3714074a6ea9a0ee56c85d57.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-14T11:45:15.794Z"
+    },
+    "toons/erin-ep2/assets/sfx/ca4f3b6b9b75235be60ec053be42403f.mp3": {
+      "size": 23866,
+      "uploadedAt": "2026-08-14T11:45:17.751Z"
+    },
+    "toons/erin-ep2/assets/sfx/cfea9302847877f0992bc314c2d4c17f.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-14T11:45:20.097Z"
+    },
+    "toons/erin-ep2/assets/sfx/d73c2885b487699a1c403ae1d8d0f0e4.mp3": {
+      "size": 66498,
+      "uploadedAt": "2026-08-14T11:45:22.026Z"
+    },
+    "toons/erin-ep2/assets/sfx/f605d59489a179d74a0689c6afa0cdb5.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-14T11:45:23.984Z"
+    },
+    "toons/jax/assets/sfx/03df5eb8d7793059375d6fc45de9ac5a.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:45:25.905Z"
+    },
+    "toons/jax/assets/sfx/0479de8b4b1082e470559ef99b2e7d5e.mp3": {
+      "size": 13836,
+      "uploadedAt": "2026-08-14T11:45:27.861Z"
+    },
+    "toons/jax/assets/sfx/0c22468b2c6e4184d6ec8f7382533728.mp3": {
+      "size": 40586,
+      "uploadedAt": "2026-08-14T11:45:29.940Z"
+    },
+    "toons/jax/assets/sfx/1282147ba9628e9fa75df029b8a91123.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:45:32.233Z"
+    },
+    "toons/jax/assets/sfx/13683078021a2fad3453bf694acede4a.mp3": {
+      "size": 36406,
+      "uploadedAt": "2026-08-14T11:45:34.157Z"
+    },
+    "toons/jax/assets/sfx/1a9ec393f7574fbfc235c7d20136f5f4.mp3": {
+      "size": 15090,
+      "uploadedAt": "2026-08-14T11:45:36.072Z"
+    },
+    "toons/jax/assets/sfx/1acde413a23aa2a2cf415c4573d65970.mp3": {
+      "size": 12164,
+      "uploadedAt": "2026-08-14T11:45:38.056Z"
+    },
+    "toons/jax/assets/sfx/1c46d454478712f5c42da415d38de870.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:45:39.944Z"
+    },
+    "toons/jax/assets/sfx/1ea886ee1943bad214d363fb4c53f641.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:45:41.996Z"
+    },
+    "toons/jax/assets/sfx/244f14880854891aeaec95c9c663f278.mp3": {
+      "size": 23031,
+      "uploadedAt": "2026-08-14T11:45:43.993Z"
+    },
+    "toons/jax/assets/sfx/2cb9d470161a4c1f789f5e1e0410e071.mp3": {
+      "size": 21359,
+      "uploadedAt": "2026-08-14T11:45:46.042Z"
+    },
+    "toons/jax/assets/sfx/2d7eb176f408b5fd268fa39d91573ba0.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:45:47.971Z"
+    },
+    "toons/jax/assets/sfx/2eddf5fcf6bd1acc7a3c117de2a8b978.mp3": {
+      "size": 10493,
+      "uploadedAt": "2026-08-14T11:45:49.990Z"
+    },
+    "toons/jax/assets/sfx/2febcc25f391d47b0856577746b12ea3.mp3": {
+      "size": 29301,
+      "uploadedAt": "2026-08-14T11:45:52.046Z"
+    },
+    "toons/jax/assets/sfx/306320672618e5e165bbc3fd31f4399c.mp3": {
+      "size": 26793,
+      "uploadedAt": "2026-08-14T11:45:54.047Z"
+    },
+    "toons/jax/assets/sfx/31470255bf27eb80fa31f64d6534a191.mp3": {
+      "size": 8821,
+      "uploadedAt": "2026-08-14T11:45:56.302Z"
+    },
+    "toons/jax/assets/sfx/387c73f2c438fd1ebd816df5ee91850b.mp3": {
+      "size": 21359,
+      "uploadedAt": "2026-08-14T11:45:58.347Z"
+    },
+    "toons/jax/assets/sfx/3b5df31719849506af56b918f0276929.mp3": {
+      "size": 18434,
+      "uploadedAt": "2026-08-14T11:46:00.353Z"
+    },
+    "toons/jax/assets/sfx/44ae2d1021d95eb187a350529a91286f.mp3": {
+      "size": 33062,
+      "uploadedAt": "2026-08-14T11:46:02.414Z"
+    },
+    "toons/jax/assets/sfx/45013f8f9f1a00d44f262caa7f484888.mp3": {
+      "size": 10493,
+      "uploadedAt": "2026-08-14T11:46:04.335Z"
+    },
+    "toons/jax/assets/sfx/469249eb98867a92208cd3ed3edf0d64.mp3": {
+      "size": 10493,
+      "uploadedAt": "2026-08-14T11:46:06.393Z"
+    },
+    "toons/jax/assets/sfx/505073fd1919c561a7e5bbf8553a9bf1.mp3": {
+      "size": 41839,
+      "uploadedAt": "2026-08-14T11:46:08.448Z"
+    },
+    "toons/jax/assets/sfx/521d3a4bf8ccb6f373eed7a86aeeb7ca.mp3": {
+      "size": 20106,
+      "uploadedAt": "2026-08-14T11:46:10.379Z"
+    },
+    "toons/jax/assets/sfx/54d862e097cbd4b485709bda719934cb.mp3": {
+      "size": 21359,
+      "uploadedAt": "2026-08-14T11:46:12.344Z"
+    },
+    "toons/jax/assets/sfx/5863ba23213219f922670e4cedcfaf06.mp3": {
+      "size": 26793,
+      "uploadedAt": "2026-08-14T11:46:14.459Z"
+    },
+    "toons/jax/assets/sfx/598a10a41aa70a94df3f5445daedbfe2.mp3": {
+      "size": 26793,
+      "uploadedAt": "2026-08-14T11:46:16.430Z"
+    },
+    "toons/jax/assets/sfx/59a2228558abdc2a54c5d4f834c953fb.mp3": {
+      "size": 39332,
+      "uploadedAt": "2026-08-14T11:46:18.449Z"
+    },
+    "toons/jax/assets/sfx/61310180a0bbb1c4c7ae584f28f29d77.mp3": {
+      "size": 36406,
+      "uploadedAt": "2026-08-14T11:46:20.567Z"
+    },
+    "toons/jax/assets/sfx/7e982688aa7ba0284662d17753f4d9e8.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:46:22.539Z"
+    },
+    "toons/jax/assets/sfx/80993aa38e0f1daba3363fe78c2a222f.mp3": {
+      "size": 13836,
+      "uploadedAt": "2026-08-14T11:46:24.528Z"
+    },
+    "toons/jax/assets/sfx/95d4034b02f244f3c1d614f52767c53d.mp3": {
+      "size": 12164,
+      "uploadedAt": "2026-08-14T11:46:26.445Z"
+    },
+    "toons/jax/assets/sfx/95f39dc0b7dc9496383478d94a1a9bd2.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:46:28.460Z"
+    },
+    "toons/jax/assets/sfx/9907eaa847cbbb6526e86f7e9c727892.mp3": {
+      "size": 24703,
+      "uploadedAt": "2026-08-14T11:46:30.633Z"
+    },
+    "toons/jax/assets/sfx/99429e98791125f97a93159f25024ce8.mp3": {
+      "size": 18434,
+      "uploadedAt": "2026-08-14T11:46:32.605Z"
+    },
+    "toons/jax/assets/sfx/9964720dd82e185e01616835c60bf2a9.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:46:34.600Z"
+    },
+    "toons/jax/assets/sfx/9a35ebac00a71d66ec419fad13f2ab83.mp3": {
+      "size": 20106,
+      "uploadedAt": "2026-08-14T11:46:36.603Z"
+    },
+    "toons/jax/assets/sfx/9b0eb2e4ce9695352725827523430360.mp3": {
+      "size": 36406,
+      "uploadedAt": "2026-08-14T11:46:38.533Z"
+    },
+    "toons/jax/assets/sfx/9fe915abfa88520a35febbfa3f8226cc.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:46:40.582Z"
+    },
+    "toons/jax/assets/sfx/af20636007380ad17bb46b4dbf0bf89a.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:46:42.852Z"
+    },
+    "toons/jax/assets/sfx/b3f34be5e7d245a30cb3ac45251e1b2b.mp3": {
+      "size": 29301,
+      "uploadedAt": "2026-08-14T11:46:44.794Z"
+    },
+    "toons/jax/assets/sfx/b6b19d7685dc15438fd8b4c5f7c1e9c6.mp3": {
+      "size": 15090,
+      "uploadedAt": "2026-08-14T11:46:46.785Z"
+    },
+    "toons/jax/assets/sfx/ba333b177a230362f71f76627a0388c5.mp3": {
+      "size": 48945,
+      "uploadedAt": "2026-08-14T11:46:48.796Z"
+    },
+    "toons/jax/assets/sfx/bb6c7ae0acb16ba39d2bfb306886a55a.mp3": {
+      "size": 20106,
+      "uploadedAt": "2026-08-14T11:46:50.732Z"
+    },
+    "toons/jax/assets/sfx/c80d05112b8b0cf2e09b5ddfde40b79f.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:46:52.802Z"
+    },
+    "toons/jax/assets/sfx/c8a62604427b902d8c18ec4ae8f966e8.mp3": {
+      "size": 36406,
+      "uploadedAt": "2026-08-14T11:46:54.712Z"
+    },
+    "toons/jax/assets/sfx/d2345a07aa001db7cd5c660b9b375608.mp3": {
+      "size": 48945,
+      "uploadedAt": "2026-08-14T11:46:56.559Z"
+    },
+    "toons/jax/assets/sfx/d2bd864945befddce361fe4e0576575b.mp3": {
+      "size": 10493,
+      "uploadedAt": "2026-08-14T11:46:58.537Z"
+    },
+    "toons/jax/assets/sfx/d5e84a0b4a0660cc076bb2597ef3f6ef.mp3": {
+      "size": 26793,
+      "uploadedAt": "2026-08-14T11:47:00.540Z"
+    },
+    "toons/jax/assets/sfx/d67ba6a8a97e47210fce3002181c4874.mp3": {
+      "size": 26793,
+      "uploadedAt": "2026-08-14T11:47:02.535Z"
+    },
+    "toons/jax/assets/sfx/d883801470b7363af43913ac60699a53.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:47:04.534Z"
+    },
+    "toons/jax/assets/sfx/d9052e0d8b699ff23a71e1afa8c0b2e3.mp3": {
+      "size": 13836,
+      "uploadedAt": "2026-08-14T11:47:06.590Z"
+    },
+    "toons/jax/assets/sfx/e26b6ac80ca5f833afd8d05aa195b841.mp3": {
+      "size": 13836,
+      "uploadedAt": "2026-08-14T11:47:08.600Z"
+    },
+    "toons/jax/assets/sfx/e42ebb3f374280f409b8fb0f1ab21879.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-14T11:47:10.697Z"
+    },
+    "toons/jax/assets/sfx/e75cd34faece1ae11f3aa5819ac066ca.mp3": {
+      "size": 29301,
+      "uploadedAt": "2026-08-14T11:47:12.744Z"
+    },
+    "toons/jax/assets/sfx/ecbecfe10f978df21a371e06ff27b1e0.mp3": {
+      "size": 33062,
+      "uploadedAt": "2026-08-14T11:47:14.812Z"
+    },
+    "toons/jax/assets/sfx/f090e4db7f14e6db8128de816878b8f0.mp3": {
+      "size": 15090,
+      "uploadedAt": "2026-08-14T11:47:16.815Z"
+    },
+    "toons/jax/assets/sfx/f77b9a1a492c01638b3f221aca5a5c69.mp3": {
+      "size": 21359,
+      "uploadedAt": "2026-08-14T11:47:18.885Z"
+    },
+    "toons/jax/assets/sfx/fedea1cd318cf1a93806bac88996e556.mp3": {
+      "size": 10493,
+      "uploadedAt": "2026-08-14T11:47:20.777Z"
+    },
+    "toons/erin-ep2/config.3946c338f2ae023ff72a4c013bd3a643.json": {
+      "size": 19462,
+      "uploadedAt": "2026-08-14T11:47:22.872Z"
+    },
+    "toons/erin-ep2/assets/sfx/0d328b0586daaec459500b4adda96028.mp3": {
+      "size": 53332,
+      "uploadedAt": "2026-08-14T11:49:30.355Z"
+    },
+    "toons/erin-ep2/assets/sfx/107f1418c1f19f0fdce5247a5d2f1e17.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-14T11:49:32.170Z"
+    },
+    "toons/erin-ep2/assets/sfx/1cf084c89f555cce10e775f5df6058b6.mp3": {
+      "size": 61483,
+      "uploadedAt": "2026-08-14T11:49:34.111Z"
+    },
+    "toons/erin-ep2/assets/sfx/2998aedbf642ded7cb963289c47f63cc.mp3": {
+      "size": 48317,
+      "uploadedAt": "2026-08-14T11:49:36.037Z"
+    },
+    "toons/erin-ep2/assets/sfx/2f248804cd979abd9a5aabef12123df0.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-14T11:49:37.976Z"
+    },
+    "toons/erin-ep2/assets/sfx/34cc8688d0a98026806a03d81e253bb4.mp3": {
+      "size": 94083,
+      "uploadedAt": "2026-08-14T11:49:39.975Z"
+    },
+    "toons/erin-ep2/assets/sfx/44eefd9b9bdaabb5776aab1b1ca9c561.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-14T11:49:41.926Z"
+    },
+    "toons/erin-ep2/assets/sfx/4acb9b487349e0bcd6f62c022453c22b.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:49:43.894Z"
+    },
+    "toons/erin-ep2/assets/sfx/5121f39ff1ad7f53d59e146d3d37e509.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:49:45.912Z"
+    },
+    "toons/erin-ep2/assets/sfx/539bdf90bd4c0863a0c427654cd9746e.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-14T11:49:47.796Z"
+    },
+    "toons/erin-ep2/assets/sfx/65191d0ce1ab3873f4755b0f0ee17966.mp3": {
+      "size": 40794,
+      "uploadedAt": "2026-08-14T11:49:49.760Z"
+    },
+    "toons/erin-ep2/assets/sfx/6ac03e1ab7799b551ae3c40662ed916d.mp3": {
+      "size": 90949,
+      "uploadedAt": "2026-08-14T11:49:51.630Z"
+    },
+    "toons/erin-ep2/assets/sfx/6b79f1e1cb904221237bee555e8ad8af.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-14T11:49:53.675Z"
+    },
+    "toons/erin-ep2/assets/sfx/7b97eb4543d1d52670eada0ae622a9c8.mp3": {
+      "size": 37032,
+      "uploadedAt": "2026-08-14T11:49:55.661Z"
+    },
+    "toons/erin-ep2/assets/sfx/8ade435eed819b1dfecd53484f037858.mp3": {
+      "size": 34524,
+      "uploadedAt": "2026-08-14T11:49:57.918Z"
+    },
+    "toons/erin-ep2/assets/sfx/90542e538fca3cded0523165d2b58a2c.mp3": {
+      "size": 31390,
+      "uploadedAt": "2026-08-14T11:49:59.904Z"
+    },
+    "toons/erin-ep2/assets/sfx/92d5f2b87ae409e70f59747f120dd95c.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-14T11:50:02.801Z"
+    },
+    "toons/erin-ep2/assets/sfx/93060b101550728089510a230fdb87a4.mp3": {
+      "size": 56467,
+      "uploadedAt": "2026-08-14T11:50:05.238Z"
+    },
+    "toons/erin-ep2/assets/sfx/9b395ccfa86e78e234ee8141b2b6cb37.mp3": {
+      "size": 42674,
+      "uploadedAt": "2026-08-14T11:50:07.246Z"
+    },
+    "toons/erin-ep2/assets/sfx/9fadf2f1ea89672d0b66cde3842d2b66.mp3": {
+      "size": 54586,
+      "uploadedAt": "2026-08-14T11:50:09.370Z"
+    },
+    "toons/erin-ep2/assets/sfx/a76bf262fb0de2ab7312f8f31aa6eaa8.mp3": {
+      "size": 23866,
+      "uploadedAt": "2026-08-14T11:50:11.522Z"
+    },
+    "toons/erin-ep2/assets/sfx/ac3ad88ca05255aec0f34cbcce996ef6.mp3": {
+      "size": 71514,
+      "uploadedAt": "2026-08-14T11:50:13.519Z"
+    },
+    "toons/erin-ep2/assets/sfx/b684ac6fe91aa174ba129774cb38d013.mp3": {
+      "size": 68379,
+      "uploadedAt": "2026-08-14T11:50:15.509Z"
+    },
+    "toons/erin-ep2/assets/sfx/bb133793a026daf1bf4b74317e482492.mp3": {
+      "size": 15716,
+      "uploadedAt": "2026-08-14T11:50:17.482Z"
+    },
+    "toons/erin-ep2/assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3": {
+      "size": 15716,
+      "uploadedAt": "2026-08-14T11:50:19.548Z"
+    },
+    "toons/erin-ep2/assets/sfx/c48ae299c4006eba77b4645916af8821.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-14T11:50:21.454Z"
+    },
+    "toons/erin-ep2/assets/sfx/c72ef800222601e19c486ead43fca61f.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-14T11:50:23.452Z"
+    },
+    "toons/erin-ep2/assets/sfx/cc6e09ffb2a438ca8215cc8f8b52c776.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-14T11:50:25.305Z"
+    },
+    "toons/erin-ep2/assets/sfx/d43afa332251aa5d514ad36ede11ceb9.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-14T11:50:27.240Z"
+    },
+    "toons/erin-ep2/assets/sfx/d6171bd6a6125ed49e942ee1576e6794.mp3": {
+      "size": 32016,
+      "uploadedAt": "2026-08-14T11:50:29.229Z"
+    },
+    "toons/erin-ep2/assets/sfx/d770c086e36dabfc2be37a7826ef52f5.mp3": {
+      "size": 62736,
+      "uploadedAt": "2026-08-14T11:50:31.186Z"
+    },
+    "toons/erin-ep2/assets/sfx/d7f76f39aec2daff574ee2b2ead49967.mp3": {
+      "size": 82799,
+      "uploadedAt": "2026-08-14T11:50:33.845Z"
+    },
+    "toons/erin-ep2/assets/sfx/d83326546ec6c3c17af48cd0f53f509c.mp3": {
+      "size": 50825,
+      "uploadedAt": "2026-08-14T11:50:36.092Z"
+    },
+    "toons/erin-ep2/assets/sfx/e7d54672c4fda84f0c2f93312b2c8ac9.mp3": {
+      "size": 33897,
+      "uploadedAt": "2026-08-14T11:50:38.200Z"
+    },
+    "toons/erin-ep2/assets/sfx/efb1d725fbc66f8e7460cad06b0ad805.mp3": {
+      "size": 66498,
+      "uploadedAt": "2026-08-14T11:50:40.416Z"
+    },
+    "toons/erin-ep2/assets/sfx/f85d17335a2cd2fcd9196927fe97672e.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-14T11:50:42.437Z"
+    },
+    "toons/erin-ep2/assets/sfx/fe05b47ab636ef2a773132afc7c28e3f.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-14T11:50:44.647Z"
+    },
+    "toons/erin-ep2/config.26641065a11aae6179326e45e1af7fe5.json": {
+      "size": 23184,
+      "uploadedAt": "2026-08-14T11:50:46.874Z"
+    },
+    "toons/erin-ep2/assets/sfx/08bcc7fb2390db5846e403dad6447fb3.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-14T11:51:58.292Z"
+    },
+    "toons/erin-ep2/assets/sfx/1e5e99b52ddafda9849580984fa6d5e8.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-14T11:52:00.245Z"
+    },
+    "toons/erin-ep2/assets/sfx/20ad49c8354e43182fd02ef5b440ea5b.mp3": {
+      "size": 82799,
+      "uploadedAt": "2026-08-14T11:52:02.159Z"
+    },
+    "toons/erin-ep2/assets/sfx/23c30863aed4f913b8ec9d1426524198.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-14T11:52:04.159Z"
+    },
+    "toons/erin-ep2/assets/sfx/27a6278ee95f39955c29d2279833879e.mp3": {
+      "size": 94083,
+      "uploadedAt": "2026-08-14T11:52:06.201Z"
+    },
+    "toons/erin-ep2/assets/sfx/2fa27352012538378b774a082aaa6bf9.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-14T11:52:08.153Z"
+    },
+    "toons/erin-ep2/assets/sfx/62913cf7c23ef16f78c800ce3e530315.mp3": {
+      "size": 34524,
+      "uploadedAt": "2026-08-14T11:52:10.231Z"
+    },
+    "toons/erin-ep2/assets/sfx/748141e7d2d9e1e06986fe8a785f1340.mp3": {
+      "size": 68379,
+      "uploadedAt": "2026-08-14T11:52:12.339Z"
+    },
+    "toons/erin-ep2/assets/sfx/8b09efa1fa10dfad6b2f48adda61b14d.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-14T11:52:14.593Z"
+    },
+    "toons/erin-ep2/assets/sfx/9c0a33043fd4a75e0858109b6d7aa36b.mp3": {
+      "size": 40794,
+      "uploadedAt": "2026-08-14T11:52:16.634Z"
+    },
+    "toons/erin-ep2/assets/sfx/c5bda8e15f04c4d2aecce90d2b9ad8ec.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-14T11:52:18.648Z"
+    },
+    "toons/erin-ep2/assets/sfx/d38c43f2dc41aaa393987806fb10b7ac.mp3": {
+      "size": 62736,
+      "uploadedAt": "2026-08-14T11:52:20.613Z"
+    },
+    "toons/erin-ep2/assets/sfx/dc08d87b361215b0de7290591dabb641.mp3": {
+      "size": 50825,
+      "uploadedAt": "2026-08-14T11:52:22.630Z"
+    },
+    "toons/erin-ep2/config.97e60cf1f2b969a369af8fdc763855d3.json": {
+      "size": 23184,
+      "uploadedAt": "2026-08-14T11:52:24.765Z"
     }
   }
 }

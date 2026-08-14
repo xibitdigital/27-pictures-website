@@ -47,7 +47,10 @@ Allow: /
 # - https://twentyseven.pictures/ — studio homepage (The Red Smile, JAX, cosplay, contact)
 # - https://twentyseven.pictures/horror-shorts/ — The Red Smile horror short anthology
 # - https://twentyseven.pictures/cosplay/ — Cinematic cosplay production service
-# - https://twentyseven.pictures/toons/ — Experiments lab
+# - https://twentyseven.pictures/toons/ — Interactive Toons index
 # - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader
+# - https://twentyseven.pictures/toons/erin-ep2/ — Erin EP 2: The Revenge, B&W dark fantasy toon (EN/IT/DE/FR captions)
 # - https://twentyseven.pictures/toons/jax/ — Jax cyberpunk toon (EN/IT/DE/FR captions)
+# - https://twentyseven.pictures/toons/nero/ — Nero detective toon (EN/IT/DE/FR captions)
+# - https://twentyseven.pictures/toons/redsmile-static/ — RED SMILE: static, B&W possession horror toon (EN/IT/DE/FR captions)
 # - https://www.youtube.com/@twentyseven.pictures — primary video distribution
