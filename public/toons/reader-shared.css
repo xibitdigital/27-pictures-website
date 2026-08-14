@@ -1207,10 +1207,13 @@ a.sound-prompt__btn {
 
 /* ── Vertical scroll reading mode ──
    Match (or beat) single-page book width so pages don’t look shrunk vs flip view.
-   Portrait plates read well up to ~720–800px wide on desktop. */
+   The cap has to follow the plate shape: 720px suits a 9:16 page, but a wider
+   2:3 plate hits it long before it fills the screen and the strip reads as
+   locked to a narrow column next to the same book in flip view. Toons with
+   wide plates raise --strip-width; the fallback is the 9:16 value. */
 .vertical-strip {
   display: none;
-  width: min(98vw, 720px);
+  width: var(--strip-width, min(98vw, 720px));
   margin: 0 auto;
   flex-direction: column;
   gap: 1rem;
