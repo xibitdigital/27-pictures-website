@@ -21,7 +21,7 @@
   ],
   "pages": [
     {
-      "file": "assets/36f142a94a865c393cae9c517ecc9eda.jpg",
+      "file": "assets/3fcd85c57057687da2c8958f3b8ce7d1.webp",
       "words": [
         {
           "x": 0.8,
@@ -516,7 +516,7 @@
       ]
     },
     {
-      "file": "assets/313de46170f64763cb387e2ea1ccf929.jpg",
+      "file": "assets/c92b036823f68263fe83ee1628c9c3ab.webp",
       "words": [
         {
           "x": 0.74,
@@ -563,7 +563,7 @@
       ]
     },
     {
-      "file": "assets/7bd9bab570fcbf28cea206ec9ee89f37.jpg",
+      "file": "assets/750c4f557aae21b1dbd2256872647cda.webp",
       "words": [
         {
           "x": 0.3,
@@ -649,7 +649,7 @@
       ]
     },
     {
-      "file": "assets/8f7219052bf1b0fb142cbc1783eb4842.jpg",
+      "file": "assets/186b41ecb46187504d7f15571f106af1.webp",
       "words": [
         {
           "x": 0.74,
@@ -716,7 +716,7 @@
       ]
     },
     {
-      "file": "assets/b01fa960596d3cd68b72e3773df638dd.jpg",
+      "file": "assets/3349df3aed7debbedb7e6ac352760f61.webp",
       "words": [
         {
           "x": 0.26,
@@ -765,7 +765,7 @@
       ]
     },
     {
-      "file": "assets/0f9f36b38f80f569c920ddb4d215c03a.webp",
+      "file": "assets/990ab141350a7ac86c73cb6669cf989a.webp",
       "words": [
         {
           "x": 0.24,
@@ -833,7 +833,7 @@
       ]
     },
     {
-      "file": "assets/e4ab938d6f2156b496fd7c119d32bfda.jpg",
+      "file": "assets/af378781b989ad30b04a428fc2fd2109.webp",
       "words": [
         {
           "x": 0.24,
@@ -947,7 +947,7 @@
       ]
     },
     {
-      "file": "assets/bf8614a14402489ec7a93f7ba7e77f75.jpg",
+      "file": "assets/969963e9d07a0e8ac38d26b89d6aedb4.webp",
       "words": [
         {
           "x": 0.26,
@@ -1065,21 +1065,42 @@
           "x": 0.22,
           "y": 0.07,
           "align": "center",
-          "size": 38,
-          "variant": "burst",
+          "size": 28,
+          "variant": "bubble",
           "color": "#111111",
-          "maxWidth": 0.22,
+          "maxWidth": 0.3,
           "text": {
-            "en": "DOWN!",
-            "it": "GIÙ!",
-            "de": "RUNTER!",
-            "fr": "À TERRE !"
+            "en": "I've put him down before.",
+            "it": "L'ho già steso una volta.",
+            "de": "Ich habe ihn schon einmal erledigt.",
+            "fr": "Je l'ai déjà mis à terre."
           },
-          "audio": "assets/sfx/f9a2f37dfab35dcf0daa3b33c3ff390a.mp3",
+          "audio": "assets/sfx/43feccaa1db090a5764f0f7ff026925c.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5,
             "tail": "bottom-right"
+          }
+        },
+        {
+          "x": 0.76,
+          "y": 0.07,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.28,
+          "text": {
+            "en": "That one was smaller.",
+            "it": "Quello era più piccolo.",
+            "de": "Der war kleiner.",
+            "fr": "Celui-là était plus petit."
+          },
+          "audio": "assets/sfx/cf1e645cbd0389edafb411575dd078b6.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
           }
         },
         {
@@ -1104,21 +1125,47 @@
           "x": 0.76,
           "y": 0.55,
           "align": "center",
-          "size": 29,
+          "size": 28,
           "variant": "bubble",
           "color": "#111111",
-          "maxWidth": 0.28,
+          "maxWidth": 0.32,
           "text": {
-            "en": "Kneel, or break.",
-            "it": "In ginocchio, o vi spezzo.",
-            "de": "Knien, oder brechen.",
-            "fr": "À genoux, ou je vous brise."
+            "en": "That one was a boy I sent.",
+            "it": "Quello era un ragazzo che avevo mandato io.",
+            "de": "Das war ein Junge, den ich geschickt habe.",
+            "fr": "Celui-là était un garçon que j'avais envoyé."
           },
-          "audio": "assets/sfx/556c82904e7561d3311b7eb0a7f4f102.mp3",
+          "audio": "assets/sfx/5beb8b9dc54da55ff455b9d728058fc8.mp3",
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5,
             "tail": "bottom-left"
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/32f49f480c564209399ef5c69ed30b29.jpg",
+      "words": [
+        {
+          "x": 0.5,
+          "y": 0.88,
+          "align": "center",
+          "size": 38,
+          "variant": "credit",
+          "color": "#111111",
+          "maxWidth": 0.5,
+          "text": {
+            "en": "To be continued…",
+            "it": "Continua…",
+            "de": "Fortsetzung folgt…",
+            "fr": "À suivre…"
+          },
+          "audio": "assets/sfx/afc225c9463b057989b19c85b20cb600.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "none"
           }
         }
       ]

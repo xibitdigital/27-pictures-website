@@ -15,7 +15,7 @@ Erin hunts a kidnapping ring through a crumbling town, finds goblins behind it,
 opens a runic portal and fights her way to the Goblin King.
 
 Episode 2 ships as its **own reader**: `/toons/erin-ep2/`, config
-`content/toons/erin-ep2/config.json`, app `src/toons/erin-ep2/`. **16 plates**,
+`content/toons/erin-ep2/config.json`, app `src/toons/erin-ep2/`. **17 plates**,
 on R2 and published, with EN/IT/DE/FR captions and voiced audio on every line.
 
 Ep-2 cast voices: `erin`, `venus`, `goblinking` (`scripts/jax-voices.json`).
