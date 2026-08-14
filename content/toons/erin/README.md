@@ -15,8 +15,14 @@ Erin hunts a kidnapping ring through a crumbling town, finds goblins behind it,
 opens a runic portal and fights her way to the Goblin King.
 
 Episode 2 ships as its **own reader**: `/toons/erin-ep2/`, config
-`content/toons/erin-ep2/config.json`, app `src/toons/erin-ep2/`. Ten plates
-staged locally; **not uploaded to R2 and not published** yet.
+`content/toons/erin-ep2/config.json`, app `src/toons/erin-ep2/`. **16 plates**,
+on R2 and published, with EN/IT/DE/FR captions and voiced audio on every line.
+
+Ep-2 cast voices: `erin`, `venus`, `goblinking` (`scripts/jax-voices.json`).
+The goblin rider is `goblinking` pitched **+12%** through the ffmpeg chain, so
+it reads as the same species without being the same character. The **goblin
+captain** (page 11, armoured, cross tabard, beside the throne) has no voice
+yet.
 
 ## Episode 2 — running order (in progress)
 

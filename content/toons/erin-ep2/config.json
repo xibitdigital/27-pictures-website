@@ -765,6 +765,74 @@
       ]
     },
     {
+      "file": "assets/0f9f36b38f80f569c920ddb4d215c03a.webp",
+      "words": [
+        {
+          "x": 0.24,
+          "y": 0.08,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.32,
+          "text": {
+            "en": "The sky tore open twice, my King.",
+            "it": "Il cielo si è squarciato due volte, mio Re.",
+            "de": "Der Himmel riss zweimal auf, mein König.",
+            "fr": "Le ciel s'est déchiré deux fois, mon Roi."
+          },
+          "audio": "assets/sfx/c5ae3e2dd630449f080b58d792d2d275.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom"
+          }
+        },
+        {
+          "x": 0.78,
+          "y": 0.08,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.2,
+          "text": {
+            "en": "Twice?",
+            "it": "Due volte?",
+            "de": "Zweimal?",
+            "fr": "Deux fois ?"
+          },
+          "audio": "assets/sfx/e13c94c0a7e245c9de17ccd6a9bee5bf.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
+        },
+        {
+          "x": 0.68,
+          "y": 0.67,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.32,
+          "text": {
+            "en": "The second one came back for us.",
+            "it": "La seconda è tornata per noi.",
+            "de": "Die zweite kam für uns zurück.",
+            "fr": "La deuxième est revenue pour nous."
+          },
+          "audio": "assets/sfx/21981f1efff34f060790e45244f2e9a2.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
+        }
+      ]
+    },
+    {
       "file": "assets/e4ab938d6f2156b496fd7c119d32bfda.jpg",
       "words": [
         {
@@ -828,6 +896,230 @@
             "strokeWidth": 5
           },
           "audio": "assets/sfx/d9c4dca88c450363ae631cc87ec5bae9.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/df8ed8d4e1fe810f47ca0c722b9ff5da.jpg",
+      "words": [
+        {
+          "x": 0.2,
+          "y": 0.12,
+          "align": "center",
+          "size": 30,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.26,
+          "text": {
+            "en": "She's in there.",
+            "it": "È là dentro.",
+            "de": "Sie ist da drin.",
+            "fr": "Elle est là-dedans."
+          },
+          "audio": "assets/sfx/93c668c62f12f3513829935ef66d0aea.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          }
+        },
+        {
+          "x": 0.8,
+          "y": 0.12,
+          "align": "center",
+          "size": 28,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.28,
+          "text": {
+            "en": "So is everything else.",
+            "it": "E anche tutto il resto.",
+            "de": "Und alles andere auch.",
+            "fr": "Et tout le reste aussi."
+          },
+          "audio": "assets/sfx/2f0bfe66fbb8487fcdec8e025a61d9a9.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/bf8614a14402489ec7a93f7ba7e77f75.jpg",
+      "words": [
+        {
+          "x": 0.26,
+          "y": 0.3,
+          "align": "center",
+          "size": 40,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": -7,
+          "maxWidth": 0.26,
+          "text": {
+            "en": "RRRAAAGH",
+            "it": "RRRAAAGH",
+            "de": "RRRAAAGH",
+            "fr": "RRRAAAGH"
+          },
+          "audio": "assets/sfx/15f2f6558ee573bae8226df7aec2b696.mp3"
+        },
+        {
+          "x": 0.74,
+          "y": 0.09,
+          "align": "center",
+          "size": 29,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.3,
+          "text": {
+            "en": "You came to my house.",
+            "it": "Siete venute a casa mia.",
+            "de": "Ihr seid in mein Haus gekommen.",
+            "fr": "Vous êtes venues chez moi."
+          },
+          "audio": "assets/sfx/569cea23cd1e5e3a447e9d69c1e56fa5.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/70398e02271f047166c8847f4bbcf565.webp",
+      "words": [
+        {
+          "x": 0.74,
+          "y": 0.06,
+          "align": "center",
+          "size": 29,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.3,
+          "text": {
+            "en": "They let us in on purpose.",
+            "it": "Ci hanno fatti entrare apposta.",
+            "de": "Sie haben uns absichtlich hereingelassen.",
+            "fr": "Ils nous ont laissés entrer exprès."
+          },
+          "audio": "assets/sfx/536c6d35177d385e296fde0f54a44db5.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.39,
+          "align": "center",
+          "size": 29,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Back to back. Don't fall.",
+            "it": "Schiena contro schiena. Non cadere.",
+            "de": "Rücken an Rücken. Fall nicht.",
+            "fr": "Dos à dos. Ne tombe pas."
+          },
+          "audio": "assets/sfx/d742c0c0e3542b8d10bbdf1d66ddd509.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          }
+        },
+        {
+          "x": 0.76,
+          "y": 0.69,
+          "align": "center",
+          "size": 29,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.3,
+          "text": {
+            "en": "Count for me this time.",
+            "it": "Stavolta conta tu per me.",
+            "de": "Diesmal zählst du für mich.",
+            "fr": "Cette fois, compte pour moi."
+          },
+          "audio": "assets/sfx/afb3292066c32416fc3c00c1ad64732d.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/eebe4c2a4bf2e730a4f6176360875491.jpg",
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.07,
+          "align": "center",
+          "size": 38,
+          "variant": "burst",
+          "color": "#111111",
+          "maxWidth": 0.22,
+          "text": {
+            "en": "DOWN!",
+            "it": "GIÙ!",
+            "de": "RUNTER!",
+            "fr": "À TERRE !"
+          },
+          "audio": "assets/sfx/f9a2f37dfab35dcf0daa3b33c3ff390a.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          }
+        },
+        {
+          "x": 0.3,
+          "y": 0.55,
+          "align": "center",
+          "size": 34,
+          "color": "#111111",
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
+          "angle": 6,
+          "maxWidth": 0.24,
+          "text": {
+            "en": "KLANG",
+            "it": "KLANG",
+            "de": "KLANG",
+            "fr": "KLANG"
+          },
+          "audio": "assets/sfx/9ed016342ec442dda507806e650cb30f.mp3"
+        },
+        {
+          "x": 0.76,
+          "y": 0.55,
+          "align": "center",
+          "size": 29,
+          "variant": "bubble",
+          "color": "#111111",
+          "maxWidth": 0.28,
+          "text": {
+            "en": "Kneel, or break.",
+            "it": "In ginocchio, o vi spezzo.",
+            "de": "Knien, oder brechen.",
+            "fr": "À genoux, ou je vous brise."
+          },
+          "audio": "assets/sfx/556c82904e7561d3311b7eb0a7f4f102.mp3",
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          }
         }
       ]
     }
