@@ -2,9 +2,12 @@ import { afterEach, vi } from "vitest";
 import { config } from "@vue/test-utils";
 import { resetPageQueryCache } from "../toons/bookReader/pageQuery";
 
-// Isolate tests from developer .env (CDN base). vite.config test.env also sets this;
-// stub here so vi.stubEnv in individual tests can still override per case.
+// Isolate tests from developer .env (CDN base, likes API). vite.config test.env
+// also sets these; stub here so vi.stubEnv in individual tests can still
+// override per case. Without the likes stub, a developer with VITE_LIKES_API in
+// .env makes the "no API configured" path hit the real Worker.
 vi.stubEnv("VITE_ASSET_BASE", "");
+vi.stubEnv("VITE_LIKES_API", "");
 
 // Headless UI + many components expect matchMedia in jsdom/happy-dom.
 if (typeof window !== "undefined" && !window.matchMedia) {
