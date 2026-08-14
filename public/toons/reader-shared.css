@@ -364,17 +364,21 @@ body.is-fullscreen .reader {
 .page-slot[data-page-num]::after {
   content: attr(data-page-num);
   position: absolute;
-  left: 0.55rem;
-  bottom: 0.4rem;
+  /* Flush into the plate's bottom-left corner — the chip is the corner. */
+  left: 0;
+  bottom: 0;
   z-index: 33;
   font-family: "VT323", monospace;
   font-size: clamp(11px, 1.5vh, 16px);
   line-height: 1;
   letter-spacing: 0.08em;
-  color: color-mix(in srgb, var(--text) 52%, transparent);
-  text-shadow:
-    0 1px 2px color-mix(in srgb, var(--bg-dark) 85%, transparent),
-    0 0 6px color-mix(in srgb, var(--bg-dark) 60%, transparent);
+  /* Solid black chip: a translucent glyph with a text-shadow vanished into the
+     plate wherever the art was busy or already black, which is most of a dark
+     toon. The chip carries its own ground so the number reads on any plate. */
+  color: var(--text);
+  background: var(--bg-dark);
+  padding: 0.25em 0.55em 0.2em;
+  border-radius: 0 3px 0 0;
   pointer-events: none;
   user-select: none;
 }
@@ -1331,8 +1335,11 @@ body.view-vertical.is-fullscreen .reader {
   position: relative;
   width: 100%;
   /* Reserve plate height before lazy images decode — without this, fast
-     flings jump/stop as each plate expands from 0 under the scroll position. */
-  aspect-ratio: 1008 / 1792;
+     flings jump/stop as each plate expands from 0 under the scroll position.
+     Must match the toon's real plate ratio, or the slot is taller than the
+     image and every page scrolls with bands above and below it. Each toon
+     sets --plate-aspect next to its book tokens; the fallback is Jax's. */
+  aspect-ratio: var(--plate-aspect, 1008 / 1792);
   height: auto;
   min-height: 0;
   flex: none;
@@ -1584,8 +1591,8 @@ body.single-page .flip-page.flipping.from-left {
 
 @media (max-width: 768px) {
   .page-slot[data-page-num]::after {
-    left: 0.4rem;
-    bottom: 0.3rem;
+    left: 0;
+    bottom: 0;
     font-size: 11px;
   }
 
