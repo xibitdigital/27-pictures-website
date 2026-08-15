@@ -258,12 +258,12 @@ body.toons-reader {
   pointer-events: none;
 }
 
-/* Count is opt-in (?stats=true) and stacks under the heart, so the top bar
-   keeps its one-icon-per-control rhythm. */
+/* The count sits beside the heart, not under it. Stacking it made this the
+   only two-line control in the bar, so the button grew taller than the
+   language, scroll and fullscreen buttons next to it and broke the row. The
+   padding stays exactly .toon-fs-btn's, so every control is the same box. */
 .toon-like-btn.has-stats {
-  flex-direction: column;
-  gap: 0.05rem;
-  padding: 0.35rem 0.45rem 0.3rem;
+  gap: 0.25rem;
   line-height: 1;
 }
 

@@ -7,17 +7,23 @@
  * twice for every book would double the requests to show one figure twice.
  */
 
-const LIKES_API = import.meta.env.VITE_LIKES_API as string | undefined;
+import { likesApiBase } from "../toons/bookReader/useToonLikes";
 
 let inflight: Promise<Map<string, number>> | null = null;
 
 async function load(ids: string[]): Promise<Map<string, number>> {
   const out = new Map<string, number>();
-  if (!LIKES_API) return out;
+  const base = likesApiBase();
+  if (!base) return out;
   await Promise.all(
     ids.map(async (id) => {
       try {
-        const res = await fetch(`${LIKES_API}?toon=${encodeURIComponent(id)}`);
+        // The Worker serves /likes; VITE_LIKES_API is only its origin. Asking
+        // the origin directly returns {"error":"not found"}, which is how the
+        // "most loved" row quietly showed nothing at all.
+        const res = await fetch(`${base}/likes?toon=${encodeURIComponent(id)}`, {
+          headers: { Accept: "application/json" },
+        });
         if (!res.ok) return;
         const data = (await res.json()) as { likes?: number };
         if (typeof data.likes === "number" && data.likes > 0) out.set(id, data.likes);

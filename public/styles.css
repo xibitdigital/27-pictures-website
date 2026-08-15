@@ -19,6 +19,10 @@
   --red-smile-hover: #c81010;
   --focus-ring: rgba(179, 0, 0, 0.4);
   --card-lift: translateY(-2px);
+
+  /* Fixed header + a little air. Studio strip and in-page jumps must
+     clear the logo; keep in step with nav padding and --nav-logo-h. */
+  --nav-offset: 7.25rem;
 }
 
 * {
@@ -1006,6 +1010,10 @@ button:focus-visible {
 
 /* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
+  :root {
+    --nav-offset: 6rem;
+  }
+
   /* Navigation */
   body > header nav,
   #site-app > header nav {
@@ -1099,7 +1107,7 @@ button:focus-visible {
   .assembly {
     grid-template-columns: 1fr;
     gap: 40px;
-    padding: 60px 5%;
+    padding: var(--nav-offset) 5% 60px;
   }
 
   /* Contact */
@@ -1194,7 +1202,7 @@ button:focus-visible {
 
 /* --- ABOUT STRIP --- */
 .about-strip {
-  padding: 80px 10%;
+  padding: var(--nav-offset) 10% 80px;
   background: var(--bg-dark);
   border-bottom: 1px solid var(--border);
 }
@@ -1210,7 +1218,7 @@ button:focus-visible {
 }
 @media (max-width: 768px) {
   .about-strip {
-    padding: 50px 5%;
+    padding: var(--nav-offset) 5% 50px;
   }
   .about-strip p {
     max-width: 100%;
@@ -2497,6 +2505,13 @@ button:focus-visible {
 
 .series-card-votes::before {
   content: "♥ ";
+}
+
+/* display:block on a class beats the UA [hidden] rule at equal specificity, so
+   without this the badge stayed in the layout and rendered a lone heart with
+   no number next to it. */
+.series-card-votes[hidden] {
+  display: none;
 }
 
 .series-card-chevron {
