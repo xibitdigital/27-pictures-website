@@ -1230,12 +1230,6 @@ button:focus-visible {
   color: var(--silver);
   font-style: italic;
 }
-.studio-updated {
-  margin-top: 8px;
-  font-size: 0.8rem;
-  color: var(--silver);
-  letter-spacing: 0.5px;
-}
 
 /* --- LATEST RELEASES --- */
 .latest-section {
