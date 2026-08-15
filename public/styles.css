@@ -2252,6 +2252,28 @@ button:focus-visible {
   color: var(--silver);
 }
 
+/* Continue-reading tile: how far in, drawn on the artwork itself. */
+.episode-tile-art {
+  position: relative;
+}
+
+.episode-tile-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: rgb(255 255 255 / 25%);
+}
+
+.episode-tile-progress::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--read, 0%);
+  background: var(--red-smile);
+}
+
 .toon-series-chevron {
   color: var(--silver);
   font-weight: 400;

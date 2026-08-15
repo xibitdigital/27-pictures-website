@@ -29,6 +29,7 @@ const bookOptions: ToonShellBookOptions = {
     alt-prefix="Nero"
     :config-url="CONFIG_URL"
     :asset-page-dir="ASSET_PAGE_DIR"
+    toon-id="nero"
     front-cover-logo="/logosquare.png"
     :cover-texture="COVER_TEXTURE"
     :book-options="bookOptions"

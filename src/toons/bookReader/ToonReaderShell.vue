@@ -3,7 +3,7 @@
  * Shared FlipFrame chrome for Erin, Jax, and future toons.
  * Owns view-mode, config load, strip, captions, and the Vue book surface.
  */
-import { computed, nextTick, onMounted, onUnmounted, ref, toRef } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, toRef, watch } from "vue";
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import CoverGuideDialog from "./CoverGuideDialog.vue";
@@ -14,6 +14,7 @@ import { parsePageQuery } from "./pageQuery";
 import VerticalStrip from "./VerticalStrip.vue";
 import AutoReadPrompt from "./captions/AutoReadPrompt.vue";
 import { provideAutoRead } from "./captions/useAutoRead";
+import { writeProgress } from "./readingProgress";
 import { provideToonCaptions } from "./captions/useToonCaptions";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
 import { prefersSinglePage } from "./bookModels";
@@ -44,6 +45,11 @@ const props = withDefaults(
     captionLangStorageKey?: string;
     /** Silence between auto-read caption clips, in ms. */
     autoReadGapMs?: number;
+    /**
+     * Toon id (matches content/toons/<id>/). Set it and the reader remembers
+     * the page locally, which is what feeds "continue reading" on /toons/.
+     */
+    toonId?: string;
   }>(),
   {
     mobileDefault: true,
@@ -306,8 +312,25 @@ const readingProgress = computed(() => (viewMode.isVertical.value ? scrollProgre
 
 const readingProgressLabel = computed(() => (viewMode.isVertical.value ? "" : engine.state.indicator));
 
+/**
+ * Remember the page locally. The engine already writes ?page=<n> as the spread
+ * changes, so that query is the one place both view modes agree on what page
+ * the reader is looking at — no second source to keep in step.
+ */
+function rememberPosition(): void {
+  if (!props.toonId) return;
+  const pages = engine.state.pages.length;
+  const page = parsePageQuery(window.location.search);
+  if (!pages || !page) return;
+  writeProgress(props.toonId, page, pages);
+}
+
+// Book mode: the spread index is the page change worth recording.
+watch(() => engine.state.viewIndex, rememberPosition);
+
 const onWindowScroll = throttleTrailing(() => {
   syncScrollProgress();
+  rememberPosition();
   if (!viewMode.isVertical.value) return;
   autoRead.notifyScroll();
 }, 32);

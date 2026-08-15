@@ -20,6 +20,8 @@ export interface Episode {
   title: string;
   url?: string;
   pages?: number;
+  /** Card art file under card-art/ on the CDN. */
+  art?: string;
   status: EpisodeStatus;
 }
 
@@ -39,6 +41,7 @@ export const SERIES: Series[] = [
     episodes: [
       {
         id: "erin",
+        art: "erin.jpg",
         n: 1,
         title: "The Missing Child",
         url: "/toons/erin/",
@@ -47,6 +50,7 @@ export const SERIES: Series[] = [
       },
       {
         id: "erin-the-revenge",
+        art: "erin-the-revenge.jpg",
         n: 2,
         title: "The Revenge",
         url: "/toons/erin-the-revenge/",
@@ -60,13 +64,15 @@ export const SERIES: Series[] = [
     key: "jax",
     title: "Jax",
     tagline: "Cyberpunk · a netrunner robbing the people who own minds",
-    episodes: [{ id: "jax", n: 1, title: "Jax", url: "/toons/jax/", status: "published" }],
+    episodes: [{ id: "jax", n: 1, title: "Jax", url: "/toons/jax/", pages: 24, art: "jax.jpg", status: "published" }],
   },
   {
     key: "nero",
     title: "Nero",
     tagline: "Cyberpunk noir · a Scotland Yard case in the rain",
-    episodes: [{ id: "nero", n: 1, title: "Nero", url: "/toons/nero/", pages: 20, status: "published" }],
+    episodes: [
+      { id: "nero", n: 1, title: "Nero", url: "/toons/nero/", pages: 20, art: "nero.jpg", status: "published" },
+    ],
   },
   {
     key: "red-smile",
@@ -75,6 +81,7 @@ export const SERIES: Series[] = [
     episodes: [
       {
         id: "redsmile-static",
+        art: "redsmile-static.jpg",
         n: 1,
         title: "static",
         url: "/toons/redsmile-static/",
@@ -127,4 +134,17 @@ export function episodeNav(toonId: string): EpisodeNav | null {
         }
       : undefined,
   };
+}
+
+/** Flat list of episodes that have a reader, in series order. */
+export function allEpisodes(): Array<Episode & { seriesTitle: string }> {
+  return SERIES.flatMap((series) =>
+    series.episodes.filter((e) => e.id && e.url).map((e) => ({ ...e, seriesTitle: series.title }))
+  );
+}
+
+/** Display name for a tile: the series name unless the series has episodes. */
+export function episodeLabel(ep: Episode & { seriesTitle: string }): string {
+  const multi = SERIES.find((s) => s.title === ep.seriesTitle)?.episodes.filter((e) => e.id).length ?? 0;
+  return multi > 1 ? `${ep.seriesTitle} · Episode ${ep.n}` : ep.seriesTitle;
 }

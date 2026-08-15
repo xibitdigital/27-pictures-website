@@ -36,6 +36,7 @@ const bookOptions: ToonShellBookOptions = {
     alt-prefix="Erin"
     :config-url="CONFIG_URL"
     :asset-page-dir="ASSET_PAGE_DIR"
+    toon-id="erin"
     front-cover-logo="/logosquare.png"
     :cover-texture="COVER_TEXTURE"
     :book-options="bookOptions"

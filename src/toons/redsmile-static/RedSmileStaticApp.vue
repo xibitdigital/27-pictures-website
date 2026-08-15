@@ -29,6 +29,7 @@ const bookOptions: ToonShellBookOptions = {
     alt-prefix="static"
     :config-url="CONFIG_URL"
     :asset-page-dir="ASSET_PAGE_DIR"
+    toon-id="redsmile-static"
     front-cover-logo="/logosquare.png"
     :cover-texture="COVER_TEXTURE"
     caption-lang-storage-key="redsmile-static-toon-lang"
