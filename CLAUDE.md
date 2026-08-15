@@ -402,10 +402,23 @@ Wire-up pattern:
   `FrontCoverInstructions.vue` (shared), not per-toon config.
 
 ```bash
-# After editing content/toons/<toon>/config.json
-npm run publish-toon-config -- --toon jax   # or erin | nero
-# Deploy site so config-lock.json is live
+# After editing content/toons/<toon>/config.json — one command, right order
+make ship TOON=jax              # → staging
+make ship TOON=jax PROD=1       # → twentyseven.pictures
+make ship TOON=jax DRY=1        # plan + asset check only
 ```
+
+`ship-toon.js` chains the four steps that must all happen, in order: upload
+local assets → **verify every plate and clip the config references resolves on
+R2** → publish the config (rewrites `config-lock.json`) → build and deploy.
+Publish a config whose plates are not up yet and the live page breaks; publish
+without deploying and nothing changes at all. It refuses a production run on a
+dirty tree, because `wrangler pages deploy` ships `dist/` built from the
+working directory.
+
+The individual steps still exist (`npm run upload-assets`,
+`npm run publish-toon-config -- --toon jax`) for when you want one of them
+alone.
 
 ### YouTube embeds: click-to-play façades
 
