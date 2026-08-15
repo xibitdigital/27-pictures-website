@@ -1950,6 +1950,32 @@ button:focus-visible {
   margin-bottom: 64px;
 }
 
+/* Opt-in separator where a page changes subject — grey, because grey divides
+   and red marks a card. Shared by both split-page families. */
+.series-section.is-divided,
+.service-section.is-divided {
+  border-top: 1px solid var(--border);
+  padding-top: 48px;
+}
+
+/* A section that is also the copy column caps itself at 820px, which cut the
+   rule off mid-page. The rule belongs to the section and should span it; the
+   820px measure belongs to the prose, so it moves onto the children. Grids and
+   figures keep the full width they were already using. */
+.service-section.is-divided.service-body,
+.series-section.is-divided.series-body {
+  max-width: none;
+}
+
+.service-section.is-divided.service-body > p,
+.service-section.is-divided.service-body > h2,
+.service-section.is-divided.service-body > ul,
+.series-section.is-divided.series-body > p,
+.series-section.is-divided.series-body > h2,
+.series-section.is-divided.series-body > ul {
+  max-width: 820px;
+}
+
 .series-section-label {
   font-size: 10px;
   letter-spacing: 5px;
@@ -1964,59 +1990,101 @@ button:focus-visible {
   font-size: clamp(1.5rem, 3.5vw, 2rem);
   margin-bottom: 20px;
 }
-
+/* ── Film cards ──
+   Same card language as the toon shelf: red rule for the top edge, thumbnail,
+   uppercase label, Playfair title, muted body clamped so the row reads as a
+   set of films rather than as five essays. The copy stays in the DOM — this
+   page is indexed for it. The frame keeps 16:9 because that is the shape the
+   façade thumbnails arrive in. */
 .films {
   display: grid;
-  gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+  /* Stretch, not start: the cards have to be equal height for their CTAs to
+     line up, and titles here run to one, two or three lines. */
+  align-items: stretch;
   margin-top: 36px;
 }
 
 .film {
-  display: grid;
-  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
-  gap: 28px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-top: 2px solid var(--red-smile);
+  padding-top: 14px;
+}
+
+/* The unclassed wrapper holding meta, title and synopsis. It grows so the
+   link below it can be pushed to a common baseline across the row. */
+.film > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .film-frame {
+  position: relative;
   margin: 0;
-  background: var(--bg-dark);
   aspect-ratio: 16 / 9;
+  border-radius: 12px;
   overflow: hidden;
+  background: var(--bg-dark);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+  transition: transform 0.35s var(--transition);
+}
+
+.film:hover .film-frame {
+  transform: translateY(-4px);
 }
 
 .film-frame iframe {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  display: block;
   border: 0;
 }
 
 .film-meta {
-  font-size: 0.68rem;
-  letter-spacing: 3px;
+  margin-top: 12px;
+  font-size: 11px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--red-smile);
-  font-weight: 700;
-  margin-bottom: 10px;
+  color: var(--silver);
 }
 
 .film h3 {
-  font-size: 1.15rem;
-  line-height: 1.3;
-  margin-bottom: 12px;
+  margin: 4px 0 0;
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--text);
 }
 
 .film p {
-  color: var(--text-muted);
-  font-size: 0.92rem;
-  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
   font-weight: 300;
+  color: var(--silver);
 }
 
 .film .cta-link {
   display: inline-block;
-  margin-top: 14px;
+  align-self: flex-start;
+  /* Bottom-aligned across the row regardless of how the title wrapped. */
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film-frame {
+    transition: none;
+  }
 }
 
 /* Break out of the .series-body copy column so the cards span the page —
@@ -2062,11 +2130,6 @@ button:focus-visible {
 
   .series-page {
     padding: 110px 24px 64px;
-  }
-
-  .film {
-    grid-template-columns: 1fr;
-    gap: 16px;
   }
 
   .series-cta {
@@ -2123,7 +2186,12 @@ button:focus-visible {
   border-color: var(--red-smile);
 }
 
+/* The rule belongs above the section heading, not below it: it separates this
+   block from what came before, and sitting under the label made it read as
+   the first row's own divider. */
 .experiments-section-label {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
   font-size: 10px;
   letter-spacing: 5px;
   text-transform: uppercase;
@@ -2155,6 +2223,13 @@ button:focus-visible {
    rails and the series shelf — is separated by the same neutral rule; the red
    is reserved for the cards themselves, so the two levels stay legible
    instead of competing. */
+/* The first row sits directly under the section label, which already carries
+   the rule — a second one 20px below it reads as a mistake. */
+.toon-series:first-of-type .toon-series-head {
+  border-top: 0;
+  padding-top: 0;
+}
+
 .toon-series-head {
   border-top: 1px solid var(--border);
   padding-top: 14px;
@@ -2269,7 +2344,6 @@ button:focus-visible {
 
 .episode-tile h2 {
   margin-top: 4px;
-  font-family: "Inter", sans-serif;
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.3;
