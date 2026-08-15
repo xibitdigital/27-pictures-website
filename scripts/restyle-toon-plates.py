@@ -187,7 +187,11 @@ def restyle_page(base, token, args, src_url, style_urls, dest):
     sent = set(payload['image'])
     urls = [u for u in collect_urls(res, []) if u not in sent]
     if not urls:
-        print(f"    no output url in result (request_id {rid})", file=sys.stderr)
+        # /status can say "completed" while /result carries status=failed and an
+        # error string — reference downloads time out on big files. Show it.
+        err = res.get('error') or res.get('message')
+        detail = f": {err}" if err else f" (request_id {rid})"
+        print(f"    no output image{detail}", file=sys.stderr)
         return None
 
     with urllib.request.urlopen(urls[0], timeout=300) as r, open(dest, 'wb') as f:
@@ -212,6 +216,10 @@ def main():
                     help='R2 key of a character sheet, attached right after the source so the '
                          'model has the canonical face to pin (repeatable). Identity drifts '
                          'fastest on single-figure pages — covers, end cards, splashes')
+    ap.add_argument('--source-key',
+                    help='R2 key to restyle instead of whatever the config points at. Needed to '
+                         're-run a page that has already been wired — otherwise the source is the '
+                         'previous restyle and the drift compounds. Single page only.')
     ap.add_argument('--prompt-extra',
                     help='sentence appended to the prompt for this run — use it to re-describe a '
                          'page the model keeps returning empty on')
@@ -265,7 +273,8 @@ def main():
         if args.resume and os.path.exists(dest):
             print('    already downloaded, skipping')
             continue
-        src_url = f"{asset_base}/{prefix}/{name}"
+        src_url = (f"{asset_base}/{args.source_key.lstrip('/')}" if args.source_key
+                   else f"{asset_base}/{prefix}/{name}")
         got = restyle_page(base, token, args, src_url, style_urls, dest)
         if got:
             print(f"    -> {os.path.relpath(got, ROOT)} ({os.path.getsize(got)} bytes)")
