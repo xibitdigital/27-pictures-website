@@ -179,8 +179,8 @@ STAGING_PROJECT ?= twentyseven-pictures-staging
 PREVIEW_BRANCH ?= staging
 
 .PHONY: ship
-ship: require-cdn-base ## Upload + verify + publish + deploy one toon (TOON=erin-ep2 [PROD=1] [DRY=1])
-	@test -n "$(TOON)" || (echo "Usage: make ship TOON=erin-ep2 [PROD=1] [DRY=1]" && exit 1)
+ship: require-cdn-base ## Upload + verify + publish + deploy one toon (TOON=erin-the-revenge [PROD=1] [DRY=1])
+	@test -n "$(TOON)" || (echo "Usage: make ship TOON=erin-the-revenge [PROD=1] [DRY=1]" && exit 1)
 	$(NPM) run ship-toon -- --toon "$(TOON)" \
 		$(if $(filter 1 true yes,$(PROD)),--production,) \
 		$(if $(filter 1 true yes,$(DRY)),--dry-run,) \

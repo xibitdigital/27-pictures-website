@@ -60,7 +60,7 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=f415ca093e" />
+    <link rel="stylesheet" href="/styles.css?v=2bd012c967" />
 
     <script type="application/ld+json">
       {
@@ -123,35 +123,52 @@
             ]
           },
           {
+            "@type": "CreativeWorkSeries",
+            "@id": "https://twentyseven.pictures/toons/#series-erin",
+            "name": "Erin & the Goblins",
+            "url": "https://twentyseven.pictures/toons/erin/",
+            "description": "Erin is half human, half vampire, keeper of a small town that is really a door between the goblin world and ours. Interactive FlipFrame comics from 27 Pictures.",
+            "genre": ["Dark Fantasy", "Horror", "Comic"],
+            "inLanguage": ["en", "it", "de", "fr"],
+            "creator": {
+              "@id": "https://twentyseven.pictures/#organization"
+            },
+            "image": {
+              "@type": "ImageObject",
+              "url": "%VITE_ASSET_BASE%/card-art/erin.jpg",
+              "width": 1152,
+              "height": 1728
+            },
+            "hasPart": [
+              {
+                "@type": "CreativeWork",
+                "@id": "https://twentyseven.pictures/toons/erin/#work",
+                "name": "Erin & the Goblins — Episode 1: The Missing Child",
+                "url": "https://twentyseven.pictures/toons/erin/",
+                "description": "An interactive toon: half human, half vampire in a small town between the goblin world and the human one. FlipFrame page-turner from 27 Pictures.",
+                "position": 1,
+                "isPartOf": {
+                  "@id": "https://twentyseven.pictures/toons/#series-erin"
+                }
+              }
+            ],
+            "isPartOf": {
+              "@id": "https://twentyseven.pictures/toons/#webpage"
+            }
+          },
+          {
             "@type": "ItemList",
             "@id": "https://twentyseven.pictures/toons/#itemlist",
             "name": "27 Pictures interactive toons",
-            "numberOfItems": 5,
+            "numberOfItems": 4,
             "itemListElement": [
               {
                 "@type": "ListItem",
                 "position": 1,
-                "name": "Erin",
+                "name": "Erin & the Goblins",
                 "url": "https://twentyseven.pictures/toons/erin/",
                 "item": {
-                  "@type": "CreativeWork",
-                  "@id": "https://twentyseven.pictures/toons/erin/#work",
-                  "name": "Erin",
-                  "url": "https://twentyseven.pictures/toons/erin/",
-                  "description": "An interactive toon: half human, half vampire in a small town between the goblin world and the human one. FlipFrame page-turner from 27 Pictures.",
-                  "genre": ["Interactive Toon", "Manga", "Fantasy"],
-                  "creator": {
-                    "@id": "https://twentyseven.pictures/#organization"
-                  },
-                  "image": {
-                    "@type": "ImageObject",
-                    "url": "%VITE_ASSET_BASE%/card-art/erin.jpg",
-                    "width": 1152,
-                    "height": 1728
-                  },
-                  "isPartOf": {
-                    "@id": "https://twentyseven.pictures/toons/#webpage"
-                  }
+                  "@id": "https://twentyseven.pictures/toons/#series-erin"
                 }
               },
               {
@@ -234,33 +251,6 @@
                     "@id": "https://twentyseven.pictures/toons/#webpage"
                   }
                 }
-              },
-              {
-                "@type": "ListItem",
-                "position": 5,
-                "name": "Erin EP 2: The Revenge",
-                "url": "https://twentyseven.pictures/toons/erin-ep2/",
-                "item": {
-                  "@type": "CreativeWork",
-                  "@id": "https://twentyseven.pictures/toons/erin-ep2/#work",
-                  "name": "Erin EP 2: The Revenge",
-                  "url": "https://twentyseven.pictures/toons/erin-ep2/",
-                  "description": "Episode 2 of Erin & the Goblins: Erin crosses a portal into the goblin world, is taken by a winged stone gargoyle, and learns to move matter itself.",
-                  "genre": ["Interactive Toon", "Dark Fantasy"],
-                  "inLanguage": ["en", "it", "de", "fr"],
-                  "creator": {
-                    "@id": "https://twentyseven.pictures/#organization"
-                  },
-                  "image": {
-                    "@type": "ImageObject",
-                    "url": "%VITE_ASSET_BASE%/card-art/erin-ep2.jpg",
-                    "width": 1152,
-                    "height": 1728
-                  },
-                  "isPartOf": {
-                    "@id": "https://twentyseven.pictures/toons/#webpage"
-                  }
-                }
               }
             ]
           }
@@ -301,126 +291,162 @@
       <section aria-labelledby="current-experiments-heading">
         <h2 id="current-experiments-heading" class="experiments-section-label">Interactive toons</h2>
 
-        <div class="experiments-grid">
-          <article>
-            <a href="/toons/nero/" class="experiment-card" aria-labelledby="nero-title">
-              <div class="experiment-card-media">
-                <img
-                  src="%VITE_ASSET_BASE%/card-art/nero.jpg"
-                  alt="Nero interactive cyberpunk sicario toon cover art by 27 Pictures"
-                  width="1008"
-                  height="1792"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div class="experiment-card-body">
-                <p class="experiment-card-label">Scotland Yard case</p>
-                <h2 id="nero-title">Nero</h2>
-                <p>
-                  Detective Nero and forensic Eve hunt a sicario called The Dog — crystal tech, AI glasses, and who
-                  hired the bullet. Short interactive FlipFrame from the Experiments lab.
-                </p>
-                <span class="experiment-card-cta">Read the toon →</span>
-              </div>
-            </a>
-          </article>
-          <article>
-            <a href="/toons/jax/" class="experiment-card" aria-labelledby="jax-title">
-              <div class="experiment-card-media">
-                <img
-                  src="%VITE_ASSET_BASE%/card-art/jax.jpg"
-                  alt="Jax interactive cyberpunk toon cover art by 27 Pictures"
-                  width="1008"
-                  height="1792"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div class="experiment-card-body">
-                <p class="experiment-card-label">Cyberpunk toon</p>
-                <h2 id="jax-title">Jax</h2>
-                <p>
-                  A netrunner with a rare sickness who steals corporate mind-control tech — a future Robin Hood in
-                  chrome.
-                </p>
-                <span class="experiment-card-cta">Read the toon →</span>
-              </div>
-            </a>
-          </article>
-          <article>
-            <a href="/toons/redsmile-static/" class="experiment-card" aria-labelledby="redsmile-static-title">
-              <div class="experiment-card-media">
-                <img
-                  src="%VITE_ASSET_BASE%/card-art/redsmile-static.jpg"
-                  alt="RED SMILE static interactive horror toon cover art by 27 Pictures"
-                  width="800"
-                  height="1424"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div class="experiment-card-body">
-                <p class="experiment-card-label">Horror short</p>
-                <h2 id="redsmile-static-title">RED SMILE: static</h2>
-                <p>
-                  The first episode of the Elena series: psychological horror drawn in heavy black-and-white gekiga ink
-                  — crushed shadows, hand-inked plates, light that never quite reaches the corners. Elena is alone in
-                  the flat when the television finds a channel that should not exist. A black-and-white FlipFrame horror
-                  short.
-                </p>
-                <span class="experiment-card-cta">Read the toon →</span>
-              </div>
-            </a>
-          </article>
-          <article>
-            <a href="/toons/erin/" class="experiment-card" aria-labelledby="erin-title">
-              <div class="experiment-card-media">
-                <img
-                  src="%VITE_ASSET_BASE%/card-art/erin.jpg"
-                  alt="Erin interactive manga reader cover art by 27 Pictures"
-                  width="1152"
-                  height="1728"
-                  loading="eager"
-                  decoding="async"
-                  fetchpriority="high"
-                />
-              </div>
-              <div class="experiment-card-body">
-                <p class="experiment-card-label">Teen fantasy toon</p>
-                <h2 id="erin-title">Erin</h2>
-                <p>
-                  Half human, half vampire — she lives in a small town that is the passage between the goblin world and
-                  the human one. A FlipFrame page-turner.
-                </p>
-                <span class="experiment-card-cta">Read the toon →</span>
-              </div>
-            </a>
-          </article>
-          <article>
-            <a href="/toons/erin-ep2/" class="experiment-card" aria-labelledby="erin-ep2-title">
-              <div class="experiment-card-media">
-                <img
-                  src="%VITE_ASSET_BASE%/card-art/erin-ep2.jpg"
-                  alt="Erin EP 2: The Revenge interactive manga reader cover art by 27 Pictures"
-                  width="1152"
-                  height="1728"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div class="experiment-card-body">
-                <p class="experiment-card-label">Teen fantasy toon</p>
-                <h2 id="erin-ep2-title">Erin EP 2: The Revenge <span class="lab-card-wip">Work in progress</span></h2>
-                <p>
-                  Erin tears a portal open into the goblin world, wakes in a forest that is already watching her, and
-                  learns to move the ground itself. Episode 2 of Erin &amp; the Goblins.
-                </p>
-                <span class="experiment-card-cta">Read the toon →</span>
-              </div>
-            </a>
-          </article>
-        </div>
+        <section class="toon-series" aria-labelledby="series-erin-title">
+          <header class="toon-series-head">
+            <h3 id="series-erin-title">Erin &amp; the Goblins</h3>
+            <p>Dark fantasy · two episodes · a town that is really a door</p>
+          </header>
+          <div class="experiments-grid">
+            <article>
+              <a href="/toons/erin/" class="experiment-card" aria-labelledby="erin-title">
+                <div class="experiment-card-media">
+                  <img
+                    src="%VITE_ASSET_BASE%/card-art/erin.jpg"
+                    alt="Erin interactive manga reader cover art by 27 Pictures"
+                    width="1152"
+                    height="1728"
+                    loading="eager"
+                    decoding="async"
+                    fetchpriority="high"
+                  />
+                </div>
+                <div class="experiment-card-body">
+                  <p class="experiment-card-label">Episode 1</p>
+                  <h2 id="erin-title">The Missing Child</h2>
+                  <p>
+                    Half human, half vampire — she lives in a small town that is the passage between the goblin world
+                    and the human one. A FlipFrame page-turner.
+                  </p>
+                  <span class="experiment-card-cta">Read the toon →</span>
+                </div>
+              </a>
+            </article>
+            <article>
+              <a href="/toons/erin-the-revenge/" class="experiment-card" aria-labelledby="erin-the-revenge-title">
+                <div class="experiment-card-media">
+                  <img
+                    src="%VITE_ASSET_BASE%/card-art/erin-the-revenge.jpg"
+                    alt="Erin EP 2: The Revenge interactive manga reader cover art by 27 Pictures"
+                    width="1152"
+                    height="1728"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="experiment-card-body">
+                  <p class="experiment-card-label">Episode 2</p>
+                  <h2 id="erin-the-revenge-title">
+                    Erin EP 2: The Revenge <span class="lab-card-wip">Work in progress</span>
+                  </h2>
+                  <p>
+                    Erin tears a portal open into the goblin world, wakes in a forest that is already watching her, and
+                    learns to move the ground itself. Episode 2 of Erin &amp; the Goblins.
+                  </p>
+                  <span class="experiment-card-cta">Read the toon →</span>
+                </div>
+              </a>
+            </article>
+          </div>
+          <p class="toon-series-note">Episode 3 is in the darkroom.</p>
+        </section>
+
+        <section class="toon-series" aria-labelledby="series-nero-title">
+          <header class="toon-series-head">
+            <h3 id="series-nero-title">Nero</h3>
+            <p>Cyberpunk noir · one episode</p>
+          </header>
+          <div class="experiments-grid">
+            <article>
+              <a href="/toons/nero/" class="experiment-card" aria-labelledby="nero-title">
+                <div class="experiment-card-media">
+                  <img
+                    src="%VITE_ASSET_BASE%/card-art/nero.jpg"
+                    alt="Nero interactive cyberpunk sicario toon cover art by 27 Pictures"
+                    width="1008"
+                    height="1792"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="experiment-card-body">
+                  <p class="experiment-card-label">Scotland Yard case</p>
+                  <h2 id="nero-title">Nero</h2>
+                  <p>
+                    Detective Nero and forensic Eve hunt a sicario called The Dog — crystal tech, AI glasses, and who
+                    hired the bullet. Short interactive FlipFrame from the Experiments lab.
+                  </p>
+                  <span class="experiment-card-cta">Read the toon →</span>
+                </div>
+              </a>
+            </article>
+          </div>
+        </section>
+
+        <section class="toon-series" aria-labelledby="series-jax-title">
+          <header class="toon-series-head">
+            <h3 id="series-jax-title">Jax</h3>
+            <p>Cyberpunk · one episode</p>
+          </header>
+          <div class="experiments-grid">
+            <article>
+              <a href="/toons/jax/" class="experiment-card" aria-labelledby="jax-title">
+                <div class="experiment-card-media">
+                  <img
+                    src="%VITE_ASSET_BASE%/card-art/jax.jpg"
+                    alt="Jax interactive cyberpunk toon cover art by 27 Pictures"
+                    width="1008"
+                    height="1792"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="experiment-card-body">
+                  <p class="experiment-card-label">Cyberpunk toon</p>
+                  <h2 id="jax-title">Jax</h2>
+                  <p>
+                    A netrunner with a rare sickness who steals corporate mind-control tech — a future Robin Hood in
+                    chrome.
+                  </p>
+                  <span class="experiment-card-cta">Read the toon →</span>
+                </div>
+              </a>
+            </article>
+          </div>
+        </section>
+
+        <section class="toon-series" aria-labelledby="series-red-smile-title">
+          <header class="toon-series-head">
+            <h3 id="series-red-smile-title">RED SMILE</h3>
+            <p>Horror · the anthology, as something you read</p>
+          </header>
+          <div class="experiments-grid">
+            <article>
+              <a href="/toons/redsmile-static/" class="experiment-card" aria-labelledby="redsmile-static-title">
+                <div class="experiment-card-media">
+                  <img
+                    src="%VITE_ASSET_BASE%/card-art/redsmile-static.jpg"
+                    alt="RED SMILE static interactive horror toon cover art by 27 Pictures"
+                    width="800"
+                    height="1424"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="experiment-card-body">
+                  <p class="experiment-card-label">Horror short</p>
+                  <h2 id="redsmile-static-title">RED SMILE: static</h2>
+                  <p>
+                    The first episode of the Elena series: psychological horror drawn in heavy black-and-white gekiga
+                    ink — crushed shadows, hand-inked plates, light that never quite reaches the corners. Elena is alone
+                    in the flat when the television finds a channel that should not exist. A black-and-white FlipFrame
+                    horror short.
+                  </p>
+                  <span class="experiment-card-cta">Read the toon →</span>
+                </div>
+              </a>
+            </article>
+          </div>
+        </section>
       </section>
 
       <footer class="experiments-footer">

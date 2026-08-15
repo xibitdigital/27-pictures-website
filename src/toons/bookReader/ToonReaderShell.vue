@@ -448,6 +448,7 @@ defineExpose<ToonReaderShellExpose>({
       :sound-enabled="soundEnabled"
       :back-href="bookOptions?.backHref"
       :back-label="bookOptions?.backLabel"
+      :back-nav="bookOptions?.backNav"
       @sound-toggle="bookOptions?.onSoundToggle?.()"
     />
 

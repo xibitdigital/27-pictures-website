@@ -2111,6 +2111,49 @@ button:focus-visible {
   height: 100%;
 }
 
+/* ── Toon series groups ──
+   A flat grid made Erin ep 1 and ep 2 look like unrelated books with no
+   reading order. Episodes now sit under the series they belong to; a
+   one-episode series is the same markup with a single card. */
+.toon-series {
+  margin-bottom: 56px;
+}
+
+.toon-series-head {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-bottom: 22px;
+}
+
+.toon-series-head h3 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text);
+}
+
+.toon-series-head p {
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+/* Series groups own their spacing; the inner grid must not add its own. */
+.toon-series .experiments-grid {
+  margin-bottom: 0;
+}
+
+.toon-series-note {
+  margin-top: 16px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
 .experiment-card {
   display: flex;
   flex-direction: column;

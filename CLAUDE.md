@@ -373,7 +373,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Jax  | `/toons/jax/`  | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)             |
 | Nero | `/toons/nero/` | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`) |
 | RED SMILE: static | `/toons/redsmile-static/` | B&W horror short — Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page` |
-| Erin EP 2 | `/toons/erin-ep2/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
+| Erin EP 2 | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
 
 **Erin EP 2 is deliberately unlisted on `main`**: no card in `/toons/`, no
 sitemap or `llms.txt` entry, `noindex, nofollow` on the reader — a
@@ -696,7 +696,7 @@ dialogue (-28 vs -19 LUFS), and generated SFX regularly peaked **above 0 dBFS**
 (measured +2.4 dBTP), which clips on playback. Level a whole toon in one pass:
 
 ```bash
-npm run normalise-audio -- jax                 # or: nero redsmile-static erin-ep2
+npm run normalise-audio -- jax                 # or: nero redsmile-static erin-the-revenge
 npm run normalise-audio -- jax --dry-run       # measure only, touch nothing
 npm run normalise-audio -- jax --voice -18 --sfx -15 --tp -1.5
 npm run normalise-audio -- jax --all           # relevel everything, even on-target clips

@@ -1550,6 +1550,88 @@ body.view-vertical.is-fullscreen .reader {
   color: var(--red-smile);
 }
 
+/* ── Back cover: where the series goes next ──
+   A standalone book keeps .back-cover-link. A book inside a series ends on
+   the question "is there more?", so the last page answers it instead of
+   dropping the reader on a generic index. */
+.back-cover-nav {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  font-family: "Inter", sans-serif;
+}
+
+.back-cover-series {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--red-smile);
+}
+
+.back-cover-current {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--silver);
+  margin-bottom: 0.35rem;
+}
+
+.back-cover-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 15rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--red-smile);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    background 0.2s var(--transition),
+    color 0.2s var(--transition);
+}
+
+.back-cover-next:hover {
+  background: var(--red-smile);
+  color: var(--text);
+}
+
+/* No reader yet — same shape, but reads as a promise, not a link. */
+.back-cover-next.is-soon {
+  border-style: dashed;
+  border-color: var(--border-light);
+  color: var(--silver);
+}
+
+.back-cover-prev,
+.back-cover-all {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--silver);
+  text-decoration: none;
+  transition: color 0.2s var(--transition);
+}
+
+.back-cover-prev:hover,
+.back-cover-all:hover {
+  color: var(--red-smile);
+}
+
+.back-cover-all {
+  margin-top: 0.35rem;
+  opacity: 0.75;
+}
+
 .page-slot.inside-cover.blank::after {
   display: none;
 }

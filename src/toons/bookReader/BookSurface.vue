@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { EpisodeNav } from "../series";
 /**
  * Declarative FlipFrame surface: slots, flip leaf, nav chrome.
  * Bound to a BookEngine (no DOM mutation in TS).
@@ -20,6 +21,7 @@ const props = defineProps<{
   soundEnabled?: boolean;
   backHref?: string;
   backLabel?: string;
+  backNav?: EpisodeNav | null;
 }>();
 
 const emit = defineEmits<{
@@ -59,6 +61,7 @@ function onTouchEnd(e: TouchEvent): void {
           :sound-enabled="soundEnabled"
           :back-href="backHref"
           :back-label="backLabel"
+          :back-nav="backNav"
           @sound-toggle="emit('soundToggle')"
         />
         <BookSlot
@@ -74,6 +77,7 @@ function onTouchEnd(e: TouchEvent): void {
           :sound-enabled="soundEnabled"
           :back-href="backHref"
           :back-label="backLabel"
+          :back-nav="backNav"
           @sound-toggle="emit('soundToggle')"
         />
         <FlipLeaf
@@ -90,6 +94,7 @@ function onTouchEnd(e: TouchEvent): void {
           :sound-enabled="soundEnabled"
           :back-href="backHref"
           :back-label="backLabel"
+          :back-nav="backNav"
           @done="engine.onFlipComplete()"
           @sound-toggle="emit('soundToggle')"
         />

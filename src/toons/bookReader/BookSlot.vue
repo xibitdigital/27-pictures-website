@@ -6,6 +6,7 @@
 import { computed, ref } from "vue";
 import CoverFirstPage from "./CoverFirstPage.vue";
 import BackCoverLink from "./BackCoverLink.vue";
+import type { EpisodeNav } from "../series";
 import PageCaptions from "./captions/PageCaptions.vue";
 import type { SlotModel } from "./bookModels";
 
@@ -23,6 +24,7 @@ const props = withDefaults(
     soundEnabled?: boolean;
     backHref?: string;
     backLabel?: string;
+    backNav?: EpisodeNav | null;
   }>(),
   {
     side: "right",
@@ -36,6 +38,7 @@ const props = withDefaults(
     soundEnabled: false,
     backHref: "/toons/",
     backLabel: "← experiments",
+    backNav: null,
   }
 );
 
@@ -113,6 +116,6 @@ function onCaptionsMeasured(ready: boolean): void {
       @sound-toggle="emit('soundToggle')"
     />
 
-    <BackCoverLink v-else-if="model.kind === 'back'" :href="backHref" :label="backLabel" />
+    <BackCoverLink v-else-if="model.kind === 'back'" :href="backHref" :label="backLabel" :nav="backNav" />
   </div>
 </template>

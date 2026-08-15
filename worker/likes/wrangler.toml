@@ -5,7 +5,7 @@ compatibility_date = "2024-01-01"
 # Comma-separated toon ids the counter will accept. Anything else 400s, so a
 # bot cannot mint unbounded KV keys by inventing toon names.
 [vars]
-ALLOWED_TOONS = "erin,erin-ep2,jax,nero,redsmile-static"
+ALLOWED_TOONS = "erin,erin-the-revenge,jax,nero,redsmile-static"
 ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures,https://staging.twentyseven-pictures.pages.dev"
 
 # One-time setup:

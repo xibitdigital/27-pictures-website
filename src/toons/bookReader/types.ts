@@ -1,3 +1,5 @@
+import type { EpisodeNav } from "../series";
+
 /** Shared types for FlipFrame / toon readers. */
 
 /**
@@ -31,6 +33,8 @@ export interface ToonBookOptions {
   manifestUrl?: string;
   backHref?: string;
   backLabel?: string;
+  /** Series navigation on the back cover (see src/toons/series.ts). */
+  backNav?: EpisodeNav | null;
   frontCoverLogo?: string | null;
   coverTitle?: string;
   coverSubtitle?: string | null;

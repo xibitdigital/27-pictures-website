@@ -3,6 +3,7 @@ import { resolveAssetUrl } from "../bookReader/assetUrl";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import { LikeButton } from "../bookReader/chrome";
 import type { ToonShellBookOptions } from "../bookReader/types";
+import { episodeNav } from "../series";
 import { toonConfigUrl } from "../configUrls";
 
 const ASSET_PAGE_DIR = "/toons/erin/";
@@ -19,10 +20,14 @@ const COVER_SYNOPSIS =
   "She lives in a small town that is not really a town at all: a thin place, a passage between the goblin world and the human one, where roads fold wrong at night and doors open onto forests that do not appear on any map.\n\n" +
   "Blood, bargains, and old names move through her streets. She is the threshold’s keeper — and its most dangerous secret.";
 
+/** Back cover points at the rest of the series, not a generic index. */
+const BACK_NAV = episodeNav("erin");
+
 const bookOptions: ToonShellBookOptions = {
   coverTitle: "Erin",
   coverSubtitle: "Between two worlds",
   coverSynopsis: COVER_SYNOPSIS,
+  backNav: BACK_NAV,
 };
 </script>
 

@@ -8,10 +8,10 @@
  * the reader asks for is compiled into the JS bundle — that is how RED SMILE
  * served 7 pages while the repo had 12.
  *
- *   npm run ship-toon -- --toon erin-ep2              # → staging
- *   npm run ship-toon -- --toon erin-ep2 --production # → twentyseven.pictures
- *   npm run ship-toon -- --toon erin-ep2 --dry-run    # report, change nothing
- *   npm run ship-toon -- --toon erin-ep2 --skip-upload
+ *   npm run ship-toon -- --toon erin-the-revenge              # → staging
+ *   npm run ship-toon -- --toon erin-the-revenge --production # → twentyseven.pictures
+ *   npm run ship-toon -- --toon erin-the-revenge --dry-run    # report, change nothing
+ *   npm run ship-toon -- --toon erin-the-revenge --skip-upload
  *
  * Production refuses to run on a dirty tree: `wrangler pages deploy` ships the
  * working directory, so a caption fix would carry whatever else is half-done.

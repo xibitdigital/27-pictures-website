@@ -14,8 +14,8 @@ Episode 1 is **ERIN & THE GOBLINS — the missing CHILD** (Volume 1 Prequel):
 Erin hunts a kidnapping ring through a crumbling town, finds goblins behind it,
 opens a runic portal and fights her way to the Goblin King.
 
-Episode 2 ships as its **own reader**: `/toons/erin-ep2/`, config
-`content/toons/erin-ep2/config.json`, app `src/toons/erin-ep2/`. **17 plates**,
+Episode 2 ships as its **own reader**: `/toons/erin-the-revenge/`, config
+`content/toons/erin-the-revenge/config.json`, app `src/toons/erin-the-revenge/`. **17 plates**,
 on R2 and published, with EN/IT/DE/FR captions and voiced audio on every line.
 
 Ep-2 cast voices: `erin`, `venus`, `goblinking` (`scripts/jax-voices.json`).
@@ -32,9 +32,9 @@ words land later as FlipFrame overlays in `config.json` → `words[]`.
 | Page | Beats | Border | Prompt |
 | ---- | ----- | ------ | ------ |
 | **1** | Erin tears a portal open → steps into deep forest, alone → asleep by a campfire, a pair of glowing eyes in the bushes | Lightning-bolt outline on the portal panel | `erin-toon-page-portal-forest-campfire-eyes-20260814-111553.txt` |
-| **2** | Single splash: the gargoyle's stone talons clamp both of Erin's shoulders and lift her off the ground, a goblin riding its shoulders; her face in pain | Full-bleed splash, no keyline | `erin-ep2-p02-gargoyle-claws-kidnap-splash-20260814-112624.txt` |
-| **3** | Aerial over the gargoyle's shoulder above the canopy → Erin wrenches the talons off and breaks free → a dirt platform assembles in mid-air and catches her fall | Zigzag bolt slash as the gutter before the impact | `erin-ep2-p03-aerial-break-free-dirt-platform-20260814-113524.txt` |
-| **4** | Erin's POV down off the platform edge: Venus below, arms raised, holding it up → close on Venus straining → the two meet, Erin thanks her without words | Middle panel a slanted wedge band | `erin-ep2-p04-venus-holds-platform-thanks-20260814-115321.txt` |
+| **2** | Single splash: the gargoyle's stone talons clamp both of Erin's shoulders and lift her off the ground, a goblin riding its shoulders; her face in pain | Full-bleed splash, no keyline | `erin-the-revenge-p02-gargoyle-claws-kidnap-splash-20260814-112624.txt` |
+| **3** | Aerial over the gargoyle's shoulder above the canopy → Erin wrenches the talons off and breaks free → a dirt platform assembles in mid-air and catches her fall | Zigzag bolt slash as the gutter before the impact | `erin-the-revenge-p03-aerial-break-free-dirt-platform-20260814-113524.txt` |
+| **4** | Erin's POV down off the platform edge: Venus below, arms raised, holding it up → close on Venus straining → the two meet, Erin thanks her without words | Middle panel a slanted wedge band | `erin-the-revenge-p04-venus-holds-platform-thanks-20260814-115321.txt` |
 
 Unplaced drafts (written, not yet assigned a page):
 
@@ -50,7 +50,7 @@ Superseded drafts, safe to delete:
 - `erin-toon-page-portal-forest-gargoyle-capture-20260813-202342.txt`
 - `erin-toon-page-gargoyle-claws-fall-campfire-eyes-20260813-202751.txt`
   (its beats are now split across pages 1 and 3)
-- `erin-ep2-p02-goblin-rider-kidnap-drone-flight-20260814-111310.txt`
+- `erin-the-revenge-p02-goblin-rider-kidnap-drone-flight-20260814-111310.txt`
   (the drone view is now page 3's top panel)
 
 ## Characters
