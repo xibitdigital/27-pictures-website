@@ -338,8 +338,8 @@
       "uploadedAt": "2026-07-29T16:31:27.872Z"
     },
     "card-art/erin.jpg": {
-      "size": 204102,
-      "uploadedAt": "2026-07-29T16:46:36.847Z"
+      "size": 498735,
+      "uploadedAt": "2026-08-15T15:27:36.205Z"
     },
     "card-art/jax.jpg": {
       "size": 488191,
@@ -6252,6 +6252,458 @@
     "card-art/erin-the-revenge.jpg": {
       "size": 808387,
       "uploadedAt": "2026-08-15T13:37:58.114Z"
+    },
+    "toons/erin/assets/c87b78742d79a8f04f70ef10d2865099.webp": {
+      "size": 368822,
+      "uploadedAt": "2026-08-15T14:14:30.174Z"
+    },
+    "toons/erin/assets/f76ea3345e15ae57f4d2425697c5f458.webp": {
+      "size": 455188,
+      "uploadedAt": "2026-08-15T14:14:33.242Z"
+    },
+    "toons/erin/assets/754c853e13ed87d144240db41d50f53f.webp": {
+      "size": 549594,
+      "uploadedAt": "2026-08-15T14:14:36.572Z"
+    },
+    "toons/erin/assets/86d39807b04e89be43f1059c4afc43f9.webp": {
+      "size": 369612,
+      "uploadedAt": "2026-08-15T14:14:39.616Z"
+    },
+    "toons/erin/assets/b2f01df83da3f2e0b43d7aba60bf2eb5.webp": {
+      "size": 542338,
+      "uploadedAt": "2026-08-15T14:14:42.684Z"
+    },
+    "toons/erin/assets/694ee5a5f0d1fc0b68aee1613db9fcb2.webp": {
+      "size": 561996,
+      "uploadedAt": "2026-08-15T14:14:45.855Z"
+    },
+    "toons/erin/assets/37741ae48d51aff877307f0dbdbf7726.webp": {
+      "size": 389112,
+      "uploadedAt": "2026-08-15T14:14:48.697Z"
+    },
+    "toons/erin/assets/9c506b00d635b3cc83be337e5d7ec639.webp": {
+      "size": 517494,
+      "uploadedAt": "2026-08-15T14:14:52.292Z"
+    },
+    "toons/erin/assets/5158edc0dacd7cad6e9edd041c4e467e.webp": {
+      "size": 446372,
+      "uploadedAt": "2026-08-15T14:14:55.269Z"
+    },
+    "toons/erin/assets/sfx/dc391d73f78c529521563ed7742548f5.mp3": {
+      "size": 20732,
+      "uploadedAt": "2026-08-15T14:19:20.221Z"
+    },
+    "toons/erin/assets/sfx/ffc40fc6668b8cd3807ca9bc946adba5.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-15T14:19:22.153Z"
+    },
+    "toons/erin/assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-15T14:19:24.053Z"
+    },
+    "toons/erin/assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3": {
+      "size": 15716,
+      "uploadedAt": "2026-08-15T14:19:26.372Z"
+    },
+    "toons/erin/assets/sfx/d6171bd6a6125ed49e942ee1576e6794.mp3": {
+      "size": 32016,
+      "uploadedAt": "2026-08-15T14:19:28.318Z"
+    },
+    "toons/erin/assets/sfx/c72ef800222601e19c486ead43fca61f.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-15T14:19:30.445Z"
+    },
+    "toons/erin/assets/sfx/d0e90aa65be8aa27f325256f9530709a.mp3": {
+      "size": 27628,
+      "uploadedAt": "2026-08-15T14:19:32.413Z"
+    },
+    "toons/erin/assets/sfx/c53551b93eacb5a94df8caf8e7044a96.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-15T14:19:34.480Z"
+    },
+    "toons/erin/assets/sfx/2f5b57a07d6fdfda2db09082a1380737.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-15T14:19:36.522Z"
+    },
+    "toons/erin/assets/sfx/bb133793a026daf1bf4b74317e482492.mp3": {
+      "size": 15716,
+      "uploadedAt": "2026-08-15T14:19:38.560Z"
+    },
+    "toons/erin/assets/sfx/459317ada9c8ca94bab341973b4bcd0e.mp3": {
+      "size": 34524,
+      "uploadedAt": "2026-08-15T14:19:55.227Z"
+    },
+    "toons/erin/assets/sfx/15f2f6558ee573bae8226df7aec2b696.mp3": {
+      "size": 32016,
+      "uploadedAt": "2026-08-15T14:19:57.141Z"
+    },
+    "toons/erin/assets/sfx/e17930d71866d71068f521d585cff81f.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-15T14:19:59.081Z"
+    },
+    "toons/erin/assets/sfx/80608c46d3cea3386d51d8e2ea838a43.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-15T14:20:01.551Z"
+    },
+    "toons/erin/assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3": {
+      "size": 54586,
+      "uploadedAt": "2026-08-15T14:20:05.262Z"
+    },
+    "toons/erin/assets/sfx/6b79f1e1cb904221237bee555e8ad8af.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-15T14:20:07.343Z"
+    },
+    "toons/erin/assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-15T14:20:09.394Z"
+    },
+    "toons/erin/assets/sfx/9ed016342ec442dda507806e650cb30f.mp3": {
+      "size": 30136,
+      "uploadedAt": "2026-08-15T14:20:11.451Z"
+    },
+    "toons/erin/assets/sfx/b598fbd729dcc0f37c04bdc5c8183e36.mp3": {
+      "size": 22612,
+      "uploadedAt": "2026-08-15T14:20:13.379Z"
+    },
+    "toons/erin/assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3": {
+      "size": 22612,
+      "uploadedAt": "2026-08-15T14:20:15.485Z"
+    },
+    "toons/erin/assets/sfx/01bfd09f39a96231f1db64c408f9dd0d.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-15T14:27:07.402Z"
+    },
+    "toons/erin/assets/sfx/04e9e00c7b33e1eb4d6906c560521d0e.mp3": {
+      "size": 67125,
+      "uploadedAt": "2026-08-15T14:27:09.374Z"
+    },
+    "toons/erin/assets/sfx/14682b1b02e88239501bb5e6d408f2a4.mp3": {
+      "size": 87814,
+      "uploadedAt": "2026-08-15T14:27:11.511Z"
+    },
+    "toons/erin/assets/sfx/14a19d7088bfcbbfda5a02804efebebd.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-15T14:27:13.454Z"
+    },
+    "toons/erin/assets/sfx/31fee9cf1850313e88322c33e9605731.mp3": {
+      "size": 69006,
+      "uploadedAt": "2026-08-15T14:27:15.482Z"
+    },
+    "toons/erin/assets/sfx/339e5bb02993841afa60f077bf72d11b.mp3": {
+      "size": 78410,
+      "uploadedAt": "2026-08-15T14:27:17.421Z"
+    },
+    "toons/erin/assets/sfx/33f92a164dee4b65e9bbe11db0aacd21.mp3": {
+      "size": 58558,
+      "uploadedAt": "2026-08-15T14:27:19.385Z"
+    },
+    "toons/erin/assets/sfx/36804a30f1312e76cf6f3f622479e45a.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-15T14:27:21.359Z"
+    },
+    "toons/erin/assets/sfx/40883578617b57975aeaf61e478105d8.mp3": {
+      "size": 195648,
+      "uploadedAt": "2026-08-15T14:27:23.316Z"
+    },
+    "toons/erin/assets/sfx/43d381e0c9e99654f2926490c69f2c28.mp3": {
+      "size": 72768,
+      "uploadedAt": "2026-08-15T14:27:25.272Z"
+    },
+    "toons/erin/assets/sfx/49051e242887885792c2420b0d3c3847.mp3": {
+      "size": 60856,
+      "uploadedAt": "2026-08-15T14:27:27.202Z"
+    },
+    "toons/erin/assets/sfx/674640fe1ea83a9db268b6f02119bcb7.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-15T14:27:29.136Z"
+    },
+    "toons/erin/assets/sfx/6c4e9f032f22ada689b6d9c597935fb7.mp3": {
+      "size": 81546,
+      "uploadedAt": "2026-08-15T14:27:31.127Z"
+    },
+    "toons/erin/assets/sfx/7474fdeda5bde2a749f10db17cd8a272.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-15T14:27:33.084Z"
+    },
+    "toons/erin/assets/sfx/7b9e3c33bd4fdaccf9d74128f86fbc04.mp3": {
+      "size": 78410,
+      "uploadedAt": "2026-08-15T14:27:35.063Z"
+    },
+    "toons/erin/assets/sfx/8373809455fa30601fb027d223ac68ff.mp3": {
+      "size": 36405,
+      "uploadedAt": "2026-08-15T14:27:37.161Z"
+    },
+    "toons/erin/assets/sfx/98be23f37f6ab36bfc350627b50602c1.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-15T14:27:39.202Z"
+    },
+    "toons/erin/assets/sfx/a1575a9b0c57d2b13cd5c9a0d72ee95e.mp3": {
+      "size": 51035,
+      "uploadedAt": "2026-08-15T14:27:41.228Z"
+    },
+    "toons/erin/assets/sfx/c208fb184541de3704c4e1ae7baae2f4.mp3": {
+      "size": 28255,
+      "uploadedAt": "2026-08-15T14:27:43.163Z"
+    },
+    "toons/erin/assets/sfx/db1988607360ab5bfb4af76b198e8418.mp3": {
+      "size": 55213,
+      "uploadedAt": "2026-08-15T14:27:45.150Z"
+    },
+    "toons/erin/assets/sfx/e3679703825164b688c74d08135041d7.mp3": {
+      "size": 45809,
+      "uploadedAt": "2026-08-15T14:27:47.195Z"
+    },
+    "toons/erin/assets/sfx/e8f6ec7350d69ef6a4c1ac26c23cc9ea.mp3": {
+      "size": 61066,
+      "uploadedAt": "2026-08-15T14:27:49.129Z"
+    },
+    "toons/erin/assets/sfx/e9dd940adfe16990372cffe09c103634.mp3": {
+      "size": 78410,
+      "uploadedAt": "2026-08-15T14:27:51.072Z"
+    },
+    "toons/erin/assets/sfx/edb9bf92c7568c0c409a879b063e839d.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-15T14:27:53.130Z"
+    },
+    "toons/erin/assets/sfx/fd5c28bf320698ffd523616db43af2a9.mp3": {
+      "size": 67125,
+      "uploadedAt": "2026-08-15T14:27:55.027Z"
+    },
+    "toons/erin/assets/sfx/9d1cb1cd4644baa079a27cb7009dd87a.mp3": {
+      "size": 195648,
+      "uploadedAt": "2026-08-15T14:30:11.590Z"
+    },
+    "toons/erin/assets/sfx/cfa6f5cf38150514fe0fc488566fa7e3.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-15T14:30:13.789Z"
+    },
+    "toons/erin/assets/sfx/55ff13b3e9d575482e92c3e88c8ddd69.mp3": {
+      "size": 153016,
+      "uploadedAt": "2026-08-15T14:36:05.252Z"
+    },
+    "toons/erin/assets/sfx/69cb8e115c14e9fc85df6140e18f9e2c.mp3": {
+      "size": 72768,
+      "uploadedAt": "2026-08-15T14:36:07.324Z"
+    },
+    "toons/erin/assets/sfx/d87a58b656165866f4bd6014508f9fc5.mp3": {
+      "size": 76529,
+      "uploadedAt": "2026-08-15T14:36:09.476Z"
+    },
+    "toons/erin/assets/sfx/e0de94c6a6b6a3c7bd5af494850336e1.mp3": {
+      "size": 32016,
+      "uploadedAt": "2026-08-15T14:36:11.520Z"
+    },
+    "toons/erin/assets/sfx/4e22b92b995a81742e5b967de4a35403.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-15T14:36:45.001Z"
+    },
+    "toons/erin/assets/0713a9e0f8cc10cc3aed92b4590e14d5.webp": {
+      "size": 351718,
+      "uploadedAt": "2026-08-15T14:38:19.298Z"
+    },
+    "toons/erin/assets/62697da6997dc24878daae460d235bfd.webp": {
+      "size": 487530,
+      "uploadedAt": "2026-08-15T14:38:22.485Z"
+    },
+    "toons/erin/assets/a4dbb0c417e8f2381459931ac1e103c4.webp": {
+      "size": 604326,
+      "uploadedAt": "2026-08-15T14:38:25.751Z"
+    },
+    "toons/erin/assets/418871a0f5d2a5c77f81960a7503beb8.webp": {
+      "size": 399534,
+      "uploadedAt": "2026-08-15T14:38:28.897Z"
+    },
+    "toons/erin/assets/a399ba88d7fbe7ccb5d9fa2936a249fd.webp": {
+      "size": 462242,
+      "uploadedAt": "2026-08-15T14:38:32.085Z"
+    },
+    "toons/erin/assets/e29887453f85458883ec90cbebd7b0cb.webp": {
+      "size": 520332,
+      "uploadedAt": "2026-08-15T14:38:35.296Z"
+    },
+    "toons/erin/assets/db8ba63fcbe715963ce495ffe068fbd2.webp": {
+      "size": 420202,
+      "uploadedAt": "2026-08-15T14:38:38.287Z"
+    },
+    "toons/erin/assets/3d17b608c69fff5fddbe8f945fa7a559.webp": {
+      "size": 494592,
+      "uploadedAt": "2026-08-15T14:38:41.727Z"
+    },
+    "toons/erin/assets/sfx/dfa9a3ec2f8d819c8501cb5a22fcae5c.mp3": {
+      "size": 62736,
+      "uploadedAt": "2026-08-15T14:39:19.794Z"
+    },
+    "toons/erin/assets/a4221ca330fa52adbeea7dbf1d641743.webp": {
+      "size": 456618,
+      "uploadedAt": "2026-08-15T14:41:06.271Z"
+    },
+    "toons/erin/assets/sfx/1149e493b62b77fd926dadce1c9be80c.mp3": {
+      "size": 77784,
+      "uploadedAt": "2026-08-15T14:46:41.197Z"
+    },
+    "toons/erin/assets/ca919bd02ed008069d9adf57af400189.webp": {
+      "size": 468654,
+      "uploadedAt": "2026-08-15T14:49:55.293Z"
+    },
+    "toons/erin/assets/38e63d3880bc42136444113b1c549534.webp": {
+      "size": 348402,
+      "uploadedAt": "2026-08-15T14:49:59.011Z"
+    },
+    "toons/erin/assets/9c5e5ff47646a734bb56d4405dbfa994.webp": {
+      "size": 340596,
+      "uploadedAt": "2026-08-15T14:50:04.219Z"
+    },
+    "toons/erin/assets/d67869aac6aea70d9582a9c2060ef1e0.webp": {
+      "size": 414722,
+      "uploadedAt": "2026-08-15T14:50:08.021Z"
+    },
+    "toons/erin/assets/151d32681b1556204e4cf603d1d65dcf.webp": {
+      "size": 525532,
+      "uploadedAt": "2026-08-15T14:58:01.341Z"
+    },
+    "toons/erin/assets/86ac928044997a38c47105ef35a8956a.webp": {
+      "size": 404226,
+      "uploadedAt": "2026-08-15T15:00:30.344Z"
+    },
+    "toons/erin/assets/sfx/425e7dffadc452675ef542ce2fdf5b21.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-15T15:02:12.976Z"
+    },
+    "toons/erin/assets/sfx/0ee6d410154e6ff266e3b9a5786d7d5a.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-15T15:03:34.143Z"
+    },
+    "toons/erin/assets/8bfd6fef4b6597e238759cf3d0337f41.webp": {
+      "size": 336020,
+      "uploadedAt": "2026-08-15T15:04:22.470Z"
+    },
+    "toons/erin/assets/30b4ba213b86bb95b5b6b4a1e535a520.webp": {
+      "size": 416874,
+      "uploadedAt": "2026-08-15T15:04:26.055Z"
+    },
+    "toons/erin/assets/sfx/9cc3a2465893537db0f673fba6ed9076.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-15T15:05:42.458Z"
+    },
+    "toons/erin/assets/6ef18ddc621dad914121ef7883bab379.webp": {
+      "size": 348362,
+      "uploadedAt": "2026-08-15T15:09:35.874Z"
+    },
+    "toons/erin/assets/cd55730560a9b48382842c35a70574dd.webp": {
+      "size": 345124,
+      "uploadedAt": "2026-08-15T15:15:14.989Z"
+    },
+    "toons/erin/assets/01775a0759c286a2624aa91c95e83527.webp": {
+      "size": 969562,
+      "uploadedAt": "2026-08-15T15:22:10.047Z"
+    },
+    "toons/erin/assets/bbb3512e779f1fc314c30d1a50326165.webp": {
+      "size": 1105360,
+      "uploadedAt": "2026-08-15T15:22:14.213Z"
+    },
+    "toons/erin/assets/fe1a2356bc8dffba59a6a15b7df568af.webp": {
+      "size": 1262056,
+      "uploadedAt": "2026-08-15T15:22:18.796Z"
+    },
+    "toons/erin/assets/a581c1d0b345b66e697f856611089522.webp": {
+      "size": 949672,
+      "uploadedAt": "2026-08-15T15:22:22.772Z"
+    },
+    "toons/erin/assets/eb4a0f41d85443571ce440dc885b8d97.webp": {
+      "size": 1266134,
+      "uploadedAt": "2026-08-15T15:22:27.428Z"
+    },
+    "toons/erin/assets/e670075541d4fa6679515535dc08381a.webp": {
+      "size": 1252886,
+      "uploadedAt": "2026-08-15T15:22:31.456Z"
+    },
+    "toons/erin/assets/48fb5126e9044222b6b5fb00e61e5bff.webp": {
+      "size": 968334,
+      "uploadedAt": "2026-08-15T15:22:35.257Z"
+    },
+    "toons/erin/assets/9e1f207fca1b1d62f8d9ecfaad963ef8.webp": {
+      "size": 1206882,
+      "uploadedAt": "2026-08-15T15:22:39.333Z"
+    },
+    "toons/erin/assets/f11ee3312ee7ea1aef5c758dfc324cd8.webp": {
+      "size": 1037682,
+      "uploadedAt": "2026-08-15T15:22:43.533Z"
+    },
+    "toons/erin/assets/a5670f90a9b72ac7fb6f4d1f27043c71.webp": {
+      "size": 893330,
+      "uploadedAt": "2026-08-15T15:22:47.591Z"
+    },
+    "toons/erin/assets/5e170f3a8073b87c5f62af33324579cd.webp": {
+      "size": 1117884,
+      "uploadedAt": "2026-08-15T15:22:51.884Z"
+    },
+    "toons/erin/assets/51f9ce5cf8474044c5ce4dfb17fc428b.webp": {
+      "size": 1118230,
+      "uploadedAt": "2026-08-15T15:22:56.126Z"
+    },
+    "toons/erin/assets/41518c28b10e6bca963e9413985c4d25.webp": {
+      "size": 1385588,
+      "uploadedAt": "2026-08-15T15:23:00.528Z"
+    },
+    "toons/erin/assets/60de9fb6d6a4b1f2f400208bc3eadb42.webp": {
+      "size": 1013584,
+      "uploadedAt": "2026-08-15T15:23:04.623Z"
+    },
+    "toons/erin/assets/8df5a6484db972b460af915870bc893d.webp": {
+      "size": 1141164,
+      "uploadedAt": "2026-08-15T15:23:19.372Z"
+    },
+    "toons/erin/assets/aa77a4a0ffa74de245c318814b1d5bc7.webp": {
+      "size": 1215316,
+      "uploadedAt": "2026-08-15T15:23:23.404Z"
+    },
+    "toons/erin/assets/76b3c5a8df52d6f11a73cdbe9c70cd52.webp": {
+      "size": 999354,
+      "uploadedAt": "2026-08-15T15:23:27.908Z"
+    },
+    "toons/erin/assets/22f88aabc47c6212777b251f3aba92ec.webp": {
+      "size": 1119798,
+      "uploadedAt": "2026-08-15T15:23:32.457Z"
+    },
+    "toons/erin/assets/e573e5536e3a494278c9a25681876f92.webp": {
+      "size": 1108972,
+      "uploadedAt": "2026-08-15T15:23:37.244Z"
+    },
+    "toons/erin/assets/03250ea1dfaf762af49d91049f74b8ea.webp": {
+      "size": 1211070,
+      "uploadedAt": "2026-08-15T15:23:41.269Z"
+    },
+    "toons/erin/assets/e81f82b73c38253972c8ed9821e16d7d.webp": {
+      "size": 841908,
+      "uploadedAt": "2026-08-15T15:23:45.307Z"
+    },
+    "toons/erin/assets/6d1b0fec4021c943b1a92d345259462d.webp": {
+      "size": 861276,
+      "uploadedAt": "2026-08-15T15:23:49.162Z"
+    },
+    "toons/erin/assets/a6d6448840bf296790a553c82795c75f.webp": {
+      "size": 1017354,
+      "uploadedAt": "2026-08-15T15:23:53.837Z"
+    },
+    "toons/erin/assets/83270becc6556461afa38ccab00bb6e8.webp": {
+      "size": 801012,
+      "uploadedAt": "2026-08-15T15:23:57.886Z"
+    },
+    "toons/erin/assets/c6922be31d2494473aa663d12ab35a10.webp": {
+      "size": 1062640,
+      "uploadedAt": "2026-08-15T15:24:02.164Z"
+    },
+    "toons/erin/assets/ffa036dc0b05af4bbb0b340a66673ff1.webp": {
+      "size": 809660,
+      "uploadedAt": "2026-08-15T15:24:06.958Z"
+    },
+    "toons/erin/assets/d139c9363f1b74aca65631ef67ab6804.webp": {
+      "size": 993622,
+      "uploadedAt": "2026-08-15T15:24:11.091Z"
+    },
+    "toons/erin/config.a957a294e45473411219b128cbb90a15.json": {
+      "size": 39940,
+      "uploadedAt": "2026-08-15T15:33:06.495Z"
     }
   }
 }

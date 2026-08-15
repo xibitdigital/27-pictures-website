@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { resolveAssetUrl } from "../bookReader/assetUrl";
+import LangSwitcher from "../bookReader/LangSwitcher.vue";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import { LikeButton } from "../bookReader/chrome";
 import type { ToonShellBookOptions } from "../bookReader/types";
@@ -39,9 +40,11 @@ const bookOptions: ToonShellBookOptions = {
     toon-id="erin"
     front-cover-logo="/logosquare.png"
     :cover-texture="COVER_TEXTURE"
+    caption-lang-storage-key="erin-toon-lang"
     :book-options="bookOptions"
   >
     <template #top-controls-start>
+      <LangSwitcher />
       <LikeButton toon-id="erin" />
     </template>
   </ToonReaderShell>
