@@ -75,6 +75,7 @@ export default defineConfig({
         toons: path.resolve(srcDir, "toons/index.html"),
         cosplay: path.resolve(srcDir, "cosplay/index.html"),
         "horror-shorts": path.resolve(srcDir, "horror-shorts/index.html"),
+        watch: path.resolve(srcDir, "watch/index.html"),
         jax: path.resolve(srcDir, "toons/jax/index.html"),
         erin: path.resolve(srcDir, "toons/erin/index.html"),
         "erin-the-revenge": path.resolve(srcDir, "toons/erin-the-revenge/index.html"),

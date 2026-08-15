@@ -35,20 +35,16 @@ describe("LikeButton", () => {
     expect(window.localStorage.getItem(`${LIKE_STORAGE_PREFIX}jax`)).toBe("1");
   });
 
-  it("hides the count unless ?stats=true", async () => {
-    vi.stubEnv("VITE_LIKES_API", "https://likes.example.dev");
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ toon: "nero", likes: 12 }), { status: 200 })
-    );
-
+  it("hides the count when there is no total to show", async () => {
+    // No likes API configured, so the composable never resolves a total —
+    // the button renders without a counter rather than with a zero.
     const wrapper = mount(LikeButton, { props: { toonId: "nero" } });
     await flushPromises();
 
     expect(wrapper.find(".toon-like-count").exists()).toBe(false);
   });
 
-  it("shows the total with ?stats=true", async () => {
-    setSearch("?stats=true");
+  it("shows the total to everyone, with no ?stats gate", async () => {
     vi.stubEnv("VITE_LIKES_API", "https://likes.example.dev");
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify({ toon: "nero", likes: 12 }), { status: 200 })

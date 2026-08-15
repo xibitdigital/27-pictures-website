@@ -170,6 +170,74 @@ body > header nav,
   gap: 80px;
   align-items: center;
 }
+/* Crosslink from a film section to the toon of the same story. Compact and
+   horizontal — it sits under body copy, not in a shelf, so a full poster card
+   would outweigh the section it belongs to. */
+.toon-crosslink {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 14px;
+  border-top: 2px solid var(--red-smile);
+  text-decoration: none;
+  color: inherit;
+}
+
+.toon-crosslink-art {
+  display: block;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-card);
+  transition: transform 0.35s var(--transition);
+}
+
+.toon-crosslink-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.toon-crosslink:hover .toon-crosslink-art,
+.toon-crosslink:focus-visible .toon-crosslink-art {
+  transform: translateY(-3px);
+}
+
+.toon-crosslink-meta {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+.toon-crosslink-title {
+  display: block;
+  margin-top: 2px;
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.toon-crosslink-cue {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--red-smile);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toon-crosslink-art {
+    transition: none;
+  }
+}
+
 .horror-text h2 {
   font-size: 7vw;
   line-height: 0.9;
@@ -351,30 +419,71 @@ body > header nav,
   border-top: 1px solid var(--bg-card);
   counter-reset: reel;
 }
-.assembly-box {
+/* ── Reel cards ──
+   The homepage assembly boxes and the numbered cards on /cosplay/ and
+   /horror-shorts/ are the same object: a red rule, a REEL label hanging off
+   it, a red heading that goes white on hover. They were three copies that had
+   already drifted apart (1.8rem vs 1.5rem headings, --silver vs --text-muted
+   body), so they share one rule now and only the counter differs. */
+.assembly-box,
+.stage-card,
+.craft-card {
   position: relative;
-  padding-top: 32px;
-  border-top: 1px solid var(--border);
+  background: none;
+  border: 0;
+  border-top: 2px solid var(--red-smile);
+  /* Clears the REEL label, which hangs below the rule. */
+  padding: 40px 0 0;
 }
+
+.assembly-box::before,
+.stage-card::before,
+.craft-card::before {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: var(--red-smile);
+  opacity: 0.9;
+}
+
+/* Each page counts its own reels. */
 .assembly-box::before {
   counter-increment: reel;
   content: "REEL 0" counter(reel);
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-size: 0.65rem;
-  letter-spacing: 5px;
-  color: var(--red-smile);
-  font-family: "Inter", sans-serif;
-  font-weight: 700;
-  opacity: 0.9;
 }
-.assembly-box h3 {
-  font-size: 1.8rem;
+
+.stage-card::before {
+  counter-increment: stage;
+  content: "REEL 0" counter(stage);
+}
+
+.craft-card::before {
+  counter-increment: craft;
+  content: "REEL 0" counter(craft);
+}
+
+.assembly-box h3,
+.stage-card h3,
+.craft-card h3 {
+  font-size: 1.5rem;
   margin-bottom: 20px;
   color: var(--red-smile);
+  transition: color 0.4s var(--transition);
 }
-.assembly-box p {
+
+.assembly-box:hover h3,
+.stage-card:hover h3,
+.craft-card:hover h3 {
+  color: var(--text);
+}
+
+.assembly-box p,
+.stage-card p,
+.craft-card p {
   font-size: 0.9rem;
   line-height: 1.7;
   color: var(--silver);
@@ -671,11 +780,11 @@ button:focus-visible {
 
 .clown-hero-frame,
 .video-frame,
+/* No red edge on the frame: the card already carries a red rule across its
+   top, and a second accent down the side made every video look bracketed. */
 .latest-card-frame {
   position: relative;
   background: #000;
-  border-left: 6px solid var(--red-smile);
-  border-right: 1px solid rgba(179, 0, 0, 0.18);
   box-shadow:
     /* Outer theater darkness */
     0 30px 80px -20px rgba(0, 0, 0, 0.9),
@@ -791,21 +900,10 @@ button:focus-visible {
   opacity: 0.95;
 }
 
-/* Assembly boxes — feel like film chapter cards or credit blocks */
-.assembly-box {
-  transition: border-color 0.5s var(--transition);
-  border-top: 1px solid var(--border);
-  padding-top: 24px;
-}
-.assembly-box:hover {
-  border-top-color: var(--red-smile);
-}
-.assembly-box h3 {
-  transition: color 0.4s var(--transition);
-}
-.assembly-box:hover h3 {
-  color: #fff;
-}
+/* Assembly boxes — feel like film chapter cards or credit blocks.
+   The rule above is declared once, with the red card treatment; re-declaring
+   border-top here would silently win on source order and put the grey
+   hairline back. */
 
 /* Contact button — heavy, title-card treatment */
 .contact-btn {
@@ -1157,10 +1255,21 @@ button:focus-visible {
   row-gap: 20px;
   margin-top: 48px;
 }
+/* Same card language as the series shelf on /toons/: a red rule across the
+   top, a Playfair title, muted body. The frame stays square — the façade
+   thumbnails are 16:9 and a poster crop would strand the play button. */
 .latest-card {
   display: grid;
   grid-row: span 3;
   grid-template-rows: subgrid;
+  border-top: 2px solid var(--red-smile);
+  padding-top: 14px;
+}
+
+.latest-card h3 {
+  font-family: "Playfair Display", serif;
+  font-weight: 900;
+  line-height: 1.1;
 }
 .latest-card-frame {
   position: relative;
@@ -1225,13 +1334,12 @@ button:focus-visible {
   margin: 48px 0 40px;
 }
 
+/* Toon cards wear the same clothes as the series shelf on /toons/: red rule
+   above, poster art, Playfair title, muted body — no card frame, no crop. */
 .lab-card {
-  background: var(--bg-card);
-  transition: transform 0.35s var(--transition);
-}
-
-.lab-card:hover {
-  transform: var(--card-lift);
+  background: none;
+  border-top: 2px solid var(--red-smile);
+  padding-top: 14px;
 }
 
 .lab-card-link {
@@ -1243,36 +1351,59 @@ button:focus-visible {
 
 .lab-card-media {
   margin: 0;
-  aspect-ratio: 16 / 10;
+  border-radius: 12px;
   overflow: hidden;
-  background: var(--bg-dark);
+  background: var(--bg-card);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+  transition: transform 0.35s var(--transition);
 }
 
 .lab-card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
   display: block;
-  transition: transform 0.5s var(--transition);
+  width: 100%;
+  height: auto;
+  /* Posters, not 16:10 crops — the card art is drawn 2:3 and cropping it
+     beheaded every cover. */
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
 }
 
-.lab-card:hover .lab-card-media img {
-  transform: scale(1.04);
+.lab-card:hover .lab-card-media,
+.lab-card-link:focus-visible .lab-card-media {
+  transform: translateY(-4px);
+}
+
+.lab-card-link:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 6px;
+  border-radius: 12px;
 }
 
 .lab-card h3 {
   font-family: "Playfair Display", serif;
-  font-size: 1.3rem;
-  margin: 24px 24px 10px;
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 12px 0 0;
+  color: var(--text);
 }
 
 .lab-card p {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
   font-weight: 300;
-  margin: 0 24px 26px;
+  color: var(--silver);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-card-media {
+    transition: none;
+  }
 }
 
 .lab-cta {
@@ -1294,6 +1425,9 @@ button:focus-visible {
   align-items: center;
   margin-top: 48px;
   padding-bottom: 48px;
+  /* No red rule here — the feature is one wide banner, not one of the cards,
+     and a rule across its full width read as a divider for the section rather
+     than as the top of a card. */
   border-bottom: 1px solid var(--border);
 }
 
@@ -1510,12 +1644,85 @@ button:focus-visible {
 }
 
 /* ── Cosplay service page (/cosplay/) ── */
-.service-page {
+/* ── Page chrome ──
+   /toons/, /watch/, /cosplay/ and /horror-shorts/ are the same page shape:
+   same gutter, same header spacing, same footer. They used to carry three
+   parallel sets of classes with identical values, which had already drifted —
+   the footers rendered differently on /toons/ than on /cosplay/ for no reason
+   anyone chose. One rule now; the old names stay as aliases so no page has to
+   be re-marked-up to get the fix. */
+.page,
+.experiments-page,
+.service-page,
+.series-page {
   padding: 150px 10% 100px;
 }
 
-.service-header {
+.page-header,
+.experiments-header,
+.service-header,
+.series-header {
   margin-bottom: 48px;
+}
+
+.page-footer,
+.experiments-footer,
+.service-footer,
+.series-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  border-top: 1px solid var(--border);
+  padding-top: 32px;
+  color: var(--silver);
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.page-footer p,
+.experiments-footer p,
+.service-footer p,
+.series-footer p {
+  max-width: 420px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  font-weight: 300;
+  color: var(--silver);
+}
+
+.page-footer-nav,
+.experiments-footer-nav,
+.service-footer-nav,
+.series-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.page-footer-nav a,
+.experiments-footer-nav a,
+.service-footer-nav a,
+.series-footer-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid transparent;
+  transition:
+    color 0.2s var(--transition),
+    border-color 0.2s var(--transition);
+}
+
+.page-footer-nav a:hover,
+.experiments-footer-nav a:hover,
+.service-footer-nav a:hover,
+.series-footer-nav a:hover {
+  color: var(--red-smile);
+  border-color: var(--red-smile);
 }
 
 .service-header .section-tag {
@@ -1586,59 +1793,7 @@ button:focus-visible {
   counter-reset: stage;
 }
 
-.stage-card {
-  position: relative;
-  background: none;
-  border: 0;
-  border-top: 1px solid var(--border);
-  padding: 32px 0 0;
-  transition: border-top-color 0.5s var(--transition);
-}
-
-.stage-card:hover {
-  border-top-color: var(--red-smile);
-}
-
-.stage-card::before {
-  counter-increment: stage;
-  content: "REEL 0" counter(stage);
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: "Inter", sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 5px;
-  font-weight: 700;
-  color: var(--red-smile);
-  opacity: 0.9;
-}
-
-.stage-card h3 {
-  font-family: "Playfair Display", serif;
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  color: var(--red-smile);
-  transition: color 0.4s var(--transition);
-}
-
-.stage-card:hover h3 {
-  color: var(--text);
-}
-
-.stage-card p {
-  font-size: 0.9rem;
-  line-height: 1.7;
-  color: var(--silver);
-}
-
 /* .stage-card styling lives with .stage-grid above (assembly treatment). */
-
-.stage-card p {
-  color: var(--text-muted);
-  font-size: 0.88rem;
-  line-height: 1.65;
-  font-weight: 300;
-}
 
 .deliverables {
   list-style: none;
@@ -1724,35 +1879,6 @@ button:focus-visible {
   line-height: 1.7;
 }
 
-.service-footer {
-  border-top: 1px solid var(--border);
-  padding-top: 32px;
-  color: var(--silver);
-  font-size: 0.85rem;
-  font-weight: 300;
-  line-height: 1.7;
-}
-
-.service-footer-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin-top: 16px;
-}
-
-.service-footer-nav a {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  transition: color 0.2s var(--transition);
-}
-
-.service-footer-nav a:hover {
-  color: var(--red-smile);
-}
-
 @media (max-width: 900px) {
   .faq-grid {
     grid-template-columns: 1fr;
@@ -1774,13 +1900,6 @@ button:focus-visible {
 }
 
 /* ── Horror shorts hub (/horror-shorts/) ── */
-.series-page {
-  padding: 150px 10% 100px;
-}
-
-.series-header {
-  margin-bottom: 48px;
-}
 
 .series-header .section-tag {
   margin-bottom: 16px;
@@ -1920,51 +2039,6 @@ button:focus-visible {
   counter-reset: craft;
 }
 
-.craft-card {
-  position: relative;
-  background: none;
-  border: 0;
-  border-top: 1px solid var(--border);
-  padding: 32px 0 0;
-  transition: border-top-color 0.5s var(--transition);
-}
-
-.craft-card:hover {
-  border-top-color: var(--red-smile);
-}
-
-.craft-card::before {
-  counter-increment: craft;
-  content: "REEL 0" counter(craft);
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: "Inter", sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 5px;
-  font-weight: 700;
-  color: var(--red-smile);
-  opacity: 0.9;
-}
-
-.craft-card h3 {
-  font-family: "Playfair Display", serif;
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  color: var(--red-smile);
-  transition: color 0.4s var(--transition);
-}
-
-.craft-card:hover h3 {
-  color: var(--text);
-}
-
-.craft-card p {
-  font-size: 0.9rem;
-  line-height: 1.7;
-  color: var(--silver);
-}
-
 /* .craft-card styling lives with .craft-grid above (assembly treatment). */
 
 .series-cta {
@@ -1987,35 +2061,6 @@ button:focus-visible {
   line-height: 1.7;
 }
 
-.series-footer {
-  border-top: 1px solid var(--border);
-  padding-top: 32px;
-  color: var(--silver);
-  font-size: 0.85rem;
-  font-weight: 300;
-  line-height: 1.7;
-}
-
-.series-footer-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin-top: 16px;
-}
-
-.series-footer-nav a {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  transition: color 0.2s var(--transition);
-}
-
-.series-footer-nav a:hover {
-  color: var(--red-smile);
-}
-
 @media (max-width: 768px) {
   .series-header h1 {
     font-size: 15vw;
@@ -2036,13 +2081,6 @@ button:focus-visible {
 }
 
 /* ── Interactive toons index (/toons/) ── */
-.experiments-page {
-  padding: 150px 10% 100px;
-}
-
-.experiments-header {
-  margin-bottom: 48px;
-}
 
 .experiments-header .section-tag {
   margin-bottom: 16px;
@@ -2119,6 +2157,10 @@ button:focus-visible {
   margin-bottom: 56px;
 }
 
+/* Grey divides, red marks a card. Every row on /toons/ — the two dynamic
+   rails and the series shelf — is separated by the same neutral rule; the red
+   is reserved for the cards themselves, so the two levels stay legible
+   instead of competing. */
 .toon-series-head {
   border-top: 1px solid var(--border);
   padding-top: 14px;
@@ -2303,6 +2345,10 @@ button:focus-visible {
   display: block;
   text-decoration: none;
   color: inherit;
+  /* Red rule across the top of every card — the same accent that marks the
+     episode block, so the shelf reads as one system. */
+  border-top: 2px solid var(--red-smile);
+  padding-top: 14px;
 }
 
 /* The whole face is the hit target — art, title and cue move together. */
@@ -2371,6 +2417,20 @@ button:focus-visible {
   color: var(--text-muted);
 }
 
+/* Total hearts across the whole series. Stays hidden until the Worker answers,
+   so a book with no votes yet shows nothing rather than a lonely zero. */
+.series-card-votes {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--red-smile);
+}
+
+.series-card-votes::before {
+  content: "♥ ";
+}
+
 .series-card-chevron {
   display: inline-block;
   transition: transform 0.25s var(--transition);
@@ -2393,12 +2453,29 @@ button:focus-visible {
   color: var(--silver);
 }
 
-/* ── Episode list (inside an open series card) ── */
+/* ── Episode list (inside an open series card) ──
+   Rows, not posters: the series card above already carries the artwork, and a
+   second grid of covers under it competed with the shelf instead of reading as
+   a table of contents. The red rule and label mark it as a different level. */
+.episode-block {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 2px solid var(--red-smile);
+}
+
+.episode-block-head {
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red-smile);
+}
+
 .episode-list {
-  margin: 14px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--border);
 }
 
 .episode-list li {
@@ -2467,130 +2544,6 @@ button:focus-visible {
   .series-card-chevron {
     transition: none;
   }
-}
-
-.experiment-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  text-decoration: none;
-  color: inherit;
-  background: var(--bg-card);
-  overflow: hidden;
-  transition: transform 0.35s var(--transition);
-}
-
-.experiment-card:hover {
-  transform: var(--card-lift);
-}
-
-.experiment-card:focus-visible {
-  outline: 2px solid var(--red-smile);
-  outline-offset: 3px;
-}
-
-.experiment-card-media {
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--bg-dark);
-}
-
-.experiment-card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
-  transition: transform 0.5s var(--transition);
-}
-
-.experiment-card:hover .experiment-card-media img {
-  transform: scale(1.04);
-}
-
-.experiment-card-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 28px 24px 32px;
-}
-
-.experiment-card-label {
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--red-smile);
-  margin-bottom: 12px;
-  font-weight: 700;
-}
-
-.experiment-card h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  font-family: "Playfair Display", serif;
-}
-
-.experiment-card p {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  font-weight: 300;
-}
-
-.experiment-card-cta {
-  display: inline-block;
-  margin-top: auto;
-  padding-top: 20px;
-  font-size: 0.7rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--silver);
-  transition: color 0.2s var(--transition);
-}
-
-.experiment-card:hover .experiment-card-cta {
-  color: var(--red-smile);
-}
-
-.experiments-footer {
-  border-top: 1px solid var(--border);
-  padding-top: 32px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px 32px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.experiments-footer p {
-  color: var(--silver);
-  font-size: 0.8rem;
-  line-height: 1.6;
-  font-weight: 300;
-  max-width: 420px;
-}
-
-.experiments-footer-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.experiments-footer-nav a {
-  color: var(--silver);
-  text-decoration: none;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  border-bottom: 1px solid transparent;
-  transition:
-    color 0.2s var(--transition),
-    border-color 0.2s var(--transition);
-}
-
-.experiments-footer-nav a:hover {
-  color: var(--text);
-  border-color: var(--border-light);
 }
 
 /* Visually hidden but available to crawlers / AT */
@@ -2728,9 +2681,10 @@ button:focus-visible {
 
 /* ── Hero: the lettering bleeds ──
    A red duplicate of the title is layered over the white one and revealed
-   top-down with clip-path. This replaced an animated background-clip: text
-   gradient, which renders but does not reliably repaint on iOS Safari — the
-   phone showed a static title while desktop animated.
+   with a traveling wave clip-path (same point count every frame so browsers
+   interpolate the crest). Replaced a hard inset() wipe — and earlier, an
+   animated background-clip: text gradient, which renders but does not
+   reliably repaint on iOS Safari.
 
    The duplicate is aria-hidden, so screen readers and crawlers still see one
    h1. Runs once, then holds: a hero that animates on a loop pulls the eye off
@@ -2747,21 +2701,584 @@ button:focus-visible {
 .hero-word--blood {
   position: absolute;
   inset: 0;
-  color: var(--red-smile);
+  /* Same family as The Studio label (--red-smile). The large solid fill
+     reads a stop darker than the small Inter tag, so the hover token
+     is the one that matches the label on screen. */
+  color: var(--red-smile-hover);
   pointer-events: none;
-  -webkit-clip-path: inset(0 0 100% 0);
-  clip-path: inset(0 0 100% 0);
-  animation: hero-bleed-fill 1.6s ease-out 0.25s 1 both;
+  -webkit-clip-path: polygon(
+    0% -65%,
+    100% -65%,
+    100% -28.73%,
+    95% -30.33%,
+    90% -31.32%,
+    85% -31.63%,
+    80% -31.41%,
+    75% -30.88%,
+    70% -30.3%,
+    65% -29.85%,
+    60% -29.57%,
+    55% -29.38%,
+    50% -29.08%,
+    45% -28.5%,
+    40% -27.53%,
+    35% -26.24%,
+    30% -24.83%,
+    25% -23.61%,
+    20% -22.93%,
+    15% -23.05%,
+    10% -24.06%,
+    5% -25.81%,
+    0% -28%
+  );
+  clip-path: polygon(
+    0% -65%,
+    100% -65%,
+    100% -28.73%,
+    95% -30.33%,
+    90% -31.32%,
+    85% -31.63%,
+    80% -31.41%,
+    75% -30.88%,
+    70% -30.3%,
+    65% -29.85%,
+    60% -29.57%,
+    55% -29.38%,
+    50% -29.08%,
+    45% -28.5%,
+    40% -27.53%,
+    35% -26.24%,
+    30% -24.83%,
+    25% -23.61%,
+    20% -22.93%,
+    15% -23.05%,
+    10% -24.06%,
+    5% -25.81%,
+    0% -28%
+  );
+  animation: hero-bleed-fill 2.4s cubic-bezier(0.37, 0, 0.63, 1) 0.3s 1 both;
 }
 
 @keyframes hero-bleed-fill {
-  from {
-    -webkit-clip-path: inset(0 0 100% 0);
-    clip-path: inset(0 0 100% 0);
+  0% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% -28.73%,
+      95% -30.33%,
+      90% -31.32%,
+      85% -31.63%,
+      80% -31.41%,
+      75% -30.88%,
+      70% -30.3%,
+      65% -29.85%,
+      60% -29.57%,
+      55% -29.38%,
+      50% -29.08%,
+      45% -28.5%,
+      40% -27.53%,
+      35% -26.24%,
+      30% -24.83%,
+      25% -23.61%,
+      20% -22.93%,
+      15% -23.05%,
+      10% -24.06%,
+      5% -25.81%,
+      0% -28%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% -28.73%,
+      95% -30.33%,
+      90% -31.32%,
+      85% -31.63%,
+      80% -31.41%,
+      75% -30.88%,
+      70% -30.3%,
+      65% -29.85%,
+      60% -29.57%,
+      55% -29.38%,
+      50% -29.08%,
+      45% -28.5%,
+      40% -27.53%,
+      35% -26.24%,
+      30% -24.83%,
+      25% -23.61%,
+      20% -22.93%,
+      15% -23.05%,
+      10% -24.06%,
+      5% -25.81%,
+      0% -28%
+    );
   }
-  to {
-    -webkit-clip-path: inset(0 0 0 0);
-    clip-path: inset(0 0 0 0);
+  10% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% -9.98%,
+      95% -11.2%,
+      90% -12%,
+      85% -12.58%,
+      80% -13.29%,
+      75% -14.42%,
+      70% -16.07%,
+      65% -18.09%,
+      60% -20.03%,
+      55% -21.33%,
+      50% -21.46%,
+      45% -20.12%,
+      40% -17.34%,
+      35% -13.56%,
+      30% -9.47%,
+      25% -5.91%,
+      20% -3.57%,
+      15% -2.9%,
+      10% -3.91%,
+      5% -6.25%,
+      0% -9.29%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% -9.98%,
+      95% -11.2%,
+      90% -12%,
+      85% -12.58%,
+      80% -13.29%,
+      75% -14.42%,
+      70% -16.07%,
+      65% -18.09%,
+      60% -20.03%,
+      55% -21.33%,
+      50% -21.46%,
+      45% -20.12%,
+      40% -17.34%,
+      35% -13.56%,
+      30% -9.47%,
+      25% -5.91%,
+      20% -3.57%,
+      15% -2.9%,
+      10% -3.91%,
+      5% -6.25%,
+      0% -9.29%
+    );
+  }
+  20% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 8.39%,
+      95% 10.4%,
+      90% 12.01%,
+      85% 12.48%,
+      80% 11.24%,
+      75% 8.11%,
+      70% 3.39%,
+      65% -2.11%,
+      60% -7.32%,
+      55% -11.14%,
+      50% -12.75%,
+      45% -11.86%,
+      40% -8.74%,
+      35% -4.16%,
+      30% 0.84%,
+      25% 5.25%,
+      20% 8.35%,
+      15% 9.88%,
+      10% 10.04%,
+      5% 9.36%,
+      0% 8.44%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 8.39%,
+      95% 10.4%,
+      90% 12.01%,
+      85% 12.48%,
+      80% 11.24%,
+      75% 8.11%,
+      70% 3.39%,
+      65% -2.11%,
+      60% -7.32%,
+      55% -11.14%,
+      50% -12.75%,
+      45% -11.86%,
+      40% -8.74%,
+      35% -4.16%,
+      30% 0.84%,
+      25% 5.25%,
+      20% 8.35%,
+      15% 9.88%,
+      10% 10.04%,
+      5% 9.36%,
+      0% 8.44%
+    );
+  }
+  32% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 22.8%,
+      95% 29.66%,
+      90% 35.26%,
+      85% 38.4%,
+      80% 38.41%,
+      75% 35.36%,
+      70% 30.02%,
+      65% 23.61%,
+      60% 17.5%,
+      55% 12.79%,
+      50% 10.07%,
+      45% 9.31%,
+      40% 9.96%,
+      35% 11.25%,
+      30% 12.46%,
+      25% 13.18%,
+      20% 13.49%,
+      15% 13.88%,
+      10% 15.01%,
+      5% 17.42%,
+      0% 21.3%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 22.8%,
+      95% 29.66%,
+      90% 35.26%,
+      85% 38.4%,
+      80% 38.41%,
+      75% 35.36%,
+      70% 30.02%,
+      65% 23.61%,
+      60% 17.5%,
+      55% 12.79%,
+      50% 10.07%,
+      45% 9.31%,
+      40% 9.96%,
+      35% 11.25%,
+      30% 12.46%,
+      25% 13.18%,
+      20% 13.49%,
+      15% 13.88%,
+      10% 15.01%,
+      5% 17.42%,
+      0% 21.3%
+    );
+  }
+  45% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 32.3%,
+      95% 39.23%,
+      90% 45.04%,
+      85% 48.87%,
+      80% 50.53%,
+      75% 50.46%,
+      70% 49.45%,
+      65% 48.35%,
+      60% 47.69%,
+      55% 47.54%,
+      50% 47.44%,
+      45% 46.66%,
+      40% 44.49%,
+      35% 40.58%,
+      30% 35.15%,
+      25% 29.05%,
+      20% 23.57%,
+      15% 20.07%,
+      10% 19.6%,
+      5% 22.58%,
+      0% 28.57%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 32.3%,
+      95% 39.23%,
+      90% 45.04%,
+      85% 48.87%,
+      80% 50.53%,
+      75% 50.46%,
+      70% 49.45%,
+      65% 48.35%,
+      60% 47.69%,
+      55% 47.54%,
+      50% 47.44%,
+      45% 46.66%,
+      40% 44.49%,
+      35% 40.58%,
+      30% 35.15%,
+      25% 29.05%,
+      20% 23.57%,
+      15% 20.07%,
+      10% 19.6%,
+      5% 22.58%,
+      0% 28.57%
+    );
+  }
+  58% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 50.12%,
+      95% 50.59%,
+      90% 50.55%,
+      85% 50.33%,
+      80% 50.61%,
+      75% 52.16%,
+      70% 55.49%,
+      65% 60.56%,
+      60% 66.71%,
+      55% 72.74%,
+      50% 77.28%,
+      45% 79.1%,
+      40% 77.55%,
+      35% 72.74%,
+      30% 65.57%,
+      25% 57.49%,
+      20% 50.12%,
+      15% 44.82%,
+      10% 42.37%,
+      5% 42.79%,
+      0% 45.42%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 50.12%,
+      95% 50.59%,
+      90% 50.55%,
+      85% 50.33%,
+      80% 50.61%,
+      75% 52.16%,
+      70% 55.49%,
+      65% 60.56%,
+      60% 66.71%,
+      55% 72.74%,
+      50% 77.28%,
+      45% 79.1%,
+      40% 77.55%,
+      35% 72.74%,
+      30% 65.57%,
+      25% 57.49%,
+      20% 50.12%,
+      15% 44.82%,
+      10% 42.37%,
+      5% 42.79%,
+      0% 45.42%
+    );
+  }
+  70% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 77.15%,
+      95% 72.11%,
+      90% 66.74%,
+      85% 62.21%,
+      80% 59.68%,
+      75% 59.95%,
+      70% 63.2%,
+      65% 68.89%,
+      60% 75.9%,
+      55% 82.81%,
+      50% 88.3%,
+      45% 91.44%,
+      40% 91.94%,
+      35% 90.17%,
+      30% 86.96%,
+      25% 83.33%,
+      20% 80.14%,
+      15% 77.84%,
+      10% 76.4%,
+      5% 75.39%,
+      0% 74.2%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 77.15%,
+      95% 72.11%,
+      90% 66.74%,
+      85% 62.21%,
+      80% 59.68%,
+      75% 59.95%,
+      70% 63.2%,
+      65% 68.89%,
+      60% 75.9%,
+      55% 82.81%,
+      50% 88.3%,
+      45% 91.44%,
+      40% 91.94%,
+      35% 90.17%,
+      30% 86.96%,
+      25% 83.33%,
+      20% 80.14%,
+      15% 77.84%,
+      10% 76.4%,
+      5% 75.39%,
+      0% 74.2%
+    );
+  }
+  82% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 102.88%,
+      95% 97.74%,
+      90% 92.26%,
+      85% 87.51%,
+      80% 84.37%,
+      75% 83.25%,
+      70% 84.07%,
+      65% 86.29%,
+      60% 89.16%,
+      55% 91.92%,
+      50% 94.06%,
+      45% 95.46%,
+      40% 96.32%,
+      35% 97.09%,
+      30% 98.19%,
+      25% 99.83%,
+      20% 101.89%,
+      15% 103.9%,
+      10% 105.18%,
+      5% 105.07%,
+      0% 103.14%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 102.88%,
+      95% 97.74%,
+      90% 92.26%,
+      85% 87.51%,
+      80% 84.37%,
+      75% 83.25%,
+      70% 84.07%,
+      65% 86.29%,
+      60% 89.16%,
+      55% 91.92%,
+      50% 94.06%,
+      45% 95.46%,
+      40% 96.32%,
+      35% 97.09%,
+      30% 98.19%,
+      25% 99.83%,
+      20% 101.89%,
+      15% 103.9%,
+      10% 105.18%,
+      5% 105.07%,
+      0% 103.14%
+    );
+  }
+  92% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 116.85%,
+      95% 114.54%,
+      90% 112.07%,
+      85% 109.95%,
+      80% 108.46%,
+      75% 107.64%,
+      70% 107.26%,
+      65% 106.99%,
+      60% 106.55%,
+      55% 105.84%,
+      50% 104.97%,
+      45% 104.29%,
+      40% 104.22%,
+      35% 105.1%,
+      30% 107.08%,
+      25% 109.99%,
+      20% 113.35%,
+      15% 116.49%,
+      10% 118.74%,
+      5% 119.56%,
+      0% 118.77%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 116.85%,
+      95% 114.54%,
+      90% 112.07%,
+      85% 109.95%,
+      80% 108.46%,
+      75% 107.64%,
+      70% 107.26%,
+      65% 106.99%,
+      60% 106.55%,
+      55% 105.84%,
+      50% 104.97%,
+      45% 104.29%,
+      40% 104.22%,
+      35% 105.1%,
+      30% 107.08%,
+      25% 109.99%,
+      20% 113.35%,
+      15% 116.49%,
+      10% 118.74%,
+      5% 119.56%,
+      0% 118.77%
+    );
+  }
+  100% {
+    -webkit-clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 140%,
+      95% 140%,
+      90% 140%,
+      85% 140%,
+      80% 140%,
+      75% 140%,
+      70% 140%,
+      65% 140%,
+      60% 140%,
+      55% 140%,
+      50% 140%,
+      45% 140%,
+      40% 140%,
+      35% 140%,
+      30% 140%,
+      25% 140%,
+      20% 140%,
+      15% 140%,
+      10% 140%,
+      5% 140%,
+      0% 140%
+    );
+    clip-path: polygon(
+      0% -65%,
+      100% -65%,
+      100% 140%,
+      95% 140%,
+      90% 140%,
+      85% 140%,
+      80% 140%,
+      75% 140%,
+      70% 140%,
+      65% 140%,
+      60% 140%,
+      55% 140%,
+      50% 140%,
+      45% 140%,
+      40% 140%,
+      35% 140%,
+      30% 140%,
+      25% 140%,
+      20% 140%,
+      15% 140%,
+      10% 140%,
+      5% 140%,
+      0% 140%
+    );
   }
 }
 
@@ -2769,7 +3286,7 @@ button:focus-visible {
   .hero-word--blood {
     /* Skip the run, keep the end state so the brand still reads red. */
     animation: none;
-    -webkit-clip-path: inset(0 0 0 0);
-    clip-path: inset(0 0 0 0);
+    -webkit-clip-path: none;
+    clip-path: none;
   }
 }

@@ -60,7 +60,7 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=d1b94654a8" />
+    <link rel="stylesheet" href="/styles.css?v=6697a424a2" />
 
     <script type="application/ld+json">
       {
@@ -321,60 +321,7 @@
           </header>
 
           <div class="series-grid">
-            <details class="series-card" id="series-erin">
-              <summary class="series-card-face">
-                <span class="series-card-art">
-                  <img
-                    src="%VITE_ASSET_BASE%/card-art/erin-dark.jpg"
-                    alt="Erin &amp; the Goblins interactive manga reader cover art by 27 Pictures"
-                    width="1152"
-                    height="1728"
-                    loading="eager"
-                    decoding="async"
-                    fetchpriority="high"
-                  />
-                </span>
-                <span class="series-card-meta">Dark fantasy</span>
-                <h3 class="series-card-title">Erin &amp; the Goblins</h3>
-                <span class="series-card-cue"
-                  >2 episodes <span class="series-card-chevron" aria-hidden="true">▾</span></span
-                >
-              </summary>
-
-              <ul class="episode-list">
-                <li>
-                  <a href="/toons/erin/">
-                    <span class="episode-list-n">EP 1</span>
-                    <span class="episode-list-body">
-                      <span class="episode-list-title">The Missing Child</span>
-                      <span class="episode-list-desc"
-                        >Half human, half vampire — she lives in a small town that is the passage between the goblin
-                        world and the human one.</span
-                      >
-                    </span>
-                    <span class="episode-list-meta">27 pages</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/toons/erin-the-revenge/">
-                    <span class="episode-list-n">EP 2</span>
-                    <span class="episode-list-body">
-                      <span class="episode-list-title"
-                        >The Revenge <span class="lab-card-wip">Work in progress</span></span
-                      >
-                      <span class="episode-list-desc"
-                        >Erin tears a portal open into the goblin world, wakes in a forest that is already watching her,
-                        and learns to move the ground itself.</span
-                      >
-                    </span>
-                    <span class="episode-list-meta">17 pages</span>
-                  </a>
-                </li>
-                <li class="episode-list-soon"><span class="episode-list-n">EP 3</span> In the darkroom</li>
-              </ul>
-            </details>
-
-            <a class="series-card series-card--single" href="/toons/nero/">
+            <a class="series-card series-card--single" href="/toons/nero/" data-series="nero">
               <span class="series-card-face">
                 <span class="series-card-art"
                   ><img
@@ -382,12 +329,14 @@
                     alt="Nero interactive cyberpunk sicario toon cover art by 27 Pictures"
                     width="1008"
                     height="1792"
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
+                    fetchpriority="high"
                 /></span>
                 <span class="series-card-meta">Cyberpunk noir</span>
                 <h3 class="series-card-title">Nero</h3>
                 <span class="series-card-cue">20 pages <span aria-hidden="true">→</span></span>
+                <span class="series-card-votes" data-votes-for="nero" hidden></span>
               </span>
               <span class="series-card-desc"
                 >Detective Nero and forensic Eve hunt a sicario called The Dog — crystal tech, AI glasses, and who hired
@@ -395,28 +344,7 @@
               >
             </a>
 
-            <a class="series-card series-card--single" href="/toons/jax/">
-              <span class="series-card-face">
-                <span class="series-card-art"
-                  ><img
-                    src="%VITE_ASSET_BASE%/card-art/jax.jpg"
-                    alt="Jax interactive cyberpunk toon cover art by 27 Pictures"
-                    width="1008"
-                    height="1792"
-                    loading="lazy"
-                    decoding="async"
-                /></span>
-                <span class="series-card-meta">Cyberpunk</span>
-                <h3 class="series-card-title">Jax</h3>
-                <span class="series-card-cue">24 pages <span aria-hidden="true">→</span></span>
-              </span>
-              <span class="series-card-desc"
-                >A netrunner with a rare sickness who steals corporate mind-control tech — a future Robin Hood in
-                chrome.</span
-              >
-            </a>
-
-            <a class="series-card series-card--single" href="/toons/redsmile-static/">
+            <a class="series-card series-card--single" href="/toons/redsmile-static/" data-series="red-smile">
               <span class="series-card-face">
                 <span class="series-card-art"
                   ><img
@@ -430,12 +358,91 @@
                 <span class="series-card-meta">Horror</span>
                 <h3 class="series-card-title">RED SMILE: static</h3>
                 <span class="series-card-cue">12 pages <span aria-hidden="true">→</span></span>
+                <span class="series-card-votes" data-votes-for="red-smile" hidden></span>
               </span>
               <span class="series-card-desc"
                 >Psychological horror in heavy black-and-white gekiga ink. Elena is alone in the flat when the
                 television finds a channel that should not exist.</span
               >
             </a>
+
+            <a class="series-card series-card--single" href="/toons/jax/" data-series="jax">
+              <span class="series-card-face">
+                <span class="series-card-art"
+                  ><img
+                    src="%VITE_ASSET_BASE%/card-art/jax.jpg"
+                    alt="Jax interactive cyberpunk toon cover art by 27 Pictures"
+                    width="1008"
+                    height="1792"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <span class="series-card-meta">Cyberpunk</span>
+                <h3 class="series-card-title">Jax</h3>
+                <span class="series-card-cue">24 pages <span aria-hidden="true">→</span></span>
+                <span class="series-card-votes" data-votes-for="jax" hidden></span>
+              </span>
+              <span class="series-card-desc"
+                >A netrunner with a rare sickness who steals corporate mind-control tech — a future Robin Hood in
+                chrome.</span
+              >
+            </a>
+
+            <details class="series-card" id="series-erin" data-series="erin">
+              <summary class="series-card-face">
+                <span class="series-card-art">
+                  <img
+                    src="%VITE_ASSET_BASE%/card-art/erin-dark.jpg"
+                    alt="Erin &amp; the Goblins interactive manga reader cover art by 27 Pictures"
+                    width="1152"
+                    height="1728"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+                <span class="series-card-meta">Dark fantasy</span>
+                <h3 class="series-card-title">Erin &amp; the Goblins</h3>
+                <span class="series-card-cue"
+                  >2 episodes <span class="series-card-chevron" aria-hidden="true">▾</span></span
+                >
+                <span class="series-card-votes" data-votes-for="erin" hidden></span>
+              </summary>
+
+              <div class="episode-block">
+                <p class="episode-block-head">Episodes</p>
+                <ul class="episode-list">
+                  <li>
+                    <a href="/toons/erin/">
+                      <span class="episode-list-n">EP 1</span>
+                      <span class="episode-list-body">
+                        <span class="episode-list-title">The Missing Child</span>
+                        <span class="episode-list-desc"
+                          >Half human, half vampire — she lives in a small town that is the passage between the goblin
+                          world and the human one.</span
+                        >
+                      </span>
+                      <span class="episode-list-meta">27 pages</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/toons/erin-the-revenge/">
+                      <span class="episode-list-n">EP 2</span>
+                      <span class="episode-list-body">
+                        <span class="episode-list-title"
+                          >The Revenge <span class="lab-card-wip">Work in progress</span></span
+                        >
+                        <span class="episode-list-desc"
+                          >Erin tears a portal open into the goblin world, wakes in a forest that is already watching
+                          her, and learns to move the ground itself.</span
+                        >
+                      </span>
+                      <span class="episode-list-meta">17 pages</span>
+                    </a>
+                  </li>
+                  <li class="episode-list-soon"><span class="episode-list-n">EP 3</span> In the darkroom</li>
+                </ul>
+              </div>
+            </details>
           </div>
         </section>
       </section>

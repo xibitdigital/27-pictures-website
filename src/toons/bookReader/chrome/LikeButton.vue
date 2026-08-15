@@ -3,11 +3,13 @@
  * Heart toggle for the reader top bar. Sits beside LangSwitcher.
  *
  * The reader's own vote is remembered in localStorage; the running total comes
- * from the likes Worker and is only rendered with `?stats=true`, so a cold
- * counter never shows a discouraging "0" to ordinary readers.
+ * from the likes Worker and is shown to everyone. It used to hide behind
+ * `?stats=true` so a cold counter never showed a discouraging "0" — the books
+ * have votes now, and a count nobody can see cannot encourage anyone to add to
+ * it. A missing total still renders as nothing rather than as zero.
  */
-import { computed, onMounted, ref } from "vue";
-import { statsEnabled, useToonLikes } from "../useToonLikes";
+import { computed } from "vue";
+import { useToonLikes } from "../useToonLikes";
 
 const props = defineProps<{
   /** Toon id the counter is keyed on (`jax`, `nero`, `redsmile-static`, …). */
@@ -15,12 +17,6 @@ const props = defineProps<{
 }>();
 
 const { liked, total, pending, toggle } = useToonLikes(props.toonId);
-const showStats = ref(false);
-
-// Query string is read on mount so SSR/tests never touch window at import time.
-onMounted(() => {
-  showStats.value = statsEnabled();
-});
 
 const label = computed(() => (liked.value ? "Liked" : "Like this toon"));
 const countLabel = computed(() => (total.value == null ? "" : String(total.value)));
@@ -30,7 +26,7 @@ const countLabel = computed(() => (total.value == null ? "" : String(total.value
   <button
     type="button"
     class="toon-fs-btn toon-like-btn"
-    :class="{ 'is-liked': liked, 'is-pending': pending, 'has-stats': showStats && countLabel !== '' }"
+    :class="{ 'is-liked': liked, 'is-pending': pending, 'has-stats': countLabel !== '' }"
     :aria-pressed="liked"
     :title="label"
     :aria-label="label"
@@ -53,6 +49,6 @@ const countLabel = computed(() => (total.value == null ? "" : String(total.value
     </svg>
     <span class="toon-fs-label">{{ label }}</span>
     <!-- Stacked under the heart, so the bar keeps one icon per control. -->
-    <span v-if="showStats && countLabel" class="toon-like-count" aria-hidden="true">{{ countLabel }}</span>
+    <span v-if="countLabel" class="toon-like-count" aria-hidden="true">{{ countLabel }}</span>
   </button>
 </template>

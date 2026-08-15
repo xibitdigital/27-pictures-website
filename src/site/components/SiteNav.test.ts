@@ -27,12 +27,11 @@ describe("SiteNav", () => {
 
     const hrefs = wrapper.findAll(".nav-links a.magnetic").map((a) => a.attributes("href"));
     // Section anchors stay bare on the homepage; the split-out pages are absolute.
-    expect(hrefs).toContain("#assembly");
     expect(hrefs).toContain("#contact");
     expect(hrefs).toContain("/horror-shorts/");
     expect(hrefs).toContain("/cosplay/");
     expect(hrefs).toContain("/toons/");
-    expect(hrefs).not.toContain("/#assembly");
+    expect(hrefs).not.toContain("/#contact");
   });
 
   it("prefixes homepage hashes when on the toons page", () => {
@@ -51,7 +50,6 @@ describe("SiteNav", () => {
     });
 
     const hrefs = wrapper.findAll(".nav-links a.magnetic").map((a) => a.attributes("href"));
-    expect(hrefs).toContain("/#assembly");
     expect(hrefs).toContain("/#contact");
     // Dedicated pages are absolute from anywhere.
     expect(hrefs).toContain("/horror-shorts/");

@@ -38,6 +38,15 @@
     </image:image>
   </url>
   <url>
+    <loc>https://twentyseven.pictures/watch/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
+      <image:title>Watch — every 27 Pictures release</image:title>
+      <image:caption>Horror shorts, the Jax cyberpunk series and the cosplay showcase by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://twentyseven.pictures/toons/</loc>
     <lastmod>2026-07-25</lastmod>
     <image:image>

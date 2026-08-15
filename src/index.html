@@ -69,7 +69,7 @@
     />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/styles.css?v=d1b94654a8" />
+    <link rel="stylesheet" href="/styles.css?v=6697a424a2" />
 
     <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -348,6 +348,25 @@
                 >Subscribe on YouTube</a
               >
             </div>
+
+            <!-- The anthology also exists as something you read; the toon is
+                 easy to miss from here otherwise. -->
+            <a class="toon-crosslink" href="/toons/redsmile-static/">
+              <span class="toon-crosslink-art"
+                ><img
+                  src="%VITE_ASSET_BASE%/card-art/redsmile-static.jpg"
+                  alt="RED SMILE static interactive horror toon cover art by 27 Pictures"
+                  width="800"
+                  height="1424"
+                  loading="lazy"
+                  decoding="async"
+              /></span>
+              <span class="toon-crosslink-body">
+                <span class="toon-crosslink-meta">Also as an interactive toon</span>
+                <span class="toon-crosslink-title">RED SMILE: static</span>
+                <span class="toon-crosslink-cue">12 pages · read it <span aria-hidden="true">→</span></span>
+              </span>
+            </a>
           </div>
           <figure class="clown-hero-frame">
             <div
@@ -429,9 +448,13 @@
       </section>
 
       <!-- LATEST RELEASES SECTION -->
+      <!-- Trimmed to a summary when /watch/ was split out. The #latest anchor
+           stays: fragments cannot be redirected, so removing it would break
+           every existing /#latest link and the nav item that used to point here. -->
       <section id="latest" class="latest-section" aria-labelledby="latest-title">
         <span class="section-tag">Latest Releases</span>
         <h2 id="latest-title" class="latest-title">WATCH ON YOUTUBE</h2>
+
         <article class="latest-feature">
           <figure class="latest-feature-frame">
             <div
@@ -448,120 +471,21 @@
               A netrunner wakes up sharing his skull with something that answers back. Widescreen cyberpunk short from
               the Jax series.
             </p>
-            <a
-              href="https://www.youtube.com/watch?v=Jqe1TmHD8cQ"
-              class="cta-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Watch on YouTube →</a
-            >
+            <div class="cta-row">
+              <a href="/watch/" class="magnetic cta-link" aria-label="See every 27 Pictures release">All videos →</a>
+              <a
+                href="https://www.youtube.com/watch?v=Jqe1TmHD8cQ"
+                class="cta-link cta-link--muted"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Watch on YouTube</a
+              >
+            </div>
           </div>
         </article>
-
-        <div class="latest-grid">
-          <article class="latest-card">
-            <figure class="latest-card-frame">
-              <div
-                class="yt-facade"
-                data-embed="https://www.youtube.com/embed/videoseries?list=PLb5rxZ02eTKvvD9u-sugPDJIPadEEpO7m"
-                data-poster="J-iZl-XkVxg"
-                data-title="Red Smile: A Horror Anthology"
-              ></div>
-            </figure>
-            <div class="latest-card-desc">
-              <h3>Red Smile: A Horror Anthology</h3>
-              <p>
-                What follows was not meant for public record. A growing anthology of psychological horror shorts — each
-                one hiding the red smile in plain sight.
-              </p>
-            </div>
-            <a
-              href="https://www.youtube.com/playlist?list=PLb5rxZ02eTKvvD9u-sugPDJIPadEEpO7m"
-              class="cta-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Watch Playlist →</a
-            >
-          </article>
-
-          <article class="latest-card">
-            <figure class="latest-card-frame">
-              <div
-                class="yt-facade"
-                data-embed="https://www.youtube.com/embed/videoseries?list=PLb5rxZ02eTKskIw5MglgYCObrkp9vAgDv"
-                data-poster="BOtFWCENtTc"
-                data-title="Horror Shorts - Collection of Short Horror Films"
-              ></div>
-            </figure>
-            <div class="latest-card-desc">
-              <h3>Horror Shorts</h3>
-              <p>
-                From psychological chills and disturbing twists to atmospheric dread — bite-sized horror stories that
-                will keep you up at night.
-              </p>
-            </div>
-            <a
-              href="https://www.youtube.com/playlist?list=PLb5rxZ02eTKskIw5MglgYCObrkp9vAgDv"
-              class="cta-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Watch Playlist →</a
-            >
-          </article>
-
-          <article class="latest-card">
-            <figure class="latest-card-frame">
-              <div
-                class="yt-facade"
-                data-embed="https://www.youtube.com/embed/lj4-xW2_Bb4?list=PLb5rxZ02eTKsZojd93MSPD-HoCxdx1xKh"
-                data-poster="lj4-xW2_Bb4"
-                data-title="Cyberpunk Jax Netrunner"
-              ></div>
-            </figure>
-            <div class="latest-card-desc">
-              <h3>Cyberpunk Jax Netrunner</h3>
-              <p>
-                A rogue netrunner turned gun-for-hire battles through a dystopian future. Cinematic cyberpunk action
-                series produced by 27 Pictures.
-              </p>
-            </div>
-            <a
-              href="https://www.youtube.com/playlist?list=PLb5rxZ02eTKsZojd93MSPD-HoCxdx1xKh"
-              class="cta-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Watch Playlist →</a
-            >
-          </article>
-        </div>
       </section>
 
-      <!-- SECTION 2: COSPLAY -->
-      <article id="cosplay" class="section cosplay-section" aria-labelledby="cosplay-title">
-        <span class="section-tag">Archive 02: Cosplay Production</span>
-        <div class="horror-container">
-          <div class="horror-text">
-            <h2 id="cosplay-title">COSPLAY</h2>
-            <p>
-              We transform cosplay into cinema. Every session is a full production—lighting, direction, and
-              post-production designed to bring your character to life with cinematic precision.
-            </p>
-            <a href="/cosplay/" class="magnetic cta-link" aria-label="Cinematic cosplay production services"
-              >See how a session works →</a
-            >
-          </div>
-          <figure class="video-frame">
-            <div
-              class="yt-facade"
-              data-embed="https://www.youtube.com/embed/nuMPi_Rnxg0"
-              data-poster="nuMPi_Rnxg0"
-              data-title="27 Pictures Cosplay Production Showcase"
-            ></div>
-          </figure>
-        </div>
-      </article>
-
-      <!-- SECTION 3: EXPERIMENTS LAB -->
+      <!-- SECTION 2: INTERACTIVE TOONS -->
       <section id="lab" class="section lab-section" aria-labelledby="lab-title">
         <span class="section-tag">Archive 03: Interactive Toons</span>
         <h2 id="lab-title">INTERACTIVE<br />TOONS</h2>
@@ -639,6 +563,31 @@
           >
         </div>
       </section>
+
+      <!-- SECTION 3: COSPLAY -->
+      <article id="cosplay" class="section cosplay-section" aria-labelledby="cosplay-title">
+        <span class="section-tag">Archive 02: Cosplay Production</span>
+        <div class="horror-container">
+          <div class="horror-text">
+            <h2 id="cosplay-title">COSPLAY</h2>
+            <p>
+              We transform cosplay into cinema. Every session is a full production—lighting, direction, and
+              post-production designed to bring your character to life with cinematic precision.
+            </p>
+            <a href="/cosplay/" class="magnetic cta-link" aria-label="Cinematic cosplay production services"
+              >See how a session works →</a
+            >
+          </div>
+          <figure class="video-frame">
+            <div
+              class="yt-facade"
+              data-embed="https://www.youtube.com/embed/nuMPi_Rnxg0"
+              data-poster="nuMPi_Rnxg0"
+              data-title="27 Pictures Cosplay Production Showcase"
+            ></div>
+          </figure>
+        </div>
+      </article>
 
       <!-- CONTACT SECTION -->
       <section id="contact" class="contact-section" aria-labelledby="contact-title">

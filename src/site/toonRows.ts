@@ -8,12 +8,12 @@
  * appears once it has something true to say. A row that would show "no
  * progress yet" or an empty ranking is worse than no row.
  */
+import { fetchLikes } from "./likes";
 import { allEpisodes, episodeLabel, type Episode } from "../toons/series";
 import { readProgress, type ReadingProgress } from "../toons/bookReader/readingProgress";
 
 type SeriesEpisode = Episode & { seriesTitle: string };
 
-const LIKES_API = import.meta.env.VITE_LIKES_API as string | undefined;
 const ASSET_BASE = (import.meta.env.VITE_ASSET_BASE as string | undefined) || "";
 
 function artUrl(ep: SeriesEpisode): string {
@@ -71,24 +71,6 @@ export function mostLovedTiles(episodes: SeriesEpisode[], likes: Map<string, num
     });
 }
 
-async function fetchLikes(episodes: SeriesEpisode[]): Promise<Map<string, number>> {
-  const out = new Map<string, number>();
-  if (!LIKES_API) return out;
-  await Promise.all(
-    episodes.map(async (ep) => {
-      try {
-        const res = await fetch(`${LIKES_API}?toon=${encodeURIComponent(ep.id as string)}`);
-        if (!res.ok) return;
-        const data = (await res.json()) as { likes?: number };
-        if (typeof data.likes === "number" && data.likes > 0) out.set(ep.id as string, data.likes);
-      } catch {
-        /* a row that cannot load simply does not appear */
-      }
-    })
-  );
-  return out;
-}
-
 export function initToonRows(): void {
   const episodes = allEpisodes();
 
@@ -97,6 +79,8 @@ export function initToonRows(): void {
 
   const loved = document.getElementById("most-loved");
   if (loved) {
-    void fetchLikes(episodes).then((likes) => renderRow(loved, mostLovedTiles(episodes, likes)));
+    void fetchLikes(episodes.map((ep) => ep.id as string)).then((likes) =>
+      renderRow(loved, mostLovedTiles(episodes, likes))
+    );
   }
 }
