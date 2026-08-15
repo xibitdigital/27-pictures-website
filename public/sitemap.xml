@@ -41,7 +41,7 @@
     <loc>https://twentyseven.pictures/toons/</loc>
     <lastmod>2026-07-25</lastmod>
     <image:image>
-      <image:loc>%VITE_ASSET_BASE%/card-art/erin.jpg</image:loc>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin interactive manga reader — 27 Pictures Experiments</image:title>
       <image:caption>Cover art for Erin, an interactive page-turning manga reader prototype by 27 Pictures</image:caption>
     </image:image>
@@ -50,7 +50,7 @@
     <loc>https://twentyseven.pictures/toons/erin/</loc>
     <lastmod>2026-07-27</lastmod>
     <image:image>
-      <image:loc>%VITE_ASSET_BASE%/card-art/erin.jpg</image:loc>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin interactive manga reader — 27 Pictures Experiments</image:title>
       <image:caption>Cover art for Erin, an interactive page-turning manga reader prototype by 27 Pictures</image:caption>
     </image:image>

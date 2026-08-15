@@ -60,7 +60,7 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css?v=e2b06c0229" />
+    <link rel="stylesheet" href="/styles.css?v=d1b94654a8" />
 
     <script type="application/ld+json">
       {
@@ -135,7 +135,7 @@
             },
             "image": {
               "@type": "ImageObject",
-              "url": "%VITE_ASSET_BASE%/card-art/erin.jpg",
+              "url": "%VITE_ASSET_BASE%/card-art/erin-dark.jpg",
               "width": 1152,
               "height": 1728
             },
@@ -310,20 +310,23 @@
           <div class="experiments-grid"></div>
         </section>
 
-        <section class="toon-series" aria-labelledby="series-erin-title">
+        <!-- One card per series. A book with a single episode is a plain link —
+             a "choose an episode" step buys nothing when there is one to choose.
+             Erin is a <details>, so the episode list is real DOM for crawlers and
+             opens without JavaScript. -->
+        <section class="toon-series series-shelf" aria-labelledby="browse-series-title">
           <header class="toon-series-head">
-            <h3 id="series-erin-title">
-              Erin &amp; the Goblins <span class="toon-series-chevron" aria-hidden="true">›</span>
-            </h3>
-            <p>Dark fantasy · two episodes · a town that is really a door</p>
+            <h3 id="browse-series-title">Browse the series</h3>
+            <p>Four books · pick one to start reading</p>
           </header>
-          <div class="experiments-grid">
-            <article>
-              <a href="/toons/erin/" class="episode-tile" aria-labelledby="erin-title">
-                <span class="episode-tile-art">
+
+          <div class="series-grid">
+            <details class="series-card" id="series-erin">
+              <summary class="series-card-face">
+                <span class="series-card-art">
                   <img
-                    src="%VITE_ASSET_BASE%/card-art/erin.jpg"
-                    alt="Erin interactive manga reader cover art by 27 Pictures"
+                    src="%VITE_ASSET_BASE%/card-art/erin-dark.jpg"
+                    alt="Erin &amp; the Goblins interactive manga reader cover art by 27 Pictures"
                     width="1152"
                     height="1728"
                     loading="eager"
@@ -331,47 +334,49 @@
                     fetchpriority="high"
                   />
                 </span>
-                <span class="episode-tile-meta">Episode 1 · 27 pages</span>
-                <h2 id="erin-title">The Missing Child</h2>
-                <span class="episode-tile-desc"
-                  >Half human, half vampire — she lives in a small town that is the passage between the goblin world and
-                  the human one. A FlipFrame page-turner.</span
+                <span class="series-card-meta">Dark fantasy</span>
+                <h3 class="series-card-title">Erin &amp; the Goblins</h3>
+                <span class="series-card-cue"
+                  >2 episodes <span class="series-card-chevron" aria-hidden="true">▾</span></span
                 >
-              </a>
-            </article>
-            <article>
-              <a href="/toons/erin-the-revenge/" class="episode-tile" aria-labelledby="erin-the-revenge-title">
-                <span class="episode-tile-art">
-                  <img
-                    src="%VITE_ASSET_BASE%/card-art/erin-the-revenge.jpg"
-                    alt="Erin &amp; the Goblins episode 2, The Revenge — interactive manga reader cover art by 27 Pictures"
-                    width="1152"
-                    height="1728"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </span>
-                <span class="episode-tile-meta">Episode 2 · 17 pages</span>
-                <h2 id="erin-the-revenge-title">The Revenge <span class="lab-card-wip">Work in progress</span></h2>
-                <span class="episode-tile-desc"
-                  >Erin tears a portal open into the goblin world, wakes in a forest that is already watching her, and
-                  learns to move the ground itself.</span
-                >
-              </a>
-            </article>
-          </div>
-          <p class="toon-series-note">Episode 3 is in the darkroom.</p>
-        </section>
+              </summary>
 
-        <section class="toon-series" aria-labelledby="series-nero-title">
-          <header class="toon-series-head">
-            <h3 id="series-nero-title">Nero</h3>
-            <p>Cyberpunk noir · one episode</p>
-          </header>
-          <div class="experiments-grid">
-            <article>
-              <a href="/toons/nero/" class="episode-tile" aria-labelledby="nero-title">
-                <span class="episode-tile-art"
+              <ul class="episode-list">
+                <li>
+                  <a href="/toons/erin/">
+                    <span class="episode-list-n">EP 1</span>
+                    <span class="episode-list-body">
+                      <span class="episode-list-title">The Missing Child</span>
+                      <span class="episode-list-desc"
+                        >Half human, half vampire — she lives in a small town that is the passage between the goblin
+                        world and the human one.</span
+                      >
+                    </span>
+                    <span class="episode-list-meta">27 pages</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="/toons/erin-the-revenge/">
+                    <span class="episode-list-n">EP 2</span>
+                    <span class="episode-list-body">
+                      <span class="episode-list-title"
+                        >The Revenge <span class="lab-card-wip">Work in progress</span></span
+                      >
+                      <span class="episode-list-desc"
+                        >Erin tears a portal open into the goblin world, wakes in a forest that is already watching her,
+                        and learns to move the ground itself.</span
+                      >
+                    </span>
+                    <span class="episode-list-meta">17 pages</span>
+                  </a>
+                </li>
+                <li class="episode-list-soon"><span class="episode-list-n">EP 3</span> In the darkroom</li>
+              </ul>
+            </details>
+
+            <a class="series-card series-card--single" href="/toons/nero/">
+              <span class="series-card-face">
+                <span class="series-card-art"
                   ><img
                     src="%VITE_ASSET_BASE%/card-art/nero.jpg"
                     alt="Nero interactive cyberpunk sicario toon cover art by 27 Pictures"
@@ -380,26 +385,19 @@
                     loading="lazy"
                     decoding="async"
                 /></span>
-                <span class="episode-tile-meta">Scotland Yard case · 20 pages</span>
-                <h2 id="nero-title">Nero</h2>
-                <span class="episode-tile-desc"
-                  >Detective Nero and forensic Eve hunt a sicario called The Dog — crystal tech, AI glasses, and who
-                  hired the bullet. Short interactive FlipFrame from the Experiments lab.</span
-                >
-              </a>
-            </article>
-          </div>
-        </section>
+                <span class="series-card-meta">Cyberpunk noir</span>
+                <h3 class="series-card-title">Nero</h3>
+                <span class="series-card-cue">20 pages <span aria-hidden="true">→</span></span>
+              </span>
+              <span class="series-card-desc"
+                >Detective Nero and forensic Eve hunt a sicario called The Dog — crystal tech, AI glasses, and who hired
+                the bullet.</span
+              >
+            </a>
 
-        <section class="toon-series" aria-labelledby="series-jax-title">
-          <header class="toon-series-head">
-            <h3 id="series-jax-title">Jax</h3>
-            <p>Cyberpunk · one episode</p>
-          </header>
-          <div class="experiments-grid">
-            <article>
-              <a href="/toons/jax/" class="episode-tile" aria-labelledby="jax-title">
-                <span class="episode-tile-art"
+            <a class="series-card series-card--single" href="/toons/jax/">
+              <span class="series-card-face">
+                <span class="series-card-art"
                   ><img
                     src="%VITE_ASSET_BASE%/card-art/jax.jpg"
                     alt="Jax interactive cyberpunk toon cover art by 27 Pictures"
@@ -408,26 +406,19 @@
                     loading="lazy"
                     decoding="async"
                 /></span>
-                <span class="episode-tile-meta">Cyberpunk toon · 24 pages</span>
-                <h2 id="jax-title">Jax</h2>
-                <span class="episode-tile-desc"
-                  >A netrunner with a rare sickness who steals corporate mind-control tech — a future Robin Hood in
-                  chrome.</span
-                >
-              </a>
-            </article>
-          </div>
-        </section>
+                <span class="series-card-meta">Cyberpunk</span>
+                <h3 class="series-card-title">Jax</h3>
+                <span class="series-card-cue">24 pages <span aria-hidden="true">→</span></span>
+              </span>
+              <span class="series-card-desc"
+                >A netrunner with a rare sickness who steals corporate mind-control tech — a future Robin Hood in
+                chrome.</span
+              >
+            </a>
 
-        <section class="toon-series" aria-labelledby="series-red-smile-title">
-          <header class="toon-series-head">
-            <h3 id="series-red-smile-title">RED SMILE</h3>
-            <p>Horror · the anthology, as something you read</p>
-          </header>
-          <div class="experiments-grid">
-            <article>
-              <a href="/toons/redsmile-static/" class="episode-tile" aria-labelledby="redsmile-static-title">
-                <span class="episode-tile-art"
+            <a class="series-card series-card--single" href="/toons/redsmile-static/">
+              <span class="series-card-face">
+                <span class="series-card-art"
                   ><img
                     src="%VITE_ASSET_BASE%/card-art/redsmile-static.jpg"
                     alt="RED SMILE static interactive horror toon cover art by 27 Pictures"
@@ -436,16 +427,15 @@
                     loading="lazy"
                     decoding="async"
                 /></span>
-                <span class="episode-tile-meta">Horror short · 12 pages</span>
-                <h2 id="redsmile-static-title">RED SMILE: static</h2>
-                <span class="episode-tile-desc"
-                  >The first episode of the Elena series: psychological horror drawn in heavy black-and-white gekiga ink
-                  — crushed shadows, hand-inked plates, light that never quite reaches the corners. Elena is alone in
-                  the flat when the television finds a channel that should not exist. A black-and-white FlipFrame horror
-                  short.</span
-                >
-              </a>
-            </article>
+                <span class="series-card-meta">Horror</span>
+                <h3 class="series-card-title">RED SMILE: static</h3>
+                <span class="series-card-cue">12 pages <span aria-hidden="true">→</span></span>
+              </span>
+              <span class="series-card-desc"
+                >Psychological horror in heavy black-and-white gekiga ink. Elena is alone in the flat when the
+                television finds a channel that should not exist.</span
+              >
+            </a>
           </div>
         </section>
       </section>

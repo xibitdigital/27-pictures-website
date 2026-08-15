@@ -2287,6 +2287,188 @@ button:focus-visible {
   color: var(--silver);
 }
 
+/* ── Series shelf ──
+   One card per series instead of every episode of every book at once. The
+   dynamic rows above (continue reading, most loved) stay as scrolling rails;
+   this is the standing catalogue, so it is a grid that wraps rather than a
+   row that hides books off-screen. */
+.series-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.series-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* The whole face is the hit target — art, title and cue move together. */
+.series-card-face {
+  display: block;
+  cursor: pointer;
+  list-style: none;
+}
+
+/* Safari still paints a disclosure triangle without this. */
+.series-card-face::-webkit-details-marker {
+  display: none;
+}
+
+.series-card-art {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+  transition: transform 0.35s var(--transition);
+}
+
+.series-card-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.series-card:hover .series-card-art,
+.series-card-face:focus-visible .series-card-art {
+  transform: translateY(-4px);
+}
+
+.series-card-face:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
+
+.series-card-meta {
+  display: block;
+  margin-top: 12px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+.series-card-title {
+  margin-top: 4px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.series-card-cue {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.series-card-chevron {
+  display: inline-block;
+  transition: transform 0.25s var(--transition);
+}
+
+.series-card[open] .series-card-chevron {
+  transform: rotate(180deg);
+}
+
+/* Synopsis stays in the DOM on the single-episode cards — this page is
+   indexed and it was the only prose those books had here. */
+.series-card-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--silver);
+}
+
+/* ── Episode list (inside an open series card) ── */
+.episode-list {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.episode-list li {
+  border-bottom: 1px solid var(--border);
+}
+
+.episode-list a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 12px 4px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s var(--transition);
+}
+
+.episode-list a:hover,
+.episode-list a:focus-visible {
+  background: var(--bg-card);
+}
+
+.episode-list-n {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--red-smile);
+}
+
+.episode-list-title {
+  display: block;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.episode-list-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--silver);
+}
+
+.episode-list-meta {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--silver);
+  white-space: nowrap;
+}
+
+.episode-list-soon {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  padding: 12px 4px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .series-card-art,
+  .series-card-chevron {
+    transition: none;
+  }
+}
+
 .experiment-card {
   display: flex;
   flex-direction: column;
