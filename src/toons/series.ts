@@ -41,7 +41,10 @@ export const SERIES: Series[] = [
     episodes: [
       {
         id: "erin",
-        art: "erin.jpg",
+        // erin-dark.jpg, not erin.jpg: card art is served immutable and is not
+        // content-hashed, so the restyled cover had to take a new key to reach
+        // anyone who had already loaded the colour one.
+        art: "erin-dark.jpg",
         n: 1,
         title: "The Missing Child",
         url: "/toons/erin/",
