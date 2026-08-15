@@ -2144,6 +2144,117 @@ button:focus-visible {
 /* Series groups own their spacing; the inner grid must not add its own. */
 .toon-series .experiments-grid {
   margin-bottom: 0;
+  /* Episode rail, Apple TV style: a row you scroll sideways rather than a
+     grid that reflows. Episodes read in order left to right, and a series
+     with one episode is the same row with one tile — no special case. */
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 300px);
+  grid-template-columns: none;
+  gap: 20px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  /* No full-bleed: a percentage margin resolves against the text column, not
+     the viewport, so it would never line up with the page gutter. The rail
+     stays inside the column and snaps at its edge. */
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-light) transparent;
+}
+
+.toon-series .experiments-grid > article {
+  scroll-snap-align: start;
+}
+
+.toon-series .experiments-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.toon-series .experiments-grid::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 3px;
+}
+
+.toon-series .experiments-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ── Episode tiles (Apple TV row) ──
+   Artwork first, rounded, then one metadata line — no card frame, no CTA
+   button. The synopsis stays in the DOM (this page is indexed) but is clamped
+   to two lines so the row reads as posters, not as paragraphs. */
+.episode-tile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.episode-tile-art {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+  transition:
+    transform 0.35s var(--transition),
+    box-shadow 0.35s var(--transition);
+}
+
+.episode-tile-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.episode-tile:hover .episode-tile-art,
+.episode-tile:focus-visible .episode-tile-art {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 14px 32px rgb(0 0 0 / 60%);
+}
+
+.episode-tile:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 6px;
+}
+
+.episode-tile-meta {
+  display: block;
+  margin-top: 12px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red-smile);
+}
+
+.episode-tile h2 {
+  margin-top: 4px;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.episode-tile-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--silver);
+}
+
+.toon-series-chevron {
+  color: var(--silver);
+  font-weight: 400;
 }
 
 .toon-series-note {
