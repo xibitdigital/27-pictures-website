@@ -79,7 +79,12 @@ export function useToonLikes(toonId: string): ToonLikesApi {
   }
 
   async function toggle(): Promise<void> {
-    if (pending.value) return;
+    // Deliberately not gated on `pending`: the vote is local state and the POST
+    // is fire-and-forget, so a request still in flight must never stop someone
+    // taking their like back. Blocking here made an un-like impossible whenever
+    // the POST was slow or the origin was not on the Worker's CORS list — the
+    // request hangs, the button keeps pointer-events:none, and the heart looks
+    // stuck on.
     const next = !liked.value;
 
     // Optimistic: the vote is the reader's own state, not the server's.
@@ -99,8 +104,13 @@ export function useToonLikes(toonId: string): ToonLikesApi {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ toon: toonId }),
+        // A counter must never hang the control that draws it.
+        signal: AbortSignal.timeout(8000),
       });
-      if (res.ok) {
+      // Only trust the server total if the reader still has the like: they may
+      // have taken it back while the POST was in flight, and overwriting their
+      // state with a count that includes the vote would put the heart back on.
+      if (res.ok && liked.value) {
         const server = parseTotal(await res.json());
         if (server != null) total.value = server;
       }

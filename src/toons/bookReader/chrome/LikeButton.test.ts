@@ -64,4 +64,23 @@ describe("LikeButton", () => {
     await nextTick();
     expect(wrapper.get("button").attributes("aria-label")).toBe("Liked");
   });
+
+  it("can be un-liked while the like POST is still in flight", async () => {
+    vi.stubEnv("VITE_LIKES_API", "https://likes.example.dev");
+    // A POST that never settles — the shape of a slow request or an origin the
+    // Worker's CORS list does not cover. The heart must still come back off.
+    vi.spyOn(globalThis, "fetch").mockImplementation(() => new Promise(() => {}));
+
+    const wrapper = mount(LikeButton, { props: { toonId: "nero" } });
+    await flushPromises();
+
+    await wrapper.get("button").trigger("click");
+    await nextTick();
+    expect(wrapper.get("button").attributes("aria-pressed")).toBe("true");
+
+    await wrapper.get("button").trigger("click");
+    await nextTick();
+    expect(wrapper.get("button").attributes("aria-pressed")).toBe("false");
+    expect(window.localStorage.getItem(`${LIKE_STORAGE_PREFIX}nero`)).toBeNull();
+  });
 });

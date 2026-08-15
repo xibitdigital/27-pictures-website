@@ -2232,10 +2232,11 @@ button:focus-visible {
    is reserved for the cards themselves, so the two levels stay legible
    instead of competing. */
 /* The first row sits directly under the section label, which already carries
-   the rule — a second one 20px below it reads as a mistake. */
+   the rule — a second one 20px below it reads as a mistake. Only the rule
+   goes: zeroing the padding too pulled the heading and its subtitle flush
+   against the label above them. */
 .toon-series:first-of-type .toon-series-head {
   border-top: 0;
-  padding-top: 0;
 }
 
 .toon-series-head {

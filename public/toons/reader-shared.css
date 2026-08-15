@@ -253,9 +253,10 @@ body.toons-reader {
   color: var(--red-smile);
 }
 
+/* Dim while the POST is in flight, but stay clickable: the vote is local
+   state, so taking a like back must not wait on the network. */
 .toon-like-btn.is-pending {
   opacity: 0.6;
-  pointer-events: none;
 }
 
 /* The count sits beside the heart, not under it. Stacking it made this the
