@@ -74,13 +74,16 @@ describe("mostLovedTiles", () => {
       ])
     );
     expect(tiles).toHaveLength(2);
-    expect(tiles[0]).toContain("11 hearts");
-    expect(tiles[1]).toContain("3 hearts");
+    // Ranked by hearts, but the count is not printed — the tile shows length.
+    expect(tiles[0]).toContain("/toons/nero/");
+    expect(tiles[1]).toContain("/toons/erin/");
+    expect(tiles[0]).not.toContain("heart");
   });
 
-  it("says heart, not hearts, for a single vote", () => {
+  it("keeps a book with a single vote, and still does not print the count", () => {
     const [tile] = mostLovedTiles(EPISODES, new Map([["erin", 1]]));
-    expect(tile).toContain("1 heart");
+    expect(tile).toContain("/toons/erin/");
+    expect(tile).not.toContain("heart");
   });
 
   it("renders nothing when nobody has voted", () => {

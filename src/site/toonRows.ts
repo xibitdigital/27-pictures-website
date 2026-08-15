@@ -60,15 +60,19 @@ export function continueReadingTiles(
     });
 }
 
-/** Most hearts first; ties keep series order. Books with no votes are left out. */
+/**
+ * Most hearts first; ties keep series order. Books with no votes are left out.
+ *
+ * The count ranks the row but is not printed on it: the heading already says
+ * these are ranked by hearts, and a tile reading "1 heart" undersells a book
+ * rather than recommending it. The tile shows its length instead, which is
+ * what someone deciding what to read next actually wants.
+ */
 export function mostLovedTiles(episodes: SeriesEpisode[], likes: Map<string, number>): string[] {
   return episodes
     .filter((ep) => (likes.get(ep.id as string) ?? 0) > 0)
     .sort((a, b) => (likes.get(b.id as string) ?? 0) - (likes.get(a.id as string) ?? 0))
-    .map((ep) => {
-      const n = likes.get(ep.id as string) ?? 0;
-      return tile(ep, `${n} ${n === 1 ? "heart" : "hearts"}`);
-    });
+    .map((ep) => tile(ep, `${ep.pages} pages`));
 }
 
 export function initToonRows(): void {
