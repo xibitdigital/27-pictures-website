@@ -2549,10 +2549,13 @@ button:focus-visible {
   position: fixed;
   inset: 0;
   margin: auto;
-  width: min(92vw, 620px);
+  width: min(92vw, 560px);
   max-height: 85dvh;
-  /* height:auto so `inset: 0` cannot stretch it to the full viewport. */
-  height: auto;
+  /* fit-content, not auto: with top and bottom both 0 an auto height stretches
+     to fill the inset box, which left 150px of empty dialog under the last
+     episode. fit-content shrinks to the content and lets the auto margins
+     centre what is left. */
+  height: fit-content;
   overflow-y: auto;
   padding: 0 24px 24px;
   border: 1px solid var(--border-light);
@@ -2590,12 +2593,14 @@ button:focus-visible {
 .episode-dialog-close {
   flex: none;
   padding: 4px 8px;
-  font-size: 0.85rem;
+  margin-right: -8px;
+  font-size: 1.1rem;
   line-height: 1;
   color: var(--silver);
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 3px;
+  /* No box: an outlined cross reads as a destructive control, and it outweighed
+     the title beside it. */
+  border: 0;
   cursor: pointer;
   transition:
     color 0.2s var(--transition),
@@ -2636,67 +2641,97 @@ button:focus-visible {
 }
 
 /* ── Episode block (inside the picker dialog) ──
-   The episodes reuse .series-card and .series-grid verbatim — same card, same
-   grid, one level down. A parallel .episode-* set was the third copy of this
-   treatment in the file and drifted from the others within a day. */
+   One layout at every width: a row per episode, thumbnail left, text right.
+   Posters were tried first and reused .series-card wholesale, but a 2:3 cover in
+   a 620px dialog is 466px tall, so three of them overflowed by 464px at 1280x900
+   and 571px on a laptop — the last episode sat below the fold of a modal whose
+   only job is choosing. Rows also stop the layout changing shape at a
+   breakpoint, so the picker behaves the same on a phone and a desktop.
+
+   The art still spans the text rows, but the text is packed to the top rather
+   than distributed down the thumbnail's height — stretched, the label, title and
+   page count read as three unrelated things. */
 .episode-block {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 2px solid var(--red-smile);
+  margin-top: 20px;
 }
 
-.episode-block-head {
-  margin-bottom: 14px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--red-smile);
+/* Rows are separated by a neutral rule. The red edge that .series-card carries
+   on the shelf is removed here: inside the dialog every row is a card, so the
+   accent repeated per row turned into stripes — five red rules in one small box.
+   Grey divides, red marks a card. */
+.episode-block .series-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
 }
 
-/* On a phone the picker's posters are 466px tall in a dialog capped at 85dvh,
-   so barely one episode is visible and choosing means scrolling a modal. Below
-   600px the episode cards go horizontal — thumbnail left, text right — and all
-   three fit at once, which is the whole point of a picker. The shelf outside
-   keeps its posters; that one is a display case, not a menu. */
+.episode-block .series-card {
+  border-top: 0;
+  padding: 14px 0;
+}
+
+.episode-block .series-card + .series-card {
+  border-top: 1px solid var(--border);
+}
+
+.episode-block .series-card-face {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  grid-template-rows: auto auto auto;
+  column-gap: 16px;
+  align-content: start;
+}
+
+.episode-block .series-card-art {
+  grid-row: 1 / span 3;
+  border-radius: 8px;
+}
+
+.episode-block .series-card-meta,
+.episode-block .series-card-title,
+.episode-block .series-card-cue {
+  grid-column: 2;
+  margin-top: 0;
+}
+
+.episode-block .series-card-title {
+  font-size: 1.1rem;
+  margin-top: 2px;
+}
+
+.episode-block .series-card-cue {
+  margin-top: 4px;
+}
+
+.episode-block .series-card-desc {
+  -webkit-line-clamp: 2;
+  /* Aligned with the text column, not with the thumbnail: it sits outside
+     .series-card-face, so by default it started back at the card's left edge. */
+  margin: 6px 0 0 108px;
+}
+
+/* On a phone the three rows overflow the dialog by ~110px with synopses shown,
+   so they go: a cover, a title and a page count is enough to choose between two
+   books, and the full copy is on each reader. Desktop keeps them — there the
+   text is shorter than the thumbnail is tall, so they cost no height at all. */
 @media (max-width: 600px) {
-  .episode-block .series-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
+  .episode-block .series-card {
+    padding: 12px 0;
   }
+}
 
-  .episode-block .series-card-face {
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    column-gap: 14px;
-    align-items: start;
-  }
-
-  .episode-block .series-card-art {
-    grid-row: 1 / span 3;
-  }
-
-  .episode-block .series-card-meta,
-  .episode-block .series-card-title,
-  .episode-block .series-card-cue {
-    grid-column: 2;
-    margin-top: 0;
-  }
-
-  .episode-block .series-card-title {
-    font-size: 1.05rem;
-  }
-
-  /* The synopsis goes: with it the three episodes still overflow a 667px-tall
-     phone, and "The Missing Child, 27 pages" is enough to choose between two
-     books whose covers are right there. The full copy lives on each reader. */
+/* The synopses are a luxury, and the constraint on them is vertical, not
+   horizontal: they cost two lines per episode, which is what pushed the picker
+   past a 768px-tall laptop and a phone. Shown only when there is room; the full
+   copy is on each reader either way. */
+@media (max-height: 820px) {
   .episode-block .series-card-desc {
     display: none;
   }
 }
 
-/* An episode with no reader yet: dimmed, and its art slot is an empty frame so
-   the row still lines up. */
+/* An episode with no reader yet: dimmed, with an empty frame holding the art
+   slot so the rows still line up. */
 .series-card--soon {
   opacity: 0.55;
 }

@@ -112,6 +112,10 @@ export function initEpisodeDialogs(root: ParentNode = document): void {
       // shut so the arrow does not flip on a card that never expands.
       card.open = false;
       dialog.showModal();
+      // showModal() focuses the first focusable child, which is the close
+      // button — so opening the picker highlights "dismiss" rather than the
+      // thing you came to choose. Move it to the first episode.
+      dialog.querySelector<HTMLAnchorElement>(".series-card[href]")?.focus();
     });
   }
 }
