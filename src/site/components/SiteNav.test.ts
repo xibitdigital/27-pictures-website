@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import SiteNav from "./SiteNav.vue";
 
@@ -83,7 +83,7 @@ describe("SiteNav", () => {
     expect(hrefs).toContain("/cosplay/");
     expect(hrefs).toContain("/horror-shorts/");
     expect(hrefs).not.toContain("/it/cosplay/");
-    const langs = wrapper.findAll(".nav-lang");
+    const langs = wrapper.findAll(".nav-links .nav-lang");
     expect(langs.map((a) => a.attributes("href"))).toEqual(
       expect.arrayContaining(["/toons/", "/it/toons/", "/de/toons/", "/fr/toons/"])
     );
@@ -116,6 +116,47 @@ describe("SiteNav", () => {
       },
     });
     expect(wrapper.find(".nav-langs").exists()).toBe(false);
+    expect(wrapper.find(".nav-lang-select").exists()).toBe(false);
+    window.history.pushState({}, "", "/");
+  });
+
+  it("navigates when the mobile language select changes", async () => {
+    document.documentElement.setAttribute("lang", "it");
+    window.history.pushState({}, "", "/it/toons/");
+
+    const wrapper = mount(SiteNav, {
+      props: { page: "toons" },
+      attachTo: document.body,
+      global: {
+        stubs: {
+          TransitionRoot: { template: "<div v-if='show'><slot /></div>", props: ["show"] },
+          TransitionChild: { template: "<div><slot /></div>" },
+          Dialog: { template: "<div><slot /></div>" },
+          DialogPanel: { template: "<div><slot /></div>" },
+          DialogTitle: { template: "<div><slot /></div>" },
+        },
+      },
+    });
+
+    await wrapper.find(".burger-btn").trigger("click");
+    const select = wrapper.find("#nav-lang-select");
+    expect(select.exists()).toBe(true);
+    expect((select.element as HTMLSelectElement).value).toBe("it");
+    expect(wrapper.findAll("#nav-lang-select option").map((o) => o.attributes("value"))).toEqual([
+      "en",
+      "de",
+      "it",
+      "fr",
+    ]);
+
+    const assign = vi.fn();
+    vi.spyOn(window.location, "assign").mockImplementation(assign);
+
+    await select.setValue("fr");
+    expect(assign).toHaveBeenCalledWith("/fr/toons/");
+
+    vi.restoreAllMocks();
+    document.documentElement.setAttribute("lang", "en");
     window.history.pushState({}, "", "/");
   });
 

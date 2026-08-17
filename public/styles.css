@@ -2808,33 +2808,72 @@ button:focus-visible {
   outline-offset: 0;
 }
 
-.nav-langs--menu {
+/* Mobile overlay: one native <select> instead of the four-link list. The OS
+   picker is easier to hit than a custom panel, and the desktop dropdown
+   keeps the crawlable <a> set. */
+.nav-lang-select-wrap {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-top: 28px;
-  padding: 6px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.nav-lang-select-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+.nav-lang-select {
+  appearance: none;
+  display: block;
+  box-sizing: border-box;
+  width: min(16.5rem, 78vw);
+  height: 2.75rem;
+  padding: 0 2.4rem 0 1.1rem;
   border: 1px solid var(--border-light);
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--bg-card) 80%, transparent);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
-.nav-langs--menu .nav-lang-toggle {
-  display: none;
+.nav-lang-select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 1.15rem;
+  bottom: 1.05rem;
+  width: 0.42em;
+  height: 0.42em;
+  border-right: 1.5px solid var(--silver);
+  border-bottom: 1.5px solid var(--silver);
+  transform: rotate(45deg);
+  pointer-events: none;
 }
 
-.nav-langs--menu .nav-lang-menu {
-  position: static;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  visibility: visible;
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
+.nav-lang-select:hover,
+.nav-lang-select:focus-visible {
+  border-color: var(--red-smile);
+}
+
+.nav-lang-select:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 2px;
+}
+
+.nav-lang-select option {
+  background: var(--bg-card);
+  color: var(--text);
 }
 
 @media (prefers-reduced-motion: reduce) {

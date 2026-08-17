@@ -73,6 +73,15 @@ function onDocKey(event: KeyboardEvent): void {
   if (event.key === "Escape") closeLangs();
 }
 
+/** Mobile menu: a native select opens the OS picker, then we go to that locale. */
+function onLangSelect(event: Event): void {
+  const value = (event.target as HTMLSelectElement).value;
+  const next = languages.value.find((l) => l.code === value);
+  if (!next || next.current) return;
+  closeMenu();
+  window.location.assign(next.href);
+}
+
 onMounted(() => {
   document.addEventListener("pointerdown", onDocPointerDown);
   document.addEventListener("keydown", onDocKey);
@@ -240,20 +249,19 @@ onUnmounted(() => {
             >
               {{ link.label }}
             </a>
-            <div v-if="showLangs" class="nav-langs nav-langs--menu" role="group" :aria-label="t.language">
-              <a
-                v-for="l in languages"
-                :key="'ml-' + l.code"
-                class="nav-lang"
-                :href="l.href"
-                :hreflang="l.code"
-                :lang="l.code"
-                :aria-current="l.current ? 'true' : undefined"
-                @click="closeMenu"
+            <div v-if="showLangs" class="nav-lang-select-wrap">
+              <label class="nav-lang-select-label" for="nav-lang-select">{{ t.language }}</label>
+              <select
+                id="nav-lang-select"
+                class="nav-lang-select"
+                :value="locale"
+                :aria-label="t.language"
+                @change="onLangSelect"
               >
-                <span class="nav-lang-code" aria-hidden="true">{{ l.label }}</span>
-                <span class="nav-lang-name">{{ l.name }}</span>
-              </a>
+                <option v-for="l in languages" :key="'ml-' + l.code" :value="l.code" :lang="l.code">
+                  {{ l.label }} · {{ l.name }}
+                </option>
+              </select>
             </div>
           </DialogPanel>
         </div>
