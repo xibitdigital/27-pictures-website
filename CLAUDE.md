@@ -9,6 +9,21 @@ npm run format
 # or: npx prettier --write "src/**/*.{vue,ts,js,css,html,json}" "public/**/*.{css,html,js,json}" "vite/**/*.ts"
 ```
 
+## DOM Guidelines
+
+**Never target an element by class name.** Class names belong to styling — a
+rename in CSS silently breaks any script that queried it, and the coupling is
+invisible from either side. Reach for, in order:
+
+1. A **template ref** (or the element a child already emits, e.g. the slot list
+   `VerticalStrip` hands to `onStripReady`) — no lookup at all.
+2. A **`data-*` attribute** that states intent: `[data-page-num="3"]`,
+   `[data-quick-view]`, `[data-series-page]`.
+3. A **semantic selector** — `a[href]`, `img`, `[role="dialog"]`.
+
+Adding a class purely so `<body>` can be styled (`body.dialog-open`) is fine:
+that is a CSS hook written *to* the DOM, not a query read *from* it.
+
 ## CSS Guidelines
 
 **Never hardcode colors.** Always use CSS custom properties defined in `:root`.

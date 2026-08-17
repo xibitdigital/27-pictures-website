@@ -1362,6 +1362,15 @@ html:has(body.toons-reader.dialog-open) {
 
 body.toons-reader.dialog-open,
 body.view-vertical.toons-reader.dialog-open {
+  /* Pinned at -scrollY (set inline by the shell): the document sits at 0 while
+     locked, so iOS hit-tests touches on the fixed overlay against the layout it
+     is actually painting. Freezing a *scrolled* document with overflow alone
+     left the popup unscrollable whenever it was reopened mid-read. */
+  position: fixed !important;
+  top: var(--dialog-lock-top, 0px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
   overflow: hidden !important;
   overscroll-behavior: none;
 }

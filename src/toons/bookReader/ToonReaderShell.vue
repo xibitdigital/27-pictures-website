@@ -199,9 +199,9 @@ function scrollVerticalToQueryPage(): void {
   if (!viewMode.isVertical.value) return;
   const page = parsePageQuery();
   if (page == null) return;
-  const root = readerEl.value;
-  if (!root) return;
-  const el = root.querySelector(`.vertical-page.page-slot[data-page-num="${page}"]`) as HTMLElement | null;
+  // The strip hands us its slot elements on ready — no DOM lookup, and no
+  // dependency on what those slots happen to be called in CSS.
+  const el = stripSlots.value.find((slot) => slot.dataset.pageNum === String(page));
   if (!el) return;
 
   const apply = (): void => {
@@ -292,7 +292,50 @@ function maybeShowScrollHowTo(): void {
  * out-specify those rules.
  */
 const dialogOpen = computed(() => guideOpen.value || autoRead.promptOpen.value);
-watch(dialogOpen, (locked) => document.body.classList.toggle("dialog-open", locked), { immediate: true });
+
+/**
+ * `overflow: hidden` alone is not enough once the strip has been read into.
+ *
+ * Reopening the guide from the toolbar at, say, y=1500 froze a document that
+ * was still scrolled, and iOS Safari then hit-tested touches on the fixed
+ * overlay against the pre-lock layout — the popup painted correctly but no
+ * drag ever reached its scrollport. Opening at y=0 (first load) hid the bug,
+ * which is why it only showed up on a reopen.
+ *
+ * So pin the body at `-scrollY` while locked: the document sits at 0, fixed
+ * overlays and touch coordinates agree, and the reader sees no movement
+ * because the offset cancels it out. The position is restored on unlock.
+ */
+let lockedScrollY = 0;
+let bodyLocked = false;
+
+function lockBodyForDialog(): void {
+  if (bodyLocked) return;
+  lockedScrollY = currentScrollY();
+  document.body.style.setProperty("--dialog-lock-top", `-${lockedScrollY}px`);
+  document.body.classList.add("dialog-open");
+  bodyLocked = true;
+}
+
+function unlockBodyForDialog(): void {
+  if (!bodyLocked) return;
+  bodyLocked = false;
+  document.body.classList.remove("dialog-open");
+  document.body.style.removeProperty("--dialog-lock-top");
+  // While pinned the body is `position: fixed`, so the document has no
+  // scrollable height. Read a layout property to flush that removal before
+  // scrolling, or the restore clamps to 0 and the reader lands back on page 1.
+  void document.body.offsetHeight;
+  window.scrollTo(0, lockedScrollY);
+  // A plate that re-expands a frame later can clamp it a second time.
+  requestAnimationFrame(() => {
+    if (bodyLocked) return;
+    if (Math.abs(currentScrollY() - lockedScrollY) > 1) window.scrollTo(0, lockedScrollY);
+  });
+  deepLinkAppliedY = deepLinkAbandoned ? null : lockedScrollY;
+}
+
+watch(dialogOpen, (locked) => (locked ? lockBodyForDialog() : unlockBodyForDialog()), { immediate: true });
 
 /** No timer: the toast is the answer to "what do I do", so it waits for the doing. */
 function notifyScrollHowToScroll(): void {
@@ -491,7 +534,7 @@ onUnmounted(() => {
   window.removeEventListener("scroll", onWindowScroll);
   onWindowScroll.cancel();
   clearDeepLinkTimers();
-  document.body.classList.remove("dialog-open");
+  unlockBodyForDialog();
   autoRead.stop();
   if (!mobileMq) return;
   if (typeof mobileMq.removeEventListener === "function") {
