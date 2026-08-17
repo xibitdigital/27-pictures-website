@@ -322,7 +322,8 @@ npm run generate-qr
 | URL               | Source                     | Role                                                        |
 | ----------------- | -------------------------- | ----------------------------------------------------------- |
 | `/`               | `src/index.html`           | Studio homepage — sections + summaries that link out         |
-| `/horror-shorts/` | `src/horror-shorts/`       | The Red Smile anthology hub; all five films with writeups    |
+| `/horror-shorts/` | `src/horror-shorts/`       | The Red Smile anthology hub; links out to one page per film  |
+| `/horror-shorts/<slug>/` | `src/horror-shorts/<slug>/` | One Red Smile short: player, writeup, `VideoObject`     |
 | `/cosplay/`       | `src/cosplay/`             | Cosplay production service page + FAQ                        |
 | `/toons/`         | `src/toons/index.html`     | Interactive Toons index (readers live at `/toons/<name>/`)   |
 | `/qr.html`        | `public/qr.html`           | Printed-QR landing page (`noindex`)                          |
@@ -335,9 +336,10 @@ homepage-relative (`/#contact`).
 
 **Schema lives with its subject, never duplicated.** The homepage graph keeps
 Organization, WebSite, WebPage, the founders and the VFX Service.
-`CreativeWorkSeries` + the five short `VideoObject`s belong to
-`/horror-shorts/`; the cosplay `Service` and `FAQPage` to `/cosplay/`. Both
-split pages add `BreadcrumbList` and reference the org by `@id`.
+`CreativeWorkSeries` belongs to `/horror-shorts/`; each short's `VideoObject`
+lives on its own film page under `/horror-shorts/<slug>/`, and the hub
+`ItemList` points at those pages. The cosplay `Service` and `FAQPage` belong
+to `/cosplay/`. Split pages add `BreadcrumbList` and reference the org by `@id`.
 
 **`/experiments/` is gone** — renamed Interactive Toons and moved to `/toons/`,
 which was already the parent of every reader URL. `public/_redirects` 301s
@@ -942,7 +944,7 @@ curl -sS https://twentyseven.pictures/robots.txt
 
 ### Remaining TODOs
 
-- Update VideoObject entries when new Shorts are published (homepage Watch strip + `/horror-shorts/` ItemList)
+- When a new Short is published: add `/horror-shorts/<slug>/` (VideoObject + writeup), then update the hub ItemList, sitemap, `llms.txt` and the homepage film list
 - Submit `/toons/`, `/cosplay/`, `/horror-shorts/` (and the retired `/experiments/`) to IndexNow once live on production
 - Watch GSC for homepage vs `/cosplay/` cannibalisation; trim the homepage summary further if both rank for the same query
 - A `/studio/` page for the assembly/beyond copy once it passes ~400 words

@@ -36,6 +36,12 @@ describe("site entry modules", () => {
     expect(mount).toHaveBeenCalledWith("#site-app");
   });
 
+  it("seriesPageMain.ts mounts SiteApp(toons) on #site-app", async () => {
+    await import("./seriesPageMain");
+    expect(createApp).toHaveBeenCalledWith(expect.anything(), { page: "toons" });
+    expect(mount).toHaveBeenCalledWith("#site-app");
+  });
+
   it("toonsMain.ts mounts SiteApp(toons) on #site-app", async () => {
     await import("./toonsMain");
     expect(createApp).toHaveBeenCalledWith(expect.anything(), { page: "toons" });

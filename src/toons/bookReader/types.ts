@@ -37,12 +37,12 @@ export interface ToonBookOptions {
   backNav?: EpisodeNav | null;
   frontCoverLogo?: string | null;
   coverTitle?: string;
-  coverSubtitle?: string | null;
+  coverSubtitle?: import("./flipframeCopy").LocalizedString | null;
   /**
    * Optional story synopsis on the front cover (above FlipFrame / how-to icons).
-   * Plain text; use `\n\n` for paragraphs. Toon-specific “manual” blurb.
+   * Plain text or a map of locale → text; use `\n\n` for paragraphs.
    */
-  coverSynopsis?: string | null;
+  coverSynopsis?: import("./flipframeCopy").LocalizedString | null;
   soundHint?: string | null;
   /** Current sound state when (re)painting the front-cover sound button. */
   getSoundEnabled?: () => boolean;

@@ -8,11 +8,35 @@ import { fileURLToPath } from "node:url";
 import { cdnMediaPlugin } from "./vite/plugins/cdnMedia";
 import { toonConfigDevPlugin } from "./vite/plugins/toonConfigDev";
 import { hashedCss } from "./vite/plugins/hashedCss";
+import { generateLocalePages, localePagesPlugin } from "./vite/plugins/localePages";
+import fs from "node:fs";
+
+/** Every index.html under a root, keyed by its path — "de/toons/erin". */
+function htmlEntries(root: string): Record<string, string> {
+  const entries: Record<string, string> = {};
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name === "index.html") {
+        const rel = path.relative(root, path.dirname(full));
+        entries[rel === "" ? "main" : rel.split(path.sep).join("/")] = full;
+      }
+    }
+  };
+  walk(root);
+  return entries;
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(__dirname, "src");
 const distDir = path.resolve(__dirname, "dist");
 const isTest = !!process.env.VITEST;
+
+// Locale HTML is generated from the English template + JSON *before* the MPA
+// input scan, so `/it/toons/` is a real Vite entry. Skipped under Vitest so
+// unit tests do not write into src/.
+if (!isTest) generateLocalePages(srcDir);
 
 /** Short id shown under FlipFrame on covers (override with VITE_FLIPFRAME_BUILD). */
 function flipframeBuildId(): string {
@@ -61,6 +85,7 @@ export default defineConfig({
     vue(),
     toonConfigDevPlugin(__dirname),
     cdnMediaPlugin(distDir),
+    localePagesPlugin(srcDir),
     // Runs last: it rewrites the HTML cdnMediaPlugin has already touched.
     hashedCss(),
   ],
@@ -73,19 +98,12 @@ export default defineConfig({
     outDir: distDir,
     emptyOutDir: true,
     rollupOptions: {
-      input: {
-        main: path.resolve(srcDir, "index.html"),
-        toons: path.resolve(srcDir, "toons/index.html"),
-        cosplay: path.resolve(srcDir, "cosplay/index.html"),
-        "horror-shorts": path.resolve(srcDir, "horror-shorts/index.html"),
-        watch: path.resolve(srcDir, "watch/index.html"),
-        jax: path.resolve(srcDir, "toons/jax/index.html"),
-        erin: path.resolve(srcDir, "toons/erin/index.html"),
-        "erin-the-revenge": path.resolve(srcDir, "toons/erin-the-revenge/index.html"),
-        "erin-and-the-goblins": path.resolve(srcDir, "toons/erin-and-the-goblins/index.html"),
-        nero: path.resolve(srcDir, "toons/nero/index.html"),
-        "redsmile-static": path.resolve(srcDir, "toons/redsmile-static/index.html"),
-      },
+      // Every index.html under src/ is an entry, found rather than listed. The
+      // list was hand-maintained, and a page missing from it builds into
+      // nothing while looking perfectly fine in the source tree — which is a
+      // silent way to ship a 404. Locale landings are generated into
+      // src/<locale>/ before this scan runs.
+      input: htmlEntries(srcDir),
     },
   },
   server: {

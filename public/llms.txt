@@ -46,10 +46,21 @@ Allow: /
 # Key pages
 # - https://twentyseven.pictures/ — studio homepage (The Red Smile, JAX, cosplay, contact)
 # - https://twentyseven.pictures/horror-shorts/ — The Red Smile horror short anthology
+# - https://twentyseven.pictures/horror-shorts/he-streamed-the-challenge/ — Fragment 05, 39s livestream dare
+# - https://twentyseven.pictures/horror-shorts/the-doll-moved-again/ — Fragment 02 (The Tumbler), empty house / doll
+# - https://twentyseven.pictures/horror-shorts/something-is-wrong-with-my-reflection/ — Fragment 04, mirror short
+# - https://twentyseven.pictures/horror-shorts/shes-not-running-away/ — Fragment 03, chase that reverses
+# - https://twentyseven.pictures/horror-shorts/she-asked-for-directions/ — Fragment 01, the first Red Smile film
 # - https://twentyseven.pictures/watch/ — Every release: horror anthology, Jax cyberpunk series, cosplay showcase
 # - https://twentyseven.pictures/cosplay/ — Cinematic cosplay production service
 # - https://twentyseven.pictures/toons/ — Interactive Toons index
+# - https://twentyseven.pictures/it/toons/ — Toon interattivi (IT)
+# - https://twentyseven.pictures/de/toons/ — Interaktive Toons (DE)
+# - https://twentyseven.pictures/fr/toons/ — Toons interactifs (FR)
 # - https://twentyseven.pictures/toons/erin-and-the-goblins/ — Erin & the Goblins series overview (2 episodes)
+# - https://twentyseven.pictures/it/toons/erin-and-the-goblins/ — Erin e i Goblin (IT)
+# - https://twentyseven.pictures/de/toons/erin-and-the-goblins/ — Erin und die Goblins (DE)
+# - https://twentyseven.pictures/fr/toons/erin-and-the-goblins/ — Erin et les Gobelins (FR)
 # - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader
 # - https://twentyseven.pictures/toons/erin-the-revenge/ — Erin EP 2: The Revenge, B&W dark fantasy toon (EN/IT/DE/FR captions)
 # - https://twentyseven.pictures/toons/jax/ — Jax cyberpunk toon (EN/IT/DE/FR captions)

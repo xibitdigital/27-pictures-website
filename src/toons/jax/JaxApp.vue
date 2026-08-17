@@ -6,6 +6,7 @@ import type { ToonShellBookOptions } from "../bookReader/types";
 import LangSwitcher from "../bookReader/LangSwitcher.vue";
 import { LikeButton } from "../bookReader/chrome";
 import { toonConfigUrl } from "../configUrls";
+import { COVER } from "../coverCopy";
 
 /** Reader media root — explicit pageDir for CDN relative paths. */
 const ASSET_PAGE_DIR = "/toons/jax/";
@@ -67,16 +68,10 @@ function onMusicClick(): void {
   }
 }
 
-/** Front-cover story — full manual in content/toons/jax/README.md */
-const COVER_SYNOPSIS =
-  "In a neon city that sells minds by the megacorp, Jax is a netrunner dying by inches: a rare sickness eats his body while his code still cuts like a blade.\n\n" +
-  "He does not rob banks — he steals mind-control tech from the corporations that build it, then turns their own weapons against the leash.\n\n" +
-  "A future Robin Hood in a trench coat and chrome, racing the clock inside his own skull: liberate the street, stay human long enough to finish the run.";
-
 /** Stable options — shell owns page source, captions, and cover identity. */
 const bookOptions: ToonShellBookOptions = {
-  coverSubtitle: "Cyberpunk Chronicles",
-  coverSynopsis: COVER_SYNOPSIS,
+  coverSubtitle: COVER.jax.subtitle,
+  coverSynopsis: COVER.jax.synopsis,
 };
 
 onMounted(() => {

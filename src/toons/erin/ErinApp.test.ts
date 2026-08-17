@@ -74,6 +74,7 @@ describe("ErinApp", () => {
     isVertical.value = false;
     pages.value = ["assets/a.jpg", "assets/b.jpg", "assets/c.jpg"];
     loadPages.mockClear();
+    window.localStorage.removeItem("27p-locale");
   });
 
   afterEach(() => {
@@ -108,6 +109,13 @@ describe("ErinApp", () => {
     expect(wrapper.find("#btn-prev").exists()).toBe(true);
     expect(wrapper.find("#btn-next").exists()).toBe(true);
     expect(loadPages).toHaveBeenCalled();
+  });
+
+  it("keeps the selected language on the logo back-link", async () => {
+    window.localStorage.setItem("27p-locale", "fr");
+    const wrapper = mountErin();
+    await flushPromises();
+    expect(wrapper.find(".toons-back").attributes("href")).toBe("/fr/toons/");
   });
 
   it("toggles vertical scroll mode", async () => {

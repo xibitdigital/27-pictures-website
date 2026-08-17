@@ -7,6 +7,8 @@ describe("SiteNav", () => {
   afterEach(() => {
     document.body.innerHTML = "";
     document.body.style.overflow = "";
+    document.documentElement.setAttribute("lang", "en");
+    window.history.pushState({}, "", "/");
   });
 
   it("renders desktop section links for home", () => {
@@ -56,6 +58,65 @@ describe("SiteNav", () => {
     expect(hrefs).toContain("/cosplay/");
     const toons = wrapper.findAll(".nav-links a.magnetic").find((a) => a.attributes("href") === "/toons/");
     expect(toons?.attributes("aria-current")).toBe("page");
+  });
+
+  it("prefixes only translated pages when the document is not English", () => {
+    document.documentElement.setAttribute("lang", "it");
+    window.history.pushState({}, "", "/it/toons/");
+
+    const wrapper = mount(SiteNav, {
+      props: { page: "toons" },
+      attachTo: document.body,
+      global: {
+        stubs: {
+          TransitionRoot: false,
+          TransitionChild: false,
+          Dialog: { template: "<div><slot /></div>" },
+          DialogPanel: { template: "<div><slot /></div>" },
+          DialogTitle: { template: "<div><slot /></div>" },
+        },
+      },
+    });
+
+    const hrefs = wrapper.findAll(".nav-links a.magnetic").map((a) => a.attributes("href"));
+    expect(hrefs).toContain("/it/toons/");
+    expect(hrefs).toContain("/cosplay/");
+    expect(hrefs).toContain("/horror-shorts/");
+    expect(hrefs).not.toContain("/it/cosplay/");
+    const langs = wrapper.findAll(".nav-lang");
+    expect(langs.map((a) => a.attributes("href"))).toEqual(
+      expect.arrayContaining(["/toons/", "/it/toons/", "/de/toons/", "/fr/toons/"])
+    );
+    expect(langs).toHaveLength(4);
+    const current = langs.find((a) => a.attributes("aria-current") === "true");
+    expect(current?.attributes("href")).toBe("/it/toons/");
+    expect(current?.attributes("lang")).toBe("it");
+    const french = langs.find((a) => a.attributes("hreflang") === "fr");
+    expect(french?.text()).toContain("Français");
+    expect(french?.attributes("href")).toBe("/fr/toons/");
+
+    document.documentElement.setAttribute("lang", "en");
+    window.history.pushState({}, "", "/");
+  });
+
+  it("hides the language switcher on pages that have no translation", () => {
+    document.documentElement.setAttribute("lang", "en");
+    window.history.pushState({}, "", "/cosplay/");
+    const wrapper = mount(SiteNav, {
+      props: { page: "cosplay" },
+      attachTo: document.body,
+      global: {
+        stubs: {
+          TransitionRoot: false,
+          TransitionChild: false,
+          Dialog: { template: "<div><slot /></div>" },
+          DialogPanel: { template: "<div><slot /></div>" },
+          DialogTitle: { template: "<div><slot /></div>" },
+        },
+      },
+    });
+    expect(wrapper.find(".nav-langs").exists()).toBe(false);
+    window.history.pushState({}, "", "/");
   });
 
   it("toggles burger active class when opened", async () => {

@@ -16,8 +16,8 @@ const props = withDefaults(
     flip: FlipModel;
     coverTexture?: string | null;
     coverTitle?: string;
-    coverSubtitle?: string | null;
-    coverSynopsis?: string | null;
+    coverSubtitle?: import("./flipframeCopy").LocalizedString | null;
+    coverSynopsis?: import("./flipframeCopy").LocalizedString | null;
     frontCoverLogo?: string | null;
     altPrefix?: string;
     soundHint?: string | null;
@@ -29,7 +29,7 @@ const props = withDefaults(
   {
     coverTexture: null,
     coverTitle: "",
-    coverSubtitle: "Experiment",
+    coverSubtitle: null,
     coverSynopsis: null,
     frontCoverLogo: null,
     altPrefix: "Page",

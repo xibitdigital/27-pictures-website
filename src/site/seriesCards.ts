@@ -21,6 +21,7 @@
 
 import { fetchLikes } from "./likes";
 import { SERIES } from "../toons/series";
+import { documentLocale, UI, withCaptionLang } from "./i18n";
 
 /**
  * A series card shows the whole series' hearts, not one book's — the card
@@ -44,7 +45,8 @@ export function initSeriesVotes(root: ParentNode = document): void {
     for (const slot of slots) {
       const total = seriesLikeTotal(slot.dataset.votesFor as string, likes);
       if (total <= 0) continue;
-      slot.textContent = `${total} ${total === 1 ? "vote" : "votes"}`;
+      const ui = UI[documentLocale()];
+      slot.textContent = `${total} ${total === 1 ? ui.vote : ui.votes}`;
       slot.hidden = false;
     }
   });
@@ -59,6 +61,9 @@ export function extractSeriesRegion(html: string): DocumentFragment | null {
   const doc = new DOMParser().parseFromString(html, "text/html");
   const region = doc.querySelector("[data-series-page]");
   if (!region) return null;
+  for (const a of region.querySelectorAll<HTMLAnchorElement>('a[href^="/toons/"]')) {
+    a.setAttribute("href", withCaptionLang(a.getAttribute("href") || ""));
+  }
   const fragment = document.createDocumentFragment();
   fragment.append(...Array.from(region.childNodes));
   return fragment;

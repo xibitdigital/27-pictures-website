@@ -3,19 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Erin &amp; the Goblins — Interactive Dark Fantasy Manga | 27 Pictures</title>
+    <title data-i18n="title">Erin &amp; the Goblins — Interactive Dark Fantasy Manga | 27 Pictures</title>
 
     <meta
       name="description"
+      data-i18n-content="description"
       content="Erin &amp; the Goblins: a black-and-white dark fantasy manga you read in the browser. Two episodes, 44 hand-inked plates, captions voiced in English, Italian, German and French."
     />
     <meta
       name="keywords"
+      data-i18n-content="keywords"
       content="Erin and the Goblins, interactive manga, dark fantasy comic, webcomic reader, black and white manga, voiced comic, multilingual comic"
     />
     <meta name="author" content="27 Pictures" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <link rel="canonical" href="https://twentyseven.pictures/toons/erin-and-the-goblins/" />
+    <!-- hreflang:start -->
+    <link rel="alternate" hreflang="en" href="https://twentyseven.pictures/toons/erin-and-the-goblins/" />
+    <link rel="alternate" hreflang="de" href="https://twentyseven.pictures/de/toons/erin-and-the-goblins/" />
+    <link rel="alternate" hreflang="it" href="https://twentyseven.pictures/it/toons/erin-and-the-goblins/" />
+    <link rel="alternate" hreflang="fr" href="https://twentyseven.pictures/fr/toons/erin-and-the-goblins/" />
+    <link rel="alternate" hreflang="x-default" href="https://twentyseven.pictures/toons/erin-and-the-goblins/" />
+    <!-- hreflang:end -->
     <meta name="theme-color" content="#b30000" />
     <meta name="indexnow-key" content="bdd5e80e21a8430d9316de0deacdb208" />
 
@@ -24,21 +33,35 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://twentyseven.pictures/toons/erin-and-the-goblins/" />
-    <meta property="og:title" content="Erin &amp; the Goblins — Interactive Dark Fantasy Manga" />
+    <meta
+      property="og:title"
+      data-i18n-content="ogTitle"
+      content="Erin &amp; the Goblins — Interactive Dark Fantasy Manga"
+    />
     <meta
       property="og:description"
+      data-i18n-content="ogDescription"
       content="Two episodes of black-and-white dark fantasy manga you read in the browser, voiced in four languages."
     />
     <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/erin-dark.jpg" />
-    <meta property="og:image:alt" content="Erin &amp; the Goblins cover art by 27 Pictures" />
+    <meta
+      property="og:image:alt"
+      data-i18n-content="ogImageAlt"
+      content="Erin &amp; the Goblins cover art by 27 Pictures"
+    />
     <meta property="og:site_name" content="27 Pictures" />
     <meta property="og:locale" content="en_US" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@27pictures" />
-    <meta name="twitter:title" content="Erin &amp; the Goblins — Interactive Dark Fantasy Manga" />
+    <meta
+      name="twitter:title"
+      data-i18n-content="ogTitle"
+      content="Erin &amp; the Goblins — Interactive Dark Fantasy Manga"
+    />
     <meta
       name="twitter:description"
+      data-i18n-content="ogDescription"
       content="Two episodes of black-and-white dark fantasy manga, voiced in four languages."
     />
     <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/erin-dark.jpg" />
@@ -113,12 +136,12 @@
     <div id="site-app"></div>
 
     <main class="page series-page" id="main-content" role="main">
-      <nav aria-label="Breadcrumb" class="sr-only-seo">
-        <a href="/">Home</a>
+      <nav data-i18n-aria-label="breadcrumbLabel" aria-label="Breadcrumb" class="sr-only-seo">
+        <a href="/" data-i18n="breadcrumbHome">Home</a>
         <span aria-hidden="true">/</span>
-        <a href="/toons/">Toons</a>
+        <a href="/toons/" data-i18n="breadcrumbToons">Toons</a>
         <span aria-hidden="true">/</span>
-        <span aria-current="page">Erin &amp; the Goblins</span>
+        <span aria-current="page" data-i18n="h1">Erin &amp; the Goblins</span>
       </nav>
 
       <!-- Everything the quick-view popup shows is inside [data-series-page]. The
@@ -127,17 +150,17 @@
            that could drift from the real page. -->
       <div data-series-page>
         <header class="page-header series-header">
-          <p class="section-tag">Interactive toons</p>
-          <h1>Erin &amp; the Goblins</h1>
-          <p class="lead">
+          <p class="section-tag" data-i18n="sectionTag">Interactive toons</p>
+          <h1 data-i18n="h1">Erin &amp; the Goblins</h1>
+          <p class="lead" data-i18n="lead">
             Dark fantasy, drawn in black and white and read a page at a time. Erin lives in a small town that is really
             a door: roads fold wrong after dark, and some of what comes through it is looking for children.
           </p>
         </header>
 
         <section class="series-section" aria-labelledby="episodes-title">
-          <p class="series-section-label">Episodes</p>
-          <h2 id="episodes-title" class="series-body">Two out, one in the darkroom</h2>
+          <p class="series-section-label" data-i18n="episodesLabel">Episodes</p>
+          <h2 id="episodes-title" class="series-body" data-i18n="episodesTitle">Two out, one in the darkroom</h2>
 
           <div class="episode-block">
             <div class="series-grid">
@@ -146,17 +169,20 @@
                   <span class="series-card-art"
                     ><img
                       src="%VITE_ASSET_BASE%/card-art/erin-dark.jpg"
+                      data-i18n-alt="ep1Alt"
                       alt="Erin &amp; the Goblins episode 1, The Missing Child — cover art"
                       width="1152"
                       height="1728"
                       loading="eager"
                       decoding="async"
                   /></span>
-                  <span class="series-card-meta">Episode 1</span>
-                  <h3 class="series-card-title">The Missing Child</h3>
-                  <span class="series-card-cue">27 pages <span aria-hidden="true">&rarr;</span></span>
+                  <span class="series-card-meta" data-i18n="ep1Meta">Episode 1</span>
+                  <h3 class="series-card-title" data-i18n="ep1Title">The Missing Child</h3>
+                  <span class="series-card-cue"
+                    ><span data-i18n="ep1Cue">27 pages</span> <span aria-hidden="true">&rarr;</span></span
+                  >
                 </span>
-                <span class="series-card-desc"
+                <span class="series-card-desc" data-i18n="ep1Desc"
                   >A child goes missing from the alleys and Erin goes after her, through a door that should not be
                   there.</span
                 >
@@ -167,17 +193,23 @@
                   <span class="series-card-art"
                     ><img
                       src="%VITE_ASSET_BASE%/card-art/erin-the-revenge.jpg"
+                      data-i18n-alt="ep2Alt"
                       alt="Erin &amp; the Goblins episode 2, The Revenge — cover art"
                       width="1152"
                       height="1728"
                       loading="lazy"
                       decoding="async"
                   /></span>
-                  <span class="series-card-meta">Episode 2</span>
-                  <h3 class="series-card-title">The Revenge <span class="lab-card-wip">Work in progress</span></h3>
-                  <span class="series-card-cue">17 pages <span aria-hidden="true">&rarr;</span></span>
+                  <span class="series-card-meta" data-i18n="ep2Meta">Episode 2</span>
+                  <h3 class="series-card-title">
+                    <span data-i18n="ep2Title">The Revenge</span>
+                    <span class="lab-card-wip" data-i18n="wip">Work in progress</span>
+                  </h3>
+                  <span class="series-card-cue"
+                    ><span data-i18n="ep2Cue">17 pages</span> <span aria-hidden="true">&rarr;</span></span
+                  >
                 </span>
-                <span class="series-card-desc"
+                <span class="series-card-desc" data-i18n="ep2Desc"
                   >She tears a portal open and crosses into the goblin world. Something winged and made of stone takes
                   her out of it.</span
                 >
@@ -186,9 +218,9 @@
               <div class="series-card series-card--soon">
                 <span class="series-card-face">
                   <span class="series-card-art" aria-hidden="true"></span>
-                  <span class="series-card-meta">Episode 3</span>
-                  <h3 class="series-card-title">In the darkroom</h3>
-                  <span class="series-card-cue">Coming soon</span>
+                  <span class="series-card-meta" data-i18n="ep3Meta">Episode 3</span>
+                  <h3 class="series-card-title" data-i18n="ep3Title">In the darkroom</h3>
+                  <span class="series-card-cue" data-i18n="comingSoon">Coming soon</span>
                 </span>
               </div>
             </div>
@@ -196,15 +228,15 @@
         </section>
 
         <section class="series-section series-body is-divided" aria-labelledby="about-title">
-          <p class="series-section-label">How it reads</p>
-          <h2 id="about-title">A book, not a scrolling feed</h2>
-          <p>
+          <p class="series-section-label" data-i18n="howLabel">How it reads</p>
+          <h2 id="about-title" data-i18n="howTitle">A book, not a scrolling feed</h2>
+          <p data-i18n-html="how1">
             Each episode opens as a book: a cover you turn, plates that fill the screen, and word balloons that appear
             where the sound is coming from. Captions are written in
             <strong>English, Italian, German and French</strong>, and every line is voiced — tap a balloon and you hear
             it. Sound effects are placed per panel rather than layered over the whole page.
           </p>
-          <p>
+          <p data-i18n-html="how2">
             The plates are hand-inked black and white: no colour, no screentone shortcuts, deep blacks that hold detail
             on a phone. Reading position is remembered on your own device, so
             <a href="/toons/">the toons index</a> can put you back where you stopped.
@@ -213,15 +245,15 @@
       </div>
 
       <footer class="page-footer series-footer">
-        <p>
+        <p data-i18n="footer">
           27 Pictures is a horror film and cinematic cosplay production studio working across Switzerland and the United
           Kingdom.
         </p>
-        <nav class="page-footer-nav series-footer-nav" aria-label="Related links">
-          <a href="/toons/">All toons</a>
-          <a href="/horror-shorts/">The Darkroom</a>
-          <a href="/watch/">Watch</a>
-          <a href="/#contact">Contact</a>
+        <nav class="page-footer-nav series-footer-nav" data-i18n-aria-label="footerNav" aria-label="Related links">
+          <a href="/toons/" data-i18n="footerToons">All toons</a>
+          <a href="/horror-shorts/" data-i18n="footerDarkroom">The Darkroom</a>
+          <a href="/watch/" data-i18n="footerWatch">Watch</a>
+          <a href="/#contact" data-i18n="footerContact">Contact</a>
         </nav>
       </footer>
     </main>

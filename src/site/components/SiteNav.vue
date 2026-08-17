@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /** Main site chrome (fixed header + mobile menu). */
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { documentLocale, isLocalizedPath, LOCALES, LOCALE_LABELS, LOCALE_NAMES, localePath, UI } from "../i18n";
 
 const props = withDefaults(
   defineProps<{
@@ -11,16 +12,45 @@ const props = withDefaults(
 );
 
 const menuOpen = ref(false);
+const langOpen = ref(false);
+const langRoot = ref<HTMLElement | null>(null);
 
-/** Away from the homepage, section anchors must point back at it. */
-const section = (hash: string) => (props.page === "home" ? hash : `/${hash}`);
+/**
+ * The locale comes from the page's <html lang>, not from a prop: every page
+ * already declares it, and reading it here means no entry module or build flag
+ * has to pass it down.
+ */
+const locale = documentLocale();
+const t = UI[locale];
+
+/**
+ * Away from the homepage, section anchors must point back at it — and back at
+ * the homepage *of this locale*, or a German page would send you to English
+ * copy for the same section.
+ */
+const section = (hash: string) => (props.page === "home" ? hash : localePath(`/${hash}`, locale));
+
+const currentPath = typeof window === "undefined" ? "/" : window.location.pathname;
+/** Only pages with a real translated document get a language switcher. */
+const showLangs = isLocalizedPath(currentPath);
+
+/** Every locale, including this one — the current code is the selected chip. */
+const languages = computed(() =>
+  LOCALES.map((code) => ({
+    code,
+    label: LOCALE_LABELS[code],
+    name: LOCALE_NAMES[code],
+    href: localePath(currentPath, code),
+    current: code === locale,
+  }))
+);
 
 const links = computed(() => [
-  { href: "/horror-shorts/", label: "The Darkroom", current: props.page === "horror-shorts" },
-  { href: "/watch/", label: "Watch", current: props.page === "watch" },
-  { href: "/toons/", label: "Toons", current: props.page === "toons" },
-  { href: "/cosplay/", label: "Cosplay", current: props.page === "cosplay" },
-  { href: section("#contact"), label: "Contact" },
+  { href: localePath("/horror-shorts/", locale), label: t.darkroom, current: props.page === "horror-shorts" },
+  { href: localePath("/watch/", locale), label: t.watch, current: props.page === "watch" },
+  { href: localePath("/toons/", locale), label: t.toons, current: props.page === "toons" },
+  { href: localePath("/cosplay/", locale), label: t.cosplay, current: props.page === "cosplay" },
+  { href: section("#contact"), label: t.contact },
 ]);
 
 watch(menuOpen, (open) => {
@@ -30,6 +60,28 @@ watch(menuOpen, (open) => {
 function closeMenu(): void {
   menuOpen.value = false;
 }
+
+function closeLangs(): void {
+  langOpen.value = false;
+}
+
+function onDocPointerDown(event: PointerEvent): void {
+  if (langRoot.value && !langRoot.value.contains(event.target as Node)) closeLangs();
+}
+
+function onDocKey(event: KeyboardEvent): void {
+  if (event.key === "Escape") closeLangs();
+}
+
+onMounted(() => {
+  document.addEventListener("pointerdown", onDocPointerDown);
+  document.addEventListener("keydown", onDocKey);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("pointerdown", onDocPointerDown);
+  document.removeEventListener("keydown", onDocKey);
+});
 </script>
 
 <template>
@@ -71,6 +123,46 @@ function closeMenu(): void {
         >
           {{ link.label }}
         </a>
+        <!-- Locale switcher: plain links, so each locale is a crawlable URL and
+             a right-click still works. No IP sniffing and no auto-redirect —
+             both hide content from people and from crawlers. Hidden on pages
+             that have no translated document. -->
+        <div
+          v-if="showLangs"
+          ref="langRoot"
+          class="nav-langs"
+          :class="{ 'is-open': langOpen }"
+          role="group"
+          :aria-label="t.language"
+        >
+          <button
+            type="button"
+            class="nav-lang-toggle"
+            :aria-expanded="langOpen"
+            :aria-label="t.language + ': ' + LOCALE_NAMES[locale]"
+            @click="langOpen = !langOpen"
+          >
+            <span aria-hidden="true">{{ LOCALE_LABELS[locale] }}</span>
+            <svg class="nav-lang-chevron" width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M3 4.5 L6 8 L9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+            </svg>
+          </button>
+          <div class="nav-lang-menu">
+            <a
+              v-for="l in languages"
+              :key="l.code"
+              class="nav-lang"
+              :href="l.href"
+              :hreflang="l.code"
+              :lang="l.code"
+              :aria-current="l.current ? 'true' : undefined"
+              @click="closeLangs"
+            >
+              <span class="nav-lang-code" aria-hidden="true">{{ l.label }}</span>
+              <span class="nav-lang-name">{{ l.name }}</span>
+            </a>
+          </div>
+        </div>
         <a
           href="https://www.instagram.com/27pictures_production"
           class="nav-social-link"
@@ -148,6 +240,21 @@ function closeMenu(): void {
             >
               {{ link.label }}
             </a>
+            <div v-if="showLangs" class="nav-langs nav-langs--menu" role="group" :aria-label="t.language">
+              <a
+                v-for="l in languages"
+                :key="'ml-' + l.code"
+                class="nav-lang"
+                :href="l.href"
+                :hreflang="l.code"
+                :lang="l.code"
+                :aria-current="l.current ? 'true' : undefined"
+                @click="closeMenu"
+              >
+                <span class="nav-lang-code" aria-hidden="true">{{ l.label }}</span>
+                <span class="nav-lang-name">{{ l.name }}</span>
+              </a>
+            </div>
           </DialogPanel>
         </div>
       </TransitionChild>

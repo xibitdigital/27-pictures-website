@@ -4,8 +4,13 @@
 import { createApp } from "vue";
 import SiteApp from "./SiteApp.vue";
 import { vMagnetic } from "./directives/magnetic";
+import { rememberDocumentLocale } from "./i18n";
 import { initSeriesQuickView, initSeriesVotes } from "./seriesCards";
 import { initToonRows } from "./toonRows";
+
+// So a reader opened from /it/toons/ starts with Italian captions, even though
+// the book itself lives at the English URL.
+rememberDocumentLocale();
 
 const app = createApp(SiteApp, { page: "toons" });
 app.directive("magnetic", vMagnetic);

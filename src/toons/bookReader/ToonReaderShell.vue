@@ -18,6 +18,8 @@ import { writeProgress } from "./readingProgress";
 import { provideToonCaptions } from "./captions/useToonCaptions";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
 import { prefersSinglePage } from "./bookModels";
+import { localePath, withCaptionLang } from "../../site/i18n";
+import { resolveReaderLocale } from "./flipframeCopy";
 
 const props = withDefaults(
   defineProps<{
@@ -206,8 +208,23 @@ const isMobileUi = ref(false);
 const guideOpen = ref(false);
 
 const coverTitle = computed(() => props.bookOptions?.coverTitle ?? props.altPrefix);
-const coverSubtitle = computed(() => props.bookOptions?.coverSubtitle ?? "Experiment");
+const coverSubtitle = computed(() => props.bookOptions?.coverSubtitle ?? null);
 const coverSynopsis = computed(() => props.bookOptions?.coverSynopsis ?? null);
+
+/** Same language as captions / the landing they came from — not the English reader URL. */
+const readerLocale = computed(() => resolveReaderLocale(captions));
+const toonsHubHref = computed(() => localePath("/toons/", readerLocale.value));
+const backHref = computed(() => localePath(props.bookOptions?.backHref ?? "/toons/", readerLocale.value));
+const backNav = computed(() => {
+  const nav = props.bookOptions?.backNav;
+  if (!nav) return null;
+  const loc = readerLocale.value;
+  return {
+    ...nav,
+    prev: nav.prev ? { ...nav.prev, href: withCaptionLang(nav.prev.href, loc) } : undefined,
+    next: nav.next ? { ...nav.next, href: nav.next.href ? withCaptionLang(nav.next.href, loc) : undefined } : undefined,
+  };
+});
 
 function guideStorageKey(): string {
   return `flipframe-cover-guide:${props.altPrefix}`;
@@ -391,9 +408,15 @@ defineExpose<ToonReaderShellExpose>({
 <template>
   <slot name="overlays" />
 
-  <!-- Back to the lab, not the homepage: the reader is reached from /toons/,
-       and the back cover's own link already points there (BookSlot backHref). -->
-  <a href="/toons/" class="toons-back" title="27 Pictures — Experiments" aria-label="27 Pictures - Back to Experiments">
+  <!-- Back to the lab, not the homepage: the reader is reached from /toons/.
+       Keep the locale they were reading in (/fr/toons/), or rememberDocumentLocale
+       on the English hub would overwrite it. -->
+  <a
+    :href="toonsHubHref"
+    class="toons-back"
+    title="27 Pictures — Experiments"
+    aria-label="27 Pictures - Back to Experiments"
+  >
     <img
       src="/logosquare.png"
       class="nav-logo-img toons-back-logo"
@@ -469,9 +492,9 @@ defineExpose<ToonReaderShellExpose>({
       :front-cover-logo="frontCoverLogo"
       :sound-hint="bookOptions?.soundHint"
       :sound-enabled="soundEnabled"
-      :back-href="bookOptions?.backHref"
+      :back-href="backHref"
       :back-label="bookOptions?.backLabel"
-      :back-nav="bookOptions?.backNav"
+      :back-nav="backNav"
       @sound-toggle="bookOptions?.onSoundToggle?.()"
     />
 

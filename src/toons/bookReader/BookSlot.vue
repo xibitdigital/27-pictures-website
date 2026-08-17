@@ -17,8 +17,8 @@ const props = withDefaults(
     altPrefix?: string;
     coverTexture?: string | null;
     coverTitle?: string;
-    coverSubtitle?: string | null;
-    coverSynopsis?: string | null;
+    coverSubtitle?: import("./flipframeCopy").LocalizedString | null;
+    coverSynopsis?: import("./flipframeCopy").LocalizedString | null;
     frontCoverLogo?: string | null;
     soundHint?: string | null;
     soundEnabled?: boolean;
@@ -31,7 +31,7 @@ const props = withDefaults(
     altPrefix: "Page",
     coverTexture: null,
     coverTitle: "",
-    coverSubtitle: "Experiment",
+    coverSubtitle: null,
     coverSynopsis: null,
     frontCoverLogo: null,
     soundHint: null,

@@ -6,6 +6,9 @@
  * a second tap on the art.
  */
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { useFlipframeCopy } from "../flipframeCopy";
+
+const t = useFlipframeCopy();
 
 defineProps<{
   open: boolean;
@@ -55,17 +58,13 @@ function onEnable(): void {
               <path d="M15.5 8.5a5 5 0 010 7" stroke-linecap="round" />
               <path d="M18 6a8.5 8.5 0 010 12" stroke-linecap="round" />
             </svg>
-            <DialogTitle as="h2">Captions play themselves</DialogTitle>
-            <p>
-              Browsers need one click before any page can make sound. Tap
-              <strong>OK</strong> and FlipFrame will read glowing captions automatically as you turn pages — no need to
-              tap each bubble.
-            </p>
+            <DialogTitle as="h2">{{ t.autoReadTitle }}</DialogTitle>
+            <p>{{ t.autoReadBody }}</p>
             <div class="sound-prompt__actions">
               <button type="button" class="sound-prompt__btn sound-prompt__btn--primary" @click="onEnable">
-                OK — play captions
+                {{ t.autoReadOk }}
               </button>
-              <button type="button" class="sound-prompt__btn" @click="onClose">Not now</button>
+              <button type="button" class="sound-prompt__btn" @click="onClose">{{ t.autoReadLater }}</button>
             </div>
           </DialogPanel>
         </div>

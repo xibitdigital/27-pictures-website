@@ -6,15 +6,16 @@
 import { computed, ref } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import { resolveCoverStory } from "./coverStory";
+import { pickLocalized, useFlipframeCopy, useReaderLocale, type LocalizedString } from "./flipframeCopy";
 
 const props = withDefaults(
   defineProps<{
     title?: string;
-    subtitle?: string | null;
+    subtitle?: LocalizedString | null;
     logo?: string | null;
     altPrefix?: string;
     /** Story synopsis (front-cover manual). Newlines preserved. */
-    synopsis?: string | null;
+    synopsis?: LocalizedString | null;
     soundHint?: string | null;
     soundEnabled?: boolean;
     /**
@@ -25,7 +26,7 @@ const props = withDefaults(
   }>(),
   {
     title: "",
-    subtitle: "Experiment",
+    subtitle: null,
     logo: null,
     altPrefix: "Page",
     synopsis: null,
@@ -41,11 +42,15 @@ const emit = defineEmits<{
 
 const aboutOpen = ref(false);
 
-const soundTitle = computed(() => (props.soundEnabled ? "Mute sound" : "Enable sound"));
-const soundLabel = computed(() => (props.soundEnabled ? "Sound on" : props.soundHint || "Sound"));
-const storyText = computed(() => resolveCoverStory(props.synopsis));
+const locale = useReaderLocale();
+const t = useFlipframeCopy();
+
+const soundTitle = computed(() => (props.soundEnabled ? t.value.muteSound : t.value.enableSound));
+const soundLabel = computed(() => (props.soundEnabled ? t.value.soundOn : props.soundHint || t.value.soundOff));
+const storyText = computed(() => resolveCoverStory(props.synopsis, locale.value));
 const isModal = computed(() => props.variant === "modal");
-const displayTitle = computed(() => props.title || (isModal.value ? "Story" : ""));
+const displayTitle = computed(() => props.title || (isModal.value ? t.value.storyTitle : ""));
+const displaySubtitle = computed(() => pickLocalized(props.subtitle, locale.value, t.value.experiment));
 /** Build id from Vite (git short SHA or VITE_FLIPFRAME_BUILD). */
 const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
 </script>
@@ -61,10 +66,10 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
     <slot name="title">
       <h1 v-if="displayTitle" class="front-cover-title">{{ displayTitle }}</h1>
     </slot>
-    <p v-if="subtitle" class="front-cover-subtitle">{{ subtitle }}</p>
+    <p v-if="displaySubtitle" class="front-cover-subtitle">{{ displaySubtitle }}</p>
 
     <div class="front-cover-separator front-cover-separator--before-story" role="separator" aria-hidden="true"></div>
-    <section class="front-cover-story" aria-label="Story">
+    <section class="front-cover-story" :aria-label="t.storyLabel">
       <div class="front-cover-synopsis">{{ storyText }}</div>
     </section>
     <div class="front-cover-separator front-cover-separator--after-story" role="separator" aria-hidden="true"></div>
@@ -76,8 +81,8 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
           <button
             type="button"
             class="front-cover-brand-info"
-            title="About FlipFrame"
-            aria-label="About FlipFrame"
+            :title="t.aboutAria"
+            :aria-label="t.aboutAria"
             @click.stop="aboutOpen = true"
           >
             <svg
@@ -95,12 +100,14 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
             </svg>
           </button>
         </p>
-        <p v-if="buildId" class="front-cover-brand-build" :title="`FlipFrame build ${buildId}`">build {{ buildId }}</p>
+        <p v-if="buildId" class="front-cover-brand-build" :title="`FlipFrame ${t.build} ${buildId}`">
+          {{ t.build }} {{ buildId }}
+        </p>
         <p class="front-cover-brand-by">by twentyseven.pictures</p>
       </div>
 
       <!-- Visual how-to: keyboard arrows + click on page -->
-      <div class="front-cover-howto" role="group" aria-label="How to read">
+      <div class="front-cover-howto" role="group" :aria-label="t.howtoLabel">
         <div class="front-cover-howto-icons" aria-hidden="true">
           <svg
             class="front-cover-howto-svg front-cover-howto-keys"
@@ -167,13 +174,7 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
             <circle class="front-cover-howto-click-dot" cx="63.5" cy="30" r="2.25" />
           </svg>
         </div>
-        <p class="front-cover-howto-caption">
-          {{
-            isModal
-              ? "Scroll to read. Captions in view play themselves — tap any bubble to replay."
-              : "Use the arrow keys, or click on a page, to turn"
-          }}
-        </p>
+        <p class="front-cover-howto-caption">{{ isModal ? t.howtoScroll : t.howtoBook }}</p>
       </div>
     </div>
 
@@ -206,7 +207,7 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
         </svg>
         <span :data-off-label="soundHint">{{ soundLabel }}</span>
       </button>
-      <p class="front-cover-sound-note">Hover (or tap) glowing captions on any page to hear them</p>
+      <p class="front-cover-sound-note">{{ t.soundNote }}</p>
     </template>
   </div>
 
@@ -237,15 +238,14 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
               <path d="M12 11v5" stroke-linecap="round" />
               <circle cx="12" cy="8" r="0.75" fill="currentColor" stroke="none" />
             </svg>
-            <DialogTitle as="h2">FlipFrame beta</DialogTitle>
+            <DialogTitle as="h2">{{ t.aboutTitle }}</DialogTitle>
             <p>
-              FlipFrame is a beta product by
-              <strong>twentyseven.pictures</strong>. If you’d like to integrate this reader on your site, get in touch
-              via our contact form.
+              {{ t.aboutLead }}
+              <strong>twentyseven.pictures</strong>. {{ t.aboutCta }}
             </p>
             <div class="sound-prompt__actions">
-              <a href="/#contact" class="sound-prompt__btn sound-prompt__btn--primary" @click.stop> Contact us </a>
-              <button type="button" class="sound-prompt__btn" @click.stop="aboutOpen = false">Close</button>
+              <a href="/#contact" class="sound-prompt__btn sound-prompt__btn--primary" @click.stop>{{ t.contact }}</a>
+              <button type="button" class="sound-prompt__btn" @click.stop="aboutOpen = false">{{ t.close }}</button>
             </div>
           </DialogPanel>
         </div>

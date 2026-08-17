@@ -17,13 +17,58 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/horror-shorts/</loc>
-    <lastmod>2026-08-12</lastmod>
+    <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>The Red Smile horror short anthology — 27 Pictures</image:title>
       <image:caption>Psychological horror shorts by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/horror-shorts/he-streamed-the-challenge/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/QMRlBqAdNGg/hq720.jpg</image:loc>
+      <image:title>He Streamed the Challenge. The Monster Streamed Back.</image:title>
+      <image:caption>Red Smile fragment 05 — a livestream dare answered from the other side of the feed</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/horror-shorts/the-doll-moved-again/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/J-iZl-XkVxg/hq720.jpg</image:loc>
+      <image:title>The Doll Moved Again. No One Was Home.</image:title>
+      <image:caption>Red Smile fragment 02 — The Tumbler. An empty house and a doll that will not stay put</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/horror-shorts/something-is-wrong-with-my-reflection/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/VEmf9eq62zo/hq720.jpg</image:loc>
+      <image:title>Something Is Wrong With My Reflection</image:title>
+      <image:caption>Red Smile fragment 04 — a mirror that keeps time, and movement that does not</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/horror-shorts/shes-not-running-away/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/qjBL4zRIFbg/hq720.jpg</image:loc>
+      <image:title>She's Not Running Away. She's Hunting.</image:title>
+      <image:caption>Red Smile fragment 03 — a chase filmed to be misread</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/horror-shorts/she-asked-for-directions/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/BOtFWCENtTc/hq720.jpg</image:loc>
+      <image:title>She Asked for Directions. She Should've Run.</image:title>
+      <image:caption>Red Smile fragment 01 — an ordinary exchange that stays ordinary too long</image:caption>
     </image:image>
   </url>
   <url>
@@ -48,11 +93,38 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/toons/</loc>
-    <lastmod>2026-07-25</lastmod>
+    <lastmod>2026-08-17</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin interactive manga reader — 27 Pictures Experiments</image:title>
       <image:caption>Cover art for Erin, an interactive page-turning manga reader prototype by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/it/toons/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
+      <image:title>Erin — toon interattivo di 27 Pictures</image:title>
+      <image:caption>Copertina di Erin, toon interattivo di 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/de/toons/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
+      <image:title>Erin — interaktiver Toon von 27 Pictures</image:title>
+      <image:caption>Cover von Erin, einem interaktiven Toon von 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/fr/toons/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
+      <image:title>Erin — toon interactif de 27 Pictures</image:title>
+      <image:caption>Couverture d'Erin, toon interactif de 27 Pictures</image:caption>
     </image:image>
   </url>
   <url>
@@ -62,6 +134,33 @@
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin &amp; the Goblins — interactive dark fantasy manga</image:title>
       <image:caption>Cover art for Erin &amp; the Goblins, a black-and-white interactive manga series by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/it/toons/erin-and-the-goblins/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
+      <image:title>Erin e i Goblin — manga dark fantasy interattivo</image:title>
+      <image:caption>Copertina di Erin e i Goblin, manga interattivo di 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/de/toons/erin-and-the-goblins/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
+      <image:title>Erin und die Goblins — interaktiver Dark-Fantasy-Manga</image:title>
+      <image:caption>Cover von Erin und die Goblins, einem interaktiven Manga von 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/fr/toons/erin-and-the-goblins/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
+      <image:title>Erin et les Gobelins — manga dark fantasy interactif</image:title>
+      <image:caption>Couverture d'Erin et les Gobelins, manga interactif de 27 Pictures</image:caption>
     </image:image>
   </url>
   <url>

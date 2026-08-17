@@ -6,6 +6,9 @@
 import { createApp } from "vue";
 import SiteApp from "./SiteApp.vue";
 import { vMagnetic } from "./directives/magnetic";
+import { rememberDocumentLocale } from "./i18n";
+
+rememberDocumentLocale();
 
 const app = createApp(SiteApp, { page: "toons" });
 app.directive("magnetic", vMagnetic);

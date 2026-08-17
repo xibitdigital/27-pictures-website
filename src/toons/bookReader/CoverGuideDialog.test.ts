@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import CoverGuideDialog from "./CoverGuideDialog.vue";
 
@@ -14,6 +14,11 @@ const headlessStubs = {
   DialogPanel: { template: `<div class="dialog-panel-stub"><slot /></div>` },
   DialogTitle: { template: `<h1 class="front-cover-title"><slot /></h1>` },
 };
+
+beforeEach(() => {
+  document.documentElement.setAttribute("lang", "en");
+  window.localStorage.removeItem("27p-locale");
+});
 
 function mountGuide(props: Record<string, unknown> = {}) {
   return mount(CoverGuideDialog, {

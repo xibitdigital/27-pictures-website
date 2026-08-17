@@ -11,6 +11,21 @@
 import { fetchLikes } from "./likes";
 import { allEpisodes, episodeLabel, type Episode } from "../toons/series";
 import { readProgress, type ReadingProgress } from "../toons/bookReader/readingProgress";
+import { documentLocale, UI, withCaptionLang } from "./i18n";
+
+export interface RowLabels {
+  pageOf: string;
+  pagesCount: string;
+}
+
+function defaultLabels(): RowLabels {
+  const ui = UI[documentLocale()];
+  return { pageOf: ui.pageOf, pagesCount: ui.pagesCount };
+}
+
+function fill(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? ""));
+}
 
 type SeriesEpisode = Episode & { seriesTitle: string };
 
@@ -27,7 +42,7 @@ function tile(ep: SeriesEpisode, meta: string, extra = ""): string {
     ? `<img src="${art}" alt="${ep.seriesTitle} — ${ep.title} cover art" width="1152" height="1728" loading="lazy" decoding="async" />`
     : "";
   return `<article>
-    <a href="${ep.url}" class="episode-tile" aria-labelledby="${id}">
+    <a href="${withCaptionLang(ep.url)}" class="episode-tile" aria-labelledby="${id}">
       <span class="episode-tile-art">${img}${extra}</span>
       <span class="episode-tile-meta">${meta}</span>
       <h3 id="${id}">${ep.title}</h3>
@@ -47,7 +62,8 @@ function renderRow(host: HTMLElement, tiles: string[]): void {
 /** Ordered by how recently the book was read, most recent first. */
 export function continueReadingTiles(
   episodes: SeriesEpisode[],
-  read: (id: string) => ReadingProgress | null = readProgress
+  read: (id: string) => ReadingProgress | null = readProgress,
+  labels: RowLabels = defaultLabels()
 ): string[] {
   return episodes
     .map((ep) => ({ ep, progress: ep.id ? read(ep.id) : null }))
@@ -56,7 +72,8 @@ export function continueReadingTiles(
     .map(({ ep, progress }) => {
       const pct = Math.round((progress.page / progress.pages) * 100);
       const bar = `<span class="episode-tile-progress" style="--read: ${pct}%"></span>`;
-      return tile({ ...ep, url: `${ep.url}?page=${progress.page}` }, `Page ${progress.page} of ${progress.pages}`, bar);
+      const meta = fill(labels.pageOf, { page: progress.page, pages: progress.pages });
+      return tile({ ...ep, url: `${ep.url}?page=${progress.page}` }, meta, bar);
     });
 }
 
@@ -68,11 +85,15 @@ export function continueReadingTiles(
  * rather than recommending it. The tile shows its length instead, which is
  * what someone deciding what to read next actually wants.
  */
-export function mostLovedTiles(episodes: SeriesEpisode[], likes: Map<string, number>): string[] {
+export function mostLovedTiles(
+  episodes: SeriesEpisode[],
+  likes: Map<string, number>,
+  labels: RowLabels = defaultLabels()
+): string[] {
   return episodes
     .filter((ep) => (likes.get(ep.id as string) ?? 0) > 0)
     .sort((a, b) => (likes.get(b.id as string) ?? 0) - (likes.get(a.id as string) ?? 0))
-    .map((ep) => tile(ep, `${ep.pages} pages`));
+    .map((ep) => tile(ep, fill(labels.pagesCount, { n: ep.pages ?? 0 })));
 }
 
 export function initToonRows(): void {

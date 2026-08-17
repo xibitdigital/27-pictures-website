@@ -8,6 +8,10 @@ import { collectWordAudioUrls, preloadAudioUrls } from "../audio/preloadAudio";
 import { loadWords } from "../words";
 import type { LangCode, LangOption, ToonConfig, WordEntry } from "../types";
 
+/** Written by the toons landing page (`rememberDocumentLocale`). Same strings. */
+const SITE_LOCALE_KEY = "27p-locale";
+const SITE_LOCALE_AT = "27p-locale-at";
+
 export interface ToonCaptionsOptions {
   /** Already-resolved config URL (same one the shell fetches pages from). */
   configUrl: string;
@@ -48,24 +52,65 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
   const designHeight = computed(() => Number(config.value?.designHeight) || 1792);
   const fontFamily = computed(() => config.value?.fontFamily || '"Bangers", cursive');
 
-  function readStoredLang(): LangCode | null {
+  /** The page's own language, when this book has captions in it. */
+  function pageLang(available: LangOption[]): LangCode | null {
+    if (typeof document === "undefined") return null;
+    const code = document.documentElement.getAttribute("lang")?.slice(0, 2).toLowerCase();
+    return code && available.some((l) => l.code === code) ? (code as LangCode) : null;
+  }
+
+  function pickAvailable(code: string | null | undefined, available: LangOption[]): LangCode | null {
+    const v = code?.slice(0, 2).toLowerCase();
+    return v && available.some((l) => l.code === v) ? (v as LangCode) : null;
+  }
+
+  function readStamp(key: string): number {
     try {
-      const v = localStorage.getItem(options.langStorageKey);
-      if (v && languages.value.some((l) => l.code === v)) return v;
+      const n = Number(localStorage.getItem(key));
+      return Number.isFinite(n) ? n : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  function persistLang(code: LangCode): void {
+    try {
+      localStorage.setItem(options.langStorageKey, code);
+      localStorage.setItem(`${options.langStorageKey}-at`, String(Date.now()));
     } catch {
       /* ignore */
     }
-    return null;
+  }
+
+  function readStoredLang(): LangCode | null {
+    try {
+      return pickAvailable(localStorage.getItem(options.langStorageKey), languages.value);
+    } catch {
+      return null;
+    }
+  }
+
+  function readLandingLang(available: LangOption[]): LangCode | null {
+    try {
+      return pickAvailable(localStorage.getItem(SITE_LOCALE_KEY), available);
+    } catch {
+      return null;
+    }
+  }
+
+  function readQueryLang(available: LangOption[]): LangCode | null {
+    if (typeof window === "undefined") return null;
+    try {
+      return pickAvailable(new URLSearchParams(window.location.search).get("lang"), available);
+    } catch {
+      return null;
+    }
   }
 
   function setLang(code: LangCode): void {
     if (!languages.value.some((l) => l.code === code)) return;
     lang.value = code;
-    try {
-      localStorage.setItem(options.langStorageKey, code);
-    } catch {
-      /* ignore */
-    }
+    persistLang(code);
   }
 
   function wordsForPage(pageNum: number): WordEntry[] {
@@ -81,7 +126,26 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
     pending = loadWords(options.configUrl, options.pageDir)
       .then((cfg) => {
         config.value = cfg;
-        lang.value = readStoredLang() || cfg.defaultLang || "en";
+        const available = languages.value;
+        // A fresh visit to /fr/toons/ is a newer choice than last week's
+        // English switcher setting. A switcher change *after* that visit
+        // still wins on reload, because it carries a later timestamp.
+        // `?lang=` is this navigation and always wins.
+        const query = readQueryLang(available);
+        const stored = readStoredLang();
+        const landing = readLandingLang(available);
+        const storedAt = readStamp(`${options.langStorageKey}-at`);
+        const landingAt = readStamp(SITE_LOCALE_AT);
+        const chosen =
+          query ||
+          (stored && storedAt >= landingAt ? stored : null) ||
+          landing ||
+          stored ||
+          pageLang(available) ||
+          cfg.defaultLang ||
+          "en";
+        lang.value = chosen;
+        if (query) persistLang(query);
         ready.value = true;
         if (options.preloadSfx !== false) void preloadAudioUrls(collectWordAudioUrls(cfg));
       })

@@ -14,8 +14,8 @@ const props = defineProps<{
   altPrefix?: string;
   coverTexture?: string | null;
   coverTitle?: string;
-  coverSubtitle?: string | null;
-  coverSynopsis?: string | null;
+  coverSubtitle?: import("./flipframeCopy").LocalizedString | null;
+  coverSynopsis?: import("./flipframeCopy").LocalizedString | null;
   frontCoverLogo?: string | null;
   soundHint?: string | null;
   soundEnabled?: boolean;

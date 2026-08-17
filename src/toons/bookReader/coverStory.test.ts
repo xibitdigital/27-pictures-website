@@ -12,4 +12,10 @@ describe("resolveCoverStory", () => {
     expect(resolveCoverStory("")).toBe(DEFAULT_COVER_STORY);
     expect(resolveCoverStory("   ")).toBe(DEFAULT_COVER_STORY);
   });
+
+  it("picks a locale from a map and falls back to English", () => {
+    const map = { en: "English case.", fr: "Affaire française." };
+    expect(resolveCoverStory(map, "fr")).toBe("Affaire française.");
+    expect(resolveCoverStory(map, "de")).toBe("English case.");
+  });
 });

@@ -142,6 +142,7 @@ describe("JaxApp", () => {
     updateView.mockClear();
     loadPages.mockClear();
     toggle.mockClear();
+    window.localStorage.removeItem("27p-locale");
 
     vi.spyOn(window.HTMLMediaElement.prototype, "play").mockImplementation(function (this: HTMLMediaElement) {
       Object.defineProperty(this, "paused", { configurable: true, get: () => false });

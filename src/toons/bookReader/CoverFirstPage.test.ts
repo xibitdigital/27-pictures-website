@@ -1,7 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import CoverFirstPage from "./CoverFirstPage.vue";
 import { DEFAULT_COVER_STORY } from "./coverStory";
+import { FLIPFRAME } from "./flipframeCopy";
+
+beforeEach(() => {
+  document.documentElement.setAttribute("lang", "en");
+  window.localStorage.removeItem("27p-locale");
+});
 
 const headlessStubs = {
   TransitionRoot: {
@@ -75,6 +81,13 @@ describe("CoverFirstPage", () => {
     });
     expect(wrapper.find(".slot-title").text()).toBe("Slotted Nero");
     expect(wrapper.findAll(".front-cover-title").length).toBe(1);
+  });
+
+  it("shows FlipFrame instructions in the landing-page language", () => {
+    window.localStorage.setItem("27p-locale", "fr");
+    const wrapper = mountPage({ title: "Jax" });
+    expect(wrapper.find(".front-cover-howto-caption").text()).toBe(FLIPFRAME.fr.howtoBook);
+    expect(wrapper.find(".front-cover-synopsis").text()).toBe(FLIPFRAME.fr.fallbackStory);
   });
 
   it("emits soundToggle when sound control is used", async () => {

@@ -5,13 +5,16 @@
  */
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import CoverFirstPage from "./CoverFirstPage.vue";
+import { useFlipframeCopy, type LocalizedString } from "./flipframeCopy";
 
 defineProps<{
   open: boolean;
   title?: string;
-  subtitle?: string | null;
-  synopsis?: string | null;
+  subtitle?: LocalizedString | null;
+  synopsis?: LocalizedString | null;
 }>();
+
+const t = useFlipframeCopy();
 
 const emit = defineEmits<{
   "update:open": [boolean];
@@ -49,21 +52,21 @@ function close(): void {
         >
           <DialogPanel class="cover-guide-panel">
             <div class="cover-guide-toolbar">
-              <button type="button" class="cover-guide-close" aria-label="Close" @click="close">×</button>
+              <button type="button" class="cover-guide-close" :aria-label="t.close" @click="close">×</button>
             </div>
 
             <div class="cover-guide-scroll">
               <CoverFirstPage variant="modal" :title="title" :subtitle="subtitle" :synopsis="synopsis">
                 <template #title>
                   <DialogTitle as="h1" class="front-cover-title">
-                    {{ title || "Story" }}
+                    {{ title || t.storyTitle }}
                   </DialogTitle>
                 </template>
               </CoverFirstPage>
             </div>
 
             <footer class="cover-guide-footer">
-              <button type="button" class="cover-guide-cta" @click="close">Start reading</button>
+              <button type="button" class="cover-guide-cta" @click="close">{{ t.startReading }}</button>
             </footer>
           </DialogPanel>
         </TransitionChild>
