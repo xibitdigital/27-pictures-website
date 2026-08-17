@@ -2230,6 +2230,46 @@ body.single-page .flip-page.flipping.from-left {
   background: var(--bg-card);
 }
 
+/*
+ * Touch: one scrollport, and it is the fixed full-screen element.
+ *
+ * The desktop layout nests a scroller inside a height-capped panel inside a
+ * fixed container. On iOS that shape is unreliable — the element scrolls
+ * programmatically (measured: range 134px, scrollTop sticks) but WebKit will
+ * not always hand it the pan gesture. Scrolling the fixed container itself is
+ * the pattern that does work there, so on a touch screen the panel simply
+ * grows and `.cover-guide-center` does the scrolling. The CTA stays reachable
+ * as a sticky footer inside the panel rather than a flex sibling of a
+ * scrollport that no longer exists.
+ */
+@media (pointer: coarse) {
+  .cover-guide-panel {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .cover-guide-scroll {
+    flex: none;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .cover-guide-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+  }
+
+  /* The panel can now be taller than the screen, so an absolute close button
+     would scroll off the top and strand the reader inside the popup. */
+  .cover-guide-toolbar {
+    position: fixed;
+    top: max(0.9rem, calc(env(safe-area-inset-top, 0px) + 0.5rem));
+    right: 1.1rem;
+    z-index: 3;
+  }
+}
+
 .cover-guide-cta {
   display: block;
   width: 100%;
