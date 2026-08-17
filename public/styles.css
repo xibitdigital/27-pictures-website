@@ -1,8 +1,8 @@
-/* Cache note: this file is served under a stable name with
-   `Cache-Control: immutable` and versioned by a ?v= query. That means a request
-   for a new ?v= landing before a deploy has propagated will cache the OLD body
-   under the NEW key, for a year, with no way to bust it except another bump.
-   Never verify a fresh hash until the deploy reports complete. */
+/* Shipped as styles.<hash>.css — vite/plugins/hashedCss.ts renames this file at
+   the end of the build and rewrites every reference in dist. Link it as plain
+   /styles.css from source HTML; never add a ?v= query. The filename is what
+   makes the immutable cache header safe: with a stable name, a request landing
+   mid-deploy can cache a stale body under a fresh key and hold it for a year. */
 :root {
   --bg: #030303;
   --bg-dark: #000;
