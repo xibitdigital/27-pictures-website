@@ -312,8 +312,15 @@ let bodyLocked = false;
 function lockBodyForDialog(): void {
   if (bodyLocked) return;
   lockedScrollY = currentScrollY();
-  document.body.style.setProperty("--dialog-lock-top", `-${lockedScrollY}px`);
   document.body.classList.add("dialog-open");
+  // Pin only when there is a scroll offset to cancel. `position: fixed` on the
+  // body is what makes a *reopened* popup scrollable on iOS, but applying it at
+  // y=0 — every first open — stops the popup scrolling there instead. Both
+  // measured on an iPhone simulator; neither is a theory.
+  if (lockedScrollY > 0) {
+    document.body.style.setProperty("--dialog-lock-top", `-${lockedScrollY}px`);
+    document.body.classList.add("dialog-pinned");
+  }
   bodyLocked = true;
 }
 
@@ -321,6 +328,7 @@ function unlockBodyForDialog(): void {
   if (!bodyLocked) return;
   bodyLocked = false;
   document.body.classList.remove("dialog-open");
+  document.body.classList.remove("dialog-pinned");
   document.body.style.removeProperty("--dialog-lock-top");
   // While pinned the body is `position: fixed`, so the document has no
   // scrollable height. Read a layout property to flush that removal before
