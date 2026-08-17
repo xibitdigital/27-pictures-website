@@ -42,7 +42,7 @@ function tile(ep: SeriesEpisode, meta: string, extra = ""): string {
     ? `<img src="${art}" alt="${ep.seriesTitle} — ${ep.title} cover art" width="1152" height="1728" loading="lazy" decoding="async" />`
     : "";
   return `<article>
-    <a href="${withCaptionLang(ep.url)}" class="episode-tile" aria-labelledby="${id}">
+    <a href="${withCaptionLang(ep.url ?? "")}" class="episode-tile" aria-labelledby="${id}">
       <span class="episode-tile-art">${img}${extra}</span>
       <span class="episode-tile-meta">${meta}</span>
       <h3 id="${id}">${ep.title}</h3>
