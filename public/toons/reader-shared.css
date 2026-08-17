@@ -1366,28 +1366,6 @@ body.view-vertical.toons-reader.dialog-open {
   overscroll-behavior: none;
 }
 
-/* Pinned at -scrollY (set inline by the shell) — only when the strip has been
-   read into. Freezing a *scrolled* document with overflow alone leaves the
-   reopened popup unscrollable on iOS; pinning at y=0 breaks the first open
-   instead. So the pin travels with the offset it exists to cancel. */
-body.toons-reader.dialog-pinned,
-body.view-vertical.toons-reader.dialog-pinned {
-  position: fixed !important;
-  top: var(--dialog-lock-top, 0px) !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-}
-
-/* Deliberately NOT `touch-action: none` on <body>: Chrome intersects
-   touch-action up the whole ancestor chain, so that would also forbid panning
-   the popup's own scrollport. overflow:hidden on html + body is what freezes
-   the document; the panel keeps its pan-y. */
-body.dialog-open .cover-guide-center,
-body.dialog-open .cover-guide-scroll {
-  touch-action: pan-y;
-}
-
 body.view-vertical .reader {
   justify-content: flex-start;
   overflow: visible !important;
@@ -2052,12 +2030,6 @@ body.single-page .flip-page.flipping.from-left {
   justify-content: center;
   padding: max(0.5rem, env(safe-area-inset-top, 0px)) 0.75rem max(0.5rem, env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
-  /* Outer safety net: if the panel ever measures taller than the viewport
-     (iOS chrome collapsing mid-gesture), the whole panel scrolls here. */
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
 }
 
 .cover-guide-panel {
@@ -2230,44 +2202,12 @@ body.single-page .flip-page.flipping.from-left {
   background: var(--bg-card);
 }
 
-/*
- * Touch: one scrollport, and it is the fixed full-screen element.
- *
- * The desktop layout nests a scroller inside a height-capped panel inside a
- * fixed container. On iOS that shape is unreliable — the element scrolls
- * programmatically (measured: range 134px, scrollTop sticks) but WebKit will
- * not always hand it the pan gesture. Scrolling the fixed container itself is
- * the pattern that does work there, so on a touch screen the panel simply
- * grows and `.cover-guide-center` does the scrolling. The CTA stays reachable
- * as a sticky footer inside the panel rather than a flex sibling of a
- * scrollport that no longer exists.
- */
-@media (pointer: coarse) {
-  .cover-guide-panel {
-    max-height: none;
-    overflow: visible;
-  }
-
-  .cover-guide-scroll {
-    flex: none;
-    min-height: 0;
-    overflow: visible;
-  }
-
-  .cover-guide-footer {
-    position: sticky;
-    bottom: 0;
-    z-index: 1;
-  }
-
-  /* The panel can now be taller than the screen, so an absolute close button
-     would scroll off the top and strand the reader inside the popup. */
-  .cover-guide-toolbar {
-    position: fixed;
-    top: max(0.9rem, calc(env(safe-area-inset-top, 0px) + 0.5rem));
-    right: 1.1rem;
-    z-index: 3;
-  }
+/* Sticky start CTA — stays visible while the body above scrolls */
+.cover-guide-footer {
+  flex-shrink: 0;
+  padding: 0.75rem 1rem max(0.85rem, env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
 }
 
 .cover-guide-cta {
@@ -2347,6 +2287,47 @@ body.single-page .flip-page.flipping.from-left {
   .front-cover-instructions--modal .front-cover-synopsis {
     font-size: 0.9rem;
     line-height: 1.48;
+  }
+}
+
+/*
+ * Touch: the guide is a full-screen sheet, and its height is definite.
+ *
+ * Every earlier attempt kept the fragile shape — a scrollport sized by
+ * `max-height` + flex inside a panel centred with auto margins inside a fixed
+ * container. On iOS that leaves content extending under the footer with no way
+ * to reach it (reported: the how-to line sliced mid-sentence by the CTA, German
+ * copy being longer than English). Percentages of `position: fixed; inset: 0`
+ * are a definite height, so the scrollport gets a real box to scroll inside —
+ * no vh units, no auto margins, no cap.
+ */
+@media (pointer: coarse) {
+  .cover-guide-center {
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+  }
+
+  .cover-guide-panel {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .cover-guide-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-top: max(1rem, calc(env(safe-area-inset-top, 0px) + 0.5rem));
+  }
+
+  .cover-guide-toolbar {
+    top: max(0.65rem, calc(env(safe-area-inset-top, 0px) + 0.35rem));
   }
 }
 

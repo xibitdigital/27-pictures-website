@@ -282,45 +282,20 @@ function maybeShowScrollHowTo(): void {
 /**
  * Freeze the strip behind an open dialog.
  *
- * HeadlessUI locks the document with an inline `overflow: hidden` on <html>,
- * but reader-shared.css unfreezes vertical mode with `overflow-y: visible
- * !important` (it has to — HeadlessUI leaves that inline style behind after a
- * dialog closes, which froze the reader). The stylesheet therefore wins while
- * the dialog is still open, the 16k-tall strip stays scrollable underneath, and
- * on a phone the finger pans *that* instead of the popup — the popup reads as
- * unscrollable. This class re-locks it from the stylesheet side, where it can
- * out-specify those rules.
+ * reader-shared.css unfreezes vertical mode with `overflow-y: visible
+ * !important` — it has to, because HeadlessUI leaves an inline `overflow:
+ * hidden` on <html> behind after a dialog closes, which froze the reader. That
+ * !important also beats HeadlessUI's lock while the dialog is *open*, so the
+ * 16k-tall strip stayed scrollable underneath it. `body.dialog-open` re-locks
+ * from the stylesheet side, where it can out-specify those rules.
  */
 const dialogOpen = computed(() => guideOpen.value || autoRead.promptOpen.value);
 
-/**
- * `overflow: hidden` alone is not enough once the strip has been read into.
- *
- * Reopening the guide from the toolbar at, say, y=1500 froze a document that
- * was still scrolled, and iOS Safari then hit-tested touches on the fixed
- * overlay against the pre-lock layout — the popup painted correctly but no
- * drag ever reached its scrollport. Opening at y=0 (first load) hid the bug,
- * which is why it only showed up on a reopen.
- *
- * So pin the body at `-scrollY` while locked: the document sits at 0, fixed
- * overlays and touch coordinates agree, and the reader sees no movement
- * because the offset cancels it out. The position is restored on unlock.
- */
-let lockedScrollY = 0;
 let bodyLocked = false;
 
 function lockBodyForDialog(): void {
   if (bodyLocked) return;
-  lockedScrollY = currentScrollY();
   document.body.classList.add("dialog-open");
-  // Pin only when there is a scroll offset to cancel. `position: fixed` on the
-  // body is what makes a *reopened* popup scrollable on iOS, but applying it at
-  // y=0 — every first open — stops the popup scrolling there instead. Both
-  // measured on an iPhone simulator; neither is a theory.
-  if (lockedScrollY > 0) {
-    document.body.style.setProperty("--dialog-lock-top", `-${lockedScrollY}px`);
-    document.body.classList.add("dialog-pinned");
-  }
   bodyLocked = true;
 }
 
@@ -328,19 +303,6 @@ function unlockBodyForDialog(): void {
   if (!bodyLocked) return;
   bodyLocked = false;
   document.body.classList.remove("dialog-open");
-  document.body.classList.remove("dialog-pinned");
-  document.body.style.removeProperty("--dialog-lock-top");
-  // While pinned the body is `position: fixed`, so the document has no
-  // scrollable height. Read a layout property to flush that removal before
-  // scrolling, or the restore clamps to 0 and the reader lands back on page 1.
-  void document.body.offsetHeight;
-  window.scrollTo(0, lockedScrollY);
-  // A plate that re-expands a frame later can clamp it a second time.
-  requestAnimationFrame(() => {
-    if (bodyLocked) return;
-    if (Math.abs(currentScrollY() - lockedScrollY) > 1) window.scrollTo(0, lockedScrollY);
-  });
-  deepLinkAppliedY = deepLinkAbandoned ? null : lockedScrollY;
 }
 
 watch(dialogOpen, (locked) => (locked ? lockBodyForDialog() : unlockBodyForDialog()), { immediate: true });

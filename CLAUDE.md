@@ -26,6 +26,19 @@ that is a CSS hook written *to* the DOM, not a query read *from* it.
 
 ## CSS Guidelines
 
+**Reach for a native CSS layout before scripting one.** If a panel will not
+size or scroll, fix the box model — a definite height, a real scrollport, the
+right containing block — instead of measuring in JS and writing inline styles
+back. Scripted geometry (pinning `position: fixed` at `-scrollY`, restoring
+scroll offsets, flushing reflows) is a repair for a layout that was already
+wrong, and it fails differently on every engine.
+
+Worked example: the mobile cover guide would not scroll on iOS. Three rounds of
+JS body-locking, offset pinning and scroll restoration all failed; the actual
+fix was one media query — on `(pointer: coarse)` the guide is a full-screen
+sheet whose height is `100%` of a `position: fixed; inset: 0` parent, so the
+scrollport finally has a definite box. All the JS came back out.
+
 **Never hardcode colors.** Always use CSS custom properties defined in `:root`.
 
 ### Available CSS Variables
