@@ -89,7 +89,6 @@ npm run format
 │   ├── purge-r2-objects.js     # delete superseded CDN objects
 │   ├── backup-cdn-assets.js    # cdn-backup/ before any purge
 │   ├── serve-protected.js
-│   ├── hash-assets.js
 │   └── generate-qr.js
 ├── worker/                  # Contact form Worker
 ├── dist/                    # build output (deploy this)
@@ -539,7 +538,7 @@ inline CSS at all.
 (`--book-width`, `--page-bg`, fullscreen overrides), not site chrome.
 
 Anything shared by more than one page belongs in `styles.css`; run
-`npm run hash-assets` after touching it so the `?v=` links update.
+a build after touching it; `vite/plugins/hashedCss.ts` re-hashes the filename.
 
 ### What goes where (CSS)
 
@@ -552,16 +551,31 @@ Everything shared belongs in `public/toons/reader-shared.css` — including
 `.jax-word*` / bubble SVG chrome (class names are historical; used by every
 toon). Caption pages should load **Bangers** + **VT323** from Google Fonts.
 
-### Cache-busting shared CSS (`?v=<hash>`)
+### Cache-busting shared CSS (hashed filenames)
 
-`styles.css` and `toons/reader-shared.css` are linked with `?v=<sha256 prefix>`.
-Automatic:
+`styles.css` and `toons/reader-shared.css` live in `public/`, so Vite copies
+them verbatim and cannot hash them itself. `vite/plugins/hashedCss.ts` does it
+at the end of the build: it writes `styles.<sha256 prefix>.css`, rewrites every
+reference in `dist/**/*.html`, and **deletes the unhashed copy**. Nothing to run
+by hand — edit the CSS and build.
 
-```bash
-npm run hash-assets   # also runs as part of npm run build
-```
+Source HTML links plain `/styles.css`, which is what the dev server serves. Do
+not reintroduce `?v=` there; the plugin replaces such a query if it finds one.
 
-Rewrites references under `src/**/*.html` (and legacy public HTML if present).
+**Why not `?v=`, which is what this used to do.** `_headers` serves these
+`immutable, max-age=1y`, and a CDN keys on the whole URL including the query. So
+`?v=` created a new cache key while the *path* still pointed at a file whose
+body changes. One request for a new `?v=` landing before a deploy finished
+propagating cached the old body under the new key — immutably, for a year, with
+no way out but changing the content again to get a different key. That reached
+production, and the request that poisoned the entry was the one verifying the
+deploy. A hashed filename means a URL has exactly one possible body, so
+`immutable` is true and a stale fetch can only land under a name nothing
+references.
+
+Only hashed names get the immutable header (`/styles.*.css`,
+`/toons/reader-shared.*.css`). If you add another `public/` stylesheet, add it
+to `SHEETS` in the plugin and give it a matching `_headers` rule.
 
 ## Toon captions / SFX (ElevenLabs)
 

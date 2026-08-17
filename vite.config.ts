@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { cdnMediaPlugin } from "./vite/plugins/cdnMedia";
 import { toonConfigDevPlugin } from "./vite/plugins/toonConfigDev";
+import { hashedCss } from "./vite/plugins/hashedCss";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(__dirname, "src");
@@ -60,6 +61,8 @@ export default defineConfig({
     vue(),
     toonConfigDevPlugin(__dirname),
     cdnMediaPlugin(distDir),
+    // Runs last: it rewrites the HTML cdnMediaPlugin has already touched.
+    hashedCss(),
   ],
   resolve: {
     alias: {
@@ -100,7 +103,9 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
     globals: true,
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    // vite/ is covered too: the build plugins have behaviour worth testing
+    // (hashedCss decides what URL every page loads its CSS from).
+    include: ["src/**/*.{test,spec}.{ts,tsx}", "vite/**/*.{test,spec}.ts"],
     setupFiles: ["src/test/setup.ts"],
     css: true,
     // Do not inherit these from developer .env — unit tests use relative paths
