@@ -2556,7 +2556,6 @@ button:focus-visible {
   overflow-y: auto;
   padding: 0 24px 24px;
   border: 1px solid var(--border-light);
-  border-top: 2px solid var(--red-smile);
   border-radius: 4px;
   background: var(--bg-card);
   color: var(--text);
