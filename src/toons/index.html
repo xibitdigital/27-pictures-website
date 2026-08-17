@@ -302,10 +302,9 @@
           <div class="experiments-grid"></div>
         </section>
 
-        <!-- One card per series. A book with a single episode is a plain link —
-             a "choose an episode" step buys nothing when there is one to choose.
-             Erin is a <details>, so the episode list is real DOM for crawlers and
-             opens without JavaScript. -->
+        <!-- One card per series. A single-episode book links straight to its
+             reader; a series links to its own page, which the quick-view dialog
+             also renders. Either way the card is a real link. -->
         <section class="toon-series series-shelf" aria-labelledby="browse-series-title">
           <header class="toon-series-head">
             <h3 id="browse-series-title">Browse the series</h3>
@@ -380,8 +379,18 @@
               >
             </a>
 
-            <details class="series-card" id="series-erin" data-series="erin">
-              <summary class="series-card-face">
+            <!-- Links to the series' own page; JS upgrades the click to a
+                 quick-view dialog showing that page's content. The link is the
+                 structure, the dialog is the enhancement — see
+                 src/site/seriesCards.ts. -->
+            <a
+              class="series-card series-card--series"
+              id="series-erin"
+              data-series="erin"
+              data-quick-view
+              href="/toons/erin-and-the-goblins/"
+            >
+              <span class="series-card-face">
                 <span class="series-card-art">
                   <img
                     src="%VITE_ASSET_BASE%/card-art/erin-dark.jpg"
@@ -394,76 +403,14 @@
                 </span>
                 <span class="series-card-meta">Dark fantasy</span>
                 <h3 class="series-card-title">Erin &amp; the Goblins</h3>
-                <span class="series-card-cue"
-                  >2 episodes <span class="series-card-chevron" aria-hidden="true">▾</span></span
-                >
+                <span class="series-card-cue">2 episodes <span aria-hidden="true">&rarr;</span></span>
                 <span class="series-card-votes" data-votes-for="erin" hidden></span>
-                <!-- Episode 1's premise stands for the series: it is where the
-                     story starts, so it is the honest summary of what you are
-                     picking up. Inside <summary> on purpose — anything after it
-                     is hidden while the details is closed, and the picker moves
-                     that content into the dialog anyway. -->
-                <span class="series-card-desc"
-                  >Half human, half vampire — she lives in a small town that is the passage between the goblin world and
-                  the human one.</span
-                >
-              </summary>
-
-              <div class="episode-block">
-                <!-- Same .series-grid / .series-card as the shelf outside the
-                     dialog: an episode is a book and should look like one. -->
-                <div class="series-grid">
-                  <a class="series-card series-card--episode" href="/toons/erin/">
-                    <span class="series-card-face">
-                      <span class="series-card-art"
-                        ><img
-                          src="%VITE_ASSET_BASE%/card-art/erin-dark.jpg"
-                          alt="Erin &amp; the Goblins episode 1, The Missing Child — cover art"
-                          width="1152"
-                          height="1728"
-                          loading="lazy"
-                          decoding="async"
-                      /></span>
-                      <span class="series-card-meta">Episode 1</span>
-                      <h4 class="series-card-title">The Missing Child</h4>
-                      <span class="series-card-cue">27 pages <span aria-hidden="true">→</span></span>
-                    </span>
-                    <span class="series-card-desc"
-                      >Half human, half vampire, in a town that is really a door between two worlds.</span
-                    >
-                  </a>
-
-                  <a class="series-card series-card--episode" href="/toons/erin-the-revenge/">
-                    <span class="series-card-face">
-                      <span class="series-card-art"
-                        ><img
-                          src="%VITE_ASSET_BASE%/card-art/erin-the-revenge.jpg"
-                          alt="Erin &amp; the Goblins episode 2, The Revenge — cover art"
-                          width="1152"
-                          height="1728"
-                          loading="lazy"
-                          decoding="async"
-                      /></span>
-                      <span class="series-card-meta">Episode 2</span>
-                      <h4 class="series-card-title">The Revenge <span class="lab-card-wip">Work in progress</span></h4>
-                      <span class="series-card-cue">17 pages <span aria-hidden="true">→</span></span>
-                    </span>
-                    <span class="series-card-desc"
-                      >She tears a portal open and crosses into the goblin world. Something is already watching.</span
-                    >
-                  </a>
-
-                  <div class="series-card series-card--soon">
-                    <span class="series-card-face">
-                      <span class="series-card-art" aria-hidden="true"></span>
-                      <span class="series-card-meta">Episode 3</span>
-                      <h4 class="series-card-title">In the darkroom</h4>
-                      <span class="series-card-cue">Coming soon</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </details>
+              </span>
+              <span class="series-card-desc"
+                >Half human, half vampire — she lives in a small town that is the passage between the goblin world and
+                the human one.</span
+              >
+            </a>
           </div>
         </section>
 

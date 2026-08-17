@@ -2499,6 +2499,26 @@ button:focus-visible {
   color: var(--text-muted);
 }
 
+/* Always-visible way into the series, independent of the picker. */
+.series-card-start {
+  display: block;
+  margin-top: 8px;
+}
+
+.series-card-start a {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--red-smile);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s var(--transition);
+}
+
+.series-card-start a:hover,
+.series-card-start a:focus-visible {
+  border-color: var(--red-smile);
+}
+
 /* Total hearts across the whole series. Stays hidden until the Worker answers,
    so a book with no votes yet shows nothing rather than a lonely zero. */
 .series-card-votes {
@@ -2570,28 +2590,15 @@ button:focus-visible {
 }
 
 /* Sticky so the title and the close button survive a long list scrolling. */
-.episode-dialog-head {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 0 4px;
-  background: var(--bg-card);
-}
-
-.episode-dialog-title {
-  font-family: "Playfair Display", serif;
-  font-size: clamp(1.1rem, 2.4vw, 1.4rem);
-  font-weight: 900;
-  line-height: 1.1;
-  color: var(--text);
+.episode-dialog-body {
+  padding-top: 20px;
 }
 
 .episode-dialog-close {
-  flex: none;
+  position: sticky;
+  top: 12px;
+  float: right;
+  z-index: 1;
   padding: 4px 8px;
   margin-right: -8px;
   font-size: 1.1rem;
@@ -2615,10 +2622,81 @@ button:focus-visible {
 
 /* Inside the dialog the red rule above the list is redundant — the dialog
    already carries one across its own top edge. */
-.episode-dialog .episode-block {
+/* The dialog holds a slice of a real page, so its own headings and sections come
+   with the page's spacing. Trim the top and drop the section rules — inside a
+   560px box they read as clutter rather than structure. */
+.episode-dialog-body > *:first-child {
   margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
+}
+
+.episode-dialog .page-header,
+.episode-dialog .series-header {
+  margin-bottom: 14px;
+}
+
+/* The page's "Interactive toons" eyebrow is context for a page arrived at cold;
+   in a dialog opened from the toons index it is telling you where you already
+   are. */
+.episode-dialog .section-tag {
+  display: none;
+}
+
+.episode-dialog .series-section {
+  margin-bottom: 24px;
+}
+
+.episode-dialog .series-section.is-divided {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+.episode-dialog h1 {
+  font-size: clamp(1.3rem, 3vw, 1.6rem);
+  line-height: 1.1;
+}
+
+.episode-dialog h2 {
+  font-size: 1.05rem;
+}
+
+.episode-dialog .lead,
+.episode-dialog .series-body p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--silver);
+}
+
+.episode-dialog .episode-block {
+  margin-top: 12px;
+}
+
+/* The quick view is for choosing, so it shows the page's opening and its
+   episodes and stops there. The trailing prose sections belong to the page; in
+   a 560px dialog they pushed the last episode 485px below the fold on desktop
+   and 699px on a phone. They are still indexed and still read on the page
+   itself, which is where someone who wants them has landed. */
+.episode-dialog .series-section.is-divided {
+  display: none;
+}
+
+.episode-dialog .lead {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.episode-dialog .series-section-label,
+/* "Two out, one in the darkroom" is a page heading; in the dialog the H1 and the
+   episodes below it already say it, and it cost a line plus its margin. */
+.episode-dialog .series-section h2 {
+  display: none;
+}
+
+/* Loading state: the fetch is usually instant from cache, so this only shows on
+   a cold, slow first open. */
+.episode-dialog.is-loading .episode-dialog-body {
+  opacity: 0.4;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -2717,6 +2795,12 @@ button:focus-visible {
 @media (max-width: 600px) {
   .episode-block .series-card {
     padding: 12px 0;
+  }
+
+  /* The intro goes: on a phone it is the last thing between three episodes and a
+     scroll, and the heading above it already names the series. */
+  .episode-dialog .lead {
+    display: none;
   }
 }
 

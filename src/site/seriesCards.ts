@@ -1,16 +1,22 @@
 /**
  * Series cards on /toons/.
  *
- * A card with several episodes opens a dialog to pick one; a card with a single
- * episode is a plain link and needs nothing. The picker is an enhancement, not
- * the structure: the markup ships as <details> with the episode list inside it,
- * so with scripting off the list still expands in place and the links are still
- * there for crawlers. When JS runs, the list moves into a <dialog> and the
- * summary opens that instead.
+ * A card for a series with several episodes links to that series' own page. With
+ * JS the click is intercepted and the page is shown in a dialog instead — the
+ * quick view — so choosing an episode does not cost a page load and does not
+ * lose your place on the index.
  *
- * Native <dialog> rather than a hand-built overlay: showModal() brings the
- * backdrop, Escape, the focus trap and inert-ing the page behind it, all of
- * which a div would have to reimplement badly.
+ * The link is the structure and the dialog is the enhancement, in that order:
+ *
+ *   - no JS, or the fetch fails, or the browser has no <dialog>: the click is a
+ *     plain navigation to a real page. Nothing is trapped behind script.
+ *   - crawlers follow the same link to a page whose content is visible, rather
+ *     than reading episode markup out of a closed dialog, where it renders as
+ *     display:none and is weighted lower than visible text.
+ *
+ * The dialog shows the page's own `[data-series-page]` region, which leaves out
+ * the nav and the footer by construction. A separate "bare" render mode would be
+ * a second code path for the same content, free to drift from the real page.
  */
 
 import { fetchLikes } from "./likes";
@@ -44,78 +50,92 @@ export function initSeriesVotes(root: ParentNode = document): void {
   });
 }
 
-/** Latest = the last episode in series order that actually has a reader. */
-export function latestEpisodeHref(scope: Element): string | null {
-  // Scoped to the block, not to a list or grid class: the picker's markup has
-  // changed shape twice and this should not have to change with it.
-  const links = scope.querySelectorAll<HTMLAnchorElement>(".episode-block a[href]");
-  const last = links[links.length - 1];
-  return last?.getAttribute("href") ?? null;
+/**
+ * Pulls the quick-view region out of a fetched series page. Null when the page
+ * has no such region — the caller then navigates rather than opening an empty
+ * dialog.
+ */
+export function extractSeriesRegion(html: string): DocumentFragment | null {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const region = doc.querySelector("[data-series-page]");
+  if (!region) return null;
+  const fragment = document.createDocumentFragment();
+  fragment.append(...Array.from(region.childNodes));
+  return fragment;
 }
 
-/** The series title, for the dialog heading. Falls back to a generic label. */
-function seriesTitle(card: Element): string {
-  return card.querySelector(".series-card-title")?.textContent?.trim() || "Episodes";
-}
-
-function buildDialog(card: Element, block: Element): HTMLDialogElement {
+function buildDialog(): HTMLDialogElement {
   const dialog = document.createElement("dialog");
   dialog.className = "episode-dialog";
-  dialog.setAttribute("aria-label", `${seriesTitle(card)} — choose an episode`);
-
-  const head = document.createElement("div");
-  head.className = "episode-dialog-head";
-
-  const title = document.createElement("p");
-  title.className = "episode-dialog-title";
-  title.textContent = seriesTitle(card);
 
   const close = document.createElement("button");
   close.type = "button";
   close.className = "episode-dialog-close";
   close.setAttribute("aria-label", "Close");
   close.textContent = "✕";
-
-  head.append(title, close);
-  // The list is moved, not copied: two copies of the same episode links would
-  // be duplicate content on a page that is indexed for them.
-  dialog.append(head, block);
-
   close.addEventListener("click", () => dialog.close());
 
-  // Clicking the backdrop closes. The dialog's own box is a child, so a click
-  // landing on the element itself can only have hit the backdrop.
+  const body = document.createElement("div");
+  body.className = "episode-dialog-body";
+
+  dialog.append(close, body);
+  // The dialog's own box is a child, so a click on the element itself can only
+  // have landed on the backdrop.
   dialog.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   });
 
+  document.body.append(dialog);
   return dialog;
 }
 
-export function initEpisodeDialogs(root: ParentNode = document): void {
-  for (const card of root.querySelectorAll<HTMLDetailsElement>("details.series-card")) {
-    const block = card.querySelector(".episode-block");
-    const summary = card.querySelector<HTMLElement>("summary");
-    if (!block || !summary || typeof HTMLDialogElement === "undefined") continue;
+export function initSeriesQuickView(root: ParentNode = document): void {
+  const triggers = [...root.querySelectorAll<HTMLAnchorElement>("a[data-quick-view]")];
+  if (!triggers.length || typeof HTMLDialogElement === "undefined") return;
 
-    const dialog = buildDialog(card, block);
-    card.after(dialog);
+  let dialog: HTMLDialogElement | null = null;
+  const cache = new Map<string, DocumentFragment>();
 
-    // The card is now a trigger, not a disclosure — say so to assistive tech,
-    // which would otherwise announce an expandable section that never expands.
-    summary.setAttribute("role", "button");
-    summary.setAttribute("aria-haspopup", "dialog");
+  for (const trigger of triggers) {
+    trigger.addEventListener("click", (event) => {
+      // Leave new-tab, middle-click and modified clicks alone — a quick view
+      // must not hijack the ways people deliberately open a real page.
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
 
-    summary.addEventListener("click", (event) => {
+      const href = trigger.getAttribute("href");
+      if (!href) return;
       event.preventDefault();
-      // A <details> whose content has moved out has nothing to show; keep it
-      // shut so the arrow does not flip on a card that never expands.
-      card.open = false;
-      dialog.showModal();
-      // showModal() focuses the first focusable child, which is the close
-      // button — so opening the picker highlights "dismiss" rather than the
-      // thing you came to choose. Move it to the first episode.
-      dialog.querySelector<HTMLAnchorElement>(".series-card[href]")?.focus();
+
+      const view = (dialog ??= buildDialog());
+      const body = view.querySelector(".episode-dialog-body") as HTMLElement;
+      const show = (content: Node) => {
+        body.replaceChildren(content);
+        view.showModal();
+        // Focus the first episode, not the close button that showModal() would
+        // otherwise pick: opening the view should not highlight "dismiss".
+        body.querySelector<HTMLAnchorElement>("a[href]")?.focus();
+      };
+
+      const cached = cache.get(href);
+      if (cached) {
+        show(cached.cloneNode(true));
+        return;
+      }
+
+      view.classList.add("is-loading");
+      void fetch(href, { headers: { Accept: "text/html" } })
+        .then((res) => (res.ok ? res.text() : Promise.reject(new Error(String(res.status)))))
+        .then((html) => {
+          const region = extractSeriesRegion(html);
+          if (!region) throw new Error("no series region");
+          cache.set(href, region);
+          show(region.cloneNode(true));
+        })
+        .catch(() => {
+          // Whatever failed, the link still works — go to the real page.
+          window.location.href = href;
+        })
+        .finally(() => view.classList.remove("is-loading"));
     });
   }
 }

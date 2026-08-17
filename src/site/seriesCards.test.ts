@@ -1,38 +1,48 @@
-import { describe, it, expect, vi } from "vitest";
-import { latestEpisodeHref, seriesLikeTotal, initEpisodeDialogs } from "./seriesCards";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { extractSeriesRegion, seriesLikeTotal, initSeriesQuickView } from "./seriesCards";
 
-/** The shipped markup: a <details> card with the episode block inside it. */
-function mountCard(): HTMLElement {
+const SERIES_PAGE = `<!doctype html><html><head><title>Erin</title></head><body>
+  <div id="site-app">nav goes here</div>
+  <main>
+    <nav class="sr-only-seo">breadcrumb</nav>
+    <div data-series-page>
+      <header class="series-header"><h1>Erin &amp; the Goblins</h1></header>
+      <a class="series-card" href="/toons/erin/">EP 1</a>
+      <a class="series-card" href="/toons/erin-the-revenge/">EP 2</a>
+    </div>
+    <footer class="page-footer">footer goes here</footer>
+  </main></body></html>`;
+
+function mountIndex(): HTMLAnchorElement {
   document.body.innerHTML = `
     <div class="series-grid">
-      <details class="series-card" data-series="erin">
-        <summary class="series-card-face">
-          <h3 class="series-card-title">Erin &amp; the Goblins</h3>
-          <span class="series-card-cue">2 episodes</span>
-        </summary>
-        <div class="episode-block">
-          <p class="episode-block-head">Episodes</p>
-          <div class="series-grid">
-            <a class="series-card series-card--episode" href="/toons/erin/">EP 1</a>
-            <a class="series-card series-card--episode" href="/toons/erin-the-revenge/">EP 2</a>
-            <div class="series-card series-card--soon">EP 3</div>
-          </div>
-        </div>
-      </details>
+      <a class="series-card series-card--series" data-quick-view href="/toons/erin-and-the-goblins/">Erin</a>
       <a class="series-card series-card--single" href="/toons/nero/">Nero</a>
     </div>`;
-  return document.querySelector("details.series-card") as HTMLElement;
+  return document.querySelector("a[data-quick-view]") as HTMLAnchorElement;
 }
 
-describe("latestEpisodeHref", () => {
-  it("takes the last episode that has a reader", () => {
-    expect(latestEpisodeHref(mountCard())).toBe("/toons/erin-the-revenge/");
+beforeEach(() => {
+  vi.restoreAllMocks();
+  document.querySelectorAll("dialog").forEach((d) => d.remove());
+});
+
+describe("extractSeriesRegion", () => {
+  it("takes the page's quick-view region and nothing around it", () => {
+    const region = extractSeriesRegion(SERIES_PAGE);
+    const host = document.createElement("div");
+    host.append(region as DocumentFragment);
+
+    expect(host.querySelectorAll('a[href^="/toons/"]').length).toBe(2);
+    expect(host.querySelector("h1")?.textContent).toBe("Erin & the Goblins");
+    // The nav and footer are excluded by construction, not by a second render mode.
+    expect(host.textContent).not.toContain("nav goes here");
+    expect(host.textContent).not.toContain("footer goes here");
+    expect(host.querySelector(".page-footer")).toBeNull();
   });
 
-  it("returns null when nothing is readable yet", () => {
-    document.body.innerHTML = `<details class="series-card"><div class="episode-block">
-      <div class="series-card series-card--soon">EP 1</div></div></details>`;
-    expect(latestEpisodeHref(document.querySelector("details") as Element)).toBeNull();
+  it("returns null for a page with no region, so the caller can navigate", () => {
+    expect(extractSeriesRegion("<html><body><main>plain page</main></body></html>")).toBeNull();
   });
 });
 
@@ -49,58 +59,77 @@ describe("seriesLikeTotal", () => {
     ).toBe(12);
   });
 
-  it("counts a single-episode series as that episode", () => {
-    expect(seriesLikeTotal("nero", new Map([["nero", 3]]))).toBe(3);
-  });
-
   it("is zero for a series with no votes, and for an unknown key", () => {
     expect(seriesLikeTotal("jax", new Map())).toBe(0);
     expect(seriesLikeTotal("nope", new Map([["jax", 9]]))).toBe(0);
   });
 });
 
-describe("initEpisodeDialogs", () => {
-  it("moves the episode list into a dialog rather than copying it", () => {
-    const card = mountCard();
-    initEpisodeDialogs();
+describe("initSeriesQuickView", () => {
+  it("shows the fetched page in a dialog instead of navigating", async () => {
+    const trigger = mountIndex();
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(SERIES_PAGE, { status: 200 }));
+    initSeriesQuickView();
 
-    const dialog = document.querySelector("dialog.episode-dialog") as HTMLDialogElement;
-    expect(dialog).toBeTruthy();
-    // Exactly one copy of the links exists, and it lives in the dialog — two
-    // would be duplicate content on a page indexed for them.
-    expect(document.querySelectorAll(".episode-block").length).toBe(1);
-    expect(dialog.querySelector(".series-grid")).toBeTruthy();
-    expect(card.querySelector(".episode-block")).toBeNull();
-    expect(dialog.querySelectorAll('a[href^="/toons/"]').length).toBe(2);
-  });
-
-  it("opens as a modal on the summary click, and does not expand the details", () => {
-    const card = mountCard() as HTMLDetailsElement;
-    initEpisodeDialogs();
-    const dialog = document.querySelector("dialog.episode-dialog") as HTMLDialogElement;
     const showModal = vi.fn();
-    dialog.showModal = showModal;
+    HTMLDialogElement.prototype.showModal = showModal;
+    trigger.click();
+    await vi.waitFor(() => expect(showModal).toHaveBeenCalled());
 
-    (card.querySelector("summary") as HTMLElement).click();
-
-    expect(showModal).toHaveBeenCalledOnce();
-    expect(card.open).toBe(false);
+    const body = document.querySelector(".episode-dialog-body") as HTMLElement;
+    expect(body.querySelectorAll('a[href^="/toons/"]').length).toBe(2);
+    expect(body.textContent).not.toContain("footer goes here");
   });
 
-  it("titles the dialog after the series and announces it as a dialog trigger", () => {
-    const card = mountCard();
-    initEpisodeDialogs();
-    const dialog = document.querySelector("dialog.episode-dialog") as HTMLDialogElement;
+  it("fetches once and reuses the result on reopen", async () => {
+    const trigger = mountIndex();
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(SERIES_PAGE, { status: 200 }));
+    HTMLDialogElement.prototype.showModal = vi.fn();
+    initSeriesQuickView();
 
-    expect(dialog.querySelector(".episode-dialog-title")?.textContent).toBe("Erin & the Goblins");
-    expect(dialog.getAttribute("aria-label")).toContain("Erin & the Goblins");
-    expect(card.querySelector("summary")?.getAttribute("aria-haspopup")).toBe("dialog");
+    trigger.click();
+    await vi.waitFor(() => expect(document.querySelector(".episode-dialog-body a")).toBeTruthy());
+    trigger.click();
+    trigger.click();
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("leaves single-episode cards alone — they are plain links", () => {
-    mountCard();
-    initEpisodeDialogs();
-    expect(document.querySelectorAll("dialog.episode-dialog").length).toBe(1);
-    expect(document.querySelector("a.series-card--single")?.getAttribute("href")).toBe("/toons/nero/");
+  it("falls back to navigating when the fetch fails", async () => {
+    const trigger = mountIndex();
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("nope", { status: 500 }));
+    HTMLDialogElement.prototype.showModal = vi.fn();
+    initSeriesQuickView();
+
+    const assign = vi.fn();
+    Object.defineProperty(window, "location", {
+      value: {
+        ...window.location,
+        set href(v: string) {
+          assign(v);
+        },
+      },
+      writable: true,
+    });
+
+    trigger.click();
+    await vi.waitFor(() => expect(assign).toHaveBeenCalledWith("/toons/erin-and-the-goblins/"));
+  });
+
+  it("leaves modified clicks to the browser, so new-tab still works", () => {
+    const trigger = mountIndex();
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    initSeriesQuickView();
+
+    trigger.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, metaKey: true }));
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("ignores cards that are not quick-view triggers", () => {
+    mountIndex();
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    initSeriesQuickView();
+    (document.querySelector("a.series-card--single") as HTMLElement).click();
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });

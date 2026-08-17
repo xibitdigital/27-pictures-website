@@ -56,6 +56,15 @@
     </image:image>
   </url>
   <url>
+    <loc>https://twentyseven.pictures/toons/erin-and-the-goblins/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
+      <image:title>Erin &amp; the Goblins — interactive dark fantasy manga</image:title>
+      <image:caption>Cover art for Erin &amp; the Goblins, a black-and-white interactive manga series by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://twentyseven.pictures/toons/erin/</loc>
     <lastmod>2026-07-27</lastmod>
     <image:image>

@@ -49,6 +49,7 @@ Allow: /
 # - https://twentyseven.pictures/watch/ — Every release: horror anthology, Jax cyberpunk series, cosplay showcase
 # - https://twentyseven.pictures/cosplay/ — Cinematic cosplay production service
 # - https://twentyseven.pictures/toons/ — Interactive Toons index
+# - https://twentyseven.pictures/toons/erin-and-the-goblins/ — Erin & the Goblins series overview (2 episodes)
 # - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader
 # - https://twentyseven.pictures/toons/erin-the-revenge/ — Erin EP 2: The Revenge, B&W dark fantasy toon (EN/IT/DE/FR captions)
 # - https://twentyseven.pictures/toons/jax/ — Jax cyberpunk toon (EN/IT/DE/FR captions)
