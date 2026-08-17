@@ -10,6 +10,7 @@ export type LocalizedString = string | Partial<Record<string, string>>;
 
 export type FlipframeKey =
   | "howtoBook"
+  | "howtoTap"
   | "howtoScroll"
   | "howtoLabel"
   | "storyLabel"
@@ -37,6 +38,7 @@ export type FlipframeKey =
 export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
   en: {
     howtoBook: "Use the arrow keys, or click on a page, to turn",
+    howtoTap: "Tap the right or left side of a page to turn",
     howtoScroll: "Scroll to read. Captions in view play themselves — tap any bubble to replay.",
     howtoLabel: "How to read",
     storyLabel: "Story",
@@ -65,6 +67,7 @@ export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
   },
   it: {
     howtoBook: "Usa le frecce della tastiera, o clicca sulla pagina, per sfogliare",
+    howtoTap: "Tocca il lato destro o sinistro della pagina per sfogliare",
     howtoScroll:
       "Scorri per leggere. Le didascalie in vista si riproducono da sole — tocca una nuvoletta per riascoltarla.",
     howtoLabel: "Come si legge",
@@ -94,6 +97,7 @@ export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
   },
   de: {
     howtoBook: "Mit den Pfeiltasten oder einem Klick auf die Seite umblättern",
+    howtoTap: "Zum Umblättern rechts oder links auf die Seite tippen",
     howtoScroll:
       "Scrollen zum Lesen. Sichtbare Sprechblasen spielen von selbst — tippe eine Blase, um sie zu wiederholen.",
     howtoLabel: "So liest du",
@@ -123,6 +127,7 @@ export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
   },
   fr: {
     howtoBook: "Utilisez les flèches du clavier, ou cliquez sur une page, pour tourner",
+    howtoTap: "Touchez le côté droit ou gauche de la page pour tourner",
     howtoScroll:
       "Faites défiler pour lire. Les bulles à l'écran se lisent toutes seules — touchez une bulle pour la réécouter.",
     howtoLabel: "Comment lire",

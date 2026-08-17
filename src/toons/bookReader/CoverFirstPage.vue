@@ -3,7 +3,7 @@
  * Shared first-page / cover layout for every FlipFrame experiment.
  * Used on the book plate and in the mobile cover guide dialog.
  */
-import { computed, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import { resolveCoverStory } from "./coverStory";
 import { pickLocalized, useFlipframeCopy, useReaderLocale, type LocalizedString } from "./flipframeCopy";
@@ -49,6 +49,40 @@ const soundTitle = computed(() => (props.soundEnabled ? t.value.muteSound : t.va
 const soundLabel = computed(() => (props.soundEnabled ? t.value.soundOn : props.soundHint || t.value.soundOff));
 const storyText = computed(() => resolveCoverStory(props.synopsis, locale.value));
 const isModal = computed(() => props.variant === "modal");
+
+/**
+ * A wide touch screen (Pro Max in landscape, any iPad) is over the 768px mobile
+ * cut-off, so it gets the book plate — and the plate used to tell it to press
+ * arrow keys and click. Drive the how-to off the pointer, not the width.
+ */
+const coarsePointer = ref(false);
+let pointerMq: MediaQueryList | null = null;
+function syncPointer(): void {
+  coarsePointer.value = !!pointerMq?.matches;
+}
+
+onMounted(() => {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+  pointerMq = window.matchMedia("(pointer: coarse)");
+  syncPointer();
+  // Rotating a tablet can swap the matching media query, so stay subscribed.
+  if (typeof pointerMq.addEventListener === "function") pointerMq.addEventListener("change", syncPointer);
+  else pointerMq.addListener?.(syncPointer);
+});
+
+onUnmounted(() => {
+  if (!pointerMq) return;
+  if (typeof pointerMq.removeEventListener === "function") pointerMq.removeEventListener("change", syncPointer);
+  else pointerMq.removeListener?.(syncPointer);
+});
+
+/** Keyboard + mouse diagrams only make sense for a fine pointer. */
+const showPointerHowto = computed(() => !isModal.value && !coarsePointer.value);
+
+const howtoCaption = computed(() => {
+  if (isModal.value) return t.value.howtoScroll;
+  return coarsePointer.value ? t.value.howtoTap : t.value.howtoBook;
+});
 const displayTitle = computed(() => props.title || (isModal.value ? t.value.storyTitle : ""));
 const displaySubtitle = computed(() => pickLocalized(props.subtitle, locale.value, t.value.experiment));
 /** Build id from Vite (git short SHA or VITE_FLIPFRAME_BUILD). */
@@ -106,9 +140,9 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
         <p class="front-cover-brand-by">by twentyseven.pictures</p>
       </div>
 
-      <!-- Visual how-to: keyboard arrows + click on page -->
+      <!-- Visual how-to: book = arrow keys + click on page; mobile = caption only -->
       <div class="front-cover-howto" role="group" :aria-label="t.howtoLabel">
-        <div class="front-cover-howto-icons" aria-hidden="true">
+        <div v-if="showPointerHowto" class="front-cover-howto-icons" aria-hidden="true">
           <svg
             class="front-cover-howto-svg front-cover-howto-keys"
             viewBox="0 0 120 64"
@@ -174,7 +208,7 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
             <circle class="front-cover-howto-click-dot" cx="63.5" cy="30" r="2.25" />
           </svg>
         </div>
-        <p class="front-cover-howto-caption">{{ isModal ? t.howtoScroll : t.howtoBook }}</p>
+        <p class="front-cover-howto-caption">{{ howtoCaption }}</p>
       </div>
     </div>
 

@@ -46,9 +46,10 @@ describe("CoverGuideDialog", () => {
       expect(wrapper.find(".front-cover-brand-build").text()).toMatch(/^build\s+\S+/);
     }
     expect(wrapper.find(".front-cover-howto").exists()).toBe(true);
-    expect(wrapper.find(".front-cover-howto-keys").exists()).toBe(true);
-    expect(wrapper.find(".front-cover-howto-click").exists()).toBe(true);
-    // Modal guide is the mobile/vertical entry — scroll-oriented howto, not book keys.
+    // Modal guide is the mobile/vertical entry — caption only, no diagram at all.
+    expect(wrapper.find(".front-cover-howto-icons").exists()).toBe(false);
+    expect(wrapper.find(".front-cover-howto-keys").exists()).toBe(false);
+    expect(wrapper.find(".front-cover-howto-click").exists()).toBe(false);
     expect(wrapper.find(".front-cover-howto-caption").text()).toMatch(/scroll|tap/i);
     expect(wrapper.find(".cover-first-page--modal").exists()).toBe(true);
     expect(wrapper.find(".cover-guide-cta").text()).toMatch(/Start reading/i);

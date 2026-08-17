@@ -97,12 +97,16 @@ describe("ToonReaderShell", () => {
     lastBookOpts = undefined;
     prefersSinglePageMock.mockReturnValue(false);
     sessionStorage.clear();
+    localStorage.removeItem("flipframe-scroll-howto");
   });
 
   afterEach(() => {
     document.body.innerHTML = "";
     document.body.className = "";
     sessionStorage.clear();
+    localStorage.removeItem("flipframe-scroll-howto");
+    vi.useRealTimers();
+    Object.defineProperty(window, "scrollY", { value: 0, configurable: true });
   });
 
   function mountShell(bookOptions?: ToonShellBookOptions) {
@@ -141,6 +145,16 @@ describe("ToonReaderShell", () => {
         },
       },
     });
+  }
+
+  /** AutoReadPrompt is a HeadlessUI Dialog — it renders outside the wrapper root. */
+  async function clickPrompt(which: "ok" | "later"): Promise<void> {
+    const btns = Array.from(document.querySelectorAll<HTMLButtonElement>(".sound-prompt__btn"));
+    const btn = which === "ok" ? btns.find((b) => b.classList.contains("sound-prompt__btn--primary")) : btns.at(-1);
+    if (!btn) throw new Error(`sound prompt "${which}" button not rendered`);
+    btn.click();
+    await flushPromises();
+    await nextTick();
   }
 
   it("shell ownership fields always win over bookOptions", async () => {
@@ -257,5 +271,90 @@ describe("ToonReaderShell", () => {
     await wrapper.find(".guide-close-stub").trigger("click");
     await nextTick();
     expect(sessionStorage.getItem("flipframe-cover-guide:Test")).toBe("1");
+  });
+
+  it("shows the how-to once, as soon as the strip is readable on mobile", async () => {
+    prefersSinglePageMock.mockReturnValue(true);
+    isVertical.value = true;
+    sessionStorage.setItem("flipframe-cover-guide:Test", "1");
+
+    const wrapper = mountShell();
+    await flushPromises();
+    await nextTick();
+
+    // The sound prompt owns the screen first — the toast waits its turn.
+    expect(wrapper.find(".scroll-howto").exists()).toBe(false);
+    await clickPrompt("later");
+
+    expect(wrapper.find(".scroll-howto").exists()).toBe(true);
+    expect(wrapper.find(".scroll-howto-body").text()).toMatch(/scroll|tap/i);
+    expect(wrapper.find(".scroll-howto-arrow").exists()).toBe(true);
+    expect(localStorage.getItem("flipframe-scroll-howto")).toBe("1");
+
+    // Jitter under the threshold leaves it up; a real scroll clears it.
+    Object.defineProperty(window, "scrollY", { value: 12, configurable: true });
+    window.dispatchEvent(new Event("scroll"));
+    await new Promise((r) => setTimeout(r, 60));
+    await nextTick();
+    expect(wrapper.find(".scroll-howto").exists()).toBe(true);
+
+    Object.defineProperty(window, "scrollY", { value: 200, configurable: true });
+    window.dispatchEvent(new Event("scroll"));
+    await new Promise((r) => setTimeout(r, 60));
+    await nextTick();
+    expect(wrapper.find(".scroll-howto").exists()).toBe(false);
+
+    wrapper.unmount();
+    const again = mountShell();
+    await flushPromises();
+    await nextTick();
+    expect(again.find(".scroll-howto").exists()).toBe(false);
+    again.unmount();
+  });
+
+  it("freezes the strip behind an open dialog via body.dialog-open", async () => {
+    prefersSinglePageMock.mockReturnValue(true);
+    isVertical.value = true;
+
+    const wrapper = mountShell();
+    await flushPromises();
+    await nextTick();
+
+    // Cover guide up: the 16k-tall strip behind must not take the gesture.
+    expect(document.body.classList.contains("dialog-open")).toBe(true);
+
+    await wrapper.find(".guide-close-stub").trigger("click");
+    await flushPromises();
+    await nextTick();
+    // Sound prompt is the next dialog — still locked.
+    expect(document.body.classList.contains("dialog-open")).toBe(true);
+
+    await clickPrompt("ok");
+    expect(document.body.classList.contains("dialog-open")).toBe(false);
+
+    wrapper.unmount();
+    expect(document.body.classList.contains("dialog-open")).toBe(false);
+  });
+
+  it("does not show the how-to while the cover guide is open", async () => {
+    prefersSinglePageMock.mockReturnValue(true);
+    isVertical.value = true;
+
+    const wrapper = mountShell();
+    await flushPromises();
+    await nextTick();
+    expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(true);
+    expect(wrapper.find(".scroll-howto").exists()).toBe(false);
+
+    // Closing the guide raises the sound prompt, which owns the screen next.
+    await wrapper.find(".guide-close-stub").trigger("click");
+    await flushPromises();
+    await nextTick();
+    expect(document.querySelector(".sound-prompt__panel")).not.toBeNull();
+    expect(wrapper.find(".scroll-howto").exists()).toBe(false);
+
+    // Only once nothing else is in the way does the toast land.
+    await clickPrompt("ok");
+    expect(wrapper.find(".scroll-howto").exists()).toBe(true);
   });
 });

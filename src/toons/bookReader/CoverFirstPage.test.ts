@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
+import { nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 import CoverFirstPage from "./CoverFirstPage.vue";
 import { DEFAULT_COVER_STORY } from "./coverStory";
@@ -7,6 +8,7 @@ import { FLIPFRAME } from "./flipframeCopy";
 beforeEach(() => {
   document.documentElement.setAttribute("lang", "en");
   window.localStorage.removeItem("27p-locale");
+  stubPointer(false);
 });
 
 const headlessStubs = {
@@ -19,6 +21,20 @@ const headlessStubs = {
   DialogPanel: { template: `<div><slot /></div>` },
   DialogTitle: { template: `<h2><slot /></h2>` },
 };
+
+/** jsdom has no pointer media support — stub matchMedia for the plate how-to. */
+function stubPointer(coarse: boolean): void {
+  window.matchMedia = ((query: string) => ({
+    matches: query.includes("pointer: coarse") ? coarse : false,
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia;
+}
 
 function mountPage(props: Record<string, unknown> = {}) {
   return mount(CoverFirstPage, {
@@ -71,6 +87,14 @@ describe("CoverFirstPage", () => {
     expect(root.classes()).toContain("cover-first-page--modal");
   });
 
+  it("drops the how-to diagram on the modal (mobile) variant, caption only", () => {
+    const wrapper = mountPage({ title: "Nero", variant: "modal" });
+    expect(wrapper.find(".front-cover-howto-icons").exists()).toBe(false);
+    expect(wrapper.find(".front-cover-howto-keys").exists()).toBe(false);
+    expect(wrapper.find(".front-cover-howto-click").exists()).toBe(false);
+    expect(wrapper.find(".front-cover-howto-caption").text()).toBe(FLIPFRAME.en.howtoScroll);
+  });
+
   it("accepts a title slot (DialogTitle in guide modal)", () => {
     const wrapper = mount(CoverFirstPage, {
       props: { title: "Nero", variant: "modal" },
@@ -97,5 +121,15 @@ describe("CoverFirstPage", () => {
     });
     await wrapper.find(".front-cover-sound-btn").trigger("click");
     expect(wrapper.emitted("soundToggle")).toHaveLength(1);
+  });
+
+  it("drops keyboard and click diagrams on a touch screen, and says tap", async () => {
+    // A Pro Max in landscape / an iPad is past the 768px cut-off: book plate,
+    // but no arrow keys and no mouse to click with.
+    stubPointer(true);
+    const wrapper = mountPage({ title: "Nero" });
+    await nextTick();
+    expect(wrapper.find(".front-cover-howto-icons").exists()).toBe(false);
+    expect(wrapper.find(".front-cover-howto-caption").text()).toBe(FLIPFRAME.en.howtoTap);
   });
 });

@@ -205,7 +205,11 @@ deploy-cdn: require-cdn-base upload-assets ## Upload R2 + build with CDN + deplo
 .PHONY: preview-deploy
 preview-deploy: require-cdn-base ## Build + deploy Pages preview branch
 	@echo "→ CDN media: $(VITE_ASSET_BASE)"
-	$(NPM) run build
+# Staging ships uncommitted work, so the bare git SHA stamps every deploy of a
+# working session identically — and the build id on the cover is the only way to
+# tell from a phone whether it is looking at a stale cache. Append a timestamp
+# whenever the tree is dirty.
+	VITE_FLIPFRAME_BUILD="$$(git rev-parse --short HEAD)$$(git diff --quiet || printf '+%s' "$$(date +%m%d-%H%M)")" $(NPM) run build
 	@find dist -name .DS_Store -delete 2>/dev/null || true
 	@echo "→ Deploying dist/ → $(STAGING_PROJECT) ($(PREVIEW_BRANCH))"
 	$(NPX) wrangler pages deploy dist \

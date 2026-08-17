@@ -10,7 +10,7 @@ import CoverGuideDialog from "./CoverGuideDialog.vue";
 import { ReaderTopBar, ReadingProgress } from "./chrome";
 import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
-import { parsePageQuery } from "./pageQuery";
+import { deepLinkReleased, parsePageQuery } from "./pageQuery";
 import VerticalStrip from "./VerticalStrip.vue";
 import AutoReadPrompt from "./captions/AutoReadPrompt.vue";
 import { provideAutoRead } from "./captions/useAutoRead";
@@ -20,6 +20,8 @@ import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
 import { prefersSinglePage } from "./bookModels";
 import { localePath, withCaptionLang } from "../../site/i18n";
 import { resolveReaderLocale } from "./flipframeCopy";
+import ScrollHowToHint from "./ScrollHowToHint.vue";
+import { SCROLL_HOWTO_DISMISS_PX, hasSeenScrollHowTo, markScrollHowToSeen, shouldShowScrollHowTo } from "./scrollHowTo";
 
 const props = withDefaults(
   defineProps<{
@@ -164,7 +166,36 @@ function releaseBodyScrollLock(): void {
  * scrollports freeze touch on iPhone. Retry after the target plate's image
  * has height so deep-links don't stick at the top of an empty strip.
  */
+/**
+ * The deep link must stop fighting the reader.
+ *
+ * This function is called from several places (strip ready, guide close, pages
+ * loaded) and each call schedules retries plus an image `load` hook, because a
+ * plate that has not decoded yet has no height to scroll to. On a phone those
+ * retries kept landing *after* the first swipe: measured on an iPhone
+ * simulator, six `scrollTo(0, 32)` calls yanked the strip back to the `?page=`
+ * target while plates streamed in, which reads as "the page will not scroll".
+ *
+ * So: re-applies are allowed only until the reader scrolls somewhere else.
+ */
+let deepLinkAbandoned = false;
+let deepLinkAppliedY: number | null = null;
+const deepLinkTimers: ReturnType<typeof setTimeout>[] = [];
+
+function clearDeepLinkTimers(): void {
+  for (const t of deepLinkTimers.splice(0)) clearTimeout(t);
+}
+
+/** One genuine scroll away from the target and the deep link is done. */
+function abandonDeepLink(): void {
+  if (deepLinkAbandoned) return;
+  deepLinkAbandoned = true;
+  deepLinkAppliedY = null;
+  clearDeepLinkTimers();
+}
+
 function scrollVerticalToQueryPage(): void {
+  if (deepLinkAbandoned) return;
   if (!viewMode.isVertical.value) return;
   const page = parsePageQuery();
   if (page == null) return;
@@ -174,9 +205,11 @@ function scrollVerticalToQueryPage(): void {
   if (!el) return;
 
   const apply = (): void => {
-    if (!viewMode.isVertical.value) return;
+    if (deepLinkAbandoned || !viewMode.isVertical.value) return;
     const top = el.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0);
-    window.scrollTo(0, Math.max(0, top - 4));
+    const target = Math.max(0, top - 4);
+    deepLinkAppliedY = target;
+    window.scrollTo(0, target);
   };
 
   const img = el.querySelector("img");
@@ -184,9 +217,10 @@ function scrollVerticalToQueryPage(): void {
     img.addEventListener(
       "load",
       () => {
+        if (deepLinkAbandoned) return;
         requestAnimationFrame(() => {
           apply();
-          window.setTimeout(apply, 50);
+          deepLinkTimers.push(setTimeout(apply, 50));
         });
       },
       { once: true }
@@ -196,9 +230,19 @@ function scrollVerticalToQueryPage(): void {
   requestAnimationFrame(() => {
     apply();
     // Images that were already cached still reflow a frame later.
-    window.setTimeout(apply, 80);
-    window.setTimeout(apply, 320);
+    deepLinkTimers.push(setTimeout(apply, 80));
+    deepLinkTimers.push(setTimeout(apply, 320));
   });
+}
+
+/**
+ * Called from the throttled scroll handler: if the position is more than a
+ * plate-reflow's worth away from what we last set, the reader moved it, not us.
+ */
+function noticeScrollAwayFromDeepLink(): void {
+  if (deepLinkAbandoned) return;
+  if (!deepLinkReleased(deepLinkAppliedY, currentScrollY())) return;
+  abandonDeepLink();
 }
 
 const soundEnabled = computed(() => !!props.bookOptions?.getSoundEnabled?.());
@@ -206,6 +250,56 @@ const soundEnabled = computed(() => !!props.bookOptions?.getSoundEnabled?.());
 /** Mobile / narrow UI — cover guide is a recallable popup (no full cover leaf in scroll mode). */
 const isMobileUi = ref(false);
 const guideOpen = ref(false);
+const scrollHowToOpen = ref(false);
+/** Scroll offset the toast opened at — it stays put until the reader moves. */
+let scrollHowToShownAtY = 0;
+
+function currentScrollY(): number {
+  return window.scrollY || window.pageYOffset || 0;
+}
+
+function dismissScrollHowTo(): void {
+  scrollHowToOpen.value = false;
+}
+
+function maybeShowScrollHowTo(): void {
+  if (
+    !shouldShowScrollHowTo({
+      seen: hasSeenScrollHowTo() || scrollHowToOpen.value,
+      mobile: isMobileUi.value,
+      vertical: viewMode.isVertical.value,
+      guideOpen: guideOpen.value,
+      promptOpen: autoRead.promptOpen.value,
+    })
+  ) {
+    return;
+  }
+  markScrollHowToSeen();
+  scrollHowToShownAtY = currentScrollY();
+  scrollHowToOpen.value = true;
+}
+
+/**
+ * Freeze the strip behind an open dialog.
+ *
+ * HeadlessUI locks the document with an inline `overflow: hidden` on <html>,
+ * but reader-shared.css unfreezes vertical mode with `overflow-y: visible
+ * !important` (it has to — HeadlessUI leaves that inline style behind after a
+ * dialog closes, which froze the reader). The stylesheet therefore wins while
+ * the dialog is still open, the 16k-tall strip stays scrollable underneath, and
+ * on a phone the finger pans *that* instead of the popup — the popup reads as
+ * unscrollable. This class re-locks it from the stylesheet side, where it can
+ * out-specify those rules.
+ */
+const dialogOpen = computed(() => guideOpen.value || autoRead.promptOpen.value);
+watch(dialogOpen, (locked) => document.body.classList.toggle("dialog-open", locked), { immediate: true });
+
+/** No timer: the toast is the answer to "what do I do", so it waits for the doing. */
+function notifyScrollHowToScroll(): void {
+  if (!scrollHowToOpen.value) return;
+  if (Math.abs(currentScrollY() - scrollHowToShownAtY) < SCROLL_HOWTO_DISMISS_PX) return;
+  scrollHowToOpen.value = false;
+}
 
 const coverTitle = computed(() => props.bookOptions?.coverTitle ?? props.altPrefix);
 const coverSubtitle = computed(() => props.bookOptions?.coverSubtitle ?? null);
@@ -251,6 +345,7 @@ function onGuideOpenUpdate(open: boolean): void {
       scrollVerticalToQueryPage();
       // After Story, invite one click so browser autoplay unlocks for captions.
       autoRead.maybeShowPrompt();
+      maybeShowScrollHowTo();
     });
   }
 }
@@ -262,12 +357,14 @@ function onAutoReadEnable(): void {
   void nextTick(() => {
     releaseBodyScrollLock();
     autoRead.kick();
+    maybeShowScrollHowTo();
   });
 }
 
 function onAutoReadDismiss(): void {
   autoRead.dismissPrompt();
   releaseBodyScrollLock();
+  maybeShowScrollHowTo();
 }
 
 function syncMobileUi(): void {
@@ -348,6 +445,8 @@ watch(() => engine.state.viewIndex, rememberPosition);
 const onWindowScroll = throttleTrailing(() => {
   syncScrollProgress();
   rememberPosition();
+  noticeScrollAwayFromDeepLink();
+  notifyScrollHowToScroll();
   if (!viewMode.isVertical.value) return;
   autoRead.notifyScroll();
 }, 32);
@@ -379,6 +478,7 @@ onMounted(() => {
     }
     if (!seen) guideOpen.value = true;
     else autoRead.maybeShowPrompt();
+    maybeShowScrollHowTo();
   });
 
   void viewMode.loadPages().then(async () => {
@@ -390,6 +490,8 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("scroll", onWindowScroll);
   onWindowScroll.cancel();
+  clearDeepLinkTimers();
+  document.body.classList.remove("dialog-open");
   autoRead.stop();
   if (!mobileMq) return;
   if (typeof mobileMq.removeEventListener === "function") {
@@ -480,6 +582,8 @@ defineExpose<ToonReaderShellExpose>({
     @enable="onAutoReadEnable"
     @dismiss="onAutoReadDismiss"
   />
+
+  <ScrollHowToHint :open="scrollHowToOpen" @dismiss="dismissScrollHowTo" />
 
   <main class="reader" id="main-content" ref="readerEl" role="main">
     <BookSurface

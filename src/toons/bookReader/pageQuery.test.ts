@@ -1,5 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { parsePageQuery, contentPageToViewIndex, writePageQuery, resetPageQueryCache } from "./pageQuery";
+import {
+  parsePageQuery,
+  contentPageToViewIndex,
+  writePageQuery,
+  resetPageQueryCache,
+  deepLinkReleased,
+  DEEP_LINK_RELEASE_PX,
+} from "./pageQuery";
 
 /** Put the jsdom window on a given URL without touching the module cache. */
 function setUrl(search: string): void {
@@ -94,5 +101,23 @@ describe("contentPageToViewIndex", () => {
     expect(contentPageToViewIndex(2, 4, false, 3)).toBe(1);
     expect(contentPageToViewIndex(3, 4, false, 3)).toBe(1);
     expect(contentPageToViewIndex(4, 4, false, 3)).toBe(2);
+  });
+});
+
+describe("deepLinkReleased", () => {
+  it("ignores the small reflow the deep link itself causes", () => {
+    expect(deepLinkReleased(32, 32)).toBe(false);
+    expect(deepLinkReleased(32, 60)).toBe(false);
+  });
+
+  it("releases once the reader has scrolled away", () => {
+    expect(deepLinkReleased(32, 212)).toBe(true);
+    expect(deepLinkReleased(32, 32 + DEEP_LINK_RELEASE_PX)).toBe(true);
+    // Upward flings count too — the direction is not the point.
+    expect(deepLinkReleased(400, 100)).toBe(true);
+  });
+
+  it("stays put while nothing has been applied yet", () => {
+    expect(deepLinkReleased(null, 5000)).toBe(false);
   });
 });

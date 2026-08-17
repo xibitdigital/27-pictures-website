@@ -1010,6 +1010,49 @@ a.sound-prompt__btn {
   height: clamp(3rem, 2.6rem + 1.2vw, 3.75rem);
 }
 
+/* Bouncing arrow — used by the how-to toast (.scroll-howto), not the guide:
+   the mobile guide is caption-only, no diagram. */
+.front-cover-howto-bounce {
+  animation: front-cover-howto-bounce 1.6s ease-in-out infinite;
+}
+
+/* Second chevron fades as the arrow travels — reads as "keep going" */
+.front-cover-howto-chevron-trail {
+  animation: front-cover-howto-trail 1.6s ease-in-out infinite;
+}
+
+@keyframes front-cover-howto-bounce {
+  0%,
+  100% {
+    transform: translateY(-5px);
+  }
+  55% {
+    transform: translateY(7px);
+  }
+}
+
+@keyframes front-cover-howto-trail {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  55% {
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .front-cover-howto-bounce,
+  .front-cover-howto-chevron-trail,
+  .scroll-howto {
+    animation: none;
+  }
+
+  .front-cover-howto-chevron-trail {
+    opacity: 0.45;
+  }
+}
+
 /* Keyboard keys — inactive base uses silver; .is-active uses accent */
 .front-cover-howto-key {
   fill: color-mix(in srgb, var(--bg-card) 70%, transparent);
@@ -1297,6 +1340,39 @@ body.view-vertical.toons-reader {
   position: relative !important;
   top: auto !important;
   width: auto !important;
+}
+
+/*
+ * Dialog open (cover guide / sound prompt): re-lock the document.
+ *
+ * The two rules above unfreeze vertical mode with !important, so they also beat
+ * the inline `overflow: hidden` HeadlessUI puts on <html> while a dialog is
+ * open. The strip behind the modal then keeps scrolling, and on a phone the
+ * finger pans the strip instead of the popup — the popup looks frozen even
+ * though its own scrollport is fine. ToonReaderShell adds `.dialog-open` to
+ * <body> for exactly as long as a dialog is up.
+ *
+ * No position:fixed / top offset here on purpose: overflow alone freezes the
+ * document without discarding the reading position, which is what the
+ * releaseBodyScrollLock() cleanup in the shell exists to repair.
+ */
+html:has(body.toons-reader.dialog-open) {
+  overflow: hidden !important;
+}
+
+body.toons-reader.dialog-open,
+body.view-vertical.toons-reader.dialog-open {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+/* Deliberately NOT `touch-action: none` on <body>: Chrome intersects
+   touch-action up the whole ancestor chain, so that would also forbid panning
+   the popup's own scrollport. overflow:hidden on html + body is what freezes
+   the document; the panel keeps its pan-y. */
+body.dialog-open .cover-guide-center,
+body.dialog-open .cover-guide-scroll {
+  touch-action: pan-y;
 }
 
 body.view-vertical .reader {
@@ -1827,6 +1903,113 @@ body.single-page .flip-page.flipping.from-left {
   opacity: 1;
 }
 
+/* One-shot mobile how-to, shown as soon as the strip is readable. Sits above
+   the 4px progress bar so it does not cover a caption in the focus band. */
+.scroll-howto {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  box-sizing: border-box;
+  width: min(24rem, calc(100vw - 1.5rem));
+  padding: 0.95rem 2.2rem 1rem 1.1rem;
+  border: 2px solid var(--red-smile);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text);
+  transform: translateX(-50%);
+  /* Loud on purpose: it is the only prompt a first-time reader gets */
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--red-smile) 40%, transparent),
+    0 18px 44px rgb(0 0 0 / 70%),
+    0 0 26px color-mix(in srgb, var(--red-smile) 35%, transparent);
+  animation: scroll-howto-in 0.32s ease-out both;
+}
+
+@keyframes scroll-howto-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.scroll-howto-arrow {
+  flex: 0 0 auto;
+  display: block;
+  width: 1.9rem;
+  height: 2.6rem;
+  overflow: visible;
+  /* Flipped: the toast sits at the bottom edge, so the arrow points back up
+     at the page it is talking about — and the bounce rides with it. */
+  transform: scaleY(-1);
+}
+
+.scroll-howto-arrow-glyph {
+  stroke: var(--red-smile);
+  fill: none;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--red-smile) 70%, transparent));
+}
+
+.scroll-howto-text {
+  min-width: 0;
+}
+
+.scroll-howto-label {
+  margin: 0 0 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--red-smile);
+}
+
+.scroll-howto-body {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.scroll-howto-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--silver);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.scroll-howto-close:hover,
+.scroll-howto-close:focus-visible {
+  color: var(--text);
+}
+
+.scroll-howto-close:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 1px;
+}
+
+@media (min-width: 769px) {
+  .scroll-howto {
+    display: none;
+  }
+}
+
 /* ── Mobile cover guide (story + how-to popup) ──
    Short phones (e.g. iPhone 13 mini): one outer scrollport must include
    title, synopsis, FlipFrame brand, and how-to — not a nested story-only scroll.
@@ -1850,20 +2033,28 @@ body.single-page .flip-page.flipping.from-left {
   inset: 0;
   z-index: 1;
   display: flex;
-  align-items: center;
+  /* flex-start + auto margins on the panel: centred when it fits, never
+     clipped at the top when it does not — `center` would cut the head off. */
+  align-items: flex-start;
   justify-content: center;
-  /* Prefer svh so mobile browser chrome doesn’t steal the scroll region */
   padding: max(0.5rem, env(safe-area-inset-top, 0px)) 0.75rem max(0.5rem, env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
-  /* Let the panel own vertical pan; avoid the page behind stealing gestures */
-  overscroll-behavior: none;
+  /* Outer safety net: if the panel ever measures taller than the viewport
+     (iOS chrome collapsing mid-gesture), the whole panel scrolls here. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .cover-guide-panel {
   width: min(22rem, 100%);
-  /* Cap height so .cover-guide-scroll becomes the scrollport on short screens */
-  max-height: min(92svh, 92dvh, 720px);
+  margin: auto;
+  /* Cap height so .cover-guide-scroll becomes the scrollport on short screens.
+     svh, not dvh: dvh grows and shrinks as the mobile browser bar hides, which
+     re-measures the scrollport mid-drag and can strand the content. */
   max-height: min(92dvh, 720px);
+  max-height: min(92svh, 720px);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -2087,8 +2278,8 @@ body.single-page .flip-page.flipping.from-left {
 
   /* Extra room on small phones (13 mini / SE): taller panel, tighter chrome */
   .cover-guide-panel {
-    max-height: min(94svh, 96dvh);
-    max-height: min(94dvh, 100%);
+    max-height: 94dvh;
+    max-height: 94svh;
     border-radius: 10px;
   }
 

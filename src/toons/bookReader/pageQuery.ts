@@ -86,6 +86,20 @@ export function writePageQuery(pageNum: number | null): string | null {
 }
 
 /**
+ * Plate reflow nudges the strip by a few px as lazy images decode; a swipe
+ * moves it by far more. Above this, the reader moved the page, not the reader
+ * code — measured on an iPhone simulator, where repeated deep-link re-applies
+ * yanked the strip back to `?page=` mid-swipe and read as "it will not scroll".
+ */
+export const DEEP_LINK_RELEASE_PX = 48;
+
+/** True once the position has left the deep-link target for good. */
+export function deepLinkReleased(appliedY: number | null, currentY: number, releasePx = DEEP_LINK_RELEASE_PX): boolean {
+  if (appliedY == null) return false;
+  return Math.abs(currentY - appliedY) >= releasePx;
+}
+
+/**
  * Map a 1-based content page number to the engine viewIndex.
  * - Single-page mode: cover=0, page1=1, … pageN=N, back=N+1
  * - Spread mode: use the same single-index → spread mapping as layout switches
