@@ -2517,11 +2517,6 @@ button:focus-visible {
 
 .series-card-chevron {
   display: inline-block;
-  transition: transform 0.25s var(--transition);
-}
-
-.series-card[open] .series-card-chevron {
-  transform: rotate(180deg);
 }
 
 /* Synopsis stays in the DOM on the single-episode cards — this page is
@@ -2537,10 +2532,109 @@ button:focus-visible {
   color: var(--silver);
 }
 
-/* ── Episode list (inside an open series card) ──
-   Rows, not posters: the series card above already carries the artwork, and a
-   second grid of covers under it competed with the shelf instead of reading as
-   a table of contents. The red rule and label mark it as a different level. */
+/* ── Episode picker dialog ──
+   Native <dialog>, so the backdrop, Escape and the focus trap come from the
+   platform. Sized to the content: an episode list is a short menu, not a page,
+   and a full-screen sheet for three rows reads as a mistake. */
+.episode-dialog {
+  /* The UA centres a modal <dialog> with `margin: auto`, which the `* { margin:
+     0 }` reset at the top of this file wipes out — without this it pins itself
+     to the top-left corner. Auto margins on a fixed, inset:0 box are what does
+     the centring; do not replace them with a transform. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(92vw, 620px);
+  max-height: 85dvh;
+  /* height:auto so `inset: 0` cannot stretch it to the full viewport. */
+  height: auto;
+  overflow-y: auto;
+  padding: 0 24px 24px;
+  border: 1px solid var(--border-light);
+  border-top: 2px solid var(--red-smile);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.episode-dialog::backdrop {
+  background: rgb(0 0 0 / 78%);
+  backdrop-filter: blur(3px);
+}
+
+/* Sticky so the title and the close button survive a long list scrolling. */
+.episode-dialog-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0 4px;
+  background: var(--bg-card);
+}
+
+.episode-dialog-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.1rem, 2.4vw, 1.4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.episode-dialog-close {
+  flex: none;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: var(--silver);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  transition:
+    color 0.2s var(--transition),
+    border-color 0.2s var(--transition);
+}
+
+.episode-dialog-close:hover,
+.episode-dialog-close:focus-visible {
+  color: var(--text);
+  border-color: var(--red-smile);
+}
+
+/* Inside the dialog the red rule above the list is redundant — the dialog
+   already carries one across its own top edge. */
+.episode-dialog .episode-block {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .episode-dialog[open] {
+    animation: episode-dialog-in 0.18s var(--transition);
+  }
+}
+
+/* translateY only — a scale or a centring transform would undo the auto
+   margins that put the dialog in the middle. */
+@keyframes episode-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Episode block (inside the picker dialog) ──
+   The episodes reuse .series-card and .series-grid verbatim — same card, same
+   grid, one level down. A parallel .episode-* set was the third copy of this
+   treatment in the file and drifted from the others within a day. */
 .episode-block {
   margin-top: 18px;
   padding-top: 14px;
@@ -2548,7 +2642,7 @@ button:focus-visible {
 }
 
 .episode-block-head {
-  margin-bottom: 6px;
+  margin-bottom: 14px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 3px;
@@ -2556,76 +2650,61 @@ button:focus-visible {
   color: var(--red-smile);
 }
 
-.episode-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+/* On a phone the picker's posters are 466px tall in a dialog capped at 85dvh,
+   so barely one episode is visible and choosing means scrolling a modal. Below
+   600px the episode cards go horizontal — thumbnail left, text right — and all
+   three fit at once, which is the whole point of a picker. The shelf outside
+   keeps its posters; that one is a display case, not a menu. */
+@media (max-width: 600px) {
+  .episode-block .series-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .episode-block .series-card-face {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    column-gap: 14px;
+    align-items: start;
+  }
+
+  .episode-block .series-card-art {
+    grid-row: 1 / span 3;
+  }
+
+  .episode-block .series-card-meta,
+  .episode-block .series-card-title,
+  .episode-block .series-card-cue {
+    grid-column: 2;
+    margin-top: 0;
+  }
+
+  .episode-block .series-card-title {
+    font-size: 1.05rem;
+  }
+
+  /* The synopsis goes: with it the three episodes still overflow a 667px-tall
+     phone, and "The Missing Child, 27 pages" is enough to choose between two
+     books whose covers are right there. The full copy lives on each reader. */
+  .episode-block .series-card-desc {
+    display: none;
+  }
 }
 
-.episode-list li {
-  border-bottom: 1px solid var(--border);
+/* An episode with no reader yet: dimmed, and its art slot is an empty frame so
+   the row still lines up. */
+.series-card--soon {
+  opacity: 0.55;
 }
 
-.episode-list a {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
-  align-items: baseline;
-  padding: 12px 4px;
-  text-decoration: none;
-  color: inherit;
-  transition: background 0.2s var(--transition);
-}
-
-.episode-list a:hover,
-.episode-list a:focus-visible {
-  background: var(--bg-card);
-}
-
-.episode-list-n {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--red-smile);
-}
-
-.episode-list-title {
-  display: block;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.episode-list-desc {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-top: 3px;
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--silver);
-}
-
-.episode-list-meta {
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: var(--silver);
-  white-space: nowrap;
-}
-
-.episode-list-soon {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  padding: 12px 4px;
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--silver);
+.series-card--soon .series-card-art {
+  aspect-ratio: 2 / 3;
+  border: 1px dashed var(--border-light);
+  box-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .series-card-art,
-  .series-card-chevron {
+  .series-card-art {
     transition: none;
   }
 }
