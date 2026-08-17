@@ -1,3 +1,8 @@
+/* Cache note: this file is served under a stable name with
+   `Cache-Control: immutable` and versioned by a ?v= query. That means a request
+   for a new ?v= landing before a deploy has propagated will cache the OLD body
+   under the NEW key, for a year, with no way to bust it except another bump.
+   Never verify a fresh hash until the deploy reports complete. */
 :root {
   --bg: #030303;
   --bg-dark: #000;
