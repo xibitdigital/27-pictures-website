@@ -168,7 +168,22 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <form class="contact-form" :action="action" method="POST" :aria-label="t.contactFormLabel" @submit="onSubmit">
+  <!--
+    `novalidate` is what makes the localized errors below reachable. With
+    `required` + `type="email"` the browser runs its own constraint check first,
+    blocks submission and shows a native bubble — worded in the *browser's* UI
+    language, not the page's, so an Italian page in an English Chrome scolds you
+    in English and `onSubmit` never fires. The `required` attributes stay: they
+    are the accessible semantics, and validation is ours to word.
+  -->
+  <form
+    class="contact-form"
+    :action="action"
+    method="POST"
+    novalidate
+    :aria-label="t.contactFormLabel"
+    @submit="onSubmit"
+  >
     <div class="form-group">
       <label for="name" class="sr-only">{{ t.contactName }}</label>
       <input
@@ -180,8 +195,10 @@ onUnmounted(() => {
         required
         autocomplete="name"
         :class="{ 'input-error': nameError }"
+        :aria-invalid="nameError ? 'true' : undefined"
+        :aria-describedby="nameError ? 'name-error' : undefined"
       />
-      <span v-if="nameError" class="error-message">{{ nameError }}</span>
+      <span v-if="nameError" id="name-error" class="error-message" role="alert">{{ nameError }}</span>
     </div>
     <div class="form-group">
       <label for="email" class="sr-only">{{ t.contactEmail }}</label>
@@ -194,8 +211,10 @@ onUnmounted(() => {
         required
         autocomplete="email"
         :class="{ 'input-error': emailError }"
+        :aria-invalid="emailError ? 'true' : undefined"
+        :aria-describedby="emailError ? 'email-error' : undefined"
       />
-      <span v-if="emailError" class="error-message">{{ emailError }}</span>
+      <span v-if="emailError" id="email-error" class="error-message" role="alert">{{ emailError }}</span>
     </div>
     <div class="form-group">
       <label for="message" class="sr-only">{{ t.contactMessageLabel }}</label>
@@ -207,8 +226,10 @@ onUnmounted(() => {
         rows="5"
         required
         :class="{ 'input-error': messageError }"
+        :aria-invalid="messageError ? 'true' : undefined"
+        :aria-describedby="messageError ? 'message-error' : undefined"
       />
-      <span v-if="messageError" class="error-message">{{ messageError }}</span>
+      <span v-if="messageError" id="message-error" class="error-message" role="alert">{{ messageError }}</span>
     </div>
     <div ref="turnstileEl" class="cf-turnstile" />
     <button type="submit" class="magnetic contact-btn" :disabled="submitting">

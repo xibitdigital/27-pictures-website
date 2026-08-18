@@ -42,6 +42,15 @@ describe("ContactForm", () => {
     document.documentElement.setAttribute("lang", "en");
   });
 
+  // Without novalidate the browser's own constraint check fires first, blocks
+  // submit and shows a bubble in the browser's UI language — so the localized
+  // errors above are unreachable and onSubmit never runs.
+  it("turns off native constraint validation so its own errors are reachable", () => {
+    const wrapper = mount(ContactForm);
+    expect(wrapper.find("form").attributes("novalidate")).toBeDefined();
+    expect(wrapper.find("#email").attributes("required")).toBeDefined();
+  });
+
   it("shows validation errors on empty submit", async () => {
     const wrapper = mount(ContactForm);
     await wrapper.find("form").trigger("submit.prevent");
