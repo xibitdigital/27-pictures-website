@@ -11,6 +11,35 @@ describe("SiteNav", () => {
     window.history.pushState({}, "", "/");
   });
 
+  // The logo was the one nav target hardcoded to "/", so pressing it on
+  // /it/watch/ reset you to the English homepage.
+  it("keeps the logo inside the current locale", () => {
+    const stubs = {
+      TransitionRoot: false,
+      TransitionChild: false,
+      Dialog: { template: "<div><slot /></div>" },
+      DialogPanel: { template: "<div><slot /></div>" },
+      DialogTitle: { template: "<div><slot /></div>" },
+    };
+
+    for (const [lang, path, expected] of [
+      ["it", "/it/watch/", "/it/"],
+      ["de", "/de/cosplay/", "/de/"],
+      ["fr", "/fr/toons/", "/fr/"],
+      ["en", "/watch/", "/"],
+    ] as const) {
+      document.documentElement.setAttribute("lang", lang);
+      window.history.pushState({}, "", path);
+      const wrapper = mount(SiteNav, {
+        props: { page: "watch" },
+        attachTo: document.body,
+        global: { stubs },
+      });
+      expect(wrapper.find("nav > a.magnetic").attributes("href"), path).toBe(expected);
+      wrapper.unmount();
+    }
+  });
+
   it("renders desktop section links for home", () => {
     const wrapper = mount(SiteNav, {
       props: { page: "home" },

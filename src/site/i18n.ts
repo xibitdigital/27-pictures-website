@@ -177,7 +177,13 @@ type NavKey =
   | "contactErrMessage"
   | "contactSent"
   | "contactFailed"
-  | "contactError";
+  | "contactError"
+  | "navMain"
+  | "navMenu"
+  | "navToggleMenu"
+  | "navMobileMenu"
+  | "navHomeAria"
+  | "navLogoTitle";
 
 export const UI: Record<Locale, Record<NavKey, string>> = {
   en: {
@@ -206,6 +212,12 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     contactSent: "Message sent successfully!",
     contactFailed: "Failed to send message. Please try again.",
     contactError: "An error occurred. Please try again.",
+    navMain: "Main navigation",
+    navMenu: "Navigation",
+    navToggleMenu: "Toggle navigation menu",
+    navMobileMenu: "Mobile navigation menu",
+    navHomeAria: "27 Pictures - Return to homepage",
+    navLogoTitle: "27 Pictures - Horror Film Production Studio",
   },
   de: {
     // "The Darkroom" stays: it is the name of the anthology strand, not a word.
@@ -234,6 +246,12 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     contactSent: "Nachricht erfolgreich gesendet!",
     contactFailed: "Nachricht konnte nicht gesendet werden. Bitte erneut versuchen.",
     contactError: "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
+    navMain: "Hauptnavigation",
+    navMenu: "Navigation",
+    navToggleMenu: "Navigationsmenü umschalten",
+    navMobileMenu: "Mobiles Navigationsmenü",
+    navHomeAria: "27 Pictures - Zurück zur Startseite",
+    navLogoTitle: "27 Pictures - Produktionsstudio für Horrorfilme",
   },
   it: {
     darkroom: "The Darkroom",
@@ -261,6 +279,12 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     contactSent: "Messaggio inviato con successo!",
     contactFailed: "Invio del messaggio non riuscito. Riprova.",
     contactError: "Si è verificato un errore. Riprova.",
+    navMain: "Navigazione principale",
+    navMenu: "Navigazione",
+    navToggleMenu: "Apri o chiudi il menu di navigazione",
+    navMobileMenu: "Menu di navigazione mobile",
+    navHomeAria: "27 Pictures - Torna alla home",
+    navLogoTitle: "27 Pictures - Studio di produzione di film horror",
   },
   fr: {
     darkroom: "The Darkroom",
@@ -288,5 +312,11 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     contactSent: "Message envoyé avec succès !",
     contactFailed: "Échec de l'envoi du message. Veuillez réessayer.",
     contactError: "Une erreur est survenue. Veuillez réessayer.",
+    navMain: "Navigation principale",
+    navMenu: "Navigation",
+    navToggleMenu: "Ouvrir ou fermer le menu de navigation",
+    navMobileMenu: "Menu de navigation mobile",
+    navHomeAria: "27 Pictures - Retour à l'accueil",
+    navLogoTitle: "27 Pictures - Studio de production de films d'horreur",
   },
 };

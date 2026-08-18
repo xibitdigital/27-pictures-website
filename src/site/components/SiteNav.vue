@@ -45,6 +45,15 @@ const languages = computed(() =>
   }))
 );
 
+/**
+ * The logo was the one nav target still hardcoded to `/`, so clicking it from
+ * /it/watch/ landed on the English homepage — a language reset in the element
+ * people press to go home. Every other link here already goes through
+ * localePath(); this one was simply missed, and a Vue component's hrefs are
+ * never touched by the locale-page generator that rewrites HTML templates.
+ */
+const homeHref = localePath("/", locale);
+
 const links = computed(() => [
   { href: localePath("/horror-shorts/", locale), label: t.darkroom, current: props.page === "horror-shorts" },
   { href: localePath("/watch/", locale), label: t.watch, current: props.page === "watch" },
@@ -95,22 +104,16 @@ onUnmounted(() => {
 
 <template>
   <header>
-    <nav role="navigation" aria-label="Main navigation">
-      <a v-magnetic href="/" class="magnetic" aria-label="27 Pictures - Return to homepage">
-        <img
-          src="/logo.png"
-          class="nav-logo-img"
-          alt="27 Pictures"
-          title="27 Pictures - Horror Film Production Studio"
-          height="40"
-        />
+    <nav role="navigation" :aria-label="t.navMain">
+      <a v-magnetic :href="homeHref" class="magnetic" :aria-label="t.navHomeAria">
+        <img src="/logo.png" class="nav-logo-img" alt="27 Pictures" :title="t.navLogoTitle" height="40" />
       </a>
 
       <button
         type="button"
         class="burger-btn"
         :class="{ active: menuOpen }"
-        aria-label="Toggle navigation menu"
+        :aria-label="t.navToggleMenu"
         :aria-expanded="menuOpen"
         aria-controls="mobileMenu"
         @click="menuOpen = !menuOpen"
@@ -236,9 +239,9 @@ onUnmounted(() => {
         leave-from="mobile-menu-leave-from"
         leave-to="mobile-menu-leave-to"
       >
-        <div class="mobile-menu active" aria-label="Mobile navigation menu">
+        <div class="mobile-menu active" :aria-label="t.navMobileMenu">
           <DialogPanel class="mobile-menu-panel">
-            <DialogTitle class="sr-only">Navigation</DialogTitle>
+            <DialogTitle class="sr-only">{{ t.navMenu }}</DialogTitle>
             <a
               v-for="link in links"
               :key="'m-' + link.href + link.label"
