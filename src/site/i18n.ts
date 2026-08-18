@@ -163,7 +163,21 @@ type NavKey =
   | "pageOf"
   | "pagesCount"
   | "vote"
-  | "votes";
+  | "votes"
+  | "contactFormLabel"
+  | "contactName"
+  | "contactEmail"
+  | "contactMessage"
+  | "contactMessageLabel"
+  | "contactSend"
+  | "contactSending"
+  | "contactVerifying"
+  | "contactErrName"
+  | "contactErrEmail"
+  | "contactErrMessage"
+  | "contactSent"
+  | "contactFailed"
+  | "contactError";
 
 export const UI: Record<Locale, Record<NavKey, string>> = {
   en: {
@@ -178,6 +192,20 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     pagesCount: "{n} pages",
     vote: "vote",
     votes: "votes",
+    contactFormLabel: "Contact form",
+    contactName: "Your Name",
+    contactEmail: "Your Email",
+    contactMessage: "Tell us about your project...",
+    contactMessageLabel: "Your Message",
+    contactSend: "Send Message",
+    contactSending: "Sending...",
+    contactVerifying: "Verifying...",
+    contactErrName: "Please enter your name",
+    contactErrEmail: "Please enter a valid email address",
+    contactErrMessage: "Please enter a message",
+    contactSent: "Message sent successfully!",
+    contactFailed: "Failed to send message. Please try again.",
+    contactError: "An error occurred. Please try again.",
   },
   de: {
     // "The Darkroom" stays: it is the name of the anthology strand, not a word.
@@ -192,6 +220,20 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     pagesCount: "{n} Seiten",
     vote: "Stimme",
     votes: "Stimmen",
+    contactFormLabel: "Kontaktformular",
+    contactName: "Ihr Name",
+    contactEmail: "Ihre E-Mail",
+    contactMessage: "Erzählen Sie uns von Ihrem Projekt...",
+    contactMessageLabel: "Ihre Nachricht",
+    contactSend: "Nachricht senden",
+    contactSending: "Wird gesendet...",
+    contactVerifying: "Wird geprüft...",
+    contactErrName: "Bitte geben Sie Ihren Namen ein",
+    contactErrEmail: "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    contactErrMessage: "Bitte geben Sie eine Nachricht ein",
+    contactSent: "Nachricht erfolgreich gesendet!",
+    contactFailed: "Nachricht konnte nicht gesendet werden. Bitte erneut versuchen.",
+    contactError: "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
   },
   it: {
     darkroom: "The Darkroom",
@@ -205,6 +247,20 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     pagesCount: "{n} pagine",
     vote: "voto",
     votes: "voti",
+    contactFormLabel: "Modulo di contatto",
+    contactName: "Il tuo nome",
+    contactEmail: "La tua email",
+    contactMessage: "Raccontaci del tuo progetto...",
+    contactMessageLabel: "Il tuo messaggio",
+    contactSend: "Invia messaggio",
+    contactSending: "Invio in corso...",
+    contactVerifying: "Verifica in corso...",
+    contactErrName: "Inserisci il tuo nome",
+    contactErrEmail: "Inserisci un indirizzo email valido",
+    contactErrMessage: "Inserisci un messaggio",
+    contactSent: "Messaggio inviato con successo!",
+    contactFailed: "Invio del messaggio non riuscito. Riprova.",
+    contactError: "Si è verificato un errore. Riprova.",
   },
   fr: {
     darkroom: "The Darkroom",
@@ -218,5 +274,19 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     pagesCount: "{n} pages",
     vote: "vote",
     votes: "votes",
+    contactFormLabel: "Formulaire de contact",
+    contactName: "Votre nom",
+    contactEmail: "Votre e-mail",
+    contactMessage: "Parlez-nous de votre projet...",
+    contactMessageLabel: "Votre message",
+    contactSend: "Envoyer le message",
+    contactSending: "Envoi en cours...",
+    contactVerifying: "Vérification en cours...",
+    contactErrName: "Veuillez saisir votre nom",
+    contactErrEmail: "Veuillez saisir une adresse e-mail valide",
+    contactErrMessage: "Veuillez saisir un message",
+    contactSent: "Message envoyé avec succès !",
+    contactFailed: "Échec de l'envoi du message. Veuillez réessayer.",
+    contactError: "Une erreur est survenue. Veuillez réessayer.",
   },
 };
