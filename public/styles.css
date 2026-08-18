@@ -1065,9 +1065,15 @@ button:focus-visible {
   .video-frame,
   .latest-card-frame {
     border-left: none;
-    border-top: 4px solid var(--red-smile);
     border-right: none;
     box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+  }
+  /* The red edge moves from the side to the top when these stack — but not on
+     .latest-card-frame: its card already carries a red rule across the top, so
+     a second one 14px below it read as two separators for one card. */
+  .clown-hero-frame,
+  .video-frame {
+    border-top: 4px solid var(--red-smile);
   }
   .clown-hero-frame::before,
   .video-frame::before,

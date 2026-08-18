@@ -80,9 +80,9 @@ describe("SiteNav", () => {
 
     const hrefs = wrapper.findAll(".nav-links a.magnetic").map((a) => a.attributes("href"));
     expect(hrefs).toContain("/it/toons/");
-    expect(hrefs).toContain("/cosplay/");
-    expect(hrefs).toContain("/horror-shorts/");
-    expect(hrefs).not.toContain("/it/cosplay/");
+    expect(hrefs).toContain("/it/cosplay/");
+    expect(hrefs).toContain("/it/horror-shorts/");
+    expect(hrefs).not.toContain("/cosplay/");
     const langs = wrapper.findAll(".nav-links .nav-lang");
     expect(langs.map((a) => a.attributes("href"))).toEqual(
       expect.arrayContaining(["/toons/", "/it/toons/", "/de/toons/", "/fr/toons/"])
@@ -101,9 +101,10 @@ describe("SiteNav", () => {
 
   it("hides the language switcher on pages that have no translation", () => {
     document.documentElement.setAttribute("lang", "en");
-    window.history.pushState({}, "", "/cosplay/");
+    // A reader: its captions are multilingual, the page itself is English only.
+    window.history.pushState({}, "", "/toons/nero/");
     const wrapper = mount(SiteNav, {
-      props: { page: "cosplay" },
+      props: { page: "toons" },
       attachTo: document.body,
       global: {
         stubs: {

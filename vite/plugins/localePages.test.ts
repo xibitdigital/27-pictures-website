@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { generateLocalePages, localizePageUrl, renderLocalePage } from "./localePages";
+import { generateLocalePages, localizePageUrl, renderLocalePage, LOCALE_PAGES, PAGE_LOCALES } from "./localePages";
 
 const TEMPLATE = `<!doctype html>
 <html lang="en">
@@ -178,16 +178,18 @@ it("renders the real toons landing template into Italian", () => {
 describe("generateLocalePages", () => {
   let root: string;
 
+  // One fixture per real entry, so adding a page to LOCALE_PAGES cannot pass
+  // here while the copy or template it names is missing.
   beforeEach(() => {
     root = fs.mkdtempSync(path.join(os.tmpdir(), "locale-pages-"));
-    fs.mkdirSync(path.join(root, "toons/erin-and-the-goblins"), { recursive: true });
-    fs.mkdirSync(path.join(root, "site/locales/toons-index"), { recursive: true });
-    fs.mkdirSync(path.join(root, "site/locales/erin-and-the-goblins"), { recursive: true });
-    fs.writeFileSync(path.join(root, "toons/index.html"), TEMPLATE);
-    fs.writeFileSync(path.join(root, "toons/erin-and-the-goblins/index.html"), TEMPLATE);
-    for (const locale of ["de", "it", "fr"] as const) {
-      fs.writeFileSync(path.join(root, `site/locales/toons-index/${locale}.json`), JSON.stringify(COPY));
-      fs.writeFileSync(path.join(root, `site/locales/erin-and-the-goblins/${locale}.json`), JSON.stringify(COPY));
+    for (const page of LOCALE_PAGES) {
+      const template = path.join(root, page.template);
+      fs.mkdirSync(path.dirname(template), { recursive: true });
+      fs.writeFileSync(template, TEMPLATE);
+      fs.mkdirSync(path.join(root, page.copyDir), { recursive: true });
+      for (const locale of PAGE_LOCALES) {
+        fs.writeFileSync(path.join(root, page.copyDir, `${locale}.json`), JSON.stringify(COPY));
+      }
     }
   });
 
@@ -195,7 +197,7 @@ describe("generateLocalePages", () => {
 
   it("writes one HTML file per locale under src/<locale>/", () => {
     const written = generateLocalePages(root);
-    expect(written).toHaveLength(6);
+    expect(written).toHaveLength(LOCALE_PAGES.length * PAGE_LOCALES.length);
     expect(fs.existsSync(path.join(root, "it/toons/index.html"))).toBe(true);
     expect(fs.readFileSync(path.join(root, "de/toons/index.html"), "utf8")).toContain('<html lang="de">');
     expect(fs.readFileSync(path.join(root, "fr/toons/index.html"), "utf8")).toContain('<html lang="fr">');

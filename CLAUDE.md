@@ -22,7 +22,7 @@ invisible from either side. Reach for, in order:
 3. A **semantic selector** — `a[href]`, `img`, `[role="dialog"]`.
 
 Adding a class purely so `<body>` can be styled (`body.dialog-open`) is fine:
-that is a CSS hook written *to* the DOM, not a query read *from* it.
+that is a CSS hook written _to_ the DOM, not a query read _from_ it.
 
 ## CSS Guidelines
 
@@ -231,10 +231,10 @@ referenced by `content/toons/*/config.json`, `src/toons/config-lock.json` and
 Alternative to `scripts/generate-toon-page.py`, which calls the RunComfy
 **model API** rather than ComfyUI itself:
 
-| File                              | Format | Use                                             |
-| --------------------------------- | ------ | ----------------------------------------------- |
-| `workflows/nero-seedream.json`     | UI     | Drag onto the canvas, edit visually             |
-| `workflows/nero-seedream.api.json` | API    | `POST /prompt`; named inputs, no widget drift   |
+| File                               | Format | Use                                           |
+| ---------------------------------- | ------ | --------------------------------------------- |
+| `workflows/nero-seedream.json`     | UI     | Drag onto the canvas, edit visually           |
+| `workflows/nero-seedream.api.json` | API    | `POST /prompt`; named inputs, no widget drift |
 
 `LoadImage ×3 → ImageBatch → ImageBatch → ByteDanceSeedreamNode → SaveImage`.
 The batch chain fixes the reference order as **Nero sheet, Eve sheet, previous
@@ -347,14 +347,18 @@ npm run generate-qr
 
 ## Site pages
 
-| URL               | Source                     | Role                                                        |
-| ----------------- | -------------------------- | ----------------------------------------------------------- |
-| `/`               | `src/index.html`           | Studio homepage — sections + summaries that link out         |
-| `/horror-shorts/` | `src/horror-shorts/`       | The Red Smile anthology hub; links out to one page per film  |
-| `/horror-shorts/<slug>/` | `src/horror-shorts/<slug>/` | One Red Smile short: player, writeup, `VideoObject`     |
-| `/cosplay/`       | `src/cosplay/`             | Cosplay production service page + FAQ                        |
-| `/toons/`         | `src/toons/index.html`     | Interactive Toons index (readers live at `/toons/<name>/`)   |
-| `/qr.html`        | `public/qr.html`           | Printed-QR landing page (`noindex`)                          |
+| URL                      | Source                      | Role                                                        |
+| ------------------------ | --------------------------- | ----------------------------------------------------------- |
+| `/`                      | `src/index.html`            | Studio homepage — sections + summaries that link out        |
+| `/horror-shorts/`        | `src/horror-shorts/`        | The Red Smile anthology hub; links out to one page per film |
+| `/horror-shorts/<slug>/` | `src/horror-shorts/<slug>/` | One Red Smile short: player, writeup, `VideoObject`         |
+| `/cosplay/`              | `src/cosplay/`              | Cosplay production service page + FAQ                       |
+| `/toons/`                | `src/toons/index.html`      | Interactive Toons index (readers live at `/toons/<name>/`)  |
+| `/watch/`                | `src/watch/`                | Every release in one place — click-to-play façades          |
+| `/qr.html`               | `public/qr.html`            | Printed-QR landing page (`noindex`)                         |
+
+Every row above except `/qr.html` also answers under `/de/`, `/it/` and `/fr/`
+— generated, not hand-written; see _Adding a page, and translating it_.
 
 Each page mounts the same Vue chrome via its own entry in `src/site/`
 (`main.ts`, `toonsMain.ts`, `cosplayMain.ts`, `horrorShortsMain.ts`) and needs a
@@ -383,6 +387,84 @@ heading treatment (Playfair, `7vw`, `15vw` under 768px) and its `10%` side
 gutter, so they read as one site. Card grids carry no borders — separation is
 background only.
 
+### Adding a page, and translating it (de / it / fr)
+
+English lives at the root; the other locales are generated subdirectories —
+`/de/cosplay/`, `/it/horror-shorts/the-doll-moved-again/`. **The locale HTML is
+built, never hand-written**: `vite/plugins/localePages.ts` renders the English
+template through a per-locale JSON of copy before Vite scans MPA inputs, so
+`/fr/watch/` is a real entry with real HTML for crawlers. `src/de/`, `src/it/`
+and `src/fr/` are gitignored — editing a file there is editing a build artefact.
+
+**Every indexable site page is translated. Readers are not** — their captions
+are already multilingual, and a `/de/toons/nero/` whose chrome is German and
+whose story is English is a language mismatch Google drops the whole cluster
+for.
+
+Adding a page:
+
+1. `src/<path>/index.html` + an entry module in `src/site/`, and a matching
+   `rollupOptions.input` line only if `htmlEntries()` cannot find it (it walks
+   for `index.html`, so usually nothing to do).
+2. `public/sitemap.xml`, `public/llms.txt`, and a real internal link — see
+   _Sitemap + getting new URLs indexed_.
+3. Then translate it, below.
+
+Translating it:
+
+1. **Tag the English template.** Text nodes take `data-i18n="key"`; a node with
+   inline markup (`<strong>`, `<a>`, `<em>`, `<br />`) takes
+   `data-i18n-html="key"` and its copy value carries that markup. Attributes take
+   `data-i18n-content` (meta), `data-i18n-alt`, `data-i18n-aria-label`. Keys are
+   stripped from the generated file, so they never ship.
+2. **Add the hreflang cluster** to the template's `<head>`, between
+   `<!-- hreflang:start -->` and `<!-- hreflang:end -->`: `en`, `de`, `it`, `fr`
+   and `x-default`, all five, on every variant. An incomplete or non-reciprocal
+   cluster is ignored wholesale. `canonical`, `og:url`, `og:locale` and
+   `<html lang>` are rewritten for you.
+3. **Register the page** in `LOCALE_PAGES` (`vite/plugins/localePages.ts`) with
+   its `template`, `copyDir` and `urlPath`, and add the same `urlPath` to
+   `LOCALIZED_PATHS` in `src/site/i18n.ts`. The plugin list writes the files;
+   the `i18n.ts` list is what the nav and the language switcher believe. A path
+   in one and not the other is a switcher pointing at a 404.
+4. **Write `src/site/locales/<copyDir>/{de,it,fr}.json`** — one key per tag. A
+   missing key keeps the English text, which is a silent half-translated page,
+   so diff the keys against the template rather than trusting the build.
+   Proper nouns stay: film titles, `The Red Smile`, `RED SMILE: static`, toon
+   names. Leave those keys out entirely instead of copying English into them.
+5. **Translate the JSON-LD** under `"schema"`. `name` / `headline` /
+   `description` hit the WebPage, `breadcrumbHome` / `breadcrumbToons` /
+   `breadcrumbHere` the BreadcrumbList, and anything else goes through
+   `"nodes"`, keyed by a node's `@id` fragment with dotted paths inside it:
+
+   ```json
+   "nodes": {
+     "#faq": { "mainEntity.0.acceptedAnswer.text": "…" },
+     "#cosplay-service": { "hasOfferCatalog.itemListElement.0.itemOffered.name": "…" }
+   }
+   ```
+
+   Paths that do not already exist are ignored, so a stale key cannot invent a
+   property. `inLanguage` is set for you.
+
+6. **Sitemap**: one `<url>` per locale (`/de/<path>/`, …) beside the English
+   one, with the locale's own `<image:title>` / `<image:caption>`.
+7. `npm run format && npm test`, then build — the pages are written at build
+   time, so `dist/de/<path>/index.html` existing is the real check.
+
+Two things the generator handles that are easy to get wrong by hand:
+
+- **Internal links.** A localized page's own hrefs are rewritten to the locale
+  (`/cosplay/` → `/de/cosplay/`) for every path in `LOCALIZED_PAGE_HREFS`;
+  reader links get `?lang=de` instead so captions open in that language;
+  assets and `/qr.html` are left alone.
+- **Global schema entities.** `#organization`, `#website`, the founders — every
+  page references those by one canonical `@id`, so URLs hanging off the origin
+  root with a fragment are never localized. The homepage needs
+  `localizeIds: ["#webpage"]` for exactly this reason: its `urlPath` is `/`, so
+  without it the whole graph would be rewritten to `/de/#organization` and stop
+  resolving.
+
 ## Toon Reader (FlipFrame — Erin, Jax, Nero, …)
 
 Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
@@ -396,13 +478,13 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | `public/toons/reader-shared.css`     | Shared book chrome + word/bubble CSS (all toons)          |
 | `public/toons/**/assets/`            | **Gitignored** — load via `VITE_ASSET_BASE`               |
 
-| Toon | URL            | Notes                                                                                                                  |
-| ---- | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Erin | `/toons/erin/` | Page-turner prototype                                                                                                  |
-| Jax  | `/toons/jax/`  | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)             |
-| Nero | `/toons/nero/` | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`) |
-| RED SMILE: static | `/toons/redsmile-static/` | B&W horror short — Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page` |
-| Erin EP 2 | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
+| Toon              | URL                        | Notes                                                                                                                                                                                            |
+| ----------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Erin              | `/toons/erin/`             | Page-turner prototype                                                                                                                                                                            |
+| Jax               | `/toons/jax/`              | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)                                                                                       |
+| Nero              | `/toons/nero/`             | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`)                                                                           |
+| RED SMILE: static | `/toons/redsmile-static/`  | B&W horror short — Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                                                                |
+| Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
 
 **Erin EP 2 is deliberately unlisted on `main`**: no card in `/toons/`, no
 sitemap or `llms.txt` entry, `noindex, nofollow` on the reader — a
@@ -456,8 +538,7 @@ iframe on click (`src/site/ytFacade.ts`, styles under `.yt-facade` in
 `styles.css`):
 
 ```html
-<div class="yt-facade" data-embed="https://www.youtube.com/embed/<id>"
-     data-poster="<video id>" data-title="…"></div>
+<div class="yt-facade" data-embed="https://www.youtube.com/embed/<id>" data-poster="<video id>" data-title="…"></div>
 ```
 
 Call `initYouTubeFacades()` from the page's entry module — `main.ts`,
@@ -531,10 +612,10 @@ index), scroll mode from document scroll.
 `reader-shared.css` used to hardcode Jax's plate shape in two places, which
 silently mis-sized every other toon:
 
-| Token             | What it drives                                   | Default (fallback) |
-| ----------------- | ------------------------------------------------ | ------------------ |
-| `--plate-aspect`  | `aspect-ratio` of a vertical-scroll page slot     | `1008 / 1792`      |
-| `--strip-width`   | Width cap of the scroll strip                     | `min(98vw, 720px)` |
+| Token            | What it drives                                | Default (fallback) |
+| ---------------- | --------------------------------------------- | ------------------ |
+| `--plate-aspect` | `aspect-ratio` of a vertical-scroll page slot | `1008 / 1792`      |
+| `--strip-width`  | Width cap of the scroll strip                 | `min(98vw, 720px)` |
 
 Each toon declares its real values next to its book tokens: Erin and Erin EP 2
 are `1152 / 1728` and raise the strip to `900px`, Nero and RED SMILE are
@@ -594,7 +675,7 @@ not reintroduce `?v=` there; the plugin replaces such a query if it finds one.
 
 **Why not `?v=`, which is what this used to do.** `_headers` serves these
 `immutable, max-age=1y`, and a CDN keys on the whole URL including the query. So
-`?v=` created a new cache key while the *path* still pointed at a file whose
+`?v=` created a new cache key while the _path_ still pointed at a file whose
 body changes. One request for a new `?v=` landing before a deploy finished
 propagating cached the old body under the new key — immutably, for a year, with
 no way out but changing the content again to get a different key. That reached
@@ -681,8 +762,7 @@ don't reintroduce it. Bubbles (and any word with audio) must capture clicks
 > and the script deletes the previous file whenever a hash changes. That wipes
 > locally staged clips other toons' configs still point at (R2 is untouched, so
 > production keeps working). To redo a single clip: change its `prompt`, delete
-> just that slug's entry from `scripts/jax-sfx-lock.json`, and run **without**
-> `--force`. If `--force` already ran, restore with
+> just that slug's entry from `scripts/jax-sfx-lock.json`, and run **without** > `--force`. If `--force` already ran, restore with
 > `git checkout scripts/jax-sfx-lock.json` + `npm run backup-cdn` files from
 > `cdn-backup/`.
 

@@ -24,8 +24,24 @@ export const DEFAULT_LOCALE: Locale = "en";
 /**
  * Paths that have a real translated document. Trailing slash is required; this
  * is `/toons/` the landing page, not `/toons/erin/` the reader.
+ *
+ * Keep in step with `LOCALE_PAGES` in `vite/plugins/localePages.ts` — that list
+ * is what actually writes the HTML, and a path here without a page there sends
+ * the language switcher to a 404.
  */
-export const LOCALIZED_PATHS = ["/toons/", "/toons/erin-and-the-goblins/"] as const;
+export const LOCALIZED_PATHS = [
+  "/",
+  "/watch/",
+  "/cosplay/",
+  "/horror-shorts/",
+  "/horror-shorts/the-doll-moved-again/",
+  "/horror-shorts/shes-not-running-away/",
+  "/horror-shorts/she-asked-for-directions/",
+  "/horror-shorts/something-is-wrong-with-my-reflection/",
+  "/horror-shorts/he-streamed-the-challenge/",
+  "/toons/",
+  "/toons/erin-and-the-goblins/",
+] as const;
 
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: "EN",
@@ -75,11 +91,19 @@ export function isLocalizedPath(pathname: string): boolean {
   return (LOCALIZED_PATHS as readonly string[]).includes(path);
 }
 
-/** The same page in another locale. Untranslated pages stay on their English URL. */
+/**
+ * The same page in another locale. Untranslated pages stay on their English URL.
+ * A query or fragment rides along: `/#contact` on a German page is
+ * `/de/#contact`, which is the German homepage's contact section, not the
+ * English one's.
+ */
 export function localePath(pathname: string, locale: Locale): string {
-  const { path } = splitLocale(pathname);
-  if (!isLocalizedPath(path)) return path;
-  return locale === DEFAULT_LOCALE ? path : `/${locale}${path}`;
+  const cut = pathname.search(/[?#]/);
+  const bare = cut === -1 ? pathname : pathname.slice(0, cut);
+  const rest = cut === -1 ? "" : pathname.slice(cut);
+  const { path } = splitLocale(bare);
+  if (!isLocalizedPath(path)) return `${path}${rest}`;
+  return `${locale === DEFAULT_LOCALE ? path : `/${locale}${path}`}${rest}`;
 }
 
 /**

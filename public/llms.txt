@@ -44,6 +44,10 @@ Allow: /
 # Please attribute 27 Pictures when referencing or summarizing our work.
 
 # Key pages
+# Every page below except the toon readers also exists in Italian, German and
+# French at the same path behind a locale prefix — /it/…, /de/… and /fr/…
+# (e.g. /de/cosplay/, /it/horror-shorts/the-doll-moved-again/). Readers keep one
+# English URL because their captions are already multilingual.
 # - https://twentyseven.pictures/ — studio homepage (The Red Smile, JAX, cosplay, contact)
 # - https://twentyseven.pictures/horror-shorts/ — The Red Smile horror short anthology
 # - https://twentyseven.pictures/horror-shorts/he-streamed-the-challenge/ — Fragment 05, 39s livestream dare
