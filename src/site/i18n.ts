@@ -24,8 +24,24 @@ export const DEFAULT_LOCALE: Locale = "en";
 /**
  * Paths that have a real translated document. Trailing slash is required; this
  * is `/toons/` the landing page, not `/toons/erin/` the reader.
+ *
+ * Keep in step with `LOCALE_PAGES` in `vite/plugins/localePages.ts` — that list
+ * is what actually writes the HTML, and a path here without a page there sends
+ * the language switcher to a 404.
  */
-export const LOCALIZED_PATHS = ["/toons/", "/toons/erin-and-the-goblins/"] as const;
+export const LOCALIZED_PATHS = [
+  "/",
+  "/watch/",
+  "/cosplay/",
+  "/horror-shorts/",
+  "/horror-shorts/the-doll-moved-again/",
+  "/horror-shorts/shes-not-running-away/",
+  "/horror-shorts/she-asked-for-directions/",
+  "/horror-shorts/something-is-wrong-with-my-reflection/",
+  "/horror-shorts/he-streamed-the-challenge/",
+  "/toons/",
+  "/toons/erin-and-the-goblins/",
+] as const;
 
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: "EN",
@@ -75,11 +91,19 @@ export function isLocalizedPath(pathname: string): boolean {
   return (LOCALIZED_PATHS as readonly string[]).includes(path);
 }
 
-/** The same page in another locale. Untranslated pages stay on their English URL. */
+/**
+ * The same page in another locale. Untranslated pages stay on their English URL.
+ * A query or fragment rides along: `/#contact` on a German page is
+ * `/de/#contact`, which is the German homepage's contact section, not the
+ * English one's.
+ */
 export function localePath(pathname: string, locale: Locale): string {
-  const { path } = splitLocale(pathname);
-  if (!isLocalizedPath(path)) return path;
-  return locale === DEFAULT_LOCALE ? path : `/${locale}${path}`;
+  const cut = pathname.search(/[?#]/);
+  const bare = cut === -1 ? pathname : pathname.slice(0, cut);
+  const rest = cut === -1 ? "" : pathname.slice(cut);
+  const { path } = splitLocale(bare);
+  if (!isLocalizedPath(path)) return `${path}${rest}`;
+  return `${locale === DEFAULT_LOCALE ? path : `/${locale}${path}`}${rest}`;
 }
 
 /**
@@ -139,7 +163,21 @@ type NavKey =
   | "pageOf"
   | "pagesCount"
   | "vote"
-  | "votes";
+  | "votes"
+  | "contactFormLabel"
+  | "contactName"
+  | "contactEmail"
+  | "contactMessage"
+  | "contactMessageLabel"
+  | "contactSend"
+  | "contactSending"
+  | "contactVerifying"
+  | "contactErrName"
+  | "contactErrEmail"
+  | "contactErrMessage"
+  | "contactSent"
+  | "contactFailed"
+  | "contactError";
 
 export const UI: Record<Locale, Record<NavKey, string>> = {
   en: {
@@ -154,6 +192,20 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     pagesCount: "{n} pages",
     vote: "vote",
     votes: "votes",
+    contactFormLabel: "Contact form",
+    contactName: "Your Name",
+    contactEmail: "Your Email",
+    contactMessage: "Tell us about your project...",
+    contactMessageLabel: "Your Message",
+    contactSend: "Send Message",
+    contactSending: "Sending...",
+    contactVerifying: "Verifying...",
+    contactErrName: "Please enter your name",
+    contactErrEmail: "Please enter a valid email address",
+    contactErrMessage: "Please enter a message",
+    contactSent: "Message sent successfully!",
+    contactFailed: "Failed to send message. Please try again.",
+    contactError: "An error occurred. Please try again.",
   },
   de: {
     // "The Darkroom" stays: it is the name of the anthology strand, not a word.
@@ -168,6 +220,20 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     pagesCount: "{n} Seiten",
     vote: "Stimme",
     votes: "Stimmen",
+    contactFormLabel: "Kontaktformular",
+    contactName: "Ihr Name",
+    contactEmail: "Ihre E-Mail",
+    contactMessage: "Erzählen Sie uns von Ihrem Projekt...",
+    contactMessageLabel: "Ihre Nachricht",
+    contactSend: "Nachricht senden",
+    contactSending: "Wird gesendet...",
+    contactVerifying: "Wird geprüft...",
+    contactErrName: "Bitte geben Sie Ihren Namen ein",
+    contactErrEmail: "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    contactErrMessage: "Bitte geben Sie eine Nachricht ein",
+    contactSent: "Nachricht erfolgreich gesendet!",
+    contactFailed: "Nachricht konnte nicht gesendet werden. Bitte erneut versuchen.",
+    contactError: "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
   },
   it: {
     darkroom: "The Darkroom",
@@ -181,6 +247,20 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     pagesCount: "{n} pagine",
     vote: "voto",
     votes: "voti",
+    contactFormLabel: "Modulo di contatto",
+    contactName: "Il tuo nome",
+    contactEmail: "La tua email",
+    contactMessage: "Raccontaci del tuo progetto...",
+    contactMessageLabel: "Il tuo messaggio",
+    contactSend: "Invia messaggio",
+    contactSending: "Invio in corso...",
+    contactVerifying: "Verifica in corso...",
+    contactErrName: "Inserisci il tuo nome",
+    contactErrEmail: "Inserisci un indirizzo email valido",
+    contactErrMessage: "Inserisci un messaggio",
+    contactSent: "Messaggio inviato con successo!",
+    contactFailed: "Invio del messaggio non riuscito. Riprova.",
+    contactError: "Si è verificato un errore. Riprova.",
   },
   fr: {
     darkroom: "The Darkroom",
@@ -194,5 +274,19 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     pagesCount: "{n} pages",
     vote: "vote",
     votes: "votes",
+    contactFormLabel: "Formulaire de contact",
+    contactName: "Votre nom",
+    contactEmail: "Votre e-mail",
+    contactMessage: "Parlez-nous de votre projet...",
+    contactMessageLabel: "Votre message",
+    contactSend: "Envoyer le message",
+    contactSending: "Envoi en cours...",
+    contactVerifying: "Vérification en cours...",
+    contactErrName: "Veuillez saisir votre nom",
+    contactErrEmail: "Veuillez saisir une adresse e-mail valide",
+    contactErrMessage: "Veuillez saisir un message",
+    contactSent: "Message envoyé avec succès !",
+    contactFailed: "Échec de l'envoi du message. Veuillez réessayer.",
+    contactError: "Une erreur est survenue. Veuillez réessayer.",
   },
 };

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import ContactForm from "./ContactForm.vue";
+import { LOCALES, UI } from "../i18n";
 
 describe("ContactForm", () => {
   afterEach(() => {
@@ -14,6 +15,40 @@ describe("ContactForm", () => {
     expect(wrapper.find("#email").exists()).toBe(true);
     expect(wrapper.find("#message").exists()).toBe(true);
     expect(wrapper.find('button[type="submit"]').text()).toMatch(/Send Message/i);
+  });
+
+  // The locale-page generator only rewrites HTML templates, so this component
+  // has to read `<html lang>` itself or every /de/, /it/ and /fr/ page ships an
+  // English form. Regression guard: it stayed English once already.
+  it("renders its labels, placeholders and errors in the document locale", async () => {
+    for (const locale of LOCALES) {
+      document.documentElement.setAttribute("lang", locale);
+      const t = UI[locale];
+      const wrapper = mount(ContactForm);
+
+      expect(wrapper.find("#name").attributes("placeholder"), locale).toBe(t.contactName);
+      expect(wrapper.find("#email").attributes("placeholder"), locale).toBe(t.contactEmail);
+      expect(wrapper.find("#message").attributes("placeholder"), locale).toBe(t.contactMessage);
+      expect(wrapper.find("form").attributes("aria-label"), locale).toBe(t.contactFormLabel);
+      expect(wrapper.find('button[type="submit"]').text(), locale).toBe(t.contactSend);
+
+      await wrapper.find("form").trigger("submit.prevent");
+      expect(wrapper.text(), locale).toContain(t.contactErrName);
+      expect(wrapper.text(), locale).toContain(t.contactErrEmail);
+      expect(wrapper.text(), locale).toContain(t.contactErrMessage);
+
+      wrapper.unmount();
+    }
+    document.documentElement.setAttribute("lang", "en");
+  });
+
+  // Without novalidate the browser's own constraint check fires first, blocks
+  // submit and shows a bubble in the browser's UI language — so the localized
+  // errors above are unreachable and onSubmit never runs.
+  it("turns off native constraint validation so its own errors are reachable", () => {
+    const wrapper = mount(ContactForm);
+    expect(wrapper.find("form").attributes("novalidate")).toBeDefined();
+    expect(wrapper.find("#email").attributes("required")).toBeDefined();
   });
 
   it("shows validation errors on empty submit", async () => {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
+import { UI, documentLocale } from "../i18n";
 
 const props = withDefaults(
   defineProps<{
@@ -12,6 +13,11 @@ const props = withDefaults(
   }
 );
 
+// The locale-page generator rewrites HTML templates only, so a Vue component's
+// own strings stay English in /de/, /it/ and /fr/ unless it reads `<html lang>`
+// itself — which is where every other bit of chrome gets its language too.
+const t = UI[documentLocale()];
+
 const name = ref("");
 const email = ref("");
 const message = ref("");
@@ -21,7 +27,7 @@ const messageError = ref("");
 const formMessage = ref("");
 const formMessageType = ref<"success" | "error">("success");
 const submitting = ref(false);
-const submitLabel = ref("Send Message");
+const submitLabel = ref(t.contactSend);
 
 let turnstileToken: string | null = null;
 let formReadyToSubmit = false;
@@ -38,7 +44,7 @@ function clearErrors(): void {
 async function submitContactForm(): Promise<void> {
   formReadyToSubmit = false;
   submitting.value = true;
-  submitLabel.value = "Sending...";
+  submitLabel.value = t.contactSending;
 
   try {
     const body = new FormData();
@@ -50,7 +56,7 @@ async function submitContactForm(): Promise<void> {
     const response = await fetch(props.action, { method: "POST", body });
 
     if (response.ok) {
-      formMessage.value = "Message sent successfully!";
+      formMessage.value = t.contactSent;
       formMessageType.value = "success";
       name.value = "";
       email.value = "";
@@ -58,15 +64,15 @@ async function submitContactForm(): Promise<void> {
       turnstileToken = null;
     } else {
       const errorText = await response.text();
-      formMessage.value = errorText || "Failed to send message. Please try again.";
+      formMessage.value = errorText || t.contactFailed;
       formMessageType.value = "error";
     }
   } catch {
-    formMessage.value = "An error occurred. Please try again.";
+    formMessage.value = t.contactError;
     formMessageType.value = "error";
   } finally {
     submitting.value = false;
-    submitLabel.value = "Send Message";
+    submitLabel.value = t.contactSend;
   }
 }
 
@@ -76,15 +82,15 @@ function onSubmit(e: Event): void {
   let isValid = true;
 
   if (name.value.trim() === "") {
-    nameError.value = "Please enter your name";
+    nameError.value = t.contactErrName;
     isValid = false;
   }
   if (!emailRegex.test(email.value.trim())) {
-    emailError.value = "Please enter a valid email address";
+    emailError.value = t.contactErrEmail;
     isValid = false;
   }
   if (message.value.trim() === "") {
-    messageError.value = "Please enter a message";
+    messageError.value = t.contactErrMessage;
     isValid = false;
   }
   if (!isValid) return;
@@ -94,7 +100,7 @@ function onSubmit(e: Event): void {
   } else {
     formReadyToSubmit = true;
     submitting.value = true;
-    submitLabel.value = "Verifying...";
+    submitLabel.value = t.contactVerifying;
     if (window.turnstile) {
       window.turnstile.execute();
     } else {
@@ -139,13 +145,13 @@ onMounted(() => {
   window.onTurnstileExpired = onTurnstileExpired;
   // Turnstile CDN may load before or after this form exists.
   renderTurnstile();
-  const t = window.setInterval(() => {
+  const poll = window.setInterval(() => {
     if (window.turnstile) {
       renderTurnstile();
-      window.clearInterval(t);
+      window.clearInterval(poll);
     }
   }, 200);
-  window.setTimeout(() => window.clearInterval(t), 8000);
+  window.setTimeout(() => window.clearInterval(poll), 8000);
 });
 
 onUnmounted(() => {
@@ -162,47 +168,68 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <form class="contact-form" :action="action" method="POST" aria-label="Contact form" @submit="onSubmit">
+  <!--
+    `novalidate` is what makes the localized errors below reachable. With
+    `required` + `type="email"` the browser runs its own constraint check first,
+    blocks submission and shows a native bubble — worded in the *browser's* UI
+    language, not the page's, so an Italian page in an English Chrome scolds you
+    in English and `onSubmit` never fires. The `required` attributes stay: they
+    are the accessible semantics, and validation is ours to word.
+  -->
+  <form
+    class="contact-form"
+    :action="action"
+    method="POST"
+    novalidate
+    :aria-label="t.contactFormLabel"
+    @submit="onSubmit"
+  >
     <div class="form-group">
-      <label for="name" class="sr-only">Your Name</label>
+      <label for="name" class="sr-only">{{ t.contactName }}</label>
       <input
         id="name"
         v-model="name"
         type="text"
         name="name"
-        placeholder="Your Name"
+        :placeholder="t.contactName"
         required
         autocomplete="name"
         :class="{ 'input-error': nameError }"
+        :aria-invalid="nameError ? 'true' : undefined"
+        :aria-describedby="nameError ? 'name-error' : undefined"
       />
-      <span v-if="nameError" class="error-message">{{ nameError }}</span>
+      <span v-if="nameError" id="name-error" class="error-message" role="alert">{{ nameError }}</span>
     </div>
     <div class="form-group">
-      <label for="email" class="sr-only">Your Email</label>
+      <label for="email" class="sr-only">{{ t.contactEmail }}</label>
       <input
         id="email"
         v-model="email"
         type="email"
         name="email"
-        placeholder="Your Email"
+        :placeholder="t.contactEmail"
         required
         autocomplete="email"
         :class="{ 'input-error': emailError }"
+        :aria-invalid="emailError ? 'true' : undefined"
+        :aria-describedby="emailError ? 'email-error' : undefined"
       />
-      <span v-if="emailError" class="error-message">{{ emailError }}</span>
+      <span v-if="emailError" id="email-error" class="error-message" role="alert">{{ emailError }}</span>
     </div>
     <div class="form-group">
-      <label for="message" class="sr-only">Your Message</label>
+      <label for="message" class="sr-only">{{ t.contactMessageLabel }}</label>
       <textarea
         id="message"
         v-model="message"
         name="message"
-        placeholder="Tell us about your project..."
+        :placeholder="t.contactMessage"
         rows="5"
         required
         :class="{ 'input-error': messageError }"
+        :aria-invalid="messageError ? 'true' : undefined"
+        :aria-describedby="messageError ? 'message-error' : undefined"
       />
-      <span v-if="messageError" class="error-message">{{ messageError }}</span>
+      <span v-if="messageError" id="message-error" class="error-message" role="alert">{{ messageError }}</span>
     </div>
     <div ref="turnstileEl" class="cf-turnstile" />
     <button type="submit" class="magnetic contact-btn" :disabled="submitting">

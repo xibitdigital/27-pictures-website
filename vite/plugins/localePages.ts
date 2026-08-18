@@ -13,6 +13,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { has, set } from "lodash-es";
 import type { Plugin } from "vite";
 
 export const ORIGIN = "https://twentyseven.pictures";
@@ -33,9 +34,53 @@ export interface LocalePageSpec {
   copyDir: string;
   /** Public URL path of the English page, e.g. "/toons/". */
   urlPath: string;
+  /**
+   * Fragments of the only `@id`s that may be localized. Needed for the
+   * homepage, whose urlPath is the origin root: without it the Organization,
+   * WebSite and Person nodes — which every other page references by their
+   * canonical `@id` — would be rewritten to `/de/#organization` and the graph
+   * would fall apart. Omit on child pages, where the global nodes' `@id`s do
+   * not start with the page's own URL and are left alone anyway.
+   */
+  localizeIds?: string[];
 }
 
+/** The five Red Smile film pages — same markup, one copy dir each. */
+export const FILM_SLUGS = [
+  "the-doll-moved-again",
+  "shes-not-running-away",
+  "she-asked-for-directions",
+  "something-is-wrong-with-my-reflection",
+  "he-streamed-the-challenge",
+] as const;
+
 export const LOCALE_PAGES: LocalePageSpec[] = [
+  {
+    template: "index.html",
+    copyDir: "site/locales/home",
+    urlPath: "/",
+    localizeIds: ["#webpage"],
+  },
+  {
+    template: "watch/index.html",
+    copyDir: "site/locales/watch",
+    urlPath: "/watch/",
+  },
+  {
+    template: "cosplay/index.html",
+    copyDir: "site/locales/cosplay",
+    urlPath: "/cosplay/",
+  },
+  {
+    template: "horror-shorts/index.html",
+    copyDir: "site/locales/horror-shorts",
+    urlPath: "/horror-shorts/",
+  },
+  ...FILM_SLUGS.map((slug) => ({
+    template: `horror-shorts/${slug}/index.html`,
+    copyDir: `site/locales/horror-shorts-${slug}`,
+    urlPath: `/horror-shorts/${slug}/`,
+  })),
   {
     template: "toons/index.html",
     copyDir: "site/locales/toons-index",
@@ -49,11 +94,17 @@ export const LOCALE_PAGES: LocalePageSpec[] = [
 ];
 
 /** Site pages that exist in every locale — prefix the path, do not add ?lang=. */
-export const LOCALIZED_PAGE_HREFS = ["/toons/", "/toons/erin-and-the-goblins/"] as const;
+export const LOCALIZED_PAGE_HREFS = LOCALE_PAGES.map((page) => page.urlPath);
+
+/** Flat keys are the legacy per-type copy; `nodes` is the generic form. */
+export interface LocaleSchema {
+  [key: string]: string | Record<string, Record<string, string>> | undefined;
+  nodes?: Record<string, Record<string, string>>;
+}
 
 export interface LocaleCopy {
-  [key: string]: string | Record<string, string> | undefined;
-  schema?: Record<string, string>;
+  [key: string]: string | LocaleSchema | undefined;
+  schema?: LocaleSchema;
 }
 
 export function localeUrl(urlPath: string, locale: string): string {
@@ -114,28 +165,69 @@ function stringsOf(copy: LocaleCopy): Record<string, string> {
 
 type JsonLd = Record<string, unknown>;
 
-/** The landing page's own URL, or that URL plus a fragment — never a child path. */
-export function localizePageUrl(value: string, urlPath: string, locale: PageLocale): string {
-  const from = `${ORIGIN}${urlPath}`;
-  const to = `${ORIGIN}${localeUrl(urlPath, locale)}`;
-  if (value === from) return to;
-  if (value.startsWith(`${from}#`)) return `${to}${value.slice(from.length)}`;
-  return value;
+/**
+ * A URL inside the graph, moved to this locale when — and only when — it names
+ * a page that has a translated document:
+ *
+ * - this page itself, with or without a fragment (`localizeIds` narrows which
+ *   fragments count, for the homepage: `#webpage` is the page, `#organization`
+ *   is not);
+ * - another localized page, so `/de/horror-shorts/` lists the German film pages
+ *   and its `hasPart` still resolves to the nodes those pages declare;
+ * - never a reader URL, an asset, or an entity hanging off the origin root —
+ *   `#organization`, `#website` and the founders are one entity per site, and
+ *   every page references them by that one `@id`.
+ */
+export function localizePageUrl(value: string, urlPath: string, locale: PageLocale, localizeIds?: string[]): string {
+  if (!value.startsWith(ORIGIN)) return value;
+  const rest = value.slice(ORIGIN.length);
+  const hash = rest.indexOf("#");
+  const pathname = hash === -1 ? rest : rest.slice(0, hash);
+  const fragment = hash === -1 ? "" : rest.slice(hash);
+  const norm = pathname.endsWith("/") ? pathname : `${pathname}/`;
+  if (!(LOCALIZED_PAGE_HREFS as readonly string[]).includes(norm)) return value;
+  if (fragment) {
+    if (norm === urlPath) {
+      if (localizeIds && !localizeIds.includes(fragment)) return value;
+    } else if (norm === "/") {
+      return value;
+    }
+  }
+  return `${ORIGIN}/${locale}${pathname}${fragment}`;
 }
 
-function walkPageUrls(node: unknown, urlPath: string, locale: PageLocale): void {
+function walkPageUrls(node: unknown, urlPath: string, locale: PageLocale, localizeIds?: string[]): void {
   if (Array.isArray(node)) {
-    for (const item of node) walkPageUrls(item, urlPath, locale);
+    for (const item of node) walkPageUrls(item, urlPath, locale, localizeIds);
     return;
   }
   if (!node || typeof node !== "object") return;
   const obj = node as JsonLd;
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === "string" && (key === "@id" || key === "url" || key === "item")) {
-      obj[key] = localizePageUrl(value, urlPath, locale);
+      obj[key] = localizePageUrl(value, urlPath, locale, localizeIds);
     } else {
-      walkPageUrls(value, urlPath, locale);
+      walkPageUrls(value, urlPath, locale, localizeIds);
     }
+  }
+}
+
+/**
+ * Generic schema copy: `schema.nodes` keys a graph node by its `@id` fragment
+ * and gives dotted paths inside it. Every schema type a page uses — Service,
+ * FAQPage, VideoObject, Person — is reachable this way, so a new page needs
+ * copy, not another branch in this file.
+ */
+function applyNodeOverrides(graph: JsonLd[], nodes: Record<string, Record<string, string>> | undefined): void {
+  if (!nodes) return;
+  for (const node of graph) {
+    const id = typeof node["@id"] === "string" ? node["@id"] : "";
+    const hash = id.indexOf("#");
+    const patch = hash === -1 ? undefined : nodes[id.slice(hash)];
+    if (!patch) continue;
+    // `has` first: a copy key that no longer matches the schema must not invent
+    // a property — lodash `set` would happily create the whole path.
+    for (const [dotted, value] of Object.entries(patch)) if (has(node, dotted)) set(node, dotted, value);
   }
 }
 
@@ -143,12 +235,23 @@ function applySchema(
   html: string,
   locale: PageLocale,
   urlPath: string,
-  schema: Record<string, string> | undefined
+  schema: LocaleSchema | undefined,
+  localizeIds?: string[]
 ): string {
   return html.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/, (_all, raw: string) => {
     const data = JSON.parse(raw) as { "@graph"?: JsonLd[] };
-    walkPageUrls(data, urlPath, locale);
-    for (const node of data["@graph"] ?? []) {
+    const graph = data["@graph"] ?? [];
+    if (localizeIds) {
+      for (const node of graph) {
+        const id = typeof node["@id"] === "string" ? node["@id"] : "";
+        const hash = id.indexOf("#");
+        if (hash !== -1 && localizeIds.includes(id.slice(hash))) walkPageUrls(node, urlPath, locale, localizeIds);
+      }
+    } else {
+      walkPageUrls(data, urlPath, locale);
+    }
+    applyNodeOverrides(graph, schema?.nodes);
+    for (const node of graph) {
       const type = node["@type"];
       if (type === "CollectionPage" || type === "WebPage") {
         if (schema?.name) node.name = schema.name;
@@ -198,9 +301,9 @@ function applySchema(
   });
 }
 
-/** Localized hub pages get a prefix; readers get `?lang=` so captions start right. */
-export function addLangToToonHrefs(html: string, locale: PageLocale): string {
-  return html.replace(/href="(\/toons\/[^"]*)"/g, (full, path: string) => {
+/** Localized site pages get a prefix; readers get `?lang=` so captions start right. */
+export function localizeHrefs(html: string, locale: PageLocale): string {
+  return html.replace(/href="(\/[^"]*)"/g, (full, path: string) => {
     const q = path.search(/[?#]/);
     const pathname = q === -1 ? path : path.slice(0, q);
     const rest = q === -1 ? "" : path.slice(q);
@@ -208,6 +311,9 @@ export function addLangToToonHrefs(html: string, locale: PageLocale): string {
     if ((LOCALIZED_PAGE_HREFS as readonly string[]).includes(norm)) {
       return `href="/${locale}${pathname}${rest}"`;
     }
+    // Everything else that is not a reader — stylesheets, images, the QR page —
+    // has one URL in every locale.
+    if (!pathname.startsWith("/toons/")) return full;
     if (/[?&]lang=/.test(path)) return full;
     const sep = path.includes("?") ? "&" : "?";
     return `href="${path}${sep}lang=${locale}"`;
@@ -222,7 +328,13 @@ function rewriteHeadUrls(html: string, urlPath: string, locale: PageLocale): str
   return html;
 }
 
-export function renderLocalePage(template: string, locale: PageLocale, copy: LocaleCopy, urlPath: string): string {
+export function renderLocalePage(
+  template: string,
+  locale: PageLocale,
+  copy: LocaleCopy,
+  urlPath: string,
+  localizeIds?: string[]
+): string {
   const strings = stringsOf(copy);
   let html = template;
 
@@ -236,8 +348,8 @@ export function renderLocalePage(template: string, locale: PageLocale, copy: Loc
   html = replaceAttr(html, "data-i18n-alt", "alt", strings);
   html = replaceAttr(html, "data-i18n-aria-label", "aria-label", strings);
 
-  html = applySchema(html, locale, urlPath, copy.schema);
-  html = addLangToToonHrefs(html, locale);
+  html = applySchema(html, locale, urlPath, copy.schema, localizeIds);
+  html = localizeHrefs(html, locale);
   html = stripI18nAttrs(html);
 
   const banner = `<!-- generated from the English template + src/site/locales — do not edit -->\n`;
@@ -262,7 +374,7 @@ export function generateLocalePages(srcDir: string): string[] {
         throw new Error(`locale copy missing: ${copyPath}`);
       }
       const copy = JSON.parse(fs.readFileSync(copyPath, "utf8")) as LocaleCopy;
-      const out = renderLocalePage(template, locale, copy, page.urlPath);
+      const out = renderLocalePage(template, locale, copy, page.urlPath, page.localizeIds);
       const dest = path.join(srcDir, locale, page.template);
       fs.mkdirSync(path.dirname(dest), { recursive: true });
       fs.writeFileSync(dest, out);
