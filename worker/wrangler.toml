@@ -2,7 +2,12 @@ name = "contact-form"
 main = "src/index.js"
 compatibility_date = "2024-01-01"
 
+# Origins whose browser POSTs are answered. Staging is a real, separate origin:
+# without it here the browser discards the reply and the visitor sees the generic
+# failure, whether or not the mail actually went out.
+# The retired staging.twentyseven-pictures.pages.dev alias is deliberately absent.
 [vars]
+ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures"
 TO_EMAIL = "27pictures@proton.me"
 FROM_EMAIL = "noreply@twentyseven.pictures"
 FROM_NAME = "27 Pictures Contact Form"

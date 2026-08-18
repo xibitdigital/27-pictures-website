@@ -295,9 +295,18 @@ npx wrangler deploy
 ### Architecture
 
 - **Frontend:** AJAX form submission (stays on page)
+- **Copy:** every string comes from the `UI` table in `src/site/i18n.ts`, keyed
+  off `<html lang>`. `ContactForm.vue` is a Vue component, so the locale-page
+  generator — which rewrites HTML templates only — never touched it, and every
+  `/de/`, `/it/`, `/fr/` page shipped an English form inside a translated page.
+- **`novalidate` is required on the form.** With `required` + `type="email"` the
+  browser runs its own constraint check first and shows a native bubble worded in
+  the *browser's* UI language, not the page's — and `onSubmit` never fires, so
+  the localized messages become unreachable code. Keep the `required`
+  attributes; they are the accessible semantics.
 - **Backend:** Cloudflare Worker
 - **Email Service:** Resend API
-- **CORS:** Only allows `https://twentyseven.pictures`
+- **CORS:** origin allow-list in `ALLOWED_ORIGINS` (apex + staging), echoed per request
 
 ### Worker Configuration
 
@@ -305,10 +314,33 @@ Environment variables in `worker/wrangler.toml`:
 
 ```toml
 [vars]
-TO_EMAIL = "sangalli.marco@gmail.com"
+ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures"
+TO_EMAIL = "27pictures@proton.me"
 FROM_EMAIL = "noreply@twentyseven.pictures"
 FROM_NAME = "27 Pictures Contact Form"
 ```
+
+**`ALLOWED_ORIGINS` is why the form works off production at all.** The origin
+used to be one hardcoded apex string, so a staging POST got a reply the browser
+discarded — surfacing to the visitor as the generic "An error occurred", which
+is indistinguishable from the mail genuinely failing. The Worker now echoes the
+matching origin and sends `Vary: Origin`; an `Origin` that is present but
+unlisted gets a 403, an absent one (curl, health check) is left alone.
+
+Adding an origin means editing that var **and** `npx wrangler deploy` — the var
+lives in the deployed Worker, not the repo. Verify with a cache-buster, because
+preflights are cached and a stale one is what `Vary: Origin` exists to prevent:
+
+```bash
+curl -s -o /dev/null -D - -X OPTIONS "https://contact-form.sangalli-marco.workers.dev/?cb=$RANDOM" \
+  -H "Origin: https://staging.twentyseven.pictures" -H "Access-Control-Request-Method: POST" \
+  | grep -i "^HTTP/\|^access-control-allow-origin\|^vary"
+```
+
+**Turnstile is a second, separate gate.** Its sitekey is domain-scoped in the
+Cloudflare dashboard; a host missing there never gets a token, so the button
+sticks on "Verifying…" no matter what CORS says. That list is dashboard-only —
+nothing in this repo controls it.
 
 ### Secrets
 
