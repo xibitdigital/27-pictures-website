@@ -85,6 +85,45 @@ scrollport finally has a definite box. All the JS came back out.
 }
 ```
 
+## Component Guidelines
+
+**Reuse the component; do not re-cut it.** If two places show the same thing,
+they share one implementation and differ by a container, a prop or a token —
+never by a second copy that starts identical and drifts.
+
+Three ways this has actually gone wrong here, each with the fix:
+
+- **A second layout for the same card.** The quick-view dialog and the series
+  page both list episodes. The dialog got its own grid under `.episode-block`,
+  which also matched the page — so the page silently lost the card layout it
+  shared with `/toons/`, and the dialog's rules had to fight a card they were
+  never written for. Fix: the row density is scoped to `.episode-dialog`, and
+  both surfaces use the same `.series-card` / `.series-grid`. **Density is a
+  property of the container, not of a different card.**
+- **A second copy of the same strings.** `ContactForm.vue` and `SiteNav.vue`
+  hardcoded English while every page around them was translated, because the
+  locale-page generator rewrites HTML templates and cannot reach inside a Vue
+  component. Fix: both read `<html lang>` via `documentLocale()` and pull from
+  the one `UI` table in `src/site/i18n.ts`. **A component that renders text owns
+  no text.**
+- **A second page that began as a copy.** `/toons/red-smile/`, `/toons/nero/`
+  and `/toons/jax/` are the same series page as `/toons/erin-and-the-goblins/`.
+  They share `seriesPageMain.ts`, the `[data-series-page]` region, the CSS and
+  the schema shape; only copy and the `SERIES` entry differ. Adding a series
+  should be a template plus a locale JSON, never a new layout.
+
+Before adding a variant, ask which of these it is:
+
+1. **Same thing, different container** → scope the difference to the container
+2. **Same thing, different content** → pass a prop, or key off existing data
+   (`SERIES`, the `UI` table, `<html lang>`)
+3. **Genuinely a different thing** → a new component, and say why in a comment
+
+`src/toons/series.ts` is the worked example of (2): one registry knows which
+books are episodes of what, and the readers' back covers, the `/toons/` cards,
+the series pages and the schema all read from it. A page that hardcodes an
+episode list has already forked.
+
 ## Project Structure
 
 ```
@@ -504,7 +543,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Path                                 | Role                                                      |
 | ------------------------------------ | --------------------------------------------------------- |
 | `src/toons/bookReader/`              | FlipFrame package: engine, shell, chrome, captions, audio |
-| `src/toons/jax/` · `erin/` · `nero/` | App entry + `ToonReaderShell` config                      |
+| `src/toons/jax-the-chip/` · `erin/` · `nero-the-dog/` | App entry + `ToonReaderShell` config          |
 | `content/toons/<name>/config.json`   | **Edit here** — pages list, captions, audio paths         |
 | `src/toons/config-lock.json`         | Points prod at `config.<md5>.json` on R2                  |
 | `public/toons/reader-shared.css`     | Shared book chrome + word/bubble CSS (all toons)          |
@@ -513,8 +552,8 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Toon              | URL                        | Notes                                                                                                                                                                                            |
 | ----------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Erin              | `/toons/erin/`             | Page-turner prototype                                                                                                                                                                            |
-| Jax               | `/toons/jax/`              | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)                                                                                       |
-| Nero              | `/toons/nero/`             | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`)                                                                           |
+| Jax               | `/toons/jax-the-chip/`     | **Jax is the series; `The Chip` is episode 1.** Series landing at `/toons/jax/`. Netrunner / Robin Hood of mind-tech; multilingual SFX (see `content/toons/jax/README.md`)                       |
+| Nero              | `/toons/nero-the-dog/`     | **Nero is the series; `The Dog` is episode 1.** Series landing at `/toons/nero/`. Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback (see `content/toons/nero/README.md`) |
 | RED SMILE: static | `/toons/redsmile-static/`  | **RED SMILE is the series; `static` is episode 1** — 12 plates. Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                     |
 | Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
 
@@ -586,6 +625,39 @@ add the init call**, or the placeholder renders empty.
   representative video id instead.
 - `hq720.jpg`, not `maxresdefault.jpg`: maxres is missing on some uploads and
   would leave blank cards.
+
+### Toon series pages
+
+A toon with more than one episode — or one that will have — gets a **series
+landing page** listing its episodes, separate from the readers:
+
+| Series | Landing | Episode 1 reader |
+| ------ | ------- | ---------------- |
+| Erin & the Goblins | `/toons/erin-and-the-goblins/` | `/toons/erin/` |
+| Nero | `/toons/nero/` | `/toons/nero-the-dog/` |
+| Jax | `/toons/jax/` | `/toons/jax-the-chip/` |
+| RED SMILE | `/toons/red-smile/` | `/toons/redsmile-static/` |
+
+Landings are indexable and translated (`LOCALE_PAGES` + `LOCALIZED_PATHS`);
+**readers are not** — they keep one URL and take `?lang=`. All four landings
+share `src/site/seriesPageMain.ts`, the `[data-series-page]` region the
+quick-view dialog injects, and one CSS component; only copy differs.
+
+**Nero and Jax used to be readers at those clean URLs.** Two consequences:
+
+- `/toons/nero/` and `/toons/jax/` are **not** redirected — they cannot be, they
+  now serve the series page. The URLs keep their signals but changed content;
+  the readers start fresh at the episode slugs.
+- Their READMEs document `?page=N` deep links against the old URLs.
+  `seriesPageMain.ts` forwards any `?page=` on a landing to episode one, keyed
+  off `data-series-key` on `<html>`. Keep that attribute — and note that
+  `localePages.ts` rewrites the `lang` attribute **in place** precisely so
+  `data-*` on `<html>` survives; replacing the whole tag once shipped every
+  Italian series page as `lang="en"`.
+
+`ASSET_PAGE_DIR` in each reader app is a **CDN key prefix, not a route**. It
+still reads `/toons/nero/` and `/toons/jax/` because the plates are keyed
+`toons/<toon>/assets/<md5>` on R2. Moving it with the route 404s every page.
 
 ### Reader SEO (crawlable fallback)
 

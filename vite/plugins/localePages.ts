@@ -91,6 +91,21 @@ export const LOCALE_PAGES: LocalePageSpec[] = [
     copyDir: "site/locales/erin-and-the-goblins",
     urlPath: "/toons/erin-and-the-goblins/",
   },
+  {
+    template: "toons/red-smile/index.html",
+    copyDir: "site/locales/red-smile",
+    urlPath: "/toons/red-smile/",
+  },
+  {
+    template: "toons/nero/index.html",
+    copyDir: "site/locales/nero",
+    urlPath: "/toons/nero/",
+  },
+  {
+    template: "toons/jax/index.html",
+    copyDir: "site/locales/jax",
+    urlPath: "/toons/jax/",
+  },
 ];
 
 /** Site pages that exist in every locale — prefix the path, do not add ?lang=. */
@@ -338,7 +353,15 @@ export function renderLocalePage(
   const strings = stringsOf(copy);
   let html = template;
 
-  html = html.replace(/<html lang="[^"]*">/, `<html lang="${locale}">`);
+  // Rewrite the lang attribute in place rather than the whole tag: <html> also
+  // carries data-* the page needs (data-series-key drives the deep-link
+  // forward), and replacing the tag wholesale silently dropped them — the
+  // Italian Nero page shipped lang="en".
+  html = html.replace(/<html\b[^>]*>/, (tag) =>
+    /\blang="/.test(tag)
+      ? tag.replace(/\blang="[^"]*"/, `lang="${locale}"`)
+      : tag.replace(/^<html\b/, `<html lang="${locale}"`)
+  );
   html = html.replace(/(<meta property="og:locale" content=")[^"]*(")/, `$1${OG_LOCALE[locale]}$2`);
   html = rewriteHeadUrls(html, urlPath, locale);
 

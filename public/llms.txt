@@ -65,9 +65,15 @@ Allow: /
 # - https://twentyseven.pictures/it/toons/erin-and-the-goblins/ — Erin e i Goblin (IT)
 # - https://twentyseven.pictures/de/toons/erin-and-the-goblins/ — Erin und die Goblins (DE)
 # - https://twentyseven.pictures/fr/toons/erin-and-the-goblins/ — Erin et les Gobelins (FR)
+# - https://twentyseven.pictures/toons/red-smile/ — RED SMILE series overview (1 episode)
+# - https://twentyseven.pictures/it/toons/red-smile/ — RED SMILE (IT)
+# - https://twentyseven.pictures/de/toons/red-smile/ — RED SMILE (DE)
+# - https://twentyseven.pictures/fr/toons/red-smile/ — RED SMILE (FR)
 # - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader
 # - https://twentyseven.pictures/toons/erin-the-revenge/ — Erin EP 2: The Revenge, B&W dark fantasy toon (EN/IT/DE/FR captions)
-# - https://twentyseven.pictures/toons/jax/ — Jax cyberpunk toon (EN/IT/DE/FR captions)
-# - https://twentyseven.pictures/toons/nero/ — Nero detective toon (EN/IT/DE/FR captions)
+# - https://twentyseven.pictures/toons/jax/ — Jax series overview (1 episode)
+# - https://twentyseven.pictures/toons/jax-the-chip/ — JAX ep.1 "The Chip", cyberpunk netrunner toon (EN/IT/DE/FR captions)
+# - https://twentyseven.pictures/toons/nero/ — Nero series overview (1 episode)
+# - https://twentyseven.pictures/toons/nero-the-dog/ — NERO ep.1 "The Dog", cyberpunk noir detective toon (EN/IT/DE/FR captions)
 # - https://twentyseven.pictures/toons/redsmile-static/ — STATIC — RED SMILE series ep.1, psychological horror in B&W gekiga ink (EN/IT/DE/FR captions)
 # - https://www.youtube.com/@twentyseven.pictures — primary video distribution

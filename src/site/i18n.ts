@@ -41,6 +41,9 @@ export const LOCALIZED_PATHS = [
   "/horror-shorts/he-streamed-the-challenge/",
   "/toons/",
   "/toons/erin-and-the-goblins/",
+  "/toons/red-smile/",
+  "/toons/nero/",
+  "/toons/jax/",
 ] as const;
 
 export const LOCALE_LABELS: Record<Locale, string> = {

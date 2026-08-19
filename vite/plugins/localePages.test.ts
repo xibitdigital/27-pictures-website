@@ -37,7 +37,7 @@ const TEMPLATE = `<!doctype html>
     <h1 data-i18n="h1">Interactive Toons</h1>
     <p data-i18n-html="lead">Hello <strong>27 Pictures</strong></p>
     <img data-i18n-alt="neroAlt" alt="English alt" />
-    <a href="/toons/nero/">Nero</a>
+    <a href="/toons/nero-the-dog/">Nero: The Dog</a>
   </body>
 </html>
 `;
@@ -71,7 +71,7 @@ describe("renderLocalePage", () => {
     expect(html).toContain('"@id": "https://twentyseven.pictures/it/toons/#webpage"');
     expect(html).toContain("https://twentyseven.pictures/toons/erin/");
     expect(html).not.toContain("https://twentyseven.pictures/it/toons/erin/");
-    expect(html).toContain('href="/toons/nero/?lang=it"');
+    expect(html).toContain('href="/toons/nero-the-dog/?lang=it"');
   });
 
   it("prefixes localized hub pages instead of adding ?lang=", () => {
@@ -120,10 +120,10 @@ describe("renderLocalePage", () => {
     const pretty = `<!doctype html>
 <html lang="en">
   <body>
-    <a href="/toons/nero/"><span data-i18n="neroDesc"
+    <a href="/toons/nero-the-dog/"><span data-i18n="neroDesc"
       >English nero</span
     ></a>
-    <a href="/toons/jax/"><span data-i18n="jaxDesc"
+    <a href="/toons/jax-the-chip/"><span data-i18n="jaxDesc"
       >English jax</span
     ></a>
   </body>
@@ -132,8 +132,8 @@ describe("renderLocalePage", () => {
     const html = renderLocalePage(pretty, "fr", { neroDesc: "Nero FR", jaxDesc: "Jax FR" }, "/toons/");
     expect(html).toContain("Nero FR");
     expect(html).toContain("Jax FR");
-    expect(html).toContain('href="/toons/nero/?lang=fr"');
-    expect(html).toContain('href="/toons/jax/?lang=fr"');
+    expect(html).toContain('href="/toons/nero-the-dog/?lang=fr"');
+    expect(html).toContain('href="/toons/jax-the-chip/?lang=fr"');
   });
 
   it("keeps English when a key is missing", () => {
@@ -150,8 +150,8 @@ describe("localizePageUrl", () => {
     expect(localizePageUrl("https://twentyseven.pictures/toons/#itemlist", "/toons/", "fr")).toBe(
       "https://twentyseven.pictures/fr/toons/#itemlist"
     );
-    expect(localizePageUrl("https://twentyseven.pictures/toons/jax/", "/toons/", "fr")).toBe(
-      "https://twentyseven.pictures/toons/jax/"
+    expect(localizePageUrl("https://twentyseven.pictures/toons/jax-the-chip/", "/toons/", "fr")).toBe(
+      "https://twentyseven.pictures/toons/jax-the-chip/"
     );
   });
 });
@@ -169,10 +169,37 @@ it("renders the real toons landing template into Italian", () => {
   expect(html).toContain('hreflang="x-default" href="https://twentyseven.pictures/toons/"');
   expect(html).toContain('rel="canonical" href="https://twentyseven.pictures/it/toons/"');
   expect(html).toContain('"inLanguage": "it"');
-  expect(html).toContain('href="/toons/nero/?lang=it"');
+  // Series landings are path-localized; readers keep one URL and take ?lang=.
+  // Nero moved from the second group to the first when it became a series.
+  expect(html).toContain('href="/it/toons/nero/"');
   expect(html).toContain('href="/it/toons/erin-and-the-goblins/"');
-  expect(html).not.toContain("https://twentyseven.pictures/it/toons/nero/");
+  expect(html).toContain('href="/it/toons/red-smile/"');
+  expect(html).toContain('href="/it/toons/jax/"');
+  // Every card on this page is a series landing now, so nothing here takes
+  // ?lang=. The invariant that still bites is the other direction: a reader
+  // path must never be prefixed, or the switcher points at a 404.
+  for (const reader of ["nero-the-dog", "jax-the-chip", "redsmile-static", "erin", "erin-the-revenge"]) {
+    expect(html, reader).not.toContain(`/it/toons/${reader}/`);
+  }
   expect(html).not.toContain("data-i18n");
+});
+
+describe("html lang", () => {
+  // A page that carries data-* on <html> (data-series-key forwards legacy
+  // ?page= deep links) once had the whole tag replaced, which set the right
+  // lang and silently dropped the attribute — and before that, kept lang="en"
+  // on every Italian series page.
+  it("sets lang without dropping other attributes on <html>", () => {
+    const html = renderLocalePage(
+      '<html lang="en" data-series-key="nero"><head></head><body></body></html>',
+      "it",
+      {} as never,
+      "/toons/nero/"
+    );
+    expect(html).toContain('lang="it"');
+    expect(html).toContain('data-series-key="nero"');
+    expect(html).not.toContain('lang="en"');
+  });
 });
 
 describe("generateLocalePages", () => {

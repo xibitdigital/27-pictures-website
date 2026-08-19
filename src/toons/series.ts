@@ -67,14 +67,37 @@ export const SERIES: Series[] = [
     key: "jax",
     title: "Jax",
     tagline: "Cyberpunk · a netrunner robbing the people who own minds",
-    episodes: [{ id: "jax", n: 1, title: "Jax", url: "/toons/jax/", pages: 24, art: "jax.jpg", status: "published" }],
+    episodes: [
+      {
+        id: "jax",
+        n: 1,
+        title: "The Chip",
+        url: "/toons/jax-the-chip/",
+        pages: 24,
+        art: "jax.jpg",
+        status: "published",
+      },
+      { n: 2, title: "In the darkroom", status: "soon" },
+    ],
   },
   {
     key: "nero",
     title: "Nero",
     tagline: "Cyberpunk noir · a Scotland Yard case in the rain",
     episodes: [
-      { id: "nero", n: 1, title: "Nero", url: "/toons/nero/", pages: 20, art: "nero.jpg", status: "published" },
+      {
+        id: "nero",
+        n: 1,
+        title: "The Dog",
+        url: "/toons/nero-the-dog/",
+        pages: 20,
+        // The card is the book's first plate. New key rather than replacing
+        // nero.jpg: card art is immutable and not content-hashed, so the old
+        // name would keep serving the old picture to anyone who had it cached.
+        art: "nero-page1.jpg",
+        status: "published",
+      },
+      { n: 2, title: "In the darkroom", status: "soon" },
     ],
   },
   {
@@ -91,6 +114,7 @@ export const SERIES: Series[] = [
         pages: 12,
         status: "published",
       },
+      { n: 2, title: "In the darkroom", status: "soon" },
     ],
   },
 ];

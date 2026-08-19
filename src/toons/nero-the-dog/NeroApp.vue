@@ -7,6 +7,9 @@ import type { ToonShellBookOptions } from "../bookReader/types";
 import { toonConfigUrl } from "../configUrls";
 import { COVER } from "../coverCopy";
 
+// A CDN key prefix, not a site route. The reader moved to /toons/nero-the-dog/
+// when Nero became a series, but the plates are still keyed
+// toons/nero/assets/<md5> on R2 — changing this 404s every page.
 const ASSET_PAGE_DIR = "/toons/nero/";
 /** Content-hashed config from config-lock.json. */
 const CONFIG_URL = toonConfigUrl("nero");

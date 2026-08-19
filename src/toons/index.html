@@ -45,7 +45,7 @@
       data-i18n-content="ogDescription"
       content="FlipFrame interactive toons from 27 Pictures — illustrated stories with voiced captions you read rather than watch."
     />
-    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/nero.jpg" />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/nero-page1.jpg" />
     <meta property="og:image:width" content="1008" />
     <meta property="og:image:height" content="1792" />
     <meta
@@ -70,7 +70,7 @@
       data-i18n-content="ogDescription"
       content="FlipFrame interactive toons from 27 Pictures — illustrated stories with voiced captions you read rather than watch."
     />
-    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/nero.jpg" />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/nero-page1.jpg" />
     <meta
       name="twitter:image:alt"
       data-i18n-content="ogImageAlt"
@@ -114,10 +114,10 @@
             },
             "primaryImageOfPage": {
               "@type": "ImageObject",
-              "@id": "%VITE_ASSET_BASE%/card-art/nero.jpg",
-              "url": "%VITE_ASSET_BASE%/card-art/nero.jpg",
-              "width": 1008,
-              "height": 1792,
+              "@id": "%VITE_ASSET_BASE%/card-art/nero-page1.jpg",
+              "url": "%VITE_ASSET_BASE%/card-art/nero-page1.jpg",
+              "width": 800,
+              "height": 1424,
               "caption": "Nero interactive cyberpunk toon cover art by 27 Pictures"
             },
             "breadcrumb": {
@@ -200,8 +200,8 @@
                 "name": "Jax",
                 "url": "https://twentyseven.pictures/toons/jax/",
                 "item": {
-                  "@type": "CreativeWork",
-                  "@id": "https://twentyseven.pictures/toons/jax/#work",
+                  "@type": "CreativeWorkSeries",
+                  "@id": "https://twentyseven.pictures/toons/jax/#series",
                   "name": "Jax",
                   "url": "https://twentyseven.pictures/toons/jax/",
                   "description": "Jax — a sick netrunner who steals corporate mind-control tech like a future Robin Hood. Interactive toon with multilingual captions from 27 Pictures.",
@@ -227,8 +227,8 @@
                 "name": "Nero",
                 "url": "https://twentyseven.pictures/toons/nero/",
                 "item": {
-                  "@type": "CreativeWork",
-                  "@id": "https://twentyseven.pictures/toons/nero/#work",
+                  "@type": "CreativeWorkSeries",
+                  "@id": "https://twentyseven.pictures/toons/nero/#series",
                   "name": "Nero",
                   "url": "https://twentyseven.pictures/toons/nero/",
                   "description": "Interactive toon: detective Nero and Scotland Yard forensic Eve hunt sicario The Dog and the conspiracy behind implant-grade crystal tech.",
@@ -239,9 +239,9 @@
                   },
                   "image": {
                     "@type": "ImageObject",
-                    "url": "%VITE_ASSET_BASE%/card-art/nero.jpg",
-                    "width": 1008,
-                    "height": 1792
+                    "url": "%VITE_ASSET_BASE%/card-art/nero-page1.jpg",
+                    "width": 800,
+                    "height": 1424
                   },
                   "isPartOf": {
                     "@id": "https://twentyseven.pictures/toons/#webpage"
@@ -342,15 +342,21 @@
           </header>
 
           <div class="series-grid">
-            <a class="series-card series-card--single" href="/toons/nero/" data-series="nero">
+            <a
+              class="series-card series-card--series"
+              id="series-nero"
+              data-series="nero"
+              data-quick-view
+              href="/toons/nero/"
+            >
               <span class="series-card-face">
                 <span class="series-card-art"
                   ><img
-                    src="%VITE_ASSET_BASE%/card-art/nero.jpg"
+                    src="%VITE_ASSET_BASE%/card-art/nero-page1.jpg"
                     data-i18n-alt="neroAlt"
                     alt="Nero interactive cyberpunk sicario toon cover art by 27 Pictures"
-                    width="1008"
-                    height="1792"
+                    width="800"
+                    height="1424"
                     loading="eager"
                     decoding="async"
                     fetchpriority="high"
@@ -358,7 +364,7 @@
                 <span class="series-card-meta" data-i18n="neroMeta">Cyberpunk noir</span>
                 <h3 class="series-card-title">Nero</h3>
                 <span class="series-card-cue"
-                  ><span data-i18n="neroCue">20 pages</span> <span aria-hidden="true">→</span></span
+                  ><span data-i18n="neroCue">1 episode</span> <span aria-hidden="true">→</span></span
                 >
                 <span class="series-card-votes" data-votes-for="nero" hidden></span>
               </span>
@@ -368,32 +374,44 @@
               >
             </a>
 
-            <a class="series-card series-card--single" href="/toons/redsmile-static/" data-series="red-smile">
+            <a
+              class="series-card series-card--series"
+              id="series-red-smile"
+              data-series="red-smile"
+              data-quick-view
+              href="/toons/red-smile/"
+            >
               <span class="series-card-face">
                 <span class="series-card-art"
                   ><img
                     src="%VITE_ASSET_BASE%/card-art/redsmile-static.jpg"
                     data-i18n-alt="redsmileAlt"
-                    alt="RED SMILE static interactive horror toon cover art by 27 Pictures"
+                    alt="RED SMILE interactive horror toon series cover art by 27 Pictures"
                     width="800"
                     height="1424"
                     loading="lazy"
                     decoding="async"
                 /></span>
                 <span class="series-card-meta" data-i18n="redsmileMeta">Horror</span>
-                <h3 class="series-card-title">RED SMILE: static</h3>
+                <h3 class="series-card-title">RED SMILE</h3>
                 <span class="series-card-cue"
-                  ><span data-i18n="redsmileCue">12 pages</span> <span aria-hidden="true">→</span></span
+                  ><span data-i18n="redsmileCue">1 episode</span> <span aria-hidden="true">→</span></span
                 >
                 <span class="series-card-votes" data-votes-for="red-smile" hidden></span>
               </span>
               <span class="series-card-desc" data-i18n="redsmileDesc"
-                >Episode 1 of the RED SMILE series. Psychological horror in heavy black-and-white gekiga ink — Elena is
-                alone in the flat when the television finds a channel that should not exist.</span
+                >Psychological horror in heavy black-and-white gekiga ink. Elena is alone in the flat when the
+                television finds a channel that should not exist.</span
               >
             </a>
 
-            <a class="series-card series-card--single" href="/toons/jax/" data-series="jax">
+            <a
+              class="series-card series-card--series"
+              id="series-jax"
+              data-series="jax"
+              data-quick-view
+              href="/toons/jax/"
+            >
               <span class="series-card-face">
                 <span class="series-card-art"
                   ><img
@@ -408,7 +426,7 @@
                 <span class="series-card-meta" data-i18n="jaxMeta">Cyberpunk</span>
                 <h3 class="series-card-title">Jax</h3>
                 <span class="series-card-cue"
-                  ><span data-i18n="jaxCue">24 pages</span> <span aria-hidden="true">→</span></span
+                  ><span data-i18n="jaxCue">1 episode</span> <span aria-hidden="true">→</span></span
                 >
                 <span class="series-card-votes" data-votes-for="jax" hidden></span>
               </span>

@@ -19,7 +19,10 @@ Target model: **`bytedance/seedream-5.0-pro` · image-to-image** (not pure t2i, 
 
 Take the user's beat/scene and output a **complete Seedream i2i prompt** for one vertical multi-panel **horror** manga page.
 
-Sibling skill: `/toon-page` is cyberpunk **i2i**. This skill is the same engine/mode with **horror** ink and atmosphere.
+Sibling skills: `/toon-page` is cyberpunk **i2i** — same engine/mode, different
+ink. `/horror-toon-character` builds the **character sheet** a page like this one
+PINs against; make the sheet first when a new character appears, and the pages
+stay on-model for free.
 
 ## Output rules (strict)
 

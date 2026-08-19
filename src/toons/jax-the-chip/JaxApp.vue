@@ -9,6 +9,9 @@ import { toonConfigUrl } from "../configUrls";
 import { COVER } from "../coverCopy";
 
 /** Reader media root — explicit pageDir for CDN relative paths. */
+// A CDN key prefix, not a site route. The reader moved to /toons/jax-the-chip/
+// when Jax became a series, but the plates are still keyed
+// toons/jax/assets/<md5> on R2 — changing this 404s every page.
 const ASSET_PAGE_DIR = "/toons/jax/";
 /** Content-hashed config from config-lock.json (changes when config bytes change). */
 const CONFIG_URL = toonConfigUrl("jax");

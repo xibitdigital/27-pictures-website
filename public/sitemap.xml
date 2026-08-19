@@ -434,6 +434,114 @@
     </image:image>
   </url>
   <url>
+    <loc>https://twentyseven.pictures/toons/red-smile/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/redsmile-static.jpg</image:loc>
+      <image:title>RED SMILE — interactive black-and-white horror manga</image:title>
+      <image:caption>Cover art for RED SMILE, a black-and-white interactive horror series by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/it/toons/red-smile/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/redsmile-static.jpg</image:loc>
+      <image:title>RED SMILE — manga horror interattivo in bianco e nero</image:title>
+      <image:caption>Copertina di RED SMILE, serie horror interattiva di 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/de/toons/red-smile/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/redsmile-static.jpg</image:loc>
+      <image:title>RED SMILE — interaktiver Schwarzweiß-Horror-Manga</image:title>
+      <image:caption>Cover von RED SMILE, einer interaktiven Horror-Serie von 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/fr/toons/red-smile/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/redsmile-static.jpg</image:loc>
+      <image:title>RED SMILE — manga d'horreur interactif en noir et blanc</image:title>
+      <image:caption>Couverture de RED SMILE, série d'horreur interactive de 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/toons/nero/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/nero-page1.jpg</image:loc>
+      <image:title>Nero — interactive cyberpunk noir toon series</image:title>
+      <image:caption>Cover art for Nero, a black-and-white interactive cyberpunk noir series by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/it/toons/nero/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/nero-page1.jpg</image:loc>
+      <image:title>Nero — serie noir cyberpunk interattiva</image:title>
+      <image:caption>Copertina di Nero, serie noir cyberpunk interattiva di 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/de/toons/nero/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/nero-page1.jpg</image:loc>
+      <image:title>Nero — interaktive Cyberpunk-Noir-Serie</image:title>
+      <image:caption>Cover von Nero, einer interaktiven Cyberpunk-Noir-Serie von 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/fr/toons/nero/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/nero-page1.jpg</image:loc>
+      <image:title>Nero — série noire cyberpunk interactive</image:title>
+      <image:caption>Couverture de Nero, série noire cyberpunk interactive de 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/toons/jax/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/jax.jpg</image:loc>
+      <image:title>Jax — interactive cyberpunk netrunner toon series</image:title>
+      <image:caption>Cover art for Jax, a black-and-white interactive cyberpunk series by 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/it/toons/jax/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/jax.jpg</image:loc>
+      <image:title>Jax — serie cyberpunk interattiva</image:title>
+      <image:caption>Copertina di Jax, serie cyberpunk interattiva di 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/de/toons/jax/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/jax.jpg</image:loc>
+      <image:title>Jax — interaktive Cyberpunk-Serie</image:title>
+      <image:caption>Cover von Jax, einer interaktiven Cyberpunk-Serie von 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://twentyseven.pictures/fr/toons/jax/</loc>
+    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>%VITE_ASSET_BASE%/card-art/jax.jpg</image:loc>
+      <image:title>Jax — série cyberpunk interactive</image:title>
+      <image:caption>Couverture de Jax, série cyberpunk interactive de 27 Pictures</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://twentyseven.pictures/toons/erin/</loc>
     <lastmod>2026-07-27</lastmod>
     <image:image>
@@ -452,14 +560,14 @@
     </image:image>
   </url>
   <url>
-    <loc>https://twentyseven.pictures/toons/jax/</loc>
-    <lastmod>2026-07-27</lastmod>
+    <loc>https://twentyseven.pictures/toons/jax-the-chip/</loc>
+    <lastmod>2026-08-19</lastmod>
   </url>
   <url>
-    <loc>https://twentyseven.pictures/toons/nero/</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://twentyseven.pictures/toons/nero-the-dog/</loc>
+    <lastmod>2026-08-19</lastmod>
     <image:image>
-      <image:loc>%VITE_ASSET_BASE%/card-art/nero.jpg</image:loc>
+      <image:loc>%VITE_ASSET_BASE%/card-art/nero-page1.jpg</image:loc>
       <image:title>Nero interactive cyberpunk sicario toon — 27 Pictures Experiments</image:title>
       <image:caption>Cover art for Nero, a cyberpunk sicario interactive toon prototype by 27 Pictures</image:caption>
     </image:image>

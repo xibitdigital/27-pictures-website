@@ -2574,9 +2574,17 @@ button:focus-visible {
    dynamic rows above (continue reading, most loved) stay as scrolling rails;
    this is the standing catalogue, so it is a grid that wraps rather than a
    row that hides books off-screen. */
+/* One grid for every card shelf: /toons/ and each series landing.
+   `auto-fill`, not `auto-fit` — `auto-fit` collapses the tracks no item lands
+   in, so the survivors stretch to fill the row. With four cards on /toons/ that
+   is invisible; with two episodes on a series page it blew each card up to half
+   the page. `auto-fill` keeps the empty tracks, so a card is one track wide
+   whether the shelf holds one item or six, and a short shelf just ends early.
+   The 280px floor is what makes both pages agree on card size; `min()` keeps it
+   from overflowing a phone, where 280px can exceed the column itself. */
 .series-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   gap: 24px;
   align-items: start;
 }
@@ -2985,6 +2993,12 @@ button:focus-visible {
   padding-top: 20px;
 }
 
+/* The panel takes focus when the dialog opens so no card is ringed; it is a
+   container, not a control, so it shows no ring of its own. */
+.episode-dialog-body:focus {
+  outline: none;
+}
+
 .episode-dialog-close {
   position: sticky;
   top: 12px;
@@ -3128,64 +3142,85 @@ button:focus-visible {
    on the shelf is removed here: inside the dialog every row is a card, so the
    accent repeated per row turned into stripes — five red rules in one small box.
    Grey divides, red marks a card. */
-.episode-block .series-grid {
+/* The quick view is a picker, not a shelf: inside the dialog each episode is a
+   compact row so several fit without scrolling. The series PAGE keeps the card
+   grid it shares with /toons/ — same component, two densities, and the density
+   is a property of the container rather than of the card. */
+.episode-dialog .episode-block .series-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
 }
 
-.episode-block .series-card {
+.episode-dialog .episode-block .series-card {
   border-top: 0;
-  padding: 14px 0;
-}
-
-.episode-block .series-card + .series-card {
-  border-top: 1px solid var(--border);
-}
-
-.episode-block .series-card-face {
+  padding: 12px 0;
+  /* One grid for the whole row, not a grid inside .series-card-face with the
+     synopsis hung off it by a margin. `display: contents` on the face lets the
+     thumbnail, the labels and the synopsis all be items of the same grid, so
+     the text column is defined once and the synopsis lines up with the title
+     instead of being pushed across by a hard-coded 108px. */
   display: grid;
-  grid-template-columns: 92px 1fr;
-  grid-template-rows: auto auto auto;
+  grid-template-columns: 88px minmax(0, 1fr);
+  /* The last track takes the slack. The thumbnail spans every row, and a
+     spanning item hands its surplus height to each intrinsic track it covers —
+     which is what pushed the label, the title and the page count apart into
+     three widely spaced lines. Give the surplus one place to go and the text
+     stays a tight block. */
+  grid-template-rows: auto auto auto 1fr;
   column-gap: 16px;
   align-content: start;
 }
 
-.episode-block .series-card-art {
-  grid-row: 1 / span 3;
+.episode-dialog .episode-block .series-card-face {
+  display: contents;
+}
+
+.episode-dialog .episode-block .series-card-art {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  align-self: start;
   border-radius: 8px;
 }
 
-.episode-block .series-card-meta,
-.episode-block .series-card-title,
-.episode-block .series-card-cue {
+.episode-dialog .episode-block .series-card-meta,
+.episode-dialog .episode-block .series-card-title,
+.episode-dialog .episode-block .series-card-cue,
+.episode-dialog .episode-block .series-card-desc {
   grid-column: 2;
-  margin-top: 0;
+  margin: 0;
 }
 
-.episode-block .series-card-title {
+.episode-dialog .episode-block .series-card-meta {
+  align-self: start;
+}
+
+.episode-dialog .episode-block .series-card-title {
   font-size: 1.1rem;
   margin-top: 2px;
 }
 
-.episode-block .series-card-cue {
+.episode-dialog .episode-block .series-card-cue {
   margin-top: 4px;
 }
 
-.episode-block .series-card-desc {
+.episode-dialog .episode-block .series-card-desc {
+  margin-top: 6px;
   -webkit-line-clamp: 2;
-  /* Aligned with the text column, not with the thumbnail: it sits outside
-     .series-card-face, so by default it started back at the card's left edge. */
-  margin: 6px 0 0 108px;
 }
 
-/* On a phone the three rows overflow the dialog by ~110px with synopses shown,
-   so they go: a cover, a title and a page count is enough to choose between two
-   books, and the full copy is on each reader. Desktop keeps them — there the
-   text is shorter than the thumbnail is tall, so they cost no height at all. */
+.episode-dialog .episode-block .series-card + .series-card {
+  border-top: 1px solid var(--border);
+}
+
+/* On a phone the rows overflow the dialog with synopses shown, so they go: a
+   cover, a title and a page count is enough to choose between two books, and
+   the full copy is on each reader. */
 @media (max-width: 600px) {
-  .episode-block .series-card {
-    padding: 12px 0;
+  .episode-dialog .episode-block .series-card {
+    grid-template-columns: 72px minmax(0, 1fr);
+    column-gap: 12px;
+    padding: 10px 0;
   }
 
   /* The intro goes: on a phone it is the last thing between three episodes and a
@@ -3200,7 +3235,7 @@ button:focus-visible {
    past a 768px-tall laptop and a phone. Shown only when there is room; the full
    copy is on each reader either way. */
 @media (max-height: 820px) {
-  .episode-block .series-card-desc {
+  .episode-dialog .episode-block .series-card-desc {
     display: none;
   }
 }

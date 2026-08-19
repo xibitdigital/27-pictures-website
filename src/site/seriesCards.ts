@@ -82,6 +82,7 @@ function buildDialog(): HTMLDialogElement {
 
   const body = document.createElement("div");
   body.className = "episode-dialog-body";
+  body.tabIndex = -1;
 
   dialog.append(close, body);
   // The dialog's own box is a child, so a click on the element itself can only
@@ -116,9 +117,11 @@ export function initSeriesQuickView(root: ParentNode = document): void {
       const show = (content: Node) => {
         body.replaceChildren(content);
         view.showModal();
-        // Focus the first episode, not the close button that showModal() would
-        // otherwise pick: opening the view should not highlight "dismiss".
-        body.querySelector<HTMLAnchorElement>("a[href]")?.focus();
+        // Focus the panel, not the close button showModal() would otherwise pick
+        // and not the first episode either: focusing a card drew a ring around
+        // episode one, which reads as "this one is selected" rather than "the
+        // dialog is open". From here Tab still reaches every episode in order.
+        body.focus();
       };
 
       const cached = cache.get(href);

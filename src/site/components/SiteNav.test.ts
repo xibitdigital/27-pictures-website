@@ -131,7 +131,7 @@ describe("SiteNav", () => {
   it("hides the language switcher on pages that have no translation", () => {
     document.documentElement.setAttribute("lang", "en");
     // A reader: its captions are multilingual, the page itself is English only.
-    window.history.pushState({}, "", "/toons/nero/");
+    window.history.pushState({}, "", "/toons/nero-the-dog/");
     const wrapper = mount(SiteNav, {
       props: { page: "toons" },
       attachTo: document.body,

@@ -20,8 +20,8 @@ describe("toon entry modules", () => {
     vi.resetModules();
   });
 
-  it("jax/main.ts mounts JaxApp on #app", async () => {
-    await import("./jax/main");
+  it("jax-the-chip/main.ts mounts JaxApp on #app", async () => {
+    await import("./jax-the-chip/main");
     expect(createApp).toHaveBeenCalled();
     expect(mount).toHaveBeenCalledWith("#app");
   });
@@ -32,8 +32,8 @@ describe("toon entry modules", () => {
     expect(mount).toHaveBeenCalledWith("#app");
   });
 
-  it("nero/main.ts mounts NeroApp on #app", async () => {
-    await import("./nero/main");
+  it("nero-the-dog/main.ts mounts NeroApp on #app", async () => {
+    await import("./nero-the-dog/main");
     expect(createApp).toHaveBeenCalled();
     expect(mount).toHaveBeenCalledWith("#app");
   });
