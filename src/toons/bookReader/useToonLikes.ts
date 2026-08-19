@@ -10,8 +10,13 @@ import { onMounted, ref } from "vue";
  *   the POST response.
  *
  * With no `VITE_LIKES_API` the composable degrades to local-only: the heart
- * still toggles and remembers, `total` simply stays null and the stats readout
- * has nothing to show.
+ * still fills and is remembered, `total` simply stays null and the stats
+ * readout has nothing to show.
+ *
+ * **A vote is final on this device.** There is no un-like: only likes are
+ * counted server-side, so taking one back could never be more than a local
+ * fiction — the heart would empty while the total it had already contributed to
+ * stayed put. One vote per reader per book, and the control retires once cast.
  */
 
 export const LIKE_STORAGE_PREFIX = "toon-like:";
@@ -20,7 +25,7 @@ export interface ToonLikesApi {
   liked: ReturnType<typeof ref<boolean>>;
   total: ReturnType<typeof ref<number | null>>;
   pending: ReturnType<typeof ref<boolean>>;
-  toggle: () => Promise<void>;
+  like: () => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -78,25 +83,19 @@ export function useToonLikes(toonId: string): ToonLikesApi {
     }
   }
 
-  async function toggle(): Promise<void> {
-    // Deliberately not gated on `pending`: the vote is local state and the POST
-    // is fire-and-forget, so a request still in flight must never stop someone
-    // taking their like back. Blocking here made an un-like impossible whenever
-    // the POST was slow or the origin was not on the Worker's CORS list — the
-    // request hangs, the button keeps pointer-events:none, and the heart looks
-    // stuck on.
-    const next = !liked.value;
+  async function like(): Promise<void> {
+    // Already voted — nothing to do. The button is disabled once `liked` is
+    // true, so this only catches a keyboard or programmatic second call, but a
+    // double POST would inflate the counter for a reader who pressed twice.
+    if (liked.value) return;
 
     // Optimistic: the vote is the reader's own state, not the server's.
-    liked.value = next;
-    writeStoredLike(toonId, next);
-    if (total.value != null) total.value = Math.max(0, total.value + (next ? 1 : -1));
+    liked.value = true;
+    writeStoredLike(toonId, true);
+    if (total.value != null) total.value += 1;
 
     const base = likesApiBase();
-    // Only likes are counted server-side. Un-liking is local: without identity
-    // there is no honest way to take a vote back, and allowing decrements is a
-    // free way for anyone to zero the counter.
-    if (!base || !next || !toonId) return;
+    if (!base || !toonId) return;
 
     pending.value = true;
     try {
@@ -107,10 +106,7 @@ export function useToonLikes(toonId: string): ToonLikesApi {
         // A counter must never hang the control that draws it.
         signal: AbortSignal.timeout(8000),
       });
-      // Only trust the server total if the reader still has the like: they may
-      // have taken it back while the POST was in flight, and overwriting their
-      // state with a count that includes the vote would put the heart back on.
-      if (res.ok && liked.value) {
+      if (res.ok) {
         const server = parseTotal(await res.json());
         if (server != null) total.value = server;
       }
@@ -126,7 +122,7 @@ export function useToonLikes(toonId: string): ToonLikesApi {
     void refresh();
   });
 
-  return { liked, total, pending, toggle, refresh };
+  return { liked, total, pending, like, refresh };
 }
 
 /** `?stats=true` reveals the running total next to the heart. */

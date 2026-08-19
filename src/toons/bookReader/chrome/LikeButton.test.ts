@@ -19,12 +19,13 @@ describe("LikeButton", () => {
     setSearch("");
   });
 
-  it("toggles the heart and stores the vote", async () => {
+  it("fills the heart, stores the vote and then retires the control", async () => {
     const wrapper = mount(LikeButton, { props: { toonId: "jax" } });
     await nextTick();
 
     const btn = wrapper.get("button");
     expect(btn.attributes("aria-pressed")).toBe("false");
+    expect(btn.attributes("disabled")).toBeUndefined();
     expect(btn.classes()).not.toContain("is-liked");
 
     await btn.trigger("click");
@@ -33,6 +34,20 @@ describe("LikeButton", () => {
     expect(btn.attributes("aria-pressed")).toBe("true");
     expect(btn.classes()).toContain("is-liked");
     expect(window.localStorage.getItem(`${LIKE_STORAGE_PREFIX}jax`)).toBe("1");
+    // A vote is final on this device: still a filled red heart, no longer a
+    // control. `is-liked` stays so the CSS keeps painting it brand red.
+    expect(btn.attributes("disabled")).toBeDefined();
+  });
+
+  it("mounts already disabled when this device has voted before", async () => {
+    window.localStorage.setItem(`${LIKE_STORAGE_PREFIX}erin`, "1");
+    const wrapper = mount(LikeButton, { props: { toonId: "erin" } });
+    await nextTick();
+
+    const btn = wrapper.get("button");
+    expect(btn.classes()).toContain("is-liked");
+    expect(btn.attributes("disabled")).toBeDefined();
+    expect(btn.attributes("aria-label")).toBe("Liked");
   });
 
   it("hides the count when there is no total to show", async () => {
@@ -65,10 +80,12 @@ describe("LikeButton", () => {
     expect(wrapper.get("button").attributes("aria-label")).toBe("Liked");
   });
 
-  it("can be un-liked while the like POST is still in flight", async () => {
+  it("keeps the vote while the like POST is still in flight", async () => {
     vi.stubEnv("VITE_LIKES_API", "https://likes.example.dev");
     // A POST that never settles — the shape of a slow request or an origin the
-    // Worker's CORS list does not cover. The heart must still come back off.
+    // Worker's CORS list does not cover. The vote is local state and was
+    // already written, so a hung request must not leave the heart looking
+    // uncertain or hand the reader a second press.
     vi.spyOn(globalThis, "fetch").mockImplementation(() => new Promise(() => {}));
 
     const wrapper = mount(LikeButton, { props: { toonId: "nero" } });
@@ -76,11 +93,11 @@ describe("LikeButton", () => {
 
     await wrapper.get("button").trigger("click");
     await nextTick();
-    expect(wrapper.get("button").attributes("aria-pressed")).toBe("true");
 
-    await wrapper.get("button").trigger("click");
-    await nextTick();
-    expect(wrapper.get("button").attributes("aria-pressed")).toBe("false");
-    expect(window.localStorage.getItem(`${LIKE_STORAGE_PREFIX}nero`)).toBeNull();
+    const btn = wrapper.get("button");
+    expect(btn.attributes("aria-pressed")).toBe("true");
+    expect(btn.classes()).toContain("is-liked");
+    expect(btn.attributes("disabled")).toBeDefined();
+    expect(window.localStorage.getItem(`${LIKE_STORAGE_PREFIX}nero`)).toBe("1");
   });
 });

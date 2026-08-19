@@ -44,20 +44,21 @@ describe("useToonLikes", () => {
     expect(api.liked.value).toBe(true);
   });
 
-  it("toggles and persists without an API configured", async () => {
+  it("records and persists a vote without an API configured", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const { api } = useIn("erin");
     await nextTick();
 
-    await api.toggle();
+    await api.like();
     expect(api.liked.value).toBe(true);
     expect(readStoredLike("erin")).toBe(true);
     // No VITE_LIKES_API → local-only, never touches the network.
     expect(fetchSpy).not.toHaveBeenCalled();
 
-    await api.toggle();
-    expect(api.liked.value).toBe(false);
-    expect(readStoredLike("erin")).toBe(false);
+    // A vote is final on this device: pressing again cannot take it back.
+    await api.like();
+    expect(api.liked.value).toBe(true);
+    expect(readStoredLike("erin")).toBe(true);
   });
 
   it("posts a like and adopts the server total", async () => {
@@ -78,7 +79,7 @@ describe("useToonLikes", () => {
     await api.refresh();
     expect(api.total.value).toBe(41);
 
-    await api.toggle();
+    await api.like();
     expect(api.liked.value).toBe(true);
     expect(api.total.value).toBe(42);
 
@@ -87,7 +88,9 @@ describe("useToonLikes", () => {
     expect(JSON.parse(String((posted?.[1] as RequestInit).body))).toEqual({ toon: "jax" });
   });
 
-  it("never POSTs an un-like (server counts likes only)", async () => {
+  // The button is disabled once voted, so this covers the keyboard and
+  // programmatic paths: a second call must not double-count.
+  it("never POSTs twice for a vote already cast", async () => {
     vi.stubEnv("VITE_LIKES_API", "https://likes.example.dev");
     writeStoredLike("nero", true);
     const fetchSpy = vi
@@ -98,8 +101,8 @@ describe("useToonLikes", () => {
     await nextTick();
     fetchSpy.mockClear();
 
-    await api.toggle();
-    expect(api.liked.value).toBe(false);
+    await api.like();
+    expect(api.liked.value).toBe(true);
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
@@ -110,7 +113,7 @@ describe("useToonLikes", () => {
     const { api } = useIn("jax");
     await nextTick();
     await api.refresh();
-    await api.toggle();
+    await api.like();
 
     expect(api.total.value).toBeNull();
     expect(api.liked.value).toBe(true);

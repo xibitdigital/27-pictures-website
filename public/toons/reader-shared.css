@@ -253,10 +253,27 @@ body.toons-reader {
   color: var(--red-smile);
 }
 
-/* Dim while the POST is in flight, but stay clickable: the vote is local
-   state, so taking a like back must not wait on the network. */
+/* A cast vote is final on this device, so the button is disabled — but it must
+   still read as a filled red heart, not as a greyed-out dead control. The
+   browser's default disabled dimming is therefore overridden: full opacity,
+   brand red kept, and only the cursor and the hover reaction retired. It is a
+   state now, not an offer. */
+.toon-like-btn:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.toon-like-btn:disabled.is-liked,
+.toon-like-btn:disabled.is-liked:hover {
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+}
+
+/* The POST is fire-and-forget and the heart is already filled from local state,
+   so there is nothing to wait for and nothing to dim: dimming here only made a
+   just-cast vote look uncertain. Kept as a hook for anything that wants it. */
 .toon-like-btn.is-pending {
-  opacity: 0.6;
+  opacity: 1;
 }
 
 /* The count sits beside the heart, not under it. Stacking it made this the

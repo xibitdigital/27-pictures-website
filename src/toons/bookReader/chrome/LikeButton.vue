@@ -16,8 +16,10 @@ const props = defineProps<{
   toonId: string;
 }>();
 
-const { liked, total, pending, toggle } = useToonLikes(props.toonId);
+const { liked, total, pending, like } = useToonLikes(props.toonId);
 
+// Past tense once cast, and the button is disabled: a vote is final on this
+// device, so "Liked" describes a state rather than offering an action.
 const label = computed(() => (liked.value ? "Liked" : "Like this toon"));
 const countLabel = computed(() => (total.value == null ? "" : String(total.value)));
 </script>
@@ -28,9 +30,10 @@ const countLabel = computed(() => (total.value == null ? "" : String(total.value
     class="toon-fs-btn toon-like-btn"
     :class="{ 'is-liked': liked, 'is-pending': pending, 'has-stats': countLabel !== '' }"
     :aria-pressed="liked"
+    :disabled="liked"
     :title="label"
     :aria-label="label"
-    @click="toggle"
+    @click="like"
   >
     <svg
       width="24"
