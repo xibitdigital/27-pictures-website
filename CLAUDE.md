@@ -515,7 +515,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Erin              | `/toons/erin/`             | Page-turner prototype                                                                                                                                                                            |
 | Jax               | `/toons/jax/`              | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)                                                                                       |
 | Nero              | `/toons/nero/`             | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`)                                                                           |
-| RED SMILE: static | `/toons/redsmile-static/`  | B&W horror short — Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                                                                |
+| RED SMILE: static | `/toons/redsmile-static/`  | **RED SMILE is the series; `static` is episode 1** — 12 plates. Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                     |
 | Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
 
 **Erin EP 2 is deliberately unlisted on `main`**: no card in `/toons/`, no

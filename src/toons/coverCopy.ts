@@ -106,19 +106,19 @@ export const COVER: Record<string, CoverCopy> = {
     subtitle: "RED SMILE",
     synopsis: {
       en:
-        "The first episode of the Elena series.\n\n" +
+        "The first episode of the RED SMILE series.\n\n" +
         "Psychological horror drawn in heavy black-and-white gekiga ink — crushed shadows, hand-inked plates, light that never quite reaches the corners.\n\n" +
         "Elena is alone in the flat when the television finds a channel that should not exist.",
       it:
-        "Il primo episodio della serie di Elena.\n\n" +
+        "Il primo episodio della serie RED SMILE.\n\n" +
         "Horror psicologico a china gekiga, bianco e nero pesante — ombre schiacciate, tavole inchiostrate a mano, una luce che non arriva mai del tutto negli angoli.\n\n" +
         "Elena è sola in casa quando la televisione trova un canale che non dovrebbe esistere.",
       de:
-        "Die erste Folge der Elena-Reihe.\n\n" +
+        "Die erste Folge der Reihe RED SMILE.\n\n" +
         "Psychologischer Horror in schwerer Schwarzweiß-Gekiga-Tusche — zerdrückte Schatten, handgetuschte Tafeln, Licht, das die Ecken nie ganz erreicht.\n\n" +
         "Elena ist allein in der Wohnung, als der Fernseher einen Kanal findet, den es nicht geben dürfte.",
       fr:
-        "Le premier épisode de la série Elena.\n\n" +
+        "Le premier épisode de la série RED SMILE.\n\n" +
         "Horreur psychologique à l'encre gekiga, noir et blanc dense — ombres écrasées, planches encrées à la main, une lumière qui n'atteint jamais tout à fait les coins.\n\n" +
         "Elena est seule chez elle quand la télévision trouve une chaîne qui ne devrait pas exister.",
     },
