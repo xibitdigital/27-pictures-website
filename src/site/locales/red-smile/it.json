@@ -21,7 +21,7 @@
   "ogDescription": "Horror psicologico in bianco e nero da leggere nel browser, doppiato in quattro lingue.",
   "ogImageAlt": "Copertina di RED SMILE di 27 Pictures",
   "lead": "Horror disegnato a china pesante in bianco e nero, da leggere una pagina alla volta. Le stanze sono ordinarie — una casa, un televisore, un telefono a faccia in giù sul tavolo — e ciò che non va arriva in silenzio, da dentro l'immagine.",
-  "episodesTitle": "Uno fuori, altri in camera oscura",
+  "episodesTitle": "Due fuori, altri in camera oscura",
   "ep1Alt": "RED SMILE episodio 1, static — copertina",
   "ep1Meta": "Episodio 1",
   "ep1Cue": "12 pagine",
@@ -33,9 +33,15 @@
     "name": "RED SMILE — Serie horror interattiva | 27 Pictures",
     "description": "Horror psicologico in bianco e nero da leggere nel browser, doppiato in quattro lingue.",
     "seriesDescription": "Horror psicologico disegnato a china gekiga in bianco e nero pesante: stanze ordinarie, e dentro qualcosa che non dovrebbe esserci.",
-    "ep1Name": "Episodio 1 — static"
+    "ep1Name": "Episodio 1 — static",
+    "ep2Name": "Episodio 2 — Marcus"
   },
   "ep2Meta": "Episodio 2",
-  "ep2Title": "In camera oscura",
-  "comingSoon": "Prossimamente"
+  "comingSoon": "Prossimamente",
+  "ep2Alt": "RED SMILE episodio 2, Marcus — copertina",
+  "ep2Cue": "1 tavola",
+  "ep2Desc": "Marcus è gentile con la donna che pulisce il suo ufficio di notte. Dietro di lui una finestra si apre da sola.",
+  "wip": "In lavorazione",
+  "ep3Meta": "Episodio 3",
+  "ep3Title": "In camera oscura"
 }

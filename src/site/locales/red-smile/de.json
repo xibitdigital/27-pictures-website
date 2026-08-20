@@ -21,7 +21,7 @@
   "ogDescription": "Psychologischer Horror in Schwarzweiß, im Browser zu lesen, vertont in vier Sprachen.",
   "ogImageAlt": "RED SMILE Titelbild von 27 Pictures",
   "lead": "Horror in schwerer Schwarzweiß-Tusche, Seite für Seite gelesen. Die Räume sind gewöhnlich — eine Wohnung, ein Fernseher, ein Telefon mit dem Display nach unten — und das, was an ihnen nicht stimmt, kommt leise, aus dem Bild heraus.",
-  "episodesTitle": "Eine draußen, weitere in der Dunkelkammer",
+  "episodesTitle": "Zwei draußen, weitere in der Dunkelkammer",
   "ep1Alt": "RED SMILE Episode 1, static — Titelbild",
   "ep1Meta": "Episode 1",
   "ep1Cue": "12 Seiten",
@@ -33,9 +33,15 @@
     "name": "RED SMILE — Interaktive Horror-Serie | 27 Pictures",
     "description": "Psychologischer Horror in Schwarzweiß, im Browser zu lesen, vertont in vier Sprachen.",
     "seriesDescription": "Psychologischer Horror in schwerer Schwarzweiß-Gekiga-Tusche: gewöhnliche Räume, und darin etwas, das nicht sein dürfte.",
-    "ep1Name": "Episode 1 — static"
+    "ep1Name": "Episode 1 — static",
+    "ep2Name": "Episode 2 — Marcus"
   },
   "ep2Meta": "Episode 2",
-  "ep2Title": "In der Dunkelkammer",
-  "comingSoon": "Demnächst"
+  "comingSoon": "Demnächst",
+  "ep2Alt": "RED SMILE Episode 2, Marcus — Titelbild",
+  "ep2Cue": "1 Seite",
+  "ep2Desc": "Marcus ist freundlich zu der Frau, die nachts sein Büro putzt. Hinter ihm öffnet sich ein Fenster von selbst.",
+  "wip": "In Arbeit",
+  "ep3Meta": "Episode 3",
+  "ep3Title": "In der Dunkelkammer"
 }

@@ -41,7 +41,7 @@ both of Halina's lines, then the chime.
       "de": "Guten Abend.",
       "fr": "Bonsoir."
     },
-    "audio": "assets/sfx/<md5>.mp3"
+    "audio": "assets/sfx/441637ea16d70f9faffdabc425941f13.mp3"
   },
   {
     "x": 0.5, "y": 0.155, "align": "center", "size": 22,
@@ -54,7 +54,7 @@ both of Halina's lines, then the chime.
       "de": "Wie geht es Ihnen?",
       "fr": "Comment allez-vous ?"
     },
-    "audio": "assets/sfx/<md5>.mp3"
+    "audio": "assets/sfx/9f865da32030145c979638085b05ab36.mp3"
   },
   {
     "x": 0.2, "y": 0.39, "align": "center", "size": 22,
@@ -67,7 +67,7 @@ both of Halina's lines, then the chime.
       "de": "Ich kann nicht klagen, mein Herr.",
       "fr": "Je ne me plains pas, monsieur."
     },
-    "audio": "assets/sfx/<md5>.mp3"
+    "audio": "assets/sfx/6b03b2c50b2cc8c2a1183ffa8379c69f.mp3"
   },
   {
     "x": 0.79, "y": 0.43, "align": "center", "size": 20,
@@ -80,7 +80,7 @@ both of Halina's lines, then the chime.
       "de": "Ich bin gleich fertig.",
       "fr": "Je ne serai pas longue."
     },
-    "audio": "assets/sfx/<md5>.mp3"
+    "audio": "assets/sfx/b7013fea7d05716aa27f2d54521417bc.mp3"
   },
   {
     "x": 0.22, "y": 0.72, "align": "center", "size": 26,
@@ -88,7 +88,7 @@ both of Halina's lines, then the chime.
     "scale": 1.0, "maxWidth": 0.28,
     "bubble": { "opacity": 0.75, "strokeWidth": 5, "stroke": "#ffffff", "strokeThickness": 8 },
     "text": { "en": "TIC", "it": "TIC", "de": "TIC", "fr": "TIC" },
-    "audio": "assets/sfx/<md5>.mp3"
+    "audio": "assets/sfx/acc7102c4f71dc864f6d1109d85bf686.mp3"
   }
 ]
 ```
@@ -113,20 +113,22 @@ outer edge.
 ```bash
 set -a; source .env; set +a
 python3 scripts/generate-jax-voice.py "[softly] Evening." \
-  --voice marcus --toon <ep2-toon> --model eleven_v3 --stability 0.4
+  --voice marcus --toon redsmile-marcus --model eleven_v3 --stability 0.4
 python3 scripts/generate-jax-voice.py "How are you keeping?" \
-  --voice marcus --toon <ep2-toon> --model eleven_v3 --stability 0.4
+  --voice marcus --toon redsmile-marcus --model eleven_v3 --stability 0.4
 python3 scripts/generate-jax-voice.py "Can't complain, sir." \
-  --voice halina --toon <ep2-toon> --model eleven_v3 --stability 0.5
+  --voice halina --toon redsmile-marcus --model eleven_v3 --stability 0.5
 python3 scripts/generate-jax-voice.py "[softly] I won't be long." \
-  --voice halina --toon <ep2-toon> --model eleven_v3 --stability 0.5
+  --voice halina --toon redsmile-marcus --model eleven_v3 --stability 0.5
 ```
 
 Marcus is warm and unhurried, never arch. Halina is low, flat, polite, tired —
 higher stability so she does not perform. Neither takes the `ai`/`badai` metallic
 chain.
 
-The chime is **not** a voice line: generate it through
-`scripts/generate-jax-sfx.py` (Sound Effects API) — a single soft, dry UI
-notification tick, no music, ~0.4s. Then level everything with
-`npm run normalise-audio -- <ep2-toon>`.
+The chime is **not** a voice line: it comes from `scripts/generate-jax-sfx.py`
+(Sound Effects API), slug `redsmile-ep2-popup-tic` — a single dry UI
+notification tick, no music. Ask for **0.8s and "loud, dry, close"**: the first
+take, worded *soft* at 0.4s, returned -60 dB mean and was inaudible under
+playback. Then level everything with
+`npm run normalise-audio -- redsmile-marcus`.

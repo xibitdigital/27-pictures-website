@@ -21,7 +21,7 @@
   "ogDescription": "Horreur psychologique en noir et blanc à lire dans le navigateur, doublée en quatre langues.",
   "ogImageAlt": "Couverture de RED SMILE par 27 Pictures",
   "lead": "De l'horreur dessinée à l'encre noire et blanche, lue une page à la fois. Les pièces sont ordinaires — un appartement, un téléviseur, un téléphone posé face contre table — et ce qui cloche arrive sans bruit, depuis l'intérieur de l'image.",
-  "episodesTitle": "Un sorti, d'autres en chambre noire",
+  "episodesTitle": "Deux dehors, d'autres dans la chambre noire",
   "ep1Alt": "RED SMILE épisode 1, static — couverture",
   "ep1Meta": "Épisode 1",
   "ep1Cue": "12 pages",
@@ -33,9 +33,15 @@
     "name": "RED SMILE — Série d'horreur interactive | 27 Pictures",
     "description": "Horreur psychologique en noir et blanc à lire dans le navigateur, doublée en quatre langues.",
     "seriesDescription": "Horreur psychologique dessinée à l'encre gekiga noir et blanc dense : des pièces ordinaires, et dedans quelque chose qui ne devrait pas y être.",
-    "ep1Name": "Épisode 1 — static"
+    "ep1Name": "Épisode 1 — static",
+    "ep2Name": "Épisode 2 — Marcus"
   },
   "ep2Meta": "Épisode 2",
-  "ep2Title": "Dans la chambre noire",
-  "comingSoon": "Bientôt"
+  "comingSoon": "Bientôt",
+  "ep2Alt": "RED SMILE épisode 2, Marcus — couverture",
+  "ep2Cue": "1 planche",
+  "ep2Desc": "Marcus est gentil avec la femme qui nettoie son bureau la nuit. Derrière lui, une fenêtre s'ouvre toute seule.",
+  "wip": "En cours",
+  "ep3Meta": "Épisode 3",
+  "ep3Title": "Dans la chambre noire"
 }

@@ -45,7 +45,8 @@
             "it": "Buonasera.",
             "de": "Guten Abend.",
             "fr": "Bonsoir."
-          }
+          },
+          "audio": "assets/sfx/441637ea16d70f9faffdabc425941f13.mp3"
         },
         {
           "x": 0.5,
@@ -67,7 +68,8 @@
             "it": "Come sta?",
             "de": "Wie geht es Ihnen?",
             "fr": "Comment allez-vous ?"
-          }
+          },
+          "audio": "assets/sfx/9f865da32030145c979638085b05ab36.mp3"
         },
         {
           "x": 0.2,
@@ -89,7 +91,8 @@
             "it": "Non mi lamento, signore.",
             "de": "Ich kann nicht klagen, mein Herr.",
             "fr": "Je ne me plains pas, monsieur."
-          }
+          },
+          "audio": "assets/sfx/6b03b2c50b2cc8c2a1183ffa8379c69f.mp3"
         },
         {
           "x": 0.79,
@@ -111,7 +114,8 @@
             "it": "Faccio in fretta.",
             "de": "Ich bin gleich fertig.",
             "fr": "Je ne serai pas longue."
-          }
+          },
+          "audio": "assets/sfx/b7013fea7d05716aa27f2d54521417bc.mp3"
         },
         {
           "x": 0.22,
@@ -134,7 +138,8 @@
             "it": "TIC",
             "de": "TIC",
             "fr": "TIC"
-          }
+          },
+          "audio": "assets/sfx/acc7102c4f71dc864f6d1109d85bf686.mp3"
         }
       ]
     }

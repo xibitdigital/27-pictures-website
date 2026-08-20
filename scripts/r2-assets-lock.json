@@ -6724,6 +6724,38 @@
     "card-art/nero-page1.jpg": {
       "size": 395596,
       "uploadedAt": "2026-08-19T06:34:26.865Z"
+    },
+    "card-art/redsmile-marcus.jpg": {
+      "size": 260328,
+      "uploadedAt": "2026-08-20T12:02:47.270Z"
+    },
+    "toons/redsmile-marcus/assets/4468349d8a10ecf6d08aa721e3115c56.png": {
+      "size": 866505,
+      "uploadedAt": "2026-08-20T12:02:48.847Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/441637ea16d70f9faffdabc425941f13.mp3": {
+      "size": 22612,
+      "uploadedAt": "2026-08-20T12:02:50.651Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/6b03b2c50b2cc8c2a1183ffa8379c69f.mp3": {
+      "size": 34524,
+      "uploadedAt": "2026-08-20T12:02:52.288Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/9f865da32030145c979638085b05ab36.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-20T12:02:54.126Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/acc7102c4f71dc864f6d1109d85bf686.mp3": {
+      "size": 13836,
+      "uploadedAt": "2026-08-20T12:02:55.821Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/b7013fea7d05716aa27f2d54521417bc.mp3": {
+      "size": 65244,
+      "uploadedAt": "2026-08-20T12:02:57.436Z"
+    },
+    "toons/redsmile-marcus/config.980102da7e27f1ad437e1f7059d59755.json": {
+      "size": 3599,
+      "uploadedAt": "2026-08-20T12:03:06.069Z"
     }
   }
 }

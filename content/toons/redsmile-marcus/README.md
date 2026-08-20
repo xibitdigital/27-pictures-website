@@ -11,15 +11,20 @@ Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 | Design size | 800 × 1424 (portrait)                                    |
 | Pages       | **1** — work in progress                                 |
 
-## Status: unlisted
+## Status: published, unlisted
 
-`noindex, nofollow` on the reader, no card on `/toons/`, no series-page episode
-card, no sitemap or `llms.txt` entry. Same treatment Erin EP 2 gets: a
-work-in-progress badge does not stop Google ranking half a story. The URL builds
-and answers, so it can be shared directly.
+The config and every asset are on R2 and the reader resolves the locked hash
+like every other toon, so `/toons/redsmile-marcus/` works in a production build.
 
-Shipping the episode = remove the noindex, add the card on
-`/toons/red-smile/`, add the sitemap `<url>` and the `llms.txt` line.
+It is still **unlisted**: `noindex, nofollow` on the reader, no card on
+`/toons/`, no sitemap or `llms.txt` entry — one page is not something to rank,
+and a work-in-progress badge does not stop Google ranking half a story. What it
+does have is an episode card on `/toons/red-smile/` (with a *Work in progress*
+badge, same as Erin EP 2) and an entry in that page's `CreativeWorkSeries`
+`hasPart`, because the series page must not claim fewer episodes than it shows.
+
+Shipping the episode = remove the noindex, add the sitemap `<url>` and the
+`llms.txt` line, and drop the WIP badge and the `1 page` cue.
 
 ## Logline
 
@@ -43,9 +48,16 @@ Page 1 carries 5 overlays — 2 Marcus lines, 2 Halina lines, 1 SFX. Draft,
 placement reasoning and the generation commands are in
 `docs/story/red-smile/captions/ep2-page-01.md`.
 
-**No audio yet.** Every `words[]` entry is missing its `audio` key; generate the
-four voice lines and the chime, then add the hashed paths and
-`npm run normalise-audio -- redsmile-marcus`.
+**Voiced.** All five overlays carry `audio`: four ElevenLabs `eleven_v3` lines
+(marcus ×2 at stability 0.4, halina ×2 at 0.5) and the popup chime from the
+Sound Effects API, slug `redsmile-ep2-popup-tic` in
+`scripts/jax-sfx-manifest.json`. Levelled with
+`npm run normalise-audio -- redsmile-marcus` (voices to -18 LUFS; the chime was
+already on target).
+
+The chime took two takes: the first came back at -60 dB mean — inaudible — and
+a 0.4 s request is under what the API renders usefully. The shipped one asks for
+0.8 s and a *loud, dry, close* tick.
 
 ## Plates
 
