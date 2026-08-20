@@ -1,0 +1,27 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image (multi-reference)
+# refs: Image 1 = nero.png (key art, front 3/4 in rain — canonical face, hair, cyber arm side and plating)
+#       Image 2 = nero-ref-A-fullbody.png (front full body, club floor — proportions, coat cut, boots)
+# out:  character reference sheet, reuse as pinned ref on every future Nero page
+
+FORMAT: Black and white cyberpunk manga CHARACTER REFERENCE SHEET, horizontal 1792x1008, clean flat light-grey background, thin panel divisions or none. High-contrast ink and screentone, same line weight and shading as the two refs. No color, no speech balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art, no arrows, no labels.
+
+MERGE INSTRUCTION: Both reference images are the SAME character. Take the face, hairline, spike pattern, eye shape, scar and jaw from Image 1. Take the body proportions, coat cut, belt, trousers and boots from Image 2. Take the cyber arm plating detail from Image 1. Produce ONE consistent character, not a collage — do not blend two different faces, do not average them into a generic face.
+
+LAYOUT (left to right, all the same character, same scale line, feet on a common baseline):
+1. Full body FRONT, standing neutral, arms at sides, coat hanging open.
+2. Full body 3/4 turn, same neutral stance.
+3. Full body SIDE profile, same neutral stance.
+4. Full body BACK view, coat from behind.
+5. Head-and-shoulders close-ups, three across the top-right: neutral, hard glare, faint grim half-smile.
+6. Isolated details, two small insets: the LEFT cyber arm alone, shoulder to fingertips, plating and cable seams visible; and the RIGHT metal hand alone at the wrist join, flesh forearm stump visible above it.
+
+SUBJECT LOCK — NERO: lean hard-bitten detective, mid-thirties, tall and wiry-muscular not bulky. Short black hair swept into tall upward spikes, sharp widow's peak, heavy dark brows, intense narrow eyes, high cheekbones, cracked fracture lines across the right side of the face and temple, permanent five-o'clock shadow. Long dark battered coat with a wide upturned collar and split tails, dark shirt open at the throat, chest and shoulder straps, dark trousers, heavy laced boots, plain belt.
+
+CYBERWARE — CRITICAL, ASYMMETRIC: the LEFT arm is prosthetic end to end — cracked porcelain-like plating over the upper arm, full segmented steel forearm, exposed cable seams, articulated metal fingers, rounded shoulder pauldron over that side. The RIGHT arm is ordinary flesh — skin upper arm and forearm — ending in a metal cybernetic HAND that starts cleanly at the wrist. Never a third arm. Never two full steel arms. Never a flesh left hand. Image 1 is the authority on sides: Nero faces the camera there, and the full steel arm sits on the viewer's right, which is his anatomical LEFT. In the side, back and 3/4 views the steel arm must stay on his anatomical left — if a pose would flip it to the right, mirror the POSE, not the arm.
+
+ANATOMY: exactly two arms and two legs in every view. No third arm, no extra hands, no floating limbs. Consistent height and head-to-body ratio across all views — same character sheet scale.
+
+STYLE LOCK: pure black-and-white manga ink, screentone shading, crisp inked contours. No photoreal 3D render, no painted color, no cel-shaded anime gloss, no gradient airbrush.
+
+CHANGE: only the pose, angle and layout. Preserve face, hair, coat design, cyber arm side and ink style exactly as pinned above.

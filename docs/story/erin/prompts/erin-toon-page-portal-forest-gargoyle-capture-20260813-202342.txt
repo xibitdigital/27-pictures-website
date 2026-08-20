@@ -1,0 +1,28 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = Erin sheet, Image 2 = forest page (ink + woodland), Image 3 = portal reference, Image 4 = border-grammar page (frame break)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~35% / 28% / 37%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, fine speed lines. No colour.
+
+PANEL BORDERS: top panel full-bleed to the page edges; middle panel a plain rectangle with a thin keyline; bottom panel is the one effect border — the gargoyle's wing and talons break out past its keyline into the white page margin. Nothing else breaks the frame: no lightning-bolt outlines, no zigzag dividers, no tilted panels. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin's face, short choppy dark bob with straight fringe and side tufts, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black lace-up combat boots from Image 1. Keep the portal design — ring of light, spiral vortex, runic stone arch, curling glyph ribbons — from Image 3. Keep the B&W ink style, line weight, screentone and forest rendering from Image 2. Do not redesign identity.
+
+TOP (full-bleed, ~35%): Erin steps into the portal, back three-quarters to camera, one arm raised into a blazing ring of light with a spiral vortex inside it, glyph ribbons curling around her, her silhouette burning black against the white.
+
+MIDDLE (rectangle, ~28%): Wide shot of Erin small in frame, walking away from camera along a root-tangled forest trail at night, enormous gnarled trunks and ferns closing over her, low mist at her boots, moonlight in hard shafts.
+
+BOTTOM (~37%, frame-breaking): A stone gargoyle drops on her from above and seizes her — talons clamped around her ribs and one shoulder, Erin's boots torn off the ground, arms wrenched wide, head snapped back in shock, leaves and grit exploding outward, radial burst lines behind them.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob, large sharp eyes with heavy lashes, hard determined brow, black track jacket with high collar and ribbed cuffs, black trousers, black combat boots, wiry athletic build; same face and outfit in every panel, white rim light separating her black clothes from the dark forest.
+
+GARGOYLE LOCK: hunched winged stone beast twice Erin's size, cracked grey granite hide with moss in the crevices, blunt horned brow, flat snarling muzzle with stubby fangs, blank pale glowing eyes, heavy ribbed bat wings, four long clawed talons per hand, thick stubby legs, stone dust flaking off it in motion. Carved statue made flesh — not a dragon, not a demon, not a goblin.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half. Vary shot scale — medium back-shot, then wide, then close violent action.
+
+ANATOMY: exactly two arms and two legs per figure; the gargoyle has two arms, two legs and two wings only. No extra limbs, no ghost hands, no extra fingers.
+
+CHANGE: only the three beats described above; preserve identity and ink style from the pins. No goblins on this page.

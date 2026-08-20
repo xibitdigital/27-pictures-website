@@ -1,0 +1,16 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current page 1 to fix
+
+PIN from Image 1 — keep the TOP panel (Nero walking down the rain-soaked neon alley) and the MIDDLE panel (extreme close-up on his cracked eye) exactly as they are, same framing, same ink, same screentone. Keep the three-panel vertical stack, thick black gutters, black outer border. Do not restyle any face or recompose either of those two panels.
+
+CHANGE — replace the BOTTOM panel entirely. Remove the wide alley shot. In its place, a minimal close-up composition with only two things in frame:
+
+1. ONE leg of the sicario — a single booted leg, standing on a rooftop ledge, dark rain-slick trousers, rain beading on the boot. Nothing else of his body is visible: no torso, no face, no second leg, no arms.
+2. The rifle muzzle and scope, hanging straight down beside that leg, pointing down toward the rooftop surface in the same direction the leg points — a loose, lowered carry position, not raised, not aimed, not sighting through the scope.
+
+Keep the composition tight and close on just these two elements. The background — rooftop surface, a hint of city skyline, rain — stays soft, dark and out of focus, with no other detail competing for attention. There is no need to show the alley or Nero in this panel.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no speech balloons, no dialogue, no captions, no SFX lettering, no watermarks, no readable text, no scope reticle numbers or markings anywhere in the art.
+
+ANATOMY: exactly one leg and the rifle in frame — no second leg, no arms, no hands, no face. Do not add any extra limbs.

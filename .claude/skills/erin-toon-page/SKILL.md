@@ -49,7 +49,7 @@ NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no cap
 
 ## Output rules (strict)
 
-- Build the full prompt, **always save it as a `.txt`** in `~/Downloads/`
+- Build the full prompt, **always save it as a `.txt`** under `docs/story/<series>/prompts/` (tracked)
 - Also show it in chat as one copyable fenced block
 - **Under ~550 English words** (Seedream scatters detail past ~600)
 - **Prompt-only by default.** Write the file and stop — user attaches refs and
@@ -95,22 +95,35 @@ PIN clause when refs are used:
 PIN from references: keep Erin's face, short choppy dark bob with straight fringe, large sharp eyes, black zip track jacket, black trousers with thin side stripe, black combat boots from Image [sheet]; keep goblin design from Image [goblins]; keep the B&W ink style and panel framing from Image [style]. Do not redesign identity.
 ```
 
-## Save prompt to Downloads (required)
+## Save the prompt (required)
 
-1. UTF-8 `.txt` under `~/Downloads/`
-2. Filename `erin-toon-page-<slug>-YYYYMMDD-HHMMSS.txt`
-   (slug: lowercase ASCII from first ~40 chars of the beat, spaces → `-`)
-3. Contents = prompt only, optional ≤4-line `#` header:
+**Primary location is the repo, tracked:**
 
 ```
-# model: bytedance/seedream-5.0-pro
-# mode: image-to-image
-# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
-# refs: [what to attach, in order]
+docs/story/<series>/prompts/
 ```
 
-4. Chat: fenced prompt + `Saved: ~/Downloads/...`
+`<series>` is the toon the plate belongs to — `nero`, `jax`, `erin`,
+`red-smile`. Name it for what it makes, with no timestamp; git already has the
+dates, and a timestamped filename stops being the obvious current version as soon
+as there are two of them:
 
+- `page-<episode>-<slug>.txt` — a story plate
+- `page-<episode>-<slug>-fix.txt` — a fix pass against a generated plate
+- `character-<name>.txt` — a character sheet
+- add `-superseded` when a prompt is replaced but worth keeping for traceability
+
+**Why tracked:** the generated images are not in git — plates live on R2 and
+generation references live in `references/`, which is gitignored. The prompt is
+the only durable record of how an image was made, and an image without its prompt
+cannot be re-rolled, fixed or matched by a later plate.
+
+Optionally also drop a copy in `~/Downloads/` if it is about to be pasted into a
+web UI. That copy is a convenience, not the record.
+
+Contents = **prompt only** (optional ≤4-line `#` header naming the model, the
+mode, and which reference is Image 1, 2, 3). In chat: the fenced prompt plus the
+saved path.
 ## Defaults (encode inside the prompt)
 
 | Spec | Default |
@@ -233,7 +246,7 @@ Trim filler adjectives first if over ~550 words.
 ```bash
 set -a; source .env; set +a
 python3 scripts/generate-toon-page.py \
-  --prompt-file ~/Downloads/erin-toon-page-<slug>-<stamp>.txt \
+  --prompt-file docs/story/erin/prompts/page-<episode>-<slug>.txt \
   --mode image-to-image \
   --ref-asset toons/erin/assets/c363b4d490e8b574c61f92716bdc7dd4.jpg \
   --ref-asset toons/erin/assets/b19084ec3aa6db1355311aea48adfd23.jpg \

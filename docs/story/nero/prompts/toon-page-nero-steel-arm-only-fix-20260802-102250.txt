@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current page to fix; Image 2 = nero.png key art (copy the steel arm from this)
+
+PIN from Image 1: keep the TOP and MIDDLE panels untouched. In the BOTTOM panel keep the room, the Victorian panelling, the glowing data-strips, cables, drone and scan-lines, Eve standing on the left turned toward Nero, Nero kneeling on one knee with his head down, the coat, the boots, the ink and screentone. Do not change the camera, the composition or any face.
+
+CHANGE — Nero's arms only. One instruction, nothing else:
+
+The arm reaching down to the floor on the VIEWER'S RIGHT must be SOLID METAL ALONG ITS WHOLE LENGTH. Copy it from Image 2. Metal at the shoulder, metal at the bicep, metal at the elbow, metal at the forearm, metal at the hand. There is NO skin on this arm anywhere. There is NO point where flesh becomes metal — no seam at the elbow, no seam mid-forearm, no bare muscular upper arm above a chrome forearm. Plated steel from the shoulder pauldron all the way to the fingertips, one continuous prosthetic, with heavy overlapping plates and a solid blunt-fingered hand — not thin skeletal fingers.
+
+His other arm, on the VIEWER'S LEFT, is ordinary human flesh. Rest it on his raised knee, close to the body, sleeve down, with only a plain metal hand showing at the wrist.
+
+Everything else in the panel stays exactly as it is.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no balloons, no text in the art.
+
+ANATOMY: exactly two arms and two legs.

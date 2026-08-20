@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sub Signo</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,900&family=Inter:wght@300;400;600&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* One committed visual world: a channel that should not exist, at 2am.
+         No light theme — the subject is a dark broadcast, and every colour is
+         painted explicitly so the page holds on any host ground. */
+      :root {
+        --ink: #030303;
+        --panel: #0b0b0d;
+        --panel-hi: #131317;
+        --line: #24242a;
+        --smoke: #8b8b93;
+        --bone: #e8e6e1;
+        --red: #b30000;
+        --red-hot: #e01010;
+        --measure: 66ch;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--bone);
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        font-weight: 300;
+        line-height: 1.75;
+        font-size: 1rem;
+        overflow-x: hidden;
+      }
+
+      /* Scanlines. The subject is a transmission; this is the only texture. */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 100;
+        background: repeating-linear-gradient(180deg, rgb(255 255 255 / 3.5%) 0 1px, transparent 1px 3px);
+      }
+
+      .wrap {
+        max-width: 60rem;
+        margin: 0 auto;
+        padding: 0 1.5rem 6rem;
+      }
+
+      /* ---- tuning strip: the rail marks sections the way a dial marks bands */
+      .rail {
+        position: fixed;
+        left: 2rem;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: var(--line);
+        display: none;
+      }
+      .rail span {
+        position: absolute;
+        left: -3px;
+        width: 7px;
+        height: 1px;
+        background: var(--smoke);
+      }
+      @media (min-width: 1180px) {
+        .rail {
+          display: block;
+        }
+      }
+
+      /* ---- hero */
+      header.hero {
+        min-height: 78vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1.75rem;
+        padding: 5rem 0 4rem;
+      }
+
+      .sigil {
+        width: 108px;
+        height: 108px;
+        display: block;
+      }
+      .sigil path {
+        fill: none;
+        stroke: var(--red-hot);
+        stroke-width: 2.2;
+        stroke-linejoin: round;
+        animation: carrier 5.5s steps(1, end) infinite;
+      }
+      @keyframes carrier {
+        0%,
+        71%,
+        74%,
+        79%,
+        100% {
+          opacity: 1;
+        }
+        72%,
+        78% {
+          opacity: 0.25;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .sigil path {
+          animation: none;
+        }
+      }
+
+      .eyebrow {
+        font-family: "VT323", ui-monospace, monospace;
+        font-size: 1.05rem;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--red);
+        margin: 0;
+      }
+
+      h1 {
+        font-family: "Playfair Display", Georgia, serif;
+        font-weight: 900;
+        font-size: clamp(3rem, 11vw, 7.5rem);
+        line-height: 0.9;
+        letter-spacing: -0.02em;
+        margin: 0;
+        text-wrap: balance;
+      }
+
+      .thesis {
+        font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+        max-width: var(--measure);
+        color: var(--bone);
+        margin: 0;
+      }
+      .thesis strong {
+        font-weight: 600;
+        color: #fff;
+      }
+
+      /* ---- sections */
+      section {
+        padding-top: 4.5rem;
+      }
+
+      h2 {
+        font-family: "Playfair Display", Georgia, serif;
+        font-weight: 900;
+        font-size: clamp(1.9rem, 4vw, 3rem);
+        line-height: 1.05;
+        margin: 0 0 0.4rem;
+        text-wrap: balance;
+      }
+
+      .kicker {
+        font-family: "VT323", ui-monospace, monospace;
+        font-size: 1rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--smoke);
+        margin: 0 0 1.25rem;
+      }
+
+      p {
+        max-width: var(--measure);
+      }
+      p + p {
+        margin-top: 1rem;
+      }
+
+      a {
+        color: var(--red-hot);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+      a:focus-visible {
+        outline: 2px solid var(--red-hot);
+        outline-offset: 3px;
+      }
+
+      /* ---- tier: structure encodes the real hierarchy, not decoration */
+      .tier {
+        display: grid;
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        margin-top: 1.75rem;
+      }
+      .member {
+        background: var(--panel);
+        padding: 1.5rem 1.5rem 1.6rem;
+        display: grid;
+        gap: 0.35rem;
+        grid-template-columns: 1fr;
+      }
+      .member.is-principal {
+        border-left: 3px solid var(--red);
+      }
+      .member.is-agent {
+        border-left: 3px solid var(--smoke);
+      }
+      .member.is-outside {
+        border-left: 3px solid transparent;
+        background: var(--ink);
+      }
+
+      .member .role {
+        font-family: "VT323", ui-monospace, monospace;
+        font-size: 0.95rem;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--smoke);
+      }
+      .member.is-principal .role {
+        color: var(--red);
+      }
+      .member h3 {
+        font-family: "Playfair Display", Georgia, serif;
+        font-weight: 700;
+        font-size: 1.6rem;
+        margin: 0;
+        line-height: 1.15;
+      }
+      .member .what {
+        color: var(--smoke);
+        font-size: 0.95rem;
+      }
+      .member p {
+        margin: 0.4rem 0 0;
+        font-size: 0.98rem;
+      }
+
+      @media (min-width: 800px) {
+        .member {
+          grid-template-columns: 11rem 1fr;
+          column-gap: 2rem;
+          align-items: baseline;
+        }
+        .member .role {
+          grid-row: 1;
+        }
+        .member h3 {
+          grid-column: 2;
+          grid-row: 1;
+        }
+        .member .what {
+          grid-column: 2;
+        }
+        .member p {
+          grid-column: 2;
+        }
+      }
+
+      /* ---- the rule table */
+      .scroller {
+        overflow-x: auto;
+        margin-top: 1.75rem;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 34rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      thead th {
+        font-family: "VT323", ui-monospace, monospace;
+        font-size: 0.95rem;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--smoke);
+        font-weight: 400;
+        border-bottom-color: var(--smoke);
+      }
+      tbody th {
+        font-weight: 600;
+        color: var(--bone);
+        white-space: nowrap;
+      }
+      td {
+        color: var(--smoke);
+      }
+      td strong {
+        color: var(--bone);
+        font-weight: 600;
+      }
+
+      /* ---- pull quote: the one loud moment */
+      .pull {
+        margin: 3rem 0 0;
+        padding: 2rem 0 2rem 2rem;
+        border-left: 3px solid var(--red);
+        font-family: "Playfair Display", Georgia, serif;
+        font-weight: 900;
+        font-style: italic;
+        font-size: clamp(1.5rem, 3.6vw, 2.4rem);
+        line-height: 1.2;
+        max-width: 30ch;
+        text-wrap: balance;
+      }
+
+      .note {
+        margin-top: 2.5rem;
+        padding: 1.25rem 1.5rem;
+        background: var(--panel-hi);
+        border: 1px solid var(--line);
+        font-size: 0.95rem;
+        color: var(--smoke);
+        max-width: var(--measure);
+      }
+      .note b {
+        color: var(--bone);
+        font-weight: 600;
+      }
+
+      ul.q {
+        max-width: var(--measure);
+        padding-left: 1.1rem;
+        color: var(--smoke);
+      }
+      ul.q li {
+        margin-bottom: 0.6rem;
+      }
+      ul.q li::marker {
+        color: var(--red);
+      }
+
+      footer {
+        margin-top: 5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--line);
+        font-family: "VT323", ui-monospace, monospace;
+        font-size: 1rem;
+        letter-spacing: 0.14em;
+        color: var(--smoke);
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="rail" aria-hidden="true">
+      <span style="top: 18%"></span><span style="top: 34%"></span><span style="top: 52%"></span>
+      <span style="top: 68%"></span><span style="top: 86%"></span>
+    </div>
+
+    <div class="wrap">
+      <header class="hero">
+        <!-- The unicursal hexagram: six tips, one continuous unbroken line,
+             taller than wide. Derived as the closed path visiting the six outer
+             points in the order top-bottom-UL-LR-LL-UR, which is what produces
+             the vertical stroke through the centre that the plate shows and a
+             pentagram does not have. Do not "simplify" this to five points. -->
+        <svg class="sigil" viewBox="0 0 100 116" role="img" aria-label="The unicursal hexagram">
+          <path d="M50 8.6 L50 107.4 L17.1 39 L82.9 77 L17.1 77 L82.9 39 Z" />
+        </svg>
+
+        <p class="eyebrow">RED SMILE · Series bible</p>
+        <h1>Sub&nbsp;Signo</h1>
+        <p class="thesis">
+          <em>Under the sign.</em> Three people hunt a thing that lives in transmission.
+          <strong
+            >Two of the three are partly what they hunt, and the one who is not is the one who does the killing.</strong
+          >
+        </p>
+      </header>
+
+      <section>
+        <p class="kicker">The name</p>
+        <h2>Under the sign, and under the standards</h2>
+        <p>
+          The society is named for the mark its members carry, not for its absence. Viktor and Adaeze wear the unicursal
+          hexagram on their skin — the entity's own shape, worn deliberately as ward and anchor. They work beneath it in
+          both senses: protected by it, and subject to it.
+        </p>
+        <p>
+          <em>Sub signis</em> is also the Latin for troops serving together under their unit's colours — the oldest way
+          to say that these people are one body, without pretending three of them and a cleaner amount to an
+          institution.
+        </p>
+        <p>
+          Tokiro is the exception that proves it. He is <em>sub signo</em> by membership and refuses to be
+          <em>sub signo</em> on his body: he will not carry the thing's picture on his skin, and goes into rooms
+          unprotected because of it. The name says what the society is; he is the standing argument about what that
+          should cost.
+        </p>
+      </section>
+
+      <section>
+        <p class="kicker">The top tier</p>
+        <h2>Three principals</h2>
+        <p>
+          Founded by Viktor in the 1940s, after he escaped an attack by the thing it now hunts. Not an inherited order
+          and nobody above him: one survivor's answer to what he watched happen in Berlin in 1934, when the entity got
+          into the heads of the first television audiences.
+        </p>
+        <p>
+          Not an agency and not an army. The qualification for the top is unteachable, so nobody is promoted into it —
+          there are three, and there have only ever been three.
+        </p>
+
+        <div class="tier">
+          <article class="member is-principal">
+            <p class="role">Scholar</p>
+            <h3>Viktor</h3>
+            <p class="what">Half vampire · 350 years old · looks sixty</p>
+            <p>
+              Occultist and master banisher. He closes a case by knowing the name. Three and a half centuries of
+              watching the same things surface, be put down, and surface again wearing whatever medium the century
+              provided — which is worth more than any of the rest of it.
+            </p>
+          </article>
+
+          <article class="member is-principal">
+            <p class="role">Finder</p>
+            <h3>Adaeze</h3>
+            <p class="what">Half demon · early forties · human mother, demon father</p>
+            <p>
+              She locates and reaches. Tokiro saved her during the battle with her father, which is the founding fact of
+              her life and the reason she is in this work. She has never entirely settled whether that was mercy or
+              recruitment.
+            </p>
+          </article>
+
+          <article class="member is-principal">
+            <p class="role">Blade</p>
+            <h3>Tokiro</h3>
+            <p class="what">Akuma banisher · late thirties · entirely human</p>
+            <p>
+              He ends it in the room. The only one of the three who is simply a man — he banishes akuma for a living and
+              carried one home, and he notices that without resenting it.
+            </p>
+          </article>
+        </div>
+
+        <blockquote class="pull">It does not get to recruit its way out of being three.</blockquote>
+      </section>
+
+      <section>
+        <p class="kicker">Below them</p>
+        <h2>Placed agents</h2>
+        <p>
+          Ordinary people in ordinary jobs, positioned where the society needs eyes. They watch, they report, they
+          banish nothing. They are deniable, unprotected, and the thing they watch for kills them specifically.
+        </p>
+
+        <div class="tier">
+          <article class="member is-agent">
+            <p class="role">Agent</p>
+            <h3>Halina</h3>
+            <p class="what">The cleaner · mid fifties · undercover in Marcus's building</p>
+            <p>
+              Her cover is close to perfect, and not because it is clever — it is perfect because it is true. She really
+              does the job, every night, properly, for the wage. Nobody in that building has ever looked at her long
+              enough to wonder.
+            </p>
+          </article>
+
+          <article class="member is-agent">
+            <p class="role">Agent · former</p>
+            <h3>Elena's mother</h3>
+            <p class="what">Dead, taken, or missing</p>
+            <p>
+              She worked this tier too. Which means the society has been losing these people for a while, and that the
+              cost of the work does not stop at the person doing it.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="kicker">What they hunt</p>
+        <h2>It has no hands, so it makes them</h2>
+        <p>
+          The entity moves through media — radio, television, computers — and crosses into a person by way of an
+          <strong>image</strong>. Not the sound, not the wiring: the picture. To see it is to be exposed, which is why
+          this whole series is drawn rather than filmed. It was in the heads of the first television users in
+          <strong>1934</strong>; every decade since has handed it a wider aperture.
+        </p>
+        <p>
+          It knows it is being hunted, and it kills society agents because it feels threatened by them. But it cannot
+          cross a room. So it takes civilians and keeps them as vessels, and the killing is done by someone who was a
+          neighbour a fortnight ago.
+        </p>
+
+        <div class="scroller">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Who</th>
+                <th scope="col">What happens to them</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">A civilian</th>
+                <td>
+                  <strong>Taken and inoculated.</strong> The image crosses, the sigil surfaces in the iris — and what is
+                  grown in them is a weapon.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">A society agent</th>
+                <td>
+                  <strong>Killed.</strong> Not hosted, not crossed into. Removed — and removed by a vessel, not by
+                  anything with a shape.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <blockquote class="pull">
+          The smile is not what is left of a person. It is what a finished weapon looks like.
+        </blockquote>
+      </section>
+
+      <section>
+        <p class="kicker">Outside the society</p>
+        <h2>The people it has already reached</h2>
+
+        <div class="tier">
+          <article class="member is-outside">
+            <p class="role">Vessel</p>
+            <h3>Elena</h3>
+            <p class="what">Episode one · an agent's daughter, which is why she was never arbitrary</p>
+            <p>
+              A text from her partner confirms she is alone. The television finds a channel that should not exist. Then
+              the same sigil surfaces inside her iris. Episode one is not a prologue — it is the transmission.
+            </p>
+          </article>
+
+          <article class="member is-outside">
+            <p class="role">Vessel</p>
+            <h3>Marcus</h3>
+            <p class="what">Chief executive · late thirties · owns the screens</p>
+            <p>
+              The entity did not need to corrupt the man who runs the largest image-delivery apparatus ever built. It
+              only needed him to look at one. He has a society agent cleaning his offices, and neither of them knows
+              about the other.
+            </p>
+          </article>
+        </div>
+
+        <div class="note">
+          <b>The boundary matters.</b> Marcus and Elena are victims, not members — and being on the payroll is not
+          immunity either. Each episode is a host.
+        </div>
+      </section>
+
+      <section>
+        <p class="kicker">The mark</p>
+        <h2>Wearing the thing's own picture</h2>
+        <p>
+          Viktor and Adaeze both carry the unicursal hexagram tattooed on their skin — his on the back of the bare right
+          hand, hers inside the left wrist. It is the same sigil that fills the television in episode one.
+        </p>
+        <p>
+          If the sigil is the transfer vector, wearing it deliberately is either suicidal or the whole trick. The
+          proposal: it is inoculation and anchor — you mark yourself with the thing's own shape so the image has nowhere
+          new to arrive, and so you can look at it directly and act.
+        </p>
+        <p>
+          Tokiro refuses it. He will not carry the thing's picture on his body, and he goes into rooms unprotected
+          because of it. Neither man has convinced the other in years of trying.
+        </p>
+      </section>
+
+      <section>
+        <p class="kicker">Unresolved</p>
+        <h2>Open questions</h2>
+        <ul class="q">
+          <li>What is the society called, if anything — and do its members ever say it aloud?</li>
+          <li>Is Adaeze's father dead? Tokiro fought him; nobody has said who won.</li>
+          <li>How does the entity identify an agent? The answer decides how Halina gets caught.</li>
+          <li>Why is Halina still alive — is the cover working, or is it waiting to see who she reports to?</li>
+          <li>Is there anything of Elena left inside the thing that used to be her?</li>
+          <li>Do the wards actually work? Viktor and Adaeze are the two it has most reason to kill.</li>
+        </ul>
+
+        <div class="note">
+          <b>Status.</b> Established: the three principals and their natures; the agent tier; the entity's medium, its
+          image vector, that it kills agents, and that Elena and Marcus are vessels. Everything else on this page is a
+          proposal — a pitch to accept, edit or throw out.
+        </div>
+      </section>
+
+      <footer>Sub Signo · 27 Pictures · RED SMILE · series bible · not for publication</footer>
+    </div>
+  </body>
+</html>

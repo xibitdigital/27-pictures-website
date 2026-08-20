@@ -1,0 +1,16 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / gekiga B&W — RED SMILE: static, end card
+# refs: Image 1 = page 11 plate (toons/redsmile-static/assets/b3998657c538be56314fd5905745e035.png) for ink style
+
+FORMAT: Black and white horror manga end card, vertical 1008x1792, ONE single full-bleed panel — no panel grid, no gutters, no borders. No text, no lettering, no logos, no watermarks, no balloons anywhere in the art.
+
+PIN from reference: keep the same B&W gekiga ink treatment — sharp decisive linework, heavy ink, hard high contrast, fine grain.
+
+IMAGE: A pure black page. Floating in the centre, slightly above the middle, a single wide devilish smile drawn in hard white — one long curving crescent of teeth, corners pulled far past any human mouth, a clean vertical seam between each tooth, the lower lip line thin and sharp. Nothing else: no face, no eyes, no head, no body, no background detail, no texture. The mouth simply hangs in the dark.
+
+TREATMENT: The white is bright and clean against absolute black, edges crisp, a faint grain in the black around it. A very slight uneven wobble to the line so it reads as inked by hand, not vector. Deep empty black fills the entire lower third and both side margins.
+
+ANATOMY: one mouth only, no face, no duplicate mouths, no extra teeth rows.
+
+CHANGE: replace the whole page with this single black plate and white smile; keep only the ink style from the reference.

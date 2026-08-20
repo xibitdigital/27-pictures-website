@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the unmask page (COMPOSITION — keep it) ; Image 2 = the ambush page (STYLE — copy it)
+
+This is a STYLE PASS. Redraw Image 1 in the exact drawing style of Image 2. The scene must not change.
+
+KEEP FROM IMAGE 1 — unchanged, exactly as drawn:
+Every panel, every figure, every pose, every camera angle. The three-panel horizontal stack and the gutter positions. Top panel: the metal hand peeling the black balaclava off the face, the tilted head, the chin and mouth clear, the mask bunched over the eyes. Middle panel: the revealed face lying on the floorboards, same features, same hair, same half-smile, same angle. Bottom panel: Nero crouched over the body, the blank keycard pinched in his metal hand, his steel forearm braced, the windows and panelling behind him. Do not reframe, do not recompose, do not move anything, do not change a single face or hand.
+
+CHANGE — the rendering only, to match Image 2:
+- Push the contrast up hard. Image 1 is flat and grey; Image 2 has deep solid blacks against bright blown-out whites. Restore that range.
+- Bring back the bright highlights. Light through the windows, the lit edges of faces and metal, and the pale floor should burn to near-white, not sit in mid-grey.
+- Crisp inked contours: firm black outlines of even weight, the way Image 2 draws its edges. Not soft pencil, not smudged charcoal.
+- Shade with visible screentone dots and directional hatching, as Image 2 does. Remove the smooth airbrushed grey gradients.
+- Keep skin, cloth and steel reading as distinct materials through ink texture rather than tonal blur.
+
+Same B&W throughout: no color, no sepia, no coloured tint. Same vertical 1008x1792 page, three stacked horizontal panels, thick black gutters, black outer border. No balloons, no captions, no SFX lettering, no watermarks, no readable text or symbols — the keycard stays blank.

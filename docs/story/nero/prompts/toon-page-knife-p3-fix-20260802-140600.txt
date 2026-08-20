@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current knife page to fix
+
+PIN from Image 1 — keep the TOP panel (Nero drawing the knife) and the MIDDLE panel (blade in flight, shooter small in the doorway) exactly as they are. Same framing, same figures, same speed lines, same ink and screentone, same three-panel stack with the diagonal split. Do not change any face, pose or limb outside the bottom panel.
+
+CHANGE — the bottom panel, two things only:
+
+1. THE KNIFE IS FACING THE WRONG WAY. Right now the pointed tip sticks out into the open air on the left and the grip end is buried in his vest. Reverse it. The BLADE must be inside his chest, buried to the hilt, and the GRIP must be the part sticking out — a dark wrapped handle with a pommel and crossguard, protruding up and to the left, back along the direction the knife travelled. No blade visible outside the body: only the handle.
+
+2. THE KNIFE IS FAR TOO BIG. Shrink it to a realistic combat knife against a grown man's torso — the visible grip should be roughly the width of his hand, not as long as his chest is wide. It should read as a real thrown knife embedded in a plate carrier, not an oversized prop.
+
+Keep the point of entry high on the CHEST, centre-left of the plate carrier, above the belt line. Keep his body snapping backward, arms flung out, gloves open, rifle falling, head out of frame, and the white radial impact lines behind him.
+
+Restrained ink: impact only. No gore, no spraying blood, no open wound detail.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no balloons, no captions, no SFX lettering, no watermarks, no readable text anywhere in the art.

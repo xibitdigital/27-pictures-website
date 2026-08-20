@@ -1,0 +1,19 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = prior Cerberus page (style/faces); Image 2 = Eve ref if available
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone. No color, no speech balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art.
+
+PIN from refs: keep Eve long wavy dark hair, black rectangular glasses always on, fitted dark blazer; Nero short dark hair, dark coat, left arm only full steel cyber (replacement not extra), normal right arm; same B&W manga ink style and three-panel stack if layout ref provided.
+
+TOP (~35%): Inside luxurious Cerberus club floor — velvet, chandeliers, deep blacks. Eve and Nero move through the crowd; well-dressed rich guests drink and talk around them. Wide establish.
+
+MIDDLE (~30%): Nero at a polished bar approaches a bartender; Eve beside or just behind him, glasses on. Clear two-arm bodies only. Medium shot, bar bottles and glass glints in ink.
+
+BOTTOM (~35%): Classic grand staircase (marble/wood rail, ornate). Nero and Eve climbing up together — Nero slightly ahead or turning, Eve following, glasses still on. Strongest ascent beat.
+
+SUBJECT LOCK: Eve — long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses always on, fitted dark blazer, slim trousers, composed forensic analyst. Nero — lean hard-bitten detective, short dark hair, intense eyes, dark coat, left arm steel cyber only, normal right arm, two legs, boots. Same faces/outfits all panels.
+
+ANATOMY: exactly two arms and two legs per person — never three or four arms, never extra hands. Cyber arm replaces left only. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the interior club scenes above; preserve identity and ink style from pins.

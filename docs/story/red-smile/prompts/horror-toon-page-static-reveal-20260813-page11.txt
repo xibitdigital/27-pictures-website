@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / gekiga B&W — RED SMILE: static, page 11
+# refs: Image 1 = page 10 plate (life drain, aged body); Image 2 = page 9 plate (toons/redsmile-static/assets/875346564336ad9f4f5ad3b1ebd55b36.png); Image 3 = page 1 plate (TV + static) if available
+
+FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive gekiga linework, heavy dark ink washes, solid crushed blacks, harsh high contrast, grey screentone midtones, cross-hatching. No colour, no speech or thought balloons, no empty balloon shapes, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text anywhere in the art.
+
+PIN from references: keep Elena's exact face and shoulder-length dark hair, dark long-sleeve top, dark trousers, barefoot. Keep the mother's drained white-haired body and dark coat from Image 1. Keep the same flat: hallway, panelled door, dark floorboards, bookshelf, old boxy CRT television on its low stand. Keep the ink style, panel weight and three-panel stack. Do not redesign identities.
+
+STYLE: Domestic space made hostile, light scarce, negative space pure black. The television is the only light source in this page — hard grey static glow, everything else crushed to black. No blood, no gore.
+
+TOP (~35%): Wide shot of the dark living room from behind. Elena walks away from camera toward the CRT television, barefoot, arms slack, unhurried. The screen has woken on its own — dense grey snow, and inside the static a faint occult sigil is re-forming. Behind her, deep in the hallway, the mother's aged body lies on the floorboards, one white-haired head and a slack hand catching the TV glow. Elena's silhouette is rimmed by the screen light. Exactly two arms and two legs.
+
+MIDDLE (~30%): Straight-on extreme close-up of the television screen filling the panel. Inside the snow, pressed against the glass FROM THE INSIDE, is the real Elena — same face, palms flat on the screen, fingers splayed, mouth open in a scream with no sound, hair floating as if underwater. Her eyes here are normal human eyes with white sclera and dark irises, wide with terror. Scanlines and grain drag across her. She is behind the glass, part of the static, not a reflection.
+
+BOTTOM (~35%): Same television, camera pulled back slightly and low. The static has gone dark; in the black glass we see the reflection of Elena's face standing in front of the set — fully black sclera, no whites, and a wide closed smile. Behind that reflection, faint in the residual snow, the trapped Elena's screaming face is still just visible, smaller and further away. Two Elenas in one frame, one watching the other.
+
+SUBJECT LOCK: Entity-Elena — young woman, dark hair, dark home clothes, fully black sclera, calm. Trapped Elena — identical face, normal white-sclera eyes, terrified, always behind glass. Mother — aged, white hair, dark coat, motionless.
+
+ANATOMY: exactly two arms and two legs per person, four fingers and one thumb on every hand, five digits total. Horizontal panels only, no diagonal slash panels, no triangle crops.
+
+CHANGE: only the three beats above — walking to the waking TV, the real Elena trapped inside the static, and the two-Elena reflection. Preserve identities, flat and ink style from the pinned references.

@@ -1,0 +1,23 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the existing Marcus sheet (LAYOUT AND COSTUME ONLY - not the face)
+
+PIN from Image 1 - keep exactly: the sheet layout (one open sheet on neutral light grey ground, no panels, no borders, no text), the costume, and the props. Sharply tailored dark two-piece single-breasted business suit, crisp white shirt, plain dark tie, polished black oxfords, discreet cufflinks, small plain lapel pin. Slim rectangular eyeglasses with thin dark rims, worn in every view, lenses clear and never opaque. Classic English haircut, short back and sides with a neat side parting. No overcoat in any view. Hand-inked black and white gekiga linework, cross-hatching, even legible lighting on the face.
+
+DO NOT PIN THE FACE. This is a deliberate recast, not a correction.
+
+CHANGE - AGE, the whole point of this pass:
+- Marcus is now a man in his LATE THIRTIES, not mid fifties. Redraw the face and body accordingly.
+- Remove all grey: the hair is dark and full, with no greying at the temples and no thinning.
+- Remove the age signs: no lines at the eyes, no softening jaw, no heaviness under the chin. The jawline is clean and defined, the neck firm.
+- Skin smooth and unweathered. He is a man who has never worked outdoors and is not yet tired.
+- Keep him TALL and keep the build trim and upright - lean and fit rather than the slightly heavy set of an older executive. He carries himself like someone who is the youngest person in every room he runs.
+- The bearing stays exactly as it was: composed, unhurried, entirely at ease. Youth must read as confidence, never as inexperience or boyishness.
+
+KEEP: three full-body views and one solid black silhouette at identical height on one shared baseline; the head sheet of three head-and-shoulders portraits at the same scale, expressions attentive and pleasant / neutral listening / a broad warm public smile; and the two detail insets - one hand shown flat and unforeshortened with the cufflink visible, and a close study of the eyes behind the glasses.
+
+NO OCCULT MARK: no tattoo, no hexagram, no star, no sigil anywhere on his body or clothing.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand, feet fully visible and uncropped in every full-body view. Consistent height across all full-body views. The glasses stay on in every view including the back view and the silhouette.
+
+FORMAT: same vertical 1008x1792 black and white horror manga character sheet, neutral seamless light grey ground, no panels, no gutters, no borders, no color, no labels, no arrows, no height rules, no text anywhere in the art.

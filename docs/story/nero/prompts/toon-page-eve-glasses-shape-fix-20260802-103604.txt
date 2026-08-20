@@ -1,0 +1,15 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current page to fix; Image 2 = Eve ref
+
+PIN from Image 1 — keep the entire page as it is. Same three panels, same framing, same camera, same ink and screentone. Keep the close-up of Eve's face and the scan-glow on her lenses. Keep the fingerprint HUD on the brass door handle. Keep the room, the Victorian panelling, the data-strips, cables, drone and scan-lines, Eve standing turned toward Nero, Nero kneeling with one hand on the floorboards, and both of his arms exactly as drawn. Do not change any pose, any face, any limb or any part of the room.
+
+CHANGE — the shape of Eve's glasses, and nothing else:
+
+Her frames must be BLACK RECTANGULAR glasses. The top edge of each lens is a straight horizontal line. The outer corners are square, level with the inner corners. Plain, severe, engineer-like — the kind of flat rectangular frame worn for work.
+
+They are currently drawn as cat-eye frames: the outer corners sweep upward into pointed wings above the brow line. Remove that entirely. No upswept corners, no winged points, no curved or tapering top edge, no rounded lenses, no decorative flare at the temples.
+
+Apply this in BOTH panels where her glasses appear — the top close-up and the bottom room shot. Same frame design in both. Keep her eyes, brows, face, hair and expression exactly as they are; only the frame outline changes.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no speech balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no readable text anywhere in the art.

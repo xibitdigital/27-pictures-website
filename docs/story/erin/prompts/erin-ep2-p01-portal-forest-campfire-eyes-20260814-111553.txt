@@ -1,0 +1,30 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = Erin sheet, Image 2 = portal plate (energy inking), Image 3 = forest page (woodland ink), Image 4 = lightning-border page (border grammar)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~36% / 28% / 36%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, fine speed lines. No colour.
+
+PANEL BORDERS: the top panel is the one effect border — the whole panel outlined in a jagged lightning-bolt border of electric spikes. The middle panel is a plain rectangle with a thin keyline. The bottom panel is a straight full-bleed rectangle running off the page edges. No zigzag dividers, no tilted panels, no frame breaks. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin's face, short choppy dark bob with straight fringe and side tufts, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black lace-up combat boots from Image 1. Keep the portal design — ring of light, spiral vortex, curling runic glyph ribbons — from Image 2. Keep the B&W ink style, line weight, screentone and forest rendering from Image 3. Do not redesign identity.
+
+TOP (~36%, lightning-bolt border): Erin tears the portal open — both hands thrust forward, a ring of white light splitting the air in front of her with a spiral vortex inside it, runic glyph ribbons curling outward, her hair and jacket blown back, her figure a hard black silhouette against the blaze.
+
+MIDDLE (~28%): Erin steps out the far side into deep forest, seen from behind and three-quarters, the collapsing ring of light still burning behind her shoulders and throwing her shadow far up the trail, enormous gnarled trunks and ferns closing in ahead.
+
+BOTTOM (full-bleed, ~36%): Later, deep night — Erin asleep on her side on the forest floor beside a small campfire, knees drawn up, face slack and unguarded, firelight raking across her; in the black undergrowth behind her a single pair of pale glowing eyes watches from between the bushes, the creature itself unseen.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob, large sharp eyes with heavy lashes, hard determined brow, black track jacket with high collar and ribbed cuffs, black trousers, black combat boots, wiry athletic build; same face and outfit in every panel, white rim light separating her black clothes from the dark forest.
+
+NO CREATURES ON THIS PAGE: no goblins, no gargoyle, no monster of any kind is drawn. Erin is alone in every panel. The only hint of anything else is the pair of eyes in the bottom panel — two small blank white shapes floating in solid black, no body, no outline, no face, no silhouette.
+
+LIGHT: the portal is the only light in the top two panels — hard white core, everything else crushed black. In the bottom panel the campfire is the only light source, small hot core with fast falloff, the forest beyond a few feet solid black. Quiet dread, no gore.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half. Shot scale: medium action, then wide back-shot, then a low still camp shot at ground level.
+
+ANATOMY: exactly two arms and two legs. No extra hands, no ghost limbs, no extra fingers.
+
+CHANGE: only the three beats described above; preserve identity and ink style from the pins.

@@ -1,0 +1,30 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = Erin sheet, Image 2 = previous page (gargoyle + goblin rider identity), Image 3 = forest page (woodland ink), Image 4 = bolt-divider page (border grammar)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~36% / 28% / 36%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, dense speed lines. No colour.
+
+PANEL BORDERS: top and middle panels are plain rectangles with thin keylines; the one effect border is a jagged zigzag lightning slash running diagonally across the page as the gutter between the middle and bottom panels. Bottom panel full-bleed below that slash. No lightning outlines around whole panels, no tilted panels, no other frame breaks. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin's face, short choppy dark bob with straight fringe and side tufts, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black lace-up combat boots from Image 1. Keep the gargoyle and the goblin rider exactly as in Image 2 — cracked grey granite hide, blunt horned brow, blank pale glowing eyes, heavy ribbed bat wings, four clawed talons per hand; goblin with warty knobbed skull, pointed ears, fanged grin, ragged rags. Keep the B&W ink style, line weight, screentone and forest rendering from Image 3. Do not redesign identity.
+
+TOP (~36%): High aerial shot taken from behind and just above the gargoyle's shoulder — one huge ribbed wing sweeping across the foreground, the goblin rider hunched in front of us gripping the stone neck, and below them Erin hanging from the talons; far beneath, an enormous moonlit forest canopy with mist in the valleys and a thin river running through it. Camera high, horizon high, everything small and far.
+
+MIDDLE (~28%): Mid-air struggle in close — Erin twisting up against the grip, both hands wrenching one stone talon back off her shoulder, boot driven into the gargoyle's forearm, granite chips and dust spraying, her other shoulder already free, the goblin lunging down from above with its claws out and missing.
+
+BOTTOM (full-bleed, ~36%): Erin drops clear and falls, and the ground answers — a slab of packed dirt, roots and stones tears up out of the forest below and assembles itself into a platform in mid-air beneath her, fine white seams running through the suspended fragments, Erin slamming down onto it on one knee and one palm, grit and leaves blasting outward, radial burst lines behind the impact, the gargoyle and goblin small and far above.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob, large sharp eyes with heavy lashes, hard determined brow, black track jacket with high collar and ribbed cuffs, black trousers, black combat boots, wiry athletic build; same face and outfit in every panel, white rim light separating her black clothes from the night.
+
+GARGOYLE LOCK: hunched winged stone beast twice Erin's size, cracked grey granite hide with moss in the crevices, blunt horned brow, blank pale glowing eyes, heavy ribbed bat wings, four long clawed talons per hand, stone dust flaking off it in motion. Not a dragon, not a demon.
+
+EFFECT LOOK: the rising platform is matter moved, not magic sparkle — solid black clods, roots and stones suspended in space, fine white cracks and seams where the ground splits, floating grit and dust. No fire, no lightning in the artwork itself, no magic circles, no runes, no lens flare. No blood, no wounds.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half. Shot scale: extreme high wide, then tight two-figure struggle, then mid-air impact.
+
+ANATOMY: exactly two arms and two legs per figure; the gargoyle has two arms, two legs and two wings only; the goblin has two arms, two legs and no wings. No extra limbs, no ghost hands, no extra fingers.
+
+CHANGE: only the three beats described above; preserve identity and ink style from the pins.

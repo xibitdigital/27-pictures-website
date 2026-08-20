@@ -1,0 +1,23 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinee B&W character sheet
+# refs: Image 1 = RED SMILE: static page 1 (ink style anchor)
+#       Image 2 = any existing RED SMILE character sheet (shared sheet layout)
+
+FORMAT: Black and white horror manga CHARACTER SHEET, vertical 1008x1792. One open sheet on a neutral seamless light grey ground - no panels, no gutters, no borders, no background scene, no furniture. Confident black linework, cross-hatching for form, sparse screentone grain, rich blacks in the suit. Even legible lighting on the face throughout. No color, no speech balloons, no captions, no SFX lettering, no logos, no watermarks, no text, no labels, no arrows and no height rules anywhere in the art.
+
+PIN from Image 1: keep the ink language only - hand-inked black and white gekiga linework, crushed blacks in fabric, fine white rim light on edges. Do not copy any subject or symbol from it.
+
+SUBJECT LOCK: MARCUS - a white English man, mid 50s, a chief executive. TALL, upright, well kept; the trim, slightly heavy build of a man with a good tailor and a standing desk. Clean shaven. Face long and even featured, strong straight nose, faint lines at the eyes, a jaw beginning to soften. Classic English haircut: short back and sides, neat side parting, greying at the temples, combed and controlled. EYEGLASSES: slim rectangular frames, thin dark rims, worn in every view, glass clear and never opaque - his eyes must read through the lenses. Costume: an excellent contemporary business suit, dark, two-piece, single-breasted, sharply tailored, worn with a crisp white shirt, a plain dark tie and polished black oxford shoes. Discreet cufflinks. A small plain lapel pin. NO OVERCOAT in any view - he is a man who is never outdoors.
+
+NO OCCULT MARK: no tattoo, no hexagram, no star, no sigil anywhere visible on his body or clothing.
+
+TOP BAND (~45%): full-body front view and full-body three-quarter view, side by side, identical height, feet on one shared baseline, neutral relaxed stand, arms clear of the torso, hands open and visible, suit jacket buttoned.
+
+MIDDLE BAND (~25%): full-body back view at the same height showing the jacket's shoulder line and vent, plus one full-body silhouette of the same figure filled solid black.
+
+BOTTOM BAND (~30%): head sheet - three head-and-shoulders portraits at the same scale, expressions attentive and pleasant / neutral listening / a broad warm public smile. Beside them two small detail insets on the same open ground: one hand shown flat and unforeshortened with the cufflink visible, and a close study of the eyes behind the glasses.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand, feet fully visible and uncropped in every full-body view. Consistent height across all full-body views. The glasses stay on in every view including the back view and the silhouette.
+
+CHANGE: only the viewing angle and the expression between views. Identity, glasses, suit and ink style stay exactly as locked.

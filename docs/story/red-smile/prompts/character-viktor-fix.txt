@@ -1,0 +1,24 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the occultist sheet to fix
+#       Image 2 = RED SMILE: static page 1 (correct symbol)
+
+PIN from Image 1: keep this exact man - the gaunt face, high cheekbones, deep lines beside the mouth, swept-back silver hair, close-trimmed silver beard, pale irises with vertical slit reptilian pupils. Keep the costume exactly: full-length double-breasted Victorian wool overcoat with velvet collar, waistcoat, high collar and cravat, black gloves carried in one hand, tall black silk 1800s top hat. Keep the sheet layout: one open sheet on neutral light grey ground, no panels, no borders, no text.
+
+CHANGE - PROPORTIONS, the main fix:
+- Make him markedly TALLER and more imposing. Lengthen the figure to roughly 8.5 head-heights, taking the extra length in the legs and torso, not the head. He should read as an unusually tall man, towering, looming.
+- Make the SHOULDERS distinctly WIDER - about 3 head-widths across, square and broad, filling the coat. Broaden the upper back and chest to match so the silhouette tapers from wide shoulders down to the hem.
+- Keep him lean, not bulky: wide of frame and long of limb, with no added weight in the waist or face.
+- The overcoat hangs from the widened shoulders and falls straight, so the whole silhouette reads as a tall dark column.
+
+CHANGE - SCALE CONSISTENCY:
+- The back view and the black silhouette in the middle band are drawn far too small. Redraw them at exactly the SAME height as the front and three-quarter views above, feet on the same shared baseline. All four full-body figures must measure identically head to heel. This is a turnaround; a view drawn at a different scale cannot be measured against.
+
+CHANGE - THE SYMBOL:
+- The tattoo on the back of the right hand is wrong. Replace it with the mark in Image 2: a UNICURSAL HEXAGRAM, a six-pointed star drawn as ONE continuous unbroken interlaced line, taller than wide, elongated vertical axis, a small lens-shaped void at its centre. It is NOT two overlapping triangles, NOT a Star of David, NOT a pentagram, and it carries no surrounding circle. Use the identical mark in the hand detail inset.
+
+KEEP UNCHANGED: the three head-and-shoulders expressions (neutral, cold amusement, wide fixed grin), the eye detail inset with its vertical slit pupil, the hand detail inset shown flat and unforeshortened, and the ink language - hand-inked black and white, cross-hatching, rich blacks in the coat, even legible lighting on the face.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand, feet fully visible and uncropped in every full-body view.
+
+FORMAT: same vertical 1008x1792 black and white horror manga character sheet, neutral seamless light grey ground, no panels, no gutters, no borders, no color, no labels, no arrows, no height rules, no text anywhere in the art.

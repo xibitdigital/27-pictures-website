@@ -1,0 +1,21 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero page 20 (layout/style/rain alley), Image 2 = Nero character sheet, Image 3 = Eve character sheet
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, FOUR stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, heavy rain hatching, wet reflective surfaces. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no HUD lettering, no logos, no watermarks, no text anywhere in the art.
+
+PIN (keep from references): keep Nero's face, short dark hair and dark coat; keep Eve's face, long wavy dark hair and black rectangular smart glasses; keep the rain-soaked night alley, the four-panel horizontal stack, gutter weight and B&W ink treatment of the reference page. Do not redesign identity.
+
+PANEL 1 (~22%): Wide low angle up the facade across the street through pouring rain — a single muzzle flash blooms small in one upper-floor window, the rest of the building black and dead.
+
+PANEL 2 (~26%): Over Nero's shoulder in the alley — his right hand is already clamped on Eve's shoulder shoving her aside, his head snapping toward the flash; empty dark HUD bracket frames float in his eyeline as blank plates with corner ticks and a thin targeting line running to Eve's chest, no letters or numbers inside them.
+
+PANEL 3 (~26%): Impact — Nero has rotated into the shot, chest square to the window, the round striking high on his RIGHT chest well off the midline; fine blood mist bursts behind him, coat snapping open, rain exploding off his shoulders, Eve falling clear behind his turning body.
+
+PANEL 4 (~26%): Eve hauling Nero out of the firing line — his arm slung over her shoulders, knees buckling, boot heels dragging a smeared blood trail through the wet asphalt as she pulls him past the brick corner of the building into cover; foreground brickwork cuts hard across the frame, the lit window far behind them now empty.
+
+SUBJECT LOCK: Nero — lean hard-bitten detective, short dark hair, dark coat, combat boots. Eve — fitted dark blazer over dark top, slim trousers, glasses stay on her face in every panel including the drag; she is straining under his weight, not carrying him easily.
+
+ANATOMY: exactly two arms and two legs per person, no extra limbs, no ghost hands. Nero's LEFT arm is a bare cracked-porcelain upper arm with a segmented steel forearm and metal fingers from the elbow down; his RIGHT arm is ordinary flesh ending in a metal cybernetic hand at the wrist — never two chrome forearms, never a third arm. Left and right are his own, so in panel 2 (seen from behind) the steel forearm falls on the viewer's left; in panels 3 and 4 (facing camera) it falls on the viewer's right.
+
+CHANGE: only the action described above — muzzle flash, the shove, the hit and the drag into cover; preserve identity, alley, rain and ink style from the pinned references.

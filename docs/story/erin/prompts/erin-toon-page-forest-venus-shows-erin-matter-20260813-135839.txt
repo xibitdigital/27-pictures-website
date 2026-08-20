@@ -1,0 +1,30 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = Erin sheet, Image 2 = forest page (ink + wedge-band layout), Image 3 = portal plate (energy FX), Image 4 = Venus reference
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels, thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, fine speed lines. No colour.
+
+PANEL BORDERS: top panel full-bleed to the page edges; the middle panel is a slanted wedge band that narrows as it crosses the page, its edges cutting diagonally into the panels above and below; bottom panel full-bleed. Reading order stays top to bottom. No triangle panels, no lightning-bolt borders on this page.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin's face, short choppy dark bob with straight fringe and side tufts, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black lace-up combat boots from Image 1. Keep Venus's exact face, hair and clothing from Image 4 — do not redesign her. Keep the B&W ink style, line weight, screentone and forest rendering from Image 2. Do not redesign identity.
+
+SETTING: deep old forest at night. Towering gnarled trunks, twisted exposed roots, ferns, moss and dead leaves, low mist between the trees, a moonlit clearing. Shafts of hard moonlight through the canopy, everything else crushed black.
+
+TOP (full-bleed, ~35%): Wide establishing shot of the clearing — Venus stands facing Erin across the mossy ground, both small in frame under enormous black trunks, mist at their boots.
+
+MIDDLE (wedge band, ~30%): Venus in profile, one open hand raised, a floating cluster of stones, splintered bark and dead leaves breaking apart in mid-air around her palm and re-forming into a smooth sphere, hairline white seams running through the drifting fragments, dust rising.
+
+BOTTOM (full-bleed, ~35%): Close on Erin from a low angle, jaw set, staring at her own open hand as one small pebble lifts and trembles above her palm, thin white glow at her fingertips, Venus a soft blurred silhouette behind her.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob, large sharp eyes with heavy lashes, hard determined brow, black track jacket with high collar and ribbed cuffs, black trousers, black combat boots, wiry athletic build; same face and outfit in every panel, white rim light separating her black clothes from the dark forest. Venus — adult woman exactly as shown in Image 4, calm and unhurried, poised stance, faintly luminous; same face, hair and outfit in every panel.
+
+EFFECT LOOK: matter manipulation drawn as ink, not glow-spam — solid black fragments suspended in space, radial motion lines, fine white cracks and seams where the material comes apart, scattered grit and floating dust, in the manner of the energy inking in Image 3. No electricity, no fire, no magic circles, no runes, no lens flare.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half. Vary shot scale — wide, then medium profile, then close.
+
+ANATOMY: exactly two arms and two legs per figure. No extra hands, no ghost limbs, no extra fingers.
+
+CHANGE: only the forest scene described above; preserve identity and ink style from the pins. No goblins on this page.

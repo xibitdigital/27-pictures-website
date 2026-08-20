@@ -5,8 +5,8 @@ description: >
   black-and-white multi-panel horror manga page (default 3 horizontal panels,
   1008×1792) for 27 Pictures dark / body-horror / occult FlipFrame plates.
   Same prompt skeleton as toon-page, but horror ink style. Always saves the
-  prompt as a .txt in the user's Downloads folder; generates only when the user
-  explicitly asks. Use when the user says "horror toon", "horror toon page",
+  prompt as a tracked .txt under docs/story/<series>/prompts/; generates only when
+  the user explicitly asks. Use when the user says "horror toon", "horror toon page",
   "/horror-toon-page", "horror manga page", "seedream horror", "dark manga page",
   or wants a horror FlipFrame plate prompt.
 user-invokable: true
@@ -26,7 +26,7 @@ stay on-model for free.
 
 ## Output rules (strict)
 
-- Build the full prompt, then **always save it as a `.txt` file** in the user's Downloads folder
+- Build the full prompt, then **always save it as a `.txt` file** under `docs/story/<series>/prompts/` (tracked)
 - Also show the prompt in chat as a single copyable fenced code block
 - **Length: stay under ~550 English words** (Seedream sweet spot <600; longer prompts scatter detail)
 - **Default is prompt-only.** Write the `.txt` and stop. User usually attaches refs in ComfyUI / RunComfy and generates there.
@@ -71,28 +71,43 @@ PIN from references: keep [face/hair/outfit] from Image [char]; keep B&W horror 
 
 Name what must **not** change vs what must **change** (i2i rule: unmentioned elements drift).
 
-## Save prompt to Downloads (required)
+## Save the prompt (required)
 
-1. Write UTF-8 `.txt` under `~/Downloads/`
-2. Filename: `horror-toon-page-<slug>-YYYYMMDD-HHMMSS.txt`
-3. Contents = **prompt only** (optional ≤4-line `#` header)
-4. Chat: fenced prompt + `Saved: ~/Downloads/...`
+**Primary location is the repo, tracked:**
 
 ```
-# model: bytedance/seedream-5.0-pro
-# mode: image-to-image
-# style: horror manga B&W
-# refs: [list what to attach]
+docs/story/<series>/prompts/
 ```
 
-## Generating (opt-in — never by default)
+Name it for what it makes, with no timestamp — git already has the dates, and a
+timestamped filename stops being the obvious current version as soon as there are
+two of them:
+
+- `character-<name>.txt` — a full character sheet
+- `character-<name>-fix.txt` — a fix pass against an existing sheet
+- `page-<episode>-<slug>.txt` — a story plate
+- add `-superseded` when a prompt is replaced but worth keeping for traceability
+
+**Why tracked:** the generated images are not in git — they live in
+`references/`, which is gitignored. The prompt is the only durable record of how
+an image was made, and an image without its prompt cannot be re-rolled, fixed or
+matched.
+
+Optionally also drop a copy in `~/Downloads/` if it is about to be pasted into a
+web UI. That copy is a convenience, not the record.
+
+Contents = **prompt only** (optional ≤4-line `#` header naming the model, the
+mode, and which reference is Image 1, 2, 3). In chat: the fenced prompt plus the
+saved path.
+
+## ## Generating (opt-in — never by default)
 
 Only when the user explicitly asks.
 
 ```bash
 set -a; source .env; set +a
 python3 scripts/generate-toon-page.py \
-  --prompt-file ~/Downloads/horror-toon-page-<slug>-<stamp>.txt \
+  --prompt-file docs/story/<series>/prompts/page-<episode>-<slug>.txt \
   --mode image-to-image \
   --ref-asset toons/<toon>/assets/<md5>.png \
   --ref https://…/style-ref.png
@@ -182,7 +197,7 @@ Short lock (face, silhouette, prop); hold across panels. Prefer a face/style ref
 3. Prefer implication over gore
 4. Balloons off unless asked
 5. Always PIN when refs are used
-6. Word-count → trim → save Downloads txt → show fenced prompt + Saved line
+6. Word-count → trim → save the tracked txt → show fenced prompt + saved path
 
 ## Fix mode (user attaches a bad generation)
 

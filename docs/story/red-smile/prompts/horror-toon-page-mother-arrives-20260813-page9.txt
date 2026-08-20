@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / gekiga B&W — RED SMILE: static, page 9
+# refs: Image 1 = page 8 plate (ink eyes / no shadow / door handle); Image 2 = page 7 plate (toons/redsmile-static/assets/df2202b076befeafe6e551366ad34924.png) for Elena + apartment
+
+FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive gekiga linework, heavy dark ink washes, solid crushed blacks, harsh high contrast, grey screentone midtones, cross-hatching. No colour, no speech or thought balloons, no empty balloon shapes, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text anywhere in the art.
+
+PIN from references: keep Elena's exact face, features and shoulder-length dark hair from Images 1-2 — same young woman, plain dark long-sleeve top and dark trousers, barefoot. Keep her flooded black sclera from Image 1. Keep the same apartment: narrow hallway, panelled main door with the ornate Victorian brass lever, low furniture, dead TV. Keep the same ink style, panel weight and three-panel vertical stack. Do not redesign identities, do not restyle faces into different people.
+
+STYLE: Domestic space made hostile, light scarce and unfriendly, negative space pure black. Restrained horror — wrongness through posture, shadow and eyes, no gore. Not cyberpunk neon. Not photoreal 3D. Not cute shōnen sparkle eyes.
+
+TOP (~35%): The main door swings inward and Elena's mother steps into the dark hallway from a brighter stairwell — woman in her fifties, shorter dark hair pinned back, coat, one grocery bag on her forearm, keys still hooked on a finger, ordinary tired warmth on her face, mouth just opening to call out. She is backlit, a hard wedge of stairwell light cutting past her into the black corridor. Exactly two arms and two legs.
+
+MIDDLE (~30%): Deep-focus shot down the hallway from behind the mother's shoulder. Elena stands at the far end, full body, arms slack, standing too straight and too still, face lost to shadow except two black eyes catching light. The mother throws a long hard black shadow across the floorboards toward Elena; Elena casts NO shadow at all — clean unbroken grey floor beneath and behind her. Make the contrast between the two shadows unmistakable.
+
+BOTTOM (~35%): Extreme close-up of Elena's face filling the panel — eyes fully ink black, no whites left, glossy highlights only, and a slow wide smile opening across her face, corners pulled far past natural, teeth rendered as hard white slivers against crushed black. Fine cross-hatching on the skin. Chilling, controlled, not screaming.
+
+SUBJECT LOCK: Elena — young woman, shoulder-length dark hair, fair skin, dark home clothes, black sclera. Mother — fifties, shorter pinned-back dark hair, coat, grocery bag, keys; normal human eyes.
+
+ANATOMY: exactly two arms and two legs per person, five fingers per hand. Horizontal panels only, no diagonal slash panels, no triangle crops.
+
+CHANGE: only the three beats above — the mother entering, the hallway stand-off with one shadow missing, and the black-eyed smile. Preserve identities, apartment and ink style from the pinned references.

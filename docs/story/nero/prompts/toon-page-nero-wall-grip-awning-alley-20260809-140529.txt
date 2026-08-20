@@ -1,0 +1,19 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: attach Nero key art + Eve face/glasses/outfit + optional prior 3-panel layout / page 18 freefall style
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, light speed lines. No color, no speech/thought balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art.
+
+PIN (keep from refs): keep Nero face, short dark hair, dark coat, LEFT steel forearm from elbow + RIGHT metal hand only; keep Eve long wavy dark hair, black rectangular smart glasses always on, fitted dark blazer and slim trousers; keep B&W manga ink and three-panel vertical stack. Do not redesign identity.
+
+TOP (~35%): Night freefall against a high building face — Nero decelerates the fall with his LEFT segmented steel cyber-forearm: metal fingers dig into the concrete/brick wall, scraping a long vertical gouge/trace down the surface as sparks or chips fly; his RIGHT flesh arm with metal hand still holds Eve against him or by the wrist; both bodies dragged downward in rain, coats whipping; dynamic side or three-quarter shot showing the claw marks trailing above the hand.
+
+MIDDLE (~30%): Nero releases Eve mid-slide; she drops onto the wet sidewalk under a bar's fabric awning — a fixed canopy mounted to the bar building above the entrance (not a free-standing tent or market stall); neon bar sign on the façade, lit windows, stools visible through glass; Eve lands in a controlled crouch under the awning; Nero still high on the wall at the top edge of frame or barely in shot; one awning, clear limbs, no crowd.
+
+BOTTOM (~35%): Both seen from behind, running into a narrow dark alley between tall wet buildings; Eve left, Nero right (from behind: his LEFT steel forearm on the viewer's left, RIGHT metal hand on the viewer's right); coat and blazer flying, rain streaks, deep shadows ahead, neon rim-light only.
+
+SUBJECT LOCK: Nero — lean hard-bitten detective, short dark hair, intense eyes, dark coat, LEFT arm bare cracked-porcelain upper arm with segmented steel forearm and metal hand from the elbow down, RIGHT arm flesh ending in a metal cybernetic hand at the wrist, combat boots. Eve — long wavy dark hair past shoulders, fair skin, black rectangular smart glasses always on (including any closer shots), fitted dark blazer over dark top, slim trousers, belt, slim wristwatch. Same faces/outfits all panels.
+
+ANATOMY: exactly two arms and two legs per person. Nero's LEFT arm is steel from the elbow down; RIGHT arm is flesh with a metal hand from the wrist — never a third arm, never two chrome forearms, never a flesh left hand. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the wall-grip decelerate freefall, bar-awning drop, and alley run described above; preserve identity and ink style from pins.

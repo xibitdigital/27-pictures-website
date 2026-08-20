@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / gekiga B&W — RED SMILE: static, page 8
+# refs: Image 1 = page 7 plate (toons/redsmile-static/assets/df2202b076befeafe6e551366ad34924.png); Image 2 = Elena face/outfit sheet if available
+
+FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive gekiga linework, heavy dark ink washes, solid crushed blacks, harsh high contrast, grey screentone midtones, cross-hatching. No colour, no speech or thought balloons, no empty balloon shapes, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text anywhere in the art.
+
+PIN from references: keep Elena's exact face, features and hair from Image 1 (and Image 2 if attached) — same young woman, dark hair, plain dark home clothes. Keep the same apartment interior: hallway, panelled main door, low furniture, dead TV. Keep the same B&W ink style, panel weight and three-panel vertical stack. Do not redesign her identity, do not age her, do not restyle her into a different person.
+
+STYLE: Domestic space made hostile. Light is scarce and unfriendly; negative space stays pure black. Restrained body horror — one clear wrongness per panel, no gore spray. Not cyberpunk neon. Not photoreal 3D. Not cute shōnen sparkle eyes.
+
+TOP (~35%): Extreme close-up on Elena's eyes across the full panel width — the whites are flooding black from the inner corners outward, like liquid ink rising inside the eyeball, a thin glossy meniscus of black creeping over the sclera, iris drowning, one slow bead of black welling at the lower lash line; her face otherwise still, lit by one hard sliver of light.
+
+MIDDLE (~30%): Wide shot of the darkened room, far darker than the earlier pages — furniture reduced to black silhouettes, only edges catching light. Elena stands upright in the middle of the floor, full body, exactly two arms and two legs, arms slack at her sides. The floor and wall behind her carry NO shadow of her at all — clean unbroken grey where a cast shadow should fall, while the chair and lamp beside her still throw long hard black shadows in the same light direction. Make the missing shadow unmistakable.
+
+BOTTOM (~35%): Extreme close-up of the apartment's main door handle — ornate Victorian brass lever on a scrolled backplate, keyhole escutcheon, scratched patina drawn in fine cross-hatching — filling the panel against near-black panelled wood. The lever is tipping a few degrees downward, unheld, no hand on it; hairline glints on the metal, deep black around it.
+
+SUBJECT LOCK: Elena — young woman, shoulder-length dark hair, fair skin, plain dark long-sleeve top and dark trousers, barefoot; same face in every panel.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand. Horizontal panels only, no diagonal slash panels, no triangle crops.
+
+CHANGE: only the three beats described above — the ink-flooded eyes, the darker room with her shadow absent, and the Victorian door handle. Preserve identity, apartment and ink style from the pinned references.

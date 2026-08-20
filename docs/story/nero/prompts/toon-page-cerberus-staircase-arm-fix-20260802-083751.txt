@@ -1,0 +1,15 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current page to fix; Image 2 = Nero key art (cyber limbs)
+
+PIN from Image 1 — do not touch: the TOP panel (entrance into the Victorian hall) and the MIDDLE panel (Eve and the bartender at the bar) stay exactly as they are. In the BOTTOM panel keep everything as it is — the staircase, the perspective, the chandelier beyond, Eve walking up on the right, Nero climbing on the left with his back to camera, both poses, the coat, the ink and screentone. Do not restyle faces, do not recompose, do not change the camera.
+
+CHANGE — one thing only, Nero's two arms in the BOTTOM panel. He has his back to the camera. Identify his arms by where they sit in the frame:
+
+- INNER ARM — the one toward the centre of the panel, nearer Eve. This is the full steel prosthetic. Keep it exactly as already drawn: segmented plating from shoulder to fingertips, cable seams, articulated metal fingers. No change at all.
+- OUTER ARM — the one toward the left edge of the panel, by the balustrade. This is currently dark and plated, so the figure reads as having two prosthetic arms. Redraw it as ORDINARY HUMAN FLESH: a bare or rolled-sleeve forearm with visible skin, normal muscle and ink hatching, unmistakably not metal — ending in a METAL CYBERNETIC HAND that begins cleanly at the wrist.
+- Sweep the coat clear of that outer arm so the flesh forearm and the metal hand both read plainly against the balustrade. The coat must not swallow it.
+
+Result: exactly ONE full steel arm and ONE flesh arm ending in a metal hand. Never two full prosthetic arms, never a third arm, never a fully human hand on the inner arm.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no speech balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art.

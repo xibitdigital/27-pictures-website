@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current unmask page to fix
+
+PIN from Image 1 — keep the MIDDLE panel and the BOTTOM panel exactly as they are. Same faces, same poses, same framing, same hands, same blank keycard, same ink and screentone. Do not touch them. Keep the three-panel horizontal stack and the black gutters.
+
+CHANGE — the TOP panel only. Push in much closer.
+
+The panel must contain ONLY the downed man's face and the hand pulling the mask. Crop in tight so those two things fill the frame edge to edge:
+
+- His face large in frame, seen from above as he lies on his back — chin, mouth, cheeks and nose clear, the black balaclava peeled up and bunched across his eyes and forehead.
+- The hand gripping the mask fabric and dragging it upward, entering from the top of the frame. Keep the hand exactly as it is drawn now: plated metal fingers, metal palm, with the wrist and a short length of forearm above it.
+- Nothing else. Remove the room, the windows, the panelling, the shoulders, the plate carrier collar and the floor. Any background is plain dark shadow or simple screentone — no furniture, no architecture, no scenery.
+
+Same B&W manga ink, screentone and line weight as the rest of the page. Restrained: no gore, no blood.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no balloons, no captions, no SFX lettering, no watermarks, no readable text or symbols anywhere in the art.

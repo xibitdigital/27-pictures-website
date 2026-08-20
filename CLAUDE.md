@@ -138,6 +138,7 @@ episode list has already forked.
 │   ├── toons/jax|erin|nero|redsmile-static/  # Toon apps
 │   └── test/setup.ts        # Vitest (forces empty VITE_ASSET_BASE)
 ├── content/toons/           # Editable config.json per toon (publish → R2)
+├── docs/story/              # Series bible + cast bios — never shipped
 ├── public/                  # Static → site root in dist/
 │   ├── styles.css, logo.png, the-red-smile.jpg, qr.html, …
 │   ├── toons/               # reader-shared.css; assets on R2
@@ -402,19 +403,18 @@ To receive emails at `info@twentyseven.pictures`:
 2. Add route: `info` → forward to personal email
 3. Add MX records if prompted
 
-## QR Code Landing Page
+## Printable QR code
 
-- **URL:** `https://twentyseven.pictures/qr.html`
-- **Purpose:** Mobile contact/inquiry page linked from a printed QR code
-- **SEO:** `noindex, nofollow` — also blocked in `robots.txt`
-- **Content:** Contact form (Turnstile + Resend), Instagram and YouTube links
-
-### Generate printable QR code PDF
+The printed QR encodes the **Instagram profile**, not a page on this site:
 
 ```bash
 npm run generate-qr
 # Output: ~/Downloads/27pictures-qr.pdf
 ```
+
+There used to be a `/qr.html` landing page behind it. It was removed
+(2026-08-19) and 301s to `/#contact` — the printed codes never pointed at it,
+so no physical material was invalidated.
 
 ## Site pages
 
@@ -426,9 +426,8 @@ npm run generate-qr
 | `/cosplay/`              | `src/cosplay/`              | Cosplay production service page + FAQ                       |
 | `/toons/`                | `src/toons/index.html`      | Interactive Toons index (readers live at `/toons/<name>/`)  |
 | `/watch/`                | `src/watch/`                | Every release in one place — click-to-play façades          |
-| `/qr.html`               | `public/qr.html`            | Printed-QR landing page (`noindex`)                         |
 
-Every row above except `/qr.html` also answers under `/de/`, `/it/` and `/fr/`
+Every row above also answers under `/de/`, `/it/` and `/fr/`
 — generated, not hand-written; see _Adding a page, and translating it_.
 
 Each page mounts the same Vue chrome via its own entry in `src/site/`
@@ -625,6 +624,35 @@ add the init call**, or the placeholder renders empty.
   representative video id instead.
 - `hq720.jpg`, not `maxresdefault.jpg`: maxres is missing on some uploads and
   would leave blank cards.
+
+### Story bible (`docs/story/<series>/`)
+
+Cast bios and series canon live under **`docs/story/<series>/`** — deliberately
+outside `content/`. Only `content/toons/<toon>/config.json` is ever read by the
+dev plugin or `publish-toon-config`, so markdown there would never have shipped
+— but `content/` is where publishable toon material lives, and unpublished
+pre-production notes do not belong in it.
+
+Series level, not per episode: the cast spans episodes, and
+`content/toons/redsmile-static/` is episode 1's folder.
+
+Each bio splits into two halves that are read very differently:
+
+- **Appearance — locked.** What the generated character sheet actually shows.
+  Binding: every plate is pinned against it. Copy it into prompts, never
+  paraphrase.
+- **Everything else — proposed.** Story, relationships, how to stage them. A
+  pitch to accept or throw out. Only Elena is established in a config today.
+
+Each also carries a **compact prose lock** — a paste-ready block for a
+`/horror-toon-page` prompt when the sheet is not attached — and voice direction,
+since none of these characters has an entry in `scripts/jax-voices.json` yet.
+
+Two things a bio is the right place to record, because they are invisible in the
+art and expensive to rediscover: how a character must be **inked** (Adaeze's deep
+skin tone has to be mid-grey with rim light, never flat black, or she vanishes
+into the plate), and what must be **absent** (Tokiro carries no occult mark, and
+that has to be stated in prompts or it leaks in from the other sheets).
 
 ### Toon series pages
 
@@ -1052,7 +1080,7 @@ Do not commit the binary.
 - IndexNow key deployed + submitted (`bdd5e80e21a8430d9316de0deacdb208`)
 - All VideoObject uploadDates and durations use real YouTube values
 - `public/llms.txt` — AI crawler allow-list + key pages (aligned with robots)
-- `public/robots.txt` — search + AI _citation_ crawlers allowed; QR landing blocked
+- `public/robots.txt` — search + AI _citation_ crawlers allowed
 - Indexable hub pages added (2026-08): `/horror-shorts/` and `/cosplay/`, each 800+ words of unique copy; sitemap now lists them with 1200×630 OG art
 - `/experiments/` → `/toons/` with 301s in `public/_redirects`
 
@@ -1132,7 +1160,7 @@ strands them.
 
 **Allowed explicitly in robots:** GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-User, anthropic-ai, PerplexityBot, Google-Extended, Applebot-Extended, meta-externalagent (+ default `User-agent: * Allow: /`).
 
-**Disallowed:** Bytespider, CCBot, `/qr.html`, `/qr`.
+**Disallowed:** Bytespider, CCBot.
 
 **Verify after CF changes:**
 

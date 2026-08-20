@@ -1,0 +1,11 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the page to fix (Nero page 22), Image 2 = Nero character sheet (optional)
+
+PIN from Image 1: keep the three-panel vertical stack, gutter weight and black outer border exactly as they are. Keep the TOP panel untouched — Nero seated against the brick in the rain, coat open, handing the scuffed metal applicator to the kneeling Eve. Keep the BOTTOM panel untouched — Eve's hands working the applicator into the wound, pale gel foaming, Nero's clenched face at the right frame edge. Keep the B&W cyberpunk manga ink, rain hatching, screentone and all identities.
+
+CHANGE — MIDDLE PANEL ONLY: replace it with a single extreme close-up of the EXIT wound on Nero's BACK, seen from directly behind him. The camera is behind his body: bare upper back and shoulder blade fill the frame, spine running vertically, wet skin with rain streaming down it, one ragged exit wound punched high on the back with torn outward-flared edges and blood washing down toward the waistband. Only ONE wound is visible in this panel — the entry hole on his chest is on the far side of his body and must not appear. Thin empty HUD bracket frames with corner ticks isolate the wound, scan hatching across the skin, no dotted trajectory line crossing the body, no letters, no numbers, no lettering of any kind.
+
+DO NOT: do not show the front of his chest in the middle panel, do not draw two wounds side by side on one surface, do not show his face, do not add speech balloons or captions, do not restyle the other two panels, do not change the page shape.
+
+FORMAT: same vertical 1008x1792 black and white cyberpunk manga page, three stacked horizontal panels, high-contrast ink and screentone, no color, no text anywhere in the art, no logos, no watermarks.

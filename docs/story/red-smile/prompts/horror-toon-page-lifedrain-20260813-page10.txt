@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / gekiga B&W — RED SMILE: static, page 10
+# refs: Image 1 = page 9 plate (toons/redsmile-static/assets/875346564336ad9f4f5ad3b1ebd55b36.png); Image 2 = page 8 plate (ink eyes, Victorian handle)
+
+FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive gekiga linework, heavy dark ink washes, solid crushed blacks, harsh high contrast, grey screentone midtones, cross-hatching. No colour, no speech or thought balloons, no empty balloon shapes, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text anywhere in the art.
+
+PIN from references: keep Elena's exact face and shoulder-length dark hair from Images 1-2 — young woman, fully black sclera, plain dark long-sleeve top, dark trousers, barefoot. Keep the mother from Image 1 — woman in her fifties, curly dark hair pinned back, dark coat, keys, grocery bag. Keep the same narrow apartment hallway, panelled main door with the ornate Victorian brass lever, dark floorboards, bookshelf and framed photos. Keep the ink style, panel weight and three-panel vertical stack. Do not redesign identities.
+
+STYLE: Domestic space made hostile, light scarce, negative space pure black. Restrained horror — no blood, no wounds, no gore; the violence is drain and age, read through ink.
+
+TOP (~35%): Camera low, almost on the floorboards, looking up the hallway past Elena's bare feet and legs in the near foreground — Elena's back and shoulder dark and towering at the edge of frame. The mother comes toward her down the corridor, seen from below so she looms slightly, coat swinging, grocery bag slipping from her arm, her face breaking into pure horror: eyes wide, brows crushed, mouth opening. Floorboards rush in hard perspective between them. Exactly two arms and two legs on each figure.
+
+MIDDLE (~30%): Extreme close-up of Elena's hand flat against the mother's chest over the heart, fingers splayed, coat fabric puckering under the pressure. Life is being pulled out of the mother into the palm — fine white filaments and a thin luminous vapour streaming from the chest, spiralling into the gaps between Elena's fingers, the skin on the back of her hand rendered in tight cross-hatching. The mother's hand grips Elena's wrist and is already thinning, veins and knuckles standing out. No blood, no wound.
+
+BOTTOM (~35%): Camera low on the floorboards again, extreme close-up of the mother lying on her side, cheek to the wood, keys spilled by her slack fingers in the foreground. Her face has aged decades in seconds — deep sunken cheeks, sagging skin, hair gone white and thin, mouth open. Her eyes are wide and completely blank white, no iris, no pupil. Deep black hallway behind her, one thin blade of light across her face.
+
+SUBJECT LOCK: Elena — young woman, dark hair, dark home clothes, fully black sclera, unchanged and young throughout. Mother — fifties in panels 1-2, drained and ancient with blank white eyes in panel 3, same coat and keys.
+
+ANATOMY: exactly two arms and two legs per person, five fingers per hand. Horizontal panels only, no diagonal slash panels, no triangle crops.
+
+CHANGE: only the three beats above — the low-angle approach, the hand draining her, the aged body on the floor. Preserve identities, apartment and ink style from the pinned references.

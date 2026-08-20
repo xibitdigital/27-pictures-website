@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinée B&W
+# refs: attach her character sheet + the previous staircase/corridor page as style/layout ref
+
+FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy dark ink washes, strong solid blacks, high-contrast shadows, grey midtones, sparse screentone grain. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text in the art.
+
+PIN (keep from references): keep her face, hair length and outfit exactly as in the character reference; keep the same house — peeling wallpaper, narrow corridor, three identical doors, worn floorboards — and the same B&W horror ink treatment, panel proportions and three-panel vertical stack as the previous page. Do not redesign identity, hairstyle or clothing.
+
+STYLE: Dark psychological horror ink — crushed shadows, one weak hostile light source, deep black pools eating the frame edges. Cross-hatching on wallpaper and floorboards. Not cyberpunk neon, not photoreal 3D, not cute shonen.
+
+TOP (~35%): Wide eye-level shot down the corridor, but the corridor is impossibly long now — walls and floorboards racing away into a vanishing point far past where the house could end, the three doors stretched and smeared thin, her shadow and the shadows of every door frame elongating into long distorted black spears pulled toward the far dark.
+
+MIDDLE (~30%): Straight-down camera mounted at the ceiling, looking vertically onto the corridor as she walks away from us — top of her head, shoulders, both arms at her sides — bare feet on the boards — while many identical copies of her shadow trail behind her across the floorboards, a dozen overlapping silhouettes fanned out at wrong angles, each one cast by nothing.
+
+BOTTOM (~35%): Extreme close-up on her bare hand gripping an ornate Victorian brass door handle, fingers curled around the tarnished lever, scratched escutcheon plate below, the heavy panelled door already pushed slightly open by her grip — a thin blade of blackness in the gap, everything beyond the crack unreadable pure black.
+
+SUBJECT LOCK: same woman in all panels — identical hair, identical clothing, and barefoot throughout, no shoes, no socks, bare soles visible on the floorboards. Consistent architecture: same wallpaper pattern, same floorboards, same door style across all three panels.
+
+ANATOMY: exactly two arms and two legs, exactly five fingers and one thumb-side layout per hand — the close-up hand must read as a correct human hand on the handle, no extra fingers, no extra limbs, no melted or duplicated body parts; duplication happens only in her shadows, never in her body. Horizontal panels only, no diagonal slash panels, no triangle crops. Pure black and white horror ink, no empty balloon shapes.
+
+CHANGE: only the corridor distortion, the multiplied shadows and the door handle close-up described above; preserve her identity, the house and the ink style from the pinned references.

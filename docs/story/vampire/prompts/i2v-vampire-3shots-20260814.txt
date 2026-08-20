@@ -1,0 +1,28 @@
+# image-to-video — 3 shots, 9:16, 5s each, from the same hero still
+# models: Kling 2.5 (cheap, best gait) or Veo 3 (best realism + native audio)
+# settings: 1080x1920, 5s, 24fps, cfg/creativity LOW (keep the input face), motion strength MEDIUM
+# i2v prompts stay SHORT — the image already carries look, wardrobe and lighting.
+# Describe only: what moves, how the camera moves, ambience.
+
+--- SHOT 1 — approach (wide) ---
+She begins walking slowly toward camera, coat swinging open with each step, hair shifting, boots hitting wet pavement. Camera dollies backward at her pace, holding her full body centred. Rain drifts through the streetlight, reflections ripple on the wet asphalt, distant traffic lights flicker behind her. Steady, unhurried, cinematic.
+
+--- SHOT 2 — boots (low tracking) ---
+Low camera close to the wet ground, tracking sideways alongside her boots and the hem of her coat as she walks. Puddles splash lightly under each step, neon reflections streak across the water, coat leather creases and swings. Shallow depth of field, background lights pulled into moving bokeh. Smooth lateral dolly, constant speed.
+
+--- SHOT 3 — the look (close-up) ---
+She stops walking and turns her head to camera, holding eye contact, a slow faint smile forming at one corner of her mouth. Almost no body movement, hair settles, breath visible in the cold air. Camera pushes in very slowly on her face. Rain falls behind her, streetlight steady. Held, still, unsettling.
+
+--- NEGATIVE (all shots) ---
+morphing face, changing facial features, distorted hands, extra fingers, extra limbs, warping coat, sliding feet, floating body, text, watermark, logo, jump cut, fast camera whip, zoom flicker, oversaturated colour, cartoon, plastic skin.
+
+--- VEO 3 AUDIO (only if using Veo) ---
+Shot 1: quiet rain, distant city traffic, slow boot steps on wet pavement.
+Shot 2: closer wet footsteps and splashes, low city hum, no music.
+Shot 3: rain only, one soft breath, no music, no dialogue.
+
+--- NOTES ---
+- Feed the SAME hero still to all three shots. Do not use a frame pulled from shot 1 as the input for shot 2 — drift compounds.
+- Shot 3 is the one that breaks. Generate it 2-3 times, keep the take where the eyes stay stable through the turn.
+- Keep creativity/cfg low on every shot; high values redraw the face.
+- If a model offers "end frame", leave it empty — a single-image start keeps identity tighter.

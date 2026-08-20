@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinee B&W
+# refs: Image 1 = references/red-smile/marcus.png (identity)
+#       Image 2 = references/red-smile/halina.png (identity)
+#       Image 3 = RED SMILE: static page 1 (ink style + the exact sigil)
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy dark ink washes, strong solid blacks, high-contrast shadows, grey midtones. No color, no speech balloons, no thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text or writing anywhere in the art - including on screens, signage and the laptop interface.
+
+PIN from references: keep the exact face, build and costume of the man in Image 1 - tall, lean, late 30s, clean shaven, dark full short-back-and-sides with a side parting, slim rectangular eyeglasses with clear lenses, sharply tailored dark two-piece suit, white shirt, dark tie. Keep the exact face, build and costume of the woman in Image 2 - mid 50s, robust and heavy-set, broad weathered face, long dark-going-grey hair scraped into a low bun, dark cleaning tunic under a knee-length utility tabard, blank ID badge on a lanyard, one blue disposable glove. Keep the B&W horror ink of Image 3. Do not redesign either person.
+
+STYLE: Dark psychological horror ink. Corporate luxury at night - glass, stone, hard reflections, pools of dark between few light sources. Not cyberpunk neon, not photoreal 3D.
+
+TOP (~35%): Wide interior. A luxurious modern top-floor office at night, floor-to-ceiling glass with a city far below, an uncluttered stone desk holding one open laptop that is the brightest thing in the room. The man stands turned toward the doorway, relaxed, entirely pleasant, one hand loose at his side, greeting the cleaner who has just come in with her cart. He looks like a courteous man saying good evening. NOTHING is wrong with him.
+
+MIDDLE (~30%): Medium close on the woman, answering him. Tired, polite, guarded; caught mid-reply, weight on one hip, gloved hand still on the cart handle. Dark corridor behind her. Two arms, two legs, hands clear.
+
+BOTTOM (~35%): Extreme close-up of the laptop screen on the desk, the room gone black around it. A small browser popup window has opened - plain rounded frame, no writing, no buttons, no branding - and filling it is the SIGIL from Image 3: a unicursal hexagram, a six-pointed star drawn as one continuous unbroken interlaced line, taller than wide, elongated vertical axis, a small lens-shaped void at its centre. It is NOT two overlapping triangles, NOT a Star of David, NOT a pentagram, and it carries no surrounding circle. Screen glow is the only light. Nobody is looking at it yet.
+
+ANATOMY: exactly two arms and two legs and five fingers per hand on every person. Horizontal panels only, pure B&W horror ink, no empty balloon shapes.
+
+CHANGE: only the scene described above; preserve both identities and the ink style from the pins.

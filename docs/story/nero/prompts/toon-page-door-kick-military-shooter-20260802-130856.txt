@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero ref; Image 2 = Eve ref; Image 3 = page 14 upstairs room, optional (room, ink weight)
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, hard impact speed lines. No color, no speech/thought balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no readable text, letters or numbers anywhere in the art.
+
+SETTING: the same upstairs room above the Cerberus club — Victorian carved panelling and heavy mouldings overlaid with cyberpunk tech: glowing data-strips along the cornices, exposed cable runs, cold light through tall shuttered windows. Violence erupting in an antique room.
+
+PIN from refs: Nero's face, spiked dark hair, long dark coat and arm construction from Image 1; Eve's face, long wavy dark hair, black rectangular glasses and dark blazer from Image 2; B&W manga ink style and the three-panel horizontal stack. Do not redesign identity.
+
+TOP (~35%): Close-up on the door as a boot smashes it inward — splintering wood around the lock, the door swinging violently at the camera, and behind it a soldier stepping through with a long suppressed rifle already raised to his shoulder.
+
+MIDDLE (~30%): Three-quarter view. Nero shoves Eve out of the line of fire with his flesh right hand while throwing his steel left forearm up across his own face as a shield. Eve is knocked sideways, glasses still on, off balance. Hard diagonal speed lines, coat flaring.
+
+BOTTOM (~35%): Extreme close-up on that raised steel forearm — a bullet striking the plating dead-on, metal denting and scoring under the impact, sparks and shaved fragments spraying off, cable seams taut. No blood, no wound.
+
+SHOOTER LOCK: heavy-set military man, dark tactical fatigues and plate carrier, gloves, combat boots, face hidden behind a balaclava and low helmet. He carries a long rifle with a fat cylindrical suppressor on the muzzle. Anonymous, professional, no insignia.
+
+SUBJECT LOCKS: Eve — long wavy dark hair past shoulders, fair skin, black RECTANGULAR glasses with straight top edges and square outer corners (never cat-eye), fitted dark blazer, slim trousers. Nero — lean hard-bitten detective, short spiked dark hair, intense eyes, long dark coat with upturned collar, combat boots.
+
+NERO'S ARMS — as Image 1 draws them:
+- LEFT arm: bare skin upper arm with fine cracked-porcelain lines under a rounded dark pauldron; from the ELBOW DOWN it is prosthetic — segmented steel forearm, cable seams, plated metal hand. Chrome starts at the elbow, not the shoulder, not mid-forearm.
+- RIGHT arm: ordinary flesh, skin all the way down, ending in a metal cybernetic hand at the wrist.
+- In the MIDDLE panel he faces three-quarters toward the camera, so his steel LEFT forearm is on the VIEWER'S RIGHT, raised across his face; his flesh RIGHT arm is on the VIEWER'S LEFT, pushing Eve. Eve is shoved toward the viewer's left.
+- Never a third arm, never two steel forearms, never a flesh left hand.
+
+ANATOMY: exactly two arms and two legs per person. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the three beats described above; preserve identity and ink style from the pins.

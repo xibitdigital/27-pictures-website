@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinée B&W
+# refs: attach character sheet (her face/hair/outfit) + prior 3-panel page as style/layout ref
+
+FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy dark ink washes, strong solid blacks, high-contrast shadows, grey midtones, sparse screentone grain. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text in the art.
+
+PIN (keep from references): keep her face, hair length and outfit exactly as in the character reference; keep the B&W horror ink treatment, panel proportions and three-panel vertical stack from the style/layout reference. Do not redesign identity, do not change hairstyle or clothing.
+
+STYLE: Dark psychological horror ink — crushed shadows, sparse hostile light falling from off-frame, deep black pools swallowing the edges of every panel. Cross-hatching on wood grain and plaster. Not cyberpunk neon, not photoreal 3D, not cute shonen.
+
+TOP (~35%): Extreme close-up on her foot pressing down on a worn wooden staircase step, shot from a very low camera at step level with a 17mm ultra-wide lens so the step edge bows huge in the foreground and the staircase warps away above her; dust and grit lit by one thin shaft of light, the rest of the frame drowned in black.
+
+MIDDLE (~30%): Straight-down camera mounted at the ceiling, looking vertically onto the staircase as she climbs away from us — we see the top of her head, her shoulders and one hand on the banister — while a massive distorted shadow stretches across the floor and stair treads behind her, far larger than her body, following her upward with no source to explain it.
+
+BOTTOM (~35%): Over-the-shoulder from close behind her head, her silhouette dark in the near foreground, revealing a long narrow corridor ahead with exactly three closed doors, all identical, receding into deep shadow; wallpaper peeling, weak light pooling only at her feet, the far end of the corridor pure black.
+
+SUBJECT LOCK: same woman in all three panels — identical hair, identical clothing, barefoot or same footwear throughout. Consistent staircase and house architecture across panels: same wooden treads, same banister, same peeling wall texture.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand, no extra limbs, no melted or duplicated body parts. Horizontal panels only, no diagonal slash panels, no triangle crops. Pure black and white horror ink, no empty balloon shapes.
+
+CHANGE: only the camera angles, staircase and corridor action described above; preserve her identity and the ink style from the pinned references.

@@ -50,3 +50,6 @@ converted/
 # Local plate restyle staging (npm run restyle-plates)
 restyled/
 worker/likes/.wrangler/
+
+# Generation references (character sheets etc.) — inputs, not site assets
+references/

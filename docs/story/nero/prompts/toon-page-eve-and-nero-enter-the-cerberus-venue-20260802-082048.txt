@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero key art (face, hair, cyber limbs); Image 2 = Eve ref (face, glasses, blazer);
+#       Image 3 = prior Cerberus interior page, optional (layout, gutters, ink weight)
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, fine cross-hatching. No color, no speech/thought balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art.
+
+SETTING: the Cerberus club — a Victorian grand interior laced with futuristic tech. Carved wood panelling, heavy velvet drapes, ornate plaster mouldings and crystal chandeliers whose candles are cold holographic light. Thin glowing data-strips run along the cornices, faint holo-signage hangs above the bar, discreet sensor lenses sit in the ceiling roses. Old-money surface, machine underneath.
+
+PIN (keep from refs): Eve face, hair, black rectangular glasses, blazer; Nero face, hair, long coat, LEFT full steel arm and RIGHT metal hand; B&W manga ink style and the three-panel horizontal stack. Do not redesign identity.
+
+TOP (~35%): Wide establish — Eve and Nero walk in through the main hall doors into a packed room, formally dressed guests drinking and talking in clusters beneath the chandeliers, polished marble floor throwing back the crowd and the light.
+
+MIDDLE (~30%): Medium shot at the long bar — Eve and Nero stand at the counter facing the bartender, who is mid-pour behind it; ranked bottles, glass and brass in tight ink behind him, holo-signage glow above.
+
+BOTTOM (~35%): Both climb the grand staircase together — carved balustrade, wide marble steps, Nero one step ahead and half-turned, Eve following, the lit hall falling away behind them.
+
+SUBJECT LOCK: Eve — long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses always on, fitted dark blazer over dark top, slim trousers, belt, slim wristwatch, composed forensic analyst. Nero — lean hard-bitten detective, short spiked dark hair, intense eyes, long dark coat with upturned collar, combat boots. Bartender — dark waistcoat, bow tie, white sleeves rolled to the elbow, neat dark hair, same man in every panel he appears. Same faces and outfits across all panels.
+
+ANATOMY: exactly two arms and two legs per person. Nero's LEFT arm is a full steel prosthetic shoulder to fingertips — cracked porcelain-like plating over the upper arm, segmented steel forearm, articulated metal fingers, rounded shoulder pauldron. His RIGHT arm is ordinary flesh ending in a metal cybernetic hand that starts at the wrist. Never a third arm, never two full steel arms, never a flesh left hand. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the club interior and the three beats described above; preserve identity and ink style from the pins.

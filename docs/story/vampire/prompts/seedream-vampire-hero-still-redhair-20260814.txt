@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: text-to-image (this still IS the character bible)
+# use: hero frame for three 9:16 image-to-video clips
+# resolution: 2K — it gets re-used and downscaled later
+
+FORMAT: Ultra-photorealistic cinematic photograph, vertical 9:16, 1080x1920, full body with boots in frame and clear space above her head. 50mm lens at f/1.8, camera at chest height so the legs read long, ISO 800, 1/160s. Tack sharp, no motion blur.
+
+SUBJECT: A striking woman in her late twenties on a wet city street at night. Deep auburn-red hair — long, glossy, softly waved, parted off-centre, catching a hard specular rim from the streetlight, a few strands lifting in the breeze. Porcelain skin with real texture and pores, faint freckles across the nose, sharp cheekbones, strong jaw, full lips in a glossy deep-red, pale grey-green eyes with a cold ring around the iris and a clear catchlight in each. Sharp winged eyeliner, smoky shadow, highlight on cheekbones and brow. Mouth closed, calm and unimpressed, chin slightly down, eyes up to the lens.
+
+WARDROBE: Modern goth glamour — a fitted black leather corset-style top with a sweetheart neckline under a long open black leather coat, high-waisted black leather trousers tucked into heavy buckled boots, a wide belt cinching the waist. Thin choker, silver rings, small ear cuffs. Real materials: leather with scuffs and specular highlights, everything faintly damp.
+
+POSE: Contrapposto — weight fully on one leg, opposite hip pushed out, shoulders turned about fifteen degrees off camera while the face stays to lens. One hand resting on the hip, the other loose at her side, both hands visible and open. Standing still, feet planted, not mid-stride.
+
+SETTING: A narrow city street after rain, late night, empty. Wet asphalt throwing long reflections, a shopfront and neon sign far behind thrown into soft bokeh, a streetlight above and left, distant traffic lights as coloured points in the blur. Fine drizzle catching the light. No other people, no readable text or logos.
+
+LIGHTING: Hard streetlight from upper left carving a rim along her cheekbone, jaw, shoulder and hair. A low warm kicker from the shopfront behind at hip height, rimming the waist and thigh so she separates from the dark street. Soft cyan bounce off the wet ground filling the shadow side of her face. Both eyes clearly lit — no shadow across them, no flare over the face, no blown highlights.
+
+ANATOMY: exactly two arms and two legs, four fingers and one thumb per hand, five digits total, natural proportions, correct knuckles and nails.
+
+RENDER: Photoreal skin with subsurface scatter and a dewy sheen from the drizzle, real fabric physics, subject sharp head to boots with the background soft. Filmic contrast, deep true blacks, slight halation on the brightest practicals, fine natural film grain.
+
+NEGATIVE: no illustration, no anime, no 3D or CGI look, no plastic airbrushed skin, no fangs showing, no open mouth, no blood, no cape or costume-shop vampire cliché, no nudity or lingerie, no exaggerated proportions, no extra limbs or fingers, no text, no watermark, no logo, no motion blur, no heavy vignette, no oversaturated colour grade.

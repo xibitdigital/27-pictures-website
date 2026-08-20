@@ -1,0 +1,19 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero character sheet, Image 2 = Eve character sheet, Image 3 (last) = Nero page 22 — previous page, for layout/rain/ink continuity
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, rain hatching, wet reflective pavement. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no HUD lettering, no logos, no watermarks, no text anywhere in the art.
+
+PIN (keep from references): keep Nero's face, short dark hair, dark coat and asymmetric cyber arms from Image 1; keep Eve's face, long wavy dark hair, black rectangular smart glasses and dark blazer from Image 2; keep the rain-soaked alley corner, brick wall, panel proportions, gutter weight and B&W ink treatment of Image 3 (the previous page) so this plate reads as the next beat in the same scene. His shirt stays blood-soaked and the sealed wound stays high on his RIGHT chest.
+
+TOP (~34%): Intimate extreme close-up of Eve — her face fills the frame, glasses beaded with rain, eyes wet and shining with held-back tears, lips parted; her bloodstained hand is open against Nero's cheek, only the edge of his jaw and temple entering frame, her thumb moving over his skin.
+
+MIDDLE (~30%): Reverse close-up of Nero's face against the wet brick — grey with blood loss, sweat and rain running through the fine porcelain cracks at his temple, brows still drawn with pain, but the corner of his mouth pulled into a small tired smile as he looks up at her.
+
+BOTTOM (~36%): Wide two-shot in the alley — Eve braced with both boots planted, Nero's arm across her shoulders and her arm locked around his waist, hauling him up off the pavement; he is halfway to standing, coat hanging open, one boot pushing off the wet ground, rain falling hard through the light behind them.
+
+SUBJECT LOCK: Nero — lean hard-bitten detective, short dark hair, dark coat over a blood-soaked shirt, combat boots, weakened and heavy, not posed heroically. Eve — fitted dark blazer over dark top, slim trousers, sleeves pushed back, hands and cuffs dark with his blood, glasses stay on her face in every panel.
+
+ANATOMY: exactly two arms and two legs per person, no extra limbs, no ghost hands, exactly five fingers per hand in the close-ups. Nero's LEFT arm is a bare cracked-porcelain upper arm with a segmented steel forearm and metal fingers from the elbow down; his RIGHT arm is ordinary flesh ending in a metal cybernetic hand at the wrist — never two chrome forearms, never a third arm. In the bottom panel his arm across her shoulders is the LEFT one, so the steel forearm and metal fingers hang over her far shoulder in clear view.
+
+CHANGE: only the scene described above — her hand on his face, his tired smile, and getting him onto his feet; preserve identity, alley, rain and ink style from the pinned references.

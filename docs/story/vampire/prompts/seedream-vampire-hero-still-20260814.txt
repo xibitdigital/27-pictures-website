@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: text-to-image (no refs — this still IS the character bible)
+# use: hero frame for three 9:16 image-to-video clips
+# resolution: 2K if available, else 1K — this frame gets re-used, generate it big
+
+FORMAT: Ultra-photorealistic cinematic photograph, vertical 9:16 portrait, 1080x1920, full-body shot with headroom above and floor space below. Shot on a full-frame camera with a 35mm lens at f/2.0, ISO 800, 1/125s — everything tack sharp, no motion blur, natural handheld framing.
+
+SUBJECT: A striking pale woman in her late twenties standing on a wet city street at night. Fine porcelain skin with visible pores and natural texture, sharp cheekbones, dark arched brows, deep-set grey-green eyes with a faint cold ring around the iris, dark red matte lips, a small sharp canine just visible at the corner of her mouth. Long straight jet-black hair with a blunt fringe, slightly damp, falling past her shoulders. Calm, unimpressed expression, chin level, looking straight into the lens.
+
+WARDROBE: Modern goth — a long black leather coat open over a fitted black lace top, high-waisted black trousers, heavy buckled boots. Silver rings on both hands, a thin choker at the throat, small silver ear cuffs. Fabric reads as real: leather with scuffs and specular highlights, lace with visible weave, everything slightly damp from rain.
+
+SETTING: A narrow city street after rain, late night. Wet asphalt throwing long reflections, a shopfront and neon sign far behind her thrown out of focus into soft bokeh, a streetlight above and left, distant traffic lights as coloured points in the blur. Fine drizzle catching the light. Empty street, no other people, no readable text or logos anywhere.
+
+LIGHTING: Cool practical light — hard streetlight from the upper left carving a rim along her cheekbone, jaw and shoulder; soft cyan bounce from the wet ground filling the shadow side; a warm amber spill from the shopfront behind separating her hair from the background. Her face stays clearly lit and readable — no shadow across the eyes, no blown highlights, no lens flare over the face.
+
+POSE: Standing still, weight on one hip, feet apart and both planted on the ground, arms relaxed at her sides, hands visible and open, coat hanging naturally. Neutral, ready-to-move stance — not mid-stride, not a dynamic action pose. Whole body inside frame, boots included, roughly 15% of the frame height as clear space above her head.
+
+ANATOMY: exactly two arms and two legs, four fingers and one thumb on each hand, five digits total, correct proportions, natural knuckles and nails.
+
+RENDER: Photoreal skin with subsurface detail, real fabric physics, shallow but not extreme depth of field — subject sharp head to boots, background soft. Filmic contrast, deep true blacks, slight halation on the brightest practicals, fine natural film grain.
+
+NEGATIVE: no illustration, no anime, no 3D render or CGI look, no plastic airbrushed skin, no fangs bared, no blood, no cape or costume-shop vampire cliché, no floating hair, no extra limbs or fingers, no text, no watermark, no logo, no motion blur, no heavy vignette, no oversaturated colour grade.

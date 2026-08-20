@@ -1,0 +1,23 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinee B&W character sheet
+# refs: Image 1 = RED SMILE: static page 1 (symbol + ink style anchor)
+#       Image 2 = the occultist's sheet, once it exists (shared ink language)
+
+FORMAT: Black and white horror manga CHARACTER SHEET, vertical 1008x1792. One open sheet on a neutral seamless light grey ground - no panels, no gutters, no borders, no background scene, no furniture. Confident black linework, cross-hatching for form, sparse screentone grain. Even legible lighting on the face throughout. No color, no speech balloons, no captions, no SFX lettering, no logos, no watermarks, no text, no labels, no arrows and no height rules anywhere in the art.
+
+PIN from Image 1: keep the ink language - hand-inked black and white gekiga linework, crushed blacks in fabric, fine white rim light on edges. Keep the occult mark exactly as drawn there.
+
+SYMBOL LOCK: a unicursal hexagram - a six-pointed star drawn as one unbroken interlaced line, taller than wide, elongated vertical axis, small lens-shaped void at centre. Do not substitute a pentagram, a Star of David or any other star.
+
+SUBJECT LOCK: ADAEZE - a Black African woman, early 40s, beautiful, tall, athletic, composed. Broad nose bridge, full lips, strong jaw, high forehead; natural hair in tight dark coils cropped close at the sides and fuller on top. Render her deep skin tone as rich mid-grey with cross-hatching and clean white rim light on cheekbone, nose and jaw - NOT flat black, never so dark the features are lost. LIGHT EYES: very pale irises, almost colourless, reading bright against the dark ink - her defining feature, clearly visible in every view. HALF-DAEMON, restrained: faint dark veining spreading from the outer corners of the eyes, slightly elongated canines visible only when she smiles, two small blunt horn buds barely breaking the hairline. No wings, no tail, no claws, no gore. Costume: modern and sharp, deliberately not period - tailored charcoal wool coat to the knee worn open, fitted dark polo neck, slim trousers, low boots. Small unicursal hexagram tattooed inside her left wrist - same order as her colleague, different placement.
+
+TOP BAND (~45%): full-body front view and full-body three-quarter view, side by side, identical height, feet on one shared baseline, neutral relaxed stand, arms clear of the torso, both hands open and visible, coat hanging open.
+
+MIDDLE BAND (~25%): full-body back view at the same height, plus one full-body silhouette of the same figure filled solid black.
+
+BOTTOM BAND (~30%): head sheet - three head-and-shoulders portraits at the same scale, expressions calm / knowing amusement / a hard cold stare with the eye veining risen. Beside them two small detail insets on the same open ground: the tattooed inner left wrist shown flat and unforeshortened, and a close study of one eye showing the pale iris and the fine dark veining.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand, feet fully visible and uncropped in every full-body view. Consistent height across all full-body views. The tattoo appears on the left wrist only.
+
+CHANGE: only the viewing angle and the expression between views. Identity, age, costume, tattoo and ink style stay exactly as locked.

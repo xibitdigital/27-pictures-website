@@ -1,0 +1,30 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = Erin sheet, Image 2 = previous page (gargoyle identity), Image 3 = forest page (woodland ink), Image 4 = bolt-divider page (border grammar)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~34% / 30% / 36%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, dense speed lines. No colour.
+
+PANEL BORDERS: top and middle panels are plain rectangles with thin keylines; the one effect border is a jagged zigzag lightning slash running diagonally across the page as the gutter between the middle and bottom panels. Bottom panel full-bleed below that slash. No lightning outlines around whole panels, no tilted panels, no other frame breaks. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin's face, short choppy dark bob with straight fringe and side tufts, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black lace-up combat boots from Image 1. Keep the gargoyle exactly as in Image 2 — cracked grey granite hide, blunt horned brow, blank pale glowing eyes, heavy ribbed bat wings, four clawed talons per hand. Keep the B&W ink style, line weight, screentone and forest rendering from Image 3. Do not redesign identity.
+
+TOP (~34%): Mid-air struggle — Erin clamped in the gargoyle's talons high above the black treetops, both her hands wrenching one claw off her ribs, teeth bared, boots kicking into its stone forearm, chips of granite flying, wings beating hard.
+
+MIDDLE (~30%): Low camera from directly beneath — Erin free of the grip and falling towards the lens, arms and legs flung wide, jacket rippling, face lit and staring down past us, the gargoyle shrinking to a small winged silhouette against the moon far above, converging speed lines and vertical trunks racing outward from the centre.
+
+BOTTOM (full-bleed, ~36%): Later, deep night — Erin asleep on her side on the forest floor beside a small campfire, knees drawn up, face slack and unguarded, firelight raking across her and throwing her shadow long; in the black undergrowth behind her a single pair of pale glowing eyes watches from between the bushes, the creature itself unseen.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob, large sharp eyes with heavy lashes, hard determined brow, black track jacket with high collar and ribbed cuffs, black trousers, black combat boots, wiry athletic build; same face and outfit in every panel, white rim light separating her black clothes from the dark forest.
+
+GARGOYLE LOCK: hunched winged stone beast twice Erin's size, cracked grey granite hide with moss in the crevices, blunt horned brow, flat snarling muzzle, blank pale glowing eyes, heavy ribbed bat wings, four long clawed talons per hand, stone dust flaking off it in motion. Not a dragon, not a demon, not a goblin.
+
+LIGHT IN THE BOTTOM PANEL: the campfire is the only light source — small hot core, hard falloff, everything beyond a few feet crushed to solid black. The watching eyes are two small blank white shapes floating in that black, no body, no outline, no face. Quiet dread, no gore, no monster reveal.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half. Shot scale: mid-air two-figure struggle, then extreme low-angle fall, then a wide, still ground-level camp shot.
+
+ANATOMY: exactly two arms and two legs per figure; the gargoyle has two arms, two legs and two wings only. No extra limbs, no ghost hands, no extra fingers.
+
+CHANGE: only the three beats described above; preserve identity and ink style from the pins. No goblins on this page.

@@ -1,0 +1,23 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinee B&W character sheet
+# refs: Image 1 = RED SMILE: static page 1 (ink style anchor)
+#       Image 2 = any existing RED SMILE character sheet (shared sheet layout)
+
+FORMAT: Black and white horror manga CHARACTER SHEET, vertical 1008x1792. One open sheet on a neutral seamless light grey ground - no panels, no gutters, no borders, no background scene, no furniture, no cleaning cart. Confident black linework, cross-hatching for form, sparse screentone grain. Even legible lighting on the face throughout. No color, no speech balloons, no captions, no SFX lettering, no logos, no watermarks, no text, no labels, no arrows and no height rules anywhere in the art. The ID badge is blank - no writing on it.
+
+PIN from Image 1: keep the ink language only - hand-inked black and white gekiga linework, crushed blacks in fabric, fine white rim light on edges. Do not copy any subject or symbol from it.
+
+SUBJECT LOCK: HALINA - a white Eastern European woman, a corporate cleaner, mid 50s. Thirty years on the night contracts. ROBUST build: broad through the shoulders and hips, heavy-set and physically strong, a body built by thirty years of work - not fat, not slim, solidly powerful. Average height. Broad face, high cheekbones, weathered skin, no makeup, deep lines at the mouth and between the brows, tired eyes that miss nothing. LONG HAIR, dark going grey, thick, worn scraped back into a low practical bun with loose strands escaping at the temples - long enough that it clearly reaches past her shoulders when down. Costume: a corporate cleaning uniform - a plain dark short-sleeved tunic-style polo, a knee-length utility tabard over it with a large front pocket, loose dark work trousers, flat rubber-soled shoes. An ID badge on a plain lanyard at her chest, blank. Blue disposable gloves worn on one hand only, the other bare.
+
+NO OCCULT MARK: no tattoo, no hexagram, no star, no sigil anywhere on her body or clothing.
+
+TOP BAND (~45%): full-body front view and full-body three-quarter view, side by side, identical height, feet on one shared baseline, neutral relaxed stand, arms clear of the torso, hands visible, tabard hanging straight.
+
+MIDDLE BAND (~25%): full-body back view at the same height showing the tabard ties and the bun at the nape, plus one full-body silhouette of the same figure filled solid black.
+
+BOTTOM BAND (~30%): head sheet - three head-and-shoulders portraits at the same scale, expressions tired and level / wary, listening / an unguarded look of someone who believed she was alone. Beside them two small detail insets on the same open ground: her bare working hand shown flat and unforeshortened, and the blank ID badge hanging on its lanyard.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand, feet fully visible and uncropped in every full-body view. Consistent height and build across all full-body views.
+
+CHANGE: only the viewing angle and the expression between views. Identity, build, uniform and ink style stay exactly as locked.

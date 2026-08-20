@@ -1,0 +1,28 @@
+# Kling 2.5 — image-to-video, 3 shots
+# input image: red-hair hero still (same still for ALL three shots)
+# settings: 9:16, 1080p, 5s, mode PRO/quality, creativity/cfg LOW (~0.3), no end frame
+# paste ONE prompt per generation into the Prompt field
+# put the negative block in the Negative Prompt field, not the main one
+
+=== SHOT 1 — approach ===
+PROMPT:
+She begins walking slowly toward the camera, her long coat swinging open with each step, her hair moving as she walks, boots planting firmly on the wet pavement. The camera dollies backward at her pace, keeping her full body centred. Light rain drifts through the streetlight, reflections ripple on the wet asphalt, distant city lights glow softly behind her. Steady, unhurried, photorealistic cinematic footage.
+
+=== SHOT 2 — boots ===
+PROMPT:
+A low camera close to the wet ground tracks sideways alongside her boots and the hem of her long coat as she walks. Shallow puddles ripple and splash lightly under each step, city lights streak across the wet surface, the leather creases and swings with her stride. Shallow depth of field, background lights soft and drifting. Smooth lateral dolly at constant speed, photorealistic.
+
+=== SHOT 3 — the look ===
+PROMPT:
+She stops walking and slowly turns her head toward the camera, holding eye contact, a faint smile forming at one corner of her mouth. Her body stays almost still, her hair settles, breath faintly visible in the cold air. The camera pushes in very slowly on her face. Rain falls behind her under a steady streetlight. Photorealistic, held, quiet.
+
+=== NEGATIVE PROMPT (all three, separate field) ===
+morphing face, changing facial features, distorted hands, extra fingers, extra limbs, sliding feet, feet not touching ground, warping clothing, floating body, blurry face, text, watermark, logo, fast camera movement, zoom flicker, cartoon, anime, plastic skin, oversaturated
+
+=== RULES ===
+- Same hero still into all three shots. Never chain a frame from one clip into the next.
+- Leave the end-frame / tail-frame field EMPTY.
+- Low creativity/cfg. High values repaint the face.
+- 5s each. Longer drifts.
+- Shot 3 needs 2-3 takes; keep the one where the eyes stay stable through the turn.
+- Judge take quality on the feet first: planting = good, sliding = discard.

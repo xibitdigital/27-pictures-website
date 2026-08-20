@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero character sheet, Image 2 = the page to fix (Nero page 21)
+
+PIN from Image 2 (the page to fix): keep all four panels, the vertical stack, gutter weight, black outer border, every face, hairstyle, Eve's blazer and glasses, both coats, the rain-soaked alley, blood spray, speed lines, screentone and B&W ink exactly as they are. Panels 1 and 2 are already correct — do not touch them at all.
+
+CHANGE — ONE ARM IN PANEL 3, ONE ARM IN PANEL 4. Ignore any idea of the character's own left or right. Work purely from where the arm sits in the frame:
+
+PANEL 3 (blood spray, Eve running behind him): the arm on the LEFT-HAND SIDE OF THE IMAGE — the one flung outward away from Eve, currently drawn as a segmented chrome forearm — must become bare human skin from shoulder all the way down to the wrist. Rain-wet deltoid, bicep, elbow and forearm, visible muscle and tendon, no plating, no panel lines, no cable seams, no chrome above the wrist. Only the hand stays mechanical: a segmented metal hand with articulated fingers, joined to the skin by a thin seam exactly at the wrist crease.
+
+PANEL 4 (both of them running toward camera): same correction on the arm on the LEFT-HAND SIDE OF THE IMAGE — the outer arm furthest from Eve, currently chrome. Bare human skin shoulder to wrist, metal hand only, thin seam at the wrist.
+
+KEEP AS DRAWN: in both panels the arm on the RIGHT-HAND SIDE OF THE IMAGE, the one nearer Eve, stays exactly as it is — chrome forearm and metal hand. Do not mirror or flip the character, do not swap the two arms, do not change any pose, do not give him two identical arms, and keep exactly five fingers on each hand.
+
+RESULT TO AIM FOR: in panels 3 and 4 the left-of-frame arm reads as a normal muscular human arm ending in a metal hand; the right-of-frame arm reads as machine from the elbow down.
+
+FORMAT: same vertical 1008x1792 black and white cyberpunk manga page, four stacked horizontal panels, high-contrast ink, screentone and rain hatching, no color, no speech balloons, no captions, no SFX lettering, no text anywhere in the art, no logos, no watermarks.

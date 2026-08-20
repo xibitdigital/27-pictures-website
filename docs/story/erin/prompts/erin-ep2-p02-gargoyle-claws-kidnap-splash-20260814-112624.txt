@@ -1,0 +1,28 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = Erin sheet, Image 2 = goblin pack plate, Image 3 = forest page (woodland ink), Image 4 = gargoyle reference if one exists
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, ONE single full-bleed splash panel filling the whole page, artwork running off all four edges, no gutters, no keyline, no white page margin, no inset panels. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, hard radial speed lines. No colour.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin's face, short choppy dark bob with straight fringe and side tufts, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black lace-up combat boots from Image 1. Keep the goblin design from Image 2. Keep the B&W ink style, line weight, screentone and forest rendering from Image 3. Do not redesign identity.
+
+SCENE: The snatch, caught at the moment Erin leaves the ground. Low camera looking up from the forest floor beside the scattered campfire. A winged stone gargoyle hangs low over her with its wings spread across the full width of the page, and its four-clawed stone talons are clamped down on BOTH of Erin's shoulders from above, lifting her off her feet. Erin is caught in the middle of the frame, arms hanging, back arched, boots just clear of the dirt, her head thrown back and her face contorted in pain — eyes screwed shut, brows driven together, teeth bared in a cry. A single goblin rides high on the gargoyle's shoulders, hunched forward, gripping the stone neck with both hands and leering down at her. The campfire below is blasted apart in the downdraft, embers, ash and dead leaves whipping upward past all three figures, mist and black trunks streaking away behind them.
+
+CLAW DETAIL: the grip is stone on cloth — the gargoyle's talons close over the shoulder seams of Erin's jacket, fabric bunched and dragged upward under the claws, her collar pulled tight. No blood, no wounds, no torn flesh.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob, large sharp eyes with heavy lashes, black track jacket with high collar and ribbed cuffs, black trousers, black combat boots, wiry athletic build; white rim light separating her black clothes from the night.
+
+GARGOYLE LOCK: hunched winged stone beast twice Erin's size, cracked grey granite hide with moss in the crevices, blunt horned brow, flat snarling muzzle, blank pale glowing eyes, heavy ribbed bat wings, four long clawed talons per hand, stone dust flaking off it in motion. Not a dragon, not a demon, not a goblin.
+
+GOBLIN RIDER LOCK: one goblin only — warty knobbed skull, long pointed ears, bulging pale eyes, wide fanged grin, sinewy long-fingered arms, ragged rags. It rides; it does not hold Erin. Grey-green ink-toned gremlin, not an orc, not a troll.
+
+LIGHT: the wrecked campfire below is the only light source, throwing everything upward — hot rim light under the wings, under the goblin's jaw and across Erin's face, the sky and canopy above crushed to solid black.
+
+COMPOSITION: Erin's face is the focal point, roughly centre of the page, unobstructed. Leave clear dark space along the top band of the page for a later caption overlay. Do not crowd faces against the page edge.
+
+ANATOMY: exactly two arms and two legs per figure; the gargoyle has two arms, two legs and two wings only; the goblin has two arms, two legs and no wings. No extra limbs, no ghost hands, no extra fingers.
+
+CHANGE: only the single scene described above; preserve identity and ink style from the pins.

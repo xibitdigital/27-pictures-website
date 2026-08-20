@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = previous cybercab page (style/faces); Image 2 = Eve ref if available
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, light rain. No color, no speech balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art (club name only as stylized neon shape, not readable letters if possible — or minimal “CERBERUS” neon only once in top panel).
+
+PIN from refs: keep Eve long wavy dark hair, black rectangular glasses, fitted dark blazer; Nero short dark hair, dark coat, left arm steel cybernetic (replacement only); same B&W manga ink style and three-panel stack as Image 1 if provided.
+
+TOP (~35%): Eve and Nero step out of the same driverless cybercab onto wet pavement. In front of them: luxury nightclub facade “Cerberus” — dark stone, gold trim, glowing sign, red carpet or polished steps. Two huge bouncers at the entrance. Small queue of well-dressed nightlife crowd waiting behind a rope. Wide establish.
+
+MIDDLE (~30%): Eve distracts one bouncer — leans in talking/gesturing, glasses on, composed charm. Nero slips past the other side of the entrance in the background, body low, only two arms (cyber left + normal right), two legs. Clear readable bodies, no ghost limbs. Medium shot.
+
+BOTTOM (~35%): Nero already inside the club threshold/shadow vestibule, looking back; Eve still holding the bouncer’s attention outside the frame edge or mid-turn to follow. Dark luxury interior hint: velvet, lights, deep blacks. ECU or medium-close payoff on the sneak succeeding.
+
+SUBJECT LOCK: Eve — long wavy dark hair past shoulders, black rectangular smart glasses always on, fitted dark blazer, slim trousers, composed forensic analyst. Nero — lean hard-bitten detective, short dark hair, intense eyes, dark coat, left arm only full steel cyber (not a third arm), normal right arm, two legs, boots. Same faces/outfits all panels.
+
+ANATOMY: exactly two arms and two legs per person — never three or four arms, never extra hands. Bouncers: two large men, two arms two legs each. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.

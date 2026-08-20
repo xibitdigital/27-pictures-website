@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / gekiga B&W + single red spot colour — RED SMILE: static, page 12 (end card)
+# refs: Image 1 = page 11 plate (toons/redsmile-static/assets/b3998657c538be56314fd5905745e035.png); Image 2 = page 10 plate (aged body, spilled keys)
+
+FORMAT: Black and white horror manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Pure greyscale throughout EXCEPT one single element — the red smile in the bottom panel. No other colour anywhere on the page. Sharp decisive gekiga linework, heavy dark ink washes, solid crushed blacks, harsh high contrast, grey screentone midtones, cross-hatching. No speech or thought balloons, no empty balloon shapes, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no readable text anywhere in the art.
+
+PIN from references: keep Elena's hands and dark long-sleeve top from Images 1-2 — young, unmarked skin, dark home clothes. Keep the same flat: narrow hallway, panelled main door with the ornate Victorian brass lever, dark floorboards, bookshelf, framed photos, old boxy CRT television on its low stand, spilled keyring. Keep the ink style, panel weight and three-panel vertical stack. Do not redesign the apartment.
+
+STYLE: Domestic space made hostile, light scarce, negative space pure black. Quiet, still, final — no motion lines, no violence, no body in shot. No blood, no gore.
+
+TOP (~35%): Extreme close-up, high angle, of a smartphone held in a young woman's hand — screen glowing hard white in the dark, a message thread of empty grey chat bubbles with NO readable letters, her thumb resting on the keyboard mid-word. Skin lit from below by the screen, everything beyond it crushed to black.
+
+MIDDLE (~30%): Wide shot straight down the empty hallway. The main door stands ajar on a black stairwell, the Victorian brass lever catching one glint, a wedge of stairwell light lying across the floorboards. The keyring sits abandoned in the middle of the boards. Nobody in frame — no bodies, no figures, only the open door and the dark beyond it.
+
+BOTTOM (~35%): The CRT television seen straight on from a distance, small in frame and pushed to the lower left, screen packed with grey static snow. Forming in the middle of the snow, in place of the sigil, is a wide curving smile — a single unbroken crescent of teeth, too wide for any human mouth, no face around it, just the mouth held in the static. That smile is vivid blood red, the ONLY colour on the page. The rest of the panel is deep empty black — a large clean unbroken black area filling the right two thirds and the bottom edge, no furniture, no pattern, no detail in it.
+
+SUBJECT LOCK: hands only in panel 1 — young, unmarked skin, dark sleeve. No faces anywhere on this page.
+
+ANATOMY: four fingers and one thumb on every hand, five digits total, correct knuckle spacing. Horizontal panels only, no diagonal slash panels, no triangle crops.
+
+CHANGE: only the three beats above — the phone mid-message, the open door on an empty hall, the distant television holding the red smile in its static with wide empty black around it. Preserve the flat, props and ink style from the pinned references.

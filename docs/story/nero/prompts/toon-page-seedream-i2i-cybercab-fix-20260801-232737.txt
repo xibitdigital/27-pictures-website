@@ -1,0 +1,16 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = current 3-panel page; Image 2 = Eve ref (glasses/blazer) if available
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, light rain. No color, no speech balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art.
+
+PIN from Image 1: keep three-panel vertical stack, rainy neon street, sleek driverless cybercab design, Eve long wavy dark hair and dark blazer, Nero short dark spiky hair and dark coat, overall B&W manga ink look. Do not redesign the page into a different story.
+
+CHANGE / FIX:
+TOP: Eve on curb with phone hailing empty driverless cab; glasses on; no driver in cab.
+MIDDLE: Eve and Nero enter through ONE open side door only. Clear bodies. Eve glasses on. Nero has exactly TWO arms: left arm full steel cybernetic from shoulder to hand (replacement, not extra), right arm normal; two legs only. No ghost limbs, no four arms, no third hand.
+BOTTOM: ECU two-shot inside cab — Nero profile left, Eve right with black rectangular glasses still on, long wavy hair, full lips, intense eyes. Rain on window.
+
+SUBJECT LOCK: Eve always wears black rectangular glasses, long wavy dark hair past shoulders, fitted dark blazer. Nero: short dark hair, dark coat, cyber left arm only + normal right arm. Same faces all panels.
+
+ANATOMY: exactly two arms and two legs per person — never three or four arms. Cyber arm replaces left arm only. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.

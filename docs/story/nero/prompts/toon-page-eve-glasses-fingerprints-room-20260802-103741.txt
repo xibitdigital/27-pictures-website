@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Eve ref; Image 2 = Nero ref; Image 3 = prior Cerberus page, optional (layout, ink weight)
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, fine cross-hatching. No color, no speech/thought balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no readable text, letters or numbers anywhere in the art.
+
+SETTING: the floor above the Cerberus club — Victorian carved wood panelling, brass fittings and heavy mouldings, overlaid with cyberpunk tech: thin glowing data-strips along the cornices and skirting, a holographic light panel floating near one wall, exposed cable runs stapled along the wainscot, a small hovering camera drone high in one corner, faint scan-lines crossing the floorboards, cold light-bloom through tall shuttered windows. Quiet, low-lit, after-hours. Abstract glowing shapes only — no words, no digits, no readouts.
+
+PIN from refs: Eve's face, hair and blazer from Image 1; Nero's face, hair, coat and arm construction from Image 2; B&W manga ink style and the three-panel horizontal stack. Do not redesign identity.
+
+TOP (~35%): Tight close-up on Eve's face, filling the panel — head slightly turned, eyes sharp behind her glasses, a thin holographic scan-glow crawling across the lenses and catching in her irises.
+
+MIDDLE (~30%): Her point of view through those glasses — a brass door handle in hard close-up, latent fingerprints picked out on the metal as bright glowing ridge-loop whorls, framed by thin geometric bracket marks and a faint reticle.
+
+BOTTOM (~35%): Inside the room. Eve stands left of centre, turned three-quarters away from the camera, watching Nero work. He kneels on one knee to her right, head down, one hand splayed on the floorboards over a set of marks.
+
+EVE LOCK: long wavy dark hair past shoulders, fair skin, full lips, composed forensic analyst. Fitted dark blazer over dark top, slim trousers, belt, slim wristwatch. Her glasses are BLACK RECTANGULAR frames — the top edge of each lens is a straight horizontal line and the outer corners are square, level with the inner corners. Plain, severe, engineer-like. Never cat-eye: no upswept or winged outer corners, no curved or tapering top edge, no round lenses. She wears them in every panel, including the close-up.
+
+NERO LOCK: lean hard-bitten detective, short spiked dark hair, intense eyes, faint crack lines across one side of his face, long dark coat with upturned collar, combat boots.
+
+NERO'S ARMS — as Image 2 draws them:
+- LEFT arm: the upper arm is BARE SKIN with fine cracked-porcelain lines through the muscle, under a rounded dark shoulder pauldron. From the ELBOW DOWN it is prosthetic — segmented steel forearm, exposed cable seams, plated metal hand with articulated fingers. The chrome starts at the elbow, not at the shoulder and not mid-forearm.
+- RIGHT arm: ordinary flesh, skin all the way down, ending in a metal cybernetic hand that begins at the wrist.
+- He kneels three-quarters toward the camera, so his LEFT arm — the steel-forearm one — falls on the VIEWER'S RIGHT and braces on the floor; his RIGHT arm falls on the VIEWER'S LEFT.
+- Never a third arm, never two steel forearms, never a flesh left hand.
+
+ANATOMY: exactly two arms and two legs per person. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the three beats described above; preserve identity and ink style from the pins.

@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero page 4 (the HOURS EARLIER interstitial) — copy its diagonal layout exactly
+
+FORMAT: Black and white cyberpunk manga interstitial plate, vertical 1008x1792, SINGLE full-bleed image — no panel grid, no gutters, no stacked panels. High-contrast ink, dense screentone, fine rain hatching. No color, no speech balloons, no captions, no lettering, no logos, no watermarks, no text anywhere in the art.
+
+PIN from Image 1: copy the same interstitial construction — the upper portion of the page is a flat, solid, empty black title field with a faint grain, and a single clean diagonal edge runs from the lower-left up to the right, cutting that black field away from the artwork below. Keep the same black outer border, the same ink density and screentone treatment, and leave the black field completely empty: no letters, no numbers, no symbols in it.
+
+ARTWORK BELOW THE DIAGONAL: a high overhead night view across the rain-soaked city — a canyon of tall towers receding into haze, thousands of lit windows, wet rooftops in the near foreground crowded with satellite dishes, aerials, vents and cable runs, streets glowing far below between the blocks, rain falling in long streaks across the whole view. Cold, indifferent, enormous — the city carrying on without them.
+
+DIFFERENCE FROM Image 1: mirror the sense of the composition so the diagonal runs the other way (black field occupying the LOWER portion, artwork above it) and shift the camera to look down a different avenue — a wider, deeper canyon with one distant tower catching the light, no figure on any rooftop. Same city, same night, later.
+
+MOOD: closing shot, not an opening — quiet after violence, empty rooftops, no people visible anywhere in frame.
+
+ANATOMY / CONTENT: no characters, no faces, no hands, no vehicles in close-up. Pure environment.
+
+CHANGE: only the camera angle and the direction of the diagonal; preserve the interstitial construction, the empty black title field and the ink style from Image 1.

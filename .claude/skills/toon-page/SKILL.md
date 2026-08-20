@@ -4,7 +4,7 @@ description: >
   Build a ByteDance Seedream 5.0 Pro (image-to-image) prompt for a full
   black-and-white multi-panel toon page (default 3 horizontal panels,
   1008×1792) for 27 Pictures cyberpunk manga. Always saves the prompt as a
-  .txt in the user's Downloads folder; generates the image only when the user
+  .txt under docs/story/<series>/prompts/ (tracked); generates the image only when the user
   explicitly asks. Use when the user says "toon page", "/toon-page", "toon
   panel", "new page prompt", "seedream", "i2i", or wants a FlipFrame/toon
   reader plate prompt.
@@ -20,7 +20,7 @@ Take the user's beat/scene and output a **complete Seedream i2i prompt** for one
 
 ## Output rules (strict)
 
-- Build the full prompt, then **always save it as a `.txt` file** in the user's Downloads folder
+- Build the full prompt, then **always save it as a `.txt` file** under `docs/story/<series>/prompts/` (tracked)
 - Also show the prompt in chat as a single copyable fenced code block
 - **Length: stay under ~550 English words** (Seedream sweet spot <600 words; longer prompts scatter detail). Prefer tight panel lines + short locks.
 - **Default is prompt-only.** Write the `.txt` and stop. The user normally attaches reference images in the ComfyUI / RunComfy web interface and generates there.
@@ -65,27 +65,35 @@ Pin from references: keep Eve face/hair/glasses/outfit from Image [Eve]; keep Ne
 
 Name what must **not** change vs what must **change** (i2i rule: unmentioned elements drift).
 
-## Save prompt to Downloads (required)
+## Save the prompt (required)
 
-After assembling the prompt body (plain text, no markdown fences inside the file):
-
-1. Write a UTF-8 `.txt` file under the user's Downloads directory.
-2. Path: `$HOME/Downloads/` or `~/Downloads/` (typically `/Users/<user>/Downloads/`)
-3. Filename: `toon-page-<slug>-YYYYMMDD-HHMMSS.txt`
-   - `slug`: lowercase ASCII from the first ~40 chars of the beat; spaces → `-`; strip non `[a-z0-9-]`; collapse `--`; default `page`
-4. File contents = **the prompt only** (no ``` fences, no commentary)
-5. Chat reply: fenced prompt + one line `Saved: ~/Downloads/...`
-
-Optional: first lines of the file may be a short header block the user can strip:
+**Primary location is the repo, tracked:**
 
 ```
-# model: bytedance/seedream-5.0-pro
-# mode: image-to-image
-# refs: [list what to attach]
+docs/story/<series>/prompts/
 ```
 
-If you include a header, keep it to ≤4 lines; prompt body still counts toward word budget.
+`<series>` is the toon the plate belongs to — `nero`, `jax`, `erin`,
+`red-smile`. Name it for what it makes, with no timestamp; git already has the
+dates, and a timestamped filename stops being the obvious current version as soon
+as there are two of them:
 
+- `page-<episode>-<slug>.txt` — a story plate
+- `page-<episode>-<slug>-fix.txt` — a fix pass against a generated plate
+- `character-<name>.txt` — a character sheet
+- add `-superseded` when a prompt is replaced but worth keeping for traceability
+
+**Why tracked:** the generated images are not in git — plates live on R2 and
+generation references live in `references/`, which is gitignored. The prompt is
+the only durable record of how an image was made, and an image without its prompt
+cannot be re-rolled, fixed or matched by a later plate.
+
+Optionally also drop a copy in `~/Downloads/` if it is about to be pasted into a
+web UI. That copy is a convenience, not the record.
+
+Contents = **prompt only** (optional ≤4-line `#` header naming the model, the
+mode, and which reference is Image 1, 2, 3). In chat: the fenced prompt plus the
+saved path.
 ## Generating (opt-in — never by default)
 
 Only when the user explicitly asks for the image. Otherwise the `.txt` is the whole deliverable.
@@ -93,7 +101,7 @@ Only when the user explicitly asks for the image. Otherwise the `.txt` is the wh
 ```bash
 set -a; source .env; set +a
 python3 scripts/generate-toon-page.py \
-  --prompt-file ~/Downloads/toon-page-<slug>-<stamp>.txt \
+  --prompt-file docs/story/<series>/prompts/page-<episode>-<slug>.txt \
   --ref-asset toons/nero/assets/<md5>.png \
   --ref https://…/nero.png
 ```
@@ -209,7 +217,7 @@ Invent a short lock from cues or refs; hold across panels.
 5. No watermarks in the art prompt
 6. Always include two-arms / two-legs + cyber-replacement language when relevant
 7. If **i2i fix** of an attached page: open with PIN (what to keep from Image 1) + CHANGE (what to fix)
-8. Word-count → trim if needed → save Downloads txt → show fenced prompt + Saved line
+8. Word-count → trim if needed → save the tracked txt → show fenced prompt + saved path
 
 ## Fix mode (user attaches a bad generation)
 

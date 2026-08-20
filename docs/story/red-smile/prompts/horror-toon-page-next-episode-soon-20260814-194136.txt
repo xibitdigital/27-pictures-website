@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinée B&W — end card
+# refs: Image 1 = citadel page (ep2 p13 or p15), Image 2 = Erin sheet, Image 3 = Venus reference
+
+FORMAT: Black and white horror manga end card, vertical 1152x1728, 2:3 portrait, ONE single full-bleed image filling the page, artwork running off all four edges, no panels, no gutters, no keyline, no white margin. Sharp decisive linework, heavy dark ink washes, solid blacks, high-contrast shadows, grey midtones, fine electric filaments of white light. No colour.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no title, no credits, no signage, no watermark, and no empty white shapes reserved for text. Pure artwork only — the "next episode" line is added later as a FlipFrame caption overlay.
+
+PIN (keep from refs): keep the goblin citadel silhouette — black cathedral spires, jagged towers, storm-lit sky — from Image 1. Keep Erin's short choppy dark bob and black zip track suit from Image 2, and Venus's face, long dark hair, headband and dark outfit from Image 3. Do not redesign identity.
+
+STYLE: Dark fantasy horror ink — crushed shadows, sparse hostile light, storm filaments. Not cyberpunk neon. Not photoreal 3D.
+
+SCENE: The morning after nothing. A wide, still, deep-focus shot looking down the cobbled road toward the citadel, which fills the upper third of the page against a boiling black sky split by white filaments. Erin and Venus stand tiny and back-to-camera at the very bottom of the frame, shoulder to shoulder, dwarfed by the gates ahead of them, their shadows thrown long behind them. Between them and the citadel the road is scattered with broken stone, dropped goblin clubs and drifting ash, all of it empty — the horde is gone and nothing moves. One goblin gargoyle perches motionless on a far spire, watching.
+
+COMPOSITION: leave the lower third quiet and dark — flat black road, no detail — as clean space for a later caption overlay. Figures small, low, centred. Nothing crowded against the frame edge. Deep negative space between the two women and the gates: the distance is the point.
+
+SUBJECT LOCK: Erin — teenage girl, short choppy dark bob, black zip-up track jacket, black trousers with a thin side stripe, black combat boots, wiry build. Venus — adult woman, long dark hair, headband, fitted dark outfit with belt, calm posture. Both seen from behind, faces not visible.
+
+ANATOMY: exactly two arms and two legs per figure. The gargoyle has two arms, two legs and two wings only. No extra limbs, no ghost hands.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins. No blood, no bodies, no gore.

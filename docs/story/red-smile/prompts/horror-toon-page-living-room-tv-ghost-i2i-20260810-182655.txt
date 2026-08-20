@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: European bande dessinée psychological horror B&W
+# refs: Image 1 = style/layout (optional prior 3-panel B&W horror page); Image 2 = young woman face/outfit if available
+
+FORMAT: Black and white European bande dessinée horror comic page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, clean precise contours, heavy dark ink washes, strong solid blacks, high-contrast shadows, grey midtones, sparse screentone. No color, no speech/thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text in the art.
+
+PIN (keep from refs): keep the young woman's face, hair, and simple domestic clothes consistent across panels from Image [woman] if provided; keep B&W bande dessinée ink style, heavy blacks, grey midtones, and three-panel vertical stack from Image [style/layout] if provided. Do not redesign her identity between panels.
+
+STYLE: Psychological horror ink — crushed corner shadows, bright TV as hostile light source, dense black voids, sharp edges. Not cyberpunk neon. Not photoreal 3D. Not cute shōnen sparkle.
+
+SUBJECT LOCK: Young woman early 20s, same face and hair all panels — calm then tense; panel 3 ghost only as solid black ink silhouette, no detailed face.
+
+TOP (~35%): Dim living room; she sits alone on a couch in calm side profile watching a bright TV; deep ink shadows pool in the corners; quiet isolation.
+
+MIDDLE (~30%): Tight close-up as she turns sharply over her shoulder; wide tense eyes; bold ink outlines; decisive facial features; two arms only.
+
+BOTTOM (~35%): Solid black ink silhouette of a ghostly figure looming in the far dark corner behind her; dense heavy blacks; sharp menacing edges; no gore.
+
+ANATOMY: exactly two arms and two legs on the woman. Horizontal panels only, pure B&W bande dessinée horror ink, no empty balloon shapes.
+
+CHANGE: only the three-panel living-room dread beat above; preserve identity and ink style from pins.

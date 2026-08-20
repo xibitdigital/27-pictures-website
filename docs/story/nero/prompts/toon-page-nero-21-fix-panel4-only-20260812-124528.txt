@@ -1,0 +1,13 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero character sheet, Image 2 = the page to fix (Nero page 21, current pass)
+
+PIN from Image 2 (the page to fix): reproduce PANELS 1, 2 and 3 pixel for pixel — do not redraw, restyle or re-ink them. Keep the four-panel vertical stack, gutter weight and black outer border. In PANEL 3 specifically, keep the torn-off sleeve and bare shoulder on the left-of-frame arm, the blood spray, the long trench coat, the pose and Eve behind him exactly as drawn. Keep every face, hairstyle, Eve's blazer and glasses, the rain, speed lines, screentone and B&W ink.
+
+CHANGE — PANEL 4 ONLY (the bottom panel: both of them running toward camera down the wet alley). Ignore the character's own left and right; go by frame position. The arm on the LEFT-HAND SIDE OF THE IMAGE — his outer arm, the one furthest from Eve, swinging forward as he runs, currently drawn as a segmented chrome forearm — must be redrawn as bare human skin from shoulder to wrist: rain-wet deltoid, bicep, elbow and forearm, visible muscle, no plating, no panel lines, no cable seams, no chrome above the wrist. The prosthetic begins exactly at the wrist crease: a segmented metal hand with articulated fingers and a thin join seam, nothing more.
+
+KEEP IN PANEL 4: the arm on the RIGHT-HAND SIDE OF THE IMAGE — the one around Eve — stays exactly as drawn. Same running pose, same stride, same coat, same framing, same rain. Do not mirror or flip the figure, do not swap arms, do not give him two matching arms, five fingers on each hand.
+
+CHECK BEFORE FINISHING: bottom panel — left-of-frame arm = human skin all the way to the wrist with a metal hand; right-of-frame arm = unchanged. Panels 1-3 = identical to the input.
+
+FORMAT: same vertical 1008x1792 black and white cyberpunk manga page, four stacked horizontal panels, high-contrast ink, screentone and rain hatching, no color, no speech balloons, no captions, no SFX lettering, no text anywhere in the art, no logos, no watermarks.

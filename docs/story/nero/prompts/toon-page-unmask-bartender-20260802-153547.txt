@@ -1,0 +1,24 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = page 16 (knife) — Nero, the downed shooter, the room, ink weight
+#       Image 2 = page 13 (Cerberus interior) — the BARTENDER's face in its middle panel
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, restrained speed lines. No color, no speech/thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no readable text, letters or numbers anywhere in the art. The references carry a small watermark in a lower corner — do not reproduce it.
+
+SETTING: the same upstairs room above the Cerberus club — Victorian carved panelling and heavy mouldings overlaid with cyberpunk tech: glowing data-strips along the cornices, exposed cable runs, cold light through tall shuttered windows. The shooter is down on the floorboards.
+
+PIN from refs: Nero's face, spiked dark hair, long dark coat and arm construction from Image 1; the downed man's dark tactical fatigues, plate carrier and low helmet from Image 1; the room design and ink style from Image 1. Do not redesign identity.
+
+TOP (~35%): Hard close-up on Nero's LEFT hand — the plated metal prosthetic hand, articulated steel fingers, segmented forearm — gripping the edge of the downed man's black balaclava and dragging it up off his face. Only the hand, the fabric and the jaw beneath are in frame. Tension in the pull.
+
+MIDDLE (~30%): Close-up on the revealed face — it is THE BARTENDER from Image 2's middle panel. Same man: neat dark hair swept back, strong jaw, straight nose, heavy brows. Copy his features exactly from Image 2. He lies slack on the floorboards, eyes half-open and unfocused, the knife hilt still at the side of his neck at the edge of frame. No bow tie or waistcoat now — the collar of the plate carrier instead.
+
+BOTTOM (~35%): Nero crouched over the body, pulling a slim flat keycard from a chest pocket of the plate carrier with his flesh RIGHT hand — the card held up, catching the light, its surface blank with no writing or symbols. His steel left forearm braces on the floor beside the body.
+
+NERO LOCK: lean hard-bitten detective, short spiked dark hair, intense eyes, long dark coat with upturned collar, combat boots. LEFT arm — bare skin upper arm with cracked-porcelain lines under a rounded dark pauldron, prosthetic from the ELBOW DOWN: segmented steel forearm, cable seams, plated metal hand. RIGHT arm — ordinary flesh, skin all the way down, ending in a metal cybernetic hand at the wrist. Chrome starts at the elbow, never at the shoulder, never mid-forearm. Never a third arm, never two steel forearms.
+
+BARTENDER LOCK: mid-thirties, neat dark hair swept back off the forehead, strong square jaw, straight nose, heavy dark brows, clean-shaven. The same man who poured the drink in Image 2 — not a new face.
+
+ANATOMY: exactly two arms and two legs per person. Restrained ink: no gore, no spraying blood, no wound detail. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the three beats described above; preserve identity, room and ink style from the pins.

@@ -1,0 +1,23 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = page 15 (ambush) — Nero, the shooter, the room, ink weight
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, hard motion and speed lines. No color, no speech/thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no readable text, letters or numbers anywhere in the art. Image 1 carries a small watermark in its lower corner — do not reproduce it or any other text.
+
+SETTING: the same upstairs room above the Cerberus club — Victorian carved panelling and heavy mouldings overlaid with cyberpunk tech: glowing data-strips along the cornices, exposed cable runs, cold light through tall shuttered windows.
+
+PIN from Image 1: Nero's face, spiked dark hair, long dark coat; the shooter in dark tactical fatigues, plate carrier, balaclava and low helmet with a long suppressed rifle; the room design; B&W manga ink and screentone; the three-panel horizontal stack. Do not redesign identity.
+
+TOP (~35%): Nero low and turning, ripping a flat combat knife free from a sheath at the waistband of his trousers — his flesh right hand closing on the grip, coat swinging open, eyes locked off-frame on the door.
+
+MIDDLE (~30%): The knife in flight, filling the foreground in hard close-up, blade edge-on and spinning toward the camera with sharp motion streaks behind it. Deep in the background, small and sharply lit in the doorway, the armed man stands with his suppressed rifle still raised. Extreme depth: huge blade, tiny distant figure.
+
+BOTTOM (~35%): Close-up on the shooter's chest — the knife buried to the hilt through the plate carrier, his body snapping backward, rifle dropping from his hands. Head partly out of frame. Restrained ink: impact, no gore, no spraying blood, no visible wound detail.
+
+NERO LOCK: lean hard-bitten detective, short spiked dark hair, intense eyes, long dark coat with upturned collar, combat boots. LEFT arm — bare skin upper arm with fine cracked-porcelain lines under a rounded dark pauldron, prosthetic from the ELBOW DOWN: segmented steel forearm, cable seams, plated metal hand. RIGHT arm — ordinary flesh, skin all the way down, ending in a metal cybernetic hand at the wrist. He draws and throws with the RIGHT hand. Chrome starts at the elbow, never at the shoulder, never mid-forearm. Never a third arm, never two steel forearms.
+
+SHOOTER LOCK: heavy-set, dark tactical fatigues and plate carrier, gloves, balaclava and low helmet, no insignia, no visible face.
+
+ANATOMY: exactly two arms and two legs per person. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the three beats described above; preserve identity, room and ink style from Image 1.

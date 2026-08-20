@@ -1,0 +1,15 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current page 10 generation (low-angle approach / life drain / aged body); Image 2 = page 9 plate for identities if needed
+
+PIN from Image 1: keep everything — the three-panel vertical B&W horror layout, panel sizes, gutters and black border, the exact camera angles, the ink style, the hallway, Elena's identity and bare feet, the mother's coat and horrified face, the white vapour streaming from her chest, the spilled keys, the aged white-haired body with blank white eyes. Same framing, same values, same linework.
+
+CHANGE / FIX — middle panel only:
+- Elena's hand pressed on the mother's chest currently has SIX digits. Redraw it with exactly FOUR FINGERS AND ONE THUMB — five digits total: index, middle, ring, little finger splayed across the chest, thumb lower and set apart at a natural angle. Correct knuckle spacing, correct finger lengths, no extra or fused digit, no duplicated knuckle.
+- The mother's hand gripping Elena's wrist must also read as exactly four fingers and one thumb, five digits total, thumb on the near side of the wrist.
+- Keep both hands in the same position, scale and pose as Image 1 — only the digit count and finger anatomy change.
+- Keep the tight cross-hatching, hard rim light and heavy blacks on both hands.
+
+Do not restyle faces into different people. Do not change the top or bottom panels. Do not add blood, wounds or gore. No speech balloons, no captions, no SFX lettering, no text anywhere in the art.
+
+FORMAT: same vertical 1008x1792 black and white horror manga page, three stacked horizontal panels, thick black gutters, black outer border, no colour, no text in the art.

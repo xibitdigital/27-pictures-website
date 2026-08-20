@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current page 1 to fix
+
+PIN from Image 1 — keep the TOP panel (Nero walking down the rain-soaked neon alley) and the MIDDLE panel (extreme close-up on his cracked eye) exactly as they are, same framing, same ink, same screentone. Keep the three-panel vertical stack, thick black gutters, black outer border. Do not restyle any face or recompose either of those two panels.
+
+CHANGE — replace the BOTTOM panel entirely. Remove the punching-fist close-up. In its place:
+
+A drone/aerial view straight down onto the alley — high overhead POV looking almost vertically down, the narrow street running diagonally through the frame, tall building walls converging toward the edges, fire escapes, cables, puddles and neon signage reflections scattered along the length of the alley below. Nero is a small, clearly readable figure standing in the middle of the alley, seen from directly above — dark coat spread out around him, a small pool of light or neon glow pooling at his feet, the rest of the alley empty and quiet around him.
+
+Keep the same rainy cyberpunk mood, same B&W manga ink and screentone as the top panel's alley, so the two panels read as the same street at two different distances.
+
+SUBJECT LOCK: Nero — lean hard-bitten detective, short dark spiked hair, long dark coat with upturned collar, combat boots. Small in frame but still recognizable by his coat and posture.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no speech balloons, no dialogue, no captions, no SFX lettering, no watermarks, no readable text or signage anywhere in the art.
+
+ANATOMY: exactly two arms and two legs, five digits per hand if any hand is visible at this distance.

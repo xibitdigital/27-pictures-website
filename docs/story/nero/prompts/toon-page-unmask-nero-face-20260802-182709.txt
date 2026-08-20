@@ -1,0 +1,18 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the unmask page (COMPOSITION — keep it) ; Image 2 = the ambush page (NERO's face + ink style)
+
+Keep Image 1 exactly as it is composed. Change only how NERO'S FACE and the surrounding inking are drawn, in the bottom panel.
+
+KEEP FROM IMAGE 1 — unchanged: all three panels, every pose, every camera angle, the gutters. Top panel: the metal hand peeling the balaclava, the tilted head, the mask over the eyes. Middle panel: the revealed face on the floorboards, its features, hair and half-smile. Bottom panel: Nero's crouch, his coat, the blank keycard in his metal hand, the steel forearm braced, the body beneath him, the windows and panelling. Do not reframe, do not recompose, do not move anything.
+
+CHANGE — Nero's face in the bottom panel is far too clean and smooth. Redraw it the way Image 2 draws him:
+
+- Give him the CRACKED-PORCELAIN FRACTURE LINES across his face — fine dark hairline cracks running over one cheekbone, up the temple and along the jaw, the same marking Image 2 shows on his skin. They are cracks in the surface, not scars, not wrinkles, not dirt.
+- Harden the shading: deep black shadow under the brow ridge and beneath the jaw, sharp cast shadow down one side of the face, strong contrast between lit and unlit planes. Image 2's face is carved out of light and shadow; Image 1's is evenly lit and soft.
+- Sharpen the ink: angular jaw, firm heavy outlines, cut cheekbones, hard-edged spiky hair with solid black masses. No soft airbrushed grey on the skin, no smooth pencil blending.
+- Keep the same expression, the same head angle, the same eyeline, the same face shape. He is the same man in the same pose — only the rendering and the fracture lines change.
+
+Match the rest of the panel's inking to that harder treatment so the face does not look pasted in.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. Pure black and white, no colour, no tint. No balloons, no captions, no SFX lettering, no watermarks, no readable text or symbols — the keycard stays blank.

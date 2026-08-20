@@ -1,0 +1,30 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = Erin sheet, Image 2 = Venus reference, Image 3 = forest page (woodland ink), Image 4 = previous page (platform + matter FX)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~38% / 24% / 38%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, fine speed lines. No colour.
+
+PANEL BORDERS: top and bottom panels are plain rectangles with thin keylines; the one effect border is the middle panel, drawn as a slanted wedge band that narrows as it crosses the page, its converging edges cutting into the panels above and below. No lightning outlines, no zigzag dividers, no tilted full panels, no frame breaks. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin's face, short choppy dark bob with straight fringe and side tufts, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black lace-up combat boots from Image 1. Keep Venus's exact face, hair and clothing from Image 2 — do not redesign her. Keep the B&W ink style, line weight, screentone and forest rendering from Image 3, and the suspended-earth platform look from Image 4. Do not redesign identity.
+
+TOP (~38%): Erin's point of view, looking straight down over the broken edge of the floating dirt platform — her own gloveless hands and one knee in the near foreground gripping the rim, clods and pebbles falling away beneath her, and far below on the forest floor Venus stands in a small clearing with both arms raised towards us, palms open, holding the whole slab up. Steep vertical drop, converging perspective lines, mist between.
+
+MIDDLE (wedge band, ~24%): Cut in close on Venus from a low angle — arms up, fingers spread and trembling, jaw set with effort, hair and clothes lifted by the updraft, loose stones and dead leaves spiralling upward around her, fine white seams of stress running through the air.
+
+BOTTOM (~38%): The platform is down. It sits crooked in the clearing with soil still sifting off its underside, and Erin has climbed off it to stand in front of Venus — Erin gripping Venus's forearm with both hands, head dipped, shoulders still heaving, one boot planted on the churned ground; Venus rests her free hand on Erin's shoulder, calm, faintly luminous. Wordless thanks, read entirely from posture — no bowing, no kneeling, no handshake.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob, large sharp eyes with heavy lashes, black track jacket with high collar and ribbed cuffs, black trousers, black combat boots, wiry athletic build; jacket torn at one shoulder seam where the talons gripped, dirt on her hands and knees. Venus — adult woman exactly as shown in Image 2, composed, unhurried, faintly luminous; same face, hair and outfit in every panel.
+
+EFFECT LOOK: the platform is matter held, not magic sparkle — solid black clods, roots and stones suspended in space, fine white cracks and seams, floating grit and dust, no glow around Venus's hands beyond a faint rim light. No fire, no lightning, no magic circles, no runes, no lens flare.
+
+NO CREATURES ON THIS PAGE: the gargoyle and the goblin are gone from the sky. Only Erin and Venus are drawn. No blood, no wounds.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half. Shot scale: extreme high POV looking down, then low-angle close, then a two-figure medium at ground level.
+
+ANATOMY: exactly two arms and two legs per figure. No extra hands, no ghost limbs, no extra fingers.
+
+CHANGE: only the three beats described above; preserve identity and ink style from the pins.

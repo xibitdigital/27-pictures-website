@@ -1,0 +1,15 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero character sheet, Image 2 = Eve character sheet, Image 3 (last) = current bottom panel (800x341) — for alley, rain and ink continuity only
+
+FORMAT: ONE single horizontal black-and-white cyberpunk manga panel, very wide letterbox format, aspect ratio 2.35:1 (800 x 341 pixels). No panel grid, no gutters, no border, no page layout — one image filling the whole frame. High-contrast ink, screentone, heavy rain hatching, wet reflective surfaces. No color, no speech balloons, no captions, no SFX lettering, no text anywhere, no logos, no watermarks.
+
+PIN from references: keep Nero's face, short spiky dark hair, the fine porcelain crack lines at his temple and cheek, and his dark coat from Image 1; keep Eve's face, long wavy dark hair and black rectangular smart glasses from Image 2; keep the rain-soaked night alley, brick, ink treatment and screentone of Image 3.
+
+SCENE: tight two-shot close-up, heads and shoulders only, filling the wide frame — Eve on the RIGHT side of the image, Nero on the LEFT, their faces close together. She is hauling him upright: her shoulder driven up under his armpit, one hand fisted in his coat lapel, jaw set, teeth gritted with the effort, glasses beaded with rain, hair plastered to her cheek. He is half-collapsed against her, head heavy and tipped toward her, eyes narrowed with pain, mouth open, blood at the corner of his lips, rain and sweat running through the porcelain cracks. Their faces nearly touching, breath and rain in the harsh light behind them, the alley reduced to a blurred dark wall of brick and falling water.
+
+FRAMING: crop at mid-chest — this is a close-up of two heads, not a full-body shot. Arms and hands stay out of frame or are cut by the frame edge; do not draw either character's forearms or hands.
+
+ANATOMY: exactly one head each, two people only, no extra limbs, no floating hands. Eve keeps her glasses on. Do not draw any mechanical or chrome parts anywhere in this panel.
+
+CHANGE: replace the running wide shot entirely with this close-up; keep only the rain, alley light and ink style from Image 3.

@@ -1,0 +1,18 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = current Cerberus page; Image 2 = Eve ref if available
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked FULL-WIDTH horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, light rain. No color, no speech balloons, no dialogue, no captions, no SFX, no watermarks. CERBERUS neon only once in top panel if needed.
+
+PIN from Image 1: keep rainy street, cybercab, CERBERUS luxury facade, two huge bouncers, small well-dressed queue, Eve long wavy dark hair / black rectangular glasses / fitted dark blazer, Nero short dark spiky hair / dark coat, B&W manga ink style, three-panel stack.
+
+CHANGE:
+TOP (~35%): Keep — Eve and Nero exit cybercab toward Cerberus; two bouncers; small queue. Wide establish.
+
+MIDDLE (~30%): Keep story — Eve distracts one bouncer (glasses on, gesturing); Nero sneaks past toward the main entrance. Nero: exactly two arms — LEFT steel cyber only, RIGHT normal; two legs; no ghost limbs. One clear action read.
+
+BOTTOM (~35%): ONE full-width panel at the MAIN ENTRANCE doors of Cerberus. Nero stands in the open doorway / just inside the threshold, body turned half-out, LEFT cyber hand or normal right hand gesturing “come on” — inviting Eve inside. Eve in the rain outside approaching him, glasses on, blazer, about to enter. Bouncers and queue soft/out of focus or at edge only. Warm club light behind Nero, wet street light on Eve. Clear invitation beat: Nero invites Eve in through the main entrance.
+
+SUBJECT LOCK: Eve — long wavy dark hair past shoulders, black rectangular glasses always on, fitted dark blazer, slim trousers. Nero — short dark hair, dark coat, left arm only full steel cyber (replacement not extra), normal right arm, two legs. Same faces all panels.
+
+ANATOMY: exactly two arms and two legs per person. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.

@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinee B&W character sheet
+# refs: Image 1 = RED SMILE: static page 1 (ink style anchor)
+
+FORMAT: Black and white horror manga CHARACTER SHEET, vertical 1008x1792. One open sheet on a neutral seamless light grey ground - no panels, no gutters, no borders, no background scene, no furniture. Confident black linework, cross-hatching for form, sparse screentone grain, rich blacks in hair and clothing. Even legible lighting on the face throughout. No color, no speech balloons, no captions, no SFX lettering, no logos, no watermarks, no text, no labels, no arrows and no height rules anywhere in the art.
+
+PIN from Image 1: keep the ink language only - hand-inked black and white gekiga linework, crushed blacks in fabric, fine white rim light on edges. Do not copy any subject or symbol from it.
+
+SUBJECT LOCK: TOKIRO - a Japanese man, late 30s, a banisher of akuma. Tall, wiry, athletic, with the still upright balance of a swordsman. Serious unsmiling face, hard flat gaze, strong straight brows, sharp jaw. Long black hair pulled into a high tight ponytail, temples smooth, a few loose strands at the face. SCAR: one continuous old scar running from the LEFT side of his forehead, down through the eyebrow and past the outer corner of the left eye, ending on the left cheekbone - raised, pale, unmissable, on the left side in every single view. The left eye is intact and undamaged. Costume: well dressed and deliberately formal - a dark tailored three-piece suit, high-collared shirt, no tie, worn under a long dark haori-style overcoat that falls to mid-calf and hangs open. Traditional split-toe boots. WEAPONS: a daisho worn at the left hip - a long katana and a shorter wakizashi, both in plain dark lacquered scabbards, thrust through a wide dark sash tied over the suit. Wrapped hilts, simple round tsuba. Both swords sheathed in every view.
+
+NO OCCULT MARK: he carries no tattoo, no hexagram, no star and no ritual sigil anywhere on his body or clothing. He is the opposition.
+
+TOP BAND (~45%): full-body front view and full-body three-quarter view, side by side, identical height, feet on one shared baseline, neutral relaxed stand, arms clear of the torso, hands open and visible, coat hanging open, both swords visible at the left hip.
+
+MIDDLE BAND (~25%): full-body back view at the same height showing the ponytail and the sash knot, plus one full-body silhouette of the same figure filled solid black with the sword hilts breaking the outline.
+
+BOTTOM BAND (~30%): head sheet - three head-and-shoulders portraits at the same scale, expressions level and serious / narrowed focus / cold controlled anger. Beside them two small detail insets on the same open ground: a close study of the left side of the face showing the full length of the scar, and the two sword hilts and tsuba seen from the side.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand, feet fully visible and uncropped in every full-body view. Consistent height across all full-body views. The scar is on the left side only.
+
+CHANGE: only the viewing angle and the expression between views. Identity, scar, costume, swords and ink style stay exactly as locked.

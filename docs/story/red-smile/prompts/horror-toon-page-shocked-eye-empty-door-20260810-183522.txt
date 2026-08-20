@@ -1,0 +1,22 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: European bande dessinée psychological horror B&W
+# refs: Image 1 = young woman face/outfit from prior page if available; Image 2 = B&W horror / bande dessinée style or 3-panel layout
+
+FORMAT: Black and white European bande dessinée horror comic page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, clean precise contours, heavy dark ink washes, strong solid blacks, high-contrast shadows, grey midtones. No color, no speech/thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text in the art.
+
+PIN (keep from refs): keep the young woman's face, hair, and simple domestic clothes from Image [woman] if provided; keep B&W bande dessinée ink, heavy blacks, grey midtones, three-panel vertical stack from Image [style/layout] if provided. Do not redesign her identity.
+
+STYLE: Psychological horror ink — crushed blacks, sparse hostile light, empty architecture as threat. Low camera, 17mm wide-angle distortion on lower shots. Not cyberpunk neon. Not photoreal 3D.
+
+SUBJECT LOCK: Young woman early 20s, same face and hair all panels — shocked, wet eyes, terrified; empty dark door frame as recurring void.
+
+TOP (~35%): Extreme close-up on her eye — shocked, wet, bright catchlight, bold ink lids and lashes, tear gloss, harsh white rim against solid black field.
+
+MIDDLE (~30%): Empty door frame in dim hallway or room edge, pure black void beyond the jamb, clean precise contours, heavy ink wash in the doorway, no figure visible yet.
+
+BOTTOM (~35%): Low 17mm camera looking up at her as she looks around really scared, wide tense eyes, head turning, shoulders tight, two arms only, deep shadow behind her, wide-angle lower-cam dread.
+
+ANATOMY: exactly two arms and two legs. Horizontal panels only, pure B&W bande dessinée horror ink, no empty balloon shapes.
+
+CHANGE: only the eye ECU → empty door → scared low-angle look-around beat above; preserve identity and ink style from pins.

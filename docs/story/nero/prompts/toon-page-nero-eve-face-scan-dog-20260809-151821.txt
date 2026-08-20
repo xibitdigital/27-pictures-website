@@ -1,0 +1,19 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: attach Eve face/glasses/outfit + Nero face/cyber arms + optional Dog silhouette/layout page
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, light rain. No color, no speech/thought balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art.
+
+PIN (keep from refs): keep Eve long wavy dark hair, black rectangular smart glasses always on, blazer; keep Nero short dark hair, cracked-porcelain face cues, dark coat, LEFT steel forearm from elbow + RIGHT metal hand only; keep B&W manga ink and three-panel stack. Do not redesign identity.
+
+TOP (~35%): Tight close-up, Nero and Eve face to face in rainy night — profiles almost nose-to-nose or three-quarter, tense shared look after the alley chase; Eve's smart glasses catch a thin HUD glint, Nero's intense eyes; wet skin, coat collar and blazer lapels only, no full bodies.
+
+MIDDLE (~30%): Extreme close-up Eve eye POV — through her eye and smart-glass lens looking up at a tall dark building façade: rain-streaked glass, window grids, AI scan reticles/tag boxes as faint ink lines only (no readable text), scanning floors; her eyelid and rectangular glasses frame stay in shot.
+
+BOTTOM (~35%): Low camera angle from street level looking up into an upper-floor window of that same building — a hard silhouette of The Dog (pale hair suggestion, long coat, still sniper posture) half-hidden behind glass and blinds, watching down; rainy neon rim-light, deep shadows, faceless silhouette (not a full face reveal).
+
+SUBJECT LOCK: Eve — long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses always on, fitted dark blazer, forensic analyst. Nero — lean hard-bitten detective, short dark hair, intense eyes, dark coat, LEFT arm bare cracked-porcelain upper arm with segmented steel forearm from the elbow, RIGHT arm flesh with metal hand from the wrist. The Dog — only as dark interior silhouette, pale hair mass, long coat, cold still presence. Same faces/outfits for Eve and Nero across panels.
+
+ANATOMY: exactly two arms and two legs when shown. Nero LEFT steel from elbow, RIGHT metal hand only — never a third arm, never two chrome forearms. Eve glasses stay on in mid ECU. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloons.
+
+CHANGE: only face-to-face close-up, eye/building scan POV, and Dog window silhouette described above; preserve identity and ink style from pins.

@@ -1,0 +1,13 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current page 1 to fix
+
+PIN from Image 1 — keep the TOP panel (Nero walking down the rain-soaked neon alley) and the MIDDLE panel (extreme close-up on his cracked eye) exactly as they are, same framing, same ink, same screentone. Keep the three-panel vertical stack, thick black gutters, black outer border. Do not restyle any face or recompose any panel.
+
+CHANGE — the BOTTOM panel only, one defect: the punching metal fist currently has SIX knuckle plates / six fingers. A human hand has exactly FOUR fingers plus a thumb — five digits total, never six. Redraw the fist with exactly five digits: four plated knuckles in a row (index, middle, ring, little finger) and one thumb wrapping in from the side, curled into the fist the way a real punch closes. Remove the extra sixth knuckle entirely — do not just shrink it, delete it so the hand reads as a normal human hand in construction, just rendered in segmented metal plating.
+
+Keep everything else in the bottom panel exactly as it is: his face, expression, spiked hair, the coat, the impact burst, the speed lines, the framing and camera angle. Do not change which arm is punching or the pose.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no speech balloons, no dialogue, no captions, no SFX lettering, no watermarks, no readable text anywhere in the art.
+
+ANATOMY: exactly two arms and two legs, and exactly five digits — four fingers and a thumb — on every hand in the image, no extra fingers, no extra knuckles.

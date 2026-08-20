@@ -1,0 +1,28 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = Erin sheet, Image 2 = previous page (gargoyle identity), Image 3 = goblin pack plate, Image 4 = forest page (woodland ink)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, two stacked panels (~52% top / 48% bottom), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, speed lines. No colour.
+
+PANEL BORDERS: the top panel is the one effect border — the whole panel tilted a few degrees off-axis so its gutters run non-parallel to the page edge. The bottom panel is a straight full-bleed rectangle running off the page edges. No lightning outlines, no zigzag dividers, no frame breaks. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin's face, short choppy dark bob with straight fringe and side tufts, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black lace-up combat boots from Image 1. Keep the gargoyle exactly as in Image 2 — cracked grey granite hide, blunt horned brow, blank pale glowing eyes, heavy ribbed bat wings, four clawed talons per hand. Keep the goblin design from Image 3. Keep the B&W ink style, line weight, screentone and forest rendering from Image 4. Do not redesign identity.
+
+TOP (tilted, ~52%): The snatch at the camp — the gargoyle sweeps low over the scattered campfire with a goblin crouched astride its shoulders, and the goblin's long clawed hands clamp down on Erin's shoulders from above and rip her off the ground; Erin twists mid-air, one arm thrown back towards the fire, boots already clear of the dirt, embers and leaves torn up in the downdraft, wings filling the top of the frame.
+
+BOTTOM (full-bleed, ~48%): High drone view, camera far above and looking down — the gargoyle in flight seen from directly overhead, wings spread wide, the goblin small on its back, Erin hanging beneath in its shadow held by the shoulders, all three tiny against an enormous black canopy of treetops and low mist far below, a thin moonlit river and a clearing scarring the forest, the group dead centre with empty dark canopy all around them.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob, large sharp eyes with heavy lashes, hard determined brow, black track jacket with high collar and ribbed cuffs, black trousers, black combat boots, wiry athletic build; same face and outfit in both panels, white rim light separating her black clothes from the night.
+
+GARGOYLE LOCK: hunched winged stone beast twice Erin's size, cracked grey granite hide with moss in the crevices, blunt horned brow, flat snarling muzzle, blank pale glowing eyes, heavy ribbed bat wings, four long clawed talons per hand, stone dust flaking off it in motion. Not a dragon, not a demon.
+
+GOBLIN RIDER LOCK: one goblin only — warty knobbed skull, long pointed ears, bulging pale eyes, wide fanged grin, sinewy long-fingered arms with hooked claws, ragged rags, riding hunched and low on the gargoyle's shoulders, gripping Erin's shoulders with both hands. Grey-green ink-toned gremlin, not an orc, not a troll.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half. Shot scale: close violent snatch, then extreme high wide.
+
+ANATOMY: exactly two arms and two legs per figure; the gargoyle has two arms, two legs and two wings only; the goblin has two arms and two legs and no wings. No extra limbs, no ghost hands, no extra fingers.
+
+CHANGE: only the two beats described above; preserve identity and ink style from the pins.

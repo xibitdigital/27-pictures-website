@@ -1,0 +1,20 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current unmask page to fix
+
+PIN from Image 1 — keep the MIDDLE panel exactly as it is: the revealed face lying on the floorboards, his features, hair, expression, the framing and the ink. Do not touch it. Keep the three-panel horizontal stack, the black gutters, the room, and the B&W manga ink and screentone throughout.
+
+CHANGE — the TOP panel and the BOTTOM panel.
+
+TOP PANEL — it is currently unreadable. Rebuild it:
+- Pull the camera back so the scene is legible: the downed man lies on his back on the floorboards, head and shoulders in frame, the collar of his black plate carrier visible beneath his chin. We must be able to tell that a man is lying there and that a mask is being pulled off his head.
+- His balaclava is being peeled upward off his face, already clear of his mouth and jaw, still covering his eyes and forehead. Show the actual face emerging — chin, mouth, cheek — not a blank featureless shape.
+- The arm doing the pulling is NERO'S LEFT ARM. It must be a SEGMENTED STEEL FOREARM — plated, cable seams, mechanical — running from the elbow to a plated metal hand. Do NOT draw it as a bare skin forearm ending in a metal hand; that is his other arm. Metal from the elbow all the way to the fingertips, entering the frame from above.
+
+BOTTOM PANEL — keep the composition, the crouch, the body, the blank keycard and the steel left forearm braced on the floor. One change only: the hand holding the card is currently fully human. Give it a METAL CYBERNETIC HAND — plated fingers and a metal palm, with a clean join at the wrist. The forearm above that wrist stays ordinary skin. So: skin forearm, metal hand, blank card pinched between metal fingers.
+
+Nero's construction, for both panels: LEFT arm — bare skin upper arm, steel from the ELBOW down. RIGHT arm — skin all the way down, metal hand from the WRIST. Never a third arm.
+
+Restrained ink: no gore, no blood, no wound detail.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no balloons, no captions, no SFX lettering, no watermarks, no readable text or symbols anywhere in the art — the keycard stays blank.

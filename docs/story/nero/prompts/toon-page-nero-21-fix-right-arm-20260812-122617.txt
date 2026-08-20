@@ -1,0 +1,13 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the page to fix (Nero page 21), Image 2 = Nero character sheet
+
+PIN from Image 1: keep the four-panel vertical stack, gutter weight and black outer border exactly as they are. Keep PANEL 1 (muzzle flash up the rainy facade) and PANEL 2 (over Nero's shoulder, his hand shoving Eve aside, empty HUD bracket frames) untouched. Keep every face, hairstyle, coat, blazer, glasses, the rain-soaked alley, blood spray, speed lines, screentone and B&W ink exactly as they are.
+
+CHANGE — NERO'S RIGHT ARM IN PANELS 3 AND 4 ONLY: it is currently drawn as a full mechanical limb; it must be an ordinary human arm with a cybernetic hand only. Draw bare human skin from shoulder to wrist on that arm — deltoid, bicep, forearm, wrist all flesh, wet with rain, with visible muscle and tendon — and start the prosthetic exactly at the wrist joint: a segmented metal hand with articulated fingers and a thin seam where metal meets skin. No plating, no panel lines, no cable seams and no chrome anywhere above that wrist.
+
+WHICH ARM: Nero faces the camera in both panels, so his RIGHT arm is the one on the VIEWER'S LEFT side of the frame — the arm swinging out toward the blood spray in panel 3 and reaching forward in panel 4. That is the arm to redraw as flesh with a metal hand.
+
+KEEP UNCHANGED: his LEFT arm — on the VIEWER'S RIGHT in both panels — stays as it is, a bare cracked-porcelain upper arm with a segmented steel forearm and metal fingers from the elbow down. Do not mirror the character, do not swap the arms, do not give him two identical arms, do not add a third arm, and keep exactly five fingers on each hand.
+
+FORMAT: same vertical 1008x1792 black and white cyberpunk manga page, four stacked horizontal panels, high-contrast ink, screentone and rain hatching, no color, no speech balloons, no captions, no SFX lettering, no text anywhere in the art, no logos, no watermarks.

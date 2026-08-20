@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the generated page to fix; Image 2 = Nero key art (cyber limbs); Image 3 = Eve ref
+
+PIN from Image 1 — do not touch: the TOP panel (entrance into the packed Victorian hall) and the MIDDLE panel (Eve and Nero at the bar with the bartender mid-pour) stay exactly as they are, same framing, same figures, same ink. Keep the three-panel vertical stack, thick black gutters, black outer border, B&W manga ink and screentone, the Victorian-plus-holographic club design, Eve's face, long wavy hair, black rectangular glasses and dark blazer, Nero's face, spiked dark hair and long dark coat. Do not restyle faces into different people.
+
+CHANGE — rebuild the BOTTOM panel only:
+
+- DIRECTION: both are CLIMBING, moving away from the camera and up the stairs. Camera is low at the foot of the staircase looking up after them. Their backs are largely to us, faces in three-quarter as they glance back and up. They are NOT descending and NOT walking toward the viewer.
+- POSES: steady, upright, mid-stride. Nero one step ahead on the left, half-turned back toward Eve; Eve a step behind on the right, one hand light on the balustrade. No stumbling, no arms flung out for balance, no crouching or hunched shoulders, no twisted spine, and they are not standing face to face.
+- NERO'S LIMBS — critical: his LEFT arm is the full steel prosthetic, shoulder to fingertips, with cracked plating over the upper arm, segmented forearm and articulated metal fingers. His RIGHT arm is ordinary flesh, sleeve rolled, ending in a metal cybernetic hand that starts at the wrist. Both arms must be visible and clear of the coat. Never two full steel arms, never a third arm, never a flesh left hand.
+- STAIRCASE: one coherent grand staircase, wide marble treads receding to a single vanishing point, both balustrades converging consistently with carved balusters at matching scale. No oversized blank marble slab in the foreground, no railing running against the perspective.
+- BACKGROUND: the lit hall and chandeliers fall away below and behind them, wall sconces and carved panelling climbing past.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no speech balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no text in the art.
+
+ANATOMY: exactly two arms and two legs per person, both feet planted on real steps.

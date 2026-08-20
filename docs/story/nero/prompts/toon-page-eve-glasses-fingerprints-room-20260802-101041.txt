@@ -1,0 +1,24 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Eve ref (face, hair, glasses, blazer); Image 2 = Nero key art (face, cyber limbs);
+#       Image 3 = prior Cerberus page, optional (layout, gutters, ink weight)
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, fine cross-hatching. No color, no speech/thought balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no readable text, letters or numbers anywhere in the art.
+
+SETTING: the floor above the Cerberus club — Victorian carved wood panelling, brass fittings and heavy mouldings, laced with cold holographic light. Quiet, low-lit, after-hours.
+
+PIN (keep from refs): Eve face, long wavy dark hair, black rectangular smart glasses, fitted dark blazer; Nero face, spiked dark hair, long dark coat, LEFT arm full steel prosthetic and RIGHT arm flesh with a metal hand; B&W manga ink style and the three-panel horizontal stack. Do not redesign identity.
+
+TOP (~35%): Tight close-up on Eve's face, filling the panel — head slightly turned, eyes sharp and focused behind her black rectangular glasses, a thin holographic scan-glow crawling across the lenses and catching in her irises.
+
+MIDDLE (~30%): Her point of view through those glasses — a brass door handle in hard close-up, latent fingerprints picked out on the metal as bright glowing ridge-loop whorls, framed by thin geometric bracket marks and a faint reticle. Abstract HUD shapes only: no words, no digits, no readouts.
+
+BOTTOM (~35%): Inside the room. Eve stands centre-frame facing the camera, hands at her sides, glasses on, composed. Behind and to her side Nero kneels on one knee in three-quarter view, head down, examining marks on the floorboards.
+
+SUBJECT LOCK: Eve — long wavy dark hair past shoulders, fair skin, full lips, black rectangular smart glasses always on in every panel including the close-up, fitted dark blazer over dark top, slim trousers, belt, slim wristwatch, composed forensic analyst. Nero — lean hard-bitten detective, short spiked dark hair, intense eyes, long dark coat with upturned collar, combat boots. Same faces and outfits across all panels.
+
+NERO'S ARMS in the bottom panel — he kneels turned three-quarters toward the camera, so: his LEFT arm, the full steel prosthetic with segmented plating and articulated metal fingers, falls on the VIEWER'S RIGHT and braces against the floor. His RIGHT arm, ordinary flesh with a metal cybernetic hand from the wrist down, falls on the VIEWER'S LEFT and reaches toward the marks. Both arms clear of the coat and plainly visible.
+
+ANATOMY: exactly two arms and two legs per person. Never two full steel arms, never a third arm, never extra hands. Horizontal panels only, pure B&W manga, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the three beats described above; preserve identity and ink style from the pins.

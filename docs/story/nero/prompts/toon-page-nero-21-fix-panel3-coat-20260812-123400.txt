@@ -1,0 +1,11 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero character sheet, Image 2 = Eve character sheet, Image 3 (last) = the page to fix (Nero page 21, arm-corrected pass)
+
+PIN from Image 3 (the page to fix): keep the four-panel vertical stack, gutter weight and black outer border exactly as they are. Keep PANELS 1, 2 and 4 completely untouched. Keep every face, hairstyle, Eve's blazer and glasses, the rain-soaked alley, blood spray, speed lines, screentone and B&W ink exactly as they are. Keep Nero's arms in Image 3 as they now stand, matching Image 1: LEFT arm bare cracked-porcelain upper arm with a segmented steel forearm and metal fingers from the elbow down; RIGHT arm bare human skin from shoulder to wrist with a segmented metal hand starting at the wrist joint only.
+
+CHANGE — NERO'S COAT IN PANEL 3 ONLY: it is drawn as a different garment from the rest of the page. Redraw it as the coat from Image 1 (his character sheet) — the same long dark coat he wears in panels 2 and 4 of Image 3 — full-length heavy dark trench coat, tall stand-up collar turned up at the neck, open down the front with no fastened buttons, wide lapels, long skirts flaring back from the hips, worn over a dark shirt and belted trousers. Same fabric weight, same ink treatment, same silhouette, soaked and snapping in the rain.
+
+DO NOT: no short jacket, no bomber, no cropped or waist-length garment, no armour plating, no straps or harness across the chest, no hood, no fur collar, no shoulder pauldrons on the coat. Do not change his pose, the framing, the blood spray or Eve behind him — only the garment.
+
+FORMAT: same vertical 1008x1792 black and white cyberpunk manga page, four stacked horizontal panels, high-contrast ink, screentone and rain hatching, no color, no speech balloons, no captions, no SFX lettering, no text anywhere in the art, no logos, no watermarks.

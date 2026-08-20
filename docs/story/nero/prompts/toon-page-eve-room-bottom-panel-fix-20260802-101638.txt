@@ -1,0 +1,21 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = the current page to fix; Image 2 = Nero key art (cyber limbs); Image 3 = Eve ref
+
+PIN from Image 1 — do not touch: the TOP panel (close-up of Eve's face and glasses) and the MIDDLE panel (fingerprint HUD on the door handle) stay exactly as they are, same framing, same ink. Keep the three-panel vertical stack, thick black gutters, black outer border, B&W manga ink and screentone. Do not restyle faces into different people.
+
+CHANGE — rebuild the BOTTOM panel only:
+
+EVE: she now looks at Nero, not at the camera. Turn her head and shoulders toward him, three-quarter, chin down slightly, watching him work. Same standing position, same fitted dark blazer, same long wavy dark hair. Her glasses must be BLACK RECTANGULAR frames with straight top edges — not cat-eye, not upswept, not winged.
+
+NERO'S ARMS — the current version is wrong. He kneels on one knee, turned three-quarters, head down over the floor. Identify his arms by frame position:
+- The arm on the VIEWER'S RIGHT is his LEFT arm and must be a FULL STEEL PROSTHETIC from shoulder to fingertips — no skin anywhere on it. Cracked porcelain-like plating over the upper arm, segmented steel forearm, exposed cable seams, a rounded metal shoulder pauldron, and a solid plated hand with articulated fingers braced flat on the floorboards. Not a skeletal or spidery hand: heavy plates, like the key art.
+- The arm on the VIEWER'S LEFT is his RIGHT arm and must be ORDINARY HUMAN FLESH — bare or rolled-sleeve, visible skin, normal muscle and hatching — ending in a METAL CYBERNETIC HAND that begins cleanly at the wrist, reaching toward the marks on the floor.
+- Do NOT put a metal join partway down a forearm. Each arm is either steel all the way from the shoulder, or flesh with the change at the wrist. Never two full steel arms, never a third arm.
+- Sweep the coat clear of both arms so each reads plainly.
+
+ROOM — add cyberpunk layers over the Victorian panelling, without replacing it: thin glowing data-strips tracing the cornices and skirting, a holographic light panel floating near one wall, cold light-bloom spilling through tall shuttered windows, exposed cable runs stapled along the wainscot, a small hovering camera drone in the upper corner, faint scan-lines crossing the floorboards. Abstract glowing shapes only — no words, no digits, no readouts, no signage.
+
+FORMAT: same vertical 1008x1792 B&W manga page, three stacked horizontal panels, thick black gutters, black outer border. No color, no speech balloons, no dialogue, no captions, no SFX, no logos, no watermarks, no readable text anywhere in the art.
+
+ANATOMY: exactly two arms and two legs per person.

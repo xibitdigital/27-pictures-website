@@ -1,0 +1,19 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = Nero sheet, Image 2 = Eve sheet, Image 3 = prior 3-panel page (layout/style) if available
+
+FORMAT: Black and white cyberpunk manga page, vertical 1008x1792, three stacked horizontal panels, thick black gutters, black outer border. High-contrast ink, screentone, sharp speed lines. No color, no speech or thought balloons, no dialogue, no captions, no SFX text, no logos, no watermarks, no text anywhere in the art.
+
+PIN (keep from refs): Nero face, short dark hair, dark coat, LEFT arm cracked-porcelain bare upper arm with segmented steel forearm and metal hand from the elbow down, RIGHT arm flesh with a metal cybernetic hand from the wrist. Eve face, long wavy dark hair past shoulders, black rectangular smart glasses always on, fitted dark blazer, slim trousers. Keep B&W manga ink style and the three-panel vertical stack from the layout ref. Do not redesign identity.
+
+TOP (~35%): Full shot from BEHIND — Nero and Eve sprinting down a dark corridor of a corporate tower toward a tall floor-to-ceiling window blazing with city light; because they are back-to-camera, Nero's steel forearm reads on the VIEWER'S LEFT and his flesh arm with the metal hand on the VIEWER'S RIGHT; Eve's hair streams behind her, coat tails flaring, speed lines converging on the glass.
+
+MIDDLE (~30%): Tight close-up on Nero's LEFT steel forearm and metal fist driving through the window in a raised protective guard across his face, glass detonating into thousands of inked shards, cracked-porcelain upper arm visible above the elbow join, screentone burst behind the impact.
+
+BOTTOM (~35%): Low camera angle from an adjacent rooftop looking up — Nero and Eve airborne mid-leap out of the shattered window, bodies stretched across the gap, glass raining beneath them, tower facade and rain-slick rooftop edge framing the jump; both figures small enough to read as full bodies, faces still recognizable.
+
+SUBJECT LOCK: Nero — lean hard-bitten detective, short dark hair, intense eyes, dark coat, combat boots. Eve — fair skin, full lips, black rectangular glasses on her face in every panel, fitted dark blazer over dark top, belt, slim wristwatch. Same faces and outfits in all three panels.
+
+ANATOMY: exactly two arms and two legs per person. Nero's LEFT arm is steel from the elbow down over a bare cracked-porcelain upper arm; his RIGHT arm is flesh with a metal hand from the wrist — never a third arm, never two chrome forearms, never a flesh left hand. No extra hands, no ghost limbs. Left and right mean the subject's own sides, not the viewer's; in the top panel he is seen from behind, so mirror the frame placement accordingly. Horizontal panels only, no diagonal slash panels, no triangle crops, pure B&W manga ink, no photoreal 3D, no empty balloon shapes.
+
+CHANGE: only the escape action described above; preserve identity, cyber-limb configuration, and ink style from the pins.
