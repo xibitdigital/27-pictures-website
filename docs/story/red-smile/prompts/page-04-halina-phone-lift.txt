@@ -1,0 +1,26 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/halina.png (identity)
+#       Image 2 = RED SMILE: Marcus page 2 (ink style, layout, the corridor) - LAST
+# note: the phone display DOES carry the message in English, by decision - the
+#       caption overlay then repeats it in IT/DE/FR over the top. Seedream garbles
+#       lettering often: check the spelling on delivery before shipping the plate.
+#       No sigil on the phone - her screen is not the entity's screen, not yet.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks. The ONLY text anywhere in the art is on the phone display, described below - no writing on walls, signage, badges or the lift.
+
+PIN from references: keep the exact face, build and costume of the woman in Image 1 - mid 50s, heavy-set, broad weathered face, deep lines, no makeup, tired watchful eyes, dark-going-grey hair scraped into a low bun with loose strands, dark tunic under a knee-length utility tabard, blank badge on a lanyard, one blue glove. Keep the dark corridor, the janitorial cart and the B&W horror ink of Image 2. Do not redesign her.
+
+STYLE: Dark psychological horror ink. Night interior, corporate, lit only by small hard sources. Not cyberpunk neon, not photoreal 3D.
+
+TOP (~35%): Extreme close-up of her hands, low in the dark corridor: one bare hand holding a small phone at chest height, the other still resting on the cart handle. The lit display is the only light source and throws hard glow up her fingers and forearm. On the screen, a plain dark messaging app with one message bubble, rendered in crisp legible sans-serif English, correctly spelled, reading exactly: "We got a new signal near you, be careful". Above the bubble the sender name is the single capital letter "V". No other writing on the screen - no time, no battery, no icons, no emoji, no symbol, no occult mark. Her face is out of frame or only a jaw edge at the top border.
+
+MIDDLE (~30%): Tight close-up of her face, lit from below by the phone. Worried and thinking, not screaming: brows drawn in, mouth closed and set, eyes lifted off the screen and looking away down the corridor at something she cannot see. Decades of night shifts in that expression - alert, not panicking.
+
+BOTTOM (~35%): Wider shot. She walks away from camera toward a pair of closed lift doors at the end of the corridor, the cart pushed beside her, phone still in her hand at her hip. The lift doors are a pale metal seam in the black, the only bright shape in the panel. Long hard perspective, walls swallowed in shadow, her figure small and squared-off with purpose.
+
+SCALE: one human scale on the page. She is average height and heavy-set, NOT oversized - head one seventh of her standing height, shoulders under two head-widths, hands no larger than her own face. The phone is a small handset that fits in one palm, not a tablet. The cart is waist-high on her with an upright push handle.
+
+ANATOMY: exactly two arms, two legs and five fingers per hand. In the close-up of the hands, five fingers on each hand, correct knuckle spacing, thumb on the correct side. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: only the scene described above; preserve her identity, the corridor and the ink style from the pins.

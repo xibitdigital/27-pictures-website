@@ -9,7 +9,7 @@ Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 | Config      | `content/toons/redsmile-marcus/config.json` → publish to R2 |
 | Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key     |
 | Design size | 800 × 1424 (portrait)                                    |
-| Pages       | **2** — work in progress                                 |
+| Pages       | **3** — work in progress                                 |
 
 ## Status: published, unlisted
 
@@ -17,7 +17,7 @@ The config and every asset are on R2 and the reader resolves the locked hash
 like every other toon, so `/toons/redsmile-marcus/` works in a production build.
 
 It is still **unlisted**: `noindex, nofollow` on the reader, no card on
-`/toons/`, no sitemap or `llms.txt` entry — two pages are not something to rank,
+`/toons/`, no sitemap or `llms.txt` entry — three pages are not something to rank,
 and a work-in-progress badge does not stop Google ranking half a story. What it
 does have is an episode card on `/toons/red-smile/` (with a *Work in progress*
 badge, same as Erin EP 2) and an entry in that page's `CreativeWorkSeries`
@@ -44,6 +44,26 @@ Full bios, appearance locks and voice direction:
 
 ## Captions
 
+Page 3 carries 4 overlays — `BZZT`, V's text, her thought, `TNK`. **Every burst
+on this toon is black lettering with no text stroke**: the burst body is already a
+light fill, so white-on-white-stroke reads as a smear. Pages 1 and 2 shipped the
+wrong way round and were corrected in the same pass.
+
+**V's message is `variant: "ai"`.** It arrives as characters on a screen, so it
+takes the HUD treatment and a `V›` prefix, exactly like Nova's `N›`. The voice is
+`viktor` (`htZQqY7WtacRNV7s62Iy`) through a **light phone-render pass** — telephone
+band plus a short comb echo, no bit-crush and no pitch shift:
+
+```bash
+ffmpeg -y -i in.mp3 -af "highpass=f=300,lowpass=f=3400,aecho=0.8:0.6:4:0.18,\
+dynaudnorm=f=200:g=5" -codec:a libmp3lame -b:a 192k /tmp/out.mp3
+```
+
+That is deliberately *not* the `ai`/`badai` chain `docs/story/red-smile/viktor.md`
+forbids. What is being processed is her phone reading his text aloud, not Viktor's
+throat — he is not a machine, and the chain must never be heavy enough to suggest
+he is.
+
 Page 2 carries 5 overlays, **all of them hers** — `SHHK` (the bin), *Sir?*,
 *I've finished, sir.*, *Goodnight.*, then `TIC`. Marcus has no bubble on the
 page at all: he is asked a question and does not answer, and the silence is the
@@ -55,7 +75,7 @@ Page 1 carries 5 overlays — 2 Marcus lines, 2 Halina lines, 1 SFX. Draft,
 placement reasoning and the generation commands are in
 `docs/story/red-smile/captions/ep2-page-01.md`.
 
-**Voiced.** All ten overlays carry `audio`: four ElevenLabs `eleven_v3` lines
+**Voiced.** All fourteen overlays carry `audio`: four ElevenLabs `eleven_v3` lines
 (marcus ×2 at stability 0.4, halina ×2 at 0.5) and the popup chime from the
 Sound Effects API, slug `redsmile-ep2-popup-tic` in
 `scripts/jax-sfx-manifest.json`. Levelled with
@@ -72,6 +92,7 @@ a 0.4 s request is under what the API renders usefully. The shipped one asks for
 | ---- | ------ |
 | 1    | `docs/story/red-smile/prompts/page-02-marcus-halina-office.txt` |
 | 2    | `docs/story/red-smile/prompts/page-03-halina-goodnight-corridor.txt` |
+| 3    | `docs/story/red-smile/prompts/page-04-halina-phone-lift.txt` |
 
 **Page 1 has a continuity defect.** The sigil in the laptop popup is a roughly
 equilateral hexagram; the series mark is notably taller than wide with a long

@@ -313,5 +313,15 @@
     "slug": "redsmile-ep2-bin-tip",
     "prompt": "Dry rustle of paper rubbish tipping out of a small bin into a plastic sack, one short close pour, loud and dry, no reverb, no music",
     "duration": 1.0
+  },
+  {
+    "slug": "redsmile-ep2-phone-buzz",
+    "prompt": "Single short mobile phone vibration buzz on a hard surface, one dry rattle, loud and close, no music, no reverb",
+    "duration": 1.0
+  },
+  {
+    "slug": "redsmile-ep2-lift-button",
+    "prompt": "Single soft click of a lift call button being pressed, dry plastic tick with a faint mechanical thunk, close and quiet, no reverb",
+    "duration": 0.8
   }
 ]

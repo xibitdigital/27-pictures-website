@@ -123,15 +123,13 @@
           "align": "center",
           "size": 26,
           "variant": "burst",
-          "color": "#ffffff",
+          "color": "#111111",
           "angle": -6,
           "scale": 1,
           "maxWidth": 0.28,
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5,
-            "stroke": "#ffffff",
-            "strokeThickness": 8
+            "strokeWidth": 5
           },
           "text": {
             "en": "TIC",
@@ -152,15 +150,13 @@
           "align": "center",
           "size": 26,
           "variant": "burst",
-          "color": "#ffffff",
+          "color": "#111111",
           "angle": -5,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5,
-            "stroke": "#ffffff",
-            "strokeThickness": 8
+            "strokeWidth": 5
           },
           "text": {
             "en": "SHHK",
@@ -201,7 +197,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.32,
           "bubble": {
             "opacity": 0.75,
@@ -224,7 +220,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "opacity": 0.75,
@@ -245,15 +241,13 @@
           "align": "center",
           "size": 26,
           "variant": "burst",
-          "color": "#ffffff",
+          "color": "#111111",
           "angle": -6,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "opacity": 0.75,
-            "strokeWidth": 5,
-            "stroke": "#ffffff",
-            "strokeThickness": 8
+            "strokeWidth": 5
           },
           "text": {
             "en": "TIC",
@@ -262,6 +256,101 @@
             "fr": "TIC"
           },
           "audio": "assets/sfx/acc7102c4f71dc864f6d1109d85bf686.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/a4245c6d45555ed59fa5914d972c769d.png",
+      "words": [
+        {
+          "x": 0.66,
+          "y": 0.05,
+          "align": "center",
+          "size": 24,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -6,
+          "scale": 0.95,
+          "maxWidth": 0.22,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "BZZT",
+            "it": "BZZT",
+            "de": "BZZT",
+            "fr": "BZZT"
+          },
+          "audio": "assets/sfx/389e3f8e0b0769f7f8267c5c8885c5f4.mp3"
+        },
+        {
+          "x": 0.23,
+          "y": 0.07,
+          "align": "center",
+          "size": 18,
+          "variant": "ai",
+          "color": "#111111",
+          "angle": 0,
+          "scale": 1.0,
+          "maxWidth": 0.34,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          },
+          "text": {
+            "en": "V› We got a new signal near you. Be careful.",
+            "it": "V› Abbiamo un nuovo segnale vicino a te. Sta' attenta.",
+            "de": "V› Wir haben ein neues Signal in deiner Nähe. Sei vorsichtig.",
+            "fr": "V› On a un nouveau signal près de toi. Fais attention."
+          },
+          "audio": "assets/sfx/9027c1ebb66d73b258da3b606b6b21f7.mp3"
+        },
+        {
+          "x": 0.19,
+          "y": 0.37,
+          "align": "center",
+          "size": 22,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          },
+          "text": {
+            "en": "He didn't look up.",
+            "it": "Non ha alzato lo sguardo.",
+            "de": "Er hat nicht aufgesehen.",
+            "fr": "Il n'a pas levé les yeux."
+          },
+          "audio": "assets/sfx/0402174399b1b335065db0d717a774a6.mp3"
+        },
+        {
+          "x": 0.76,
+          "y": 0.7,
+          "align": "center",
+          "size": 24,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 0.9,
+          "maxWidth": 0.2,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "TNK",
+            "it": "TNK",
+            "de": "TNK",
+            "fr": "TNK"
+          },
+          "audio": "assets/sfx/737ed7f4f78a2e737a7e0b01d79f37fa.mp3"
         }
       ]
     }
