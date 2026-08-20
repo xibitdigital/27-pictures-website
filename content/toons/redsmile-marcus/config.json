@@ -145,7 +145,125 @@
     },
     {
       "file": "assets/541502fa97985f995fe38a63b920cfd0.png",
-      "words": []
+      "words": [
+        {
+          "x": 0.2,
+          "y": 0.06,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#ffffff",
+          "angle": -5,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "stroke": "#ffffff",
+            "strokeThickness": 8
+          },
+          "text": {
+            "en": "SHHK",
+            "it": "SHHK",
+            "de": "SHHK",
+            "fr": "SHHK"
+          },
+          "audio": "assets/sfx/14b62a4005e065d3925cd430cc9bc072.mp3"
+        },
+        {
+          "x": 0.53,
+          "y": 0.07,
+          "align": "center",
+          "size": 20,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 0.95,
+          "maxWidth": 0.22,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "Sir?",
+            "it": "Signore?",
+            "de": "Mein Herr?",
+            "fr": "Monsieur ?"
+          },
+          "audio": "assets/sfx/99690772c766d6a05267cd7403eb3743.mp3"
+        },
+        {
+          "x": 0.22,
+          "y": 0.38,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.0,
+          "maxWidth": 0.32,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          },
+          "text": {
+            "en": "I've finished, sir.",
+            "it": "Ho finito, signore.",
+            "de": "Ich bin fertig, mein Herr.",
+            "fr": "J'ai fini, monsieur."
+          },
+          "audio": "assets/sfx/cc06fb90e124a31d0ffbb6bef3b0eecd.mp3"
+        },
+        {
+          "x": 0.56,
+          "y": 0.4,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "Goodnight.",
+            "it": "Buonanotte.",
+            "de": "Gute Nacht.",
+            "fr": "Bonne nuit."
+          },
+          "audio": "assets/sfx/90224cc7d56839cb11e73a161f635716.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.71,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#ffffff",
+          "angle": -6,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "stroke": "#ffffff",
+            "strokeThickness": 8
+          },
+          "text": {
+            "en": "TIC",
+            "it": "TIC",
+            "de": "TIC",
+            "fr": "TIC"
+          },
+          "audio": "assets/sfx/acc7102c4f71dc864f6d1109d85bf686.mp3"
+        }
+      ]
     }
   ]
 }

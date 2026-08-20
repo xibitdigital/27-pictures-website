@@ -308,5 +308,10 @@
     "slug": "redsmile-ep2-popup-tic",
     "prompt": "Single sharp digital notification click, one crisp loud tick, dry close mic, no reverb, no music, computer window popping open",
     "duration": 0.8
+  },
+  {
+    "slug": "redsmile-ep2-bin-tip",
+    "prompt": "Dry rustle of paper rubbish tipping out of a small bin into a plastic sack, one short close pour, loud and dry, no reverb, no music",
+    "duration": 1.0
   }
 ]

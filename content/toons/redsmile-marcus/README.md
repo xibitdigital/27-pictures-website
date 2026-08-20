@@ -44,15 +44,18 @@ Full bios, appearance locks and voice direction:
 
 ## Captions
 
-**Page 2 has no captions yet** — the plate ships silent, so the reader turns to
-it and nothing is said. Draft them from `docs/story/red-smile/captions/` before
-this episode ships.
+Page 2 carries 5 overlays, **all of them hers** — `SHHK` (the bin), *Sir?*,
+*I've finished, sir.*, *Goodnight.*, then `TIC`. Marcus has no bubble on the
+page at all: he is asked a question and does not answer, and the silence is the
+beat. The closing `TIC` reuses page 1's popup clip, so the machine speaks again
+after she has left the corridor. Draft and placement reasoning:
+`docs/story/red-smile/captions/ep2-page-02.md`.
 
 Page 1 carries 5 overlays — 2 Marcus lines, 2 Halina lines, 1 SFX. Draft,
 placement reasoning and the generation commands are in
 `docs/story/red-smile/captions/ep2-page-01.md`.
 
-**Voiced.** All five overlays carry `audio`: four ElevenLabs `eleven_v3` lines
+**Voiced.** All ten overlays carry `audio`: four ElevenLabs `eleven_v3` lines
 (marcus ×2 at stability 0.4, halina ×2 at 0.5) and the popup chime from the
 Sound Effects API, slug `redsmile-ep2-popup-tic` in
 `scripts/jax-sfx-manifest.json`. Levelled with
