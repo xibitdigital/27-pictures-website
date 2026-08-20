@@ -2,3 +2,10 @@
 /experiments      /toons/   301
 /experiments/     /toons/   301
 /experiments/*    /toons/   301
+
+# /qr.html was a printed-QR landing page, removed 2026-08-19. The printed code
+# encodes the Instagram profile, not this URL, so nothing in the wild points
+# here — but bookmarks and old links should reach the contact form rather than
+# a 404.
+/qr.html   /#contact   301
+/qr        /#contact   301

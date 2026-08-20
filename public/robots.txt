@@ -8,11 +8,9 @@
 # below. Keep AI Crawl Control per-bot Block toggles OFF for citation bots.
 # See CLAUDE.md → SEO State → Crawlers / AI search policy.
 
-# --- Default: open site, hide QR landing only ---
+# --- Default: open site ---
 User-agent: *
 Allow: /
-Disallow: /qr.html
-Disallow: /qr
 
 # --- AI search / citation (explicit Allow) ---
 User-agent: GPTBot
