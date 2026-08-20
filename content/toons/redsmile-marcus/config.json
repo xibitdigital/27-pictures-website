@@ -33,7 +33,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.34,
           "bubble": {
             "opacity": 0.75,
@@ -56,7 +56,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": 1,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.38,
           "bubble": {
             "opacity": 0.75,
@@ -79,7 +79,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.32,
           "bubble": {
             "opacity": 0.75,
@@ -125,7 +125,7 @@
           "variant": "burst",
           "color": "#ffffff",
           "angle": -6,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.28,
           "bubble": {
             "opacity": 0.75,
@@ -142,6 +142,10 @@
           "audio": "assets/sfx/acc7102c4f71dc864f6d1109d85bf686.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/541502fa97985f995fe38a63b920cfd0.png",
+      "words": []
     }
   ]
 }

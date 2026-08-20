@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/halina.png (identity)
+#       Image 2 = references/red-smile/marcus.png (identity)
+#       Image 3 = RED SMILE: Marcus page 1 (ink style, layout, the office set) - LAST
+# note: the sigil is deliberately NOT drawn on this page - the screen faces away
+#       and only its glow is seen. Page 1's mark is still wrong; do not re-roll it here.
+# status: THIS wording, with all three refs attached in the web UI, produced the
+#       good plate. The single-ref API variant of it did not - dropping the two
+#       character sheets cost the scale and staged panel 1 as a conversation.
+#       Do not "tighten" this without a reason.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text or writing anywhere in the art, including on the laptop screen.
+
+PIN from references: keep the exact face, build and costume of the woman in Image 1 - mid 50s, heavy-set, broad weathered face, no makeup, dark-going-grey hair in a low bun, dark tunic under a knee-length tabard, blank badge on a lanyard, one blue glove. Keep the exact face, build and costume of the man in Image 2 - late 30s, tall and lean, dark side-parted hair, slim rectangular eyeglasses, tailored dark suit, white shirt, dark tie. Keep the office, stone desk, leather chair, glass wall and the B&W horror ink of Image 3. Do not redesign either person.
+
+STYLE: Dark psychological horror ink. Corporate luxury at night - glass, stone, hard reflections, deep black. Not cyberpunk neon, not photoreal 3D.
+
+TOP (~35%): Close three-quarter of the woman, bent at the waist beside the desk, tipping a small cylindrical desk bin she holds in two hands into the sack on her cart - a full-size janitorial cart, waist-high on her, upright push handle at her hip. Her head is turned up from her work toward the desk - she has just noticed something. Behind her, softly OUT OF FOCUS, the man is still seated in the leather chair, upright and completely motionless, face lit hard from below by the laptop, eyes wide and fixed, lips slightly parted, one hand stopped flat on the desk.
+
+MIDDLE (~30%): Wider shot from the doorway - one continuous room, one scale, the man smaller only through distance. She stands framed by the door jamb, turned back into the room, mid-sentence, one gloved hand on the cart handle, the other raised in a small parting gesture - saying she has finished, goodnight. Deep in frame he is unchanged: same posture, same fixed stare, not turned toward her, not answering.
+
+BOTTOM (~35%): The woman from BEHIND, small in frame, walking AWAY from camera down a long dark corridor, both hands on the cart handle. Hard perspective, walls swallowed in black. The corridor ahead of her is dark and closed - no lit doorway in front of her. The only bright shape is BEHIND her: a pale rectangle of laptop glow spilling from the office door she has left, thrown across the corridor floor. No figure standing in it.
+
+SCALE: one human scale in all three panels. She is average height and heavy-set, NOT oversized - head one seventh of her standing height, shoulders under two head-widths, hands no larger than her own face. She never towers over the room or over the seated man. Furniture is drawn to the people: desk at his seated elbow height, chair back to his shoulders.
+
+ANATOMY: exactly two arms, two legs and five fingers per hand on every person. The bent pose reads clearly - hips back, knees flexed, no folded torso. The seated pose reads clearly - hips back in the chair, knees under the desk. Horizontal panels only, pure B&W horror ink, no empty balloon shapes.
+
+CHANGE: only the scene described above; preserve both identities, the office and the ink style from the pins.

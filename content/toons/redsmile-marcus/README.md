@@ -9,7 +9,7 @@ Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 | Config      | `content/toons/redsmile-marcus/config.json` → publish to R2 |
 | Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key     |
 | Design size | 800 × 1424 (portrait)                                    |
-| Pages       | **1** — work in progress                                 |
+| Pages       | **2** — work in progress                                 |
 
 ## Status: published, unlisted
 
@@ -17,7 +17,7 @@ The config and every asset are on R2 and the reader resolves the locked hash
 like every other toon, so `/toons/redsmile-marcus/` works in a production build.
 
 It is still **unlisted**: `noindex, nofollow` on the reader, no card on
-`/toons/`, no sitemap or `llms.txt` entry — one page is not something to rank,
+`/toons/`, no sitemap or `llms.txt` entry — two pages are not something to rank,
 and a work-in-progress badge does not stop Google ranking half a story. What it
 does have is an episode card on `/toons/red-smile/` (with a *Work in progress*
 badge, same as Erin EP 2) and an entry in that page's `CreativeWorkSeries`
@@ -44,6 +44,10 @@ Full bios, appearance locks and voice direction:
 
 ## Captions
 
+**Page 2 has no captions yet** — the plate ships silent, so the reader turns to
+it and nothing is said. Draft them from `docs/story/red-smile/captions/` before
+this episode ships.
+
 Page 1 carries 5 overlays — 2 Marcus lines, 2 Halina lines, 1 SFX. Draft,
 placement reasoning and the generation commands are in
 `docs/story/red-smile/captions/ep2-page-01.md`.
@@ -64,6 +68,7 @@ a 0.4 s request is under what the API renders usefully. The shipped one asks for
 | Page | Prompt |
 | ---- | ------ |
 | 1    | `docs/story/red-smile/prompts/page-02-marcus-halina-office.txt` |
+| 2    | `docs/story/red-smile/prompts/page-03-halina-goodnight-corridor.txt` |
 
 **Page 1 has a continuity defect.** The sigil in the laptop popup is a roughly
 equilateral hexagram; the series mark is notably taller than wide with a long
