@@ -260,7 +260,7 @@
       ]
     },
     {
-      "file": "assets/a4245c6d45555ed59fa5914d972c769d.png",
+      "file": "assets/b13ff147406a21082a486e31a17a32e9.webp",
       "words": [
         {
           "x": 0.66,
@@ -292,7 +292,7 @@
           "variant": "ai",
           "color": "#fff",
           "angle": 0,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.34,
           "bubble": {
             "opacity": 0.75,
@@ -315,7 +315,7 @@
           "variant": "thought",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.28,
           "bubble": {
             "opacity": 0.75,

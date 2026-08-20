@@ -1,6 +1,8 @@
 # EP 2, page 3 — captions
 
-Plate: `assets/a4245c6d45555ed59fa5914d972c769d.png`. Her hand and the lit
+Plate: `assets/b13ff147406a21082a486e31a17a32e9.webp` (a redo of panel 2 —
+the phone left the frame and the close-up tightened; the panel gutters did not
+move, so the captions carried over untouched). Her hand and the lit
 phone; her face reading it; she walks to the lift with the cart.
 
 ## The idea
