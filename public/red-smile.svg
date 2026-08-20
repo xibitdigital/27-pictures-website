@@ -1,0 +1,51 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 64 64"
+  width="64"
+  height="64"
+  color="#b30000"
+  role="img"
+  aria-labelledby="red-smile-title"
+>
+  <title id="red-smile-title">RED SMILE</title>
+  <!--
+    The closing plate of RED SMILE: static, simplified to what survives at 16px.
+
+    Every tooth is bounded by the SAME two arcs, so the row curves as one piece
+    and the gaps between teeth are hairlines. Two earlier attempts missed this:
+    wedges tapering to points read as generic clipart, and free-standing rounded
+    rectangles with wide gaps read as an equaliser. A mouth is a continuous band
+    of teeth with slits in it, not a set of separate bars.
+
+    The two arcs deliberately do NOT meet at the ends. In the plate the outer
+    teeth are roughly half the height of the middle ones; arcs that converge
+    would drive them to zero and give the wedge-shaped slivers of attempt one.
+    End teeth are 8 units tall against 16 in the middle — that same ratio, and
+    the reason the row ends bluntly rather than in a point.
+
+    Nine teeth against the plate's ten — close enough to the source, and the
+    hairline gaps close up gracefully into a solid crescent at 16px rather than
+    turning to mush.
+
+    Plain filled paths — no mask, no clip-path. The gaps are real transparency,
+    so the icon sits on any ground without carrying a background colour it would
+    have to guess. A mask would have been fewer shapes but is not honoured
+    everywhere an icon ends up; ImageMagick, for one, renders the mask's
+    contents instead of applying it.
+
+    `color` on the root makes it render brand red standalone (an <img> or a
+    favicon, where CSS custom properties do not reach); inline it and
+    `currentColor` picks up the surrounding text colour instead.
+  -->
+  <g fill="currentColor">
+    <path d="M6 22Q8.63 23.42 11.27 24.55L11.27 35.46Q8.63 33.04 6 30Z" />
+    <path d="M11.84 24.79Q14.48 25.89 17.11 26.7L17.11 40.08Q14.48 38.34 11.84 35.98Z" />
+    <path d="M17.68 26.88Q20.32 27.66 22.95 28.15L22.95 43.18Q20.32 42.13 17.68 40.45Z" />
+    <path d="M23.52 28.26Q26.16 28.72 28.79 28.89L28.79 44.77Q26.16 44.4 23.52 43.41Z" />
+    <path d="M29.37 28.93Q32 29.07 34.63 28.93L34.63 44.85Q32 45.15 29.37 44.85Z" />
+    <path d="M35.21 28.89Q37.84 28.72 40.48 28.26L40.48 43.41Q37.84 44.4 35.21 44.77Z" />
+    <path d="M41.05 28.15Q43.68 27.66 46.32 26.88L46.32 40.45Q43.68 42.13 41.05 43.18Z" />
+    <path d="M46.89 26.7Q49.52 25.89 52.16 24.79L52.16 35.98Q49.52 38.34 46.89 40.08Z" />
+    <path d="M52.73 24.55Q55.37 23.42 58 22L58 30Q55.37 33.04 52.73 35.46Z" />
+  </g>
+</svg>
