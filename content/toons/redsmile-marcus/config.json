@@ -1,0 +1,142 @@
+{
+  "title": "MARCUS",
+  "designWidth": 800,
+  "designHeight": 1424,
+  "defaultLang": "en",
+  "languages": [
+    {
+      "code": "en",
+      "label": "EN"
+    },
+    {
+      "code": "it",
+      "label": "IT"
+    },
+    {
+      "code": "de",
+      "label": "DE"
+    },
+    {
+      "code": "fr",
+      "label": "FR"
+    }
+  ],
+  "pages": [
+    {
+      "file": "assets/4468349d8a10ecf6d08aa721e3115c56.png",
+      "words": [
+        {
+          "x": 0.5,
+          "y": 0.075,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.34,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "Evening.",
+            "it": "Buonasera.",
+            "de": "Guten Abend.",
+            "fr": "Bonsoir."
+          }
+        },
+        {
+          "x": 0.5,
+          "y": 0.155,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 1,
+          "scale": 1.0,
+          "maxWidth": 0.38,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "How are you keeping?",
+            "it": "Come sta?",
+            "de": "Wie geht es Ihnen?",
+            "fr": "Comment allez-vous ?"
+          }
+        },
+        {
+          "x": 0.2,
+          "y": 0.39,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.0,
+          "maxWidth": 0.32,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          },
+          "text": {
+            "en": "Can't complain, sir.",
+            "it": "Non mi lamento, signore.",
+            "de": "Ich kann nicht klagen, mein Herr.",
+            "fr": "Je ne me plains pas, monsieur."
+          }
+        },
+        {
+          "x": 0.79,
+          "y": 0.43,
+          "align": "center",
+          "size": 20,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": 2,
+          "scale": 0.95,
+          "maxWidth": 0.3,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "I won't be long.",
+            "it": "Faccio in fretta.",
+            "de": "Ich bin gleich fertig.",
+            "fr": "Je ne serai pas longue."
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.72,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#ffffff",
+          "angle": -6,
+          "scale": 1.0,
+          "maxWidth": 0.28,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "stroke": "#ffffff",
+            "strokeThickness": 8
+          },
+          "text": {
+            "en": "TIC",
+            "it": "TIC",
+            "de": "TIC",
+            "fr": "TIC"
+          }
+        }
+      ]
+    }
+  ]
+}

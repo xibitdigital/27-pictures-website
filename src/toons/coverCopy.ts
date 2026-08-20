@@ -102,6 +102,27 @@ export const COVER: Record<string, CoverCopy> = {
         "Ensemble, Nero et Eve doivent casser l'affaire du cristal, traquer The Dog sur les toits et dans le labo, et découvrir qui a payé la balle — et quelle techno d'implant presque invisible elle devait protéger.",
     },
   },
+  "redsmile-marcus": {
+    subtitle: "RED SMILE",
+    synopsis: {
+      en:
+        "The second episode of the RED SMILE series.\n\n" +
+        "Halina cleans the tower every night, and nobody in it knows her name. Marcus is pleasant to her, and waits for the answer.\n\n" +
+        "Behind him a window opens by itself.",
+      it:
+        "Il secondo episodio della serie RED SMILE.\n\n" +
+        "Halina pulisce la torre ogni notte e nessuno lì dentro sa come si chiama. Marcus è gentile con lei, e aspetta la risposta.\n\n" +
+        "Dietro di lui una finestra si apre da sola.",
+      de:
+        "Die zweite Folge der Reihe RED SMILE.\n\n" +
+        "Halina putzt den Turm jede Nacht, und niemand darin kennt ihren Namen. Marcus ist freundlich zu ihr und wartet auf die Antwort.\n\n" +
+        "Hinter ihm öffnet sich ein Fenster von selbst.",
+      fr:
+        "Le deuxième épisode de la série RED SMILE.\n\n" +
+        "Halina nettoie la tour chaque nuit, et personne à l'intérieur ne connaît son nom. Marcus est aimable avec elle, et attend la réponse.\n\n" +
+        "Derrière lui, une fenêtre s'ouvre toute seule.",
+    },
+  },
   "redsmile-static": {
     subtitle: "RED SMILE",
     synopsis: {

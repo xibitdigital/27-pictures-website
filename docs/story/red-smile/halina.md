@@ -169,7 +169,7 @@ about that helps her, and Marcus chairs a meeting the next morning.
 
 ## Voice
 
-No entry in `scripts/jax-voices.json` yet.
+Voice: `halina` → `USEQXnsXRJlw2k9LUzG4` in `scripts/jax-voices.json`.
 
 Direction: low, unhurried, an Eastern European accent worn smooth by decades in
 England. Few words, dry, entirely unimpressed. Eleven v3, high stability — she is
