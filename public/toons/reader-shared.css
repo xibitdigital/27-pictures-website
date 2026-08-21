@@ -2089,11 +2089,12 @@ body.single-page .flip-page.flipping.from-left {
   outline-offset: 1px;
 }
 
-@media (min-width: 769px) {
-  .scroll-howto {
-    display: none;
-  }
-}
+/* No width gate on the toast. There used to be a `@media (min-width: 769px) {
+   display: none }` here, mirroring a JS check that also hid it above 768px.
+   Scroll is the default view at every width now, so the toast is scoped by
+   *mode* (the shell mounts it only in vertical mode), never by viewport — and
+   when the JS gate went, this rule kept hiding it on desktop with the element
+   present, visible and 0×0 in the DOM. */
 
 /* ── Mobile cover guide (story + how-to popup) ──
    Short phones (e.g. iPhone 13 mini): one outer scrollport must include

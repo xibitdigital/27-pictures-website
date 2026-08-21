@@ -32,6 +32,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(__dirname, "src");
 const distDir = path.resolve(__dirname, "dist");
 const isTest = !!process.env.VITEST;
+const devHttps = process.env.DEV_HTTPS === "1";
 
 // Locale HTML is generated from the English template + JSON *before* the MPA
 // input scan, so `/it/toons/` is a real Vite entry. Skipped under Vitest so
@@ -76,12 +77,23 @@ export default defineConfig({
     "import.meta.env.VITE_FLIPFRAME_BUILD": JSON.stringify(flipframeBuild),
   },
   plugins: [
-    // Local HTTPS for hosts name outside twentyseven.pictures (prod HSTS includeSubDomains
-    // blocks self-signed certs on *.twentyseven.pictures). Use local.twentyseven.test.
-    basicSsl({
-      name: "local.twentyseven.test",
-      domains: ["local.twentyseven.test", "localhost"],
-    }),
+    // HTTPS is opt-in: `DEV_HTTPS=1 make dev`.
+    //
+    // The cert is self-signed, so anything that does not already trust it gets
+    // a hard failure rather than a click-through — a headless / fresh-profile
+    // Chrome (chrome-devtools MCP) refuses the page outright with
+    // ERR_CERT_AUTHORITY_INVALID, which makes the dev server undriveable for
+    // exactly the automated checks it should be serving. Plain HTTP by default;
+    // turn it on when a feature needs a secure context (service workers,
+    // clipboard, media capture) or when testing the local.twentyseven.test host.
+    ...(devHttps
+      ? [
+          basicSsl({
+            name: "local.twentyseven.test",
+            domains: ["local.twentyseven.test", "localhost"],
+          }),
+        ]
+      : []),
     vue(),
     toonConfigDevPlugin(__dirname),
     cdnMediaPlugin(distDir),
@@ -110,7 +122,7 @@ export default defineConfig({
     port: 5173,
     // All interfaces + custom hosts name (see /etc/hosts → local.twentyseven.test)
     host: true,
-    // HTTPS certs injected by @vitejs/plugin-basic-ssl
+    // HTTPS only when DEV_HTTPS=1 injects @vitejs/plugin-basic-ssl certs
     allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1"],
     fs: { allow: [__dirname] },
   },

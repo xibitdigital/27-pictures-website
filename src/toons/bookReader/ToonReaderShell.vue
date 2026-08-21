@@ -222,6 +222,12 @@ function scrollVerticalToQueryPage(): void {
     const target = Math.max(0, top - 4);
     deepLinkAppliedY = target;
     window.scrollTo(0, target);
+    // The toast dismisses itself once the position moves — that is meant to
+    // mean "the reader scrolled", and this move is ours. Without re-baselining,
+    // any ?page=N (or a restored position) jumps hundreds of px right after the
+    // toast opens and clears it within a frame, so the instruction flashed and
+    // vanished unread.
+    scrollHowToShownAtY = target;
   };
 
   const img = el.querySelector("img");
