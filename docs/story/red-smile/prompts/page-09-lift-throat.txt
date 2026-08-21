@@ -1,0 +1,44 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/marcus.png (identity)
+#       Image 2 = references/red-smile/halina.png (identity)
+#       Image 3 = RED SMILE: Marcus page 7 (ink, layout, the lift car, the
+#                 basement corridor) - LAST
+# note: ASPECT IS NOT IN THE PROMPT'S GIFT. generate-toon-page.py sends only
+#       resolution (1K/2K) and the model defaulted to 1024x1024 on the first
+#       roll of this page. Generate in the web UI with a portrait size, or
+#       attach the previous page LAST and check the delivered file with
+#       `identify` before doing anything else with it.
+# note: NO text anywhere in the art - if the floor readout is in frame it is
+#       dark. He has NO GLASSES and BOTH EYES SOLID BLACK throughout, and the
+#       grin stays SMALL AND TIGHT: the full rictus is the series' last stage and
+#       is not spent here.
+#       The speed is drawn the way pages 4 and 5 drew it: the room streaks, HE
+#       does not. He is never crouched, never lunging, never running - upright,
+#       level, jacket undisturbed. A man who arrives is worse than a man who
+#       charges.
+#       Panel 3 is the page: her feet off the floor is the only thing that says
+#       what he is. Do not put the strain anywhere else - no snarl, no bulging
+#       arm, no visible effort at all.
+
+STAGING: every panel is INSIDE the lift car at level -1, doors open on the black corridor.
+
+OUTPUT: ONE portrait page, aspect ratio 4:7 — 800 wide by 1424 tall, decidedly taller than wide. NEVER square, never landscape, never a grid of panels: three full-width horizontal panels stacked top to bottom on a single tall page.
+
+FORMAT: Black and white horror manga page, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text, letters or numbers anywhere.
+
+PIN from references: keep the man of Image 1 exactly - late 30s, tall, lean, long even face, dark side-parted hair, tailored dark suit and tie - WITHOUT eyeglasses. BOTH EYES SOLID BLACK, no white, no iris, in EVERY panel: one black eye and one normal eye reads as an error, not a tell. Keep the exact face, heavy-set build and costume of the woman in Image 2 - mid 50s, broad weathered face, grey-streaked low bun, and the FULL uniform in every panel: dark tunic UNDER A KNEE-LENGTH UTILITY TABARD, blank badge on a lanyard, one blue glove, flat rubber-soled shoes. The tabard is not optional - without it she is a woman in a dark top, not the cleaner. Keep the lift car, corridor and B&W horror ink of Image 3.
+
+STYLE: Dark psychological horror ink. Cold steel, one hard ceiling light in the car, the corridor crushed to black.
+
+TOP (~35%): Wide of the car. He is INSIDE it and WITHIN ARM'S REACH of her - not across the room, not still in the doorway - upright, level, jacket undisturbed, while the doorway and corridor behind him STREAK WITH HARD MOTION BLUR, the only thing showing the speed. Face calm, lit from above, both eyes solid black, small tight grin. She is flattened against the back wall, chin up, the spray bottle falling from her open hand.
+
+MIDDLE (~30%): Tight on both from her side. HIS RIGHT HAND IS CLOSED AROUND HER THROAT, fingers wrapped, thumb along her jaw, arm straight and relaxed - no strain anywhere in him. Both her hands grip his forearm. Her face caught mid-breath, mouth open, eyes wide, cords in her neck. His face at the frame edge, black eyes on hers, the same grin.
+
+BOTTOM (~35%): Extreme close-up, low to the car floor. HER FEET ARE OFF THE GROUND - both flat rubber-soled shoes hanging, toes down, a hand's width of dark steel floor beneath them, trouser hems slack. The fallen spray bottle lies on its side nearby. Behind, the bright seam of the open doors and the black corridor. Nothing of him in frame but one trouser leg, planted and still.
+
+SCALE: one human scale. She is average height and heavy-set, he is a head taller; his hand is a normal man's hand at her throat, no elongation, no claws. The gap under her shoes is a hand's width, not a metre - held up, not levitating.
+
+ANATOMY: exactly two arms, two legs and five fingers per hand, thumbs on the correct side, correct knuckle spacing on the gripping hand. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: only the scene above; preserve both identities, the lift car, the corridor and the ink from the pins.

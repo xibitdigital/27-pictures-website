@@ -46,3 +46,27 @@ the wrong things.
   see CLAUDE.md, *Plate colour*.
 - A character sheet must **not** go through `make add-image`; that watermarks it
   and appends it to a toon's config as a story page.
+
+## The model API returns square — roll plates in the web UI
+
+`scripts/generate-toon-page.py` cannot produce a portrait plate. Measured
+2026-08-21: every reference was portrait (character sheets 1584×2816, the
+previous page 800×1424) and the delivered file was still **1024×1024**. The
+payload carries only `prompt`, `image`, `resolution` (1K/2K) and
+`output_format` — there is no aspect field, and the API **accepts unknown keys
+silently**: posting `aspect_ratio: "__probe__"` queued a job rather than
+returning a validation error, so no field name can be discovered by probing and
+none takes effect.
+
+Consequences:
+
+- **Story plates go through the web UI**, with a portrait size (4:7 — 800×1424,
+  or 1024×1792 downscaled) and the previous page attached last.
+- **`identify` the delivered file before anything else.** One square roll of ep 2
+  page 8 got as far as being reviewed for content before anyone measured it.
+- The script stays useful for square work (character sheets, tests) and for
+  anything where the aspect does not matter.
+
+```bash
+identify ~/Downloads/<file>.png   # expect 800x1424 for a RED SMILE plate
+```
