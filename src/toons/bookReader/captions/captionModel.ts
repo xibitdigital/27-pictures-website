@@ -157,6 +157,50 @@ export function autoWrapCh(text: string): number {
   return Math.max(Math.min(Math.max(14, Math.ceil(len / 2)), 28), longestWord);
 }
 
+/** Rough width of one character in the caption faces (Bangers is condensed). */
+const EM_PER_CHAR = 0.46;
+const EM_PER_LINE = 1.2;
+/** (√2 − 1) / 2 — the inset each side of a box needs to sit inside an ellipse. */
+const ELLIPSE_INSET = 0.207;
+/**
+ * A star burst is tighter than an ellipse: `starBurstPath` runs an inner radius
+ * of 27 against an outer 48, so the usable middle is only ~0.56 of the balloon
+ * — and at the old padding a six-letter SFX was almost exactly that wide, which
+ * is why the lettering sat on the spikes. Allowing the letters a little way
+ * between the points (0.72 rather than 0.56) gives √2 / 0.72 ≈ 1.96 across, so
+ * 0.48 a side, rounded up for a margin that reads as deliberate.
+ */
+const STAR_INSET = 0.62;
+
+/**
+ * Padding that keeps every line inside a curved balloon, in em.
+ *
+ * Never smaller than the variant's own padding — this only ever opens the
+ * balloon up — and capped so a long caption does not turn into a balloon of
+ * mostly air. The vertical side rarely moves: a two- or three-line block is
+ * short enough that the base padding already clears the curve, which is why the
+ * failure always looked horizontal.
+ */
+export function ellipsePadding(
+  text: string,
+  wrapCh: number | null,
+  base: { padX: number; padY: number },
+  shape = "organic"
+): { padX: number; padY: number } {
+  const len = text.replace(/\s+/g, " ").trim().length;
+  const cap = wrapCh ?? autoWrapCh(text);
+  const widthEm = Math.min(len, cap) * EM_PER_CHAR;
+  const lines = Math.max(1, Math.ceil(len / cap));
+  const heightEm = lines * EM_PER_LINE;
+  const inset = shape === "star" ? STAR_INSET : ELLIPSE_INSET;
+  const capX = shape === "star" ? 3.2 : 2.6;
+  const capY = shape === "star" ? 2.2 : 1.8;
+  return {
+    padX: Math.min(capX, Math.max(base.padX, widthEm * inset)),
+    padY: Math.min(capY, Math.max(base.padY, heightEm * inset)),
+  };
+}
+
 /** One word entry → the props WordCaption.vue renders (null = nothing to show). */
 export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): CaptionModel | null {
   const text = resolveText(w, ctx.lang);
@@ -228,8 +272,21 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
 
     // Organic/burst/badai = dark ink; good AI HUD = white.
     textStyle.color = w.color || (variant === "ai" ? "#f5f5f5" : variant === "badai" ? "#0a0a0a" : "#111111");
-    const padX = `${style_.padX}em`;
-    const padY = `${style_.padY}em`;
+    // A rectangle inscribed in an ellipse touches it only at the mid-points of
+    // its sides, so the first and last lines of a multi-line balloon run into
+    // the curve while the middle line looks fine. A flat 1em cannot fix that:
+    // the inset an ellipse needs grows with the block it has to contain.
+    //
+    // For an ellipse to hold a w×h box, each axis must be at least √2 times the
+    // box — i.e. every side inset by (√2−1)/2 ≈ 0.207 of that dimension. The
+    // block is measured in em from the wrap width and the line count, so the
+    // padding tracks the type size like the rest of the chrome.
+    const roundShape = style_.shape === "organic" || style_.shape === "thought" || style_.shape === "star";
+    const pad = roundShape
+      ? ellipsePadding(text, w.maxWidth != null ? null : autoWrapCh(text), style_, style_.shape)
+      : style_;
+    const padX = `${pad.padX}em`;
+    const padY = `${pad.padY}em`;
     // The tail eats into the balloon on its own side, so pad that side out.
     // Thought bubbles have no lobe (dots sit fully outside), so no tail padding.
     const tailPad = `calc(${padY} + 0.35em)`;

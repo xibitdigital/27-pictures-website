@@ -8,6 +8,7 @@ import {
   toFraction,
   type CaptionContext,
   autoWrapCh,
+  ellipsePadding,
 } from "./captionModel";
 import type { WordEntry } from "../types";
 
@@ -195,5 +196,40 @@ describe("autoWrapCh", () => {
 
   it("caps the widest balloon so a long caption is not a strip", () => {
     expect(autoWrapCh("x".repeat(20) + " " + "y".repeat(20) + " " + "z".repeat(20))).toBeLessThanOrEqual(28);
+  });
+});
+
+describe("ellipsePadding", () => {
+  const base = { padX: 1, padY: 1 };
+
+  it("opens a wide balloon out so the first and last lines clear the curve", () => {
+    // A rectangle inscribed in an ellipse only touches it at the mid-points of
+    // its sides, so a flat 1em left the outer lines running into the outline.
+    const wide = ellipsePadding("Car park, then the street and I'll be safe.", 22, base);
+    expect(wide.padX).toBeGreaterThan(base.padX * 2);
+  });
+
+  it("leaves a short caption on the variant's own padding", () => {
+    expect(ellipsePadding("No signal.", 14, base)).toEqual({ padX: 1, padY: 1 });
+  });
+
+  it("gives a burst more room than an ellipse, because the spikes cut in", () => {
+    // starBurstPath: inner radius 27 against an outer 48 — the usable middle is
+    // barely half the balloon, which is what put the lettering on the points.
+    const burst = ellipsePadding("KRUNCH", 14, { padX: 1.1, padY: 0.9 }, "star");
+    const oval = ellipsePadding("KRUNCH", 14, { padX: 1.1, padY: 0.9 });
+    expect(burst.padX).toBeGreaterThan(oval.padX);
+  });
+
+  it("caps the padding so a long caption is not mostly air", () => {
+    const huge = ellipsePadding("x".repeat(200), 28, base);
+    expect(huge.padX).toBeLessThanOrEqual(2.6);
+    expect(huge.padY).toBeLessThanOrEqual(1.8);
+  });
+
+  it("never returns less than the variant asked for", () => {
+    const generous = ellipsePadding("Hm.", 14, { padX: 1.4, padY: 1.2 });
+    expect(generous.padX).toBe(1.4);
+    expect(generous.padY).toBe(1.2);
   });
 });
