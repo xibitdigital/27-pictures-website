@@ -600,9 +600,9 @@
         },
         {
           "x": 0.74,
-          "y": 0.72,
+          "y": 0.7,
           "variant": "bubble",
-          "tail": "bottom-left",
+          "tail": "top-right",
           "size": 24,
           "angle": -4,
           "text": {

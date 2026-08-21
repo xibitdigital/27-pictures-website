@@ -16,6 +16,8 @@ Editable source of truth for toon page lists + captions. **Not deployed** with t
 | `jax`  | `content/toons/jax/`  | Netrunner chronicles — synopsis on cover; multilingual SFX/music (see `jax/README.md`)          |
 | `nero` | `content/toons/nero/` | Scotland Yard case: Nero / Eve / The Dog; `?page=N` deep-links; full manual in `nero/README.md` |
 | `redsmile-static` | `content/toons/redsmile-static/` | RED SMILE: static — B&W horror short; the static learns Elena, and something walks out wearing her |
+| `redsmile-marcus` | `content/toons/redsmile-marcus/` | RED SMILE ep 2 — Marcus and the cleaner; unlisted while it is short (see `redsmile-marcus/README.md`) |
+| `erin-the-revenge` | `content/toons/erin-the-revenge/` | ERIN & THE GOBLINS ep 2 — The Revenge |
 
 ```bash
 # After editing config.json
@@ -34,16 +36,54 @@ make add-image SRC=~/page.jpg TOON=nero CONFIG=1 UPLOAD=1
 **Prod:** readers load via `VITE_ASSET_BASE` + `config-lock.json` — never from Pages.
 Deploy the site after `config-lock.json` changes so production picks up the new hash.
 
+## What a word entry says
+
+Only what is true of *that* caption. Everything else is style, and style lives in
+the reader:
+
+```json
+{
+  "x": 0.2,
+  "y": 0.15,
+  "variant": "thought",
+  "tail": "top-left",
+  "text": { "en": "No signal.", "it": "Nessun segnale." },
+  "audio": "assets/sfx/acb3f6ef….mp3"
+}
+```
+
+| Derived | Where from |
+| ------- | ---------- |
+| Wrap width | The text itself — `autoWrapCh` in `captions/captionModel.ts`, in `ch` so a balloon keeps its shape at any size. **Do not add `maxWidth`**; the box already sizes to its content |
+| Padding | `resolveBubbleStyle` (`padX`/`padY`), per variant |
+| Type size | The variant — bursts 28, HUD 20, speech 22 (`defaultSize`) |
+| Fill opacity | `BUBBLE_FILL_OPACITY` = 0.75, the house style |
+| Stroke width | `BUBBLE_STROKE_WIDTH` = 5 |
+| Colour | The variant — dark ink on organic bubbles, light on the HUD |
+| Alignment | `center` |
+
+Add `size`, `angle`, `scale` or `color` only when that caption wants something
+other than the default — an explicit value always wins. `tail` is top level;
+`"bubble": { … }` is for the rarer overrides (`fill`, `stroke`, `shape`).
+
+These configs were rewritten to this shape (~2,100 lines of repeated style
+removed). If one drifts back, `node scripts/slim-toon-config.js --all --dry-run`
+says what is redundant and `--all` strips it.
+
 ## Caption placement
 
 Captions go in the **top band of their own panel** (`panel_top + ~0.04`),
 hugged to the outer edge, never over a face. `bubble.tail` points back at the
-sound source — all eight directions including diagonals. Every variant carries
-`"opacity": 0.75` / `"strokeWidth": 5`; onomatopoeia over dark plates add
-`"stroke": "#ffffff"` + `"strokeThickness": 8`.
+sound source — all eight directions including diagonals. 0.75 opacity and a
+stroke width of 5 are the defaults now, so a caption says neither; onomatopoeia
+over dark plates still add `"stroke": "#ffffff"` + `"strokeThickness": 8`.
 
-**Auto-read plays `words[]` in array order**, so an SFX that should land before
-a line must sit before it in the array. Full notes in the root `CLAUDE.md`.
+**Auto-read follows position, not array order** — `readingOrder` in
+`captions/captionModel.ts` sorts top→bottom and merges captions within
+`ROW_TOLERANCE` (0.06) into one row read left→right. So an SFX that must land
+before a line needs a smaller `y` than that line, or the same row and a smaller
+`x`. Moving it earlier in `words[]` changes nothing. Full notes in the root
+`CLAUDE.md`.
 
 ## Captions / voices
 

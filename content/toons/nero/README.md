@@ -86,7 +86,7 @@ Asset for page 23: `assets/410c1237863c5d55ac9a98815615646c.webp` (shot/reverse 
 
 - **Desktop cover:** title → story (scrollable column) → FlipFrame → how to read.
 - **Mobile / vertical scroll:** story + how-to as a **popup** once per session; toolbar **Story** button reopens it (`CoverGuideDialog`).
-- **Captions:** tap for audio; organic bubbles support `"bubble": { "tail": "left" }` etc.
+- **Captions:** tap for audio; organic bubbles point with a top-level `"tail": "left"` (all eight directions). Size, padding, wrap width and the 0.75/5 chrome are defaults — see `content/toons/README.md`.
 - **SFX onomatopoeia:** plain text + white stroke (not bubble), same as Jax.
 
 ## Captions / audio workflow

@@ -849,20 +849,38 @@ never over a face, never centred on the speaker. Work out the panel bands
 first: a 3-panel plate is roughly `.03–.31 / .34–.63 / .66–.97`, a 4-panel one
 `.03–.24 / .26–.47 / .50–.71 / .73–.97`.
 
-**Tails do the pointing.** `bubble.tail` aims back at whatever makes the sound
+**Tails do the pointing.** `tail` aims back at whatever makes the sound
 — the speaker's head, the hand on the object, the TV — using all eight values
 (`top`, `bottom`, `left`, `right` + the four diagonals, see `BUBBLE_TAIL_TIPS`
 in `bubbles.ts`). Diagonals are the common case; a caption in the top band
 almost always wants `bottom-left` / `bottom-right`.
 
-**Chrome to match the book:** every variant carries
-`bubble: { "opacity": 0.75, "strokeWidth": 5 }` (bursts included) so lettering
-never sits on flat white. Onomatopoeia over dark plates also take
-`"stroke": "#ffffff"`, `"strokeThickness": 8` to lift off the ink.
+**A word entry says what it is, never how it is styled.** Position, variant,
+`tail`, text, clip — that is a complete caption:
 
-**Auto-read follows array order**, not position on the page. An SFX that should
-land before a line has to sit before it in `words[]` — e.g. the phone buzz
-opens RED SMILE page 1, the hinge whine opens its page 7.
+```json
+{ "x": 0.2, "y": 0.15, "variant": "thought", "tail": "top-left",
+  "text": { "en": "No signal." }, "audio": "assets/sfx/….mp3" }
+```
+
+Wrap width comes from the text (`autoWrapCh`, in `ch`), padding from
+`resolveBubbleStyle`, type size from the variant (`defaultSize`: bursts 28, HUD
+20, speech 22), and 0.75 fill opacity / stroke width 5 are the defaults — so
+lettering never sits on flat white without anyone asking. **Do not add
+`maxWidth`**: the balloon already sizes to its own content, and a plate-fraction
+width does not survive a size change. Add `size`, `angle`, `scale` or `color`
+only where that caption wants something else; an explicit value always wins.
+Onomatopoeia over dark plates still take `"stroke": "#ffffff"`,
+`"strokeThickness": 8` to lift off the ink. `node scripts/slim-toon-config.js
+--all --dry-run` reports anything a config repeats that the reader already
+derives.
+
+**Auto-read follows position, not array order.** `readingOrder` in
+`captions/captionModel.ts` sorts top→bottom and merges captions within
+`ROW_TOLERANCE` (0.06) into a row read left→right. An SFX that must land before
+a line needs a smaller `y` — or the same row and a smaller `x`. Moving it
+earlier in `words[]` does nothing, which is how RED SMILE ep 2 shipped a lift
+chime that played after the thought it was supposed to interrupt.
 
 **Word-layer z-index matters**: `.nav-zone` (the full-height page-turn click
 areas) sits at `z-index: 30`. The word overlay layer must stay above it
