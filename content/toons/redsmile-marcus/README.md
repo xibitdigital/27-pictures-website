@@ -9,7 +9,7 @@ Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 | Config      | `content/toons/redsmile-marcus/config.json` → publish to R2 |
 | Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key     |
 | Design size | 800 × 1424 (portrait)                                    |
-| Pages       | **4** — work in progress                                 |
+| Pages       | **5** — work in progress                                 |
 
 ## Status: published, unlisted
 
@@ -17,7 +17,7 @@ The config and every asset are on R2 and the reader resolves the locked hash
 like every other toon, so `/toons/redsmile-marcus/` works in a production build.
 
 It is still **unlisted**: `noindex, nofollow` on the reader, no card on
-`/toons/`, no sitemap or `llms.txt` entry — four pages are not something to rank,
+`/toons/`, no sitemap or `llms.txt` entry — five pages are not something to rank,
 and a work-in-progress badge does not stop Google ranking half a story. What it
 does have is an episode card on `/toons/red-smile/` (with a *Work in progress*
 badge, same as Erin EP 2) and an entry in that page's `CreativeWorkSeries`
@@ -92,7 +92,7 @@ Page 1 carries 5 overlays — 2 Marcus lines, 2 Halina lines, 1 SFX. Draft,
 placement reasoning and the generation commands are in
 `docs/story/red-smile/captions/ep2-page-01.md`.
 
-**Voiced.** All fourteen overlays carry `audio`: four ElevenLabs `eleven_v3` lines
+**Voiced.** Every overlay on every page carries `audio`: four ElevenLabs `eleven_v3` lines
 (marcus ×2 at stability 0.4, halina ×2 at 0.5) and the popup chime from the
 Sound Effects API, slug `redsmile-ep2-popup-tic` in
 `scripts/jax-sfx-manifest.json`. Levelled with
@@ -102,6 +102,22 @@ already on target).
 The chime took two takes: the first came back at -60 dB mean — inaudible — and
 a 0.4 s request is under what the API renders usefully. The shipped one asks for
 0.8 s and a *loud, dry, close* tick.
+
+## Page 5 — two breaks from the sheets, both deliberate
+
+- **No eyeglasses.** `docs/story/red-smile/marcus.md` locks the slim rectangular
+  glasses into *every* view. They come off here because the human upkeep has
+  stopped — and because a lens is the one thing that would hide the black. State
+  it twice in any re-roll (in the PIN and in the panel), or i2i puts them back.
+- **Black sclera at distance**, both eyes, readable at corridor range. This is the
+  escalation from page 4's iris mark, and no sigil is visible now — the black
+  swallows it.
+
+His courtesy is the last thing in the episode, not the violence: he is invisible
+except four fingers in a lift door, and what he says is *Mrs…?* — still polite,
+still without her name. Ep 1 built that man on purpose (he asks how she is and
+waits for the answer); this is where it is spent. Do not give him a threat line
+here.
 
 ## Plates
 

@@ -328,5 +328,10 @@
     "slug": "redsmile-ep2-fast-steps",
     "prompt": "Three fast hard-soled leather shoe steps on a hard corridor floor, even quick tempo, dry and close, loud, no reverb tail, no music",
     "duration": 1.5
+  },
+  {
+    "slug": "redsmile-ep2-door-clunk",
+    "prompt": "Lift doors closing and striking an obstruction, hard metal clunk with a short rubber-edge squeak and the motor straining, dry and close, loud, no reverb",
+    "duration": 1.4
   }
 ]

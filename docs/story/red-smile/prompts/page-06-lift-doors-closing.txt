@@ -4,25 +4,27 @@
 #       Image 2 = references/red-smile/halina.png (identity)
 #       Image 3 = RED SMILE: Marcus page 4 (ink style, layout, the lift car and
 #                 corridor) - LAST
-# note: NO text anywhere in the art on this page. The tell here is BLACK SCLERA, the
-#       escalation from the iris sigil on page 4: the mark meant it had crossed, the
-#       black eye means the vessel is being used. No sigil visible now - the black
-#       swallows it.
+# note: NO text anywhere in the art. Two deliberate breaks from the sheets:
+#       (1) NO GLASSES on this page - marcus.md locks the eyeglasses into every
+#           view, and losing them here is the point: the human upkeep has stopped,
+#           and a lens is the one thing that would hide the black.
+#       (2) BLACK SCLERA is already present at distance - the escalation from the
+#           iris sigil on page 4, and no sigil is visible now, the black swallows it.
 
 FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text, letters or numbers anywhere in the art.
 
-PIN from references: keep the exact face and suit of the man in Image 1 - late 30s, tall, lean, clean shaven, long even face, dark side-parted hair, slim rectangular eyeglasses, tailored dark two-piece suit, white shirt, dark tie. Keep the exact face and costume of the woman in Image 2 - mid 50s, heavy-set, broad weathered face, deep lines, no makeup, dark-going-grey hair in a low bun, dark tunic under a knee-length utility tabard. Keep the lift car interior, the corridor and the B&W horror ink of Image 3. Do not redesign either person.
+PIN from references: keep the exact face, build and suit of the man in Image 1 - late 30s, tall, lean, long even face, dark side-parted hair, tailored dark suit, dark tie - but WITHOUT his eyeglasses here. Keep the exact face and costume of the woman in Image 2 - mid 50s, heavy-set, broad weathered face, deep lines, dark-going-grey hair in a low bun, dark tunic under a knee-length tabard. Keep the lift car, the corridor and the B&W horror ink of Image 3. Do not redesign either person.
 
-STYLE: Dark psychological horror ink. Cold metal, hard small light sources, crushed shadow. Not cyberpunk neon, not photoreal 3D.
+STYLE: Dark psychological horror ink. Cold metal, hard light, crushed shadow. Not cyberpunk neon, not photoreal 3D.
 
-TOP (~35%): From INSIDE the lift car, looking out through the doors as they slide shut - a bright vertical gap narrowing between two dark steel door edges that frame the shot. Out in the corridor he has almost reached the threshold: upright, level, jacket undisturbed, one arm beginning to rise toward the gap. He is NOT running and NOT crouched, but the corridor blurs behind him and he is far closer than the last panel allows. His face is calm.
+TOP (~35%): From INSIDE the lift car, looking out through the doors as they begin to slide shut - two dark steel door edges framing a narrowing view of the corridor. He is STILL FAR AWAY, well down the corridor, coming on: upright, level, arms straight at his sides, jacket undisturbed, NOT running and NOT crouched, the walls streaking with motion blur while he stays sharp. No eyeglasses. A hard ceiling light catches his face, and BOTH EYES ARE SOLID BLACK - sclera black edge to edge, wet and reflective, readable even at this distance as two dark holes in a calm face. Nothing else about him is wrong.
 
-MIDDLE (~30%): Extreme close-up of her face inside the car, lit hard by the car's ceiling light. Horrified - but this is RECOGNITION, not a scream: eyes wide and fixed, jaw set, mouth closed or barely open, chin drawn back a fraction. A woman who has just understood exactly what is walking at her, and who does not waste breath. No open-mouthed shriek.
+MIDDLE (~30%): Extreme close-up of her face inside the car, lit hard from above. TERRIFIED and no longer hiding it: eyes stretched wide with the whites showing all round, brows high and drawn, mouth open on a caught breath, cords standing in her neck, a sheen of sweat on her temple, one loose strand stuck to her forehead. She is backed against the car wall. Not a comic shriek - the frozen open-mouthed instant before a sound.
 
-BOTTOM (~35%): Extreme close-up of the last of the gap between the closing doors, the two steel edges compressing the frame into a narrow vertical slot. Through it: his eye, filling most of the slot, the SCLERA SOLID BLACK edge to edge, wet and reflective like ink, the iris a pale grey ring with a darker pupil, the skin and brow around it entirely normal and unmarked - no veins, no cracks, no symbol, no sigil. Below the eye, his arm is thrust INTO the gap, sleeve and cuff sharp, the hand open and reaching, all five fingers extended and separated, fingertips just short of the frame edge. One hard catchlight on the black.
+BOTTOM (~35%): Extreme close-up of the doors almost shut, the two steel edges nearly meeting and compressing the frame to a thin vertical slot. Through the last of the gap his HAND is inside the car - fingers pushed through past the door edge, all five fingertips and the first knuckles clearly inside the lift, pads flattening, the rest of the hand and cuff still out in the corridor. The steel edges press against his fingers. Hard rim light on the knuckles, the corridor beyond lost in black. No eye visible in this panel.
 
-SCALE: the hand reads at true size against the door edge - a palm roughly the width of the gap, not larger. Fingers in correct proportion to the hand, no elongation.
+SCALE: the hand reads at true size against the door edge - a palm about the width of the gap, fingers in correct proportion, no elongation, no claws.
 
-ANATOMY: exactly two arms and two legs. On the reaching hand: exactly five fingers, one thumb on the correct side, correct knuckle spacing, no extra or fused digits. Horizontal panels only, no empty balloon shapes.
+ANATOMY: exactly two arms and two legs. On the reaching hand: exactly five fingers, one thumb on the correct side, correct knuckle spacing, no extra or fused digits, ordinary human nails. Horizontal panels only, no empty balloon shapes.
 
 CHANGE: only the scene described above; preserve both identities, the lift and corridor, and the ink style from the pins.

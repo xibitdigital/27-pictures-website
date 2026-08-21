@@ -365,7 +365,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": -5,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.3,
           "bubble": {
             "opacity": 0.75,
@@ -423,6 +423,101 @@
             "fr": "À la maison dans vingt minutes."
           },
           "audio": "assets/sfx/91a6c8e3e67e08f276f44b347a8016bb.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/15eb782474ac54f65cb92fa536ae1c8f.png",
+      "words": [
+        {
+          "x": 0.19,
+          "y": 0.06,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -5,
+          "scale": 1.0,
+          "maxWidth": 0.3,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "TOK TOK TOK",
+            "it": "TOK TOK TOK",
+            "de": "TOK TOK TOK",
+            "fr": "TOK TOK TOK"
+          },
+          "audio": "assets/sfx/f2ac2be4829f2252caadd0618020a93f.mp3"
+        },
+        {
+          "x": 0.17,
+          "y": 0.38,
+          "align": "center",
+          "size": 24,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -4,
+          "scale": 1.0,
+          "maxWidth": 0.2,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          },
+          "text": {
+            "en": "No—",
+            "it": "No—",
+            "de": "Nein—",
+            "fr": "Non—"
+          },
+          "audio": "assets/sfx/9f210dfd11552e0fd13c1e6c26d9de3d.mp3"
+        },
+        {
+          "x": 0.18,
+          "y": 0.7,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 5,
+          "scale": 1.0,
+          "maxWidth": 0.22,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "KLNK",
+            "it": "KLNK",
+            "de": "KLNK",
+            "fr": "KLNK"
+          },
+          "audio": "assets/sfx/8249f426527dcf35c2f144639cdc4616.mp3"
+        },
+        {
+          "x": 0.72,
+          "y": 0.7,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "Mrs…?",
+            "it": "Signora…?",
+            "de": "Frau…?",
+            "fr": "Madame… ?"
+          },
+          "audio": "assets/sfx/c8ac5b881a3df89525c0b9eda6193993.mp3"
         }
       ]
     }
