@@ -116,10 +116,11 @@ export const SERIES: Series[] = [
       },
       {
         id: "redsmile-marcus",
+        art: "redsmile-marcus.jpg",
         n: 2,
         title: "Marcus",
         url: "/toons/redsmile-marcus/",
-        pages: 1,
+        pages: 7,
         // draft: the URL builds and answers, but it is unlisted and noindex.
         // One page of a story is not something to rank — same call as Erin EP 2.
         status: "draft",

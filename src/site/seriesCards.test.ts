@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { extractSeriesRegion, seriesLikeTotal, initSeriesQuickView } from "./seriesCards";
+import { extractSeriesRegion, seriesLikeTotal, initSeriesQuickView, initEpisodeVotes } from "./seriesCards";
+import { resetLikesCache, fetchLikes } from "./likes";
+
+vi.mock("./likes", async (orig) => ({
+  ...(await orig<typeof import("./likes")>()),
+  fetchLikes: vi.fn(),
+}));
 
 const SERIES_PAGE = `<!doctype html><html><head><title>Erin</title></head><body>
   <div id="site-app">nav goes here</div>
@@ -24,6 +30,7 @@ function mountIndex(): HTMLAnchorElement {
 
 beforeEach(() => {
   vi.restoreAllMocks();
+  resetLikesCache();
   document.querySelectorAll("dialog").forEach((d) => d.remove());
 });
 
@@ -131,5 +138,52 @@ describe("initSeriesQuickView", () => {
     initSeriesQuickView();
     (document.querySelector("a.series-card--single") as HTMLElement).click();
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("initEpisodeVotes", () => {
+  /**
+   * Stub the counts at the module boundary, not at `fetch`: Vitest forces
+   * VITE_LIKES_API empty, so `likesApiBase()` is null and the real loader
+   * returns an empty map without ever calling fetch.
+   */
+  function stubLikes(counts: Record<string, number>): void {
+    vi.mocked(fetchLikes).mockResolvedValue(new Map(Object.entries(counts)));
+  }
+
+  it("prints each episode's own count, not the series total", async () => {
+    document.body.innerHTML = `
+      <span class="series-card-votes" data-votes-episode="erin" hidden></span>
+      <span class="series-card-votes" data-votes-episode="erin-the-revenge" hidden></span>`;
+    stubLikes({ erin: 7, "erin-the-revenge": 5 });
+
+    initEpisodeVotes();
+    await vi.waitFor(() => {
+      const [ep1, ep2] = [...document.querySelectorAll<HTMLElement>("[data-votes-episode]")];
+      expect(ep1.textContent).toBe("7 votes");
+      expect(ep2.textContent).toBe("5 votes");
+      expect(ep1.hidden).toBe(false);
+    });
+  });
+
+  it("leaves an episode with no votes hidden and empty", async () => {
+    document.body.innerHTML = `<span data-votes-episode="jax" hidden></span>`;
+    stubLikes({});
+
+    initEpisodeVotes();
+    await new Promise((r) => setTimeout(r, 10));
+    const slot = document.querySelector<HTMLElement>("[data-votes-episode]")!;
+    expect(slot.hidden).toBe(true);
+    expect(slot.textContent).toBe("");
+  });
+
+  it("uses the singular for one vote", async () => {
+    document.body.innerHTML = `<span data-votes-episode="nero" hidden></span>`;
+    stubLikes({ nero: 1 });
+
+    initEpisodeVotes();
+    await vi.waitFor(() =>
+      expect(document.querySelector<HTMLElement>("[data-votes-episode]")!.textContent).toBe("1 vote")
+    );
   });
 });

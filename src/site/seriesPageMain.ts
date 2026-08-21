@@ -8,6 +8,7 @@ import SiteApp from "./SiteApp.vue";
 import { vMagnetic } from "./directives/magnetic";
 import { rememberDocumentLocale } from "./i18n";
 import { SERIES } from "../toons/series";
+import { initEpisodeVotes } from "./seriesCards";
 
 rememberDocumentLocale();
 
@@ -36,3 +37,6 @@ if (seriesKey) {
 const app = createApp(SiteApp, { page: "toons" });
 app.directive("magnetic", vMagnetic);
 app.mount("#site-app");
+
+// Vote counts per episode — silent until the Worker answers, absent at zero.
+initEpisodeVotes();

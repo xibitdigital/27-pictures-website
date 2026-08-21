@@ -27,7 +27,31 @@ function corsHeaders(request, env) {
     Vary: "Origin",
   };
   if (allowed.includes(origin)) headers["Access-Control-Allow-Origin"] = origin;
+  // A dev origin may READ counts, never write one. Without this every vote
+  // badge is empty on `make dev` — the fetch is CORS-blocked, the client
+  // swallows it as "no count", and the numbers look broken rather than
+  // unreachable. Writes stay on the listed origins: `isWriteOrigin` gates POST,
+  // so a page served from any localhost cannot mint likes.
+  else if (isDevOrigin(origin)) headers["Access-Control-Allow-Origin"] = origin;
   return headers;
+}
+
+/**
+ * The Vite dev server, any port: localhost, 127.0.0.1, or the loopback host
+ * name this project puts in /etc/hosts (local.twentyseven.test — the .test TLD
+ * exists so a dev host can never resolve publicly).
+ */
+function isDevOrigin(origin) {
+  return /^https?:\/\/(localhost|127\.0\.0\.1|local\.twentyseven\.test)(:\d+)?$/.test(origin);
+}
+
+/** Origins allowed to POST a like — the listed ones only, never a dev origin. */
+function isWriteOrigin(request, env) {
+  const allowed = String(env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return allowed.includes(request.headers.get("Origin") || "");
 }
 
 function json(body, status, extraHeaders) {
@@ -78,7 +102,9 @@ export default {
     }
 
     if (request.method !== "POST") return json({ error: "method not allowed" }, 405, cors);
-    if (!cors["Access-Control-Allow-Origin"]) return json({ error: "forbidden origin" }, 403, cors);
+    // Not `cors["Access-Control-Allow-Origin"]`: that is now also set for dev
+    // origins, which may read but must not write.
+    if (!isWriteOrigin(request, env)) return json({ error: "forbidden origin" }, 403, cors);
 
     let payload = {};
     try {

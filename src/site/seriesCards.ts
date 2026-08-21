@@ -53,6 +53,31 @@ export function initSeriesVotes(root: ParentNode = document): void {
 }
 
 /**
+ * Fills the per-episode vote badges on a series page — or on the copy of it
+ * injected into the quick-view dialog, which is why this takes a root.
+ *
+ * Per episode, not per series: on a series page each row *is* one book, so the
+ * series total that the /toons/ card shows would be the same number printed
+ * against every episode.
+ */
+export function initEpisodeVotes(root: ParentNode = document): void {
+  const slots = [...root.querySelectorAll<HTMLElement>("[data-votes-episode]")];
+  if (!slots.length) return;
+
+  const ids = SERIES.flatMap((s) => s.episodes.map((e) => e.id).filter((id): id is string => Boolean(id)));
+
+  void fetchLikes(ids).then((likes) => {
+    const ui = UI[documentLocale()];
+    for (const slot of slots) {
+      const total = likes.get(slot.dataset.votesEpisode as string) ?? 0;
+      if (total <= 0) continue;
+      slot.textContent = `${total} ${total === 1 ? ui.vote : ui.votes}`;
+      slot.hidden = false;
+    }
+  });
+}
+
+/**
  * Pulls the quick-view region out of a fetched series page. Null when the page
  * has no such region — the caller then navigates rather than opening an empty
  * dialog.
@@ -116,6 +141,10 @@ export function initSeriesQuickView(root: ParentNode = document): void {
       const body = view.querySelector(".episode-dialog-body") as HTMLElement;
       const show = (content: Node) => {
         body.replaceChildren(content);
+        // The badges are filled on the injected copy, not on the cached
+        // fragment: `show` clones it, so a fragment filled once would keep a
+        // stale count for the rest of the session.
+        initEpisodeVotes(body);
         view.showModal();
         // Focus the panel, not the close button showModal() would otherwise pick
         // and not the first episode either: focusing a card drew a ring around
