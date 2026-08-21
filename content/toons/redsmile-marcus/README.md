@@ -127,6 +127,22 @@ Three rolls, and the prompt now carries what each one taught:
 The grin stays **small and tight**. "The smile" is the series' last stage and is
 not spent on a page where she gets away.
 
+**If a plate comes back with light gutters, fix it locally — do not re-roll.** One
+roll of this page returned the gutters and outer border in pale grey instead of
+black, which is the only thing separating panels in this book. The gutter region
+is one contiguous shape, so a single flood fill takes all of it and leaves the
+panels untouched:
+
+```bash
+magick <src> -colorspace Gray -colorspace sRGB \
+  -fill black -fuzz 18% -draw "color 2,2 floodfill" /tmp/fixed.png
+# verify: corner and a gutter midpoint should both read gray(0)
+magick /tmp/fixed.png -format "%[pixel:p{2,2}] %[pixel:p{400,573}]\n" info:
+```
+
+Re-rolling for a gutter is a waste — the art is what is expensive, and the border
+is a five-second repair.
+
 ## Page 5 — two breaks from the sheets, both deliberate
 
 - **No eyeglasses.** `docs/story/red-smile/marcus.md` locks the slim rectangular
