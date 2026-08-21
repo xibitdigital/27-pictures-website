@@ -34,8 +34,8 @@ translations can carry that.
 
 | Panel | Overlay | Notes |
 | ----- | ------- | ----- |
-| 1 | `KRUNCH` | x .62, over the lift wall behind him — the first violence in the episode, and it is hers |
-| 1 | *Get back!* | x .20, tail **bottom-right** to her head |
+| 1 | `KRUNCH` | x .20, over his side of the panel — the first violence in the episode, and it is hers |
+| 1 | *Get back!* | x .62, tail **bottom** to her head, which sits on the right of this roll |
 | 2 | `PSSHHT` | x .17, top band, clear of his face and the spray fan |
 | 3 | *…Mrs Nowak.* | x .72, tail **bottom-left**, leading ellipsis, spoken from one knee |
 
