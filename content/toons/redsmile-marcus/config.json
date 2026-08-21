@@ -547,10 +547,10 @@
           "audio": "assets/sfx/ead3f0e4305ebdcc962e7a30dbf9dc20.mp3"
         },
         {
-          "x": 0.62,
-          "y": 0.06,
+          "x": 0.82,
+          "y": 0.05,
           "align": "center",
-          "size": 22,
+          "size": 26,
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
@@ -559,7 +559,7 @@
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5,
-            "tail": "bottom"
+            "tail": "bottom-left"
           },
           "text": {
             "en": "Get back!",
@@ -570,10 +570,10 @@
           "audio": "assets/sfx/190f1f9823c92a4898fc78f45559cfcc.mp3"
         },
         {
-          "x": 0.27,
+          "x": 0.47,
           "y": 0.43,
           "align": "center",
-          "size": 38,
+          "size": 40,
           "variant": "burst",
           "color": "#111111",
           "angle": 5,
@@ -623,7 +623,7 @@
           "x": 0.2,
           "y": 0.15,
           "align": "center",
-          "size": 22,
+          "size": 30,
           "variant": "thought",
           "color": "#111111",
           "angle": -2,
@@ -643,11 +643,11 @@
           "audio": "assets/sfx/d45d94b5220b8f8845b2d4cb752da76c.mp3"
         },
         {
-          "x": 0.2,
-          "y": 0.27,
+          "x": 0.65,
+          "y": 0.15,
           "align": "center",
-          "size": 22,
-          "variant": "thought",
+          "size": 32,
+          "variant": "bubble",
           "color": "#111111",
           "angle": -2,
           "scale": 0.95,
@@ -655,7 +655,7 @@
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5,
-            "tail": "top-left"
+            "tail": "left"
           },
           "text": {
             "en": "No signal.",
@@ -733,8 +733,8 @@
           "audio": "assets/sfx/04dae00374926f85c91fa0c1db404d30.mp3"
         },
         {
-          "x": 0.74,
-          "y": 0.7,
+          "x": 0.72,
+          "y": 0.75,
           "align": "center",
           "size": 22,
           "variant": "bubble",
@@ -745,7 +745,7 @@
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5,
-            "tail": "bottom-left"
+            "tail": "left"
           },
           "text": {
             "en": "I took the stairs.",
@@ -756,10 +756,10 @@
           "audio": "assets/sfx/14524943f81fe393c83241faf979d8fc.mp3"
         },
         {
-          "x": 0.22,
+          "x": 0.4,
           "y": 0.88,
           "align": "center",
-          "size": 22,
+          "size": 20,
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
