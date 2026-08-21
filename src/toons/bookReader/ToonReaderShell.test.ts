@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { nextTick, ref } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
 import ToonReaderShell from "./ToonReaderShell.vue";
+import { SCROLL_HOWTO_KEY } from "./scrollHowTo";
 import type { ToonShellBookOptions } from "./types";
 
 const updateView = vi.fn();
@@ -97,7 +98,7 @@ describe("ToonReaderShell", () => {
     lastBookOpts = undefined;
     prefersSinglePageMock.mockReturnValue(false);
     sessionStorage.clear();
-    localStorage.removeItem("flipframe-scroll-howto");
+    localStorage.removeItem(SCROLL_HOWTO_KEY);
   });
 
   afterEach(() => {
@@ -289,7 +290,7 @@ describe("ToonReaderShell", () => {
     expect(wrapper.find(".scroll-howto").exists()).toBe(true);
     expect(wrapper.find(".scroll-howto-body").text()).toMatch(/scroll|tap/i);
     expect(wrapper.find(".scroll-howto-arrow").exists()).toBe(true);
-    expect(localStorage.getItem("flipframe-scroll-howto")).toBe("1");
+    expect(localStorage.getItem(SCROLL_HOWTO_KEY)).toBe("1");
 
     // Jitter under the threshold leaves it up; a real scroll clears it.
     Object.defineProperty(window, "scrollY", { value: 12, configurable: true });
@@ -356,5 +357,28 @@ describe("ToonReaderShell", () => {
     // Only once nothing else is in the way does the toast land.
     await clickPrompt("ok");
     expect(wrapper.find(".scroll-howto").exists()).toBe(true);
+  });
+
+  it("shows the how-to on a desktop strip too, not just a phone", async () => {
+    // The reason this can regress silently: every existing how-to test sets a
+    // narrow viewport, so a desktop-only failure passes the whole suite.
+    prefersSinglePageMock.mockReturnValue(false);
+    isVertical.value = true;
+
+    const wrapper = mountShell();
+    await flushPromises();
+    await nextTick();
+
+    // Cover guide owns the screen first, exactly as on mobile.
+    expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(true);
+    await wrapper.find(".guide-close-stub").trigger("click");
+    await flushPromises();
+    await nextTick();
+
+    await clickPrompt("ok");
+    await flushPromises();
+    await nextTick();
+    expect(wrapper.find(".scroll-howto").exists()).toBe(true);
+    expect(localStorage.getItem(SCROLL_HOWTO_KEY)).toBe("1");
   });
 });

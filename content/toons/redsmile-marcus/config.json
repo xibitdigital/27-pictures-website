@@ -167,29 +167,6 @@
           "audio": "assets/sfx/14b62a4005e065d3925cd430cc9bc072.mp3"
         },
         {
-          "x": 0.53,
-          "y": 0.07,
-          "align": "center",
-          "size": 20,
-          "variant": "bubble",
-          "color": "#111111",
-          "angle": -2,
-          "scale": 0.95,
-          "maxWidth": 0.22,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
-          "text": {
-            "en": "Sir?",
-            "it": "Signore?",
-            "de": "Mein Herr?",
-            "fr": "Monsieur ?"
-          },
-          "audio": "assets/sfx/99690772c766d6a05267cd7403eb3743.mp3"
-        },
-        {
           "x": 0.22,
           "y": 0.38,
           "align": "center",
@@ -311,24 +288,24 @@
           "x": 0.19,
           "y": 0.37,
           "align": "center",
-          "size": 22,
+          "size": 20,
           "variant": "thought",
           "color": "#111111",
           "angle": -2,
           "scale": 1,
-          "maxWidth": 0.28,
+          "maxWidth": 0.34,
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5,
             "tail": "bottom-right"
           },
           "text": {
-            "en": "He didn't look up.",
-            "it": "Non ha alzato lo sguardo.",
-            "de": "Er hat nicht aufgesehen.",
-            "fr": "Il n'a pas levé les yeux."
+            "en": "He didn't look up and say goodnight back to me, like he usually does…",
+            "it": "Non ha alzato lo sguardo, non mi ha detto buonanotte come fa sempre…",
+            "de": "Er hat nicht aufgesehen, hat mir nicht wie immer gute Nacht gewünscht…",
+            "fr": "Il n'a pas levé les yeux, il ne m'a pas dit bonne nuit comme d'habitude…"
           },
-          "audio": "assets/sfx/0402174399b1b335065db0d717a774a6.mp3"
+          "audio": "assets/sfx/8233dc2e020bcca0922b661b2fb29eca.mp3"
         },
         {
           "x": 0.76,
@@ -691,24 +668,24 @@
           "x": 0.74,
           "y": 0.36,
           "align": "center",
-          "size": 22,
+          "size": 20,
           "variant": "thought",
           "color": "#111111",
           "angle": -2,
           "scale": 0.95,
-          "maxWidth": 0.24,
+          "maxWidth": 0.3,
           "bubble": {
             "opacity": 0.75,
             "strokeWidth": 5,
             "tail": "bottom-left"
           },
           "text": {
-            "en": "Car park. Then the street.",
-            "it": "Il parcheggio. Poi la strada.",
-            "de": "Parkhaus. Dann die Straße.",
-            "fr": "Le parking. Puis la rue."
+            "en": "Car park, then the street and I'll be safe.",
+            "it": "Il parcheggio, poi la strada e sarò salva.",
+            "de": "Parkhaus, dann die Straße, und ich bin in Sicherheit.",
+            "fr": "Le parking, puis la rue et je serai en sécurité."
           },
-          "audio": "assets/sfx/bd231d29b05844298610f5f4e7e8c5d1.mp3"
+          "audio": "assets/sfx/7c6bc148540048d9e801d065aab34366.mp3"
         },
         {
           "x": 0.17,

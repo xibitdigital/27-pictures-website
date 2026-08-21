@@ -743,8 +743,8 @@ describe("WordLayer", () => {
     controller.stop();
   });
 
-  it("auto-reads only captions in the top 80% of the viewport (focus band)", async () => {
-    // Mobile strip: only caption screen Y in the top 80% — plate need not be aligned.
+  it("auto-reads only captions inside the focus band", async () => {
+    // Scroll strip: only caption screen Y inside the band — plate need not be aligned.
     document.body.classList.add("view-vertical");
     const played: string[] = [];
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
@@ -755,7 +755,7 @@ describe("WordLayer", () => {
       }
       return Promise.resolve();
     });
-    // Viewport 400px → focus band [0, 320).
+    // Viewport 400px → focus band [0, 360).
     vi.stubGlobal("innerHeight", 400);
     Object.defineProperty(window, "visualViewport", {
       configurable: true,
@@ -895,7 +895,7 @@ describe("WordLayer", () => {
     document.body.classList.remove("view-vertical");
   });
 
-  it("mobile: plate that fits the viewport still only plays captions in the top 80%", async () => {
+  it("mobile: plate that fits the viewport still only plays captions inside the band", async () => {
     // Emulator/phone case: portrait plate height < viewport (fits), so the old
     // plate-height heuristic expanded to full-page and required “page align”.
     // Vertical mode must stay caption-position based.
@@ -909,10 +909,10 @@ describe("WordLayer", () => {
       }
       return Promise.resolve();
     });
-    vi.stubGlobal("innerHeight", 800);
-    Object.defineProperty(window, "visualViewport", { configurable: true, value: { height: 800 } });
+    vi.stubGlobal("innerHeight", 720);
+    Object.defineProperty(window, "visualViewport", { configurable: true, value: { height: 720 } });
 
-    // Plate height 700 < 800 — fits. Band [0, 640).
+    // Plate height 700 < 720 — fits. Band [0, 648).
     // y=0.2 → 140 in; y=0.95 → 665 out.
     const plate = {
       top: 0,

@@ -3,7 +3,14 @@
  * no cover guide and no sound prompt in the way — and it stays up until the
  * reader actually scrolls, then is remembered so it never comes back.
  */
-export const SCROLL_HOWTO_KEY = "flipframe-scroll-howto";
+/**
+ * Versioned on purpose. The toast used to be mobile-only, so every reader who
+ * had ever opened a strip on a phone carried `"1"` under the old key — and when
+ * scroll became the default at every width, those readers were marked as having
+ * seen an instruction that had never been shown to them on a desktop. Bumping
+ * the key re-arms it once for everyone; it is one toast, dismissed by scrolling.
+ */
+export const SCROLL_HOWTO_KEY = "flipframe-scroll-howto:v2";
 /** Movement that counts as "they got it" — momentum jitter must not clear it. */
 export const SCROLL_HOWTO_DISMISS_PX = 24;
 

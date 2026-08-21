@@ -291,6 +291,20 @@ function maybeShowScrollHowTo(): void {
 }
 
 /**
+ * Re-check whenever a surface that was covering the strip goes away.
+ *
+ * Hooking the close *handlers* was not enough, and the failure was invisible on
+ * a phone: `useAutoRead` closes its own prompt on the first document gesture
+ * (`unlockAudioFromGesture`), so on desktop the click that dismissed the cover
+ * guide cleared `promptOpen` with nothing calling back — and the toast, whose
+ * only retriggers were those handlers, never showed again. Watching the state
+ * covers every close path, including the ones inside the controller.
+ */
+watch([guideOpen, autoReadPromptOpen, () => viewMode.isVertical.value], () => {
+  void nextTick(maybeShowScrollHowTo);
+});
+
+/**
  * Freeze the strip behind an open dialog.
  *
  * reader-shared.css unfreezes vertical mode with `overflow-y: visible
@@ -369,7 +383,6 @@ function onGuideOpenUpdate(open: boolean): void {
       scrollVerticalToQueryPage();
       // After Story, invite one click so browser autoplay unlocks for captions.
       autoRead.maybeShowPrompt();
-      maybeShowScrollHowTo();
     });
   }
 }
@@ -381,14 +394,12 @@ function onAutoReadEnable(): void {
   void nextTick(() => {
     releaseBodyScrollLock();
     autoRead.kick();
-    maybeShowScrollHowTo();
   });
 }
 
 function onAutoReadDismiss(): void {
   autoRead.dismissPrompt();
   releaseBodyScrollLock();
-  maybeShowScrollHowTo();
 }
 
 function syncMobileUi(): void {

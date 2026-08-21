@@ -61,11 +61,11 @@ describe("visibility", () => {
     ).toEqual(["1", "2"]);
   });
 
-  it("focus band is the top 80% of the viewport by default", () => {
-    expect(FOCUS_BAND_END).toBe(0.8);
-    expect(isInFocusBand(100, 800)).toBe(true); // y=100 < 640
-    expect(isInFocusBand(639, 800)).toBe(true);
-    expect(isInFocusBand(640, 800)).toBe(false);
+  it("focus band is the top 90% of the viewport by default", () => {
+    expect(FOCUS_BAND_END).toBe(0.9);
+    expect(isInFocusBand(100, 800)).toBe(true); // y=100 < 720
+    expect(isInFocusBand(719, 800)).toBe(true);
+    expect(isInFocusBand(720, 800)).toBe(false);
     expect(isInFocusBand(-1, 800)).toBe(false);
   });
 
@@ -74,9 +74,9 @@ describe("visibility", () => {
     expect(captionScreenPoint(plate, 0.5, 0.25)).toEqual({ x: 150, y: 200 });
   });
 
-  it("collects only captions whose anchors sit in the top 80% — even on a misaligned plate", () => {
+  it("collects only captions whose anchors sit in the top 90% — even on a misaligned plate", () => {
     // Plate partially scrolled: top at -200, height 800, viewport 400.
-    // Default band = [0, 320). Anchors: y=0.3 → screen 40 (in); y=0.85 → screen 480 (out).
+    // Default band = [0, 360). Anchors: y=0.3 → screen 40 (in); y=0.85 → screen 480 (out).
     // Page height / alignment is irrelevant — only caption screen Y matters.
     const plate = rect({ top: -200, left: 0, width: 300, height: 800 });
     const layers = [
@@ -111,10 +111,10 @@ describe("visibility", () => {
     expect(clips.map((c) => c.caption.audio)).toEqual(["b.mp3"]);
   });
 
-  it("still applies the 80% band when the plate fits the viewport (mobile emulator case)", () => {
+  it("still applies the band when the plate fits the viewport (mobile emulator case)", () => {
     // Mobile plates often fit in the viewport height; band must stay caption-based.
-    // Viewport 800 → band [0, 640). Plate height 700 at top=0.
-    // y=0.2 → 140 (in); y=0.95 → 665 (out of 80%).
+    // Viewport 720 → band [0, 648). Plate height 700 at top=0 — it fits.
+    // y=0.2 → 140 (in); y=0.95 → 665 (out of the top 90%).
     const plate = rect({ top: 0, left: 0, width: 300, height: 700 });
     const layers = [
       {
@@ -126,7 +126,7 @@ describe("visibility", () => {
         ],
       },
     ];
-    const clips = collectFocusClips(layers, 800, FOCUS_BAND_END);
+    const clips = collectFocusClips(layers, 720, FOCUS_BAND_END);
     expect(clips.map((c) => c.caption.audio)).toEqual(["a.mp3"]);
   });
 
