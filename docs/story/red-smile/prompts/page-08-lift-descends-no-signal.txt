@@ -1,0 +1,30 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/halina.png (identity)
+#       Image 2 = references/red-smile/marcus.png (silhouette height + suit only)
+#       Image 3 = RED SMILE: Marcus page 6 (ink, layout, the lift car and
+#                 corridor) - LAST
+# note: ONLY two glyphs are allowed in the art - the sender letter "V" on the
+#       phone and "-1" on the floor readout. Everything else is textless, and the
+#       failed send is drawn as a CROSSED-OUT SIGNAL-BARS ICON, not as words.
+#       Marcus is a PURE BLACK SILHOUETTE in panel 3: no face, no eyes, no
+#       glasses, no grin. The sclera and the smile are not spent on a shape at
+#       that distance - what sells it is that he is already down here.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks. The ONLY text anywhere is the single capital letter "V" on the phone and "-1" on the lift floor readout - no other writing on screens, walls, signage, badges or the lift.
+
+PIN from references: keep the exact face, build and costume of the woman in Image 1 - mid 50s, heavy-set, broad weathered face, deep lines, no makeup, tired watchful eyes, dark-going-grey hair in a low bun with loose strands, dark tunic under a knee-length utility tabard, blank badge on a lanyard, one blue glove. From Image 2 take only the man's height and tailored-suit silhouette - tall, lean, square shoulders, no coat, arms straight down. Keep the lift car interior, the corridor and the B&W horror ink of Image 3.
+
+STYLE: Dark psychological horror ink. Night interior, cold metal, one hard light source per panel, crushed shadow everywhere else. Not cyberpunk neon, not photoreal 3D.
+
+TOP (~35%): Extreme close-up of the phone in her bare hand inside the moving lift car, the lit display the only light, throwing hard glow up her fingers. A plain dark messaging thread, the sender name the single capital letter "V" at the top, one half-typed outgoing bubble with no legible words in it, and at the corner of the screen a SIGNAL-BARS ICON STRUCK THROUGH BY A DIAGONAL LINE - no signal. Her thumb is stalled over the keys. Beyond the phone, the cart rail and her tabard read as black shapes.
+
+MIDDLE (~30%): Close-up inside the car, low angle past her shoulder up to the floor readout above the doors, glowing "-1", the car slowing. Her face is lit hard from that readout: jaw set, mouth closed, breath held, eyes up on the number, the spray bottle still gripped in her fist at her chest. Sweat sheen, one strand stuck to her temple.
+
+BOTTOM (~35%): HER POINT OF VIEW as the doors part - the two door edges framing the left and right of the panel. Beyond them a basement corridor in hard one-point perspective, walls swallowed in black, one far ceiling lamp the only light. Dead centre, far down the corridor, a tall man stands FACING HER as a SOLID BLACK SILHOUETTE - upright, arms straight at his sides, suit shape and side-parted hair readable as outline only, no face, no eyes, no features at all. He is not moving. He is already here.
+
+SCALE: one human scale on the page. She is average height and heavy-set, NOT oversized - head one seventh of standing height, shoulders under two head-widths, hands no larger than her own face. The phone fits one palm. The silhouette reads as a normal man at distance, small in the corridor, NOT looming or giant.
+
+ANATOMY: exactly two arms, two legs and five fingers per hand, thumb on the correct side. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: only the scene above; preserve her identity, the lift car, the corridor and the ink from the pins.

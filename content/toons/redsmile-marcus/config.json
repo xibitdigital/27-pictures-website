@@ -615,6 +615,124 @@
           "audio": "assets/sfx/8538b91f8574130e39501a3ae50f1006.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/720c54e50ee943f45442537d87830c58.webp",
+      "words": [
+        {
+          "x": 0.2,
+          "y": 0.27,
+          "align": "center",
+          "size": 22,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 0.95,
+          "maxWidth": 0.24,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "top-left"
+          },
+          "text": {
+            "en": "No signal.",
+            "it": "Nessun segnale.",
+            "de": "Kein Signal.",
+            "fr": "Pas de réseau."
+          },
+          "audio": "assets/sfx/acb3f6efa1bbe2a3070f178fb54ec2e8.mp3"
+        },
+        {
+          "x": 0.22,
+          "y": 0.5,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 0.9,
+          "maxWidth": 0.18,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "DING",
+            "it": "DING",
+            "de": "DING",
+            "fr": "DING"
+          },
+          "audio": "assets/sfx/aa2eb0c8a844c2e4a68646cf11dd3f05.mp3"
+        },
+        {
+          "x": 0.74,
+          "y": 0.36,
+          "align": "center",
+          "size": 22,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 0.95,
+          "maxWidth": 0.24,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "Car park. Then the street.",
+            "it": "Il parcheggio. Poi la strada.",
+            "de": "Parkhaus. Dann die Straße.",
+            "fr": "Le parking. Puis la rue."
+          },
+          "audio": "assets/sfx/bd231d29b05844298610f5f4e7e8c5d1.mp3"
+        },
+        {
+          "x": 0.17,
+          "y": 0.7,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -5,
+          "scale": 0.95,
+          "maxWidth": 0.2,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "SSHK",
+            "it": "SSHK",
+            "de": "SSHK",
+            "fr": "SSHK"
+          },
+          "audio": "assets/sfx/04dae00374926f85c91fa0c1db404d30.mp3"
+        },
+        {
+          "x": 0.74,
+          "y": 0.7,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1,
+          "maxWidth": 0.24,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "I took the stairs.",
+            "it": "Ho preso le scale.",
+            "de": "Ich habe die Treppe genommen.",
+            "fr": "J'ai pris l'escalier."
+          },
+          "audio": "assets/sfx/14524943f81fe393c83241faf979d8fc.mp3"
+        }
+      ]
     }
   ]
 }
