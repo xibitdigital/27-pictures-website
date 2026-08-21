@@ -22,6 +22,12 @@ bursts sit, so black lettering needs no white stroke anywhere on the page. The
 cost is a softer expression than the first roll's, and a paler garment in panel 1
 than the tunic in panel 2.
 
+**She counts the failures before she names the cause.** *Three tries. Nothing.*
+then *No signal.* — the art already draws the failed send twice, so the thoughts
+add the one thing a drawing cannot: that she has been at it long enough to count.
+V does not know she is in this lift, and page 3's warning was the last thing that
+reached her.
+
 **She is still working the plan when the doors open.** *Car park. Then the
 street.* is a woman with an exit, one beat before it turns out she does not have
 one. Her sound budget is spent — she screamed on page 5 and shouted on page 6 —
@@ -33,19 +39,27 @@ in what he says. *I took the stairs.* answers the question the reader is asking
 — how is he already down here — with dry courtesy, and it is worse than a
 threat. He is still not threatening her. He is being funny about it.
 
-Alternate, if the name should land twice: *Going down, Mrs Nowak?* — same
-register, uses page 6's reveal, but spends the surname a page after it entered
-canon.
+**The page ends on an instruction, not a threat.** *Put the phone away, Mrs
+Nowak.* is courteous, uses the surname the thing took off her on page 6, and is
+the most on-canon thing he could say: `the-entity.md` makes a phone a surface it
+can arrive through, and the phone is also her only line to V. He is closing both
+at once, politely.
+
+Two lines were weighed against it and are worth keeping on file: *After you.*
+(lift courtesy inverted, two words, the tighter joke) and *Nobody clocked you
+out.* (nobody will come looking). Both land in the same slot.
 
 ## words[]
 
 | Panel | Overlay | Notes |
 | ----- | ------- | ----- |
+| 1 | *Three tries. Nothing.* | x .20, y .15, thought, tail **top-left**. Stacked above *No signal.* on the dark sleeve — **not** at x .72, which is the phone screen and the struck-through send glyph |
 | 1 | *No signal.* | x .20, y .27, thought, tail **top-left** to her off-frame face. Below her jaw, clear of the phone — the screen is the panel's subject and nothing sits on it |
 | 2 | `DING` | x .22, y .50, on the lit door face, clear of the `-1` readout at x .36 and the call buttons at x .10 |
 | 2 | *Car park. Then the street.* | x .74, y .36, tail **bottom-left** to her face — she is on the right of this roll |
 | 3 | `SSHK` | x .17, y .70, on the lighter left door pilaster — the doors parting |
 | 3 | *I took the stairs.* | x .74, tail **bottom-left** to the silhouette's head at x .50 |
+| 3 | *Put the phone away, Mrs Nowak.* | x .22, y .88, tail **top-right** — the last words on the page |
 
 Bands, measured: **p1 .02–.33**, **p2 .34–.65**, **p3 .66–.98**. Bursts are black
 lettering, no text stroke.
@@ -65,10 +79,12 @@ his voice. The last thing on the page is him being pleasant.
   dissonance is the point. **Came back at -36 dB mean** and needed the levelling
   pass, like page 4's steps.
 - `SSHK` — slug `redsmile-ep2-lift-doors-open`.
-- *No signal.* — `halina`, `eleven_v3`, `[softly]`, stability 0.6.
+- *Three tries. Nothing.* and *No signal.* — `halina`, `eleven_v3`, `[softly]`,
+  stability 0.6. Same register: counted under her breath, not narrated.
 - *Car park. Then the street.* — `halina`, `eleven_v3`, `[whispers]`, stability
   0.5. Under her breath, not narration.
-- *I took the stairs.* — `marcus`, `eleven_v3`, `[softly]`, stability 0.4, then
+- *I took the stairs.* and *Put the phone away, Mrs Nowak.* — `marcus`,
+  `eleven_v3`, `[softly]`, stability 0.4, then
   **pitched down 12%** (`asetrate=44100*0.88`). Every line he speaks while the
   sclera is black takes that pass, and a silhouette is no exception — the voice
   is the only thing identifying him in the panel.
