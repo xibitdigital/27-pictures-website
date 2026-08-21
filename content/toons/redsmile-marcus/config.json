@@ -355,7 +355,7 @@
       ]
     },
     {
-      "file": "assets/86f02a0e7c61e861c3601a5f807df8dc.webp",
+      "file": "assets/a31957db4ded2b2c94037788cd8d6e19.webp",
       "words": [
         {
           "x": 0.2,
@@ -427,7 +427,7 @@
       ]
     },
     {
-      "file": "assets/15eb782474ac54f65cb92fa536ae1c8f.png",
+      "file": "assets/eb43fcdecb99d055c56d8f08304f1c57.webp",
       "words": [
         {
           "x": 0.19,
@@ -532,7 +532,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": -6,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "opacity": 0.75,
@@ -554,7 +554,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -3,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "opacity": 0.75,
@@ -577,7 +577,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": 5,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "opacity": 0.75,
@@ -599,7 +599,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.26,
           "bubble": {
             "opacity": 0.75,

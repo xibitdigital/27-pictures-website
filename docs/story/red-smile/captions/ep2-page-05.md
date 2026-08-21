@@ -1,7 +1,9 @@
 # EP 2, page 5 — captions
 
-Plate: the closing lift doors — him far down the corridor with black eyes and no
-glasses, her face terrified, his fingers inside the car.
+Plate: `assets/eb43fcdecb99d055c56d8f08304f1c57.webp`. **Panel 1 is now an extreme
+close-up of his black eye**, not the corridor wide shot the prompt describes — the
+approach is carried by sound alone while the reader looks straight into it. Panel
+2 her face, panel 3 his fingers inside the car.
 
 ## The idea
 
@@ -24,7 +26,7 @@ on Viktor elsewhere, knowing; that would make this the penultimate page.
 
 | Panel | Overlay | Notes |
 | ----- | ------- | ----- |
-| 1 | `TOK TOK TOK` | x .19 — **the same clip as page 4**. Nothing about him changed; he is only closer |
+| 1 | `TOK TOK TOK` | x .19, over the brow — **the same clip as page 4**. With panel 1 now an eye ECU, the steps are the *only* thing telling you he is still moving |
 | 2 | *No—* | x .17, tail **bottom-right** to her mouth, top band so it clears her face |
 | 3 | `KLNK` | x .18 — the doors striking his fingers |
 | 3 | *Mrs…?* | x .72, tail **bottom-left** at the hand in the gap |
