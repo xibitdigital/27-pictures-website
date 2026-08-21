@@ -3154,7 +3154,23 @@ button:focus-visible {
 
 .episode-dialog .episode-block .series-card {
   border-top: 0;
-  padding: 12px 0;
+  /* Each row is a surface, not four lines of text on the dialog's own black.
+     Rows used to be divided by a hairline only, which reads as a list rather
+     than a set of things to pick from — and the card is the hit target, so it
+     has to look like one before the pointer arrives. Background defines it
+     (`Card grids carry no borders` still holds); the red edge appears on hover,
+     where it marks *which* card rather than striping every row.
+
+     Not `var(--bg-card)` flat: the dialog's own panel is already that colour,
+     so a card painted with it is invisible — measured identical, rgb(17,17,17)
+     on rgb(17,17,17). The row has to sit a step above the surface it is on. */
+  background: color-mix(in srgb, var(--bg-card) 93%, var(--text) 7%);
+  border-radius: 10px;
+  padding: 12px;
+  transition:
+    background 0.25s var(--transition),
+    transform 0.25s var(--transition),
+    box-shadow 0.25s var(--transition);
   /* One grid for the whole row, not a grid inside .series-card-face with the
      synopsis hung off it by a margin. `display: contents` on the face lets the
      thumbnail, the labels and the synopsis all be items of the same grid, so
@@ -3167,9 +3183,43 @@ button:focus-visible {
      which is what pushed the label, the title and the page count apart into
      three widely spaced lines. Give the surplus one place to go and the text
      stays a tight block. */
-  grid-template-rows: auto auto auto 1fr;
+  /* One track per text item, then an empty last track to swallow the slack the
+     full-height thumbnail hands down. With the surplus landing on the *items*
+     the synopsis floated to the bottom of the row, a hand's width below the
+     line it belongs to. */
+  grid-template-rows: auto auto auto auto auto 1fr;
   column-gap: 16px;
   align-content: start;
+}
+
+/* Hover and keyboard focus are the same state: lift, lighter surface, and a red
+   edge down the leading side — drawn with an inset shadow so it costs no layout
+   and cannot shift the text by a pixel. */
+.episode-dialog .episode-block .series-card:is(a):hover,
+.episode-dialog .episode-block .series-card:has(.series-card-face:focus-visible) {
+  background: color-mix(in srgb, var(--bg-card) 82%, var(--text) 18%);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 3px 0 0 var(--red-smile),
+    0 12px 28px rgb(0 0 0 / 55%);
+}
+
+.episode-dialog .episode-block .series-card:is(a):hover .series-card-title {
+  color: var(--red-smile);
+}
+
+/* The thumbnail is already lifted by the shared .series-card rule; in a row
+   that lift reads as detachment, so it scales in place instead. */
+.episode-dialog .episode-block .series-card:is(a):hover .series-card-art {
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .episode-dialog .episode-block .series-card,
+  .episode-dialog .episode-block .series-card:is(a):hover .series-card-art {
+    transform: none;
+    transition: none;
+  }
 }
 
 .episode-dialog .episode-block .series-card-face {
@@ -3186,9 +3236,32 @@ button:focus-visible {
 .episode-dialog .episode-block .series-card-meta,
 .episode-dialog .episode-block .series-card-title,
 .episode-dialog .episode-block .series-card-cue,
+.episode-dialog .episode-block .series-card-votes,
 .episode-dialog .episode-block .series-card-desc {
   grid-column: 2;
   margin: 0;
+}
+
+/* Explicit rows: the vote badge was auto-placed, so its position depended on
+   which cells the spanning thumbnail happened to leave free. */
+.episode-dialog .episode-block .series-card-meta {
+  grid-row: 1;
+}
+
+.episode-dialog .episode-block .series-card-title {
+  grid-row: 2;
+}
+
+.episode-dialog .episode-block .series-card-cue {
+  grid-row: 3;
+}
+
+.episode-dialog .episode-block .series-card-votes {
+  grid-row: 4;
+}
+
+.episode-dialog .episode-block .series-card-desc {
+  grid-row: 5;
 }
 
 .episode-dialog .episode-block .series-card-meta {
@@ -3210,7 +3283,7 @@ button:focus-visible {
 }
 
 .episode-dialog .episode-block .series-card + .series-card {
-  border-top: 1px solid var(--border);
+  margin-top: 10px;
 }
 
 /* On a phone the rows overflow the dialog with synopses shown, so they go: a
