@@ -106,7 +106,11 @@ describe("useToonLikes", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("survives a failing counter API", async () => {
+  it("does not remember a vote the counter never took", async () => {
+    // Was the opposite assertion. A remembered-but-uncounted vote is the worst
+    // of both: the heart is filled, `like()` returns early ever after, and the
+    // count never moves — which is exactly what a toon missing from the
+    // Worker's allow-list produced, one lost vote per device.
     vi.stubEnv("VITE_LIKES_API", "https://likes.example.dev");
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
 
@@ -116,8 +120,48 @@ describe("useToonLikes", () => {
     await api.like();
 
     expect(api.total.value).toBeNull();
+    expect(api.liked.value).toBe(false);
+    expect(readStoredLike("jax")).toBe(false);
+  });
+
+  it("rolls the count back when the Worker rejects the toon", async () => {
+    vi.stubEnv("VITE_LIKES_API", "https://likes.example.dev");
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
+      if ((init as RequestInit | undefined)?.method === "POST") {
+        return new Response(JSON.stringify({ error: "unknown toon" }), { status: 400 });
+      }
+      return new Response(JSON.stringify({ likes: 4 }), { status: 200 });
+    });
+
+    const { api } = useIn("redsmile-marcus");
+    await nextTick();
+    await api.refresh();
+    expect(api.total.value).toBe(4);
+
+    await api.like();
+    // Back to the server's figure, not 5 — the vote was refused.
+    expect(api.total.value).toBe(4);
+    expect(api.liked.value).toBe(false);
+    expect(readStoredLike("redsmile-marcus")).toBe(false);
+  });
+
+  it("keeps the vote when the Worker saw it but did not add it", async () => {
+    // `counted: false` is the per-IP-per-day guard, not a failure.
+    vi.stubEnv("VITE_LIKES_API", "https://likes.example.dev");
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) =>
+      (init as RequestInit | undefined)?.method === "POST"
+        ? new Response(JSON.stringify({ toon: "nero", likes: 8, counted: false }), { status: 200 })
+        : new Response(JSON.stringify({ likes: 8 }), { status: 200 })
+    );
+
+    const { api } = useIn("nero");
+    await nextTick();
+    await api.refresh();
+    await api.like();
+
+    expect(api.total.value).toBe(8);
     expect(api.liked.value).toBe(true);
-    expect(readStoredLike("jax")).toBe(true);
+    expect(readStoredLike("nero")).toBe(true);
   });
 });
 

@@ -90,12 +90,27 @@ export function useToonLikes(toonId: string): ToonLikesApi {
     if (liked.value) return;
 
     // Optimistic: the vote is the reader's own state, not the server's.
+    const priorTotal = total.value;
     liked.value = true;
     writeStoredLike(toonId, true);
     if (total.value != null) total.value += 1;
 
     const base = likesApiBase();
     if (!base || !toonId) return;
+
+    /**
+     * The vote never reached the counter, so nothing about it should look
+     * final. The remembered flag is what makes a rejected POST permanent: the
+     * heart stays filled, `like()` returns early ever after, and the reader is
+     * left looking at a count that never moved. A toon missing from the
+     * Worker's ALLOWED_TOONS did exactly that — 400 on every attempt, one vote
+     * silently dropped per device.
+     */
+    const rollback = (): void => {
+      liked.value = false;
+      writeStoredLike(toonId, false);
+      total.value = priorTotal;
+    };
 
     pending.value = true;
     try {
@@ -106,12 +121,18 @@ export function useToonLikes(toonId: string): ToonLikesApi {
         // A counter must never hang the control that draws it.
         signal: AbortSignal.timeout(8000),
       });
-      if (res.ok) {
-        const server = parseTotal(await res.json());
-        if (server != null) total.value = server;
+      if (!res.ok) {
+        rollback();
+        return;
       }
+      const server = parseTotal(await res.json());
+      // `counted: false` is a success: the Worker saw the vote and declined to
+      // add it (one per IP per toon per day). The reader's own vote stands.
+      if (server != null) total.value = server;
     } catch {
-      /* keep the optimistic local state */
+      // Offline, timeout, CORS — all indistinguishable from here, and all mean
+      // the same thing: try again next visit rather than pretend it landed.
+      rollback();
     } finally {
       pending.value = false;
     }
