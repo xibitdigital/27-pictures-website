@@ -1,8 +1,15 @@
 # EP 2, page 6 — captions
 
-Plate: `assets/7bcf72f8560dad769ad87073a4d2e779.png`. She rams the cart out of
-the car into him; she sprays cleaning fluid in his face; the doors shut while he
-kneels in the corridor.
+Plate: `assets/3febbf5d3989b06d59e46b0a0a290423.webp`. She drives him back out of
+the car; she sprays cleaning fluid in his face; the doors shut while he kneels in
+the corridor.
+
+**Caption/art mismatch to resolve:** panel 1 of this roll has **no cart in frame** —
+she is reaching, he is leaning away, and the trolley she is supposed to be ramming
+is out of shot. `KRUNCH` therefore has nothing visible to hit. Either re-roll panel
+1 with the cart in frame, or relabel the burst to the shove itself (a cloth-and-body
+`THMP` rather than a steel `KRUNCH`). The audio is a metal cart impact, so it wants
+the cart.
 
 ## The idea
 
