@@ -437,7 +437,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": -5,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.3,
           "bubble": {
             "opacity": 0.75,
@@ -459,7 +459,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -4,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.2,
           "bubble": {
             "opacity": 0.75,
@@ -482,7 +482,7 @@
           "variant": "burst",
           "color": "#111111",
           "angle": 5,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.22,
           "bubble": {
             "opacity": 0.75,
@@ -504,7 +504,7 @@
           "variant": "bubble",
           "color": "#111111",
           "angle": -2,
-          "scale": 1.0,
+          "scale": 1,
           "maxWidth": 0.24,
           "bubble": {
             "opacity": 0.75,
@@ -518,6 +518,101 @@
             "fr": "Madame… ?"
           },
           "audio": "assets/sfx/3952753bf9d4a8263dbb6f563e444808.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/7bcf72f8560dad769ad87073a4d2e779.png",
+      "words": [
+        {
+          "x": 0.62,
+          "y": 0.06,
+          "align": "center",
+          "size": 28,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -6,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "KRUNCH",
+            "it": "KRUNCH",
+            "de": "KRUNCH",
+            "fr": "KRUNCH"
+          },
+          "audio": "assets/sfx/ead3f0e4305ebdcc962e7a30dbf9dc20.mp3"
+        },
+        {
+          "x": 0.2,
+          "y": 0.06,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -3,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-right"
+          },
+          "text": {
+            "en": "Get back!",
+            "it": "Stia indietro!",
+            "de": "Zurück!",
+            "fr": "Reculez !"
+          },
+          "audio": "assets/sfx/190f1f9823c92a4898fc78f45559cfcc.mp3"
+        },
+        {
+          "x": 0.17,
+          "y": 0.38,
+          "align": "center",
+          "size": 28,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 5,
+          "scale": 1.0,
+          "maxWidth": 0.24,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "PSSHHT",
+            "it": "PSSHHT",
+            "de": "PSSHHT",
+            "fr": "PSSHHT"
+          },
+          "audio": "assets/sfx/bd397a23d82f5eeaeb2144433b53c6d3.mp3"
+        },
+        {
+          "x": 0.72,
+          "y": 0.7,
+          "align": "center",
+          "size": 22,
+          "variant": "bubble",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 1.0,
+          "maxWidth": 0.26,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "…Mrs Nowak.",
+            "it": "…Signora Nowak.",
+            "de": "…Frau Nowak.",
+            "fr": "…Madame Nowak."
+          },
+          "audio": "assets/sfx/8538b91f8574130e39501a3ae50f1006.mp3"
         }
       ]
     }

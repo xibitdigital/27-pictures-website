@@ -9,7 +9,7 @@ Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 | Config      | `content/toons/redsmile-marcus/config.json` → publish to R2 |
 | Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key     |
 | Design size | 800 × 1424 (portrait)                                    |
-| Pages       | **5** — work in progress                                 |
+| Pages       | **6** — work in progress                                 |
 
 ## Status: published, unlisted
 
@@ -17,7 +17,7 @@ The config and every asset are on R2 and the reader resolves the locked hash
 like every other toon, so `/toons/redsmile-marcus/` works in a production build.
 
 It is still **unlisted**: `noindex, nofollow` on the reader, no card on
-`/toons/`, no sitemap or `llms.txt` entry — five pages are not something to rank,
+`/toons/`, no sitemap or `llms.txt` entry — six pages are not something to rank,
 and a work-in-progress badge does not stop Google ranking half a story. What it
 does have is an episode card on `/toons/red-smile/` (with a *Work in progress*
 badge, same as Erin EP 2) and an entry in that page's `CreativeWorkSeries`
@@ -102,6 +102,30 @@ already on target).
 The chime took two takes: the first came back at -60 dB mean — inaudible — and
 a 0.4 s request is under what the API renders usefully. The shipped one asks for
 0.8 s and a *loud, dry, close* tick.
+
+## Page 6 — she fights back, and what it cost to get the panel
+
+**Page 6 has no captions yet.** She rams the cart into him, sprays cleaning fluid
+in his face, and the doors shut while he is on one knee. The cleaner's cart is
+both her cover and her only weapon — nobody equipped her, per `halina.md`.
+
+Three rolls, and the prompt now carries what each one taught:
+
+1. **Front-on grin.** He posed at the camera. A grin at the viewer is a poster; a
+   grin at the person you are about to kill is the beat. Fixed by pinning him
+   three-quarter with his eyes on her, plus three explicit negatives.
+2. **Inverted geography** — her in the corridor, him in the car. Caused by the
+   phrase *"in the doorway"*, which reads from either side. Fixed by a **STAGING**
+   clause above the panels that states who is where and applies to all of them.
+   Do not delete it, and never write "in the doorway" on this page.
+3. **Normal eyes, and a cart that missed.** Both wide-shot rolls treated the black
+   sclera as detail and the shove as a pose. Fixed by shooting panel 1 as a
+   **medium close** with him large in frame, naming his face as the panel's
+   subject, and describing the impact in the **past tense** — *the cart has already
+   hit him* — with its consequences rather than the action.
+
+The grin stays **small and tight**. "The smile" is the series' last stage and is
+not spent on a page where she gets away.
 
 ## Page 5 — two breaks from the sheets, both deliberate
 

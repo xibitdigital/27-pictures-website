@@ -2,27 +2,33 @@
 # mode: image-to-image
 # refs: Image 1 = references/red-smile/marcus.png (identity)
 #       Image 2 = references/red-smile/halina.png (identity)
-#       Image 3 = RED SMILE: Marcus page 5 (ink style, layout, the lift and corridor,
-#                 the black sclera, no glasses) - LAST
-# note: NO text anywhere in the art - the spray bottle carries no label, no brand,
-#       no writing. He still has NO GLASSES and BLACK SCLERA, carried from page 5.
-#       The grin here is SMALL AND TIGHT, not the full rictus: "the smile" is the
-#       series' last stage (see the-entity.md) and is not spent on this page.
+#       Image 3 = RED SMILE: Marcus page 5 (ink, layout, lift + corridor, black
+#                 sclera, no glasses) - LAST
+# note: NO text in the art - the spray bottle is unlabelled. He has NO GLASSES and
+#       BLACK SCLERA throughout. The grin is SMALL AND TIGHT, never the full rictus:
+#       "the smile" is the series' last stage and is not spent here.
+#       Two rolls went wrong: one posed him front-on grinning at the camera, the
+#       next INVERTED THE GEOGRAPHY - her in the corridor, him in the car - and
+#       dropped the black eyes and the grin as well. Hence the STAGING clause. Do
+#       not remove it, and do not describe anyone as "in the doorway".
+#       Panel 1 is deliberately a MEDIUM CLOSE shot. Two wide-shot rolls drew his
+#       eyes normal and let the cart miss him entirely - at that distance the model
+#       treats eyes as detail and a shove as a pose. Keep him large in frame.
 
-FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text, letters or numbers anywhere in the art.
+STAGING (true in every panel): SHE IS INSIDE THE LIFT CAR with her cleaning cart. HE IS OUTSIDE IT, in the corridor. The open doorway is between them. She never steps out of the car; he never steps into it.
 
-PIN from references: keep the exact face, build and suit of the man in Image 1 - late 30s, tall, lean, long even face, dark side-parted hair, dark suit, dark tie - with NO eyeglasses and BOTH EYES SOLID BLACK as in Image 3. Keep the exact face and costume of the woman in Image 2 - mid 50s, heavy-set, broad weathered face, deep lines, grey-streaked hair in a low bun, dark tunic under a knee-length tabard, blue glove. Keep the lift car, the corridor and the ink of Image 3.
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text, letters or numbers anywhere.
 
-STYLE: Dark psychological horror ink. Cold metal, hard light, crushed shadow. Not cyberpunk neon, not photoreal 3D.
+PIN from references: keep the man's exact face and suit from Image 1 - late 30s, lean, long even face, dark side-parted hair, dark suit and tie - with NO eyeglasses and BOTH EYES SOLID BLACK, no white showing, as in Image 3. Keep the woman's exact face and costume from Image 2 - mid 50s, heavy-set, broad weathered face, grey-streaked low bun, dark tunic under a knee-length tabard, blue glove. Keep the lift car, corridor and ink of Image 3.
 
-TOP (~35%): Inside the lift, doors sliding back OPEN again - his hand in the gap has tripped them. He stands in the widening doorway TURNED TOWARD HER, body angled three-quarter away from camera, head turned so his face is aimed at her and his eyes are ON HER - he is NOT looking at the viewer, NOT facing the camera, NOT posing front-on. Upright and calm. BOTH EYES SOLID BLACK, sclera black edge to edge with no white showing, and on his mouth a SMALL TIGHT GRIN, lips closed or barely parted, almost polite: the first thing his face has done that a courteous man would not, and it is aimed at her. She has both hands on the janitorial cart and is RAMMING it at him, weight behind her shoulder, the cart tipping into his legs, sack and mop handle swinging. Her face is set with effort, not fear.
+TOP (~35%): Camera INSIDE the lift car, close over her shoulder, looking out through the open doorway - a MEDIUM CLOSE shot, not a wide: he fills much of the frame from the waist up. THE CART HAS ALREADY HIT HIM. Its front edge is driven into his shins out in the corridor, he is folded slightly forward over it, one hand knocked out to the side, jacket swinging open, one heel skidding back. Her forearms and both hands are in the near foreground on the cart handle, shoulders down and weight behind it. HIS FACE IS THE SUBJECT OF THIS PANEL: turned up and toward HER, eyes locked on hers across the cart. BOTH EYES ARE TWO SOLID BLACK VOIDS - no white, no iris, no catchlight, the darkest thing in the panel, unmistakable at this size. On his mouth a SMALL TIGHT GRIN, lips barely parted, almost courteous, aimed at her. He is taking the blow and smiling at the person who threw it.
 
-MIDDLE (~30%): Her point of view, close: her own bare hand thrust forward in the lower frame gripping a plain plastic spray bottle of cleaning fluid, trigger squeezed, and a hard fan of liquid leaving the nozzle straight into his face. Droplets caught in the air, a wet sheet across his cheek and brow, his black eyes screwed shut, his head snapped back and away. The bottle is unlabelled - no writing, no brand, no icons.
+MIDDLE (~30%): Her point of view, close: her own bare hand thrust forward low in frame gripping a plain unlabelled plastic spray bottle, trigger squeezed, a hard fan of liquid leaving the nozzle straight into his face. Droplets in the air, a wet sheet across his cheek and brow, black eyes screwed shut, head snapped back and away. No writing, brand or icon on the bottle.
 
-BOTTOM (~35%): Camera BEHIND HIS SHOULDER, low and close, looking past him into the lift. He is DOWN ON ONE KNEE, back to camera, one hand clamped over his eyes and dragging down his face, shoulders hunched. Beyond him the lift doors slide SHUT again, and in the narrowing bright gap her legs and the cart are visible inside the car. He is hurt, delayed, not defeated.
+BOTTOM (~35%): Camera OUT IN THE CORRIDOR, low and close behind his shoulder. He is DOWN ON ONE KNEE ON THE CORRIDOR FLOOR, back to camera, one hand clamped over his eyes and dragging down his face, shoulders hunched. Ahead of him the lift doors are ALREADY HALF SHUT, the bright gap between them narrower than her body, and through it she is visible INSIDE the car with the cart. He is hurt, delayed, not defeated.
 
-SCALE: one human scale. The cart is waist-high on her with an upright push handle; the spray bottle fits in one hand. The kneeling man reads at correct height against the doorway.
+SCALE: one human scale. The cart is waist-high on her, the bottle fits one hand, the kneeling man reads correctly against the doorway.
 
-ANATOMY: exactly two arms and two legs per person, five fingers per hand, correct knuckle spacing, thumbs on the correct side. Horizontal panels only, no empty balloon shapes.
+ANATOMY: exactly two arms and two legs per person, five fingers per hand, thumbs on the correct side. Horizontal panels only, no empty balloon shapes.
 
-CHANGE: only the scene described above; preserve both identities, the lift and corridor, and the ink style from the pins.
+CHANGE: only the scene above; preserve both identities, the lift and corridor, and the ink from the pins.

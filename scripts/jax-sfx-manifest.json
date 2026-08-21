@@ -333,5 +333,15 @@
     "slug": "redsmile-ep2-door-clunk",
     "prompt": "Lift doors closing and striking an obstruction, hard metal clunk with a short rubber-edge squeak and the motor straining, dry and close, loud, no reverb",
     "duration": 1.4
+  },
+  {
+    "slug": "redsmile-ep2-cart-impact",
+    "prompt": "Heavy metal janitorial cart slamming into a man's legs, hard steel clang with a bucket rattle and castors skidding on a hard floor, one loud impact, dry, no reverb",
+    "duration": 1.6
+  },
+  {
+    "slug": "redsmile-ep2-spray-hiss",
+    "prompt": "Trigger spray bottle firing a hard burst of liquid, sharp wet hiss close to the microphone, one squeeze, dry, no music",
+    "duration": 1.2
   }
 ]

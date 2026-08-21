@@ -1,4 +1,10 @@
-# Halina
+# Halina Nowak
+
+**Surname: `Nowak`, established in ep 2 page 6** — the last words of that page are
+Marcus, blind on one knee, saying *"…Mrs Nowak."* It matters that it is said there
+and nowhere earlier: nobody in that building knows her name all episode, he trails
+off on *"Mrs…?"* one page before, and the thing in him supplies it. Whatever it
+does to identify an agent, it has done it by then.
 
 **Status: proposed.** Established by the user: Halina, a woman, mid 50s, a bit
 robust, long hair, corporate cleaner's uniform — and **an undercover society
