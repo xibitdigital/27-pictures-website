@@ -42,5 +42,13 @@ Read order gives: his steps, her refusal, the doors failing, his voice.
   page 4.
 - `KLNK` — `redsmile-ep2-door-clunk`, generated against a single-slug manifest.
 - *No—* — `halina`, `eleven_v3`, `[scared]`, stability 0.3 so the tag lands.
-- *Mrs…?* — `marcus`, `eleven_v3`, `[softly]`, stability 0.4, **no processing**. He
-  is not a machine; only V's texts get the phone-render pass.
+- *Mrs…?* — `marcus`, `eleven_v3`, `[softly]`, stability 0.4, then the
+  **possession double**: his own take mixed with a copy pitched down 8% at 0.75
+  gain, plus a short comb echo and a slow phaser. Two voices in one mouth. See the
+  chain in `content/toons/redsmile-marcus/README.md`.
+
+  Not V's phone-render pass — that says "a device is reading text aloud", and he is
+  standing in the corridor. Not `ai`/`badai` either: those are machines, and
+  `marcus.md` insists he is not one. **Any line he speaks while the sclera is black
+  takes this pass**; his page 1 lines, spoken before the crossing, stay clean —
+  which is itself a tell, if a reader goes back.

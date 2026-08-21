@@ -113,6 +113,25 @@ a 0.4 s request is under what the API renders usefully. The shipped one asks for
   escalation from page 4's iris mark, and no sigil is visible now — the black
   swallows it.
 
+**His line is processed — a possession double, not the phone pass.** *Mrs…?* is
+his own take mixed with a copy of itself pitched down 8% at 0.75 gain, then a
+short comb echo and a slow phaser: two voices in one mouth. He stays recognisable,
+which `marcus.md` requires — he is a vessel, not a machine — but the courtesy
+comes out wrong.
+
+```bash
+ffmpeg -y -i in.mp3 -filter_complex \
+"[0:a]asplit=2[dry][sub];[sub]asetrate=44100*0.92,aresample=44100,volume=0.75[low];\
+[dry][low]amix=inputs=2:duration=longest:dropout_transition=0,highpass=f=90,\
+lowpass=f=9000,aecho=0.85:0.6:6:0.22,aphaser=type=t:speed=0.8:decay=0.2,\
+dynaudnorm=f=200:g=5" -codec:a libmp3lame -b:a 192k /tmp/out.mp3
+```
+
+Do **not** use V's phone-render pass on him: that one says "a device is reading
+text aloud", and Marcus is standing in the corridor. Nor the `ai`/`badai` chains —
+those are machines. Any line he speaks while the sclera is black takes this pass;
+his ep 2 page 1 lines, spoken before the crossing, stay clean.
+
 His courtesy is the last thing in the episode, not the violence: he is invisible
 except four fingers in a lift door, and what he says is *Mrs…?* — still polite,
 still without her name. Ep 1 built that man on purpose (he asks how she is and
