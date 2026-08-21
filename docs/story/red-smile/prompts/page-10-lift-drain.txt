@@ -1,35 +1,34 @@
-# model: bytedance/seedream-5.0-pro
+# model: bytedance/seedream-5.0-pro  (ComfyUI: ByteDance Seedream 4.5 & 5.0)
 # mode: image-to-image
-# refs: Image 1 = references/red-smile/halina.png (identity)
-#       Image 2 = references/red-smile/marcus.png (identity)
-#       Image 3 = RED SMILE: Marcus page 8 (ink style, layout, the lift car and
-#                 the throat grip) - LAST
-# note: The drain is the SAME visual language as episode 1 page 10 - fine white
-#       filaments and a thin luminous vapour pulled into the palm, and the victim
-#       ages decades in seconds. NO blood, no wound, no gore: the violence is
-#       drain and age, read through ink. Keep it consistent or the series has two
-#       different powers.
-#       She still has IRISES here. Blank white eyes are what ep 1 used for a body
-#       that is already dead - do not spend that on this page.
-#       He does not change: no glasses, both eyes solid black, the grin still
-#       SMALL and tight, suit undisturbed. The vessel is untouched by what it
-#       takes. Panel 3 is a silhouette but NOT a black cutout - his face is turned
-#       to the corridor lamp so the black sclera and the grin read.
+# refs: Image 1 = references/red-smile/marcus.png (identity)
+#       Image 2 = references/red-smile/halina.png (identity)
+#       Image 3 = RED SMILE: Marcus page 9 (ink style, layout, the lift car)
+#       Image 4 = RED SMILE: Marcus page 5 - its panel 1 is the black sclera
+#                 drawn correctly, as an eye. Pin the tell against this.
+# graph: 1488x2496 (3.71 MP - the model rejects under 3.68 and the node caps
+#        height at 2496), thinking ON (required with reference images),
+#        ImageScale crop=center down to 800x1424.
+# note: Drain language matches ep 1 page 10. IRISES in panels 1-2, BLANK WHITE
+#       in panel 3. She dies here. Fresh roll from the character sheets and
+#       page 9. Panel 3 staging is ep 1 page 10's: she is lying on her side,
+#       slack hand and the spray bottle in the foreground.
 
-FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive gekiga linework, heavy ink washes, solid crushed blacks, harsh contrast, grey screentone midtones, cross-hatching. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text, letters or numbers anywhere in the art.
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp gekiga linework, heavy ink washes, solid blacks, harsh contrast, grey midtones. No color, no balloons, no captions, no SFX, no logos, no watermarks, no text anywhere.
 
-PIN from references: keep the exact face and costume of the woman in Image 1 - mid 50s, heavy-set, broad weathered face, dark-going-grey hair in a low bun, dark tunic under a knee-length tabard, blank badge, one blue glove - and age her across this page. Keep the exact face and suit of the man in Image 2 - late 30s, tall, lean, long even face, dark side-parted hair, tailored dark suit, dark tie - WITHOUT his eyeglasses and with BOTH EYES SOLID BLACK. Keep the lift car, the corridor and the B&W horror ink of Image 3. Do not redesign either person.
+PIN from references: the man of Image 1 exactly - late 30s, tall, lean, long even face, dark side-parted hair, dark suit and tie, no eyeglasses. The woman of Image 2 exactly - mid 50s, heavy-set, broad weathered face, grey-streaked low bun, dark tunic under a knee-length tabard, blank badge - and age her across this page. Keep the lift car and the ink of Image 3. Do not redesign either person.
 
-STYLE: Dark psychological horror ink. Cold metal, one hard ceiling light in the car, the corridor crushed to black. Restrained horror - the harm is age, not injury.
+EYES: if his face appears, take the black sclera EXACTLY as Image 4 draws it - ink-black eyeball, no iris, no white, one pinhead catchlight. Eyes, not eyewear: normal lids and lashes, no sunglasses.
 
-TOP (~35%): Extreme close-up of her face, his hand still closed around her throat at the bottom of frame. She is AGEING IN SECONDS: cheeks hollowing, skin slackening into deep folds, lips thinning, the grey in her hair running white from the temples out, loose strands gone brittle. Her eyes are wide and still HERS - irises present, pupils huge, the whites bloodshot. Not a corpse yet. Sweat on a face that is drying out as we watch.
+STYLE: Dark psychological horror ink. Cold metal, one hard ceiling light, corridor crushed to black. The harm is age, not injury.
 
-MIDDLE (~30%): Extreme close-up of his hand at her throat. Life is being pulled out of her into his palm - fine white filaments and a thin luminous vapour drawn off her neck and collarbone, spiralling into the gaps between his fingers, the back of his hand in tight cross-hatching. Her own hands are on his forearm and already thinning: veins standing, knuckles enlarged, the blue glove loose on a smaller hand. No blood, no wound.
+TOP (~35%): Extreme close-up of HER FACE, his hand still closed around her throat at the bottom of frame. She is AGEING IN SECONDS: cheeks hollowing, skin slackening into deep folds, lips thinning, grey in her hair running white from the temples, strands gone brittle. Eyes still HERS - irises present, pupils huge, whites bloodshot. Not a corpse yet.
 
-BOTTOM (~35%): Camera OUT IN THE BASEMENT CORRIDOR, low, looking back at the open lift. He stands in the lit doorway as a near-silhouette against the bright car - tall, upright, one arm raised and straight, her body hanging from it with her shoes clear of the floor, the cleaning cart behind them. His head is turned toward the corridor and catches the one ceiling lamp: BOTH EYES SOLID BLACK, wet and reflective, and a SMALL TIGHT GRIN. Everything else about him is shape and edge.
+MIDDLE (~30%): Extreme close-up of HIS HAND at her throat. Fine white filaments and a thin luminous vapour drawn off her neck into the gaps between his fingers. Her own hands on his forearm, already thinning: veins standing, knuckles enlarged, skin loose. No blood, no wound.
 
-SCALE: one human scale. He is a head taller; the hand at her throat is a normal man's hand, no elongation, no claws. Her feet hang a hand's width off the floor.
+BOTTOM (~35%): Camera low on the lift-car tiles. Close on her lying on her side, cheek to the floor, slack fingers and the spray bottle in the foreground, tabard collar and both shoulders in frame, her body stretching back along the tiles. She has aged twenty years in two panels: deep sunken cheeks, sagging skin, hair at her face gone white and thin, mouth open. Eyes wide and completely blank white, no iris, no pupil. She is alone in the car. One thin blade of ceiling light across her face, the rest black.
 
-ANATOMY: exactly two arms, two legs and five fingers per hand, thumbs on the correct side. Horizontal panels only, no empty balloon shapes.
+SCALE: one human scale. His hand is a normal man's hand. In panel 3 she is a normal adult woman lying on her side - shoulders wider than her face, torso receding along the tiles.
 
-CHANGE: only the scene described above; preserve both identities, the lift and corridor, and the ink style from the pins.
+ANATOMY: two arms, two legs, five fingers per hand. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: only the scene above; preserve both identities, the lift car and the ink from the pins.

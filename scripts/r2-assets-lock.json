@@ -7052,6 +7052,70 @@
     "toons/redsmile-static/config.b5072de57d25c586570f51e9c8dfa509.json": {
       "size": 18895,
       "uploadedAt": "2026-08-21T11:02:50.492Z"
+    },
+    "toons/redsmile-marcus/assets/510193fc346a06cb6a53e71e7783d258.webp": {
+      "size": 238240,
+      "uploadedAt": "2026-08-21T13:36:13.318Z"
+    },
+    "toons/redsmile-marcus/assets/f644468e26a6e7797f9b0376c03a3830.webp": {
+      "size": 380758,
+      "uploadedAt": "2026-08-21T13:38:42.108Z"
+    },
+    "toons/redsmile-marcus/assets/a4525888e1649363d820ef2ec2c1d7e6.webp": {
+      "size": 230350,
+      "uploadedAt": "2026-08-21T13:50:49.220Z"
+    },
+    "toons/redsmile-marcus/assets/91defc58286cef4a29605f261dce85e6.webp": {
+      "size": 289648,
+      "uploadedAt": "2026-08-21T14:08:36.786Z"
+    },
+    "toons/redsmile-marcus/assets/150312e7fd9b4e02422f3bfe310693b8.webp": {
+      "size": 294630,
+      "uploadedAt": "2026-08-21T15:36:33.729Z"
+    },
+    "toons/redsmile-marcus/assets/e0d0930ae3887c863e62524920751ced.webp": {
+      "size": 290714,
+      "uploadedAt": "2026-08-21T16:13:07.166Z"
+    },
+    "toons/redsmile-marcus/config.fb846078984e4807e41b6c6c200c8dfd.json": {
+      "size": 15552,
+      "uploadedAt": "2026-08-21T16:13:18.349Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/130f7efe1162ecee41403700fbe03457.mp3": {
+      "size": 73394,
+      "uploadedAt": "2026-08-21T16:18:11.813Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/4e013a1743ea589cfb1950235be1efb4.mp3": {
+      "size": 27628,
+      "uploadedAt": "2026-08-21T16:18:13.946Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/4f93aa1764389249a41cd885013aaba0.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-21T16:18:15.925Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/b533514976b42e2179ae53abcc5b5b5f.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-21T16:18:18.114Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/d0bc5e4c7556bb031939a1212a9bbad6.mp3": {
+      "size": 21359,
+      "uploadedAt": "2026-08-21T16:18:20.589Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/f1dba288ea84c4696780cf8f5cb0e45a.mp3": {
+      "size": 40167,
+      "uploadedAt": "2026-08-21T16:18:22.692Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/faf355192fc52521f8effa249c49ea50.mp3": {
+      "size": 60856,
+      "uploadedAt": "2026-08-21T16:18:24.794Z"
+    },
+    "toons/redsmile-marcus/assets/sfx/fb92c33fb7655cecfe90bed3b1257fa4.mp3": {
+      "size": 38913,
+      "uploadedAt": "2026-08-21T16:18:27.058Z"
+    },
+    "toons/redsmile-marcus/config.4e405ba0e29642bbcf72eeac6b125612.json": {
+      "size": 17127,
+      "uploadedAt": "2026-08-21T16:18:29.028Z"
     }
   }
 }

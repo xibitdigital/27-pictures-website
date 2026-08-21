@@ -510,6 +510,128 @@
           "audio": "assets/sfx/3b0efb96279e68de11ae3ad6e0db5ec3.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/150312e7fd9b4e02422f3bfe310693b8.webp",
+      "words": [
+        {
+          "x": 0.13,
+          "y": 0.09,
+          "variant": "burst",
+          "angle": -6,
+          "text": {
+            "en": "FWSH",
+            "it": "FWSH",
+            "de": "FWSH",
+            "fr": "FWSH"
+          },
+          "audio": "assets/sfx/b533514976b42e2179ae53abcc5b5b5f.mp3"
+        },
+        {
+          "x": 0.8,
+          "y": 0.06,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "angle": -3,
+          "text": {
+            "en": "No one about at this hour.",
+            "it": "Non c'è nessuno a quest'ora.",
+            "de": "Um diese Zeit ist niemand hier.",
+            "fr": "Personne à cette heure-ci."
+          },
+          "audio": "assets/sfx/130f7efe1162ecee41403700fbe03457.mp3"
+        },
+        {
+          "x": 0.22,
+          "y": 0.35,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "angle": -2,
+          "text": {
+            "en": "—can't—",
+            "it": "—non riesco—",
+            "de": "—ich kann nicht—",
+            "fr": "—j'peux pas—"
+          },
+          "audio": "assets/sfx/4f93aa1764389249a41cd885013aaba0.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.35,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "angle": -3,
+          "text": {
+            "en": "That's it.",
+            "it": "Ecco.",
+            "de": "So ist gut.",
+            "fr": "Voilà."
+          },
+          "audio": "assets/sfx/4e013a1743ea589cfb1950235be1efb4.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/e0d0930ae3887c863e62524920751ced.webp",
+      "words": [
+        {
+          "x": 0.82,
+          "y": 0.07,
+          "variant": "thought",
+          "tail": "bottom-left",
+          "angle": -2,
+          "text": {
+            "en": "I'm getting old.",
+            "it": "Sto invecchiando.",
+            "de": "Ich werde alt.",
+            "fr": "Je vieillis."
+          },
+          "audio": "assets/sfx/f1dba288ea84c4696780cf8f5cb0e45a.mp3"
+        },
+        {
+          "x": 0.8,
+          "y": 0.36,
+          "variant": "burst",
+          "size": 24,
+          "angle": 6,
+          "text": {
+            "en": "sssshhhkk",
+            "it": "sssshhhkk",
+            "de": "sssshhhkk",
+            "fr": "sssshhhkk"
+          },
+          "audio": "assets/sfx/faf355192fc52521f8effa249c49ea50.mp3"
+        },
+        {
+          "x": 0.2,
+          "y": 0.52,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "angle": -3,
+          "text": {
+            "en": "Shh.\nIt's quick.",
+            "it": "Shh.\nÈ veloce.",
+            "de": "Schh.\nEs geht schnell.",
+            "fr": "Chut.\nC'est rapide."
+          },
+          "audio": "assets/sfx/fb92c33fb7655cecfe90bed3b1257fa4.mp3"
+        },
+        {
+          "x": 0.2,
+          "y": 0.7,
+          "variant": "bubble",
+          "tail": "top",
+          "size": 20,
+          "angle": -2,
+          "text": {
+            "en": "Goodnight.",
+            "it": "Buonanotte.",
+            "de": "Gute Nacht.",
+            "fr": "Bonne nuit."
+          },
+          "audio": "assets/sfx/d0bc5e4c7556bb031939a1212a9bbad6.mp3"
+        }
+      ]
     }
   ]
 }

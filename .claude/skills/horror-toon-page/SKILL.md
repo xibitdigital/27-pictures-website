@@ -135,25 +135,68 @@ saved path.
 
 ## Generating (opt-in — never by default)
 
-Only when the user explicitly asks.
+Only when the user explicitly asks. **Two routes, and they are not
+interchangeable.**
+
+### ComfyUI — the one that produces a portrait plate
+
+`scripts/build-comfy-plate.py` turns the saved `.txt` into a ComfyUI graph. Use
+it for story plates:
+
+```bash
+python3 scripts/build-comfy-plate.py \
+  --prompt-file docs/story/<series>/prompts/page-<episode>-<slug>.txt \
+  --ref <char> --ref <char> --ref <prev-page> \
+  --prefix <toon>/page-<n> \
+  --out workflows/<series>-seedream.api.json
+# add --submit to queue it against $COMFY_URL (costs API credits)
+```
+
+- `--ref` takes an alias from `REFS` in that script, or a filename as ComfyUI
+  sees it in `input/`. **Order is the prompt's `Image N` order, previous page
+  last** — the V3 node's numbered slots *are* `Image 1 / Image 2 / Image 3`.
+- ComfyUI renames uploads to the sha256 of their bytes, so an `input/` filename
+  says nothing about what it holds. Add an alias to `REFS` rather than pasting a
+  hash into a command.
+- The graph renders **1472x2624 (3.86 MP)** and scales down to the 800x1424
+  plate: Seedream 4.5/5.0 reject anything under 3.68 MP, and a down-scale is
+  sharper than the old up-scale ever was.
+- It also flattens the colour cast in-graph (Rec.709 luma out of core nodes) and
+  saves the raw roll beside the flattened one, so `magick -colorspace Gray` is no
+  longer a separate step.
+- One graph per **series**, never a file per page: everything that differs
+  between pages is an argument.
+
+### The RunComfy model API — square only, so not for plates
+
+`scripts/generate-toon-page.py` cannot produce a portrait image. Measured
+2026-08-21: every reference portrait (sheets 1584x2816, previous page 800x1424),
+`aspect_ratio: "9:16"` sent explicitly, delivered file still **1024x1024**. The
+field is documented for other models on that API and is accepted without error
+for Seedream, but it never reaches the model. Cropping a square to 4:7 means a
+575x1024 window upscaled 1.39x, which visibly loses detail.
+
+Keep it for square work — character sheets, tests:
 
 ```bash
 set -a; source .env; set +a
 python3 scripts/generate-toon-page.py \
-  --prompt-file docs/story/<series>/prompts/page-<episode>-<slug>.txt \
-  --mode image-to-image \
-  --ref https://…/character-sheet.png \
-  --ref-asset toons/<toon>/assets/<previous-page-md5>.png
+  --prompt-file docs/story/<series>/prompts/character-<name>.txt \
+  --mode image-to-image --ref https://…/sheet.png
 ```
 
-- **Ref order on the command line is the `Image N` order in the prompt.** The
-  previous page's `--ref-asset` goes **last**, after the character sheets.
-- **Costs real money** — $0.05 per `1K` image. State cost before firing.
-- Refs must be **public HTTPS** (or `--ref-asset` via `VITE_ASSET_BASE`). Local-only files: user attaches in web UI.
-- The previous page is already on R2 if the episode is published, so it is
-  reachable with `--ref-asset`; character sheets in gitignored `references/` are
-  not, which is the usual reason a run has to happen in the web UI instead.
-- After success: `make add-image …` only if asked.
+- **Costs real money** — $0.05 per `1K` image, $0.10 at `2K`. State cost before firing.
+- Refs must be **public HTTPS** (or `--ref-asset` via `VITE_ASSET_BASE`).
+
+### Either way
+
+- **`identify` the delivered file before reviewing the art.** A plate that is not
+  taller than it is wide is the wrong output however good the drawing is; one
+  square roll got as far as being critiqued for its staging.
+- The `#` header of the prompt file is notes to the operator. `build-comfy-plate.py`
+  strips it; a web playground does not, and a roll went out with those notes
+  inside the prompt.
+- After success: `make add-image …` / `swap-toon-page.js` only if asked.
 
 ## Defaults (encode inside the prompt)
 

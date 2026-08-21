@@ -1,0 +1,525 @@
+{
+  "last_node_id": 17,
+  "last_link_id": 19,
+  "version": 0.4,
+  "extra": {
+    "note": "RED SMILE: Marcus page 8 (the lift throat grip) — Seedream i2i. Reference order is Image 1 Marcus sheet, Image 2 Halina sheet, Image 3 previous page; the ImageBatch chain preserves it. Prompt source: docs/story/red-smile/prompts/page-09-lift-throat.txt Seedream returns a faint colour cast; nodes 8-15 flatten it to Rec.709 grey in-graph, so the saved plate is already neutral and needs no magick pass."
+  },
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "title": "Image 1 — Marcus sheet",
+      "pos": [40, 40],
+      "size": [320, 314],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [1],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": ["marcus-sheet.png", "image"]
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "title": "Image 2 — Halina sheet",
+      "pos": [40, 400],
+      "size": [320, 314],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [2],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": ["halina-sheet.png", "image"]
+    },
+    {
+      "id": 3,
+      "type": "LoadImage",
+      "title": "Image 3 — previous page (Marcus p7)",
+      "pos": [40, 760],
+      "size": [320, 314],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [4],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": ["redsmile-marcus-page-07.png", "image"]
+    },
+    {
+      "id": 4,
+      "type": "ImageBatch",
+      "title": "Batch: sheets",
+      "pos": [400, 120],
+      "size": [220, 46],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image1",
+          "type": "IMAGE",
+          "link": 1
+        },
+        {
+          "name": "image2",
+          "type": "IMAGE",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [3],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageBatch"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 5,
+      "type": "ImageBatch",
+      "title": "Batch: + previous page",
+      "pos": [400, 220],
+      "size": [220, 46],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image1",
+          "type": "IMAGE",
+          "link": 3
+        },
+        {
+          "name": "image2",
+          "type": "IMAGE",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [5],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageBatch"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 6,
+      "type": "ByteDanceSeedreamNode",
+      "title": "Seedream — RED SMILE Marcus p8 (i2i)",
+      "pos": [680, 40],
+      "size": [520, 620],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [7, 10, 13, 18],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ByteDanceSeedreamNode"
+      },
+      "widgets_values": [
+        "seedream 5.0 lite",
+        "FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text, letters or numbers anywhere in the art.\n\nPIN from references: keep the exact face, build and suit of the man in Image 1 - late 30s, tall, lean, long even face, dark side-parted hair, tailored dark suit, dark tie - WITHOUT his eyeglasses, and BOTH EYES SOLID BLACK in every panel he appears in. Keep the exact face and costume of the woman in Image 2 - mid 50s, heavy-set, broad weathered face, deep lines, dark-going-grey hair in a low bun, dark tunic under a knee-length tabard, blank badge, one blue glove, flat rubber-soled shoes. Keep the lift car, the corridor and the B&W horror ink of Image 3. Do not redesign either person.\n\nSTYLE: Dark psychological horror ink. Cold metal, hard light, crushed shadow. Not cyberpunk neon, not photoreal 3D.\n\nTOP (~35%): Wide of the lift car interior at level -1, doors open on the black corridor. He has crossed the corridor and is INSIDE the car, within arm's reach of her - upright, level, arms controlled, jacket undisturbed, not a hair moved - while the doorway and corridor behind him STREAK WITH HARD MOTION BLUR, the only thing in the panel that shows the speed. A hard ceiling light catches his face: calm, both eyes solid black, a small tight grin. She is flattened against the back wall of the car, chin up, the spray bottle falling out of her open hand.\n\nMIDDLE (~30%): Tight on the two of them from her side. HIS RIGHT HAND IS CLOSED AROUND HER THROAT, fingers wrapped, thumb along her jawline, his arm straight and relaxed - no strain anywhere in him. Both her hands grip his forearm. Her face is caught mid-breath: mouth open, eyes stretched wide, cords standing in her neck, one loose strand stuck to her temple. His face at the edge of frame, black eyes on hers, the same small grin.\n\nBOTTOM (~35%): Extreme close-up, low to the car floor. HER FEET ARE OFF THE GROUND - both flat rubber-soled shoes hanging in the air, toes pointed down, a clear hand's width of dark steel floor beneath them, her trouser hems slack. The fallen spray bottle lies on its side nearby. Behind, the bright vertical seam of the open doors and the black corridor beyond. Nothing of him in frame but one trouser leg, planted and still.\n\nSCALE: one human scale. She is average height and heavy-set, he is a head taller; the hand at her throat is a normal man's hand, no elongation, no claws. The gap under her shoes is a hand's width, not a metre - she is held up, not levitating.\n\nANATOMY: exactly two arms, two legs and five fingers per hand, thumbs on the correct side, correct knuckle spacing on the gripping hand. Horizontal panels only, no empty balloon shapes.\n\nCHANGE: only the scene described above; preserve both identities, the lift and corridor, and the ink style from the pins.",
+        "Custom",
+        1472,
+        2624,
+        "disabled",
+        1,
+        0,
+        "fixed",
+        false,
+        true
+      ]
+    },
+    {
+      "id": 7,
+      "type": "SaveImage",
+      "title": "Save plate (flattened)",
+      "pos": [1980, 40],
+      "size": [400, 450],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 19
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": ["redsmile-marcus/page-08"]
+    },
+    {
+      "id": 8,
+      "type": "ImageToMask",
+      "title": "Split — red",
+      "pos": [1240, 40],
+      "size": [210, 58],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [8],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageToMask"
+      },
+      "widgets_values": ["red"]
+    },
+    {
+      "id": 9,
+      "type": "ImageToMask",
+      "title": "Split — green",
+      "pos": [1240, 160],
+      "size": [210, 58],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [11],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageToMask"
+      },
+      "widgets_values": ["green"]
+    },
+    {
+      "id": 10,
+      "type": "ImageToMask",
+      "title": "Split — blue",
+      "pos": [1240, 280],
+      "size": [210, 58],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [14],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageToMask"
+      },
+      "widgets_values": ["blue"]
+    },
+    {
+      "id": 11,
+      "type": "MaskToImage",
+      "title": "Red as image",
+      "pos": [1470, 40],
+      "size": [210, 46],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [9],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MaskToImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 12,
+      "type": "MaskToImage",
+      "title": "Green as image",
+      "pos": [1470, 160],
+      "size": [210, 46],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [12],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MaskToImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 13,
+      "type": "MaskToImage",
+      "title": "Blue as image",
+      "pos": [1470, 280],
+      "size": [210, 46],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [15],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MaskToImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 14,
+      "type": "ImageBlend",
+      "title": "Luma — 0.2292 R + 0.7708 G",
+      "pos": [1700, 60],
+      "size": [240, 106],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image1",
+          "type": "IMAGE",
+          "link": 9
+        },
+        {
+          "name": "image2",
+          "type": "IMAGE",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [16],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageBlend"
+      },
+      "widgets_values": [0.7708, "normal"]
+    },
+    {
+      "id": 15,
+      "type": "ImageBlend",
+      "title": "Luma — + 0.0722 B (Rec.709 grey)",
+      "pos": [1700, 220],
+      "size": [240, 106],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image1",
+          "type": "IMAGE",
+          "link": 16
+        },
+        {
+          "name": "image2",
+          "type": "IMAGE",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [17],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageBlend"
+      },
+      "widgets_values": [0.0722, "normal"]
+    },
+    {
+      "id": 16,
+      "type": "SaveImage",
+      "title": "Save raw (pre-flatten)",
+      "pos": [1980, 520],
+      "size": [340, 380],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 18
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": ["redsmile-marcus/page-08-raw"]
+    },
+    {
+      "id": 17,
+      "type": "ImageScale",
+      "title": "Down to 800x1424 (plate size)",
+      "pos": [1700, 380],
+      "size": [240, 130],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [19],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": ["lanczos", 800, 1424, "disabled"]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 4, 0, "IMAGE"],
+    [2, 2, 0, 4, 1, "IMAGE"],
+    [3, 4, 0, 5, 0, "IMAGE"],
+    [4, 3, 0, 5, 1, "IMAGE"],
+    [5, 5, 0, 6, 0, "IMAGE"],
+    [7, 6, 0, 8, 0, "IMAGE"],
+    [8, 8, 0, 11, 0, "MASK"],
+    [10, 6, 0, 9, 0, "IMAGE"],
+    [11, 9, 0, 12, 0, "MASK"],
+    [13, 6, 0, 10, 0, "IMAGE"],
+    [14, 10, 0, 13, 0, "MASK"],
+    [9, 11, 0, 14, 0, "IMAGE"],
+    [12, 12, 0, 14, 1, "IMAGE"],
+    [16, 14, 0, 15, 0, "IMAGE"],
+    [15, 13, 0, 15, 1, "IMAGE"],
+    [18, 6, 0, 16, 0, "IMAGE"],
+    [17, 15, 0, 17, 0, "IMAGE"],
+    [19, 17, 0, 7, 0, "IMAGE"]
+  ],
+  "groups": [],
+  "config": {}
+}
