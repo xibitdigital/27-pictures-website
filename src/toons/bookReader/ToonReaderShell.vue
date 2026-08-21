@@ -7,13 +7,13 @@ import { computed, nextTick, onMounted, onUnmounted, ref, toRef, watch } from "v
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import CoverGuideDialog from "./CoverGuideDialog.vue";
-import { ReaderTopBar, ReadingProgress } from "./chrome";
+import { AutoReadBand, ReaderTopBar, ReadingProgress } from "./chrome";
 import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
-import { deepLinkReleased, parsePageQuery } from "./pageQuery";
+import { deepLinkReleased, parsePageQuery, visiblePageNum, writePageQuery, type SlotBox } from "./pageQuery";
 import VerticalStrip from "./VerticalStrip.vue";
 import AutoReadPrompt from "./captions/AutoReadPrompt.vue";
-import { provideAutoRead } from "./captions/useAutoRead";
+import { FOCUS_BAND_END, provideAutoRead } from "./captions/useAutoRead";
 import { writeProgress } from "./readingProgress";
 import { provideToonCaptions } from "./captions/useToonCaptions";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
@@ -45,6 +45,16 @@ const props = withDefaults(
      */
     bookOptions?: ToonShellBookOptions;
     mobileDefault?: boolean;
+    /**
+     * Which view a reader opens in. Defaults to `"scroll"` at every width.
+     *
+     * A plate is a single image: in book mode panel 3 is on screen the moment
+     * panel 1 is, so the page's own payoff is spoiled before the reader gets
+     * there. The strip is what withholds it — the fold is the reveal. Pass
+     * `"book"` for a toon whose pages are composed as spreads rather than as
+     * top-to-bottom beats.
+     */
+    defaultView?: "scroll" | "book";
     /** localStorage key for caption language; defaults to `<altPrefix>-toon-lang`. */
     captionLangStorageKey?: string;
     /** Silence between auto-read caption clips, in ms. */
@@ -57,6 +67,7 @@ const props = withDefaults(
   }>(),
   {
     mobileDefault: true,
+    defaultView: "scroll",
     autoReadGapMs: 600,
   }
 );
@@ -106,6 +117,7 @@ const highlightPulse = computed(() => engine.state.highlightPulse);
 
 const viewMode = useViewMode({
   mobileDefault: props.mobileDefault,
+  defaultVertical: props.defaultView !== "book",
   reader: readerEl,
   loadPages: loadSharedPages,
   onEnterScroll: () => emit("enter-scroll"),
@@ -266,7 +278,6 @@ function maybeShowScrollHowTo(): void {
   if (
     !shouldShowScrollHowTo({
       seen: hasSeenScrollHowTo() || scrollHowToOpen.value,
-      mobile: isMobileUi.value,
       vertical: viewMode.isVertical.value,
       guideOpen: guideOpen.value,
       promptOpen: autoRead.promptOpen.value,
@@ -440,9 +451,30 @@ const readingProgress = computed(() => (viewMode.isVertical.value ? scrollProgre
 const readingProgressLabel = computed(() => (viewMode.isVertical.value ? "" : engine.state.indicator));
 
 /**
- * Remember the page locally. The engine already writes ?page=<n> as the spread
- * changes, so that query is the one place both view modes agree on what page
- * the reader is looking at — no second source to keep in step.
+ * Mirror the scrolled position into `?page=N`.
+ *
+ * The flip engine writes the param as the spread changes, but the strip has no
+ * view index, so in scroll mode nothing wrote it at all: the address bar kept
+ * whatever page the document was loaded with. That also froze `rememberPosition`
+ * — it reads the query — so "continue reading" on /toons/ never advanced either.
+ * Now that scroll is the default view, both were broken for every reader.
+ */
+function syncScrollPageQuery(): void {
+  if (!viewMode.isVertical.value) return;
+  const boxes: SlotBox[] = [];
+  for (const slot of stripSlots.value) {
+    if (!slot) continue;
+    const r = slot.getBoundingClientRect();
+    boxes.push({ pageNum: Number.parseInt(slot.dataset.pageNum ?? "", 10), top: r.top, bottom: r.bottom });
+  }
+  const page = visiblePageNum(boxes, window.innerHeight / 2);
+  if (page != null) writePageQuery(page);
+}
+
+/**
+ * Remember the page locally. Both view modes agree on `?page=<n>` — the engine
+ * writes it as the spread changes, `syncScrollPageQuery` as the strip moves —
+ * so that query stays the single source, with no second one to keep in step.
  */
 function rememberPosition(): void {
   if (!props.toonId) return;
@@ -457,6 +489,7 @@ watch(() => engine.state.viewIndex, rememberPosition);
 
 const onWindowScroll = throttleTrailing(() => {
   syncScrollProgress();
+  syncScrollPageQuery();
   rememberPosition();
   noticeScrollAwayFromDeepLink();
   notifyScrollHowToScroll();
@@ -597,6 +630,10 @@ defineExpose<ToonReaderShellExpose>({
   />
 
   <ScrollHowToHint :open="scrollHowToOpen" @dismiss="dismissScrollHowTo" />
+
+  <!-- Where a caption starts speaking. Scroll mode only: book mode's band is
+       the whole viewport, so there is no line to draw. -->
+  <AutoReadBand v-if="viewMode.isVertical.value && autoRead.unlocked.value" :band-end="FOCUS_BAND_END" />
 
   <main class="reader" id="main-content" ref="readerEl" role="main">
     <BookSurface

@@ -14,6 +14,16 @@ export function prefersMobileScroll(): boolean {
 export interface UseViewModeOptions {
   /** Default true — start in scroll mode under 768px. */
   mobileDefault?: boolean;
+  /**
+   * Start in scroll mode at **every** width, not just under 768px.
+   *
+   * This is the default for the toons: a plate is one image, so book mode puts
+   * the payoff panel on screen at the same instant as the setup panel. The
+   * strip is the reveal mechanism — the fold hides panel 3 until the reader
+   * scrolls to it. Book mode stays one click away for readers who want the
+   * spread.
+   */
+  defaultVertical?: boolean;
   onEnterBook?: () => void;
   onEnterScroll?: () => void;
   /** Optional reader element to scroll to top when entering vertical mode. */
@@ -79,7 +89,7 @@ export function useViewMode(opts: UseViewModeOptions = {}): UseViewModeApi {
   }
 
   onMounted(() => {
-    if (mobileDefault && prefersMobileScroll()) {
+    if (opts.defaultVertical || (mobileDefault && prefersMobileScroll())) {
       void setVertical(true);
     }
   });

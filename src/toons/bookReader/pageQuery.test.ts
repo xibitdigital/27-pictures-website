@@ -6,6 +6,8 @@ import {
   resetPageQueryCache,
   deepLinkReleased,
   DEEP_LINK_RELEASE_PX,
+  visiblePageNum,
+  type SlotBox,
 } from "./pageQuery";
 
 /** Put the jsdom window on a given URL without touching the module cache. */
@@ -119,5 +121,46 @@ describe("deepLinkReleased", () => {
 
   it("stays put while nothing has been applied yet", () => {
     expect(deepLinkReleased(null, 5000)).toBe(false);
+  });
+});
+
+describe("visiblePageNum", () => {
+  const strip = (heights: number[], offset: number): SlotBox[] => {
+    let top = offset;
+    return heights.map((h, i) => {
+      const box = { pageNum: i + 1, top, bottom: top + h };
+      top += h + 16; // strip gap
+      return box;
+    });
+  };
+
+  it("returns the slot that owns the middle of the viewport", () => {
+    // Three 1200px plates, strip scrolled so plate 2 straddles the centre.
+    expect(visiblePageNum(strip([1200, 1200, 1200], -1300), 400)).toBe(2);
+  });
+
+  it("is not fooled by a plate taller than the viewport", () => {
+    // Plate 1 starts above the fold and still covers the centre line.
+    expect(visiblePageNum(strip([1200, 1200], -200), 400)).toBe(1);
+  });
+
+  it("answers with the page above when the centre lands in the gutter", () => {
+    const slots: SlotBox[] = [
+      { pageNum: 1, top: -600, bottom: 390 },
+      { pageNum: 2, top: 410, bottom: 1400 },
+    ];
+    expect(visiblePageNum(slots, 400)).toBe(1);
+  });
+
+  it("returns null before the first plate reaches the centre", () => {
+    expect(visiblePageNum(strip([1200], 500), 400)).toBe(null);
+  });
+
+  it("skips slots with no page number", () => {
+    const slots: SlotBox[] = [
+      { pageNum: Number.NaN, top: -100, bottom: 500 },
+      { pageNum: 2, top: 516, bottom: 1700 },
+    ];
+    expect(visiblePageNum(slots, 400)).toBe(null);
   });
 });

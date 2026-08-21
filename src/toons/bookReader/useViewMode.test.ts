@@ -88,6 +88,20 @@ describe("useViewMode", () => {
     expect(vm.pages.value).toEqual(["assets/a.jpg", "assets/b.jpg", "assets/c.jpg"]);
   });
 
+  it("starts vertical at desktop widths when defaultVertical is set", async () => {
+    // matchMedia is stubbed to matches:false in this describe — i.e. desktop.
+    const vm = withSetup(() => useViewMode({ defaultVertical: true, configUrl: "config.json" }));
+    await nextTick();
+    expect(vm.isVertical.value).toBe(true);
+    expect(document.body.classList.contains("view-vertical")).toBe(true);
+  });
+
+  it("stays in book mode at desktop widths without defaultVertical", async () => {
+    const vm = withSetup(() => useViewMode({ configUrl: "config.json" }));
+    await nextTick();
+    expect(vm.isVertical.value).toBe(false);
+  });
+
   it("loads empty list when config has no pages", async () => {
     vi.stubGlobal(
       "fetch",

@@ -85,6 +85,33 @@ export function writePageQuery(pageNum: number | null): string | null {
   return next;
 }
 
+/** One strip slot's vertical extent in viewport coordinates. */
+export interface SlotBox {
+  pageNum: number;
+  top: number;
+  bottom: number;
+}
+
+/**
+ * Which page a vertical strip is showing: the slot that owns `mid` (the middle
+ * of the viewport). Plates are taller than a laptop viewport, so "the slot at
+ * the top" is wrong as soon as one page fills the screen — and between two
+ * plates, in the gutter, the answer has to be the one above rather than none.
+ *
+ * Scroll mode has no engine view index, so this is the only source for
+ * `?page=`; the book engine mirrors its spread instead.
+ */
+export function visiblePageNum(slots: SlotBox[], mid: number): number | null {
+  let current: number | null = null;
+  for (const s of slots) {
+    if (!Number.isFinite(s.pageNum)) continue;
+    if (s.top <= mid && s.bottom >= mid) return s.pageNum;
+    if (s.top > mid) break;
+    current = s.pageNum;
+  }
+  return current;
+}
+
 /**
  * Plate reflow nudges the strip by a few px as lazy images decode; a swipe
  * moves it by far more. Above this, the reader moved the page, not the reader

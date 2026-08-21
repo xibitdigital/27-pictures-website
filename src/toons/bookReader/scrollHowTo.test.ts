@@ -3,7 +3,6 @@ import { SCROLL_HOWTO_KEY, hasSeenScrollHowTo, markScrollHowToSeen, shouldShowSc
 
 const ready = {
   seen: false,
-  mobile: true,
   vertical: true,
   guideOpen: false,
   promptOpen: false,
@@ -20,9 +19,8 @@ describe("scrollHowTo", () => {
     expect(hasSeenScrollHowTo()).toBe(true);
   });
 
-  it("shows immediately on a mobile vertical strip", () => {
+  it("shows on any vertical strip, desktop included", () => {
     expect(shouldShowScrollHowTo(ready)).toBe(true);
-    expect(shouldShowScrollHowTo({ ...ready, mobile: false })).toBe(false);
     expect(shouldShowScrollHowTo({ ...ready, vertical: false })).toBe(false);
     expect(shouldShowScrollHowTo({ ...ready, seen: true })).toBe(false);
   });

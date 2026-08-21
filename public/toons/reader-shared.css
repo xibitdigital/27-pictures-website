@@ -1310,6 +1310,16 @@ a.sound-prompt__btn {
   padding: 0 0 0.5rem;
 }
 
+/* Scroll mode is the default on desktop too, so the fallback cap has to suit a
+   wide viewport: 720px on a 1440px screen reads as an accident rather than a
+   column. Toons that declare --strip-width keep it — including the ones that
+   cap at their plate's native width so a desktop strip never upscales. */
+@media (min-width: 1024px) {
+  .vertical-strip {
+    width: var(--strip-width, min(92vw, 900px));
+  }
+}
+
 /* Inner wrapper from VerticalStrip.vue — pass flex layout through */
 .vertical-strip .vertical-strip-pages {
   display: flex;
@@ -1913,6 +1923,73 @@ body.single-page .flip-page.flipping.from-left {
 
 /* One-shot mobile how-to, shown as soon as the strip is readable. Sits above
    the 4px progress bar so it does not cover a caption in the focus band. */
+/* ── Auto-read band marks (.autoread-band) ──
+   A caption speaks when its anchor crosses into the top FOCUS_BAND_END of the
+   viewport (captions/visibility.ts). Nothing showed that line, so lines
+   started talking with no visible cause. Two hairlines flank the strip at it.
+
+   `dvh`, not `vh`: the band is measured against `visualViewport.height`, which
+   is what dvh tracks — with vh the marks drift by the height of the mobile
+   toolbars.
+
+   The inset is clamped so each mark keeps ~48px of room: on desktop they sit
+   in the gutter outside the strip, on a phone (98vw strip) they ride just
+   inside the plate edge instead of off-screen. */
+.autoread-band {
+  position: fixed;
+  top: calc(var(--autoread-band-end, 0.8) * 100dvh);
+  left: 0;
+  right: 0;
+  height: 0;
+  /* above .nav-zone (30) and the folio (33), below the word overlay (35) */
+  z-index: 34;
+  pointer-events: none;
+}
+
+.autoread-band-mark {
+  --autoread-band-inset: calc(min(var(--strip-width, min(98vw, 720px)), 100vw - 112px) / 2 + 8px);
+  position: absolute;
+  top: -1.5px;
+  width: 56px;
+  height: 3px;
+  border-radius: 2px;
+  /* A 2px 50%-opacity hairline vanished against a dark plate and the letterbox
+     either side of it. The mark has to survive both, so it carries its own
+     glow rather than relying on contrast with whatever is behind it. */
+  opacity: 0.95;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--red-smile) 75%, transparent));
+}
+
+/* Solid dot at the inner tip — the eye catches a point long before it catches
+   a 3px line, and it marks exactly where the threshold sits. */
+.autoread-band-mark::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red-smile);
+}
+
+.autoread-band-mark:first-child {
+  right: calc(50% + var(--autoread-band-inset));
+  background: linear-gradient(to left, var(--red-smile) 35%, transparent);
+}
+
+.autoread-band-mark:first-child::after {
+  right: -2px;
+}
+
+.autoread-band-mark:last-child {
+  left: calc(50% + var(--autoread-band-inset));
+  background: linear-gradient(to right, var(--red-smile) 35%, transparent);
+}
+
+.autoread-band-mark:last-child::after {
+  left: -2px;
+}
+
 .scroll-howto {
   position: fixed;
   left: 50%;
