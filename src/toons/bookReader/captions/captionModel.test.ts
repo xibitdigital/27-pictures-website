@@ -7,6 +7,7 @@ import {
   resolveVariant,
   toFraction,
   type CaptionContext,
+  autoWrapCh,
 } from "./captionModel";
 import type { WordEntry } from "../types";
 
@@ -133,5 +134,66 @@ describe("readingOrder", () => {
       { id: "top-left", x: 0.2, y: 0.12 },
     ];
     expect(readingOrder(items).map((i) => i.id)).toEqual(["top-left", "top-right", "bottom"]);
+  });
+});
+
+describe("config defaults (a lean word entry)", () => {
+  const ctx = {
+    lang: "en" as const,
+    pageNum: 1,
+    designWidth: 800,
+    designHeight: 1424,
+    designScale: 1,
+    fontFamily: "Bangers, cursive",
+  };
+
+  it("renders a balloon from position, variant, tail and text alone", () => {
+    const c = buildCaption(
+      { x: 0.2, y: 0.15, variant: "bubble", tail: "top-left", text: { en: "No signal." } },
+      0,
+      ctx
+    )!;
+    expect(c).not.toBeNull();
+    expect(c.tail).toBe("top-left");
+    // Size, colour and wrap width all come from the code now.
+    expect(c.style["font-size"]).toBe("22px");
+    expect(c.textStyle.color).toBe("#111111");
+    expect(c.style["max-width"]).toBe("14ch");
+    // Padding is derived from the bubble style, never authored per caption.
+    expect(c.textStyle.padding).toBeTruthy();
+  });
+
+  it("draws onomatopoeia larger than speech without being told", () => {
+    const burst = buildCaption({ x: 0.2, y: 0.4, variant: "burst", text: { en: "DING" } }, 0, ctx)!;
+    const line = buildCaption({ x: 0.2, y: 0.4, variant: "bubble", text: { en: "DING" } }, 0, ctx)!;
+    expect(burst.style["font-size"]).toBe("28px");
+    expect(line.style["font-size"]).toBe("22px");
+  });
+
+  it("still obeys an explicit size and maxWidth", () => {
+    const c = buildCaption(
+      { x: 0.2, y: 0.4, variant: "bubble", size: 40, maxWidth: 0.25, text: { en: "Loud." } },
+      0,
+      ctx
+    )!;
+    expect(c.style["font-size"]).toBe("40px");
+    expect(c.style["max-width"]).toBe("25%");
+  });
+});
+
+describe("autoWrapCh", () => {
+  it("keeps a long line to about two lines", () => {
+    const text = "Car park, then the street and I'll be safe.";
+    expect(autoWrapCh(text)).toBe(22);
+    expect(Math.ceil(text.length / autoWrapCh(text))).toBe(2);
+  });
+
+  it("never wraps narrower than the longest word", () => {
+    // Would otherwise compute 14 and break the word across lines.
+    expect(autoWrapCh("Unterschriftenmappe")).toBe(19);
+  });
+
+  it("caps the widest balloon so a long caption is not a strip", () => {
+    expect(autoWrapCh("x".repeat(20) + " " + "y".repeat(20) + " " + "z".repeat(20))).toBeLessThanOrEqual(28);
   });
 });

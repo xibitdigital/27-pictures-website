@@ -126,6 +126,37 @@ export function imageContentBox(img: HTMLImageElement): {
   return { left, top, width, height, scale };
 }
 
+/**
+ * Type size when the config does not say. Onomatopoeia are drawn larger than
+ * speech by convention, and HUD readouts a shade smaller than a voice.
+ */
+export function defaultSize(variant: string): number {
+  if (variant === "burst") return 28;
+  if (variant === "ai" || variant === "badai") return 20;
+  if (variant === "credit") return 18;
+  return 22;
+}
+
+/**
+ * Wrap width for a balloon that does not declare one, in `ch` — the font's own
+ * character width, so it tracks the type size and the face instead of a
+ * fraction of the plate.
+ *
+ * A balloon wants roughly two lines: wide enough that a short line never breaks,
+ * narrow enough that a long one is not a strip across the page. Half the
+ * character count lands there, clamped at both ends, and never narrower than
+ * the longest word or that word would break mid-letter.
+ *
+ * It is a *max*-width, so short text still shrinks to its own content — which is
+ * what makes the box self-sizing and the `maxWidth` on every config entry
+ * redundant.
+ */
+export function autoWrapCh(text: string): number {
+  const len = text.replace(/\s+/g, " ").trim().length;
+  const longestWord = text.split(/\s+/).reduce((n, word) => Math.max(n, word.length), 0);
+  return Math.max(Math.min(Math.max(14, Math.ceil(len / 2)), 28), longestWord);
+}
+
 /** One word entry → the props WordCaption.vue renders (null = nothing to show). */
 export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): CaptionModel | null {
   const text = resolveText(w, ctx.lang);
@@ -134,9 +165,9 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
   const x = toFraction(w.x, ctx.designWidth);
   const y = toFraction(w.y, ctx.designHeight);
   const align = w.align || "center";
-  const sizePx = (w.size != null ? Number(w.size) : 22) * ctx.designScale;
-  const maxW = w.maxWidth != null ? (w.maxWidth > 1 ? w.maxWidth / ctx.designWidth : w.maxWidth) * 100 : null;
   const variant = resolveVariant(w);
+  const sizePx = (w.size != null ? Number(w.size) : defaultSize(variant)) * ctx.designScale;
+  const maxW = w.maxWidth != null ? (w.maxWidth > 1 ? w.maxWidth / ctx.designWidth : w.maxWidth) * 100 : null;
   const isBubble =
     variant === "bubble" || variant === "thought" || variant === "ai" || variant === "badai" || variant === "burst";
   const isCredit = variant === "credit";
@@ -169,7 +200,9 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
   };
   // Credit color is owned by .jax-word--credit CSS (end-card readable).
   if (!isBubble && !isCredit) style.color = w.color || "#fff";
-  if (maxW != null) style["max-width"] = `${maxW}%`;
+  // An explicit maxWidth is a fraction of the plate; the automatic one is in
+  // `ch`, so it keeps its shape when the same caption is read at another size.
+  style["max-width"] = maxW != null ? `${maxW}%` : `${autoWrapCh(text)}ch`;
   if (isCredit) style["text-transform"] = "none";
   // Bubbles (and any word with SFX) must capture hits — the layer is
   // pointer-events:none so stray clicks fall through to .nav-zone (page turn).

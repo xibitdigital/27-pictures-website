@@ -54,6 +54,14 @@ export interface BubbleStyle {
 export const BUBBLE_STROKE_WIDTH = 5;
 
 /**
+ * House fill opacity for every balloon: lettering must never sit on flat white
+ * over a plate. Every config in the repo carried `"opacity": 0.75` on every
+ * single word to get this — it is the style, so it is the default, and a config
+ * only says anything when it wants something else.
+ */
+export const BUBBLE_FILL_OPACITY = 0.75;
+
+/**
  * Default chrome for organic speech balloons (`variant: "bubble"`).
  * Config may omit `bubble` entirely; only set overrides (e.g. tail) when needed.
  */
@@ -454,8 +462,9 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
     .toLowerCase();
   const isClean = shape === "clean" || shape === "frame" || shape === "rect";
   // Fill opacity only (0–1). Accept 0–1 or 0–100 (e.g. 80 → 0.8).
-  let opacity = 1;
-  const rawOp = b.opacity != null ? Number(b.opacity) : w.bubbleOpacity != null ? Number(w.bubbleOpacity) : 1;
+  let opacity = BUBBLE_FILL_OPACITY;
+  const rawOp =
+    b.opacity != null ? Number(b.opacity) : w.bubbleOpacity != null ? Number(w.bubbleOpacity) : BUBBLE_FILL_OPACITY;
   if (Number.isFinite(rawOp)) {
     opacity = rawOp > 1 ? Math.min(1, rawOp / 100) : Math.max(0, Math.min(1, rawOp));
   }

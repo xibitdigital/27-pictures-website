@@ -33,66 +33,57 @@
         {
           "x": 0.4,
           "y": 0.15,
-          "align": "center",
           "size": 65,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -12,
-          "maxWidth": 0.45,
           "text": {
             "en": "CLANK",
             "it": "CLANK",
             "de": "KLIRR",
             "fr": "CLANG"
           },
-          "audio": "assets/sfx/bfc3c9d9f19ff8b5fcc298517c0fc757.mp3"
+          "audio": "assets/sfx/bfc3c9d9f19ff8b5fcc298517c0fc757.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.35,
           "y": 0.32,
-          "align": "center",
           "size": 51,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": 14,
-          "maxWidth": 0.4,
           "text": {
             "en": "WHOOSH",
             "it": "SWISH",
             "de": "WUSCH",
             "fr": "FOUICH"
           },
-          "audio": "assets/sfx/bb54ccad931486e6dd0c90be2199f6d9.mp3"
+          "audio": "assets/sfx/bb54ccad931486e6dd0c90be2199f6d9.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.82,
           "y": 0.78,
-          "align": "center",
           "size": 57,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -8,
-          "maxWidth": 0.4,
           "text": {
             "en": "HRAA!",
             "it": "HRAA!",
             "de": "HRAA!",
             "fr": "HRAA!"
           },
-          "audio": "assets/sfx/bf324e90c8f4570f12f45168b7c795cb.mp3"
+          "audio": "assets/sfx/bf324e90c8f4570f12f45168b7c795cb.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.28,
           "y": 0.87,
-          "align": "center",
-          "size": 51,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 51,
           "angle": -3,
-          "maxWidth": 0.34,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -117,67 +108,58 @@
         {
           "x": 0.22,
           "y": 0.08,
-          "align": "center",
           "size": 63,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -18,
-          "maxWidth": 0.4,
           "text": {
             "en": "KRAKOOM",
             "it": "KRAKOOM",
             "de": "KRAKOOM",
             "fr": "KRAKOOM"
           },
-          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3"
+          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.52,
           "y": 0.11,
-          "align": "center",
           "size": 43,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": 22,
-          "maxWidth": 0.35,
           "text": {
             "en": "WHOOSH",
             "it": "SWISH",
             "de": "WUSCH",
             "fr": "FOUICH"
           },
-          "audio": "assets/sfx/bb54ccad931486e6dd0c90be2199f6d9.mp3"
+          "audio": "assets/sfx/bb54ccad931486e6dd0c90be2199f6d9.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.48,
           "y": 0.67,
-          "align": "center",
           "size": 72,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.4,
           "text": {
             "en": "THUD",
             "it": "BUM",
             "de": "BUMM",
             "fr": "BADA"
           },
-          "audio": "assets/sfx/f8bc6a50e39ccc7ad518c1e0494a3bdb.mp3"
+          "audio": "assets/sfx/f8bc6a50e39ccc7ad518c1e0494a3bdb.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.78,
           "y": 0.38,
-          "align": "center",
-          "size": 30,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 30,
           "angle": -5,
           "scale": 1.15,
-          "maxWidth": 0.36,
           "text": {
             "en": "Anybody\nhome?",
             "it": "C'è\nnessuno?",
@@ -189,12 +171,9 @@
         {
           "x": 0.2,
           "y": 0.48,
-          "align": "center",
-          "size": 26,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 26,
           "angle": 2,
-          "maxWidth": 0.32,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -214,13 +193,10 @@
         {
           "x": 0.28,
           "y": 0.88,
-          "align": "center",
-          "size": 28,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 28,
           "angle": -3,
           "scale": 1.1,
-          "maxWidth": 0.28,
           "text": {
             "en": "I see you.",
             "it": "Ti vedo.",
@@ -232,31 +208,26 @@
         {
           "x": 0.74,
           "y": 0.84,
-          "align": "center",
           "size": 48,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": 12,
-          "maxWidth": 0.38,
           "text": {
             "en": "KRR-CHUNK",
             "it": "CLACK",
             "de": "KLACK",
             "fr": "CLAC"
           },
-          "audio": "assets/sfx/0cbed7807e3ae79426edd37fd3ae49cc.mp3"
+          "audio": "assets/sfx/0cbed7807e3ae79426edd37fd3ae49cc.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.78,
           "y": 0.9,
-          "align": "center",
-          "size": 34,
           "variant": "burst",
-          "color": "#111111",
+          "size": 34,
           "angle": 6,
           "scale": 1.35,
-          "maxWidth": 0.32,
           "text": {
             "en": "Let's dance.",
             "it": "Balliamo.",
@@ -273,49 +244,42 @@
         {
           "x": 0.72,
           "y": 0.14,
-          "align": "center",
           "size": 39,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 6,
           "angle": 10,
-          "maxWidth": 0.3,
           "text": {
             "en": "FWOOSH",
             "it": "SWISH",
             "de": "WUSCH",
             "fr": "FOUICH"
           },
-          "audio": "assets/sfx/ab547e07037981d8f305302b36c0f8da.mp3"
+          "audio": "assets/sfx/ab547e07037981d8f305302b36c0f8da.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 6
         },
         {
           "x": 0.78,
           "y": 0.42,
-          "align": "center",
           "size": 45,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": -6,
-          "maxWidth": 0.32,
           "text": {
             "en": "GRRRH",
             "it": "GRRRH",
             "de": "GRRRH",
             "fr": "GRRRH"
           },
-          "audio": "assets/sfx/178e115a531a778cdc6fa0de4c083576.mp3"
+          "audio": "assets/sfx/178e115a531a778cdc6fa0de4c083576.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.28,
           "y": 0.6,
-          "align": "center",
-          "size": 35,
           "variant": "burst",
-          "color": "#111111",
+          "size": 35,
           "angle": -4,
           "scale": 1.8,
-          "maxWidth": 0.3,
           "text": {
             "en": "Coming\nto get\nyou!",
             "it": "Sto\narrivando\nper te!",
@@ -327,20 +291,18 @@
         {
           "x": 0.52,
           "y": 0.95,
-          "align": "center",
           "size": 65,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 10,
           "angle": -14,
-          "maxWidth": 0.45,
           "text": {
             "en": "CRAAASH",
             "it": "CRAAASH",
             "de": "KRACH",
             "fr": "CRAAASH"
           },
-          "audio": "assets/sfx/0877c518ddad94e9badaf965e571a0e6.mp3"
+          "audio": "assets/sfx/0877c518ddad94e9badaf965e571a0e6.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 10
         }
       ]
     },
@@ -350,106 +312,90 @@
         {
           "x": 0.45,
           "y": 0.1,
-          "align": "center",
           "size": 47,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -12,
-          "maxWidth": 0.35,
           "text": {
             "en": "DASH",
             "it": "FOOSH",
             "de": "RUSCH",
             "fr": "VROUM"
           },
-          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3"
+          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.78,
           "y": 0.42,
-          "align": "center",
-          "size": 30,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "none",
+          "size": 30,
           "angle": -4,
           "scale": 1.15,
-          "maxWidth": 0.36,
           "text": {
             "en": "Borrowing\nthis.",
             "it": "Lo prendo\nin prestito.",
             "de": "Leihe mir\ndas.",
             "fr": "J'emprunte\nça."
           },
-          "audio": "assets/sfx/0bfe57738a4f2a4605a3fda2292396a7.mp3",
-          "bubble": {
-            "tail": "none"
-          }
+          "audio": "assets/sfx/0bfe57738a4f2a4605a3fda2292396a7.mp3"
         },
         {
           "x": 0.55,
           "y": 0.36,
-          "align": "center",
           "size": 43,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": 8,
-          "maxWidth": 0.35,
           "text": {
             "en": "SNATCH",
             "it": "GRAB",
             "de": "RAPS",
             "fr": "ATTRAP'"
           },
-          "audio": "assets/sfx/6f805fb7bacaaeec2a3eec5d6e8dbb3e.mp3"
+          "audio": "assets/sfx/6f805fb7bacaaeec2a3eec5d6e8dbb3e.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.38,
           "y": 0.6,
-          "align": "center",
           "size": 41,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": -10,
-          "maxWidth": 0.3,
           "text": {
             "en": "HUH?!",
             "it": "EH?!",
             "de": "HÄ?!",
             "fr": "HEIN?!"
           },
-          "audio": "assets/sfx/52c97035c29c10f58946802103da18fa.mp3"
+          "audio": "assets/sfx/52c97035c29c10f58946802103da18fa.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.22,
           "y": 0.93,
-          "align": "center",
           "size": 54,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -20,
-          "maxWidth": 0.35,
           "text": {
             "en": "SHUNK",
             "it": "SWISH",
             "de": "SCHUNK",
             "fr": "CHTONG"
           },
-          "audio": "assets/sfx/64d22986ace4df437a04ab415933fc1d.mp3"
+          "audio": "assets/sfx/64d22986ace4df437a04ab415933fc1d.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.78,
           "y": 0.88,
-          "align": "center",
-          "size": 42,
           "variant": "burst",
-          "color": "#111111",
+          "size": 42,
           "angle": 6,
           "scale": 1.4,
-          "maxWidth": 0.3,
           "text": {
             "en": "Catch.",
             "it": "Prendi.",
@@ -466,65 +412,57 @@
         {
           "x": 0.28,
           "y": 0.1,
-          "align": "center",
           "size": 41,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": -14,
-          "maxWidth": 0.3,
           "text": {
             "en": "CLACK",
             "it": "CLACK",
             "de": "KLACK",
             "fr": "CLAC"
           },
-          "audio": "assets/sfx/eb733eaf52d522008b39b043cc1b09ae.mp3"
+          "audio": "assets/sfx/eb733eaf52d522008b39b043cc1b09ae.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.72,
           "y": 0.12,
-          "align": "center",
           "size": 45,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": 18,
-          "maxWidth": 0.32,
           "text": {
             "en": "FWIP",
             "it": "SWISH",
             "de": "WUPS",
             "fr": "FWIP"
           },
-          "audio": "assets/sfx/8b408e129af01fc45cd4ab49b417c71d.mp3"
+          "audio": "assets/sfx/8b408e129af01fc45cd4ab49b417c71d.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.42,
           "y": 0.38,
-          "align": "center",
           "size": 55,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -16,
-          "maxWidth": 0.38,
           "text": {
             "en": "WHAM",
             "it": "BAM",
             "de": "WUMM",
             "fr": "PAF"
           },
-          "audio": "assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3"
+          "audio": "assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.83,
           "y": 0.31,
-          "align": "center",
           "size": 49,
           "color": "#111111",
           "angle": 6,
-          "maxWidth": 0.22,
           "text": {
             "en": "Too slow,\nman!",
             "it": "Troppo lento,\ntizio!",
@@ -536,38 +474,33 @@
         {
           "x": 0.15,
           "y": 0.62,
-          "align": "center",
           "size": 43,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": -10,
-          "maxWidth": 0.32,
           "text": {
             "en": "THUD",
             "it": "BUM",
             "de": "BUMM",
             "fr": "BADA"
           },
-          "audio": "assets/sfx/f8bc6a50e39ccc7ad518c1e0494a3bdb.mp3"
+          "audio": "assets/sfx/f8bc6a50e39ccc7ad518c1e0494a3bdb.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.5,
           "y": 0.9,
-          "align": "center",
           "size": 35,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 6,
-          "angle": 0,
-          "maxWidth": 0.35,
           "text": {
             "en": "TAP… TAP",
             "it": "TAP… TAP",
             "de": "TIPP… TIPP",
             "fr": "TAP… TAP"
           },
-          "audio": "assets/sfx/b598fbd729dcc0f37c04bdc5c8183e36.mp3"
+          "audio": "assets/sfx/b598fbd729dcc0f37c04bdc5c8183e36.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 6
         }
       ]
     },
@@ -577,74 +510,66 @@
         {
           "x": 0.58,
           "y": 0.12,
-          "align": "center",
           "size": 43,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": 6,
-          "maxWidth": 0.32,
           "text": {
             "en": "BEEP",
             "it": "BIP",
             "de": "PIEP",
             "fr": "BIP"
           },
-          "audio": "assets/sfx/6b947b8815366dfa12a0e7212c289d56.mp3"
+          "audio": "assets/sfx/6b947b8815366dfa12a0e7212c289d56.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.72,
           "y": 0.18,
-          "align": "center",
           "size": 37,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 6,
           "angle": -8,
-          "maxWidth": 0.28,
           "text": {
             "en": "CLICK",
             "it": "CLIC",
             "de": "KLICK",
             "fr": "CLIC"
           },
-          "audio": "assets/sfx/06ea23525af3be2bb84193031f16c9a3.mp3"
+          "audio": "assets/sfx/06ea23525af3be2bb84193031f16c9a3.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 6
         },
         {
           "x": 0.5,
           "y": 0.42,
-          "align": "center",
           "size": 35,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 6,
           "angle": 4,
-          "maxWidth": 0.45,
           "text": {
             "en": "MURMUR…",
             "it": "MORMORIO…",
             "de": "GEMURMEL…",
             "fr": "MURMURE…"
           },
-          "audio": "assets/sfx/3dfd0bf2f1371da35b0e9bbd11749494.mp3"
+          "audio": "assets/sfx/3dfd0bf2f1371da35b0e9bbd11749494.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 6
         },
         {
           "x": 0.55,
           "y": 0.86,
-          "align": "center",
           "size": 45,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": -5,
-          "maxWidth": 0.35,
           "text": {
             "en": "HISS",
             "it": "SSSH",
             "de": "ZISCH",
             "fr": "PSSSH"
           },
-          "audio": "assets/sfx/415907f85f78757c106c9416b2b62bbf.mp3"
+          "audio": "assets/sfx/415907f85f78757c106c9416b2b62bbf.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         }
       ]
     },
@@ -654,30 +579,25 @@
         {
           "x": 0.5,
           "y": 0.3,
-          "align": "center",
           "size": 73,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -10,
-          "maxWidth": 0.42,
           "text": {
             "en": "CRASH",
             "it": "CRASH",
             "de": "KRACH",
             "fr": "CRASH"
           },
-          "audio": "assets/sfx/e471657822fbb9cad1446bd8ed8d26f8.mp3"
+          "audio": "assets/sfx/e471657822fbb9cad1446bd8ed8d26f8.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.76,
           "y": 0.41,
-          "align": "center",
-          "size": 39,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 39,
           "angle": -1,
-          "maxWidth": 0.27,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -697,56 +617,50 @@
         {
           "x": 0.22,
           "y": 0.42,
-          "align": "center",
           "size": 39,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 6,
           "angle": -4,
-          "maxWidth": 0.28,
           "text": {
             "en": "VZZT",
             "it": "VZZT",
             "de": "WZZT",
             "fr": "VZZT"
           },
-          "audio": "assets/sfx/148cff94100e625051ef1fc03a9f83c0.mp3"
+          "audio": "assets/sfx/148cff94100e625051ef1fc03a9f83c0.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 6
         },
         {
           "x": 0.78,
           "y": 0.48,
-          "align": "center",
           "size": 37,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 6,
           "angle": 8,
-          "maxWidth": 0.28,
           "text": {
             "en": "BZZT",
             "it": "BZZT",
             "de": "BZZT",
             "fr": "BZZT"
           },
-          "audio": "assets/sfx/803952beaffcb142563c4c81f8dff1ad.mp3"
+          "audio": "assets/sfx/803952beaffcb142563c4c81f8dff1ad.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 6
         },
         {
           "x": 0.52,
           "y": 0.86,
-          "align": "center",
           "size": 55,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -12,
-          "maxWidth": 0.4,
           "text": {
             "en": "FOOM",
             "it": "FOOM",
             "de": "FOOM",
             "fr": "FOOM"
           },
-          "audio": "assets/sfx/acff59e7564f4a24edfdf185aa960514.mp3"
+          "audio": "assets/sfx/acff59e7564f4a24edfdf185aa960514.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         }
       ]
     },
@@ -756,49 +670,42 @@
         {
           "x": 0.55,
           "y": 0.1,
-          "align": "center",
           "size": 92,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.35,
           "text": {
             "en": "WHIRR",
             "it": "VRUM",
             "de": "SUMM",
             "fr": "VRROUM"
           },
-          "audio": "assets/sfx/e99cc11ffa3d66d4687f78b8c7477b09.mp3"
+          "audio": "assets/sfx/e99cc11ffa3d66d4687f78b8c7477b09.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.52,
           "y": 0.6,
-          "align": "center",
           "size": 65,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": 10,
-          "maxWidth": 0.35,
           "text": {
             "en": "CLUNK",
             "it": "CLUNK",
             "de": "KLONK",
             "fr": "CLONC"
           },
-          "audio": "assets/sfx/c7f73e90922f4da86fceaf236fd7cd39.mp3"
+          "audio": "assets/sfx/c7f73e90922f4da86fceaf236fd7cd39.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.78,
           "y": 0.52,
-          "align": "center",
-          "size": 32,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 32,
           "angle": -4,
           "scale": 1.15,
-          "maxWidth": 0.3,
           "text": {
             "en": "Lock it.",
             "it": "Bloccalo.",
@@ -810,13 +717,10 @@
         {
           "x": 0.22,
           "y": 0.88,
-          "align": "center",
-          "size": 40,
           "variant": "burst",
-          "color": "#111111",
+          "size": 40,
           "angle": -8,
           "scale": 1.4,
-          "maxWidth": 0.36,
           "text": {
             "en": "LIGHT IT\nUP!",
             "it": "ACCENDILO!",
@@ -828,20 +732,18 @@
         {
           "x": 0.58,
           "y": 0.82,
-          "align": "center",
           "size": 83,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 10,
           "angle": -14,
-          "maxWidth": 0.4,
           "text": {
             "en": "BOOOOM",
             "it": "BOOOOM",
             "de": "BOOOOM",
             "fr": "BOOOOM"
           },
-          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3"
+          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 10
         }
       ]
     },
@@ -851,38 +753,34 @@
         {
           "x": 0.72,
           "y": 0.2,
-          "align": "center",
           "size": 69,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -12,
-          "maxWidth": 0.35,
           "text": {
             "en": "PING",
             "it": "PING",
             "de": "PING",
             "fr": "PING"
           },
-          "audio": "assets/sfx/47ef236b8a09f7b53ecd7c193d1afd46.mp3"
+          "audio": "assets/sfx/47ef236b8a09f7b53ecd7c193d1afd46.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.68,
           "y": 0.7,
-          "align": "center",
           "size": 75,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 11,
           "angle": -16,
-          "maxWidth": 0.45,
           "text": {
             "en": "KABOOOM",
             "it": "KABOOOM",
             "de": "KABOOOM",
             "fr": "KABOOOM"
           },
-          "audio": "assets/sfx/0ce0462065919da7f3ff9b73621fc814.mp3"
+          "audio": "assets/sfx/0ce0462065919da7f3ff9b73621fc814.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 11
         }
       ]
     },
@@ -892,49 +790,42 @@
         {
           "x": 0.78,
           "y": 0.12,
-          "align": "center",
           "size": 58,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -14,
-          "maxWidth": 0.38,
           "text": {
             "en": "KRAKOOM",
             "it": "KRAKOOM",
             "de": "KRAKOOM",
             "fr": "KRAKOOM"
           },
-          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3"
+          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.18,
           "y": 0.52,
-          "align": "center",
           "size": 72,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 10,
           "angle": 12,
-          "maxWidth": 0.35,
           "text": {
             "en": "THUD",
             "it": "BUM",
             "de": "BUMM",
             "fr": "BADA"
           },
-          "audio": "assets/sfx/f8bc6a50e39ccc7ad518c1e0494a3bdb.mp3"
+          "audio": "assets/sfx/f8bc6a50e39ccc7ad518c1e0494a3bdb.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 10
         },
         {
           "x": 0.22,
           "y": 0.48,
-          "align": "center",
-          "size": 48,
           "variant": "burst",
-          "color": "#111111",
+          "size": 48,
           "angle": -10,
           "scale": 1.4,
-          "maxWidth": 0.28,
           "text": {
             "en": "Ghh—!",
             "it": "Ghh—!",
@@ -946,12 +837,9 @@
         {
           "x": 0.22,
           "y": 0.62,
-          "align": "center",
-          "size": 24,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 24,
           "angle": -2,
-          "maxWidth": 0.34,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -971,13 +859,10 @@
         {
           "x": 0.78,
           "y": 0.4,
-          "align": "center",
-          "size": 28,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 28,
           "angle": 4,
           "scale": 1.1,
-          "maxWidth": 0.36,
           "text": {
             "en": "Still standing.",
             "it": "Ancora in piedi.",
@@ -989,13 +874,10 @@
         {
           "x": 0.28,
           "y": 0.88,
-          "align": "center",
-          "size": 66,
           "variant": "burst",
-          "color": "#111111",
+          "size": 66,
           "angle": -5,
           "scale": 1.2,
-          "maxWidth": 0.28,
           "text": {
             "en": "Jax!",
             "it": "Jax!",
@@ -1007,20 +889,18 @@
         {
           "x": 0.74,
           "y": 0.82,
-          "align": "center",
           "size": 68,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -10,
-          "maxWidth": 0.35,
           "text": {
             "en": "BZZT",
             "it": "BZZT",
             "de": "BZZT",
             "fr": "BZZT"
           },
-          "audio": "assets/sfx/803952beaffcb142563c4c81f8dff1ad.mp3"
+          "audio": "assets/sfx/803952beaffcb142563c4c81f8dff1ad.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         }
       ]
     },
@@ -1030,12 +910,9 @@
         {
           "x": 0.32,
           "y": 0.22,
-          "align": "center",
-          "size": 46,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 46,
           "angle": -2,
-          "maxWidth": 0.32,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1055,12 +932,9 @@
         {
           "x": 0.68,
           "y": 0.72,
-          "align": "center",
-          "size": 58,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 58,
           "angle": 3,
-          "maxWidth": 0.28,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1085,48 +959,41 @@
         {
           "x": 0.38,
           "y": 0.05,
-          "align": "center",
           "size": 68,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 10,
           "angle": -12,
-          "maxWidth": 0.38,
           "text": {
             "en": "WHAM",
             "it": "WHAM",
             "de": "WHAM",
             "fr": "WHAM"
           },
-          "audio": "assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3"
+          "audio": "assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 10
         },
         {
           "x": 0.55,
           "y": 0.48,
-          "align": "center",
           "size": 62,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": 8,
-          "maxWidth": 0.4,
           "text": {
             "en": "KRAKOOM",
             "it": "KRAKOOM",
             "de": "KRAKOOM",
             "fr": "KRAKOOM"
           },
-          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3"
+          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.78,
           "y": 0.72,
-          "align": "center",
-          "size": 38,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 38,
           "angle": -2,
-          "maxWidth": 0.3,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1146,20 +1013,18 @@
         {
           "x": 0.22,
           "y": 0.8,
-          "align": "center",
           "size": 78,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 11,
           "angle": -16,
-          "maxWidth": 0.4,
           "text": {
             "en": "BOOOOM",
             "it": "BOOOOM",
             "de": "BOOOOM",
             "fr": "BOOOOM"
           },
-          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3"
+          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 11
         }
       ]
     },
@@ -1169,13 +1034,10 @@
         {
           "x": 0.78,
           "y": 0.34,
-          "align": "center",
-          "size": 52,
           "variant": "burst",
-          "color": "#111111",
+          "size": 52,
           "angle": -8,
           "scale": 1.6,
-          "maxWidth": 0.28,
           "text": {
             "en": "FOOL!",
             "it": "IDIOTA!",
@@ -1187,31 +1049,26 @@
         {
           "x": 0.86,
           "y": 0.58,
-          "align": "center",
           "size": 62,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 10,
           "angle": 16,
-          "maxWidth": 0.32,
           "text": {
             "en": "ARGHH!",
             "it": "ARGHH!",
             "de": "ARGHH!",
             "fr": "ARGHH!"
           },
-          "audio": "assets/sfx/200c6e654ae69b27cd14253a0266b984.mp3"
+          "audio": "assets/sfx/200c6e654ae69b27cd14253a0266b984.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 10
         },
         {
           "x": 0.22,
           "y": 0.62,
-          "align": "center",
-          "size": 34,
           "variant": "burst",
-          "color": "#111111",
+          "size": 34,
           "angle": -6,
           "scale": 1.5,
-          "maxWidth": 0.32,
           "text": {
             "en": "This is\nfor you!",
             "it": "Questo è\nper te!",
@@ -1228,13 +1085,10 @@
         {
           "x": 0.78,
           "y": 0.06,
-          "align": "center",
-          "size": 40,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 40,
           "angle": -6,
           "scale": 1.2,
-          "maxWidth": 0.5,
           "text": {
             "en": "What the\nhell!!!",
             "it": "Ma che\ncazzo!!!",
@@ -1246,66 +1100,57 @@
         {
           "x": 0.72,
           "y": 0.58,
-          "align": "center",
           "size": 68,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 10,
           "angle": -10,
-          "maxWidth": 0.4,
           "text": {
             "en": "KRAKOOM",
             "it": "KRAKOOM",
             "de": "KRAKOOM",
             "fr": "KRAKOOM"
           },
-          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3"
+          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 10
         },
         {
           "x": 0.28,
           "y": 0.72,
-          "align": "center",
           "size": 62,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": 12,
-          "maxWidth": 0.35,
           "text": {
             "en": "BOOOOM",
             "it": "BOOOOM",
             "de": "BOOOOM",
             "fr": "BOOOOM"
           },
-          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3"
+          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.48,
           "y": 0.9,
-          "align": "center",
           "size": 58,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -8,
-          "maxWidth": 0.32,
           "text": {
             "en": "ARGHH!",
             "it": "ARGHH!",
             "de": "ARGHH!",
             "fr": "ARGHH!"
           },
-          "audio": "assets/sfx/200c6e654ae69b27cd14253a0266b984.mp3"
+          "audio": "assets/sfx/200c6e654ae69b27cd14253a0266b984.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.78,
           "y": 0.9,
-          "align": "center",
-          "size": 28,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 28,
           "angle": -2,
-          "maxWidth": 0.36,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1330,48 +1175,41 @@
         {
           "x": 0.78,
           "y": 0.14,
-          "align": "center",
           "size": 65,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 9,
           "angle": -14,
-          "maxWidth": 0.36,
           "text": {
             "en": "CRAAASH",
             "it": "CRAAASH",
             "de": "KRACHS",
             "fr": "CRAAASH"
           },
-          "audio": "assets/sfx/0877c518ddad94e9badaf965e571a0e6.mp3"
+          "audio": "assets/sfx/0877c518ddad94e9badaf965e571a0e6.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 9
         },
         {
           "x": 0.28,
           "y": 0.48,
-          "align": "center",
           "size": 62,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 7,
           "angle": 16,
-          "maxWidth": 0.28,
           "text": {
             "en": "CRACK",
             "it": "CRACK",
             "de": "KNACK",
             "fr": "CRACK"
           },
-          "audio": "assets/sfx/e471657822fbb9cad1446bd8ed8d26f8.mp3"
+          "audio": "assets/sfx/e471657822fbb9cad1446bd8ed8d26f8.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 7
         },
         {
           "x": 0.22,
           "y": 0.62,
-          "align": "center",
-          "size": 56,
           "variant": "burst",
-          "color": "#111111",
+          "size": 56,
           "angle": -6,
-          "maxWidth": 0.32,
           "text": {
             "en": "HURTS!!",
             "it": "FA MALE!!",
@@ -1383,37 +1221,25 @@
         {
           "x": 0.28,
           "y": 0.9,
-          "align": "center",
           "size": 53,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.3,
           "text": {
             "en": "HISS",
             "it": "HISS",
             "de": "ZISCH",
             "fr": "HISS"
           },
-          "audio": "assets/sfx/415907f85f78757c106c9416b2b62bbf.mp3"
+          "audio": "assets/sfx/415907f85f78757c106c9416b2b62bbf.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.76,
           "y": 0.88,
-          "align": "center",
-          "size": 32,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 32,
           "angle": -2,
-          "maxWidth": 0.36,
-          "text": {
-            "en": "N› The new chip\nis taking control",
-            "it": "N› Il nuovo chip\nsta prendendo il controllo",
-            "de": "N› Der neue Chip\nübernimmt die Kontrolle",
-            "fr": "N› La nouvelle puce\nprend le contrôle"
-          },
-          "audio": "assets/sfx/ba95d0229af593212a028e1d17f32927.mp3",
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1421,7 +1247,14 @@
             "tail": "none",
             "scratches": 6,
             "retrace": 2
-          }
+          },
+          "text": {
+            "en": "N› The new chip\nis taking control",
+            "it": "N› Il nuovo chip\nsta prendendo il controllo",
+            "de": "N› Der neue Chip\nübernimmt die Kontrolle",
+            "fr": "N› La nouvelle puce\nprend le contrôle"
+          },
+          "audio": "assets/sfx/ba95d0229af593212a028e1d17f32927.mp3"
         }
       ]
     },
@@ -1431,12 +1264,9 @@
         {
           "x": 0.22,
           "y": 0.1,
-          "align": "center",
-          "size": 26,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 26,
           "angle": -2,
-          "maxWidth": 0.36,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1456,12 +1286,9 @@
         {
           "x": 0.74,
           "y": 0.13,
-          "align": "center",
-          "size": 40,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 40,
           "angle": 8,
-          "maxWidth": 0.28,
           "text": {
             "en": "I'm in your\nfeed—",
             "it": "Sono nel tuo\nfeed—",
@@ -1473,12 +1300,9 @@
         {
           "x": 0.8,
           "y": 0.5,
-          "align": "center",
-          "size": 32,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 32,
           "angle": -3,
-          "maxWidth": 0.46,
           "text": {
             "en": "C'MON JAX,\nDON'T LOSE\nYOURSELF!",
             "it": "DAI JAX,\nNON PERDERTI!",
@@ -1495,13 +1319,10 @@
         {
           "x": 0.72,
           "y": 0.18,
-          "align": "center",
-          "size": 34,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 34,
           "angle": -5,
           "scale": 1.15,
-          "maxWidth": 0.42,
           "text": {
             "en": "Where… am I?",
             "it": "Dove… sono?",
@@ -1513,13 +1334,10 @@
         {
           "x": 0.28,
           "y": 0.68,
-          "align": "center",
-          "size": 72,
           "variant": "burst",
-          "color": "#111111",
+          "size": 72,
           "angle": -8,
           "scale": 1.5,
-          "maxWidth": 0.28,
           "text": {
             "en": "NO.",
             "it": "NO.",
@@ -1531,13 +1349,10 @@
         {
           "x": 0.74,
           "y": 0.88,
-          "align": "center",
-          "size": 30,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 30,
           "angle": -3,
           "scale": 1.2,
-          "maxWidth": 0.44,
           "text": {
             "en": "GET OUT OF\nMY HEAD.",
             "it": "ESCI DALLA\nMIA TESTA.",
@@ -1554,12 +1369,8 @@
         {
           "x": 0.5,
           "y": 0.14,
-          "align": "center",
-          "size": 30,
           "variant": "badai",
-          "color": "#0a0a0a",
-          "angle": 0,
-          "maxWidth": 0.55,
+          "size": 30,
           "bubble": {
             "fill": "#f5f5f5",
             "stroke": "#0a0a0a",
@@ -1579,13 +1390,10 @@
         {
           "x": 0.78,
           "y": 0.42,
-          "align": "center",
-          "size": 28,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 28,
           "angle": -4,
           "scale": 1.1,
-          "maxWidth": 0.38,
           "text": {
             "en": "I can still\nfeel it.",
             "it": "La sento\nancora.",
@@ -1597,34 +1405,26 @@
         {
           "x": 0.22,
           "y": 0.48,
-          "align": "center",
-          "size": 26,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "none",
+          "size": 26,
           "angle": 5,
           "scale": 1.05,
-          "maxWidth": 0.36,
           "text": {
             "en": "Don't open\nyet…",
             "it": "Non aprire\nancora…",
             "de": "Noch nicht\nöffnen…",
             "fr": "N'ouvre pas\nencore…"
           },
-          "audio": "assets/sfx/a3b1ca8e023479acfc04e0795feaf0ca.mp3",
-          "bubble": {
-            "tail": "none"
-          }
+          "audio": "assets/sfx/a3b1ca8e023479acfc04e0795feaf0ca.mp3"
         },
         {
           "x": 0.22,
           "y": 0.72,
-          "align": "center",
-          "size": 42,
           "variant": "burst",
-          "color": "#111111",
+          "size": 42,
           "angle": -6,
           "scale": 1.4,
-          "maxWidth": 0.32,
           "text": {
             "en": "STAY WITH\nME.",
             "it": "RESTA\nCON ME.",
@@ -1636,23 +1436,18 @@
         {
           "x": 0.78,
           "y": 0.88,
-          "align": "center",
-          "size": 28,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "top-left",
+          "size": 28,
           "angle": -3,
           "scale": 1.15,
-          "maxWidth": 0.4,
           "text": {
             "en": "This is still\nmy shell.",
             "it": "Questo è ancora\nil mio guscio.",
             "de": "Das ist noch\nmeine Hülle.",
             "fr": "C'est encore\nma coque."
           },
-          "audio": "assets/sfx/9752b24f0c72e04b5b83bb7e4c2dfcdf.mp3",
-          "bubble": {
-            "tail": "top-left"
-          }
+          "audio": "assets/sfx/9752b24f0c72e04b5b83bb7e4c2dfcdf.mp3"
         }
       ]
     },
@@ -1662,12 +1457,9 @@
         {
           "x": 0.22,
           "y": 0.08,
-          "align": "center",
-          "size": 28,
           "variant": "badai",
-          "color": "#0a0a0a",
+          "size": 28,
           "angle": -2,
-          "maxWidth": 0.36,
           "bubble": {
             "fill": "#f5f5f5",
             "stroke": "#0a0a0a",
@@ -1687,12 +1479,9 @@
         {
           "x": 0.78,
           "y": 0.1,
-          "align": "center",
-          "size": 26,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 26,
           "angle": 2,
-          "maxWidth": 0.36,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1712,13 +1501,10 @@
         {
           "x": 0.2,
           "y": 0.42,
-          "align": "center",
-          "size": 30,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 30,
           "angle": -4,
           "scale": 1.1,
-          "maxWidth": 0.28,
           "text": {
             "en": "Nova—?",
             "it": "Nova—?",
@@ -1730,12 +1516,9 @@
         {
           "x": 0.8,
           "y": 0.48,
-          "align": "center",
-          "size": 28,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 28,
           "angle": 1,
-          "maxWidth": 0.3,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1755,13 +1538,10 @@
         {
           "x": 0.28,
           "y": 0.62,
-          "align": "center",
-          "size": 52,
           "variant": "burst",
-          "color": "#111111",
+          "size": 52,
           "angle": -8,
           "scale": 1.5,
-          "maxWidth": 0.28,
           "text": {
             "en": "NOW!",
             "it": "ORA!",
@@ -1773,12 +1553,9 @@
         {
           "x": 0.18,
           "y": 0.82,
-          "align": "center",
-          "size": 32,
           "variant": "badai",
-          "color": "#0a0a0a",
+          "size": 32,
           "angle": -3,
-          "maxWidth": 0.28,
           "bubble": {
             "fill": "#f5f5f5",
             "stroke": "#0a0a0a",
@@ -1798,13 +1575,10 @@
         {
           "x": 0.78,
           "y": 0.9,
-          "align": "center",
-          "size": 40,
           "variant": "burst",
-          "color": "#111111",
+          "size": 40,
           "angle": 6,
           "scale": 1.35,
-          "maxWidth": 0.3,
           "text": {
             "en": "I'M IN.",
             "it": "CI SONO.",
@@ -1821,13 +1595,10 @@
         {
           "x": 0.22,
           "y": 0.12,
-          "align": "center",
-          "size": 42,
           "variant": "burst",
-          "color": "#111111",
+          "size": 42,
           "angle": -10,
           "scale": 1.4,
-          "maxWidth": 0.34,
           "text": {
             "en": "BACK\nONLINE!",
             "it": "DI NUOVO\nONLINE!",
@@ -1839,12 +1610,9 @@
         {
           "x": 0.8,
           "y": 0.08,
-          "align": "center",
-          "size": 26,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 26,
           "angle": 2,
-          "maxWidth": 0.32,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1864,30 +1632,25 @@
         {
           "x": 0.55,
           "y": 0.42,
-          "align": "center",
           "size": 68,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 10,
           "angle": -12,
-          "maxWidth": 0.4,
           "text": {
             "en": "KRAKOOM",
             "it": "KRAKOOM",
             "de": "KRAKOOM",
             "fr": "KRAKOOM"
           },
-          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3"
+          "audio": "assets/sfx/a177fa397e80a4012b259c6ce8aeb049.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 10
         },
         {
           "x": 0.18,
           "y": 0.52,
-          "align": "center",
-          "size": 30,
           "variant": "badai",
-          "color": "#0a0a0a",
+          "size": 30,
           "angle": -4,
-          "maxWidth": 0.28,
           "bubble": {
             "fill": "#f5f5f5",
             "stroke": "#0a0a0a",
@@ -1907,13 +1670,10 @@
         {
           "x": 0.78,
           "y": 0.58,
-          "align": "center",
-          "size": 32,
           "variant": "burst",
-          "color": "#111111",
+          "size": 32,
           "angle": 6,
           "scale": 1.35,
-          "maxWidth": 0.36,
           "text": {
             "en": "NOT YOUR\nARM ANYMORE.",
             "it": "NON È PIÙ\nIL TUO BRACCIO.",
@@ -1925,30 +1685,25 @@
         {
           "x": 0.5,
           "y": 0.72,
-          "align": "center",
           "size": 52,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": 8,
-          "maxWidth": 0.42,
           "text": {
             "en": "KRR-CHUNK",
             "it": "CLACK",
             "de": "KLACK",
             "fr": "CLAC"
           },
-          "audio": "assets/sfx/0cbed7807e3ae79426edd37fd3ae49cc.mp3"
+          "audio": "assets/sfx/0cbed7807e3ae79426edd37fd3ae49cc.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.8,
           "y": 0.84,
-          "align": "center",
-          "size": 26,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 26,
           "angle": 1,
-          "maxWidth": 0.34,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -1968,13 +1723,10 @@
         {
           "x": 0.22,
           "y": 0.9,
-          "align": "center",
-          "size": 28,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 28,
           "angle": -3,
           "scale": 1.1,
-          "maxWidth": 0.32,
           "text": {
             "en": "I'm home.",
             "it": "Sono a casa.",
@@ -1991,30 +1743,25 @@
         {
           "x": 0.22,
           "y": 0.12,
-          "align": "center",
           "size": 72,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 11,
           "angle": -14,
-          "maxWidth": 0.4,
           "text": {
             "en": "BOOOOM",
             "it": "BOOOOM",
             "de": "BOOOOM",
             "fr": "BOOOOM"
           },
-          "audio": "assets/sfx/0d1082ce122284892cf30961c1340041.mp3"
+          "audio": "assets/sfx/0d1082ce122284892cf30961c1340041.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 11
         },
         {
           "x": 0.82,
           "y": 0.18,
-          "align": "center",
-          "size": 28,
           "variant": "ai",
-          "color": "#f5f5f5",
+          "size": 28,
           "angle": 2,
-          "maxWidth": 0.28,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -2034,13 +1781,10 @@
         {
           "x": 0.78,
           "y": 0.88,
-          "align": "center",
-          "size": 32,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 32,
           "angle": -4,
           "scale": 1.15,
-          "maxWidth": 0.3,
           "text": {
             "en": "…Yeah.",
             "it": "…Sì.",
@@ -2057,13 +1801,10 @@
         {
           "x": 0.28,
           "y": 0.48,
-          "align": "center",
-          "size": 36,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 36,
           "angle": -5,
           "scale": 1.15,
-          "maxWidth": 0.34,
           "text": {
             "en": "That chip\nwasn't mine.",
             "it": "Quel chip\nnon era mio.",
@@ -2075,12 +1816,8 @@
         {
           "x": 0.3,
           "y": 0.8,
-          "align": "center",
-          "size": 38,
           "variant": "ai",
-          "color": "#f5f5f5",
-          "angle": 0,
-          "maxWidth": 0.7,
+          "size": 38,
           "bubble": {
             "fill": "#0a0a0a",
             "stroke": "#0a0a0a",
@@ -2100,11 +1837,8 @@
         {
           "x": 0.5,
           "y": 0.935,
-          "align": "center",
-          "size": 23,
           "variant": "credit",
-          "angle": 0,
-          "maxWidth": 0.88,
+          "size": 23,
           "text": {
             "en": "Story, sound & drawings by\nMarco Sangalli\nwith help from Grok Imagine & Elevenlabs",
             "it": "Storia, suono e disegni di\nMarco Sangalli\ncon l'aiuto di Grok Imagine & Elevenlabs",

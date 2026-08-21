@@ -28,18 +28,9 @@
         {
           "x": 0.5,
           "y": 0.075,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "bottom-left",
           "angle": -2,
-          "scale": 1,
-          "maxWidth": 0.34,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "text": {
             "en": "Evening.",
             "it": "Buonasera.",
@@ -51,18 +42,9 @@
         {
           "x": 0.5,
           "y": 0.155,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "bottom-left",
           "angle": 1,
-          "scale": 1,
-          "maxWidth": 0.38,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "text": {
             "en": "How are you keeping?",
             "it": "Come sta?",
@@ -74,18 +56,9 @@
         {
           "x": 0.2,
           "y": 0.39,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "bottom-right",
           "angle": -3,
-          "scale": 1,
-          "maxWidth": 0.32,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "text": {
             "en": "Can't complain, sir.",
             "it": "Non mi lamento, signore.",
@@ -97,18 +70,11 @@
         {
           "x": 0.79,
           "y": 0.43,
-          "align": "center",
-          "size": 20,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "bottom-left",
+          "size": 20,
           "angle": 2,
           "scale": 0.95,
-          "maxWidth": 0.3,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "text": {
             "en": "I won't be long.",
             "it": "Faccio in fretta.",
@@ -120,17 +86,9 @@
         {
           "x": 0.22,
           "y": 0.72,
-          "align": "center",
-          "size": 26,
           "variant": "burst",
-          "color": "#111111",
+          "size": 26,
           "angle": -6,
-          "scale": 1,
-          "maxWidth": 0.28,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "TIC",
             "it": "TIC",
@@ -147,17 +105,9 @@
         {
           "x": 0.2,
           "y": 0.06,
-          "align": "center",
-          "size": 26,
           "variant": "burst",
-          "color": "#111111",
+          "size": 26,
           "angle": -5,
-          "scale": 1,
-          "maxWidth": 0.26,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "SHHK",
             "it": "SHHK",
@@ -169,18 +119,9 @@
         {
           "x": 0.22,
           "y": 0.38,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "bottom-right",
           "angle": -3,
-          "scale": 1,
-          "maxWidth": 0.32,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "text": {
             "en": "I've finished, sir.",
             "it": "Ho finito, signore.",
@@ -192,18 +133,9 @@
         {
           "x": 0.56,
           "y": 0.4,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "bottom-left",
           "angle": 2,
-          "scale": 1,
-          "maxWidth": 0.26,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "text": {
             "en": "Goodnight.",
             "it": "Buonanotte.",
@@ -215,17 +147,9 @@
         {
           "x": 0.78,
           "y": 0.71,
-          "align": "center",
-          "size": 26,
           "variant": "burst",
-          "color": "#111111",
+          "size": 26,
           "angle": -6,
-          "scale": 1,
-          "maxWidth": 0.24,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "TIC",
             "it": "TIC",
@@ -242,17 +166,10 @@
         {
           "x": 0.66,
           "y": 0.05,
-          "align": "center",
-          "size": 24,
           "variant": "burst",
-          "color": "#111111",
+          "size": 24,
           "angle": -6,
           "scale": 0.95,
-          "maxWidth": 0.22,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "BZZT",
             "it": "BZZT",
@@ -264,18 +181,10 @@
         {
           "x": 0.23,
           "y": 0.07,
-          "align": "center",
-          "size": 28,
           "variant": "ai",
+          "tail": "bottom-right",
+          "size": 28,
           "color": "#fff",
-          "angle": 0,
-          "scale": 1,
-          "maxWidth": 0.34,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "text": {
             "en": "V› We got a new signal near you. Be careful.",
             "it": "V› Abbiamo un nuovo segnale vicino a te. Sta' attenta.",
@@ -287,18 +196,10 @@
         {
           "x": 0.19,
           "y": 0.37,
-          "align": "center",
-          "size": 20,
           "variant": "thought",
-          "color": "#111111",
+          "tail": "bottom-right",
+          "size": 20,
           "angle": -2,
-          "scale": 1,
-          "maxWidth": 0.34,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "text": {
             "en": "He didn't look up and say goodnight back to me, like he usually does…",
             "it": "Non ha alzato lo sguardo, non mi ha detto buonanotte come fa sempre…",
@@ -310,17 +211,10 @@
         {
           "x": 0.76,
           "y": 0.7,
-          "align": "center",
-          "size": 24,
           "variant": "burst",
-          "color": "#111111",
+          "size": 24,
           "angle": 4,
           "scale": 0.9,
-          "maxWidth": 0.2,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "TNK",
             "it": "TNK",
@@ -337,17 +231,9 @@
         {
           "x": 0.2,
           "y": 0.38,
-          "align": "center",
-          "size": 26,
           "variant": "burst",
-          "color": "#111111",
+          "size": 26,
           "angle": -5,
-          "scale": 1,
-          "maxWidth": 0.3,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "TOK TOK TOK",
             "it": "TOK TOK TOK",
@@ -359,17 +245,10 @@
         {
           "x": 0.78,
           "y": 0.7,
-          "align": "center",
-          "size": 24,
           "variant": "burst",
-          "color": "#111111",
+          "size": 24,
           "angle": 4,
           "scale": 0.9,
-          "maxWidth": 0.18,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "TK",
             "it": "TK",
@@ -381,18 +260,11 @@
         {
           "x": 0.3,
           "y": 0.74,
-          "align": "center",
-          "size": 25,
           "variant": "thought",
-          "color": "#111111",
+          "tail": "top-left",
+          "size": 25,
           "angle": -2,
           "scale": 0.95,
-          "maxWidth": 0.26,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-left"
-          },
           "text": {
             "en": "Home in twenty.",
             "it": "A casa in venti minuti.",
@@ -409,17 +281,9 @@
         {
           "x": 0.19,
           "y": 0.06,
-          "align": "center",
-          "size": 26,
           "variant": "burst",
-          "color": "#111111",
+          "size": 26,
           "angle": -5,
-          "scale": 1,
-          "maxWidth": 0.3,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "TOK TOK TOK",
             "it": "TOK TOK TOK",
@@ -431,18 +295,10 @@
         {
           "x": 0.17,
           "y": 0.38,
-          "align": "center",
-          "size": 34,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "bottom-right",
+          "size": 34,
           "angle": -4,
-          "scale": 1,
-          "maxWidth": 0.2,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "text": {
             "en": "No—",
             "it": "No—",
@@ -454,17 +310,9 @@
         {
           "x": 0.18,
           "y": 0.7,
-          "align": "center",
-          "size": 26,
           "variant": "burst",
-          "color": "#111111",
+          "size": 26,
           "angle": 5,
-          "scale": 1,
-          "maxWidth": 0.22,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "KLNK",
             "it": "KLNK",
@@ -476,18 +324,10 @@
         {
           "x": 0.72,
           "y": 0.7,
-          "align": "center",
-          "size": 32,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "left",
+          "size": 32,
           "angle": -2,
-          "scale": 1,
-          "maxWidth": 0.24,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left"
-          },
           "text": {
             "en": "Mrs…?",
             "it": "Signora…?",
@@ -504,17 +344,8 @@
         {
           "x": 0.2,
           "y": 0.06,
-          "align": "center",
-          "size": 28,
           "variant": "burst",
-          "color": "#111111",
           "angle": -6,
-          "scale": 1,
-          "maxWidth": 0.26,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "KRUNCH",
             "it": "KRUNCH",
@@ -526,18 +357,10 @@
         {
           "x": 0.82,
           "y": 0.05,
-          "align": "center",
-          "size": 26,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "bottom-left",
+          "size": 26,
           "angle": -3,
-          "scale": 1,
-          "maxWidth": 0.24,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "text": {
             "en": "Get back!",
             "it": "Stia indietro!",
@@ -549,17 +372,9 @@
         {
           "x": 0.47,
           "y": 0.43,
-          "align": "center",
-          "size": 40,
           "variant": "burst",
-          "color": "#111111",
+          "size": 40,
           "angle": 5,
-          "scale": 1,
-          "maxWidth": 0.24,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "PSSHHT",
             "it": "PSSHHT",
@@ -571,18 +386,9 @@
         {
           "x": 0.22,
           "y": 0.85,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "top-right",
           "angle": -2,
-          "scale": 1,
-          "maxWidth": 0.26,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-right"
-          },
           "text": {
             "en": "…Mrs Nowak.",
             "it": "…Signora Nowak.",
@@ -599,18 +405,11 @@
         {
           "x": 0.2,
           "y": 0.15,
-          "align": "center",
-          "size": 30,
           "variant": "thought",
-          "color": "#111111",
+          "tail": "top-left",
+          "size": 30,
           "angle": -2,
           "scale": 0.95,
-          "maxWidth": 0.24,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-left"
-          },
           "text": {
             "en": "Three tries. Nothing.",
             "it": "Tre tentativi. Niente.",
@@ -622,18 +421,11 @@
         {
           "x": 0.65,
           "y": 0.15,
-          "align": "center",
-          "size": 32,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "left",
+          "size": 32,
           "angle": -2,
           "scale": 0.95,
-          "maxWidth": 0.24,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left"
-          },
           "text": {
             "en": "No signal.",
             "it": "Nessun segnale.",
@@ -645,17 +437,10 @@
         {
           "x": 0.22,
           "y": 0.4,
-          "align": "center",
-          "size": 26,
           "variant": "burst",
-          "color": "#111111",
+          "size": 26,
           "angle": 4,
           "scale": 0.9,
-          "maxWidth": 0.18,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "DING",
             "it": "DING",
@@ -667,18 +452,11 @@
         {
           "x": 0.74,
           "y": 0.36,
-          "align": "center",
-          "size": 20,
           "variant": "thought",
-          "color": "#111111",
+          "tail": "bottom-left",
+          "size": 20,
           "angle": -2,
           "scale": 0.95,
-          "maxWidth": 0.3,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "text": {
             "en": "Car park, then the street and I'll be safe.",
             "it": "Il parcheggio, poi la strada e sarò salva.",
@@ -690,17 +468,10 @@
         {
           "x": 0.17,
           "y": 0.7,
-          "align": "center",
-          "size": 26,
           "variant": "burst",
-          "color": "#111111",
+          "size": 26,
           "angle": -5,
           "scale": 0.95,
-          "maxWidth": 0.2,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5
-          },
           "text": {
             "en": "SSHK",
             "it": "SSHK",
@@ -712,18 +483,9 @@
         {
           "x": 0.72,
           "y": 0.75,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "left",
           "angle": -3,
-          "scale": 1,
-          "maxWidth": 0.24,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left"
-          },
           "text": {
             "en": "I took the stairs.",
             "it": "Ho preso le scale.",
@@ -735,18 +497,10 @@
         {
           "x": 0.4,
           "y": 0.88,
-          "align": "center",
-          "size": 20,
           "variant": "bubble",
-          "color": "#111111",
+          "tail": "top-right",
+          "size": 20,
           "angle": -2,
-          "scale": 1,
-          "maxWidth": 0.26,
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-right"
-          },
           "text": {
             "en": "Put the phone away, Mrs Nowak.",
             "it": "Metta via il telefono, signora Nowak.",

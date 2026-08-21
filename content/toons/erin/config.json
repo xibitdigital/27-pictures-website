@@ -26,84 +26,60 @@
         {
           "x": 0.5,
           "y": 0.085,
-          "align": "center",
-          "size": 54,
           "variant": "credit",
+          "tail": "none",
+          "size": 54,
           "color": "#111111",
-          "maxWidth": 0.86,
           "text": {
             "en": "ERIN & THE GOBLINS",
             "it": "ERIN & THE GOBLINS",
             "de": "ERIN & THE GOBLINS",
             "fr": "ERIN & THE GOBLINS"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
-          },
           "audio": "assets/sfx/fd5c28bf320698ffd523616db43af2a9.mp3"
         },
         {
           "x": 0.5,
           "y": 0.185,
-          "align": "center",
-          "size": 34,
           "variant": "credit",
+          "tail": "none",
+          "size": 34,
           "color": "#111111",
-          "maxWidth": 0.7,
           "text": {
             "en": "the missing CHILD",
             "it": "la BAMBINA scomparsa",
             "de": "das vermisste KIND",
             "fr": "l'ENFANT disparue"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
-          },
           "audio": "assets/sfx/674640fe1ea83a9db268b6f02119bcb7.mp3"
         },
         {
           "x": 0.5,
           "y": 0.905,
-          "align": "center",
-          "size": 26,
           "variant": "credit",
+          "tail": "none",
+          "size": 26,
           "color": "#111111",
-          "maxWidth": 0.6,
           "text": {
             "en": "Volume 1 Prequel",
             "it": "Volume 1 Prequel",
             "de": "Band 1 Prequel",
             "fr": "Volume 1 Préquelle"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
-          },
           "audio": "assets/sfx/04e9e00c7b33e1eb4d6906c560521d0e.mp3"
         },
         {
           "x": 0.5,
           "y": 0.955,
-          "align": "center",
-          "size": 22,
           "variant": "credit",
+          "tail": "none",
+          "size": 22,
           "color": "#111111",
-          "maxWidth": 0.8,
           "text": {
             "en": "story by Olivia and Marco Sangalli",
             "it": "storia di Olivia e Marco Sangalli",
             "de": "Geschichte von Olivia und Marco Sangalli",
             "fr": "histoire d'Olivia et Marco Sangalli"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
           },
           "audio": "assets/sfx/e8f6ec7350d69ef6a4c1ac26c23cc9ea.mp3"
         }
@@ -115,20 +91,18 @@
         {
           "x": 0.22,
           "y": 0.7,
-          "align": "center",
           "size": 60,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.24,
           "text": {
             "en": "FSSH",
             "it": "FSSH",
             "de": "FSSH",
             "fr": "FSSH"
           },
-          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3"
+          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -138,128 +112,88 @@
         {
           "x": 0.69,
           "y": 0.19,
-          "align": "center",
-          "size": 30,
           "variant": "burst",
-          "color": "#111111",
-          "maxWidth": 0.36,
+          "size": 30,
+          "bubble": {
+            "tail": "bottom-left",
+            "padX": 3,
+            "padY": 3
+          },
           "text": {
             "en": "I am going to find you little one.",
             "it": "Ti troverò, piccola.",
             "de": "Ich werde dich finden, Kleine.",
             "fr": "Je vais te retrouver, petite."
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left",
-            "padX": 3,
-            "padY": 3
-          },
           "audio": "assets/sfx/14a19d7088bfcbbfda5a02804efebebd.mp3"
         },
         {
           "x": 0.56,
           "y": 0.42,
-          "align": "center",
-          "size": 34,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.26,
+          "tail": "bottom-left",
+          "size": 34,
           "text": {
             "en": "Who took her?",
             "it": "Chi l'ha presa?",
             "de": "Wer hat sie geholt?",
             "fr": "Qui l'a enlevée ?"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "audio": "assets/sfx/31fee9cf1850313e88322c33e9605731.mp3"
         },
         {
           "x": 0.67,
           "y": 0.59,
-          "align": "center",
-          "size": 20,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.22,
+          "tail": "left",
+          "size": 20,
           "text": {
             "en": "Suspicious strangers…",
             "it": "Sconosciuti sospetti…",
             "de": "Verdächtige Fremde…",
             "fr": "Des inconnus suspects…"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left"
-          },
           "audio": "assets/sfx/7474fdeda5bde2a749f10db17cd8a272.mp3"
         },
         {
           "x": 0.6,
           "y": 0.73,
-          "align": "center",
-          "size": 20,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.22,
+          "tail": "top-left",
+          "size": 20,
           "text": {
             "en": "The black van at midnight…",
             "it": "Il furgone nero a mezzanotte…",
             "de": "Der schwarze Transporter um Mitternacht…",
             "fr": "La camionnette noire à minuit…"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-left"
-          },
           "audio": "assets/sfx/49051e242887885792c2420b0d3c3847.mp3"
         },
         {
           "x": 0.54,
           "y": 0.81,
-          "align": "center",
-          "size": 20,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.24,
+          "tail": "top-left",
+          "size": 20,
           "text": {
             "en": "Goblin traffickers in the alleys…",
             "it": "Trafficanti goblin nei vicoli…",
             "de": "Goblin-Schmuggler in den Gassen…",
             "fr": "Des trafiquants gobelins dans les ruelles…"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-left"
-          },
           "audio": "assets/sfx/43d381e0c9e99654f2926490c69f2c28.mp3"
         },
         {
           "x": 0.47,
           "y": 0.9,
-          "align": "center",
-          "size": 28,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.34,
+          "tail": "top-left",
+          "size": 28,
           "text": {
             "en": "An organized kidnapping ring.",
             "it": "Un giro organizzato di rapimenti.",
             "de": "Ein organisierter Entführungsring.",
             "fr": "Un réseau d'enlèvements organisé."
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-left"
           },
           "audio": "assets/sfx/db1988607360ab5bfb4af76b198e8418.mp3"
         }
@@ -271,38 +205,34 @@
         {
           "x": 0.7,
           "y": 0.08,
-          "align": "center",
           "size": 50,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.3,
           "text": {
             "en": "KREEEAK",
             "it": "KREEEAK",
             "de": "KREEEAK",
             "fr": "KREEEAK"
           },
-          "audio": "assets/sfx/4e22b92b995a81742e5b967de4a35403.mp3"
+          "audio": "assets/sfx/4e22b92b995a81742e5b967de4a35403.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.22,
           "y": 0.58,
-          "align": "center",
           "size": 44,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -10,
-          "maxWidth": 0.24,
           "text": {
             "en": "DASH",
             "it": "DASH",
             "de": "DASH",
             "fr": "DASH"
           },
-          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3"
+          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -312,41 +242,32 @@
         {
           "x": 0.22,
           "y": 0.07,
-          "align": "center",
-          "size": 24,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.28,
+          "tail": "right",
+          "size": 24,
           "text": {
             "en": "There are traces here…",
             "it": "Ci sono tracce qui…",
             "de": "Hier sind Spuren…",
             "fr": "Il y a des traces ici…"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "right"
-          },
           "audio": "assets/sfx/cfa6f5cf38150514fe0fc488566fa7e3.mp3"
         },
         {
           "x": 0.78,
           "y": 0.4,
-          "align": "center",
           "size": 42,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "VZZT",
             "it": "VZZT",
             "de": "VZZT",
             "fr": "VZZT"
           },
-          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3"
+          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -356,38 +277,34 @@
         {
           "x": 0.18,
           "y": 0.22,
-          "align": "center",
           "size": 40,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.24,
           "text": {
             "en": "GRRRH",
             "it": "GRRRH",
             "de": "GRRRH",
             "fr": "GRRRH"
           },
-          "audio": "assets/sfx/d6171bd6a6125ed49e942ee1576e6794.mp3"
+          "audio": "assets/sfx/d6171bd6a6125ed49e942ee1576e6794.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.3,
           "y": 0.42,
-          "align": "center",
           "size": 36,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "WHAMM",
             "it": "WHAMM",
             "de": "WHAMM",
             "fr": "WHAMM"
           },
-          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3"
+          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -397,42 +314,36 @@
         {
           "x": 0.84,
           "y": 0.14,
-          "align": "center",
-          "size": 40,
           "variant": "burst",
-          "color": "#111111",
+          "size": 40,
+          "bubble": {
+            "tail": "left",
+            "padX": 3,
+            "padY": 3
+          },
           "text": {
             "en": "WHERE IS SHE???",
             "it": "DOV'È???",
             "de": "WO IST SIE???",
             "fr": "OÙ EST-ELLE ???"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left",
-            "padX": 3,
-            "padY": 3
-          },
           "audio": "assets/sfx/36804a30f1312e76cf6f3f622479e45a.mp3"
         },
         {
           "x": 0.28,
           "y": 0.8,
-          "align": "center",
           "size": 44,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "THUKK",
             "it": "THUKK",
             "de": "THUKK",
             "fr": "THUKK"
           },
-          "audio": "assets/sfx/d0e90aa65be8aa27f325256f9530709a.mp3"
+          "audio": "assets/sfx/d0e90aa65be8aa27f325256f9530709a.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -442,38 +353,34 @@
         {
           "x": 0.22,
           "y": 0.12,
-          "align": "center",
           "size": 42,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.24,
           "text": {
             "en": "THUD",
             "it": "THUD",
             "de": "THUD",
             "fr": "THUD"
           },
-          "audio": "assets/sfx/c53551b93eacb5a94df8caf8e7044a96.mp3"
+          "audio": "assets/sfx/c53551b93eacb5a94df8caf8e7044a96.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.82,
           "y": 0.58,
-          "align": "center",
           "size": 26,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -4,
-          "maxWidth": 0.24,
           "text": {
             "en": "DRIP",
             "it": "DRIP",
             "de": "DRIP",
             "fr": "DRIP"
           },
-          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3"
+          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -483,38 +390,34 @@
         {
           "x": 0.22,
           "y": 0.12,
-          "align": "center",
           "size": 32,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "SKREEE",
             "it": "SKREEE",
             "de": "SKREEE",
             "fr": "SKREEE"
           },
-          "audio": "assets/sfx/2f5b57a07d6fdfda2db09082a1380737.mp3"
+          "audio": "assets/sfx/2f5b57a07d6fdfda2db09082a1380737.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.28,
           "y": 0.62,
-          "align": "center",
           "size": 54,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -10,
-          "maxWidth": 0.24,
           "text": {
             "en": "DASH",
             "it": "DASH",
             "de": "DASH",
             "fr": "DASH"
           },
-          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3"
+          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -528,61 +431,48 @@
         {
           "x": 0.3,
           "y": 0.145,
-          "align": "center",
-          "size": 30,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.26,
+          "tail": "bottom-right",
+          "size": 30,
           "text": {
             "en": "It's time…",
             "it": "È ora…",
             "de": "Es ist Zeit…",
             "fr": "C'est l'heure…"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "audio": "assets/sfx/c208fb184541de3704c4e1ae7baae2f4.mp3"
         },
         {
           "x": 0.8,
           "y": 0.42,
-          "align": "center",
           "size": 30,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "BZZT",
             "it": "BZZT",
             "de": "BZZT",
             "fr": "BZZT"
           },
-          "audio": "assets/sfx/bb133793a026daf1bf4b74317e482492.mp3"
+          "audio": "assets/sfx/bb133793a026daf1bf4b74317e482492.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.74,
           "y": 0.8,
-          "align": "center",
-          "size": 50,
           "variant": "burst",
-          "color": "#111111",
+          "size": 50,
+          "bubble": {
+            "tail": "top-left",
+            "padX": 3,
+            "padY": 3
+          },
           "text": {
             "en": "Open.",
             "it": "Apriti.",
             "de": "Öffne dich.",
             "fr": "Ouvre-toi."
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-left",
-            "padX": 3,
-            "padY": 3
           },
           "audio": "assets/sfx/edb9bf92c7568c0c409a879b063e839d.mp3"
         }
@@ -594,20 +484,18 @@
         {
           "x": 0.22,
           "y": 0.18,
-          "align": "center",
           "size": 56,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "FWOOSH",
             "it": "FWOOSH",
             "de": "FWOOSH",
             "fr": "FWOOSH"
           },
-          "audio": "assets/sfx/459317ada9c8ca94bab341973b4bcd0e.mp3"
+          "audio": "assets/sfx/459317ada9c8ca94bab341973b4bcd0e.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -617,20 +505,18 @@
         {
           "x": 0.16,
           "y": 0.4,
-          "align": "center",
           "size": 60,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.24,
           "text": {
             "en": "VZZT",
             "it": "VZZT",
             "de": "VZZT",
             "fr": "VZZT"
           },
-          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3"
+          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -640,41 +526,32 @@
         {
           "x": 0.8,
           "y": 0.1,
-          "align": "center",
           "size": 58,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.24,
           "text": {
             "en": "SHFFF",
             "it": "SHFFF",
             "de": "SHFFF",
             "fr": "SHFFF"
           },
-          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3"
+          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.22,
           "y": 0.67,
-          "align": "center",
-          "size": 24,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.26,
+          "tail": "bottom-right",
+          "size": 24,
           "text": {
             "en": "What is this place?",
             "it": "Cos'è questo posto?",
             "de": "Was ist das für ein Ort?",
             "fr": "C'est quoi, cet endroit ?"
           },
-          "audio": "assets/sfx/9cc3a2465893537db0f673fba6ed9076.mp3",
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          }
+          "audio": "assets/sfx/9cc3a2465893537db0f673fba6ed9076.mp3"
         }
       ]
     },
@@ -684,39 +561,30 @@
         {
           "x": 0.72,
           "y": 0.56,
-          "align": "center",
           "size": 34,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "WHAMM",
             "it": "WHAMM",
             "de": "WHAMM",
             "fr": "WHAMM"
           },
-          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3"
+          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.45,
           "y": 0.62,
-          "align": "center",
-          "size": 38,
           "variant": "burst",
-          "color": "#111111",
-          "maxWidth": 0.26,
+          "tail": "left",
+          "size": 38,
           "text": {
             "en": "GRAAAH!",
             "it": "GRAAAH!",
             "de": "GRAAAH!",
             "fr": "GRAAAH!"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left"
           },
           "audio": "assets/sfx/8373809455fa30601fb027d223ac68ff.mp3"
         }
@@ -728,38 +596,34 @@
         {
           "x": 0.56,
           "y": 0.37,
-          "align": "center",
           "size": 46,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "KRAK",
             "it": "KRAK",
             "de": "KRAK",
             "fr": "KRAK"
           },
-          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3"
+          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.3,
           "y": 0.62,
-          "align": "center",
           "size": 32,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.24,
           "text": {
             "en": "THKK",
             "it": "THKK",
             "de": "THKK",
             "fr": "THKK"
           },
-          "audio": "assets/sfx/80608c46d3cea3386d51d8e2ea838a43.mp3"
+          "audio": "assets/sfx/80608c46d3cea3386d51d8e2ea838a43.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -769,64 +633,51 @@
         {
           "x": 0.3,
           "y": 0.58,
-          "align": "center",
           "size": 34,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "RRRAAAGH",
             "it": "RRRAAAGH",
             "de": "RRRAAAGH",
             "fr": "RRRAAAGH"
           },
-          "audio": "assets/sfx/425e7dffadc452675ef542ce2fdf5b21.mp3"
+          "audio": "assets/sfx/425e7dffadc452675ef542ce2fdf5b21.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.85,
           "y": 0.21,
-          "align": "center",
-          "size": 28,
           "variant": "burst",
-          "color": "#111111",
-          "maxWidth": 0.38,
+          "bubble": {
+            "tail": "left",
+            "padX": 4,
+            "padY": 4
+          },
           "text": {
             "en": "What did you do to my army!",
             "it": "Che cosa hai fatto al mio esercito!",
             "de": "Was hast du mit meiner Armee gemacht!",
             "fr": "Qu'as-tu fait à mon armée !"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left",
-            "padX": 4,
-            "padY": 4
-          },
           "audio": "assets/sfx/33f92a164dee4b65e9bbe11db0aacd21.mp3"
         },
         {
           "x": 0.84,
           "y": 0.79,
-          "align": "center",
-          "size": 30,
           "variant": "burst",
-          "color": "#111111",
-          "maxWidth": 0.28,
+          "size": 30,
+          "bubble": {
+            "tail": "top-left",
+            "padX": 2,
+            "padY": 3
+          },
           "text": {
             "en": "You will pay dearly!",
             "it": "La pagherai cara!",
             "de": "Das wirst du teuer bezahlen!",
             "fr": "Tu vas le payer cher !"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "top-left",
-            "padX": 2,
-            "padY": 3
           },
           "audio": "assets/sfx/339e5bb02993841afa60f077bf72d11b.mp3"
         }
@@ -838,38 +689,34 @@
         {
           "x": 0.27,
           "y": 0.27,
-          "align": "center",
           "size": 64,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.34,
           "text": {
             "en": "KRAK",
             "it": "KRAK",
             "de": "KRAK",
             "fr": "KRAK"
           },
-          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3"
+          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.76,
           "y": 0.83,
-          "align": "center",
           "size": 54,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.34,
           "text": {
             "en": "BOOM",
             "it": "BOOM",
             "de": "BOOM",
             "fr": "BOOM"
           },
-          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3"
+          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -879,61 +726,52 @@
         {
           "x": 0.22,
           "y": 0.45,
-          "align": "center",
           "size": 30,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.24,
           "text": {
             "en": "GRRNN",
             "it": "GRRNN",
             "de": "GRRNN",
             "fr": "GRRNN"
           },
-          "audio": "assets/sfx/6b79f1e1cb904221237bee555e8ad8af.mp3"
+          "audio": "assets/sfx/6b79f1e1cb904221237bee555e8ad8af.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.84,
           "y": 0.72,
-          "align": "center",
-          "size": 30,
           "variant": "burst",
-          "color": "#111111",
-          "maxWidth": 0.48,
+          "size": 30,
+          "bubble": {
+            "tail": "left",
+            "padX": 2,
+            "padY": 3
+          },
           "text": {
             "en": "You thought you killed me that easily!",
             "it": "Credevi di avermi ucciso così facilmente!",
             "de": "Du dachtest, du hättest mich so leicht getötet!",
             "fr": "Tu croyais m'avoir tué si facilement !"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left",
-            "padX": 2,
-            "padY": 3
-          },
           "audio": "assets/sfx/6c4e9f032f22ada689b6d9c597935fb7.mp3"
         },
         {
           "x": 0.62,
           "y": 0.9,
-          "align": "center",
           "size": 42,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -4,
-          "maxWidth": 0.28,
           "text": {
             "en": "HAHAHAHAHAHA!",
             "it": "HAHAHAHAHAHA!",
             "de": "HAHAHAHAHAHA!",
             "fr": "HAHAHAHAHAHA!"
           },
-          "audio": "assets/sfx/7b9e3c33bd4fdaccf9d74128f86fbc04.mp3"
+          "audio": "assets/sfx/7b9e3c33bd4fdaccf9d74128f86fbc04.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -943,58 +781,50 @@
         {
           "x": 0.2,
           "y": 0.12,
-          "align": "center",
           "size": 34,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -8,
-          "maxWidth": 0.24,
           "text": {
             "en": "WHAM",
             "it": "WHAM",
             "de": "WHAM",
             "fr": "WHAM"
           },
-          "audio": "assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3"
+          "audio": "assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.8,
           "y": 0.3,
-          "align": "center",
           "size": 32,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -6,
-          "maxWidth": 0.24,
           "text": {
             "en": "KLANG",
             "it": "KLANG",
             "de": "KLANG",
             "fr": "KLANG"
           },
-          "audio": "assets/sfx/9ed016342ec442dda507806e650cb30f.mp3"
+          "audio": "assets/sfx/9ed016342ec442dda507806e650cb30f.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.52,
           "y": 0.49,
-          "align": "center",
-          "size": 40,
           "variant": "burst",
-          "color": "#111111",
+          "size": 40,
+          "bubble": {
+            "tail": "none",
+            "padX": 4,
+            "padY": 3
+          },
           "text": {
             "en": "They traded blows for hours. Neither one would fall.",
             "it": "Si colpirono per ore. Nessuno dei due cadeva.",
             "de": "Sie schlugen sich stundenlang. Keiner von beiden fiel.",
             "fr": "Ils échangèrent des coups pendant des heures. Aucun des deux ne tombait."
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none",
-            "padX": 4,
-            "padY": 3
           },
           "audio": "assets/sfx/1149e493b62b77fd926dadce1c9be80c.mp3"
         }
@@ -1006,61 +836,49 @@
         {
           "x": 0.28,
           "y": 0.07,
-          "align": "center",
-          "size": 24,
           "variant": "credit",
+          "tail": "none",
+          "size": 24,
           "color": "#111111",
-          "maxWidth": 0.42,
           "text": {
             "en": "Returning to the cave…",
             "it": "Tornando alla caverna…",
             "de": "Zurück in der Höhle…",
             "fr": "De retour à la grotte…"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
-          },
           "audio": "assets/sfx/0ee6d410154e6ff266e3b9a5786d7d5a.mp3"
         },
         {
           "x": 0.3,
           "y": 0.3,
-          "align": "center",
           "size": 26,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -4,
-          "maxWidth": 0.24,
           "text": {
             "en": "TAP… TAP",
             "it": "TAP… TAP",
             "de": "TAP… TAP",
             "fr": "TAP… TAP"
           },
-          "audio": "assets/sfx/b598fbd729dcc0f37c04bdc5c8183e36.mp3"
+          "audio": "assets/sfx/b598fbd729dcc0f37c04bdc5c8183e36.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.71,
           "y": 0.67,
-          "align": "center",
-          "size": 32,
           "variant": "burst",
-          "color": "#111111",
+          "size": 32,
+          "bubble": {
+            "tail": "bottom-left",
+            "padX": 2,
+            "padY": 3
+          },
           "text": {
             "en": "After I save the child, I'll find you!",
             "it": "Dopo aver salvato la bambina, ti troverò!",
             "de": "Wenn ich das Kind gerettet habe, finde ich dich!",
             "fr": "Une fois l'enfant sauvée, je te retrouverai !"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left",
-            "padX": 2,
-            "padY": 3
           },
           "audio": "assets/sfx/e9dd940adfe16990372cffe09c103634.mp3"
         }
@@ -1072,60 +890,48 @@
         {
           "x": 0.29,
           "y": 0.07,
-          "align": "center",
-          "size": 24,
           "variant": "credit",
+          "tail": "none",
+          "size": 24,
           "color": "#111111",
-          "maxWidth": 0.44,
           "text": {
             "en": "After the Goblin King fled…",
             "it": "Dopo la fuga del Re Goblin…",
             "de": "Nachdem der Goblinkönig geflohen war…",
             "fr": "Après la fuite du Roi Gobelin…"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
           }
         },
         {
           "x": 0.3,
           "y": 0.3,
-          "align": "center",
           "size": 26,
           "color": "#111111",
-          "stroke": "#ffffff",
-          "strokeThickness": 8,
           "angle": -4,
-          "maxWidth": 0.24,
           "text": {
             "en": "DRIP",
             "it": "DRIP",
             "de": "DRIP",
             "fr": "DRIP"
           },
-          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3"
+          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         },
         {
           "x": 0.82,
           "y": 0.63,
-          "align": "center",
-          "size": 40,
           "variant": "burst",
-          "color": "#111111",
+          "size": 40,
+          "bubble": {
+            "tail": "left",
+            "padX": 3,
+            "padY": 3
+          },
           "text": {
             "en": "But where is she?",
             "it": "Ma lei dov'è?",
             "de": "Aber wo ist sie?",
             "fr": "Mais où est-elle ?"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left",
-            "padX": 3,
-            "padY": 3
           },
           "audio": "assets/sfx/98be23f37f6ab36bfc350627b50602c1.mp3"
         }
@@ -1137,21 +943,14 @@
         {
           "x": 0.72,
           "y": 0.16,
-          "align": "center",
-          "size": 40,
           "variant": "burst",
-          "color": "#111111",
-          "maxWidth": 0.3,
+          "tail": "bottom",
+          "size": 40,
           "text": {
             "en": "I'M SAFE NOW!",
             "it": "ORA SONO SALVA!",
             "de": "JETZT BIN ICH IN SICHERHEIT!",
             "fr": "JE SUIS SAUVÉE !"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom"
           },
           "audio": "assets/sfx/dfa9a3ec2f8d819c8501cb5a22fcae5c.mp3"
         }
@@ -1163,127 +962,86 @@
         {
           "x": 0.26,
           "y": 0.05,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.22,
+          "tail": "bottom-right",
           "text": {
             "en": "Hi, are you the lost little girl?",
             "it": "Ciao, sei tu la bambina scomparsa?",
             "de": "Hallo, bist du das vermisste Mädchen?",
             "fr": "Salut, c'est toi la petite fille disparue ?"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "audio": "assets/sfx/14682b1b02e88239501bb5e6d408f2a4.mp3"
         },
         {
           "x": 0.15,
           "y": 0.18,
-          "align": "center",
-          "size": 24,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.14,
+          "tail": "bottom-right",
+          "size": 24,
           "text": {
             "en": "Yes!",
             "it": "Sì!",
             "de": "Ja!",
             "fr": "Oui !"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "audio": "assets/sfx/e0de94c6a6b6a3c7bd5af494850336e1.mp3"
         },
         {
           "x": 0.84,
           "y": 0.105,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.24,
+          "tail": "bottom-left",
           "text": {
             "en": "Then I'll take you home. Come with me.",
             "it": "Allora ti porto a casa. Vieni con me.",
             "de": "Dann bringe ich dich nach Hause. Komm mit.",
             "fr": "Alors je te ramène chez toi. Viens avec moi."
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "audio": "assets/sfx/a1575a9b0c57d2b13cd5c9a0d72ee95e.mp3"
         },
         {
           "x": 0.41,
           "y": 0.47,
-          "align": "center",
-          "size": 25,
           "variant": "bubble",
-          "color": "#111111",
+          "size": 25,
+          "bubble": {
+            "tail": "bottom-left",
+            "padX": 3,
+            "padY": 3
+          },
           "text": {
             "en": "Thank you for saving me from the goblins! I was imprisoned by the guards and you defeated them!",
             "it": "Grazie per avermi salvata dai goblin! Le guardie mi tenevano prigioniera e tu le hai sconfitte!",
             "de": "Danke, dass du mich vor den Goblins gerettet hast! Die Wachen hielten mich gefangen, und du hast sie besiegt!",
             "fr": "Merci de m'avoir sauvée des gobelins ! Les gardes me retenaient prisonnière et tu les as vaincus !"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left",
-            "padX": 3,
-            "padY": 3
-          },
           "audio": "assets/sfx/55ff13b3e9d575482e92c3e88c8ddd69.mp3"
         },
         {
           "x": 0.61,
           "y": 0.7,
-          "align": "center",
-          "size": 20,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.18,
+          "tail": "bottom-left",
+          "size": 20,
           "text": {
             "en": "Teach me those moves, please please!",
             "it": "Insegnami quelle mosse, ti prego, ti prego!",
             "de": "Bring mir diese Bewegungen bei, bitte, bitte!",
             "fr": "Apprends-moi ces mouvements, s'il te plaît !"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-left"
-          },
           "audio": "assets/sfx/69cb8e115c14e9fc85df6140e18f9e2c.mp3"
         },
         {
           "x": 0.87,
           "y": 0.66,
-          "align": "center",
-          "size": 20,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.18,
+          "tail": "bottom",
+          "size": 20,
           "text": {
             "en": "Not now. There's no time.",
             "it": "Non ora. Non c'è tempo.",
             "de": "Nicht jetzt. Wir haben keine Zeit.",
             "fr": "Pas maintenant. Il n'y a pas le temps."
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom"
           },
           "audio": "assets/sfx/01bfd09f39a96231f1db64c408f9dd0d.mp3"
         }
@@ -1295,42 +1053,26 @@
         {
           "x": 0.25,
           "y": 0.39,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.22,
+          "tail": "bottom-right",
           "text": {
             "en": "When I grow up I want to be a warrior like you!",
             "it": "Da grande voglio diventare una guerriera come te!",
             "de": "Wenn ich groß bin, will ich eine Kriegerin wie du werden!",
             "fr": "Quand je serai grande, je veux être une guerrière comme toi !"
           },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "bottom-right"
-          },
           "audio": "assets/sfx/d87a58b656165866f4bd6014508f9fc5.mp3"
         },
         {
           "x": 0.76,
           "y": 0.82,
-          "align": "center",
-          "size": 22,
           "variant": "bubble",
-          "color": "#111111",
-          "maxWidth": 0.28,
+          "tail": "left",
           "text": {
             "en": "I'll return to that cave… even stronger this time. He won't escape me!",
             "it": "Tornerò in quella caverna… ancora più forte. Non mi sfuggirà!",
             "de": "Ich kehre in diese Höhle zurück… noch stärker. Er entkommt mir nicht!",
             "fr": "Je retournerai dans cette grotte… encore plus forte. Il ne m'échappera pas !"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "left"
           },
           "audio": "assets/sfx/9d1cb1cd4644baa079a27cb7009dd87a.mp3"
         }
@@ -1342,81 +1084,57 @@
         {
           "x": 0.5,
           "y": 0.165,
-          "align": "center",
-          "size": 60,
           "variant": "credit",
+          "tail": "none",
+          "size": 60,
           "color": "#111111",
-          "maxWidth": 0.8,
           "text": {
             "en": "THE END",
             "it": "FINE",
             "de": "ENDE",
             "fr": "FIN"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
           }
         },
         {
           "x": 0.5,
           "y": 0.265,
-          "align": "center",
-          "size": 28,
           "variant": "credit",
+          "tail": "none",
+          "size": 28,
           "color": "#111111",
-          "maxWidth": 0.7,
           "text": {
             "en": "Volume 2 — Coming Soon",
             "it": "Volume 2 — In arrivo",
             "de": "Band 2 — Demnächst",
             "fr": "Volume 2 — Bientôt"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
           }
         },
         {
           "x": 0.5,
           "y": 0.935,
-          "align": "center",
-          "size": 24,
           "variant": "credit",
+          "tail": "none",
+          "size": 24,
           "color": "#111111",
-          "maxWidth": 0.8,
           "text": {
             "en": "story by Olivia & Marco Sangalli",
             "it": "storia di Olivia e Marco Sangalli",
             "de": "Geschichte von Olivia & Marco Sangalli",
             "fr": "histoire d'Olivia et Marco Sangalli"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
           }
         },
         {
           "x": 0.5,
           "y": 0.975,
-          "align": "center",
-          "size": 20,
           "variant": "credit",
+          "tail": "none",
+          "size": 20,
           "color": "#111111",
-          "maxWidth": 0.7,
           "text": {
             "en": "https://twentyseven.pictures",
             "it": "https://twentyseven.pictures",
             "de": "https://twentyseven.pictures",
             "fr": "https://twentyseven.pictures"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
           }
         }
       ]
@@ -1427,41 +1145,29 @@
         {
           "x": 0.18,
           "y": 0.07,
-          "align": "center",
-          "size": 48,
           "variant": "credit",
+          "tail": "none",
+          "size": 48,
           "color": "#111111",
-          "maxWidth": 0.3,
           "text": {
             "en": "ERIN",
             "it": "ERIN",
             "de": "ERIN",
             "fr": "ERIN"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
           }
         },
         {
           "x": 0.18,
           "y": 0.135,
-          "align": "center",
-          "size": 22,
           "variant": "credit",
+          "tail": "none",
+          "size": 22,
           "color": "#111111",
-          "maxWidth": 0.3,
           "text": {
             "en": "PREQUEL ERA",
             "it": "ERA PREQUEL",
             "de": "PREQUEL-ÄRA",
             "fr": "ÈRE PRÉQUELLE"
-          },
-          "bubble": {
-            "opacity": 0.75,
-            "strokeWidth": 5,
-            "tail": "none"
           }
         }
       ]
