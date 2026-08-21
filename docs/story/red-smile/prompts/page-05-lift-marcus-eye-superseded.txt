@@ -1,0 +1,29 @@
+# SUPERSEDED by page-05-marcus-crossing-lift.txt - the panels were reordered and
+# the black sclera replaced by the iris sigil, so ep 2 uses ep 1's host tell.
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/halina.png (identity)
+#       Image 2 = references/red-smile/marcus.png (identity)
+#       Image 3 = RED SMILE: Marcus page 3 (ink style, layout, the lift and corridor) - LAST
+# note: the ONLY glyph in the art is "-1" on the pressed lift button. No sigil
+#       anywhere on this page - the host tell here is the black sclera, and the
+#       unicursal hexagram has already failed three generations on page 1. Do not
+#       let it in through the eye.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks. The only text anywhere in the art is the characters "-1" on one lift button, described below; every other button and surface carries no legible glyph.
+
+PIN from references: keep the exact face, build and costume of the woman in Image 1 - mid 50s, heavy-set, broad weathered face, deep lines, tired watchful eyes, dark-going-grey hair in a low bun, dark tunic under a knee-length utility tabard. Keep the exact face of the man in Image 2 - late 30s, long even face, clean shaven, dark side-parted hair, slim rectangular eyeglasses. Keep the lift, the corridor and the B&W horror ink of Image 3. Do not redesign either person.
+
+STYLE: Dark psychological horror ink. Cold metal, hard small light sources, deep shadow pools. Not cyberpunk neon, not photoreal 3D.
+
+TOP (~35%): Extreme close-up inside the lift car: her bare index finger pressing a round brushed-steel call button on the panel, fingertip flattened against it, the button faintly lit from within. The pressed button carries the characters "-1" and nothing else; the buttons above and below it are plain unmarked discs. Her cuff and the edge of her tabard fill the left of frame. Cold reflected light, the car's interior black behind.
+
+MIDDLE (~30%): Camera INSIDE the lift car looking out through the fully open doors, the door frame boxing the shot on both sides. Beyond it the dark corridor recedes, and standing in it, some distance away and dead centre, is the man in SILHOUETTE - a tall lean black shape in a suit, backlit by one weak ceiling light, arms straight down at his sides, absolutely still, no face readable at all. He is simply there, in a corridor he cannot have reached this fast. Nothing about the pose is threatening; that is the point.
+
+BOTTOM (~35%): Extreme close-up of the man's eye and the skin around it, filling the panel - lit hard from one side, lashes and pore texture crisp. The SCLERA IS SOLID BLACK, edge to edge, wet and reflective like ink; the iris is a pale grey ring and the pupil a darker point inside it. The skin, brow and lid are entirely normal and unmarked. No veins, no cracks, no symbol, no sigil, no glyph in the iris, no tears. One small hard catchlight on the black.
+
+SCALE: the finger and the button read at true size - a fingertip roughly as wide as the button, not larger. In the middle panel the silhouetted man stands at correct human height for his distance, head one seventh of his height, and the open doorway frames him without dwarfing him.
+
+ANATOMY: exactly two arms and two legs on every figure, five fingers on the hand at the panel, correct knuckle spacing and thumb on the correct side. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: only the scene described above; preserve both identities, the lift and corridor, and the ink style from the pins.

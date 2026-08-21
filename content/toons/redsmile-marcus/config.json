@@ -353,6 +353,78 @@
           "audio": "assets/sfx/737ed7f4f78a2e737a7e0b01d79f37fa.mp3"
         }
       ]
+    },
+    {
+      "file": "assets/86f02a0e7c61e861c3601a5f807df8dc.webp",
+      "words": [
+        {
+          "x": 0.2,
+          "y": 0.38,
+          "align": "center",
+          "size": 26,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": -5,
+          "scale": 1.0,
+          "maxWidth": 0.3,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "TOK TOK TOK",
+            "it": "TOK TOK TOK",
+            "de": "TOK TOK TOK",
+            "fr": "TOK TOK TOK"
+          },
+          "audio": "assets/sfx/f2ac2be4829f2252caadd0618020a93f.mp3"
+        },
+        {
+          "x": 0.78,
+          "y": 0.7,
+          "align": "center",
+          "size": 24,
+          "variant": "burst",
+          "color": "#111111",
+          "angle": 4,
+          "scale": 0.9,
+          "maxWidth": 0.18,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5
+          },
+          "text": {
+            "en": "TK",
+            "it": "TK",
+            "de": "TK",
+            "fr": "TK"
+          },
+          "audio": "assets/sfx/737ed7f4f78a2e737a7e0b01d79f37fa.mp3"
+        },
+        {
+          "x": 0.3,
+          "y": 0.71,
+          "align": "center",
+          "size": 20,
+          "variant": "thought",
+          "color": "#111111",
+          "angle": -2,
+          "scale": 0.95,
+          "maxWidth": 0.26,
+          "bubble": {
+            "opacity": 0.75,
+            "strokeWidth": 5,
+            "tail": "bottom-left"
+          },
+          "text": {
+            "en": "Home in twenty.",
+            "it": "A casa in venti minuti.",
+            "de": "In zwanzig Minuten zu Hause.",
+            "fr": "À la maison dans vingt minutes."
+          },
+          "audio": "assets/sfx/91a6c8e3e67e08f276f44b347a8016bb.mp3"
+        }
+      ]
     }
   ]
 }

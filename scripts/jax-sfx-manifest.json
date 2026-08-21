@@ -323,5 +323,10 @@
     "slug": "redsmile-ep2-lift-button",
     "prompt": "Single soft click of a lift call button being pressed, dry plastic tick with a faint mechanical thunk, close and quiet, no reverb",
     "duration": 0.8
+  },
+  {
+    "slug": "redsmile-ep2-fast-steps",
+    "prompt": "Three fast hard-soled leather shoe steps on a hard corridor floor, even quick tempo, dry and close, loud, no reverb tail, no music",
+    "duration": 1.5
   }
 ]

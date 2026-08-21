@@ -9,7 +9,7 @@ Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 | Config      | `content/toons/redsmile-marcus/config.json` → publish to R2 |
 | Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key     |
 | Design size | 800 × 1424 (portrait)                                    |
-| Pages       | **3** — work in progress                                 |
+| Pages       | **4** — work in progress                                 |
 
 ## Status: published, unlisted
 
@@ -17,7 +17,7 @@ The config and every asset are on R2 and the reader resolves the locked hash
 like every other toon, so `/toons/redsmile-marcus/` works in a production build.
 
 It is still **unlisted**: `noindex, nofollow` on the reader, no card on
-`/toons/`, no sitemap or `llms.txt` entry — three pages are not something to rank,
+`/toons/`, no sitemap or `llms.txt` entry — four pages are not something to rank,
 and a work-in-progress badge does not stop Google ranking half a story. What it
 does have is an episode card on `/toons/red-smile/` (with a *Work in progress*
 badge, same as Erin EP 2) and an entry in that page's `CreativeWorkSeries`
@@ -43,6 +43,23 @@ Full bios, appearance locks and voice direction:
 `docs/story/red-smile/{marcus,halina}.md`.
 
 ## Captions
+
+**Page 4 has no captions yet.** Its panels are: his eye at the desk with the
+**sigil in the iris**, him walking the corridor far too fast, and her finger on
+the `-1` button. The page was restaged once — the first version opened on the
+lift button and closed on a **black sclera** eye, which skipped a step ep 1 had
+already taught the reader.
+
+**The two host tells are sequential, not interchangeable.** The iris mark means
+it has crossed (ep 1 page 1 ends on exactly that shot of Elena); black sclera
+means the vessel is being used, and belongs on the page where he acts — page 5.
+Keep them in that order, and take the mark's geometry from **ep 1 page 1**, never
+from ep 2 page 1, which drew it as an equilateral hexagram.
+
+The middle panel is the one to protect in any re-roll: he is upright, arms down,
+jacket undisturbed, face calm, and the *walls* carry the motion blur. `marcus.md`
+forbids transforming or lunging — the speed is the only thing wrong with him, and
+that reads worse than a charge.
 
 Page 3 carries 4 overlays — `BZZT`, V's text, her thought, `TNK`. **Every burst
 on this toon is black lettering with no text stroke**: the burst body is already a
@@ -93,6 +110,7 @@ a 0.4 s request is under what the API renders usefully. The shipped one asks for
 | 1    | `docs/story/red-smile/prompts/page-02-marcus-halina-office.txt` |
 | 2    | `docs/story/red-smile/prompts/page-03-halina-goodnight-corridor.txt` |
 | 3    | `docs/story/red-smile/prompts/page-04-halina-phone-lift.txt` |
+| 4    | `docs/story/red-smile/prompts/page-05-lift-marcus-eye.txt` |
 
 **Page 1 has a continuity defect.** The sigil in the laptop popup is a roughly
 equilateral hexagram; the series mark is notably taller than wide with a long

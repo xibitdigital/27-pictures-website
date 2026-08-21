@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/marcus.png (identity)
+#       Image 2 = RED SMILE: static page 1 (the SIGIL - correct geometry, and the
+#                 eye-in-close-up treatment this panel deliberately rhymes with)
+#       Image 3 = RED SMILE: Marcus page 4, the plate being restaged (the lift car,
+#                 the button panel, the corridor, the ink) - LAST
+# note: ONE glyph in the art, "-1" on the pressed button. The host tell on this page
+#       is the sigil in the iris, NOT black sclera - ep 1 established the iris mark
+#       as the moment it crosses. Black sclera is saved for the page where he acts.
+#       Do not copy the sigil off ep 2 page 1: that plate drew it wrong.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, high-contrast shadows, grey midtones. No color, no speech or thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks. The only text anywhere in the art is "-1" on one lift button; every other surface carries no legible glyph.
+
+PIN from references: keep the exact face of the man in Image 1 - late 30s, long even face, clean shaven, dark side-parted hair, slim rectangular eyeglasses. Keep the lift car, the brushed-steel button panel, the corridor and the B&W horror ink of Image 3. Do not redesign him.
+
+STYLE: Dark psychological horror ink. Corporate night interior, cold metal, hard small light sources. Not cyberpunk neon, not photoreal 3D.
+
+TOP (~35%): Extreme close-up of the man's eye, still at his desk, screen glow raking it from below - the same framing as the eye in Image 2. The iris is large and very dark, and inside it, drawn as ONE continuous thin white interlaced line, sits the sigil from Image 2: a six-pointed star, TALLER THAN WIDE with a long vertical axis, a small lens-shaped void at its centre. It is NOT two overlapping triangles, NOT a Star of David, NOT a pentagram, and it has no surrounding circle. The sclera is normal, the skin and brow normal and unmarked. Behind the lashes, out of focus, the pale rectangle of the laptop.
+
+MIDDLE (~30%): The corridor, wide, seen from near the lift. He is coming - already halfway down it and closing, upright, arms straight at his sides, jacket undisturbed, NOT running, NOT crouched, NOT reaching. His posture is that of a man walking politely, but he is covering the floor far faster than that posture allows: the walls streak with motion blur while he stays sharp and level, no bounce, no stride swing. Face calm and readable. Nothing about him is monstrous; the speed is the only thing wrong.
+
+BOTTOM (~35%): Extreme close-up inside the lift car: her bare index finger pressing the round brushed-steel button marked "-1", fingertip flattened, the button faintly lit from within. The buttons above and below are plain unmarked discs. Her cuff and the edge of her tabard fill the left of frame. She is unhurried. She has no idea.
+
+SCALE: the fingertip is about as wide as the button, not larger. In the middle panel he stands at correct human height for his distance, head one seventh of his height.
+
+ANATOMY: exactly two arms and two legs, five fingers on the hand at the panel, correct knuckle spacing, thumb on the correct side. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: only the scene described above; preserve his identity, the lift and corridor, and the ink style from the pins.
