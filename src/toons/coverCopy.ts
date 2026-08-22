@@ -107,20 +107,20 @@ export const COVER: Record<string, CoverCopy> = {
     synopsis: {
       en:
         "The second episode of the RED SMILE series.\n\n" +
-        "Halina cleans the tower every night, and nobody in it knows her name. Marcus is pleasant to her, and waits for the answer.\n\n" +
-        "Behind him a window opens by itself.",
+        "Marcus is CEO of NEXORA. He works until late. Halina cleans the tower, and nobody in it knows her name.\n\n" +
+        "A transmission starts on his laptop. Something darker is lurking.",
       it:
         "Il secondo episodio della serie RED SMILE.\n\n" +
-        "Halina pulisce la torre ogni notte e nessuno lì dentro sa come si chiama. Marcus è gentile con lei, e aspetta la risposta.\n\n" +
-        "Dietro di lui una finestra si apre da sola.",
+        "Marcus è il CEO di NEXORA. Lavora fino a tardi. Halina pulisce la torre, e nessuno lì dentro sa come si chiama.\n\n" +
+        "Sul suo laptop parte una trasmissione. Qualcosa di più oscuro è in agguato.",
       de:
         "Die zweite Folge der Reihe RED SMILE.\n\n" +
-        "Halina putzt den Turm jede Nacht, und niemand darin kennt ihren Namen. Marcus ist freundlich zu ihr und wartet auf die Antwort.\n\n" +
-        "Hinter ihm öffnet sich ein Fenster von selbst.",
+        "Marcus ist CEO von NEXORA. Er arbeitet bis spät. Halina putzt den Turm, und niemand darin kennt ihren Namen.\n\n" +
+        "Auf seinem Laptop beginnt eine Übertragung. Etwas Dunkleres lauert.",
       fr:
         "Le deuxième épisode de la série RED SMILE.\n\n" +
-        "Halina nettoie la tour chaque nuit, et personne à l'intérieur ne connaît son nom. Marcus est aimable avec elle, et attend la réponse.\n\n" +
-        "Derrière lui, une fenêtre s'ouvre toute seule.",
+        "Marcus est le PDG de NEXORA. Il travaille tard. Halina nettoie la tour, et personne à l'intérieur ne connaît son nom.\n\n" +
+        "Une transmission démarre sur son ordinateur. Quelque chose de plus sombre rôde.",
     },
   },
   "redsmile-static": {

@@ -28,9 +28,9 @@ Shipping the episode = remove the noindex, add the sitemap `<url>` and the
 
 ## Logline
 
-Halina cleans the tower every night and nobody in it knows her name. Marcus is
-pleasant to her, asks how she is, and waits for the answer. Behind him a browser
-window opens by itself.
+Marcus is CEO of NEXORA. He works until late. Halina cleans the tower, and
+nobody in it knows her name. A transmission starts on his laptop. Something
+darker is lurking.
 
 ## Cast / voices
 
