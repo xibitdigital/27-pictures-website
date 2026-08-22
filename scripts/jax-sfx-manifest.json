@@ -343,5 +343,10 @@
     "slug": "redsmile-ep2-spray-hiss",
     "prompt": "Trigger spray bottle firing a hard burst of liquid, sharp wet hiss close to the microphone, one squeeze, dry, no music",
     "duration": 1.2
+  },
+  {
+    "slug": "redsmile-ep2-screen-hiss",
+    "prompt": "Steady analogue white noise, the hiss of an untuned CRT television at close range, with a faint low mains hum underneath. Completely even from start to finish, no swell, no rise, no fade, no clicks, no pops, no music, no voices. A continuous bed of static.",
+    "duration": 2.5
   }
 ]

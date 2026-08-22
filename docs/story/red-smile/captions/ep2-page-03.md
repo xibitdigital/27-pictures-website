@@ -10,11 +10,11 @@ phone; her face reading it; she walks to the lift with the cart.
 **The warning arrives after she has already seen the answer.** V tells her there
 is a new signal near her. She has just left a man sitting perfectly still in
 front of a screen, and she said goodnight to him. Her one thought on this page —
-*He didn't look up.* — is the reader connecting it while she does not.
+_He didn't look up._ — is the reader connecting it while she does not.
 
 This is also the first crack in the civilian read. `halina.md` wants her played
-as a bystander for as long as possible, so the message is kept undecodable: *V*
-and *signal* mean nothing yet. First read, a small mystery. Second read, she was
+as a bystander for as long as possible, so the message is kept undecodable: _V_
+and _signal_ mean nothing yet. First read, a small mystery. Second read, she was
 noticing professionally the whole time.
 
 **She does not reply.** A junior agent does not chat, and a reply would make her
@@ -48,6 +48,20 @@ with a white outline reads as a smear.
 
 V's line is `variant: "ai"` with the `V›` prefix — the HUD treatment for text
 delivered by a device.
+
+## Music cue
+
+`𝄞` at **x .10, y .29, `align: "left"`** — bottom-left of panel 1, the position
+every music cue in this episode uses. `assets/sfx/90443126e726c8f2b78ecd223354038e.mp3`:
+detuned music box, warped tape, rumble underneath.
+
+The glyph is furniture, not scene: same mark, same corner, four pages. The rule
+and the reasons — why the corner is always free, why panel 1 rather than panel 3
+(the folio), and what it costs in read order — live in
+[`ep2-page-09.md`](ep2-page-09.md), which also carries the ffmpeg dread pass that
+makes these clips horror rather than sad.
+
+Cue for: the transmission arrives.
 
 ## Audio
 

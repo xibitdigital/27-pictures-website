@@ -53,6 +53,24 @@ darker is lurking.
 Full bios, appearance locks and voice direction:
 `docs/story/red-smile/{marcus,halina,viktor,tokiro,adaeze}.md`.
 
+## Music cues (4)
+
+Pages 3, 9 and 12 carry **one three-note motif in three timbres** — music box,
+strings, dead piano — so the reader hears _the same thing_ across a tower, a lift
+and a house without being told. Page 6 is deliberately outside the motif: that
+violence is physical, not occult.
+
+Each is a caption, not a background track: a single `𝄞` (U+1D11E) at **x .10,
+y .29, `align: "left"`** — bottom-left of panel 1, every time. Nothing else is
+ever there, because every other caption in this episode sits in the top band of
+its own panel. Details, and the ffmpeg dread pass that makes these clips
+frightening rather than merely sad, are in
+`docs/story/red-smile/captions/ep2-page-09.md`.
+
+Nothing on pages 4-5 (the three steps _are_ the score), 7 (no reply is the page's
+content), 10 (three voiced overlays and two title cards) or 13 (the motif ends on
+12; music after it would be a second ending).
+
 ## Captions
 
 **Page 4 has no captions yet.** Its panels are: his eye at the desk with the

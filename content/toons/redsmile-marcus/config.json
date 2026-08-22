@@ -123,7 +123,8 @@
             "it": "SHHHHH",
             "de": "SHHHHH",
             "fr": "SHHHHH"
-          }
+          },
+          "audio": "assets/sfx/d2a110d4256ffa384ac3bbf0b455153e.mp3"
         }
       ]
     },
@@ -192,6 +193,23 @@
       "file": "assets/b13ff147406a21082a486e31a17a32e9.webp",
       "words": [
         {
+          "x": 0.1,
+          "y": 0.29,
+          "variant": "plain",
+          "size": 32,
+          "angle": -8,
+          "color": "#e8e8e8",
+          "fontFamily": "\"Apple Symbols\", \"Segoe UI Symbol\", \"Noto Music\", serif",
+          "text": {
+            "en": "𝄞",
+            "it": "𝄞",
+            "de": "𝄞",
+            "fr": "𝄞"
+          },
+          "audio": "assets/sfx/90443126e726c8f2b78ecd223354038e.mp3",
+          "align": "left"
+        },
+        {
           "x": 0.66,
           "y": 0.05,
           "variant": "burst",
@@ -211,7 +229,7 @@
           "y": 0.07,
           "variant": "ai",
           "tail": "bottom-right",
-          "size": 28,
+          "size": 24,
           "color": "#fff",
           "text": {
             "en": "V› We got a new signal near you. Be careful.",
@@ -268,7 +286,7 @@
             "de": "TOK TOK TOK",
             "fr": "TOK TOK TOK"
           },
-          "audio": "assets/sfx/f2ac2be4829f2252caadd0618020a93f.mp3"
+          "audio": "assets/sfx/a86a5a5d76be7e8312151c1ac36d8786.mp3"
         },
         {
           "x": 0.78,
@@ -318,7 +336,7 @@
             "de": "TOK TOK TOK",
             "fr": "TOK TOK TOK"
           },
-          "audio": "assets/sfx/f2ac2be4829f2252caadd0618020a93f.mp3"
+          "audio": "assets/sfx/a86a5a5d76be7e8312151c1ac36d8786.mp3"
         },
         {
           "x": 0.17,
@@ -369,6 +387,23 @@
     {
       "file": "assets/3febbf5d3989b06d59e46b0a0a290423.webp",
       "words": [
+        {
+          "x": 0.1,
+          "y": 0.29,
+          "variant": "plain",
+          "size": 30,
+          "angle": -8,
+          "color": "#e8e8e8",
+          "fontFamily": "\"Apple Symbols\", \"Segoe UI Symbol\", \"Noto Music\", serif",
+          "text": {
+            "en": "𝄞",
+            "it": "𝄞",
+            "de": "𝄞",
+            "fr": "𝄞"
+          },
+          "audio": "assets/sfx/bcf1643c06aece8990a1d2a216a09404.mp3",
+          "align": "left"
+        },
         {
           "x": 0.2,
           "y": 0.06,
@@ -617,6 +652,23 @@
           "audio": "assets/sfx/88a0f13b9596ccd5473ef7a1f940051c.mp3"
         },
         {
+          "x": 0.1,
+          "y": 0.29,
+          "variant": "plain",
+          "size": 34,
+          "angle": -8,
+          "color": "#e8e8e8",
+          "fontFamily": "\"Apple Symbols\", \"Segoe UI Symbol\", \"Noto Music\", serif",
+          "text": {
+            "en": "𝄞",
+            "it": "𝄞",
+            "de": "𝄞",
+            "fr": "𝄞"
+          },
+          "audio": "assets/sfx/031e89852b4f4045545e787121ac8c76.mp3",
+          "align": "left"
+        },
+        {
           "x": 0.8,
           "y": 0.36,
           "variant": "burst",
@@ -794,6 +846,23 @@
     {
       "file": "assets/8fc86b7e21fe6e6df06fa08a7521be7e.webp",
       "words": [
+        {
+          "x": 0.1,
+          "y": 0.29,
+          "variant": "plain",
+          "size": 32,
+          "angle": -8,
+          "color": "#e8e8e8",
+          "fontFamily": "\"Apple Symbols\", \"Segoe UI Symbol\", \"Noto Music\", serif",
+          "text": {
+            "en": "𝄞",
+            "it": "𝄞",
+            "de": "𝄞",
+            "fr": "𝄞"
+          },
+          "audio": "assets/sfx/d3252e63b37118f43401f7e978c5d18c.mp3",
+          "align": "left"
+        },
         {
           "x": 0.55,
           "y": 0.05,
