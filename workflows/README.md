@@ -93,17 +93,34 @@ in the filename says which reference it is — **the `_meta.title` on each
 
 `REFS` in `scripts/build-comfy-plate.py` is that record — one alias per upload:
 
-| Alias    | Reference     | `ComfyUI/input/` name |
-| -------- | ------------- | --------------------- |
-| `halina` | Halina sheet  | `19f0f1f6…c396.png`   |
-| `marcus` | Marcus sheet  | `be8903d6…38d4.png`   |
-| `page08` | page 8 plate  | `9bdb1524…349c.png`   |
-| `page11` | page 11 plate | `90d14cfd…02f9.png`   |
-| `viktor` | Viktor sheet  | `4981daab…d753.png`   |
-| `tokiro` | Tokiro sheet  | `f77f85de…6577.png`   |
+| Alias    | Reference                                        | `ComfyUI/input/` name |
+| -------- | ------------------------------------------------ | --------------------- |
+| `halina` | Halina sheet                                     | `19f0f1f6…c396.png`   |
+| `marcus` | Marcus sheet                                     | `be8903d6…38d4.png`   |
+| `page08` | page 8 plate                                     | `9bdb1524…349c.png`   |
+| `page11` | page 11 plate                                    | `90d14cfd…02f9.png`   |
+| `viktor` | Viktor sheet                                     | `4981daab…d753.png`   |
+| `tokiro` | Tokiro sheet                                     | `f77f85de…6577.png`   |
+| `mark`   | The unicursal hexagram, cropped from ep 1 page 1 | `1208ea28…39c4.png`   |
 
 Each new page adds one line: the plate that page follows. Nothing else in the
 graph changes.
+
+**`mark` is a slot for a shape, not for a person.** Every roll that had to draw
+the unicursal hexagram from the prompt's words came back a pentagram or two
+stacked triangles — the wrist plate's first roll among them. It is now
+`references/red-smile/mark-hexagram.png`: the mark as ep 1 page 1 drew it filling
+the television, cropped and upscaled, dark line on a light ground because that is
+the polarity a tattoo needs. Same trick as `page05` for the black sclera — when a
+clause keeps failing, the fix is a reference, not more adjectives.
+
+**Slot numbers are episode-wide, so pad rather than renumber.** RED SMILE ep 2
+reads `1 marcus, 2 halina, 3 previous plate, 4 page05, 5 viktor, 6 tokiro,
+7 mark`. A page that needs none of the middle refs still passes them, negated in
+the PIN clause, because "Image 5" has to mean Viktor on every page or the prompts
+stop being comparable. Dropping an unused ref to shorten the command shifts every
+number after it and pins the wrong things — which is the one failure mode this
+table exists to prevent.
 
 **Every one of these must be the un-watermarked plate.** Feed the watermarked
 WebP from `public/` and Seedream inks `twentyseven.pictures` into the new page.

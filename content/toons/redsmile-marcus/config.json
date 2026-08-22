@@ -26,10 +26,10 @@
       "file": "assets/4468349d8a10ecf6d08aa721e3115c56.png",
       "words": [
         {
-          "x": 0.18,
-          "y": 0.05,
+          "x": 0.65,
+          "y": 0.06,
           "variant": "credit",
-          "size": 22,
+          "size": 25,
           "text": {
             "en": "NEXORA. After hours.",
             "it": "NEXORA. Fuori orario.",
@@ -110,6 +110,20 @@
             "fr": "TIC"
           },
           "audio": "assets/sfx/acc7102c4f71dc864f6d1109d85bf686.mp3"
+        },
+        {
+          "x": 0.68,
+          "y": 0.74,
+          "variant": "burst",
+          "size": 22,
+          "angle": 4,
+          "scale": 0.9,
+          "text": {
+            "en": "SHHHHH",
+            "it": "SHHHHH",
+            "de": "SHHHHH",
+            "fr": "SHHHHH"
+          }
         }
       ]
     },
@@ -648,6 +662,57 @@
       ]
     },
     {
+      "file": "assets/a4238988a6f95ce05d520d1176b40cd1.webp",
+      "words": [
+        {
+          "x": 0.78,
+          "y": 0.22,
+          "variant": "thought",
+          "tail": "top-right",
+          "size": 22,
+          "angle": -2,
+          "text": {
+            "en": "…sorry, Viktor.",
+            "it": "…scusami, Viktor.",
+            "de": "…verzeih, Viktor.",
+            "fr": "…pardon, Viktor."
+          },
+          "speaker": "halina",
+          "audio": "assets/sfx/2fc4c880120c95b32e5a183ecd26c125.mp3"
+        },
+        {
+          "x": 0.11,
+          "y": 0.5,
+          "align": "left",
+          "variant": "credit",
+          "size": 44,
+          "text": {
+            "en": "A HOUSE ACROSS THE CITY.\nThe same night.",
+            "it": "UNA CASA DALL'ALTRA PARTE DELLA CITTÀ.\nLa stessa notte.",
+            "de": "EIN HAUS AM ANDEREN ENDE DER STADT.\nDieselbe Nacht.",
+            "fr": "UNE MAISON À L'AUTRE BOUT DE LA VILLE.\nLa même nuit."
+          },
+          "speaker": "narrator",
+          "audio": "assets/sfx/77509422754e5b9299b2bd6469722b66.mp3"
+        },
+        {
+          "x": 0.11,
+          "y": 0.7,
+          "align": "left",
+          "variant": "credit",
+          "size": 32,
+          "text": {
+            "en": "Where her reports went.",
+            "it": "Dove finivano i suoi rapporti.",
+            "de": "Wohin ihre Meldungen gingen.",
+            "fr": "Là où arrivaient ses rapports."
+          },
+          "speaker": "narrator",
+          "audio": "assets/sfx/28d20f7bac7df358549a960dda3e29b8.mp3"
+        }
+      ]
+    },
+    {
       "file": "assets/bd989e9074bf5a36713531adda489dc0.webp",
       "words": [
         {
@@ -693,18 +758,36 @@
           "audio": "assets/sfx/eda8bb806c56cd5a74b93c832e0ade02.mp3"
         },
         {
-          "x": 0.68,
-          "y": 0.7,
+          "x": 0.23,
+          "y": 0.75,
           "variant": "bubble",
-          "tail": "bottom-left",
+          "tail": "right",
+          "size": 20,
           "angle": -2,
           "text": {
-            "en": "Tokiro. Elena's house. Find H.",
-            "it": "Tokiro. Casa di Elena. Trova H.",
-            "de": "Tokiro. Elenas Haus. Finde H.",
-            "fr": "Tokiro. Chez Elena. Trouve H."
+            "en": "Tokiro. An hour of silence from H.",
+            "it": "Tokiro. Un'ora di silenzio da H.",
+            "de": "Tokiro. Eine Stunde Funkstille von H.",
+            "fr": "Tokiro. Une heure de silence de H."
           },
-          "audio": "assets/sfx/2b08138aef139e170a5cdf4f38e7f900.mp3"
+          "speaker": "viktor",
+          "audio": "assets/sfx/123d644adfb2dc8eed12f0cb06f20c1a.mp3"
+        },
+        {
+          "x": 0.76,
+          "y": 0.78,
+          "variant": "bubble",
+          "tail": "left",
+          "size": 18,
+          "angle": 1,
+          "text": {
+            "en": "Elena's house. Then Halina — and nobody else finds that wrist.",
+            "it": "La casa di Elena. Poi Halina — e quel polso non lo trova nessun altro.",
+            "de": "Elenas Haus. Dann Halina — und dieses Handgelenk findet niemand sonst.",
+            "fr": "La maison d'Elena. Puis Halina — et personne d'autre ne trouve ce poignet."
+          },
+          "speaker": "viktor",
+          "audio": "assets/sfx/3a008a24c97f8d2f1da864eecce06674.mp3"
         }
       ]
     },

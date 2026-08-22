@@ -4,12 +4,12 @@
 
 Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 
-|             |                                                          |
-| ----------- | -------------------------------------------------------- |
+|             |                                                             |
+| ----------- | ----------------------------------------------------------- |
 | Config      | `content/toons/redsmile-marcus/config.json` → publish to R2 |
-| Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key     |
-| Design size | 800 × 1424 (portrait)                                    |
-| Pages       | **12**                                                   |
+| Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key        |
+| Design size | 800 × 1424 (portrait)                                       |
+| Pages       | **13**                                                      |
 
 ## Status: published, unlisted
 
@@ -23,6 +23,16 @@ card on `/toons/red-smile/` and an entry in that page's `CreativeWorkSeries`
 
 Shipping the episode = remove the noindex, add the sitemap `<url>` and the
 `llms.txt` line.
+
+## Page 10 is an insert
+
+The wrist plate sits between Halina's death and Viktor's desk, so the pages
+after it shifted by one: Viktor's desk is 11, the handover 12, the credits 13.
+Its prompt is `docs/story/red-smile/prompts/page-10b-halina-mark.txt` — named
+`10b` on purpose, so no earlier prompt file had to be renumbered. Caption docs
+`captions/ep2-page-1{0,1,2}.md` were renamed to match the reader.
+
+Deep links move with it: `?page=10` was Viktor's desk and is now the wrist.
 
 ## Logline
 
@@ -58,7 +68,7 @@ Keep them in that order, and take the mark's geometry from **ep 1 page 1**, neve
 from ep 2 page 1, which drew it as an equilateral hexagram.
 
 The middle panel is the one to protect in any re-roll: he is upright, arms down,
-jacket undisturbed, face calm, and the *walls* carry the motion blur. `marcus.md`
+jacket undisturbed, face calm, and the _walls_ carry the motion blur. `marcus.md`
 forbids transforming or lunging — the speed is the only thing wrong with him, and
 that reads worse than a charge.
 
@@ -77,13 +87,13 @@ ffmpeg -y -i in.mp3 -af "highpass=f=300,lowpass=f=3400,aecho=0.8:0.6:4:0.18,\
 dynaudnorm=f=200:g=5" -codec:a libmp3lame -b:a 192k /tmp/out.mp3
 ```
 
-That is deliberately *not* the `ai`/`badai` chain `docs/story/red-smile/viktor.md`
+That is deliberately _not_ the `ai`/`badai` chain `docs/story/red-smile/viktor.md`
 forbids. What is being processed is her phone reading his text aloud, not Viktor's
 throat — he is not a machine, and the chain must never be heavy enough to suggest
 he is.
 
-Page 2 carries 5 overlays, **all of them hers** — `SHHK` (the bin), *Sir?*,
-*I've finished, sir.*, *Goodnight.*, then `TIC`. Marcus has no bubble on the
+Page 2 carries 5 overlays, **all of them hers** — `SHHK` (the bin), _Sir?_,
+_I've finished, sir._, _Goodnight._, then `TIC`. Marcus has no bubble on the
 page at all: he is asked a question and does not answer, and the silence is the
 beat. The closing `TIC` reuses page 1's popup clip, so the machine speaks again
 after she has left the corridor. Draft and placement reasoning:
@@ -102,7 +112,7 @@ already on target).
 
 The chime took two takes: the first came back at -60 dB mean — inaudible — and
 a 0.4 s request is under what the API renders usefully. The shipped one asks for
-0.8 s and a *loud, dry, close* tick.
+0.8 s and a _loud, dry, close_ tick.
 
 ## Page 6 — she fights back, and what it cost to get the panel
 
@@ -116,14 +126,14 @@ Three rolls, and the prompt now carries what each one taught:
    grin at the person you are about to kill is the beat. Fixed by pinning him
    three-quarter with his eyes on her, plus three explicit negatives.
 2. **Inverted geography** — her in the corridor, him in the car. Caused by the
-   phrase *"in the doorway"*, which reads from either side. Fixed by a **STAGING**
+   phrase _"in the doorway"_, which reads from either side. Fixed by a **STAGING**
    clause above the panels that states who is where and applies to all of them.
    Do not delete it, and never write "in the doorway" on this page.
 3. **Normal eyes, and a cart that missed.** Both wide-shot rolls treated the black
    sclera as detail and the shove as a pose. Fixed by shooting panel 1 as a
    **medium close** with him large in frame, naming his face as the panel's
-   subject, and describing the impact in the **past tense** — *the cart has already
-   hit him* — with its consequences rather than the action.
+   subject, and describing the impact in the **past tense** — _the cart has already
+   hit him_ — with its consequences rather than the action.
 
 The grin stays **small and tight**. "The smile" is the series' last stage and is
 not spent on a page where she gets away.
@@ -147,14 +157,14 @@ is a five-second repair.
 ## Page 5 — two breaks from the sheets, both deliberate
 
 - **No eyeglasses.** `docs/story/red-smile/marcus.md` locks the slim rectangular
-  glasses into *every* view. They come off here because the human upkeep has
+  glasses into _every_ view. They come off here because the human upkeep has
   stopped — and because a lens is the one thing that would hide the black. State
   it twice in any re-roll (in the PIN and in the panel), or i2i puts them back.
 - **Black sclera at distance**, both eyes, readable at corridor range. This is the
   escalation from page 4's iris mark, and no sigil is visible now — the black
   swallows it.
 
-**His line is pitched down, and nothing else.** *Mrs…?* is his own take dropped
+**His line is pitched down, and nothing else.** _Mrs…?_ is his own take dropped
 12% in pitch — one voice, lower than his:
 
 ```bash
@@ -175,19 +185,19 @@ takes this pass**; his page 1 lines, spoken before the crossing, stay clean —
 which is itself a tell on a reread.
 
 His courtesy is the last thing in the episode, not the violence: he is invisible
-except four fingers in a lift door, and what he says is *Mrs…?* — still polite,
+except four fingers in a lift door, and what he says is _Mrs…?_ — still polite,
 still without her name. Ep 1 built that man on purpose (he asks how she is and
 waits for the answer); this is where it is spent. Do not give him a threat line
 here.
 
 ## Plates
 
-| Page | Prompt |
-| ---- | ------ |
-| 1    | `docs/story/red-smile/prompts/page-02-marcus-halina-office.txt` |
+| Page | Prompt                                                               |
+| ---- | -------------------------------------------------------------------- |
+| 1    | `docs/story/red-smile/prompts/page-02-marcus-halina-office.txt`      |
 | 2    | `docs/story/red-smile/prompts/page-03-halina-goodnight-corridor.txt` |
-| 3    | `docs/story/red-smile/prompts/page-04-halina-phone-lift.txt` |
-| 4    | `docs/story/red-smile/prompts/page-05-lift-marcus-eye.txt` |
+| 3    | `docs/story/red-smile/prompts/page-04-halina-phone-lift.txt`         |
+| 4    | `docs/story/red-smile/prompts/page-05-lift-marcus-eye.txt`           |
 
 **Page 1 has a continuity defect.** The sigil in the laptop popup is a roughly
 equilateral hexagram; the series mark is notably taller than wide with a long

@@ -107,8 +107,14 @@ outer edge.
   **bottom-right** toward her face at about x .45 — never across it.
 - Her second line goes right, tail **bottom-left**, clear of the cart.
 - The chime sits left of the laptop in panel 3 over black, no tail: it comes from
-  the machine, not from a mouth. White lettering with a white stroke so it lifts
-  off the dark plate.
+  the machine, not from a mouth. Black lettering, no text stroke — the burst body
+  is already a light fill, so white-on-white reads as a smear.
+- `SHHHHH` sits right of it, x .68 y .74, `burst`, size 22, no tail, no stroke —
+  the screen's white noise coming up under the popup. Same row as `TIC` (.02
+  apart, inside `ROW_TOLERANCE`) and a larger x, so auto-read gives the tick
+  first and the hiss after it: the machine pings, then the room starts humming.
+  Smaller and less angled than `TIC` because it is a sustained bed, not a hit.
+  It is the ep 1 static arriving in this building.
 
 ## Audio to generate
 
@@ -127,6 +133,11 @@ python3 scripts/generate-jax-voice.py "[softly] I won't be long." \
 Marcus is warm and unhurried, never arch. Halina is low, flat, polite, tired —
 higher stability so she does not perform. Neither takes the `ai`/`badai` metallic
 chain.
+
+`SHHHHH` is the second SFX on the page, slug `redsmile-ep2-screen-hiss`:
+**2.5s of steady analogue white noise / CRT hiss with a faint mains hum, no
+music, no clicks, no rise**. It has to loop-read as one continuous bed under the
+tick, so ask for *steady* — a swell dated the moment it played twice.
 
 The chime is **not** a voice line: it comes from `scripts/generate-jax-sfx.py`
 (Sound Effects API), slug `redsmile-ep2-popup-tic` — a single dry UI

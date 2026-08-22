@@ -77,6 +77,13 @@ REFS = {
     'page11': '90d14cfdfdd250c521c03469e435a29e6bd106479676dc70b5091485256b02f9.png',
     'viktor': '4981daab45709b1fda8d2f25dcc6bd13effe39770d83a1f6a6955133c850d753.png',
     'tokiro': 'f77f85de644b96fb0cafc6fc1a6b37e81d035a92b06f1aa358a473a181926577.png',
+    # the mark itself, cropped from ep 1 page 1 (the hexagram filling the
+    # television) and upscaled: references/red-smile/mark-hexagram.png. Every
+    # roll that had to draw the mark from words alone came back a pentagram or
+    # two stacked triangles, so it gets its own slot the way page05 does for the
+    # black sclera. Dark line on a light ground, which is also the polarity a
+    # tattoo needs.
+    'mark': '1208ea2883edbf6ca6eadb1817530b3a94c35806733d8ee6f883506555b139c4.png',
 }
 
 # Rec.709 luma out of core nodes only: ImageBlend in "normal" mode computes

@@ -1,0 +1,87 @@
+# model: bytedance/seedream-5.0-pro  (ComfyUI: ByteDance Seedream 4.5 & 5.0)
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/marcus.png (NOT on this page)
+#       Image 2 = references/red-smile/halina.png (identity - her hands, her
+#                 tabard cuff, her age)
+#       Image 3 = RED SMILE: Marcus page 9 plate - the lift car (ink, tiles,
+#                 ceiling light, the spray bottle)
+#       Image 4 = RED SMILE: Marcus page 5 - black sclera (NOT used here)
+#       Image 5 = references/red-smile/viktor.png - NOT on this page. It carries
+#                 the mark, but small; Image 7 is the one to draw from.
+#       Image 6 = references/red-smile/tokiro.png - NOT on this page. Loaded
+#                 only so slot 6 keeps meaning Tokiro, as it does on page 12.
+#       Image 7 = references/red-smile/mark-hexagram.png - THE MARK. Cropped
+#                 from ep 1 page 1 (the hexagram filling the television) and
+#                 upscaled. Dark line on a light ground, which is the polarity
+#                 a tattoo wants. Geometry only: no screen, no bezel, no static,
+#                 no television anywhere on this page.
+# graph: 1472x2624, thinking ON, ImageScale crop=center down to 800x1424.
+#        Pass --width/--height: the script's 1024x1824 default trips its own
+#        3.68 MP floor check for seedream 5.0 pro.
+#   npm run comfy-page -- \
+#     --prompt-file docs/story/red-smile/prompts/page-10b-halina-mark.txt \
+#     --ref marcus --ref halina --ref page09 --ref page05 \
+#     --ref viktor --ref tokiro --ref mark \
+#     --width 1472 --height 2624 \
+#     --prefix redsmile-marcus/page-10b \
+#     --out workflows/redsmile-seedream.api.json
+#
+# note: Same five-slot reference block as pages 9-12, so "Image 1 / 2 / 3 / 4 /
+#       5" mean what they mean on those pages. Only Image 2 is an identity pin;
+#       Images 1, 4 and 5's man are all explicitly negated. Image 5 contributes
+#       the hexagram and nothing else.
+#       INSERT between the drain plate (page-10-lift-drain) and the study plate
+#       (page-11-viktor-desk). Reader page 10; everything after shifts by one.
+#       ONE FULL-BLEED PANEL - the only splash in the episode. It exists to turn
+#       one fact: the cleaner nobody knew the name of was one of theirs. Viktor
+#       says "another agent is down" on the next page; this page is what he
+#       means.
+#       ONE PERSON, and she is dead. No standing figure, no reflection, nobody
+#       in the doorway. Nothing moves.
+#       Her FACE stays out of frame. The page is the wrist, not the corpse -
+#       page 10's last panel already gave the reader her face.
+#       The harm is age, not injury: no blood, no wound, no bruise at the throat.
+#       CAPTIONLESS on purpose - the mark is the whole line. Do not draw
+#       lettering of any kind.
+#
+#       Roll 1 failed on the two things that matter and is not worth a fix pass:
+#       (a) it drew her STANDING and stooping toward the camera with both shoes
+#       planted, arm outstretched - which reads as her reaching, not as a body;
+#       (b) the tattoo came back a FIVE-POINTED pentagram, thin and fresh, and
+#       far too small to carry a full page. It also rendered as soft graphite
+#       with no solid blacks. Hence the POSE, SYMBOL and STYLE clauses below.
+#       The symbol now has its OWN reference slot rather than a paragraph of
+#       words - Image 7, `--ref mark`, the same trick `page05` plays for the
+#       black sclera. Slot 6 stays Tokiro even though he is absent, so an
+#       "Image N" means one thing across every page of the episode.
+#
+#       Roll 2 got the pose right - lying flat, arm along the tiles, bottle,
+#       aged skin, face out of frame - and failed on two things:
+#       (a) the HAND. The clause said LEFT, palm up, and the roll drew a hand
+#       that reads as the other one. Handedness is not worth a re-roll and the
+#       story does not care which arm it is, so it is no longer specified: the
+#       mark lives on the pale INNER wrist, and "palm turned up" is the only
+#       constraint that matters. Do not put LEFT or RIGHT back in.
+#       (b) the symbol came back a FIVE-POINTED star again. If Image 7 was not
+#       attached, that is the whole story - check the graph before rewording
+#       anything. Six points or the page has failed; there is no third option.
+#       Roll 2 also foreshortened so hard the hand dwarfs her body. Pull back:
+#       the arm owns the lower third of the page, not the lower two thirds.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, ONE FULL-BLEED PANEL - no gutters, no panel divisions, no insets. Sharp gekiga linework, heavy ink washes, solid blacks, harsh contrast. No color, no balloons, no captions, no SFX, no logos, no watermarks, no text anywhere.
+
+PIN from references: the arm and hand of the woman in Image 2 - mid 50s, heavy-set, dark tunic under a knee-length tabard - aged twenty years on top, as the drain left her: skin loose and papery, veins standing. Keep the lift car and ink of Image 3 - white tiled floor, brushed steel, one hard ceiling light, the spray bottle. Take the mark from Image 7 and nothing else from it. Nothing at all from Images 1, 4, 5, 6 - no man, no overcoat, no swords, no second person, no television, no static.
+
+SYMBOL: the mark of IMAGE 7, copied line for line, tattooed on the pale INNER WRIST - the soft underside above the heel of the upturned hand, never the back of the hand, never the outer forearm. COUNT THE POINTS: SIX, not five - one unbroken interlaced line, taller than wide, lens-shaped void at its centre. NOT a pentagram, NOT a five-pointed star, NOT two overlapping triangles. Dark old ink on old skin, every crossing readable. LARGE - it spans the whole wrist and is the sharpest thing in the frame.
+
+STYLE: Dark psychological horror INK, matching Image 3 - brush and pen, hard-edged black shapes, cross-hatching, flat greys, large areas of SOLID BLACK. NOT soft pencil, NOT graphite, NOT airbrushed, NOT photoreal 3D. Cold tile and metal, one hard ceiling light, everything past it crushed to black.
+
+POSE - SHE IS DEAD ON THE FLOOR: LYING DOWN, flat along the tiles. The arm fell where it lies, wrist turned up. NOT standing, kneeling, crouching or reaching, nothing propped, nothing gripping. Nothing is upright, nothing is moving.
+
+LAYOUT - the page splits on one diagonal. The LOWER RIGHT is lit tiled floor and the arm. The UPPER LEFT, a little over half the page, is SOLID FLAT BLACK: empty, even, no gradient, no texture, no detail, no light spill. One clean boundary between them, from the left edge at about two thirds height up to the right edge at about two fifths height, broken only by ink hatching and the light's own spill so it reads as darkness, not as a cut.
+
+COMPOSITION: Camera almost ON the tile, looking ALONG the floor. ONE ARM lies stretched across the tiles out of the black into the light, forearm flat on the floor, PALM TURNED UP so the soft inner wrist faces the ceiling, fingers slack and half-curled where they fell. Cuff and sleeve fallen back to bare the wrist. The TATTOO sits inside the lit area, below and right of the page centre, one hard blade of light across it so the interlaced line reads end to end. Her sleeve and shoulder vanish into the black at the upper left - no face, no body, nothing identifiable there. The spray bottle on its side deeper in the light. A sliver of steel kick-plate and one door seam survive at the top of the lit area, so the room is still a lift. No blood, no wound.
+
+SCALE AND ANATOMY: one human scale - a normal adult forearm and hand, foreshortened toward the camera, not a giant hand. ONE arm, ONE hand, palm up, five digits: one thumb set apart from four fingers, all lying against the tile. No third hand, no second person, no floating limb.
+
+CHANGE: only the scene above, single full-page panel. Preserve the woman of Image 2 and the ink of Image 3.

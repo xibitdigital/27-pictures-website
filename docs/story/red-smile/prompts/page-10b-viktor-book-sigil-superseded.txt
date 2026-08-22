@@ -1,0 +1,56 @@
+# SUPERSEDED - never run. The book gets its reveal on page 12 (the handover);
+# a splash of it here spends that beat early and turns nothing. Replaced by
+# page-10b-halina-mark.txt, which makes "another agent is down" a reveal.
+
+# model: bytedance/seedream-5.0-pro  (ComfyUI: ByteDance Seedream 4.5 & 5.0)
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/marcus.png (not on this page)
+#       Image 2 = references/red-smile/halina.png (not on this page)
+#       Image 3 = RED SMILE: Marcus page 11 plate - Viktor's study (ink, lamp,
+#                 dark wood). Swap for the page 10 drain plate only if that
+#                 upload exists; REFS has no `page10` alias yet.
+#       Image 4 = RED SMILE: Marcus page 5 - black sclera (unused this page)
+#       Image 5 = references/red-smile/viktor.png (identity + the mark)
+# graph: 1472x2624, thinking ON, ImageScale crop=center down to 800x1424.
+#   npm run comfy-page -- \
+#     --prompt-file docs/story/red-smile/prompts/page-10b-viktor-book-sigil.txt \
+#     --ref marcus --ref halina --ref page11 --ref page05 --ref viktor \
+#     --prefix redsmile-marcus/page-10b \
+#     --out workflows/redsmile-seedream.api.json
+#
+# note: Same five-slot reference block as pages 10-12, so the PIN clause's
+#       "Image 1 / 2 / 3 / 4 / 5" mean what they mean on those pages. Marcus,
+#       Halina and the sclera are loaded and explicitly NEGATED - identity is
+#       Image 5 only. Do not PIN Image 1 or this page draws Marcus.
+#       INSERT between the drain plate (page-10-lift-drain) and the study plate
+#       (page-11-viktor-desk). Reader page 10; everything after shifts by one.
+#       ONE FULL-BLEED PANEL, not a three-panel stack - the only splash page in
+#       the episode, which is why the book gets it.
+#       His FACE stays out of frame: the desk plate is his reveal, this page is
+#       the book. Hands, coat, hat brim only.
+#       The hexagram appears TWICE - blind-tooled into the leather and tattooed
+#       on the back of the right hand - and both must be the same geometry.
+#       If the cover reads as a Star of David or a pentagram the page has failed.
+#       The book carries the symbol and NOTHING ELSE: no title, no lettering.
+#       page-12-tokiro-book.txt says "no title, no letters" - that stays true,
+#       but its cover now has to show this mark.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, ONE SINGLE FULL-BLEED PANEL filling the whole page - no gutters, no panel divisions, no inset panels, no stacked rows. Sharp gekiga linework, heavy ink washes, solid blacks, harsh contrast, grey midtones. No color, no balloons, no captions, no SFX, no logos, no watermarks, no text anywhere.
+
+PIN from references: the man of Image 5 exactly, seen only from the chest down - full-length double-breasted Victorian wool overcoat, heavy dark wool, velvet collar, waistcoat and cravat, black leather gloves CARRIED not worn, both hands bare, 1800s black silk top hat. Keep the study and the B&W horror ink of Image 3 - old dark wood, one desk lamp, crushed shadow. Do not take a face, suit or body from Image 1 or Image 2. Do not take the black sclera from Image 4. Do not redesign him, and do not give him a face in this frame.
+
+SYMBOL: unicursal hexagram - a six-pointed star drawn as ONE continuous unbroken interlaced line, taller than wide, elongated vertical axis, a small lens-shaped void at its centre. Not two overlapping triangles, not a Star of David, not a pentagram, no surrounding circle. Identical to the mark on Image 5, drawn twice on this page and identical both times.
+
+STYLE: Dark psychological horror ink. The Victorian study, one raking lamp from the left, the room behind falling to solid black. ONLY ONE PERSON, and only his hands, coat and hat brim are in frame.
+
+COMPOSITION: Vertical full-page shot, close and centred. An OLD CLOSED BOOK held in BOTH BARE HANDS at chest height, front cover square to the camera, filling the middle third of the page. Worn dark leather, bruised corners, raised spine bands, a heavy clasp, thick uneven page block. The unicursal hexagram is BLIND-TOOLED into the leather - pressed, not printed - catching the lamp along one edge of the line and holding shadow in the groove, the interlaced path readable end to end. No title, no letters, no gilding, no other ornament on the cover.
+
+The RIGHT HAND grips the lower edge, back of the hand toward the camera, its tattooed unicursal hexagram fully lit and unmistakably the same mark as the cover. The LEFT HAND steadies the top edge, fingers curled over the board. Age spots, tendons, deep knuckle lines.
+
+Above the book: the velvet collar, the cravat, and the underside of the top hat brim cutting across the TOP EDGE of frame - the face above it lost in black, no eyes, no mouth, nothing to identify. Below: the coat falling straight into darkness. Behind: the edge of the desk and the lamp's glow, the rest of the study black.
+
+SCALE: one human scale. The book is a normal old book, roughly two hand-widths tall, held comfortably - not a giant tome, not a pocket volume. The hands are normal adult hands.
+
+ANATOMY: two arms. Each hand has five digits: one thumb and four fingers, thumb on the correct side, both thumbs on the near face of the book. No third hand, no second person.
+
+CHANGE: only the scene above. Single full-page panel, his study. Preserve the man of Image 5 and the ink of Image 3.
