@@ -662,11 +662,11 @@
       ]
     },
     {
-      "file": "assets/a4238988a6f95ce05d520d1176b40cd1.webp",
+      "file": "assets/188263c3655617103bb624b78eefc02f.webp",
       "words": [
         {
-          "x": 0.78,
-          "y": 0.22,
+          "x": 0.3,
+          "y": 0.1,
           "variant": "thought",
           "tail": "top-right",
           "size": 22,
@@ -685,7 +685,7 @@
           "y": 0.5,
           "align": "left",
           "variant": "credit",
-          "size": 44,
+          "size": 40,
           "text": {
             "en": "A HOUSE ACROSS THE CITY.\nThe same night.",
             "it": "UNA CASA DALL'ALTRA PARTE DELLA CITTÀ.\nLa stessa notte.",
@@ -697,7 +697,7 @@
         },
         {
           "x": 0.11,
-          "y": 0.7,
+          "y": 0.64,
           "align": "left",
           "variant": "credit",
           "size": 32,

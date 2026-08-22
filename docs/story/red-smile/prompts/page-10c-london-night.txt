@@ -1,0 +1,49 @@
+# model: bytedance/seedream-5.0-pro  (ComfyUI: ByteDance Seedream 4.5 & 5.0)
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/marcus.png (NOT on this page)
+#       Image 2 = references/red-smile/halina.png (NOT on this page)
+#       Image 3 = RED SMILE: Marcus page 11 plate - Viktor's study. Here it is
+#                 an INK reference only: brush weight, solid blacks, the way
+#                 lamplight is drawn. Not a location to copy.
+# graph: 1472x2624, thinking ON, ImageScale crop=center down to 800x1424.
+#        Pass --width/--height: the script's 1024x1824 default trips its own
+#        3.68 MP floor check for seedream 5.0 pro.
+#   npm run comfy-page -- \
+#     --prompt-file docs/story/red-smile/prompts/page-10c-london-night.txt \
+#     --ref marcus --ref halina --ref page11 \
+#     --width 1472 --height 2624 \
+#     --prefix redsmile-marcus/page-10c \
+#     --out workflows/redsmile-seedream.api.json
+#
+# note: Slots 1-3 keep their episode-wide meaning; slots 4-7 (page05, viktor,
+#       tokiro, mark) are simply not passed - dropping TRAILING refs shifts no
+#       number, dropping a middle one would.
+#       INSERT after the wrist plate (page-10b) and before Viktor's study
+#       (page-11). It is the descent that page 10's card promises: A HOUSE
+#       ACROSS THE CITY. Reader page 11; everything after shifts by one again.
+#       NO PEOPLE ANYWHERE. Not a figure at a window, not a silhouette on a
+#       street, not a face in a pane. The city is empty of visible humans, and
+#       that is the point: two rooms in it matter and nobody else knows.
+#       The three panels are ONE CONTINUOUS DESCENT - high, lower, lowest -
+#       reading as a drone dropping toward the house. Same night, same weather,
+#       same direction of view in all three.
+#       CAPTIONLESS on purpose: page 10's card already said where we are going,
+#       so this page only has to arrive. Draw no lettering.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp gekiga linework, heavy ink washes, solid blacks, harsh contrast, grey midtones. No color, no balloons, no captions, no SFX, no logos, no watermarks, no text anywhere.
+
+PIN from references: take ONLY the ink of Image 3 - brush and pen, hard-edged black shapes, cross-hatching, flat greys, large areas of solid black, lamplight drawn as hard pools rather than glow. Do not take the study, the desk or the lamp from it as a place. Nothing at all from Image 1 or Image 2 - no man, no woman, no faces, no figures.
+
+STYLE: Dark psychological horror ink, aerial. LONDON AT NIGHT from above, overcast, wet after rain so every surface holds a hard reflection. Streetlight is sodium-hard, windows are small cut rectangles of white, the sky is solid black with no stars. Not photoreal, not a 3D render, not neon cyberpunk - inked architecture.
+
+TOP (~35%): HIGH ALTITUDE, looking down at a shallow angle across the city. The Thames curves black through the middle distance, bridges crossing it as thin lit lines, the dense grid of streets carrying sodium light to the horizon. Recognisably London: a cluster of glass towers on one side, older stone terraces and church spires on the other. In the middle distance ONE glass tower stands with a SINGLE FLOOR still lit near its top, every other floor dark - the office of page 1. Everything is tiny at this height; no detail larger than a matchhead.
+
+MIDDLE (~30%): LOWER, over rooftops. Slate roofs shining wet, chimney stacks in rows, a mews and a garden square below, bare plane trees, parked cars as dark blocks, one empty street with the sodium lamps reflected end to end in the tarmac. Deep black between the buildings. Still nobody in the street.
+
+BOTTOM (~35%): LOWEST, almost above it. ONE HOUSE in a dark Victorian terrace, seen steeply from above and in front - four storeys, stone steps to a black door, iron railings, a walled garden behind. Every window is dark except ONE on the upper floor: a warm hard-edged rectangle of lamplight with the sash and glazing bars drawn black across it. The house is the only lit thing in the panel. Nobody at the window.
+
+SCALE: aerial and consistent. Panel 1 is a whole city, panel 2 a few streets, panel 3 one building - each panel roughly a third of the height of the last. No panel is at eye level.
+
+ANATOMY: no people, so no bodies to get wrong. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: everything but the ink. New location - the city from the air, then one house. Preserve only the brush weight and blacks of Image 3.

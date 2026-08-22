@@ -1,9 +1,9 @@
 # EP 2, page 10 — captions
 
-Plate: `assets/a4238988a6f95ce05d520d1176b40cd1.webp` (prompt
+Plate: `assets/188263c3655617103bb624b78eefc02f.webp` (prompt
 `docs/story/red-smile/prompts/page-10b-halina-mark.txt`). Her arm on the lift
-tiles, palm up, the mark on the inner wrist; the lower half of the plate is
-flat black. Inserted between the drain plate and Viktor's desk, which is why
+tiles, palm up, the mark on the inner wrist; then a black band; then the house
+from above, one upper window lit. The page is the whole cut in one plate. Inserted between the drain plate and Viktor's desk, which is why
 its prompt is numbered `10b` — every later prompt file keeps the number it had.
 
 ## The idea
@@ -35,14 +35,14 @@ Three overlays: her last breath, the location card, one line of subtitle under
 it. All three are voiced.
 
 ```json
-{ "x": 0.78, "y": 0.22, "size": 22, "angle": -2,
+{ "x": 0.30, "y": 0.46, "size": 22, "angle": -2,
   "variant": "thought", "tail": "top-right",
   "text": { "en": "…sorry, Viktor." }, "speaker": "halina",
   "audio": "assets/sfx/2fc4c880120c95b32e5a183ecd26c125.mp3" },
-{ "x": 0.11, "y": 0.50, "size": 34, "align": "left", "variant": "credit",
+{ "x": 0.11, "y": 0.56, "size": 34, "align": "left", "variant": "credit",
   "text": { "en": "A HOUSE ACROSS THE CITY.\nThe same night." }, "speaker": "narrator",
   "audio": "assets/sfx/77509422754e5b9299b2bd6469722b66.mp3" },
-{ "x": 0.11, "y": 0.70, "size": 22, "align": "left", "variant": "credit",
+{ "x": 0.11, "y": 0.64, "size": 22, "align": "left", "variant": "credit",
   "text": { "en": "Where her reports went." }, "speaker": "narrator",
   "audio": "assets/sfx/28d20f7bac7df358549a960dda3e29b8.mp3" }
 ```
@@ -117,14 +117,29 @@ Three points that matter if these are ever regenerated:
 
 All three are on R2 (`npm run upload-assets`).
 
-## The mark is correct on this plate
+## The plate carries the cut, so the page needs no second plate
 
-Six points, one unbroken interlaced line, lens void at the centre — the
-unicursal hexagram as ep 1 page 1 draws it. Two earlier rolls came back
-five-pointed; both are gone. If this plate is ever re-rolled, the thing to check
-first is the point count, because the mark is the only hard link between Halina,
-Viktor, Adaeze and Elena's iris.
+The current plate is three zones down one column: her wrist on the tiles at the
+top, a wide black band, then the house seen steeply from above with one upper
+window lit. The descent that was going to be its own three-panel page
+(`page-10c-london-night.txt`) is compressed into the bottom third — the city
+went, the arrival stayed.
 
-The art sits in the top ~40% of the plate and the rest is flat black, which is
-where the three captions live. A re-roll that fills more of the page leaves them
-sitting on ink.
+That makes the black band the middle of the page rather than its floor, and all
+three overlays live in it: whisper at `.46`, card at `.56`, subtitle at `.64`.
+The order is now spatial as well as temporal — she speaks over the tiles she is
+lying on, the words cross the dark, and the house is underneath them, waiting.
+Nothing sits on ink.
+
+Two things to watch on any re-roll:
+
+- **Keep the black band tall enough.** Three overlays and a 34px card need
+  roughly a third of the page. A roll that fills more of the plate pushes the
+  subtitle onto the roofline.
+- **The mark is six-pointed here** — one unbroken interlaced line, lens void at
+  the centre. Earlier rolls came back as pentagrams; it is the only hard link
+  between Halina, Viktor, Adaeze and Elena's iris, so it is the first thing to
+  check.
+
+`page-10c-london-night.txt` stays in the prompts folder unrun. If the city ever
+wants its own page, it is written — but the reader does not need it now.
