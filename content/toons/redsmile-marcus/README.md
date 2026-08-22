@@ -9,7 +9,7 @@ Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 | Config      | `content/toons/redsmile-marcus/config.json` → publish to R2 |
 | Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key     |
 | Design size | 800 × 1424 (portrait)                                    |
-| Pages       | **7** — work in progress                                 |
+| Pages       | **12**                                                   |
 
 ## Status: published, unlisted
 
@@ -17,14 +17,12 @@ The config and every asset are on R2 and the reader resolves the locked hash
 like every other toon, so `/toons/redsmile-marcus/` works in a production build.
 
 It is still **unlisted**: `noindex, nofollow` on the reader, no card on
-`/toons/`, no sitemap or `llms.txt` entry — seven pages are not something to rank,
-and a work-in-progress badge does not stop Google ranking half a story. What it
-does have is an episode card on `/toons/red-smile/` (with a *Work in progress*
-badge, same as Erin EP 2) and an entry in that page's `CreativeWorkSeries`
+`/toons/`, no sitemap or `llms.txt` entry. What it does have is an episode
+card on `/toons/red-smile/` and an entry in that page's `CreativeWorkSeries`
 `hasPart`, because the series page must not claim fewer episodes than it shows.
 
 Shipping the episode = remove the noindex, add the sitemap `<url>` and the
-`llms.txt` line, and drop the WIP badge and the `1 page` cue.
+`llms.txt` line.
 
 ## Logline
 
