@@ -5,7 +5,7 @@
     },
     "class_type": "LoadImage",
     "_meta": {
-      "title": "Image 1 — Marcus sheet"
+      "title": "Image 1 \u2014 Marcus sheet"
     }
   },
   "2": {
@@ -14,21 +14,21 @@
     },
     "class_type": "LoadImage",
     "_meta": {
-      "title": "Image 2 — Halina sheet"
+      "title": "Image 2 \u2014 Halina sheet"
     }
   },
   "3": {
     "inputs": {
-      "image": "63bed0610ccaf89475acf565fe779f970c8694788567e5aaa77a9ff088ac2f64.png"
+      "image": "90d14cfdfdd250c521c03469e435a29e6bd106479676dc70b5091485256b02f9.png"
     },
     "class_type": "LoadImage",
     "_meta": {
-      "title": "Image 3 — previous page (Marcus p7)"
+      "title": "Image 3 \u2014 previous page"
     }
   },
   "7": {
     "inputs": {
-      "filename_prefix": "redsmile-marcus/page-08",
+      "filename_prefix": "redsmile-marcus",
       "images": ["15", 0]
     },
     "class_type": "SaveImage",
@@ -43,7 +43,7 @@
     },
     "class_type": "ImageToMask",
     "_meta": {
-      "title": "Split — red"
+      "title": "Split \u2014 red"
     }
   },
   "9": {
@@ -53,7 +53,7 @@
     },
     "class_type": "ImageToMask",
     "_meta": {
-      "title": "Split — green"
+      "title": "Split \u2014 green"
     }
   },
   "10": {
@@ -63,7 +63,7 @@
     },
     "class_type": "ImageToMask",
     "_meta": {
-      "title": "Split — blue"
+      "title": "Split \u2014 blue"
     }
   },
   "11": {
@@ -102,7 +102,7 @@
     },
     "class_type": "ImageBlend",
     "_meta": {
-      "title": "Luma — 0.2292 R + 0.7708 G"
+      "title": "Luma \u2014 0.2292 R + 0.7708 G"
     }
   },
   "15": {
@@ -114,7 +114,7 @@
     },
     "class_type": "ImageBlend",
     "_meta": {
-      "title": "Luma — + 0.0722 B (Rec.709 grey)"
+      "title": "Luma \u2014 + 0.0722 B (Rec.709 grey)"
     }
   },
   "16": {
@@ -145,12 +145,12 @@
     },
     "class_type": "LoadImage",
     "_meta": {
-      "title": "Image 4 — marcus eye"
+      "title": "Image 4 \u2014 marcus eye"
     }
   },
   "22": {
     "inputs": {
-      "prompt": "FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive gekiga linework, heavy ink washes, solid crushed blacks, harsh contrast, grey screentone midtones, cross-hatching. No color, no balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text anywhere.\n\nPIN from references: the man of Image 1 exactly - late 30s, tall, lean, long even face, dark side-parted hair, dark suit and tie, NO eyeglasses. The woman of Image 2 exactly - mid 50s, heavy-set, broad weathered face, grey-streaked low bun, dark tunic under a knee-length tabard, blank badge - and age her across this page. Keep the lift car and the ink of Image 3. Do not redesign either person.\n\nEYES: take the black sclera EXACTLY as Image 4 draws it. THE EYEBALL IS BLACK - the darkest thing on his face, ink-black across the whole visible eye, no iris, no pupil, no white of any kind, in EVERY panel he appears in. The only light on it is one pinhead catchlight. His eyes are NOT white, NOT pale, NOT glowing; no light comes out of them. They are EYES, not eyewear: normal lids, lashes and brows, no sunglasses, no lenses, no dark discs on the face.\n\nSTYLE: Dark psychological horror ink. Cold metal, one hard ceiling light in the car, the corridor beyond crushed to black. Restrained horror - the harm is age, not injury.\n\nTOP (~35%): Extreme close-up of HER FACE, his hand still closed around her throat at the bottom of frame. She is AGEING IN SECONDS: cheeks hollowing, skin slackening into deep folds, lips thinning, the grey in her hair running white from the temples out, loose strands gone brittle. Her eyes are wide and still HERS - irises present, pupils huge, whites bloodshot. Not a corpse yet. Sweat on a face that is drying out as we watch.\n\nMIDDLE (~30%): Extreme close-up of HIS HAND at her throat. Life is being pulled out of her into his palm - fine white filaments and a thin luminous vapour drawn off her neck and collarbone, spiralling into the gaps between his fingers, the back of his hand in tight cross-hatching. Her own hands are on his forearm and already thinning: veins standing, knuckles enlarged, skin loose. No blood, no wound.\n\nBOTTOM (~35%): Camera OUT IN THE BASEMENT CORRIDOR, low, looking back into the lit lift car. He stands in the open doorway holding her up by the throat. SHE IS A FULL-GROWN, HEAVY-SET WOMAN - as tall as his shoulder, broad through the hips, filling as much of the doorway as he does. NOT a child, not doll-sized, not a small figure dangling from his fist. His arm is extended FORWARD at about his own shoulder height with the elbow slightly bent - NOT raised above his head - so her face is level with his and her shoes clear the floor by only a hand's width. Backlit by the car, so he reads mostly as a dark shape - but his head is turned toward the corridor and catches the one ceiling lamp: BOTH EYES SOLID BLACK, wet, and a SMALL TIGHT GRIN. Not a flat silhouette: that lit half of his face must be legible.\n\nSCALE: one human scale, and the two of them are the same species of size - he is ONE HEAD taller than her, no more. She is heavy-set and solid, seven heads tall like any adult; if she reads as small, slight or childlike the panel has failed. The hand at her throat is a normal man's hand, no elongation, no claws. Her feet hang a hand's width off the floor - centimetres, not a metre.\n\nANATOMY: two arms, two legs, five fingers per hand, thumbs on the correct side. Horizontal panels only, no empty balloon shapes.\n\nCHANGE: only the scene above; preserve both identities, the lift car and the ink from the pins.\n",
+      "prompt": "FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp gekiga linework, heavy ink washes, solid blacks, harsh contrast, grey midtones. No color, no balloons, no captions, no SFX, no logos, no watermarks, no text anywhere.\n\nPIN from references: VIKTOR is the man of Image 5 exactly - very tall, broad square shoulders, lean; gaunt face, high cheekbones, swept-back silver hair, close-trimmed silver beard, pale irises with vertical slit pupils; full-length double-breasted Victorian wool overcoat, top hat; gloves carried, not worn; hexagram on the bare right hand. TOKIRO is the man of Image 6 exactly - Japanese, late 30s, tall wiry athletic, serious unsmiling face, long black hair in a high tight ponytail; raised pale scar from the LEFT forehead through the eyebrow past the left eye to the left cheekbone, eye undamaged; dark three-piece suit under a long open haori-style coat, katana and wakizashi sheathed at the left hip; NO tattoo, NO hexagram, NO sigil. Keep the B&W horror ink and three-panel stack from Image 3. Do not take a face from Image 1 or Image 2. Do not take the black sclera from Image 4.\n\nSTYLE: Dark psychological horror ink. The corridor outside the study - old dark wood, one distant lamp, crushed shadow. Not the lift. ONLY Viktor and Tokiro.\n\nTOP (~35%): A dark corridor. EXACTLY TWO PEOPLE. TOKIRO stands in the corridor, NOT CLEARLY VISIBLE - a tall wiry silhouette, ponytail and sheathed swords readable, face lost in shadow. VIKTOR is nearer the lamp, recognizable, holding out an OLD CLOSED BOOK toward him, one hand offering it. The book is worn leather, no title, no letters. He is handing it over, not reading it.\n\nMIDDLE (~30%): Extreme close-up of TOKIRO TAKING the book. Tokiro's hands close on the leather - five digits per hand: one thumb and four fingers. His coat sleeve and a wrapped sword-hilt at the edge of frame. Viktor's bare right hand still on the other side of the book, hexagram visible. No other people.\n\nBOTTOM (~35%): Extreme close-up of TOKIRO - MOUTH AND NECK only. High shirt collar, tense throat, closed unsmiling mouth, a few strands of black hair. Scar only if the left jaw enters frame. No hexagram on the skin.\n\nSCALE: one human scale. Viktor is taller; Tokiro is a tall man, not doll-sized in the corridor. The book is a normal old book, one hand-width, not a tome.\n\nANATOMY: two arms, two legs. Each hand has five digits: one thumb and four fingers. Horizontal panels only, no empty balloon shapes.\n\nCHANGE: only the scene above. Corridor of the house in Image 3, not the lift. Preserve both identities and the ink from the pins.\n",
       "model": "seedream 5.0 pro",
       "model.size_preset": "Custom",
       "model.width": 1024,
@@ -162,11 +162,31 @@
       "model.images.image_1": ["1", 0],
       "model.images.image_2": ["2", 0],
       "model.images.image_3": ["3", 0],
-      "model.images.image_4": ["18", 0]
+      "model.images.image_4": ["18", 0],
+      "model.images.image_5": ["26", 0],
+      "model.images.image_6": ["27", 0]
     },
     "class_type": "ByteDanceSeedreamNodeV3",
     "_meta": {
       "title": "ByteDance Seedream 4.5 & 5.0"
+    }
+  },
+  "26": {
+    "inputs": {
+      "image": "4981daab45709b1fda8d2f25dcc6bd13effe39770d83a1f6a6955133c850d753.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 5 \u2014 victor"
+    }
+  },
+  "27": {
+    "inputs": {
+      "image": "f77f85de644b96fb0cafc6fc1a6b37e81d035a92b06f1aa358a473a181926577.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 6 \u2014 Tokiro"
     }
   }
 }

@@ -73,6 +73,10 @@ REFS = {
     'page05': 'c98d4c5374a359b29b6b3ffcf57531fcc4477aba886990efadd781e47fcda387.png',
     # the shipped page 9 plate — Image 3 for the drain page
     'page09': '63bed0610ccaf89475acf565fe779f970c8694788567e5aaa77a9ff088ac2f64.png',
+    # page 11 Viktor desk, un-watermarked ComfyUI upload — Image 3 on the Tokiro page
+    'page11': '90d14cfdfdd250c521c03469e435a29e6bd106479676dc70b5091485256b02f9.png',
+    'viktor': '4981daab45709b1fda8d2f25dcc6bd13effe39770d83a1f6a6955133c850d753.png',
+    'tokiro': 'f77f85de644b96fb0cafc6fc1a6b37e81d035a92b06f1aa358a473a181926577.png',
 }
 
 # Rec.709 luma out of core nodes only: ImageBlend in "normal" mode computes

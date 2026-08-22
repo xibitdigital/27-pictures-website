@@ -91,13 +91,16 @@ its bytes, so the graphs carry names like
 in the filename says which reference it is — **the `_meta.title` on each
 `LoadImage` is the only record**, so keep those titles accurate:
 
-`REFS` in `scripts/run-comfy-page.js` is that record — one alias per upload:
+`REFS` in `scripts/build-comfy-plate.py` is that record — one alias per upload:
 
-| Alias    | Reference    | `ComfyUI/input/` name |
-| -------- | ------------ | --------------------- |
-| `halina` | Halina sheet | `19f0f1f6…c396.png`   |
-| `marcus` | Marcus sheet | `be8903d6…38d4.png`   |
-| `page08` | page 8 plate | `9bdb1524…349c.png`   |
+| Alias    | Reference     | `ComfyUI/input/` name |
+| -------- | ------------- | --------------------- |
+| `halina` | Halina sheet  | `19f0f1f6…c396.png`   |
+| `marcus` | Marcus sheet  | `be8903d6…38d4.png`   |
+| `page08` | page 8 plate  | `9bdb1524…349c.png`   |
+| `page11` | page 11 plate | `90d14cfd…02f9.png`   |
+| `viktor` | Viktor sheet  | `4981daab…d753.png`   |
+| `tokiro` | Tokiro sheet  | `f77f85de…6577.png`   |
 
 Each new page adds one line: the plate that page follows. Nothing else in the
 graph changes.
