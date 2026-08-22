@@ -1,25 +1,29 @@
 # model: Kling 2.5+ image-to-video — MASTER / PRO mode, never Turbo (Turbo smears motion)
 # settings: 9:16, 1080p, 5s, cfg_scale ~0.5, end_frame EMPTY
 # input: shots 1-2 use the MOTION-SAFE still (02b), shot 3 uses the close-up (03)
+# setting: the hall of a regal gothic house — marble floor, panelling, candles.
+#          The wet-street version of these shots is in docs/story/vampire/prompts/.
 # paste ONE prompt per generation
 #
 # Rules these prompts follow — break them and the artifacts come back:
 #   - one action OR one camera move per clip, never both
 #   - no words for drift/streak/soft/shallow focus: Kling renders them as blur
 #   - never instruct garment motion (no "swinging open", no "hem flaring")
-#   - hands stay pocketed and out of frame; nothing asks fingers to move
+#   - the hands hold the candleholder and never open; nothing asks fingers to move
+#   - no candle flame is ever described as moving: a flame the model animates
+#     becomes a smear, and it is the brightest thing in frame
 
 === SHOT 1 — approach (input: 02b motion-safe still) ===
-She takes four slow, even steps toward the camera, hands staying in her coat pockets, arms still at her sides, each boot planting flat and firmly on the wet pavement before the next lifts. Her closed coat stays closed and hangs straight. The camera is locked on a tripod at chest height and does not move. Rain falls steadily through the streetlight, city lights behind her stay fixed. Photorealistic cinematic footage, crisp per-frame detail, fast shutter speed, everything in sharp focus, stable geometry.
+She takes four slow, even steps toward the camera down the hall, both gloved hands staying closed around the candleholder held level at her waist, arms still, each boot planting flat and firmly on the marble before the next lifts. Her skirt stays a single straight panel. The camera is locked on a tripod at chest height and does not move. The candles behind her burn steady, the hall stays fixed. Photorealistic cinematic footage, crisp per-frame detail, fast shutter speed, everything in sharp focus, stable geometry.
 
 === SHOT 2 — boots (input: 02b motion-safe still) ===
-A locked low camera close to the wet ground frames only her boots and the straight hem of her coat as she walks slowly past, left to right. Each boot presses into a shallow puddle and lifts cleanly, the water rippling outward in defined circles. The leather of the boots creases at the ankle. Nothing else in frame moves. Photorealistic, crisp per-frame detail, fast shutter speed, sharp focus throughout, stable geometry.
+A locked low camera close to the marble frames only her boots and the straight hem of her dress as she walks slowly past, left to right. Each heel sets down on the polished stone and lifts cleanly, her reflection tracking her in the marble beneath. The leather of the boots creases at the ankle. Nothing else in frame moves. Photorealistic, crisp per-frame detail, fast shutter speed, sharp focus throughout, stable geometry.
 
 === SHOT 3 — the look (input: 03 close-up with fangs) ===
-She holds completely still and looks directly into the camera, her smile widening very slightly, the parted lips staying parted. Her hands are not in frame. Rain falls behind her under a steady streetlight. The camera pushes in very slowly on her face at a constant rate. Photorealistic, held, quiet, crisp per-frame detail, sharp focus on the eyes, stable facial geometry.
+She holds completely still and looks directly into the camera, her smile widening very slightly, the parted lips staying parted. Her hands are not in frame. Behind her the dark panelled hall and the candlelight stay steady. The camera pushes in very slowly on her face at a constant rate. Photorealistic, held, quiet, crisp per-frame detail, sharp focus on the eyes, stable facial geometry.
 
 === NEGATIVE PROMPT (separate field, all shots) ===
-motion blur, smearing, ghosting, motion trails, long exposure, double image, frame blending, soft focus, out of focus, low frame rate, choppy motion, morphing face, changing facial features, visible hands, fingers, distorted hands, extra fingers, extra limbs, duplicated arms, disconnected limbs, rubber limbs, bending joints, sliding feet, feet not touching ground, coat opening, flapping coat, garment morphing, tearing fabric, changing hem length, melting leather, warping clothing, floating body, blurry face, text, watermark, logo, fast camera movement, camera shake, zoom flicker, cartoon, anime, plastic skin, oversaturated
+motion blur, smearing, ghosting, motion trails, long exposure, double image, frame blending, soft focus, out of focus, low frame rate, choppy motion, morphing face, changing facial features, visible hands, fingers, distorted hands, extra fingers, extra limbs, duplicated arms, disconnected limbs, rubber limbs, bending joints, sliding feet, feet not touching ground, guttering candles, flickering flames, skirt splitting, slit opening, flapping fabric, garment morphing, tearing fabric, changing hem length, melting leather, warping clothing, floating body, blurry face, text, watermark, logo, fast camera movement, camera shake, zoom flicker, cartoon, anime, plastic skin, oversaturated
 
 === SHOT 3 ONLY — add to negative ===
 changing teeth, extra teeth, gums, snarl, open mouth

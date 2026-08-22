@@ -1,0 +1,204 @@
+{
+  "1": {
+    "class_type": "ByteDanceSeedreamNodeV3",
+    "_meta": {
+      "title": "Seedream — hero still (t2i)"
+    },
+    "inputs": {
+      "prompt": "FORMAT: Ultra-photorealistic cinematic photograph, vertical 9:16, 1080x1920, full body with the shoes in frame and clear space above her head. 50mm lens at f/1.8, camera at chest height so the legs read long, ISO 800, 1/160s. Tack sharp, no motion blur.\n\nSUBJECT: A striking woman in her late twenties standing in the hall of a grand old house at night. Deep auburn-red hair — long, glossy, softly waved, parted off-centre, catching a hard specular rim from a wall sconce. Porcelain skin with real texture and pores, faint freckles across the nose, sharp cheekbones, strong jaw, full lips in a glossy deep-red, pale grey-green eyes with a cold ring around the iris and a clear catchlight in each. Sharp winged eyeliner, smoky shadow, highlight on cheekbones and brow. Mouth closed, calm and unimpressed, chin slightly down, eyes up to the lens.\n\nWARDROBE: Modern goth glamour, expensive and contemporary — a fitted long-sleeve black dress in matte velvet with a sheer black lace yoke and high neck, boned bodice seams, the skirt narrow and floor-skimming with a single knee-height slit on one side. Elbow-length black satin gloves. Slim black leather ankle boots with a stacked heel. A thin choker with one small dark stone, small ear cuffs, no rings. Real materials: velvet with a directional nap and specular sheen at the seams, lace with visible weave, satin catching the sconce light.\n\nPOSE: Contrapposto — weight fully on one leg, opposite hip pushed out, shoulders turned about fifteen degrees off camera while the face stays to lens. Both gloved hands relaxed at her sides, fingers together and straight. Standing still, feet planted, not mid-stride.\n\nSETTING: The hall of a regal gothic house, late night, empty. Dark oak panelling and a carved staircase behind her, a long runner over black-and-white marble, tall arched windows with leaded glass giving onto the night, an iron candelabra with lit candles further down the hall, a gilt-framed portrait in shadow, heavy drapes. Deep receding perspective down the hall, everything beyond her thrown into soft bokeh. No other people, no readable text or logos.\n\nLIGHTING: Hard sconce light from upper left carving a rim along her cheekbone, jaw, shoulder and hair. Warm candlelight from the candelabra behind at hip height, rimming her waist and thigh so she separates from the dark panelling. Cool moonlight through the leaded windows filling the shadow side of her face. Both eyes clearly lit — no shadow across them, no flare over the face, no blown highlights.\n\nANATOMY: exactly two arms and two legs, natural proportions. Gloved hands read as hands: no visible fingers separating, no claws, no distorted thumbs.\n\nRENDER: Photoreal skin with subsurface scatter, real fabric physics, subject sharp head to boots with the hall soft behind. Filmic contrast, deep true blacks, slight halation on the candle flames, fine natural film grain.\n\nNEGATIVE: no illustration, no anime, no 3D or CGI look, no plastic airbrushed skin, no fangs showing, no open mouth, no blood, no cape or costume-shop vampire cliché, no corset worn as outerwear, no fishnets, no nudity or lingerie, no exaggerated proportions, no full ballgown or crinoline, no train, no tulle, no extra limbs or fingers, no text, no watermark, no logo, no motion blur, no heavy vignette, no oversaturated colour grade.",
+      "model": "seedream 5.0 pro",
+      "model.size_preset": "Custom",
+      "model.width": 1080,
+      "model.height": 1920,
+      "model.prompt_optimization": "standard",
+      "model.seed": 0,
+      "model.watermark": false,
+      "model.thinking": true
+    }
+  },
+  "2": {
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save hero still (poster frame)"
+    },
+    "inputs": {
+      "images": ["1", 0],
+      "filename_prefix": "vampire-reel/01-hero"
+    }
+  },
+  "3": {
+    "class_type": "ByteDanceSeedreamNodeV3",
+    "_meta": {
+      "title": "Seedream — motion-safe still (i2i)"
+    },
+    "inputs": {
+      "prompt": "PIN from Image 1: keep the same woman exactly — face, deep auburn-red hair and its rim light, freckles, winged eyeliner, glossy deep-red lips, closed mouth, grey-green eyes with catchlights, choker, ear cuffs. Keep the fitted black velvet dress with its lace yoke and high neck, the elbow-length satin gloves, the ankle boots, the panelled hall, the staircase, the candelabra, the sconce from upper left and the moonlight through the leaded windows. Same 9:16 vertical framing, same photoreal cinematic grade.\n\nCHANGE — arms, skirt and stance only:\n- Both gloved hands come together at her waist, closed around a single brass candleholder held level in front of her. Forearms relaxed, elbows at her sides, fingers together inside the gloves. Nothing else in her hands.\n- The knee-height slit is gone: the skirt front is one continuous panel, a single clean vertical line, no split, no vent, no ragged corners.\n- The hem falls straight and clears the marble by a hand's width, above the boot ankle, with an unbroken edge.\n- Shoulders squared to camera, weight even on both feet, standing straight rather than contrapposto.\n\nKEEP: same feet planted in the same spots, same boots at the same angle, same distance from camera, same hall behind her exactly.\n\nNEGATIVE: no change to the face, no change to hair colour or length, no bare hands, no separated fingers, no rings or bracelets, no skirt slit or vent, no hem touching the floor, no train, no tulle, no nudity, no exaggerated proportions, no plastic or latex sheen, no extra limbs, no second object in frame, no text, no watermark, no motion blur.",
+      "model": "seedream 5.0 pro",
+      "model.size_preset": "Custom",
+      "model.width": 1080,
+      "model.height": 1920,
+      "model.prompt_optimization": "standard",
+      "model.seed": 1,
+      "model.watermark": false,
+      "model.thinking": true,
+      "model.images.image_1": ["1", 0]
+    }
+  },
+  "4": {
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save motion-safe still (i2v input, shots 1-2)"
+    },
+    "inputs": {
+      "images": ["3", 0],
+      "filename_prefix": "vampire-reel/02b-motion-safe"
+    }
+  },
+  "5": {
+    "class_type": "MinimaxImageToVideoNode",
+    "_meta": {
+      "title": "hailuo i2v — shot 1"
+    },
+    "inputs": {
+      "image": ["3", 0],
+      "prompt_text": "She takes four slow, even steps toward the camera down the hall, both gloved hands staying closed around the candleholder held level at her waist, arms still, each boot planting flat and firmly on the marble before the next lifts. Her skirt stays a single straight panel. The camera is locked on a tripod at chest height and does not move. The candles behind her burn steady, the hall stays fixed. Photorealistic cinematic footage, crisp per-frame detail, fast shutter speed, everything in sharp focus, stable geometry.",
+      "model": "MiniMax-Hailuo-02",
+      "duration": 6,
+      "resolution": "1080P",
+      "prompt_optimizer": false
+    }
+  },
+  "6": {
+    "class_type": "SaveVideo",
+    "_meta": {
+      "title": "Save shot 1"
+    },
+    "inputs": {
+      "video": ["5", 0],
+      "filename_prefix": "vampire-reel/shot-1",
+      "format": "mp4",
+      "codec": "h264"
+    }
+  },
+  "7": {
+    "class_type": "MinimaxImageToVideoNode",
+    "_meta": {
+      "title": "hailuo i2v — shot 2"
+    },
+    "inputs": {
+      "image": ["3", 0],
+      "prompt_text": "A locked low camera close to the marble frames only her boots and the straight hem of her dress as she walks slowly past, left to right. Each heel sets down on the polished stone and lifts cleanly, her reflection tracking her in the marble beneath. The leather of the boots creases at the ankle. Nothing else in frame moves. Photorealistic, crisp per-frame detail, fast shutter speed, sharp focus throughout, stable geometry.",
+      "model": "MiniMax-Hailuo-02",
+      "duration": 6,
+      "resolution": "1080P",
+      "prompt_optimizer": false
+    }
+  },
+  "8": {
+    "class_type": "SaveVideo",
+    "_meta": {
+      "title": "Save shot 2"
+    },
+    "inputs": {
+      "video": ["7", 0],
+      "filename_prefix": "vampire-reel/shot-2",
+      "format": "mp4",
+      "codec": "h264"
+    }
+  },
+  "9": {
+    "class_type": "MinimaxImageToVideoNode",
+    "_meta": {
+      "title": "hailuo i2v — shot 3"
+    },
+    "inputs": {
+      "image": ["3", 0],
+      "prompt_text": "She holds completely still and looks directly into the camera, her smile widening very slightly, the parted lips staying parted. Her hands are not in frame. Behind her the dark panelled hall and the candlelight stay steady. The camera pushes in very slowly on her face at a constant rate. Photorealistic, held, quiet, crisp per-frame detail, sharp focus on the eyes, stable facial geometry.",
+      "model": "MiniMax-Hailuo-02",
+      "duration": 6,
+      "resolution": "1080P",
+      "prompt_optimizer": false
+    }
+  },
+  "10": {
+    "class_type": "SaveVideo",
+    "_meta": {
+      "title": "Save shot 3"
+    },
+    "inputs": {
+      "video": ["9", 0],
+      "filename_prefix": "vampire-reel/shot-3",
+      "format": "mp4",
+      "codec": "h264"
+    }
+  },
+  "11": {
+    "class_type": "GetVideoComponents",
+    "_meta": {
+      "title": "Frames of shot 1"
+    },
+    "inputs": {
+      "video": ["5", 0]
+    }
+  },
+  "12": {
+    "class_type": "GetVideoComponents",
+    "_meta": {
+      "title": "Frames of shot 2"
+    },
+    "inputs": {
+      "video": ["7", 0]
+    }
+  },
+  "13": {
+    "class_type": "GetVideoComponents",
+    "_meta": {
+      "title": "Frames of shot 3"
+    },
+    "inputs": {
+      "video": ["9", 0]
+    }
+  },
+  "14": {
+    "class_type": "ImageBatch",
+    "_meta": {
+      "title": "Join shots 1-2"
+    },
+    "inputs": {
+      "image1": ["11", 0],
+      "image2": ["12", 0]
+    }
+  },
+  "15": {
+    "class_type": "ImageBatch",
+    "_meta": {
+      "title": "Join shots 1-3"
+    },
+    "inputs": {
+      "image1": ["14", 0],
+      "image2": ["13", 0]
+    }
+  },
+  "16": {
+    "class_type": "CreateVideo",
+    "_meta": {
+      "title": "Reel — three shots in order"
+    },
+    "inputs": {
+      "images": ["15", 0],
+      "fps": ["11", 2]
+    }
+  },
+  "17": {
+    "class_type": "SaveVideo",
+    "_meta": {
+      "title": "Save reel"
+    },
+    "inputs": {
+      "video": ["16", 0],
+      "filename_prefix": "vampire-reel/reel",
+      "format": "mp4",
+      "codec": "h264"
+    }
+  }
+}

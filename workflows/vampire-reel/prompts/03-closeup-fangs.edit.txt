@@ -1,10 +1,10 @@
 # model: Nano Banana (Gemini 2.5 Flash Image) or Flux.1 Kontext — NOT Seedream
 # mode: single-image edit
-# input: 02 output (fixed hero still)
+# input: 01 output (hero still)
 # output: shot 3 input frame
 # note: edit models want SHORT imperative instructions. Do not paste a structured block.
 
-Crop to a tight vertical head-and-shoulders close-up of this woman, 9:16. Keep her face, red hair, makeup, choker and coat collar exactly the same. Part her lips slightly to reveal two elongated pointed upper canines resting on the lower lip — subtle, no other teeth visible, no gums, no blood. Keep the rainy night street soft and out of focus behind her. Photorealistic, sharp eyes with catchlights, damp skin.
+Crop to a tight vertical head-and-shoulders close-up of this woman, 9:16. Keep her face, red hair, makeup, choker and the dress's lace high neck exactly the same. Part her lips slightly to reveal two elongated pointed upper canines resting on the lower lip — subtle, no other teeth visible, no gums, no blood. Keep the panelled hall and the candlelight soft and out of focus behind her. Photorealistic, sharp eyes with catchlights.
 
 --- IF THE FANGS COME OUT WRONG, SPLIT INTO TWO PASSES ---
 

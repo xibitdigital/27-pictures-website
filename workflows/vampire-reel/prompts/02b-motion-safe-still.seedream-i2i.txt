@@ -1,20 +1,25 @@
 # model: bytedance/seedream-5.0-pro
 # mode: image-to-image
-# refs: Image 1 = the fixed hero still from step 02
-# why: this is the frame that FEEDS KLING for shots 1-2. The step-02 still has a
-#      hand on the hip, silver rings and an open coat — i2v has to invent an arm
-#      swing and animate two free coat panels, which is where the limb warping
-#      and hem tearing come from. Give the hands a job and close the coat.
+# refs: Image 1 = the hero still (step 01)
+# why: this is the frame that FEEDS i2v for shots 1-2, and its whole job is to
+#      remove work the video model would otherwise have to invent. The hero
+#      still is posed for a poster: hip pushed out, arms free, a slit in the
+#      skirt. Walking that frame means simulating a swinging arm, a slit that
+#      opens and closes, and a hem near the floor — which is where limb warping
+#      and torn hems come from.
+#
+# The dress version of the old "hands in pockets" trick: a dress has no pockets,
+# so the hands get a prop instead. Gloved hands closed around one object are the
+# most stable thing i2v can be given — no finger articulation, no free arm.
 
-PIN from Image 1: keep the same woman exactly — face, deep auburn-red hair and its rim light, freckles, winged eyeliner, glossy deep-red lips, closed mouth, grey-green eyes with catchlights, choker, ear cuffs. Keep the slim high-waisted black leather trousers, the heavy buckled boots, the wet night street, the streetlight from upper left, the neon bokeh and the reflections. Same 9:16 vertical framing, same photoreal cinematic grade.
+PIN from Image 1: keep the same woman exactly — face, deep auburn-red hair and its rim light, freckles, winged eyeliner, glossy deep-red lips, closed mouth, grey-green eyes with catchlights, choker, ear cuffs. Keep the fitted black velvet dress with its lace yoke and high neck, the elbow-length satin gloves, the ankle boots, the panelled hall, the staircase, the candelabra, the sconce from upper left and the moonlight through the leaded windows. Same 9:16 vertical framing, same photoreal cinematic grade.
 
-CHANGE — arms and coat only:
-- Both hands go into the coat's slash pockets, wrists straight, forearms relaxed along the body. No fingers visible anywhere in frame.
-- Remove the silver rings (nothing small and metallic on the hands).
-- The long black leather coat is belted closed at the waist over the corset top: one continuous front, a single clean vertical closure line, no open panels, no flapping lapels, no visible lining.
-- The hem falls straight to mid-calf, clear of the boot shafts by a hand's width, with an unbroken edge — no split, no vent, no ragged corners.
+CHANGE — arms, skirt and stance only:
+- Both gloved hands come together at her waist, closed around a single brass candleholder held level in front of her. Forearms relaxed, elbows at her sides, fingers together inside the gloves. Nothing else in her hands.
+- The knee-height slit is gone: the skirt front is one continuous panel, a single clean vertical line, no split, no vent, no ragged corners.
+- The hem falls straight and clears the marble by a hand's width, above the boot ankle, with an unbroken edge.
 - Shoulders squared to camera, weight even on both feet, standing straight rather than contrapposto.
 
-KEEP: same feet planted in the same spots, same boots at the same angle, same distance from camera, same background exactly.
+KEEP: same feet planted in the same spots, same boots at the same angle, same distance from camera, same hall behind her exactly.
 
-NEGATIVE: no change to the face, no change to hair colour or length, no visible hands or fingers, no rings or bracelets, no open coat, no coat vent or slit, no hem touching the ground, no nudity, no exaggerated proportions, no plastic or latex sheen, no extra limbs, no text, no watermark, no motion blur.
+NEGATIVE: no change to the face, no change to hair colour or length, no bare hands, no separated fingers, no rings or bracelets, no skirt slit or vent, no hem touching the floor, no train, no tulle, no nudity, no exaggerated proportions, no plastic or latex sheen, no extra limbs, no second object in frame, no text, no watermark, no motion blur.
