@@ -3319,10 +3319,11 @@ button:focus-visible {
   opacity: 0.55;
 }
 
+/* The "In the darkroom" card now carries real art — a blank print pegged over a
+   developing tray — so the dashed placeholder box is gone. The reduced opacity
+   on .series-card--soon is what still reads as unfinished. */
 .series-card--soon .series-card-art {
   aspect-ratio: 2 / 3;
-  border: 1px dashed var(--border-light);
-  box-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
