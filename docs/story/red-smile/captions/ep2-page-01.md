@@ -23,8 +23,8 @@ harm. He is turned away. The reader is the only one who sees it.
 
 ## Read order
 
-Auto-read follows **array order**, not position on the plate. Marcus first, then
-both of Halina's lines, then the chime.
+Auto-read follows position. The narrator sits top-left of panel 1
+(*NEXORA. After hours.*) so it lands before *Evening.* — same row, smaller x.
 
 ## words[]
 
@@ -99,6 +99,8 @@ Panel bands on this plate, measured: **p1 .034–.33**, **p2 .35–.67**,
 **p3 .69–.98**. Every caption sits in the top band of its own panel and hugs an
 outer edge.
 
+- *NEXORA. After hours.* is `credit`, x .18 y .05, over the night window —
+  no tail, narrator. Names the company as the place.
 - Marcus's two lines sit centre-right of panel 1 over the dark glass, tails
   **bottom-left** toward his seated head at roughly x .28.
 - Halina's first line is far left over the dark doorframe, tail

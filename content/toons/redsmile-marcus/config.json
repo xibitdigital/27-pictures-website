@@ -26,7 +26,21 @@
       "file": "assets/4468349d8a10ecf6d08aa721e3115c56.png",
       "words": [
         {
-          "x": 0.5,
+          "x": 0.18,
+          "y": 0.05,
+          "variant": "credit",
+          "size": 22,
+          "text": {
+            "en": "NEXORA. After hours.",
+            "it": "NEXORA. Fuori orario.",
+            "de": "NEXORA. Nach Feierabend.",
+            "fr": "NEXORA. Après l'heure."
+          },
+          "audio": "assets/sfx/12dc80b87875f214e4a2afe906cdd633.mp3",
+          "speaker": "narrator"
+        },
+        {
+          "x": 0.38,
           "y": 0.075,
           "variant": "bubble",
           "tail": "bottom-left",
@@ -43,7 +57,7 @@
           "x": 0.5,
           "y": 0.155,
           "variant": "bubble",
-          "tail": "bottom-left",
+          "tail": "left",
           "angle": 1,
           "text": {
             "en": "How are you keeping?",
@@ -512,7 +526,7 @@
       ]
     },
     {
-      "file": "assets/150312e7fd9b4e02422f3bfe310693b8.webp",
+      "file": "assets/b03622efb8203e034c1cbf271610add0.webp",
       "words": [
         {
           "x": 0.13,
@@ -534,12 +548,12 @@
           "tail": "bottom-left",
           "angle": -3,
           "text": {
-            "en": "No one about at this hour.",
-            "it": "Non c'è nessuno a quest'ora.",
-            "de": "Um diese Zeit ist niemand hier.",
-            "fr": "Personne à cette heure-ci."
+            "en": "No one will come.",
+            "it": "Non verrà nessuno.",
+            "de": "Es wird niemand kommen.",
+            "fr": "Personne ne viendra."
           },
-          "audio": "assets/sfx/130f7efe1162ecee41403700fbe03457.mp3"
+          "audio": "assets/sfx/bb168a799895c89b54bedf9f89dadb17.mp3"
         },
         {
           "x": 0.22,
@@ -548,12 +562,12 @@
           "tail": "bottom-right",
           "angle": -2,
           "text": {
-            "en": "—can't—",
-            "it": "—non riesco—",
-            "de": "—ich kann nicht—",
-            "fr": "—j'peux pas—"
+            "en": "I…can't…",
+            "it": "Io…non riesco…",
+            "de": "Ich…kann nicht…",
+            "fr": "Je…peux pas…"
           },
-          "audio": "assets/sfx/4f93aa1764389249a41cd885013aaba0.mp3"
+          "audio": "assets/sfx/9b66fe99409703028dffd4ac6a1151a9.mp3"
         },
         {
           "x": 0.78,
@@ -581,12 +595,12 @@
           "tail": "bottom-left",
           "angle": -2,
           "text": {
-            "en": "I'm getting old.",
-            "it": "Sto invecchiando.",
-            "de": "Ich werde alt.",
-            "fr": "Je vieillis."
+            "en": "There's nothing I can do.",
+            "it": "Non posso farci niente.",
+            "de": "Ich kann nichts tun.",
+            "fr": "Je n'y peux rien."
           },
-          "audio": "assets/sfx/f1dba288ea84c4696780cf8f5cb0e45a.mp3"
+          "audio": "assets/sfx/88a0f13b9596ccd5473ef7a1f940051c.mp3"
         },
         {
           "x": 0.8,
@@ -595,18 +609,18 @@
           "size": 24,
           "angle": 6,
           "text": {
-            "en": "sssshhhkk",
-            "it": "sssshhhkk",
-            "de": "sssshhhkk",
-            "fr": "sssshhhkk"
+            "en": "sshhkk",
+            "it": "sshhkk",
+            "de": "sshhkk",
+            "fr": "sshhkk"
           },
           "audio": "assets/sfx/faf355192fc52521f8effa249c49ea50.mp3"
         },
         {
-          "x": 0.2,
+          "x": 0.8,
           "y": 0.52,
           "variant": "bubble",
-          "tail": "bottom-right",
+          "tail": "right",
           "angle": -3,
           "text": {
             "en": "Shh.\nIt's quick.",
@@ -617,10 +631,10 @@
           "audio": "assets/sfx/fb92c33fb7655cecfe90bed3b1257fa4.mp3"
         },
         {
-          "x": 0.2,
-          "y": 0.7,
+          "x": 0.82,
+          "y": 0.77,
           "variant": "bubble",
-          "tail": "top",
+          "tail": "top-right",
           "size": 20,
           "angle": -2,
           "text": {
@@ -630,6 +644,144 @@
             "fr": "Bonne nuit."
           },
           "audio": "assets/sfx/d0bc5e4c7556bb031939a1212a9bbad6.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/bd989e9074bf5a36713531adda489dc0.webp",
+      "words": [
+        {
+          "x": 0.16,
+          "y": 0.05,
+          "variant": "thought",
+          "tail": "bottom-right",
+          "angle": -2,
+          "text": {
+            "en": "Nothing from H.",
+            "it": "Niente da H.",
+            "de": "Nichts von H.",
+            "fr": "Rien de H."
+          },
+          "audio": "assets/sfx/f0e69e062713a108654e2aa7665ff2e4.mp3"
+        },
+        {
+          "x": 0.16,
+          "y": 0.37,
+          "variant": "thought",
+          "tail": "bottom-right",
+          "angle": -2,
+          "text": {
+            "en": "Have I lost her?",
+            "it": "L'ho persa?",
+            "de": "Habe ich sie verloren?",
+            "fr": "L'ai-je perdue ?"
+          },
+          "audio": "assets/sfx/7168d535cd614e3de2f2982aa1885884.mp3"
+        },
+        {
+          "x": 0.8,
+          "y": 0.4,
+          "variant": "thought",
+          "tail": "bottom-left",
+          "angle": -2,
+          "text": {
+            "en": "If so, another agent is down.",
+            "it": "Se è così, un altro agente è caduto.",
+            "de": "Wenn ja, ist ein weiterer Agent gefallen.",
+            "fr": "Si c'est le cas, un autre agent est tombé."
+          },
+          "audio": "assets/sfx/eda8bb806c56cd5a74b93c832e0ade02.mp3"
+        },
+        {
+          "x": 0.68,
+          "y": 0.7,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "angle": -2,
+          "text": {
+            "en": "Tokiro. Elena's house. Find H.",
+            "it": "Tokiro. Casa di Elena. Trova H.",
+            "de": "Tokiro. Elenas Haus. Finde H.",
+            "fr": "Tokiro. Chez Elena. Trouve H."
+          },
+          "audio": "assets/sfx/2b08138aef139e170a5cdf4f38e7f900.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/8fc86b7e21fe6e6df06fa08a7521be7e.webp",
+      "words": [
+        {
+          "x": 0.55,
+          "y": 0.05,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "angle": -2,
+          "text": {
+            "en": "You'll need this.",
+            "it": "Ti servirà.",
+            "de": "Du wirst das brauchen.",
+            "fr": "Tu en auras besoin."
+          },
+          "audio": "assets/sfx/1fb78f9f85da544c892ec0f5aeee6b8a.mp3"
+        },
+        {
+          "x": 0.26,
+          "y": 0.7,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "angle": -2,
+          "text": {
+            "en": "I'll check Elena's mother first. Then Halina.",
+            "it": "Prima controllo la madre di Elena. Poi Halina.",
+            "de": "Ich sehe zuerst nach Elenas Mutter. Dann Halina.",
+            "fr": "Je vais d'abord voir la mère d'Elena. Puis Halina."
+          },
+          "audio": "assets/sfx/20872177e665be55123be54fef28bdaa.mp3"
+        },
+        {
+          "x": 0.84,
+          "y": 0.78,
+          "variant": "bubble",
+          "tail": "right",
+          "angle": 2,
+          "text": {
+            "en": "I'll come with you.",
+            "it": "Vengo con te.",
+            "de": "Ich komme mit dir.",
+            "fr": "Je viens avec toi."
+          },
+          "audio": "assets/sfx/b31eea62fd7138a4e65677a5e479dc7e.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/cb65710f545e84bdef4b9d91d9c2a175.png",
+      "words": [
+        {
+          "x": 0.5,
+          "y": 0.74,
+          "variant": "credit",
+          "size": 64,
+          "text": {
+            "en": "TO BE CONTINUED",
+            "it": "CONTINUA",
+            "de": "FORTSETZUNG FOLGT",
+            "fr": "À SUIVRE"
+          },
+          "audio": "assets/sfx/b185550cdd557a1cb849f3c23b399327.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.85,
+          "variant": "credit",
+          "size": 22,
+          "text": {
+            "en": "Created by\nMarco and Sonia Sangalli",
+            "it": "Creato da\nMarco e Sonia Sangalli",
+            "de": "Von\nMarco und Sonia Sangalli",
+            "fr": "Créé par\nMarco et Sonia Sangalli"
+          }
         }
       ]
     }

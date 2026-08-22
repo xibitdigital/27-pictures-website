@@ -114,7 +114,7 @@ their lives, and dressing properly is a courtesy to them.
 
 ## Voice
 
-No `tokiro` entry in `scripts/jax-voices.json` yet.
+`tokiro` → `qjx83Y0UcERgVPICvVpl` in `scripts/jax-voices.json`.
 
 Direction: measured, quiet, economical. Short sentences, no theatrics — the
 calmest person in any room he enters, including rooms where he should not be

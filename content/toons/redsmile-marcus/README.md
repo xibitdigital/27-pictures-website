@@ -38,9 +38,12 @@ window opens by itself.
 | --------- | -------------------------------------------- |
 | Marcus    | `marcus` → `yhf80q1381zd2JJQ4tM7`            |
 | Halina    | `halina` → `USEQXnsXRJlw2k9LUzG4`            |
+| Viktor    | `viktor` → `htZQqY7WtacRNV7s62Iy`            |
+| Tokiro    | `tokiro` → `qjx83Y0UcERgVPICvVpl`            |
+| Adaeze    | `adaeze` → `jv41DhCf464zw0TI7I1w`            |
 
 Full bios, appearance locks and voice direction:
-`docs/story/red-smile/{marcus,halina}.md`.
+`docs/story/red-smile/{marcus,halina,viktor,tokiro,adaeze}.md`.
 
 ## Captions
 

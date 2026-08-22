@@ -156,7 +156,7 @@ for people he placed himself.
 
 ## Voice
 
-No `viktor` entry in `scripts/jax-voices.json` yet.
+`viktor` → `htZQqY7WtacRNV7s62Iy` in `scripts/jax-voices.json`.
 
 Direction: low, dry, unhurried, faintly amused. Received pronunciation of a
 vintage that no longer exists — he learned his English before the accent

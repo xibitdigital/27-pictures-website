@@ -1,0 +1,31 @@
+# model: bytedance/seedream-5.0-pro  (ComfyUI: ByteDance Seedream 4.5 & 5.0)
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/marcus.png (not on this page)
+#       Image 2 = references/red-smile/halina.png (not on this page)
+#       Image 3 = RED SMILE: Marcus page 11 - Viktor at the desk (ink, 3-panel stack)
+#       Image 4 = RED SMILE: Marcus page 5 - black sclera (unused this page)
+#       Image 5 = references/red-smile/viktor.png (identity)
+#       Image 6 = references/red-smile/tokiro.png (identity)
+# graph: 1024x1824, thinking ON, ImageScale crop=center down to 800x1424.
+# note: Corridor of the same house as the study. Tokiro is Image 6. He carries
+#       NO mark - if Image 5's hexagram leaks onto him the page has failed.
+#       "Not clearly visible" in panel 1 means his FACE is lost in shadow,
+#       not that he is absent. The book has no lettering.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp gekiga linework, heavy ink washes, solid blacks, harsh contrast, grey midtones. No color, no balloons, no captions, no SFX, no logos, no watermarks, no text anywhere.
+
+PIN from references: VIKTOR is the man of Image 5 exactly - very tall, broad square shoulders, lean; gaunt face, high cheekbones, swept-back silver hair, close-trimmed silver beard, pale irises with vertical slit pupils; full-length double-breasted Victorian wool overcoat, top hat; gloves carried, not worn; hexagram on the bare right hand. TOKIRO is the man of Image 6 exactly - Japanese, late 30s, tall wiry athletic, serious unsmiling face, long black hair in a high tight ponytail; raised pale scar from the LEFT forehead through the eyebrow past the left eye to the left cheekbone, eye undamaged; dark three-piece suit under a long open haori-style coat, katana and wakizashi sheathed at the left hip; NO tattoo, NO hexagram, NO sigil. Keep the B&W horror ink and three-panel stack from Image 3. Do not take a face from Image 1 or Image 2. Do not take the black sclera from Image 4.
+
+STYLE: Dark psychological horror ink. The corridor outside the study - old dark wood, one distant lamp, crushed shadow. Not the lift. ONLY Viktor and Tokiro.
+
+TOP (~35%): A dark corridor. EXACTLY TWO PEOPLE. TOKIRO stands in the corridor, NOT CLEARLY VISIBLE - a tall wiry silhouette, ponytail and sheathed swords readable, face lost in shadow. VIKTOR is nearer the lamp, recognizable, holding out an OLD CLOSED BOOK toward him, one hand offering it. The book is worn leather, no title, no letters. He is handing it over, not reading it.
+
+MIDDLE (~30%): Extreme close-up of TOKIRO TAKING the book. Tokiro's hands close on the leather - five digits per hand: one thumb and four fingers. His coat sleeve and a wrapped sword-hilt at the edge of frame. Viktor's bare right hand still on the other side of the book, hexagram visible. No other people.
+
+BOTTOM (~35%): Extreme close-up of TOKIRO - MOUTH AND NECK only. High shirt collar, tense throat, closed unsmiling mouth, a few strands of black hair. Scar only if the left jaw enters frame. No hexagram on the skin.
+
+SCALE: one human scale. Viktor is taller; Tokiro is a tall man, not doll-sized in the corridor. The book is a normal old book, one hand-width, not a tome.
+
+ANATOMY: two arms, two legs. Each hand has five digits: one thumb and four fingers. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: only the scene above. Corridor of the house in Image 3, not the lift. Preserve both identities and the ink from the pins.

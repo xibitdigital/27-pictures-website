@@ -89,6 +89,9 @@ or occult mark
 
 ## Proposed — which company
 
+**NEXORA.** Established in ep 2 page 1's narrator line. A telecommunications
+company whose screens are in every room — the medium as a brand.
+
 The obvious and best answer: **the company is the medium.** A broadcaster, a
 platform, a device maker — whatever it is, its screens are in the rooms where
 [the entity](the-entity.md) arrives, and its business is putting images in front

@@ -1,48 +1,36 @@
-# model: bytedance/seedream-5.0-pro
+# model: bytedance/seedream-5.0-pro  (ComfyUI: ByteDance Seedream 4.5 & 5.0)
 # mode: image-to-image
 # refs: Image 1 = references/red-smile/marcus.png (identity)
 #       Image 2 = references/red-smile/halina.png (identity)
 #       Image 3 = RED SMILE: Marcus page 8 (ink style, layout, the lift car and
 #                 basement corridor)
 #       Image 4 = RED SMILE: Marcus page 5 - its panel 1 is the black sclera
-#                 drawn correctly, as an eye: wet, lids and lashes intact, one
-#                 catchlight. Pin the tell against this, never against a cropped
-#                 eye study, which is what taught a roll to draw sunglasses.
-# note: NO text anywhere in the art - if the floor readout is in frame it is dark.
-#       No glasses and BOTH EYES SOLID BLACK throughout, as page 6 established;
-#       the grin stays SMALL AND TIGHT, the full rictus is the series' last stage.
-#       The speed is drawn the way pages 4 and 5 drew it: the room streaks, HE
-#       does not - upright, level, jacket undisturbed, never crouched, never
-#       running. A man who arrives is worse than a man who charges.
-#       Panel 3 is the page: her feet off the floor is the only thing that says
-#       what he is. No strain anywhere on him - no snarl, no bulging arm.
-#       Both were missed on the first roll: panel 1 came back with a blurred
-#       SECOND Marcus mid-corridor and her standing far away, panel 3 with her
-#       shoes flat on the floor. Hence the "exactly two people" and "if either
-#       shoe touches the floor the panel has failed" wording - do not soften it.
-#       A second roll then read the black sclera as SUNGLASSES in panel 1 and hid
-#       his face in silhouette in panel 2, so the EYES block spells out that they
-#       are eyes and that his face is lit. If a close-up of the black eyes is
-#       attached as a reference, that is what teaches "dark round object on the
-#       face" - so the tell is pinned against page 5, where it is drawn in
-#       context with lids, lashes and a catchlight.
+#                 drawn correctly, as an eye. Pin the tell against this.
+# graph: 1024x1824, thinking ON, ImageScale crop=center down to 800x1424.
+# note: Panel 1 restage: camera AT THE OPEN DOORS looking INTO the car. He is
+#       seen FROM BEHIND as he steps in. She faces the camera, terrorised.
+#       His FACE is not in panel 1 - black sclera is a panel 2 job.
+#       Speed is still pages 4-5: the doorway and corridor streak, HE does not.
+#       Upright, jacket undisturbed, never crouched, never running.
+#       Panel 3 is still the hanging feet. If either shoe touches the floor
+#       the panel has failed.
 
-FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp decisive linework, heavy ink washes, solid blacks, harsh contrast, grey midtones. No color, no balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text anywhere.
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp gekiga linework, heavy ink washes, solid blacks, harsh contrast, grey midtones. No color, no balloons, no captions, no SFX, no logos, no watermarks, no text anywhere.
 
-PIN from references: the man of Image 1 exactly - late 30s, tall, lean, long even face, dark side-parted hair, dark suit and tie, NO eyeglasses. The woman of Image 2 exactly, in every panel - mid 50s, heavy-set, broad weathered face, deep lines, grey-streaked low bun, dark tunic under a knee-length tabard, blank badge, flat rubber-soled shoes. Keep the lift car, corridor and ink of Image 3. Do not redesign either person, and do not substitute a different woman.
+PIN from references: the man of Image 1 exactly - late 30s, tall, lean, long even face, dark side-parted hair, dark suit and tie, no eyeglasses. The woman of Image 2 exactly, in every panel - mid 50s, heavy-set, broad weathered face, deep lines, grey-streaked low bun, dark tunic under a knee-length tabard, blank badge, flat rubber-soled shoes. Keep the lift car, corridor and ink of Image 3. Do not redesign either person.
 
-EYES: take the black sclera EXACTLY as Image 4 draws it. THE EYEBALL IS BLACK - the darkest thing on his face, ink-black across the whole visible eye, no iris, no pupil, no white of any kind. The only light on it is ONE PINHEAD catchlight, a dot smaller than a lash. His eyes are NOT white, NOT pale, NOT glowing, NOT lit from inside; no light comes out of them. They are EYES, not eyewear: normal eye shape, normal lids, lashes and brows, skin and sockets as usual - no sunglasses, no lenses, no rims, no dark discs on the face. His face itself is LIT and legible wherever he appears: never a flat silhouette, never a shadowed head with only a glint.
+EYES: if his face appears, take the black sclera EXACTLY as Image 4 draws it - ink-black eyeball, no iris, no white, one pinhead catchlight. Eyes, not eyewear: normal lids and lashes, no sunglasses. Face lit and legible, never a flat silhouette.
 
-STYLE: Dark psychological horror ink. Cold metal, hard light, crushed shadow. Not cyberpunk neon, not photoreal 3D. All three panels are inside the lift car at level -1.
+STYLE: Dark psychological horror ink. Cold metal, one hard ceiling light in the car, corridor crushed to black. All three panels are the lift at level -1.
 
-TOP (~35%): Inside the car, doors open on the black corridor. EXACTLY TWO PEOPLE - no third figure, no blurred double of him. NOT two people standing: he is arriving, so the doorway, door frames and corridor walls STREAK WITH HARD MOTION BLUR while HE stays perfectly sharp - that contrast is the panel. He is CLOSE ENOUGH TO TOUCH HER - his shoulder a hand's width from hers, not across the car, not by the doors - turned toward her, upright, jacket undisturbed, a hard ceiling light on his face: calm, both eyes solid black, small tight grin. She is the SAME WOMAN as Image 2, same face, same heavy build, same tabard and badge - backed against the BACK WALL, one hand flat on it, recoiling. The spray bottle is ALREADY ON THE FLOOR at her feet, on its side. Nobody is spraying anything: no jet, no mist, no bottle in the air, no bottle in a hand.
+TOP (~35%): Camera at the open lift doors, looking INTO the car. EXACTLY TWO PEOPLE. HE is seen FROM BEHIND, already crossing the threshold into the car - back of the dark suit, side-parted hair from behind, tall, upright, jacket undisturbed. The doorway, door frames and corridor STREAK WITH HARD MOTION BLUR; HE stays perfectly sharp. SHE faces the camera: backed against the far wall, the same woman as Image 2, looking straight at us past his shoulder, terrorised - eyes wide, brows up, mouth open, one hand flat on the wall. Her FACE is fully visible beyond him. Spray bottle already on the floor at her feet, on its side.
 
-MIDDLE (~30%): Tight on both from her side, inside the car - steel wall behind them, not a blown-out white ground. His head is in THREE-QUARTER VIEW and LIT: the black eyes and the small grin must both be visible, not a silhouetted profile. HIS RIGHT HAND IS CLOSED AROUND HER THROAT, fingers wrapped and gripping, thumb along her jawline, her skin creasing under the pressure - his arm straight and relaxed, no strain in him. Both her hands grip his forearm. Her face caught mid-breath: mouth open, eyes wide, cords in her neck. His face at the frame edge, black eyes on hers, the same small grin.
+MIDDLE (~30%): Tight on both from her side, inside the car, steel wall behind them. His head in three-quarter view and LIT: black eyes and the small tight grin both visible. HIS RIGHT HAND CLOSED AROUND HER THROAT, fingers wrapped, thumb along her jawline, her skin creasing - arm straight and relaxed, no strain. Both her hands grip his forearm. Her face mid-breath: mouth open, eyes wide, cords in her neck. His face at the frame edge, black eyes on hers, the same small grin.
 
-BOTTOM (~35%): Low in the car, camera near the floor. HER LEGS ARE IN FRAME FROM THE KNEE DOWN, WEARING HER SHOES, AND HANGING - trousers, ankles, both feet still in her flat rubber-soled shoes, toes pointed down, dangling with a hand's width of lit tiled floor visible under both soles. Her shadow reads on the tiles beneath them. THE SHOES ARE ON HER FEET: no empty shoes on the floor, no shoes removed, no bare feet. His shoes are planted flat at the frame edge, heels down, the only feet touching anything. The spray bottle lies on its side on the tiles. Nothing else of him in frame.
+BOTTOM (~35%): Camera near the floor of the car. HER LEGS FROM THE KNEE DOWN, still in her flat rubber-soled shoes, toes pointed down, hanging - a hand's width of lit tiled floor under both soles, her shadow on the tiles. Shoes on her feet. His shoes planted flat at the frame edge, the only feet touching anything. Spray bottle on its side on the tiles. Nothing else of him in frame.
 
-SCALE: one human scale. She is heavy-set, he a head taller; the hand at her throat is a normal man's hand, no elongation, no claws. The gap under her shoes is a hand's width, not a metre.
+SCALE: one human scale. He is a head taller; in panel 1 his back is a normal man in the near foreground and she is a full adult woman at the far wall, not doll-sized. The hand at her throat is a normal man's hand. The gap under her shoes is a hand's width.
 
-ANATOMY: two arms, two legs, five fingers per hand, thumbs on the correct side, correct knuckle spacing on the gripping hand. Horizontal panels only, no empty balloon shapes.
+ANATOMY: two arms, two legs, five fingers per hand, thumbs on the correct side. Horizontal panels only, no empty balloon shapes.
 
-CHANGE: only the scene described above; preserve both identities, the lift and corridor, and the ink style from the pins.
+CHANGE: only the scene above; preserve both identities, the lift and corridor, and the ink from the pins.

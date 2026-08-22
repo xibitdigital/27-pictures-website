@@ -127,7 +127,7 @@ for the panel where the reader has already relaxed.
 
 ## Voice
 
-No `adaeze` entry in `scripts/jax-voices.json` yet.
+`adaeze` → `jv41DhCf464zw0TI7I1w` in `scripts/jax-voices.json`.
 
 Direction: warm, articulate, unhurried — a voice it is pleasant to be talked to
 by. The horror is the content, never the delivery. Eleven v3, moderate

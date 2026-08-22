@@ -1,0 +1,33 @@
+# model: bytedance/seedream-5.0-pro  (ComfyUI: ByteDance Seedream 4.5 & 5.0)
+# mode: image-to-image
+# refs: Image 1 = references/red-smile/marcus.png (not on this page)
+#       Image 2 = references/red-smile/halina.png (not on this page)
+#       Image 3 = RED SMILE: Marcus page 9 - the drain plate (ink, 3-panel stack)
+#       Image 4 = RED SMILE: Marcus page 5 - black sclera (unused this page)
+#       Image 5 = references/red-smile/viktor.png (identity)
+# graph: 1024x1824, thinking ON, ImageScale crop=center down to 800x1424.
+# note: Scene cut. The lift is gone. Identity is Image 5. Do not PIN Image 1
+#       or this page draws Marcus.
+#       Panel 1 came back with six digits: the line "five fingers, thumb on
+#       the correct side" was read as five fingers PLUS a thumb. It is FIVE
+#       DIGITS - one thumb and four fingers. Fresh roll, same refs.
+
+FORMAT: Black and white horror manga page, vertical 800x1424, three stacked horizontal panels, thick black gutters, black outer border. Sharp gekiga linework, heavy ink washes, solid blacks, harsh contrast, grey midtones. No color, no balloons, no captions, no SFX, no logos, no watermarks, no text anywhere.
+
+PIN from references: the man of Image 5 exactly - very tall, broad square shoulders, lean; gaunt face, high cheekbones, swept-back silver hair, close-trimmed silver beard, pale irises with vertical slit pupils; full-length double-breasted Victorian wool overcoat with velvet collar, waistcoat and cravat, 1800s black silk top hat; gloves carried, not worn; unicursal hexagram tattooed on the back of the bare right hand. Keep the B&W horror ink and three-panel stack from Image 3. Do not take a face, suit or body from Image 1 or Image 2. Do not take the black sclera from Image 4.
+
+SYMBOL: unicursal hexagram on the back of the RIGHT hand - a six-pointed star as ONE continuous unbroken interlaced line, taller than wide, elongated vertical axis, a small lens-shaped void at its centre. Not two overlapping triangles, not a Star of David, not a pentagram, no surrounding circle. Identical to the mark on Image 5.
+
+STYLE: Dark psychological horror ink. A Victorian study - old dark wood, one desk lamp, crushed shadow. Not the lift. Not cyberpunk neon, not photoreal 3D. ONLY the man of Image 5. No other person.
+
+TOP (~35%): Extreme close-up of his BARE RIGHT HAND on the old wooden desk, back of the hand facing the camera, the tattoo filling the panel. FIVE DIGITS TOTAL - one thumb on the left and four fingers: index, middle, ring, little. Age spots and tendons, raking lamp light so the interlaced line reads. Desk grain under the palm. No glove on this hand.
+
+MIDDLE (~30%): Extreme close-up of ONE EYE, filling the panel. Pale iris, vertical slit pupil, reptilian, fully lit - the lighting must not eat the slit. Lid, lashes, the deep line beside the eye, a silver brow. Hat brim only if it sits at the very top of frame.
+
+BOTTOM (~35%): Seen FROM BEHIND, seated in an old wooden chair at the desk. Overcoat hanging off the wide shoulders, top hat on, a tall dark column even sitting. The chair is worn, high-backed, slightly too small for him. Desk in front of him - we see the chair back, his back, the desk edge. One lamp on the desk. Empty study around him.
+
+SCALE: one human scale. The hand is a normal adult hand. In panel 3 he is a very tall seated man, the chair sized to him, not a giant in a toy chair.
+
+ANATOMY: two arms, two legs. Each hand has five digits: one thumb and four fingers. Horizontal panels only, no empty balloon shapes.
+
+CHANGE: only the scene above. New set - his study, not the lift. Preserve the man of Image 5 and the ink from Image 3.
