@@ -301,7 +301,7 @@ npx wrangler deploy
   `/de/`, `/it/`, `/fr/` page shipped an English form inside a translated page.
 - **`novalidate` is required on the form.** With `required` + `type="email"` the
   browser runs its own constraint check first and shows a native bubble worded in
-  the *browser's* UI language, not the page's — and `onSubmit` never fires, so
+  the _browser's_ UI language, not the page's — and `onSubmit` never fires, so
   the localized messages become unreachable code. Keep the `required`
   attributes; they are the accessible semantics.
 - **Backend:** Cloudflare Worker
@@ -515,16 +515,14 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Erin              | `/toons/erin/`             | Page-turner prototype                                                                                                                                                                            |
 | Jax               | `/toons/jax/`              | Netrunner / Robin Hood of mind-tech; cover synopsis + multilingual SFX (see `content/toons/jax/README.md`)                                                                                       |
 | Nero              | `/toons/nero/`             | Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback plate (see `content/toons/nero/README.md`)                                                                           |
-| RED SMILE: static | `/toons/redsmile-static/`  | **RED SMILE is the series; `static` is episode 1** — 12 plates. Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                     |
+| RED SMILE: static | `/toons/redsmile-static/`  | **RED SMILE is the series; `static` is episode 1** — 12 plates. Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                   |
 | Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
 
-**Erin EP 2 is deliberately unlisted on `main`**: no card in `/toons/`, no
-sitemap or `llms.txt` entry, `noindex, nofollow` on the reader — a
-"Work in progress" badge does not stop Google ranking half a story. The URL
-still builds and answers, so it can be shared directly. The `staging` branch
-carries the reverse commit, so the card and `index, follow` are live there.
-Shipping the episode = revert that hide on `main` (card + `numberOfItems`,
-sitemap `<url>`, `llms.txt` line, robots).
+**Erin EP 2 has shipped (2026-08)**: `/toons/erin-the-revenge/` is live and
+`index, follow`, listed in the sitemap and `llms.txt`, and reachable through
+the localized series hub `/toons/erin-and-the-goblins/` (which links both
+episodes and carries the canonical `#series` entity the `/toons/` ItemList
+references by `@id`). The old hide-on-`main` arrangement is history.
 
 Wire-up pattern:
 
@@ -602,7 +600,8 @@ Each `src/toons/<name>/index.html` therefore carries:
 - **`WebPage` + `BreadcrumbList` + `CreativeWork`** JSON-LD. The CreativeWork
   description reuses the app's `COVER_SYNOPSIS`, so cover copy and schema
   cannot drift.
-- **og/twitter tags** pointing at `card-art/<toon>.jpg`, and a title built from
+- **og/twitter tags** pointing at `card-art/<toon>-og.jpg` (1200×630 landscape
+  crops — the portrait card art crops badly on `summary_large_image`), and a title built from
   the hook rather than "… | Experiments", which no one searches.
 
 Keep the fallback in step with the synopsis when a toon's story changes, and
@@ -974,12 +973,13 @@ Do not commit the binary.
 
 - Page title: `27 Pictures | AI Horror Shorts & Cinematic Cosplay Production`
 - Meta description updated (matches YouTube channel description)
-- JSON-LD schema split across pages (2026-08): homepage keeps Organization, WebSite, WebPage, 3× Person, the cosplay-showcase + Jax VideoObjects and the VFX Service; `/horror-shorts/` owns CreativeWorkSeries + ItemList of 5 VideoObjects; `/cosplay/` owns the cosplay Service + FAQPage; both add BreadcrumbList
+- JSON-LD schema split across pages (2026-08): homepage keeps Organization, WebSite, WebPage, 3× Person, the Jax-short VideoObject and the VFX Service — the cosplay showcase VideoObject lives on `/cosplay/#showcase` and the homepage references it by bare `@id` only (a typed stub would parse as its own VideoObject missing required fields); `/horror-shorts/` owns CreativeWorkSeries + ItemList of 5 VideoObjects; `/cosplay/` owns the cosplay Service + FAQPage; both add BreadcrumbList
 - Person schema: 3 founders (Sonia, Marco, Daniele Sangalli) with `jobTitle`/`description`/`worksFor`, linked from `Organization.founder`
 - Organization location: Switzerland & United Kingdom
 - IndexNow key deployed + submitted (`bdd5e80e21a8430d9316de0deacdb208`)
 - All VideoObject uploadDates and durations use real YouTube values
-- `public/llms.txt` — AI crawler allow-list + key pages (aligned with robots)
+- `public/llms.txt` — llms.txt-convention markdown (H1 + blockquote summary +
+  H2 link sections); crawler directives live only in `robots.txt`
 - `public/robots.txt` — search + AI _citation_ crawlers allowed; QR landing blocked
 - Indexable hub pages added (2026-08): `/horror-shorts/` and `/cosplay/`, each 800+ words of unique copy; sitemap now lists them with 1200×630 OG art
 - `/experiments/` → `/toons/` with 301s in `public/_redirects`
@@ -1054,7 +1054,7 @@ strands them.
 | File                              | Role                                                                                                                                            |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `public/robots.txt`               | Authoritative crawl rules shipped in `dist/`                                                                                                    |
-| `public/llms.txt`                 | Human/AI policy note; must stay consistent with robots                                                                                          |
+| `public/llms.txt`                 | Markdown site guide for AI engines (llms.txt spec); crawler rules live in robots.txt                                                            |
 | Cloudflare **AI Crawl Control**   | Per-bot **Block** toggles (leave **off** for GPT/Claude/Google/Perplexity)                                                                      |
 | Cloudflare **managed robots.txt** | **Must stay disabled** — when enabled it prepends `Disallow: /` for GPTBot, ClaudeBot, Google-Extended, etc. and conflicts with our Allow rules |
 

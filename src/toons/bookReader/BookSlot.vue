@@ -93,6 +93,7 @@ function onCaptionsMeasured(ready: boolean): void {
       :src="model.src"
       :alt="`${altPrefix} — page ${model.pageNum}`"
       draggable="false"
+      fetchpriority="high"
     />
 
     <PageCaptions

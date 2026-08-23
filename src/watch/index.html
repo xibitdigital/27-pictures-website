@@ -49,7 +49,7 @@
       data-i18n-content="ogDescription"
       content="Every film 27 Pictures has released: the Red Smile horror anthology, the Jax cyberpunk series, and the cosplay showcase."
     />
-    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg" />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/watch-og.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" data-i18n-content="ogImageAlt" content="Films by 27 Pictures" />
@@ -70,15 +70,27 @@
       data-i18n-content="twitterDescription"
       content="Every film 27 Pictures has released: horror anthology, cyberpunk series, cosplay showcase."
     />
-    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg" />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/watch-og.jpg" />
     <meta name="twitter:image:alt" data-i18n-content="ogImageAlt" content="Films by 27 Pictures" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript
+      ><link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+        rel="stylesheet"
+    /></noscript>
     <link rel="stylesheet" href="/styles.css" />
 
     <script type="application/ld+json">
@@ -93,7 +105,46 @@
             "description": "Every film 27 Pictures has released: the Red Smile horror anthology, the Jax cyberpunk series, and the cosplay showcase.",
             "isPartOf": { "@id": "https://twentyseven.pictures/#website" },
             "publisher": { "@id": "https://twentyseven.pictures/#organization" },
-            "inLanguage": "en"
+            "inLanguage": "en",
+            "mainEntity": { "@id": "https://twentyseven.pictures/watch/#releases" }
+          },
+          {
+            "@type": "ItemList",
+            "@id": "https://twentyseven.pictures/watch/#releases",
+            "name": "27 Pictures releases",
+            "numberOfItems": 4,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Jax The Chip: AI in His Head",
+                "url": "https://www.youtube.com/watch?v=Jqe1TmHD8cQ"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Red Smile: A Horror Anthology",
+                "url": "https://twentyseven.pictures/horror-shorts/",
+                "item": {
+                  "@type": "CreativeWorkSeries",
+                  "@id": "https://twentyseven.pictures/#the-red-smile",
+                  "name": "The Red Smile",
+                  "url": "https://twentyseven.pictures/horror-shorts/"
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Horror Shorts collection",
+                "url": "https://www.youtube.com/playlist?list=PLb5rxZ02eTKskIw5MglgYCObrkp9vAgDv"
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Cyberpunk Jax Netrunner series",
+                "url": "https://www.youtube.com/playlist?list=PLb5rxZ02eTKsZojd93MSPD-HoCxdx1xKh"
+              }
+            ]
           },
           {
             "@type": "BreadcrumbList",
@@ -238,6 +289,21 @@
             >
           </article>
         </div>
+      </section>
+
+      <section class="experiments-intro" aria-labelledby="watch-about-title">
+        <h2 id="watch-about-title" class="experiments-section-label" data-i18n="aboutTitle">How we release</h2>
+        <p data-i18n-html="about1">
+          Everything 27 Pictures makes premieres on YouTube, free to watch. The Red Smile anthology is psychological
+          horror in short form — five films so far, each with its own page and production writeup under
+          <a href="/horror-shorts/">horror shorts</a>. The Jax series is widescreen cyberpunk: a netrunner, an AI in his
+          head, and a city that wants both back. The cosplay showcase collects our cinematic cosplay production work.
+        </p>
+        <p data-i18n-html="about2">
+          Some stories are released as interactive webcomics instead of films — full-screen plates with voiced captions
+          you read at your own pace. You will find those in the
+          <a href="/toons/">Interactive Toons index</a>, not on YouTube.
+        </p>
       </section>
 
       <footer class="experiments-footer">

@@ -50,9 +50,9 @@
       data-i18n-content="ogDescription"
       content="Professional horror film production studio. Psychological horror short films, AI-enhanced cosplay cinematography, and neural synthesis VFX. Home of 'The Red Smile' series."
     />
-    <meta property="og:image" content="https://twentyseven.pictures/the-red-smile.jpg" />
-    <meta property="og:image:width" content="1135" />
-    <meta property="og:image:height" content="844" />
+    <meta property="og:image" content="https://twentyseven.pictures/the-red-smile-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
       data-i18n-content="ogImageAlt"
@@ -75,7 +75,7 @@
       data-i18n-content="twitterDescription"
       content="Professional horror film production studio. Psychological horror short films, AI-enhanced cosplay cinematography, and neural synthesis VFX."
     />
-    <meta name="twitter:image" content="https://twentyseven.pictures/the-red-smile.jpg" />
+    <meta name="twitter:image" content="https://twentyseven.pictures/the-red-smile-og.jpg" />
     <meta
       name="twitter:image:alt"
       data-i18n-content="twitterImageAlt"
@@ -88,9 +88,21 @@
 
     <!-- Premium Editorial Fonts -->
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript
+      ><link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+        rel="stylesheet"
+    /></noscript>
 
     <!-- Styles -->
     <link rel="stylesheet" href="/styles.css" />
@@ -114,7 +126,7 @@
             "url": "https://twentyseven.pictures/",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://twentyseven.pictures/logo.png",
+              "url": "https://twentyseven.pictures/logo.1a83b92ec2.png",
               "width": 832,
               "height": 1248
             },
@@ -218,34 +230,21 @@
             "about": {
               "@id": "https://twentyseven.pictures/#organization"
             },
+            "inLanguage": "en",
             "primaryImageOfPage": {
               "@type": "ImageObject",
               "url": "https://twentyseven.pictures/the-red-smile.jpg",
               "width": 1135,
               "height": 844
-            }
-          },
-          {
-            "@type": "VideoObject",
-            "@id": "https://twentyseven.pictures/#video-nuMPi_Rnxg0",
-            "name": "27 Pictures Cosplay Production Showcase",
-            "description": "A showcase of 27 Pictures' AI-enhanced cosplay cinematography. Full production sessions using high-bitrate 4K RAW, neural synthesis, and generative AI environment mapping.",
-            "thumbnailUrl": "https://i.ytimg.com/vi/nuMPi_Rnxg0/maxresdefault.jpg",
-            "embedUrl": "https://www.youtube.com/embed/nuMPi_Rnxg0",
-            "url": "https://www.youtube.com/watch?v=nuMPi_Rnxg0",
-            "uploadDate": "2025-01-01",
-            "duration": "PT1M00S",
-            "genre": "Cosplay",
-            "publisher": {
-              "@id": "https://twentyseven.pictures/#organization"
-            }
+            },
+            "video": { "@id": "https://twentyseven.pictures/cosplay/#showcase" }
           },
           {
             "@type": "VideoObject",
             "@id": "https://twentyseven.pictures/#short-Jqe1TmHD8cQ",
             "name": "Jax The Chip: AI in His Head (Cyberpunk Short)",
             "description": "A netrunner wakes up sharing his skull with an AI that answers back. Widescreen cyberpunk short from the Jax series by 27 Pictures.",
-            "thumbnailUrl": "https://i.ytimg.com/vi/Jqe1TmHD8cQ/maxresdefault.jpg",
+            "thumbnailUrl": "https://i.ytimg.com/vi/Jqe1TmHD8cQ/hq720.jpg",
             "embedUrl": "https://www.youtube.com/embed/Jqe1TmHD8cQ",
             "url": "https://www.youtube.com/watch?v=Jqe1TmHD8cQ",
             "uploadDate": "2026-08-12",
@@ -444,19 +443,17 @@
               The Neural Evolution of Horror &amp; Cosplay Cinema
             </blockquote>
             <p data-i18n="beyondP1">
-              At 27 Pictures, we have redefined the limits of horror and cosplay production. We treat every frame as a
-              narrative centerpiece, using high-bitrate 4K RAW cinematography as the foundation for digital
-              transformation.
+              Beyond the Mask is our cosplay cinema line. Every production starts the way our films do: a lighting plan,
+              a shot list, and high-bitrate 4K RAW footage of a real person in a real costume.
             </p>
             <p data-i18n="beyondP2">
-              Our specialized workflow uses Neural Synthesis — a production pipeline combining AI-generated environment
-              mapping and texture diffusion with live-action 4K RAW footage — to create otherworldly atmospheres that
-              blur the line between reality and imagination, whether summoning nightmares or bringing beloved characters
-              to life.
+              The transformation happens in post. Neural Synthesis — our pipeline of AI-generated environment mapping
+              and texture diffusion — builds the world around that footage: a rain-slicked street, a throne room, a ship
+              corridor. The person and the costume stay real; the set is grown around them.
             </p>
             <p data-i18n="beyondP3">
-              Every "Beyond the Mask" production is an assembly of artistic precision and artificial intelligence,
-              ensuring that the final frame transcends traditional boundaries into cinematic art.
+              The finish is film finish: colour grade, grain, and a sound mix. What leaves the studio is not a photo set
+              — it is a short piece of cinema with your character in it.
             </p>
           </div>
 
@@ -683,7 +680,7 @@
 
     <footer role="contentinfo">
       <img
-        src="/logo.png"
+        src="/logo.1a83b92ec2.png"
         class="footer-logo-img"
         alt="27 Pictures - Horror Film Production and AI-Enhanced Cosplay Cinematography Studio"
         width="180"

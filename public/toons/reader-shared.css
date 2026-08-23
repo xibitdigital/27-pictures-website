@@ -2431,6 +2431,13 @@ body.single-page .flip-page.flipping.from-left {
    Lives inside #app, so Vue replaces it the moment the reader mounts. Search
    engines and no-JS visitors get the premise, page count and languages instead
    of an empty document; nothing here is hidden from anyone. */
+
+/* Reserve the reader's box before Vue mounts: the fallback → book-scene swap
+   otherwise lands as layout shift (measured CLS 0.177 on Nero, mobile). */
+body.toons-reader #app {
+  min-height: 100dvh;
+}
+
 .reader-fallback {
   max-width: 46rem;
   margin: 0 auto;

@@ -35,5 +35,8 @@
     "description": "Tous les films sortis chez 27 Pictures : l'anthologie d'horreur The Red Smile, la série cyberpunk Jax et la vitrine cosplay.",
     "breadcrumbHome": "Accueil",
     "breadcrumbHere": "Regarder"
-  }
+  },
+  "aboutTitle": "Comment nous publions",
+  "about1": "Tout ce que produit 27 Pictures sort d'abord sur YouTube, gratuitement. L'anthologie Red Smile, c'est de l'horreur psychologique au format court — cinq films à ce jour, chacun avec sa page et ses notes de production sous <a href=\"/horror-shorts/\">courts métrages d'horreur</a>. La série Jax, c'est du cyberpunk en widescreen : un netrunner, une IA dans la tête et une ville qui veut récupérer les deux. Le showcase cosplay rassemble nos productions cosplay cinématographiques.",
+  "about2": "Certaines histoires sortent en webcomic interactif plutôt qu'en film — des planches plein écran aux bulles parlées, à lire à son rythme. Vous les trouverez dans l'index des <a href=\"/toons/\">toons interactifs</a>, pas sur YouTube."
 }

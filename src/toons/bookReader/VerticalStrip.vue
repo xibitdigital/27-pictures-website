@@ -61,6 +61,7 @@ watch(
         :alt="`${altPrefix || 'Page'} — page ${i + 1}`"
         draggable="false"
         :loading="i > 1 ? 'lazy' : 'eager'"
+        :fetchpriority="i === 0 ? 'high' : undefined"
       />
       <PageCaptions :page-num="i + 1" :image-el="imgEls[i] ?? null" />
     </div>

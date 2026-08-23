@@ -6,7 +6,7 @@
     <title>Nero — Cyberpunk Detective Toon, Voiced in 4 Languages | 27 Pictures</title>
     <meta
       name="description"
-      content="Nero — a Scotland Yard detective with a steel arm hunts the sicario called The Dog through rain, crystal tech and a contract nobody will name. A 24-page interactive cyberpunk noir with voiced captions in four languages."
+      content="A Scotland Yard detective with a steel arm hunts the sicario called The Dog. A 24-page interactive cyberpunk noir webcomic, voiced in four languages."
     />
     <link rel="canonical" href="https://twentyseven.pictures/toons/nero/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
@@ -22,7 +22,9 @@
       property="og:description"
       content="Nero — a Scotland Yard detective with a steel arm hunts the sicario called The Dog through rain, crystal tech and a contract nobody will name. A 24-page interactive cyberpunk noir with voiced captions in four languages."
     />
-    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/nero.jpg" />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/nero-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="27 Pictures" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Nero — Cyberpunk Detective Toon, Voiced in 4 Languages | 27 Pictures" />
@@ -30,7 +32,7 @@
       name="twitter:description"
       content="Nero — a Scotland Yard detective with a steel arm hunts the sicario called The Dog through rain, crystal tech and a contract nobody will name. A 24-page interactive cyberpunk noir with voiced captions in four languages."
     />
-    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/nero.jpg" />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/nero-og.jpg" />
 
     <link rel="icon" type="image/png" href="/logosquare.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logosquare.png" />
@@ -38,9 +40,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript
+      ><link
+        href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+        rel="stylesheet"
+    /></noscript>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/toons/reader-shared.css" />
     <style>
@@ -116,8 +130,13 @@
             ]
           },
           {
-            "@type": "CreativeWork",
+            "@type": ["CreativeWork", "ComicStory"],
             "@id": "https://twentyseven.pictures/toons/nero/#toon",
+            "character": [
+              { "@type": "Person", "name": "Nero" },
+              { "@type": "Person", "name": "Eve" },
+              { "@type": "Person", "name": "The Dog" }
+            ],
             "name": "Nero",
             "url": "https://twentyseven.pictures/toons/nero/",
             "description": "In a rain-soaked city of wetwork and wet labs, detective Nero — ex-military, one hand lost to a terrorist attack and rebuilt in steel — follows a trail of blood and crystal. His ally Eve, a Scotland Yard forensic specialist whose AI-enhanced glasses can tag faces and materials, reads the evidence he cannot. Between them stands The Dog: a cold-blooded sicario who never misses. Together Nero and Eve must crack the crystal case, hunt The Dog through the rooftops and the lab, and uncover who hired the bullet — and what near-invisible implant tech it was meant to protect.",

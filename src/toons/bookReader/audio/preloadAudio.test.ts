@@ -6,7 +6,7 @@ import {
   preloadAudioUrl,
   preloadAudioUrls,
 } from "./preloadAudio";
-import type { WordsConfig } from "../types";
+import type { WordEntry } from "../types";
 
 /** Minimal Audio mock with EventTarget + readyState. */
 function mockAudio(opts: { readyState?: number; fail?: boolean } = {}) {
@@ -41,28 +41,20 @@ function mockAudio(opts: { readyState?: number; fail?: boolean } = {}) {
 }
 
 describe("collectWordAudioUrls", () => {
-  it("returns unique non-empty audio paths", () => {
-    const config: WordsConfig = {
-      pages: [
-        {
-          file: "assets/1.jpg",
-          words: [
-            { audio: "assets/sfx/a.mp3", text: "A" },
-            { audio: "assets/sfx/a.mp3", text: "A2" },
-            { text: "silent" },
-            { audio: "  assets/sfx/b.mp3  ", text: "B" },
-            { audio: "", text: "empty" },
-          ],
-        },
-        { file: "assets/2.jpg", words: [{ audio: "assets/sfx/c.mp3", text: "C" }] },
-      ],
-    };
-    expect(collectWordAudioUrls(config).sort()).toEqual(["assets/sfx/a.mp3", "assets/sfx/b.mp3", "assets/sfx/c.mp3"]);
+  it("returns unique non-empty audio paths from one page's words", () => {
+    const words: WordEntry[] = [
+      { audio: "assets/sfx/a.mp3", text: "A" },
+      { audio: "assets/sfx/a.mp3", text: "A2" },
+      { text: "silent" },
+      { audio: "  assets/sfx/b.mp3  ", text: "B" },
+      { audio: "", text: "empty" },
+    ];
+    expect(collectWordAudioUrls(words).sort()).toEqual(["assets/sfx/a.mp3", "assets/sfx/b.mp3"]);
   });
 
-  it("handles missing pages", () => {
+  it("handles missing words", () => {
     expect(collectWordAudioUrls(undefined)).toEqual([]);
-    expect(collectWordAudioUrls({})).toEqual([]);
+    expect(collectWordAudioUrls(null)).toEqual([]);
   });
 });
 

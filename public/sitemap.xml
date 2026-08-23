@@ -3,65 +3,63 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://twentyseven.pictures/</loc>
-    <lastmod>2026-05-30</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://twentyseven.pictures/the-red-smile.jpg</image:loc>
       <image:title>The Red Smile - Psychological Horror Short Film by 27 Pictures</image:title>
       <image:caption>Cinematic clown portrait from The Red Smile horror series featuring atmospheric deep-shadow cinematography</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://twentyseven.pictures/logo.png</image:loc>
+      <image:loc>https://twentyseven.pictures/logo.1a83b92ec2.png</image:loc>
       <image:title>27 Pictures Logo</image:title>
       <image:caption>27 Pictures - Horror Film Production and AI-Enhanced Cosplay Cinematography Studio</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://twentyseven.pictures/the-red-smile.jpg</image:loc>
       <image:title>The Red Smile — una produzione horror psicologica di 27 Pictures con immagini cinematografiche di clown</image:title>
       <image:caption>Studio professionale di produzione horror. Cortometraggi horror psicologici, cinematografia cosplay potenziata dall'IA e VFX con sintesi neurale. Casa della serie 'The Red Smile'.</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://twentyseven.pictures/logo.png</image:loc>
-      <image:title>The Red Smile — una produzione horror psicologica di 27 Pictures con immagini cinematografiche di clown</image:title>
-      <image:caption>Studio professionale di produzione horror. Cortometraggi horror psicologici, cinematografia cosplay potenziata dall'IA e VFX con sintesi neurale. Casa della serie 'The Red Smile'.</image:caption>
+      <image:loc>https://twentyseven.pictures/logo.1a83b92ec2.png</image:loc>
+      <image:title>Logo 27 Pictures</image:title>
+      <image:caption>27 Pictures — studio di produzione di film horror e cinematografia cosplay potenziata dall'IA</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://twentyseven.pictures/the-red-smile.jpg</image:loc>
       <image:title>The Red Smile — eine psychologische Horrorproduktion von 27 Pictures mit kinoreifen Clown-Bildern</image:title>
       <image:caption>Professionelles Studio für Horrorfilmproduktion. Psychologische Horror-Kurzfilme, KI-gestützte Cosplay-Kameraarbeit und VFX mit neuraler Synthese. Heimat der Reihe „The Red Smile“.</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://twentyseven.pictures/logo.png</image:loc>
-      <image:title>The Red Smile — eine psychologische Horrorproduktion von 27 Pictures mit kinoreifen Clown-Bildern</image:title>
-      <image:caption>Professionelles Studio für Horrorfilmproduktion. Psychologische Horror-Kurzfilme, KI-gestützte Cosplay-Kameraarbeit und VFX mit neuraler Synthese. Heimat der Reihe „The Red Smile“.</image:caption>
+      <image:loc>https://twentyseven.pictures/logo.1a83b92ec2.png</image:loc>
+      <image:title>27 Pictures Logo</image:title>
+      <image:caption>27 Pictures — Studio für Horrorfilmproduktion und KI-gestützte Cosplay-Kameraarbeit</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://twentyseven.pictures/the-red-smile.jpg</image:loc>
       <image:title>The Red Smile — une production d'horreur psychologique de 27 Pictures avec une imagerie de clown cinématographique</image:title>
       <image:caption>Studio professionnel de production de films d'horreur. Courts métrages d'horreur psychologique, image cosplay augmentée par IA et VFX par synthèse neuronale. Maison de la série « The Red Smile ».</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://twentyseven.pictures/logo.png</image:loc>
-      <image:title>The Red Smile — une production d'horreur psychologique de 27 Pictures avec une imagerie de clown cinématographique</image:title>
-      <image:caption>Studio professionnel de production de films d'horreur. Courts métrages d'horreur psychologique, image cosplay augmentée par IA et VFX par synthèse neuronale. Maison de la série « The Red Smile ».</image:caption>
+      <image:loc>https://twentyseven.pictures/logo.1a83b92ec2.png</image:loc>
+      <image:title>Logo 27 Pictures</image:title>
+      <image:caption>27 Pictures — studio de production de films d'horreur et de cinématographie cosplay augmentée par IA</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://twentyseven.pictures/horror-shorts/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>The Red Smile horror short anthology — 27 Pictures</image:title>
@@ -70,9 +68,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/horror-shorts/</loc>
-    <lastmod>2026-08-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>L'antologia di corti horror The Red Smile di 27 Pictures</image:title>
@@ -81,9 +77,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/horror-shorts/</loc>
-    <lastmod>2026-08-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>Die Horror-Kurzfilm-Anthologie The Red Smile von 27 Pictures</image:title>
@@ -92,9 +86,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/horror-shorts/</loc>
-    <lastmod>2026-08-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>L'anthologie de courts métrages d'horreur The Red Smile de 27 Pictures</image:title>
@@ -103,7 +95,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/horror-shorts/he-streamed-the-challenge/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/QMRlBqAdNGg/hq720.jpg</image:loc>
       <image:title>He Streamed the Challenge. The Monster Streamed Back.</image:title>
@@ -112,7 +104,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/horror-shorts/he-streamed-the-challenge/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/QMRlBqAdNGg/hq720.jpg</image:loc>
       <image:title>He Streamed the Challenge. The Monster Streamed Back. — corto di The Red Smile di 27 Pictures</image:title>
@@ -121,7 +113,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/horror-shorts/he-streamed-the-challenge/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/QMRlBqAdNGg/hq720.jpg</image:loc>
       <image:title>He Streamed the Challenge. The Monster Streamed Back. — Red-Smile-Kurzfilm von 27 Pictures</image:title>
@@ -130,7 +122,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/horror-shorts/he-streamed-the-challenge/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/QMRlBqAdNGg/hq720.jpg</image:loc>
       <image:title>He Streamed the Challenge. The Monster Streamed Back. — court métrage Red Smile de 27 Pictures</image:title>
@@ -139,7 +131,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/horror-shorts/the-doll-moved-again/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/J-iZl-XkVxg/hq720.jpg</image:loc>
       <image:title>The Doll Moved Again. No One Was Home.</image:title>
@@ -148,7 +140,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/horror-shorts/the-doll-moved-again/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/J-iZl-XkVxg/hq720.jpg</image:loc>
       <image:title>The Doll Moved Again. No One Was Home. — corto di The Red Smile di 27 Pictures</image:title>
@@ -157,7 +149,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/horror-shorts/the-doll-moved-again/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/J-iZl-XkVxg/hq720.jpg</image:loc>
       <image:title>The Doll Moved Again. No One Was Home. — Red-Smile-Kurzfilm von 27 Pictures</image:title>
@@ -166,7 +158,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/horror-shorts/the-doll-moved-again/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/J-iZl-XkVxg/hq720.jpg</image:loc>
       <image:title>The Doll Moved Again. No One Was Home. — court métrage Red Smile de 27 Pictures</image:title>
@@ -175,7 +167,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/horror-shorts/something-is-wrong-with-my-reflection/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/VEmf9eq62zo/hq720.jpg</image:loc>
       <image:title>Something Is Wrong With My Reflection</image:title>
@@ -184,7 +176,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/horror-shorts/something-is-wrong-with-my-reflection/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/VEmf9eq62zo/hq720.jpg</image:loc>
       <image:title>Something Is Wrong With My Reflection — corto di The Red Smile di 27 Pictures</image:title>
@@ -193,7 +185,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/horror-shorts/something-is-wrong-with-my-reflection/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/VEmf9eq62zo/hq720.jpg</image:loc>
       <image:title>Something Is Wrong With My Reflection — Red-Smile-Kurzfilm von 27 Pictures</image:title>
@@ -202,7 +194,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/horror-shorts/something-is-wrong-with-my-reflection/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/VEmf9eq62zo/hq720.jpg</image:loc>
       <image:title>Something Is Wrong With My Reflection — court métrage Red Smile de 27 Pictures</image:title>
@@ -211,7 +203,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/horror-shorts/shes-not-running-away/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/qjBL4zRIFbg/hq720.jpg</image:loc>
       <image:title>She's Not Running Away. She's Hunting.</image:title>
@@ -220,7 +212,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/horror-shorts/shes-not-running-away/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/qjBL4zRIFbg/hq720.jpg</image:loc>
       <image:title>She's Not Running Away. She's Hunting. — corto di The Red Smile di 27 Pictures</image:title>
@@ -229,7 +221,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/horror-shorts/shes-not-running-away/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/qjBL4zRIFbg/hq720.jpg</image:loc>
       <image:title>She's Not Running Away. She's Hunting. — Red-Smile-Kurzfilm von 27 Pictures</image:title>
@@ -238,7 +230,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/horror-shorts/shes-not-running-away/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/qjBL4zRIFbg/hq720.jpg</image:loc>
       <image:title>She's Not Running Away. She's Hunting. — court métrage Red Smile de 27 Pictures</image:title>
@@ -247,7 +239,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/horror-shorts/she-asked-for-directions/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/BOtFWCENtTc/hq720.jpg</image:loc>
       <image:title>She Asked for Directions. She Should've Run.</image:title>
@@ -256,7 +248,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/horror-shorts/she-asked-for-directions/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/BOtFWCENtTc/hq720.jpg</image:loc>
       <image:title>She Asked for Directions. She Should've Run. — corto di The Red Smile di 27 Pictures</image:title>
@@ -265,7 +257,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/horror-shorts/she-asked-for-directions/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/BOtFWCENtTc/hq720.jpg</image:loc>
       <image:title>She Asked for Directions. She Should've Run. — Red-Smile-Kurzfilm von 27 Pictures</image:title>
@@ -274,7 +266,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/horror-shorts/she-asked-for-directions/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://i.ytimg.com/vi/BOtFWCENtTc/hq720.jpg</image:loc>
       <image:title>She Asked for Directions. She Should've Run. — court métrage Red Smile de 27 Pictures</image:title>
@@ -283,9 +275,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/cosplay/</loc>
-    <lastmod>2026-08-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/cosplay-og.jpg</image:loc>
       <image:title>Cinematic cosplay production — 27 Pictures</image:title>
@@ -294,9 +284,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/cosplay/</loc>
-    <lastmod>2026-08-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/cosplay-og.jpg</image:loc>
       <image:title>Fotogramma di una produzione cosplay cinematografica di 27 Pictures</image:title>
@@ -305,9 +293,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/cosplay/</loc>
-    <lastmod>2026-08-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/cosplay-og.jpg</image:loc>
       <image:title>Standbild einer kinoreifen Cosplay-Produktion von 27 Pictures</image:title>
@@ -316,9 +302,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/cosplay/</loc>
-    <lastmod>2026-08-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/cosplay-og.jpg</image:loc>
       <image:title>Photogramme d'une production cosplay cinématographique de 27 Pictures</image:title>
@@ -327,7 +311,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/watch/</loc>
-    <lastmod>2026-08-15</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>Watch — every 27 Pictures release</image:title>
@@ -336,7 +320,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/watch/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>I film di 27 Pictures</image:title>
@@ -345,7 +329,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/watch/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>Filme von 27 Pictures</image:title>
@@ -354,7 +338,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/watch/</loc>
-    <lastmod>2026-08-18</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/horror-shorts-og.jpg</image:loc>
       <image:title>Les films de 27 Pictures</image:title>
@@ -363,7 +347,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/toons/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin interactive manga reader — 27 Pictures Experiments</image:title>
@@ -372,7 +356,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/toons/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin — toon interattivo di 27 Pictures</image:title>
@@ -381,7 +365,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/toons/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin — interaktiver Toon von 27 Pictures</image:title>
@@ -390,7 +374,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/toons/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin — toon interactif de 27 Pictures</image:title>
@@ -399,7 +383,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/toons/erin-and-the-goblins/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin &amp; the Goblins — interactive dark fantasy manga</image:title>
@@ -408,7 +392,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/it/toons/erin-and-the-goblins/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin e i Goblin — manga dark fantasy interattivo</image:title>
@@ -417,7 +401,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/de/toons/erin-and-the-goblins/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin und die Goblins — interaktiver Dark-Fantasy-Manga</image:title>
@@ -426,7 +410,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/fr/toons/erin-and-the-goblins/</loc>
-    <lastmod>2026-08-17</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin et les Gobelins — manga dark fantasy interactif</image:title>
@@ -435,7 +419,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/toons/erin/</loc>
-    <lastmod>2026-07-27</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-dark.jpg</image:loc>
       <image:title>Erin interactive manga reader — 27 Pictures Experiments</image:title>
@@ -444,7 +428,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/toons/erin-the-revenge/</loc>
-    <lastmod>2026-08-15</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/erin-the-revenge.jpg</image:loc>
       <image:title>Erin EP 2: The Revenge — 27 Pictures interactive toon</image:title>
@@ -453,11 +437,11 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/toons/jax/</loc>
-    <lastmod>2026-07-27</lastmod>
+    <lastmod>2026-08-23</lastmod>
   </url>
   <url>
     <loc>https://twentyseven.pictures/toons/nero/</loc>
-    <lastmod>2026-08-01</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/nero.jpg</image:loc>
       <image:title>Nero interactive cyberpunk sicario toon — 27 Pictures Experiments</image:title>
@@ -466,7 +450,7 @@
   </url>
   <url>
     <loc>https://twentyseven.pictures/toons/redsmile-static/</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>%VITE_ASSET_BASE%/card-art/redsmile-static.jpg</image:loc>
       <image:title>RED SMILE: static interactive horror toon — 27 Pictures</image:title>

@@ -22,7 +22,9 @@
       property="og:description"
       content="Erin — half human, half vampire, keeper of a town that is really a doorway between the goblin world and ours. A 27-page interactive horror comic you read in the browser."
     />
-    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/erin-dark.jpg" />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/erin-dark-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="27 Pictures" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Erin — Half-Vampire Horror Toon | 27 Pictures" />
@@ -30,7 +32,7 @@
       name="twitter:description"
       content="Erin — half human, half vampire, keeper of a town that is really a doorway between the goblin world and ours. A 27-page interactive horror comic you read in the browser."
     />
-    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/erin-dark.jpg" />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/erin-dark-og.jpg" />
 
     <link rel="icon" type="image/png" href="/logosquare.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logosquare.png" />
@@ -38,9 +40,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript
+      ><link
+        href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+        rel="stylesheet"
+    /></noscript>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/toons/reader-shared.css" />
     <style>
@@ -124,8 +138,9 @@
             ]
           },
           {
-            "@type": "CreativeWork",
+            "@type": ["CreativeWork", "ComicStory"],
             "@id": "https://twentyseven.pictures/toons/erin/#toon",
+            "character": [{ "@type": "Person", "name": "Erin" }],
             "name": "Erin",
             "url": "https://twentyseven.pictures/toons/erin/",
             "description": "Erin is half human, half vampire — too much of each world to belong fully to either. She lives in a small town that is not really a town at all: a thin place, a passage between the goblin world and the human one, where roads fold wrong at night and doors open onto forests that do not appear on any map. Blood, bargains, and old names move through her streets. She is the threshold’s keeper — and its most dangerous secret.",

@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { transform } from "esbuild";
 import type { Plugin } from "vite";
 
 /**
@@ -52,7 +53,7 @@ export function hashedCss(): Plugin {
       outDir = path.resolve(config.root, config.build.outDir);
     },
 
-    closeBundle() {
+    async closeBundle() {
       if (!fs.existsSync(outDir)) return;
       const htmlFiles = walkHtml(outDir);
 
@@ -63,7 +64,14 @@ export function hashedCss(): Plugin {
           continue;
         }
 
-        const bytes = fs.readFileSync(source);
+        // These sheets bypass Vite's pipeline, so minify here before hashing.
+        let bytes = fs.readFileSync(source);
+        try {
+          const minified = await transform(bytes.toString("utf8"), { loader: "css", minify: true });
+          bytes = Buffer.from(minified.code);
+        } catch (err) {
+          this.warn(`hashed-public-css: could not minify ${sheet} (${String(err)}); shipping unminified`);
+        }
         const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 10);
         const dir = path.dirname(sheet);
         const base = path.basename(sheet, ".css");
