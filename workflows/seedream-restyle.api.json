@@ -1,0 +1,49 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 1 — COMPOSITION source (original page)"
+    },
+    "inputs": {
+      "image": "REPLACE ME — the original page to restyle (composition, subjects, layout)"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 2 — STYLE source (ink technique only)"
+    },
+    "inputs": {
+      "image": "REPLACE ME — the style sample (linework, grey wash, value balance)"
+    }
+  },
+  "3": {
+    "class_type": "ByteDanceSeedreamNodeV3",
+    "_meta": {
+      "title": "Seedream 5.0 Pro — restyle (composition from Image 1, style from Image 2)"
+    },
+    "inputs": {
+      "prompt": "FORMAT: identical to Image 1 in every measurable way — same canvas dimensions and aspect ratio, and if Image 1 has panels, the same panel count, proportions, gutters, keylines and margins. Do not add, remove, merge or resize any panel.\n\nCOMPOSITION — TRACE IMAGE 1, DO NOT REINTERPRET IT: preserve exactly what Image 1 shows — every figure's pose, position, scale, screen direction and crop, the camera angle and framing, and what is happening. Do not add, remove or reinterpret any figure or action.\n\nRENDERING — MATCH IMAGE 2, IGNORE IMAGE 1's OWN INK ENTIRELY: Image 1's existing linework, shading and screentone are not a reference for how to draw — they are the thing being replaced. Every surface of the output must be redrawn in Image 2's exact ink technique: bold, decisive, confident linework with no scratchy or sketchy texture, and depth built from smooth continuous grey tonal washes — not a dot-pattern halftone screentone, not cross-hatching, not a flat black/white-only render. Match Image 2's VALUE BALANCE as well as its linework: black and dark grey are the dominant tone across most of the surface, white is scarce and reserved for a few deliberate highlights. If any part of the output still looks like Image 1's original rendering, looks like halftone screentone rather than a soft tonal wash, or reads as a mostly-white page rather than a mostly-dark one, the restyle has failed.\n\nCLARITY RULE, from Image 2: every figure reads clearly against what is behind it through value grouping — a lighter figure against a darker mass, or a clean tonal edge where two similarly dark shapes meet. No figure is ever lost against the background, the same way in every part of the image.\n\nFACES, from Image 2: every face is fully modelled in the grey-wash technique, eyes, brow and mouth drawn in confident, deliberate ink line. Legible and expressive, never a flat void, never overworked with fine detail.\n\nSUBJECT LOCK: every figure keeps the exact face, proportions and outfit shown in Image 1. Only Image 1 decides who or what is in the image; only Image 2 decides how it is drawn.\n\nNO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no onomatopoeia, no SFX lettering, no title, no credits, no watermark. Pure artwork only.\n\nANATOMY: same number of limbs and digits as Image 1, in the same arrangement. No extra hands, no ghost limbs, no extra fingers.\n\nNEGATIVE: no new pose, camera angle or crop, no added or removed figures or panels, no changed panel count or proportions, no colour, no dot-pattern halftone screentone, no dense cross-hatching, no scratchy or sketchy linework, no flat single-value silhouette with no grey modelling, no loss of any figure's outline against the background, no redesign of any figure's basic shape, no text, no watermark.\n\nCHANGE: composition comes only from Image 1; rendering comes only from Image 2. Nothing else changes.",
+      "model": "seedream 5.0 pro",
+      "model.size_preset": "Custom",
+      "model.width": 1152,
+      "model.height": 1728,
+      "model.prompt_optimization": "standard",
+      "model.seed": 0,
+      "model.watermark": false,
+      "model.thinking": true,
+      "model.images.image_1": ["1", 0],
+      "model.images.image_2": ["2", 0]
+    }
+  },
+  "4": {
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save restyle"
+    },
+    "inputs": {
+      "images": ["3", 0],
+      "filename_prefix": "restyle/two-ref"
+    }
+  }
+}

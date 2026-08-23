@@ -1,0 +1,160 @@
+{
+  "1": {
+    "inputs": {
+      "image": "aa078f9df46de666e57cc425e2ff091cde43cccfd282cda6a477d6587d89f6cf.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 1 — STYLE (ink technique only)"
+    }
+  },
+  "2": {
+    "inputs": {
+      "image": "37d1743e7801b48891a416865ad8b8baeaabea6f37158674042e083e4b45141d.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 2 — Erin character sheet"
+    }
+  },
+  "3": {
+    "inputs": {
+      "image": "62ac941a71e54a09eafcb0198e14e99e88d3635dc9a24aa0c2c93a14e080ba18.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 3 — Venus character reference"
+    }
+  },
+  "4": {
+    "inputs": {
+      "image": "e85ccad98638c2a503b2406e7f44109d3a2d806bd3c91f13cc753248120b3f68.webp"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 4 — Goblin pack"
+    }
+  },
+  "5": {
+    "inputs": {
+      "image": "4c3a2592bfc70afbdc6c96c961eab4186e69f196badb8b6a5c0dca1204cd6127.webp"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 5 — Goblin King"
+    }
+  },
+  "6": {
+    "inputs": {
+      "image": "b8d9bd83bb5a1a4ea6d45116543f8906151f8da12baf5363cfd0461aa37b0307.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Image 6 — Gargoyle"
+    }
+  },
+  "7": {
+    "inputs": {
+      "prompt": ["12", 0],
+      "model": "seedream 5.0 pro",
+      "model.size_preset": "Custom",
+      "model.width": 1152,
+      "model.height": 1728,
+      "model.prompt_optimization": "standard",
+      "model.seed": 1321039749,
+      "model.watermark": false,
+      "model.thinking": true,
+      "model.images.image_1": ["1", 0],
+      "model.images.image_2": ["2", 0],
+      "model.images.image_3": ["3", 0],
+      "model.images.image_4": ["4", 0],
+      "model.images.image_5": ["5", 0],
+      "model.images.image_6": ["6", 0]
+    },
+    "class_type": "ByteDanceSeedreamNodeV3",
+    "_meta": {
+      "title": "Seedream 5.0 Pro — generate (style + full Erin cast)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "filename_prefix": "erin-generate/scene",
+      "images": ["7", 0]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save"
+    }
+  },
+  "12": {
+    "inputs": {
+      "string_a": ["24", 0],
+      "string_b": "SUBJECT LOCK: Erin's jacket torn at one shoulder seam, dirt on her hands and knees. Venus composed, faintly luminous.\n\nEFFECT LOOK: matter held, not sparkle — solid clods, roots, stones, fine white seams, floating grit. Faint rim light on Venus's hands, no glow. No fire, no runes, no blood.\n\nCOMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half.\n\nANATOMY: exactly two arms and two legs per figure. No extra hands, no ghost limbs, no extra fingers.\n\nCHANGE: only the three beats above; identity from Images 2 and 3, ink from Image 1.",
+      "delimiter": ""
+    },
+    "class_type": "StringConcatenate",
+    "_meta": {
+      "title": "Concatenate Text"
+    }
+  },
+  "17": {
+    "inputs": {
+      "string_a": ["25", 0],
+      "string_b": ["26", 0],
+      "delimiter": ""
+    },
+    "class_type": "StringConcatenate",
+    "_meta": {
+      "title": "Concatenate Text"
+    }
+  },
+  "18": {
+    "inputs": {
+      "string_a": ["17", 0],
+      "string_b": ["27", 0],
+      "delimiter": ""
+    },
+    "class_type": "StringConcatenate",
+    "_meta": {
+      "title": "Concatenate Text"
+    }
+  },
+  "24": {
+    "inputs": {
+      "string_a": "FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~38% / 24% / 38%), thin white gutters, thin black keylines, white page margin. No colour.\n\nPANEL BORDERS: top and bottom plain rectangles; the one effect border is the middle panel, a slanted wedge band that narrows across the page. Reading order top to bottom. No triangle panels.\n\nNO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.\n\nPIN: Image 1 = ink technique only (linework, grey wash, value balance; copy no subject or pose). Image 2 = Erin — face, short choppy dark bob with straight fringe, large sharp eyes, black zip-up track jacket, black trousers with thin side stripe, black combat boots. Image 3 = Venus — exact face, hair and clothing. Image 4 = goblins — warty knobbed skull, pointed ears, bulging pale eyes, fanged grin, ragged rags; not orcs. Image 5 = Goblin King — jagged bone crown, long pale hair, scaled plate, spiked pauldrons; ignore baked lettering. Image 6 = gargoyle — cracked granite hide, blunt horned brow, blank pale glowing eyes, ribbed bat wings, four clawed talons; not a dragon. Do not redesign any identity.\n",
+      "string_b": ["18", 0],
+      "delimiter": ""
+    },
+    "class_type": "StringConcatenate",
+    "_meta": {
+      "title": "Concatenate Text"
+    }
+  },
+  "25": {
+    "inputs": {
+      "value": "TOP Erin and Venus climbing a rock\n"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Text (Multiline)"
+    }
+  },
+  "26": {
+    "inputs": {
+      "value": "MIDDLE Erin and Venus seen from behind watching the goblinking fortress, a massive armi of goblins are waiting "
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Text (Multiline)"
+    }
+  },
+  "27": {
+    "inputs": {
+      "value": "BOTTOM Venus and Erin with energy charged hands, upset faces. Erin is not able to manipulate matter"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Text (Multiline)"
+    }
+  }
+}
