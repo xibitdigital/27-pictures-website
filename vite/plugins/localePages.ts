@@ -267,8 +267,10 @@ function applySchema(
     }
     applyNodeOverrides(graph, schema?.nodes);
     for (const node of graph) {
-      const type = node["@type"];
-      if (type === "CollectionPage" || type === "WebPage") {
+      // "@type" may be a string or an array (e.g. ["CreativeWorkSeries", "ComicSeries"]).
+      const rawType = node["@type"];
+      const hasType = (t: string) => (Array.isArray(rawType) ? rawType.includes(t) : rawType === t);
+      if (hasType("CollectionPage") || hasType("WebPage")) {
         if (schema?.name) node.name = schema.name;
         if (schema?.headline) node.headline = schema.headline;
         if (schema?.description) node.description = schema.description;
@@ -276,7 +278,7 @@ function applySchema(
         const image = node.primaryImageOfPage as JsonLd | undefined;
         if (image && schema?.imageCaption) image.caption = schema.imageCaption;
       }
-      if (type === "BreadcrumbList") {
+      if (hasType("BreadcrumbList")) {
         const items = (node.itemListElement as JsonLd[] | undefined) ?? [];
         if (items[0] && schema?.breadcrumbHome) items[0].name = schema.breadcrumbHome;
         if (items.length === 2 && items[1] && schema?.breadcrumbHere) items[1].name = schema.breadcrumbHere;
@@ -286,18 +288,13 @@ function applySchema(
           if (last && schema?.breadcrumbHere) last.name = schema.breadcrumbHere;
         }
       }
-      if (type === "CreativeWorkSeries") {
-        if (schema?.erinDescription) node.description = schema.erinDescription;
+      if (hasType("CreativeWorkSeries")) {
         if (schema?.seriesDescription) node.description = schema.seriesDescription;
         const parts = node.hasPart as JsonLd[] | undefined;
-        if (parts?.[0]) {
-          if (schema?.erinEp1Name) parts[0].name = schema.erinEp1Name;
-          if (schema?.ep1Name) parts[0].name = schema.ep1Name;
-          if (schema?.erinEp1Description) parts[0].description = schema.erinEp1Description;
-        }
+        if (parts?.[0] && schema?.ep1Name) parts[0].name = schema.ep1Name;
         if (parts?.[1] && schema?.ep2Name) parts[1].name = schema.ep2Name;
       }
-      if (type === "ItemList") {
+      if (hasType("ItemList")) {
         if (schema?.itemListName) node.name = schema.itemListName;
         for (const li of (node.itemListElement as JsonLd[] | undefined) ?? []) {
           const item = li.item as JsonLd | undefined;

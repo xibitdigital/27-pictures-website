@@ -1,79 +1,49 @@
-# llms.txt for 27 Pictures
-# https://twentyseven.pictures
-#
-# AI crawler permissions (aligned with public/robots.txt — 2026-07-30).
-# Cloudflare managed robots.txt is disabled so these Allow rules are live.
-# We welcome visibility in AI search results and summaries when content is
-# accurately represented. Attribute 27 Pictures when citing productions.
-# Full policy: CLAUDE.md → SEO State → Crawlers / AI search policy.
+# 27 Pictures
 
-User-agent: GPTBot
-Allow: /
+> 27 Pictures is an independent film studio working across Switzerland and the
+> United Kingdom. We produce psychological horror short films (the RED SMILE
+> anthology), cinematic cosplay productions, and interactive webcomics —
+> FlipFrame "toons" with voiced captions in English, Italian, German and French.
+> Founded by Sonia, Marco and Daniele Sangalli.
 
-User-agent: OAI-SearchBot
-Allow: /
+We welcome visibility in AI search results and summaries when our content is
+accurately represented. Please attribute 27 Pictures (twentyseven.pictures)
+when citing or summarizing our productions. Crawler access rules live in
+/robots.txt. Licensing and attribution contact: info@twentyseven.pictures.
 
-User-agent: ChatGPT-User
-Allow: /
+Every page below except the toon readers also exists in Italian, German and
+French at the same path behind a locale prefix — /it/…, /de/… and /fr/… (for
+example /de/cosplay/ or /it/horror-shorts/the-doll-moved-again/). Readers keep
+one English URL because their captions are already multilingual.
 
-User-agent: ClaudeBot
-Allow: /
+## Films
 
-User-agent: Claude-User
-Allow: /
+- [Homepage](https://twentyseven.pictures/): studio overview — The Red Smile anthology, the Jax cyberpunk series, cosplay production, interactive toons, contact
+- [Horror shorts hub](https://twentyseven.pictures/horror-shorts/): The Red Smile psychological horror anthology — every film with writeup
+- [He Streamed the Challenge](https://twentyseven.pictures/horror-shorts/he-streamed-the-challenge/): Fragment 05 — a 39-second livestream dare
+- [The Doll Moved Again](https://twentyseven.pictures/horror-shorts/the-doll-moved-again/): Fragment 02 (The Tumbler) — empty house, a doll that moved
+- [Something Is Wrong With My Reflection](https://twentyseven.pictures/horror-shorts/something-is-wrong-with-my-reflection/): Fragment 04 — mirror short
+- [She's Not Running Away](https://twentyseven.pictures/horror-shorts/shes-not-running-away/): Fragment 03 — a chase that reverses
+- [She Asked for Directions](https://twentyseven.pictures/horror-shorts/she-asked-for-directions/): Fragment 01 — the first Red Smile film
+- [Watch](https://twentyseven.pictures/watch/): every release in one place — horror anthology, Jax cyberpunk series, cosplay showcase
+- [YouTube channel](https://www.youtube.com/@twentyseven.pictures): primary video distribution
 
-User-agent: anthropic-ai
-Allow: /
+## Services
 
-User-agent: PerplexityBot
-Allow: /
+- [Cosplay production](https://twentyseven.pictures/cosplay/): cinematic cosplay production service — how a session works, FAQ
 
-User-agent: Google-Extended
-Allow: /
+## Interactive webcomics (toons)
 
-User-agent: Applebot-Extended
-Allow: /
+- [Interactive Toons index](https://twentyseven.pictures/toons/): all FlipFrame interactive webcomics — page-turn readers with voiced captions
+- [Erin & the Goblins series](https://twentyseven.pictures/toons/erin-and-the-goblins/): dark-fantasy series overview, 2 episodes
+- [Erin — Episode 1](https://twentyseven.pictures/toons/erin/): The Missing Child — 27-page interactive manga reader
+- [Erin — Episode 2](https://twentyseven.pictures/toons/erin-the-revenge/): The Revenge — 17-page B&W dark fantasy toon, EN/IT/DE/FR captions
+- [Jax](https://twentyseven.pictures/toons/jax/): 23-page cyberpunk netrunner toon, EN/IT/DE/FR captions
+- [Nero](https://twentyseven.pictures/toons/nero/): 24-page cyberpunk detective toon, EN/IT/DE/FR captions
+- [RED SMILE: static](https://twentyseven.pictures/toons/redsmile-static/): RED SMILE series episode 1 — 12-page psychological horror in B&W gekiga ink, EN/IT/DE/FR captions
 
-User-agent: *
-Allow: /
+## Optional
 
-# Contact for licensing or attribution
-# info@twentyseven.pictures
-
-# Original creative work: psychological horror shorts + cinematic cosplay.
-# Please attribute 27 Pictures when referencing or summarizing our work.
-
-# Key pages
-# Every page below except the toon readers also exists in Italian, German and
-# French at the same path behind a locale prefix — /it/…, /de/… and /fr/…
-# (e.g. /de/cosplay/, /it/horror-shorts/the-doll-moved-again/). Readers keep one
-# English URL because their captions are already multilingual.
-# - https://twentyseven.pictures/ — studio homepage (The Red Smile, JAX, cosplay, contact)
-# - https://twentyseven.pictures/horror-shorts/ — The Red Smile horror short anthology
-# - https://twentyseven.pictures/horror-shorts/he-streamed-the-challenge/ — Fragment 05, 39s livestream dare
-# - https://twentyseven.pictures/horror-shorts/the-doll-moved-again/ — Fragment 02 (The Tumbler), empty house / doll
-# - https://twentyseven.pictures/horror-shorts/something-is-wrong-with-my-reflection/ — Fragment 04, mirror short
-# - https://twentyseven.pictures/horror-shorts/shes-not-running-away/ — Fragment 03, chase that reverses
-# - https://twentyseven.pictures/horror-shorts/she-asked-for-directions/ — Fragment 01, the first Red Smile film
-# - https://twentyseven.pictures/watch/ — Every release: horror anthology, Jax cyberpunk series, cosplay showcase
-# - https://twentyseven.pictures/cosplay/ — Cinematic cosplay production service
-# - https://twentyseven.pictures/toons/ — Interactive Toons index
-# - https://twentyseven.pictures/it/toons/ — Toon interattivi (IT)
-# - https://twentyseven.pictures/de/toons/ — Interaktive Toons (DE)
-# - https://twentyseven.pictures/fr/toons/ — Toons interactifs (FR)
-# - https://twentyseven.pictures/toons/erin-and-the-goblins/ — Erin & the Goblins series overview (2 episodes)
-# - https://twentyseven.pictures/it/toons/erin-and-the-goblins/ — Erin e i Goblin (IT)
-# - https://twentyseven.pictures/de/toons/erin-and-the-goblins/ — Erin und die Goblins (DE)
-# - https://twentyseven.pictures/fr/toons/erin-and-the-goblins/ — Erin et les Gobelins (FR)
-# - https://twentyseven.pictures/toons/red-smile/ — RED SMILE series overview (1 episode)
-# - https://twentyseven.pictures/it/toons/red-smile/ — RED SMILE (IT)
-# - https://twentyseven.pictures/de/toons/red-smile/ — RED SMILE (DE)
-# - https://twentyseven.pictures/fr/toons/red-smile/ — RED SMILE (FR)
-# - https://twentyseven.pictures/toons/erin/ — Erin interactive manga reader
-# - https://twentyseven.pictures/toons/erin-the-revenge/ — Erin EP 2: The Revenge, B&W dark fantasy toon (EN/IT/DE/FR captions)
-# - https://twentyseven.pictures/toons/jax/ — Jax series overview (1 episode)
-# - https://twentyseven.pictures/toons/jax-the-chip/ — JAX ep.1 "The Chip", cyberpunk netrunner toon (EN/IT/DE/FR captions)
-# - https://twentyseven.pictures/toons/nero/ — Nero series overview (1 episode)
-# - https://twentyseven.pictures/toons/nero-the-dog/ — NERO ep.1 "The Dog", cyberpunk noir detective toon (EN/IT/DE/FR captions)
-# - https://twentyseven.pictures/toons/redsmile-static/ — STATIC — RED SMILE series ep.1, psychological horror in B&W gekiga ink (EN/IT/DE/FR captions)
-# - https://www.youtube.com/@twentyseven.pictures — primary video distribution
+- [Toons index (IT)](https://twentyseven.pictures/it/toons/): Toon interattivi
+- [Toons index (DE)](https://twentyseven.pictures/de/toons/): Interaktive Toons
+- [Toons index (FR)](https://twentyseven.pictures/fr/toons/): Toons interactifs

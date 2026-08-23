@@ -106,7 +106,7 @@ onUnmounted(() => {
   <header>
     <nav role="navigation" :aria-label="t.navMain">
       <a v-magnetic :href="homeHref" class="magnetic" :aria-label="t.navHomeAria">
-        <img src="/logo.png" class="nav-logo-img" alt="27 Pictures" :title="t.navLogoTitle" height="40" />
+        <img src="/logo.1a83b92ec2.png" class="nav-logo-img" alt="27 Pictures" :title="t.navLogoTitle" height="40" />
       </a>
 
       <button

@@ -139,6 +139,38 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     return n >= 1 && n <= state.pages.length ? n : null;
   }
 
+  /** Plates already handed to the browser by the warm window. */
+  const warmedSrcs = new Set<string>();
+
+  /**
+   * Warm the plates the reader can reach next: one view behind, two ahead.
+   * A cold open used to warm the whole book here — 24 plates (~10MB) fighting
+   * the visible page for bandwidth; turns still await preloadSrc, so anything
+   * outside this window loads when the reader actually approaches it.
+   */
+  function warmNearby(): void {
+    const srcs: (string | null)[] = [];
+    if (state.singlePage) {
+      const last = totalSingleViews(state.pages.length) - 1;
+      for (let i = state.viewIndex - 1; i <= state.viewIndex + 2; i++) {
+        if (i < 0 || i > last) continue;
+        const view = singleViewContent(state.pages, i);
+        if (view.kind === "page") srcs.push(view.src);
+      }
+    } else {
+      const ts = totalSpreads();
+      for (let spread = state.viewIndex - 1; spread <= state.viewIndex + 1; spread++) {
+        if (spread < 0 || spread >= ts) continue;
+        srcs.push(pageSrcForSpread(state.pages, spread, "left"), pageSrcForSpread(state.pages, spread, "right"));
+      }
+    }
+    for (const src of srcs) {
+      if (!src || warmedSrcs.has(src)) continue;
+      warmedSrcs.add(src);
+      void preloadSrc(src);
+    }
+  }
+
   function syncChrome(): void {
     state.indicator = indicatorText(state.pages, state.viewIndex, state.singlePage, totalSpreads());
     const last = maxIndex();
@@ -147,6 +179,7 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
     state.canNext = state.viewIndex < maxIndex();
     document.body.classList.toggle("single-page", state.singlePage);
     if (querySyncArmed) writePageQuery(currentContentPage());
+    if (state.ready) warmNearby();
   }
 
   function paintSpread(spread: number): void {
@@ -388,12 +421,6 @@ export function createBookEngine(opts: ToonBookOptions = {}): BookEngine {
       await opts.beforeStart?.();
     } catch (err) {
       console.warn("ToonBook beforeStart:", err);
-    }
-
-    // Warm page images.
-    for (const src of state.pages) {
-      const img = new Image();
-      img.src = src;
     }
 
     state.ready = true;

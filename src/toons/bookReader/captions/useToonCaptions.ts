@@ -31,6 +31,8 @@ export interface ToonCaptionsStore {
   designHeight: ComputedRef<number>;
   fontFamily: ComputedRef<string>;
   wordsForPage: (pageNum: number) => WordEntry[];
+  /** Warm the browser cache for one page's caption audio (idempotent). */
+  warmPageAudio: (pageNum: number) => void;
   setLang: (code: LangCode) => void;
   load: () => Promise<void>;
 }
@@ -120,6 +122,24 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
     return Array.isArray(page?.words) ? (page.words as WordEntry[]) : [];
   }
 
+  /** Pages whose caption audio has been handed to the preloader. */
+  const warmedAudioPages = new Set<number>();
+
+  /**
+   * Warm one page's clips as that page is painted. Loading the whole book's
+   * SFX after the config used to put ~100 mp3 requests in front of the plates
+   * on a cold open; a clip outside the warmed pages still plays — playback
+   * fetches on demand — just without the head start.
+   */
+  function warmPageAudio(pageNum: number): void {
+    if (options.preloadSfx === false) return;
+    if (warmedAudioPages.has(pageNum)) return;
+    const urls = collectWordAudioUrls(wordsForPage(pageNum));
+    if (!urls.length) return;
+    warmedAudioPages.add(pageNum);
+    void preloadAudioUrls(urls);
+  }
+
   let pending: Promise<void> | null = null;
   function load(): Promise<void> {
     if (pending) return pending;
@@ -147,7 +167,8 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
         lang.value = chosen;
         if (query) persistLang(query);
         ready.value = true;
-        if (options.preloadSfx !== false) void preloadAudioUrls(collectWordAudioUrls(cfg));
+        // Caption audio is warmed per page (warmPageAudio) as pages paint,
+        // not all at once here — see that function's comment.
       })
       .catch((err) => {
         // A missing/broken config must not take the reader down — pages still turn.
@@ -156,7 +177,7 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
     return pending;
   }
 
-  return { ready, lang, languages, designWidth, designHeight, fontFamily, wordsForPage, setLang, load };
+  return { ready, lang, languages, designWidth, designHeight, fontFamily, wordsForPage, warmPageAudio, setLang, load };
 }
 
 export const TOON_CAPTIONS_KEY: InjectionKey<ToonCaptionsStore> = Symbol("flipframe-captions");

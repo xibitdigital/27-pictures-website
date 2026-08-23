@@ -3,25 +3,24 @@
  * One-shot SFX still use a fresh `new Audio(url)` for overlap; preloading
  * fills HTTP cache and keeps a silent element at canplaythrough when possible.
  */
-import type { WordsConfig } from "../types";
+import type { WordEntry } from "../types";
 
 const cache = new Map<string, HTMLAudioElement>();
 
 /** HAVE_FUTURE_DATA — enough data to play forward a bit (see HTMLMediaElement). */
 const READY_ENOUGH = 3;
 
-/** Unique non-empty `audio` paths from toon config page captions. */
-export function collectWordAudioUrls(config: WordsConfig | null | undefined): string[] {
+/**
+ * Unique non-empty `audio` paths from caption word entries — the one place
+ * that decides what counts as a caption audio URL. Callers pass one page's
+ * `words[]`; warming is per page since the whole-book preload was removed.
+ */
+export function collectWordAudioUrls(entries: readonly WordEntry[] | null | undefined): string[] {
   const urls = new Set<string>();
-  const pages = config?.pages;
-  if (!Array.isArray(pages)) return [];
-  for (const page of pages) {
-    const entries = page?.words;
-    if (!Array.isArray(entries)) continue;
-    for (const w of entries) {
-      const src = w?.audio;
-      if (typeof src === "string" && src.trim()) urls.add(src.trim());
-    }
+  if (!Array.isArray(entries)) return [];
+  for (const w of entries) {
+    const src = w?.audio;
+    if (typeof src === "string" && src.trim()) urls.add(src.trim());
   }
   return [...urls];
 }

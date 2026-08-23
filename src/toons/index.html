@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-i18n="title">Interactive Toons | Experiments Lab | 27 Pictures</title>
+    <title data-i18n="title">Interactive Toons — Interactive Webcomics | 27 Pictures</title>
 
     <meta
       name="description"
       data-i18n-content="description"
-      content="Read interactive toons from 27 Pictures — FlipFrame stories with voiced captions you turn like a book. Erin, Jax, Nero, and RED SMILE: static."
+      content="Read interactive webcomics from 27 Pictures — FlipFrame toons with voiced captions you turn like a book. Erin &amp; the Goblins, Jax, Nero, and RED SMILE: static."
     />
     <meta
       name="keywords"
       data-i18n-content="keywords"
-      content="interactive toon, interactive comic, FlipFrame, interactive manga reader, AI illustrated story, horror interactive toon, cyberpunk toon, Erin, Jax, Nero, RED SMILE static, 27 Pictures experiments"
+      content="interactive webcomic, interactive toon, interactive comic, FlipFrame, interactive manga reader, motion comic, horror interactive toon, cyberpunk webcomic, Erin, Jax, Nero, RED SMILE static, 27 Pictures toons"
     />
     <meta name="author" content="27 Pictures" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -39,11 +39,15 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://twentyseven.pictures/toons/" />
-    <meta property="og:title" data-i18n-content="ogTitle" content="Interactive Toons | Experiments Lab | 27 Pictures" />
+    <meta
+      property="og:title"
+      data-i18n-content="ogTitle"
+      content="Interactive Toons — Interactive Webcomics | 27 Pictures"
+    />
     <meta
       property="og:description"
       data-i18n-content="ogDescription"
-      content="FlipFrame interactive toons from 27 Pictures — illustrated stories with voiced captions you read rather than watch."
+      content="FlipFrame interactive webcomics from 27 Pictures — illustrated stories with voiced captions you read rather than watch."
     />
     <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/nero-page1.jpg" />
     <meta property="og:image:width" content="1008" />
@@ -51,7 +55,7 @@
     <meta
       property="og:image:alt"
       data-i18n-content="ogImageAlt"
-      content="Nero interactive cyberpunk toon — cover art from 27 Pictures Experiments"
+      content="Nero interactive cyberpunk webcomic — cover art from 27 Pictures Interactive Toons"
     />
     <meta property="og:site_name" content="27 Pictures" />
     <meta property="og:locale" content="en_US" />
@@ -63,26 +67,38 @@
     <meta
       name="twitter:title"
       data-i18n-content="ogTitle"
-      content="Interactive Toons | Experiments Lab | 27 Pictures"
+      content="Interactive Toons — Interactive Webcomics | 27 Pictures"
     />
     <meta
       name="twitter:description"
       data-i18n-content="ogDescription"
-      content="FlipFrame interactive toons from 27 Pictures — illustrated stories with voiced captions you read rather than watch."
+      content="FlipFrame interactive webcomics from 27 Pictures — illustrated stories with voiced captions you read rather than watch."
     />
     <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/nero-page1.jpg" />
     <meta
       name="twitter:image:alt"
       data-i18n-content="ogImageAlt"
-      content="Nero interactive cyberpunk toon — cover art from 27 Pictures Experiments"
+      content="Nero interactive cyberpunk webcomic — cover art from 27 Pictures Interactive Toons"
     />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript
+      ><link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+        rel="stylesheet"
+    /></noscript>
     <link rel="stylesheet" href="/styles.css" />
 
     <script type="application/ld+json">
@@ -93,9 +109,9 @@
             "@type": "CollectionPage",
             "@id": "https://twentyseven.pictures/toons/#webpage",
             "url": "https://twentyseven.pictures/toons/",
-            "name": "Interactive Toons | Experiments Lab | 27 Pictures",
+            "name": "Interactive Toons — Interactive Webcomics | 27 Pictures",
             "headline": "Interactive toons",
-            "description": "FlipFrame interactive toons from 27 Pictures — illustrated stories with voiced captions you read rather than watch. Erin, Jax, Nero, and RED SMILE: static.",
+            "description": "FlipFrame interactive webcomics from 27 Pictures — illustrated stories with voiced captions you read rather than watch. Erin & the Goblins, Jax, Nero, and RED SMILE: static.",
             "inLanguage": "en",
             "isPartOf": {
               "@type": "WebSite",
@@ -140,44 +156,10 @@
               {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "Experiments",
+                "name": "Interactive Toons",
                 "item": "https://twentyseven.pictures/toons/"
               }
             ]
-          },
-          {
-            "@type": "CreativeWorkSeries",
-            "@id": "https://twentyseven.pictures/toons/#series-erin",
-            "name": "Erin & the Goblins",
-            "url": "https://twentyseven.pictures/toons/erin/",
-            "description": "Erin is half human, half vampire, keeper of a small town that is really a door between the goblin world and ours. Interactive FlipFrame comics from 27 Pictures.",
-            "genre": ["Dark Fantasy", "Horror", "Comic"],
-            "inLanguage": ["en", "it", "de", "fr"],
-            "creator": {
-              "@id": "https://twentyseven.pictures/#organization"
-            },
-            "image": {
-              "@type": "ImageObject",
-              "url": "%VITE_ASSET_BASE%/card-art/erin-dark.jpg",
-              "width": 1152,
-              "height": 1728
-            },
-            "hasPart": [
-              {
-                "@type": "CreativeWork",
-                "@id": "https://twentyseven.pictures/toons/erin/#work",
-                "name": "Erin & the Goblins — Episode 1: The Missing Child",
-                "url": "https://twentyseven.pictures/toons/erin/",
-                "description": "An interactive toon: half human, half vampire in a small town between the goblin world and the human one. FlipFrame page-turner from 27 Pictures.",
-                "position": 1,
-                "isPartOf": {
-                  "@id": "https://twentyseven.pictures/toons/#series-erin"
-                }
-              }
-            ],
-            "isPartOf": {
-              "@id": "https://twentyseven.pictures/toons/#webpage"
-            }
           },
           {
             "@type": "ItemList",
@@ -189,9 +171,12 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Erin & the Goblins",
-                "url": "https://twentyseven.pictures/toons/erin/",
+                "url": "https://twentyseven.pictures/toons/erin-and-the-goblins/",
                 "item": {
-                  "@id": "https://twentyseven.pictures/toons/#series-erin"
+                  "@type": "CreativeWorkSeries",
+                  "@id": "https://twentyseven.pictures/toons/erin-and-the-goblins/#series",
+                  "name": "Erin & the Goblins",
+                  "url": "https://twentyseven.pictures/toons/erin-and-the-goblins/"
                 }
               },
               {
@@ -233,7 +218,7 @@
                   "url": "https://twentyseven.pictures/toons/nero/",
                   "description": "Interactive toon: detective Nero and Scotland Yard forensic Eve hunt sicario The Dog and the conspiracy behind implant-grade crystal tech.",
                   "genre": ["Interactive Toon", "Cyberpunk"],
-                  "inLanguage": ["en"],
+                  "inLanguage": ["en", "it", "de", "fr"],
                   "creator": {
                     "@id": "https://twentyseven.pictures/#organization"
                   },
@@ -298,15 +283,15 @@
         <p class="section-tag" data-i18n="sectionTag">Archive 03</p>
         <h1 data-i18n="h1">Interactive Toons</h1>
         <p class="lead" data-i18n-html="lead">
-          Interactive toons from <strong>27 Pictures</strong> — illustrated stories you read rather than watch, with
+          Interactive toons from <strong>27 Pictures</strong> — interactive webcomics you read rather than watch, with
           captions that speak and pages you turn.
         </p>
       </header>
 
-      <section class="experiments-intro" data-i18n-aria-label="introLabel" aria-label="About the Experiments lab">
+      <section class="experiments-intro" data-i18n-aria-label="introLabel" aria-label="About interactive toons">
         <p data-i18n-html="intro1">
-          An interactive toon is a FlipFrame story: black-and-white plates, voiced word balloons, and a reader that
-          works like a book. We build them in this lab — the same darkroom as
+          An interactive toon is our take on the interactive webcomic: a FlipFrame story of black-and-white plates,
+          voiced word balloons, and a reader that works like a book. We build them in the same darkroom as
           <a href="/horror-shorts/">The Red Smile</a> shorts and our <a href="/cosplay/">cosplay productions</a> — to
           test narrative interfaces before they graduate into a fuller production.
         </p>
@@ -484,6 +469,30 @@
           </header>
           <div class="experiments-grid"></div>
         </section>
+      </section>
+
+      <section class="experiments-intro" aria-labelledby="webcomic-about-title">
+        <h2 id="webcomic-about-title" class="experiments-section-label" data-i18n="aboutTitle">
+          What is an interactive webcomic?
+        </h2>
+        <p data-i18n="about1">
+          An interactive webcomic sits between a comic and a film. Every page is a full-screen hand-inked plate; you
+          turn pages like a book on desktop, or read a vertical strip on a phone. Word balloons are placed over the art,
+          and each one can speak — tap a caption and it plays a voiced line or a sound effect, recorded, levelled and
+          mixed the way we mix our films.
+        </p>
+        <p data-i18n="about2">
+          Our readers run on FlipFrame, the reading engine we built for these stories. Captions exist in English,
+          Italian, German and French, so the same page reads itself aloud in the language you choose. There is nothing
+          to install and every toon is free to read: each one is a page you can send to anyone with a link.
+        </p>
+        <p data-i18n-html="about3">
+          The stories come out of the same darkroom as our horror short films and cosplay productions: cyberpunk noir in
+          <em>Nero</em> and <em>Jax</em>, psychological horror in <em>RED SMILE: static</em>, dark fantasy in
+          <em>Erin &amp; the Goblins</em>. New episodes appear here as they leave the darkroom — and we build
+          interactive webcomics for other people too, as a series pilot, a campaign, or a comic that carries its own
+          voice acting. <a href="/#contact">Tell us about your story</a> if you have one that would suit the format.
+        </p>
       </section>
 
       <footer class="experiments-footer">

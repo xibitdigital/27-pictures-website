@@ -57,9 +57,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript
+      ><link
+        href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+        rel="stylesheet"
+    /></noscript>
     <link rel="stylesheet" href="/styles.css" />
 
     <script type="application/ld+json">
@@ -93,6 +105,11 @@
           {
             "@type": "CreativeWorkSeries",
             "@id": "https://twentyseven.pictures/toons/nero/#series",
+            "character": [
+              { "@type": "Person", "name": "Nero" },
+              { "@type": "Person", "name": "Eve" },
+              { "@type": "Person", "name": "The Dog" }
+            ],
             "name": "Nero",
             "url": "https://twentyseven.pictures/toons/nero/",
             "description": "Cyberpunk noir: a Scotland Yard detective with a rebuilt arm, a forensic partner who reads what he cannot, and a sicario who never misses.",

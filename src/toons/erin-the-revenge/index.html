@@ -22,7 +22,9 @@
       property="og:description"
       content="Erin EP 2: The Revenge — Erin crosses a portal into the goblin world, is taken by a winged stone gargoyle, and learns to move matter itself. A 17-page interactive dark fantasy comic you read in the browser."
     />
-    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/erin-the-revenge.jpg" />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/erin-the-revenge-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="27 Pictures" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Erin EP 2: The Revenge — Dark Fantasy Toon | 27 Pictures" />
@@ -30,7 +32,7 @@
       name="twitter:description"
       content="Erin EP 2: The Revenge — Erin crosses a portal into the goblin world, is taken by a winged stone gargoyle, and learns to move matter itself. A 17-page interactive dark fantasy comic you read in the browser."
     />
-    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/erin-the-revenge.jpg" />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/erin-the-revenge-og.jpg" />
 
     <link rel="icon" type="image/png" href="/logosquare.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logosquare.png" />
@@ -38,9 +40,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript
+      ><link
+        href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+        rel="stylesheet"
+    /></noscript>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/toons/reader-shared.css" />
     <style>
@@ -125,8 +139,9 @@
             ]
           },
           {
-            "@type": "CreativeWork",
+            "@type": ["CreativeWork", "ComicStory"],
             "@id": "https://twentyseven.pictures/toons/erin-the-revenge/#toon",
+            "character": [{ "@type": "Person", "name": "Erin" }],
             "name": "Erin EP 2: The Revenge",
             "url": "https://twentyseven.pictures/toons/erin-the-revenge/",
             "description": "Erin tears a portal open and crosses into the goblin world. She wakes in a forest that is already watching her, and something winged and made of stone takes her out of it. What saves her is a stranger who can move the ground itself — and who is willing to teach. Erin came looking for a missing child. She goes back for the debt.",

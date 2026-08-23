@@ -43,7 +43,9 @@
       data-i18n-content="ogDescription"
       content="Two episodes of black-and-white dark fantasy manga you read in the browser, voiced in four languages."
     />
-    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/erin-dark.jpg" />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/erin-dark-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
       data-i18n-content="ogImageAlt"
@@ -64,14 +66,26 @@
       data-i18n-content="ogDescription"
       content="Two episodes of black-and-white dark fantasy manga, voiced in four languages."
     />
-    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/erin-dark.jpg" />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/erin-dark-og.jpg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript
+      ><link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+        rel="stylesheet"
+    /></noscript>
     <link rel="stylesheet" href="/styles.css" />
 
     <script type="application/ld+json">
@@ -103,27 +117,28 @@
             ]
           },
           {
-            "@type": "CreativeWorkSeries",
+            "@type": ["CreativeWorkSeries", "ComicSeries"],
             "@id": "https://twentyseven.pictures/toons/erin-and-the-goblins/#series",
             "name": "Erin & the Goblins",
             "url": "https://twentyseven.pictures/toons/erin-and-the-goblins/",
             "description": "Dark fantasy manga: a teenage girl in a town that is really a door between the human world and the goblin one.",
             "genre": ["Dark Fantasy", "Manga", "Interactive Fiction"],
             "inLanguage": ["en", "it", "de", "fr"],
-            "numberOfEpisodes": 2,
             "creator": { "@id": "https://twentyseven.pictures/#organization" },
             "hasPart": [
               {
-                "@type": "CreativeWork",
+                "@type": ["CreativeWork", "ComicStory"],
+                "@id": "https://twentyseven.pictures/toons/erin/#toon",
                 "name": "Episode 1 — The Missing Child",
                 "url": "https://twentyseven.pictures/toons/erin/",
-                "numberOfPages": 27
+                "position": 1
               },
               {
-                "@type": "CreativeWork",
+                "@type": ["CreativeWork", "ComicStory"],
+                "@id": "https://twentyseven.pictures/toons/erin-the-revenge/#toon",
                 "name": "Episode 2 — The Revenge",
                 "url": "https://twentyseven.pictures/toons/erin-the-revenge/",
-                "numberOfPages": 17
+                "position": 2
               }
             ]
           }
