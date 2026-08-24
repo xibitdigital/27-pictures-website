@@ -21,7 +21,7 @@
   ],
   "pages": [
     {
-      "file": "assets/3fcd85c57057687da2c8958f3b8ce7d1.webp",
+      "file": "assets/d0ce730cbbfa602091fdbf66830b4d76.webp",
       "words": [
         {
           "x": 0.8,
@@ -86,7 +86,7 @@
       ]
     },
     {
-      "file": "assets/b9732ff67bd0ec2d7e4d014db6455b2b.jpg",
+      "file": "assets/41a32bc6545726301d859bf2f4aa5e0b.webp",
       "words": [
         {
           "x": 0.8,
@@ -135,7 +135,7 @@
       ]
     },
     {
-      "file": "assets/2bfcd964cab32377453bab9b8d58c054.jpg",
+      "file": "assets/d108b719d041ec62e2fcd4807032dc1f.webp",
       "words": [
         {
           "x": 0.22,
@@ -214,131 +214,109 @@
       ]
     },
     {
-      "file": "assets/874d3cb762df239a8666abc70e1268d4.jpg",
+      "file": "assets/e208e4bf0b326dc85aad91bfa3356144.webp",
       "words": [
         {
-          "x": 0.74,
+          "x": 0.24,
+          "y": 0.06,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "You don't look like a rumor."
+          }
+        },
+        {
+          "x": 0.76,
           "y": 0.06,
           "variant": "bubble",
           "tail": "bottom-left",
           "size": 30,
           "text": {
-            "en": "Who's holding this up?",
-            "it": "Chi la sta tenendo su?",
-            "de": "Wer hält das hier oben?",
-            "fr": "Qui tient ça en l'air ?"
-          },
-          "audio": "assets/sfx/90542e538fca3cded0523165d2b58a2c.mp3"
+            "en": "You don't look like you plan to run."
+          }
         },
         {
-          "x": 0.22,
-          "y": 0.38,
+          "x": 0.76,
+          "y": 0.34,
           "variant": "bubble",
-          "tail": "bottom-right",
+          "tail": "bottom-left",
           "size": 30,
           "text": {
-            "en": "Breathe. I have you.",
-            "it": "Respira. Ti tengo io.",
-            "de": "Atme. Ich habe dich.",
-            "fr": "Respire. Je te tiens."
-          },
-          "audio": "assets/sfx/9b395ccfa86e78e234ee8141b2b6cb37.mp3"
+            "en": "Everything here is matter. Even the dark."
+          }
         },
         {
-          "x": 0.24,
+          "x": 0.74,
           "y": 0.7,
           "variant": "bubble",
-          "tail": "bottom-right",
+          "tail": "bottom-left",
           "size": 30,
           "text": {
-            "en": "You could've caught me sooner.",
-            "it": "Potevi prendermi prima.",
-            "de": "Du hättest mich früher fangen können.",
-            "fr": "Tu aurais pu me rattraper plus tôt."
-          },
-          "audio": "assets/sfx/4acb9b487349e0bcd6f62c022453c22b.mp3"
+            "en": "So that's 'big.' Noted."
+          }
         }
       ]
     },
     {
-      "file": "assets/521437fdaaea4a1461f725b790084603.jpg",
+      "file": "assets/248d6f05ab94835f404295ef14c5cca9.webp",
       "words": [
         {
-          "x": 0.74,
+          "x": 0.76,
           "y": 0.06,
           "variant": "bubble",
           "tail": "bottom-left",
-          "size": 26,
+          "size": 30,
           "text": {
-            "en": "Everything here is matter. Even the dark.",
-            "it": "Qui è tutto materia. Anche il buio.",
-            "de": "Alles hier ist Materie. Auch die Dunkelheit.",
-            "fr": "Ici tout est matière. Même le noir."
-          },
-          "audio": "assets/sfx/ac3ad88ca05255aec0f34cbcce996ef6.mp3"
+            "en": "Now. Take it."
+          }
         },
         {
-          "x": 0.76,
-          "y": 0.33,
+          "x": 0.24,
+          "y": 0.06,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "It's warm."
+          }
+        },
+        {
+          "x": 0.74,
+          "y": 0.36,
           "variant": "bubble",
           "tail": "bottom-left",
-          "size": 27,
+          "size": 30,
           "text": {
-            "en": "Big is easy. Small is honest.",
-            "it": "Il grande è facile. Il piccolo è onesto.",
-            "de": "Groß ist leicht. Klein ist ehrlich.",
-            "fr": "Le grand est facile. Le petit est honnête."
-          },
-          "audio": "assets/sfx/efb1d725fbc66f8e7460cad06b0ad805.mp3"
+            "en": "Down. Always down."
+          }
         },
         {
-          "x": 0.22,
-          "y": 0.4,
-          "size": 32,
+          "x": 0.5,
+          "y": 0.68,
+          "size": 34,
           "color": "#111111",
-          "angle": 5,
+          "angle": -4,
           "text": {
-            "en": "GRRNN",
-            "it": "GRRNN",
-            "de": "GRRNN",
-            "fr": "GRRNN"
+            "en": "GRRNN"
           },
-          "audio": "assets/sfx/6b79f1e1cb904221237bee555e8ad8af.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
         {
-          "x": 0.24,
-          "y": 0.63,
-          "variant": "bubble",
+          "x": 0.26,
+          "y": 0.7,
+          "variant": "burst",
           "tail": "bottom-right",
-          "size": 30,
+          "size": 40,
           "text": {
-            "en": "Now. Take it.",
-            "it": "Ora. Prendilo.",
-            "de": "Jetzt. Nimm ihn.",
-            "fr": "Maintenant. Prends-le."
-          },
-          "audio": "assets/sfx/8ce35b195e0cfabf4300d8c0872a9edc.mp3"
-        },
-        {
-          "x": 0.18,
-          "y": 0.83,
-          "variant": "bubble",
-          "tail": "bottom-right",
-          "size": 30,
-          "text": {
-            "en": "It's warm.",
-            "it": "È caldo.",
-            "de": "Er ist warm.",
-            "fr": "C'est chaud."
-          },
-          "audio": "assets/sfx/a76bf262fb0de2ab7312f8f31aa6eaa8.mp3"
+            "en": "Move!"
+          }
         }
       ]
     },
     {
-      "file": "assets/ceca59e0aaffe7393d77a5b45396cece.jpg",
+      "file": "assets/51dce66a27fbbef8316ac86ee64b96db.webp",
       "words": [
         {
           "x": 0.22,
@@ -347,7 +325,7 @@
           "tail": "bottom-right",
           "size": 30,
           "text": {
-            "en": "You knew I'd fall.",
+            "en": "Okay. Where are you.",
             "it": "Sapevi che sarei caduta.",
             "de": "Du wusstest, dass ich falle.",
             "fr": "Tu savais que je tomberais."
@@ -361,7 +339,7 @@
           "tail": "bottom-left",
           "size": 25,
           "text": {
-            "en": "Venus. I've been waiting a long time for a door to open.",
+            "en": "There you are.",
             "it": "Venus. Aspettavo da molto che una porta si aprisse.",
             "de": "Venus. Ich habe lange gewartet, dass sich eine Tür öffnet.",
             "fr": "Venus. J'attends depuis longtemps qu'une porte s'ouvre."
@@ -375,7 +353,7 @@
           "tail": "bottom-right",
           "size": 30,
           "text": {
-            "en": "Erin. I'm here for a child.",
+            "en": "My turn.",
             "it": "Erin. Sono qui per una bambina.",
             "de": "Erin. Ich bin wegen eines Kindes hier.",
             "fr": "Erin. Je suis là pour une enfant."
@@ -385,7 +363,7 @@
       ]
     },
     {
-      "file": "assets/c92b036823f68263fe83ee1628c9c3ab.webp",
+      "file": "assets/bdd0c0bd687ca760fb6015930e494e9b.webp",
       "words": [
         {
           "x": 0.74,
@@ -418,433 +396,411 @@
       ]
     },
     {
-      "file": "assets/750c4f557aae21b1dbd2256872647cda.webp",
+      "file": "assets/b0dd84b6824fccc77fe57985ec6a727b.webp",
       "words": [
         {
-          "x": 0.3,
-          "y": 0.06,
-          "variant": "bubble",
-          "tail": "bottom-left",
-          "size": 27,
-          "text": {
-            "en": "Two now? The King eats twice.",
-            "it": "Due, adesso? Il Re mangia due volte.",
-            "de": "Jetzt zwei? Der König isst zweimal.",
-            "fr": "Deux, maintenant ? Le Roi mange deux fois."
-          },
-          "audio": "assets/sfx/31f1ec29228c0637cd67490bd4ebf172.mp3"
-        },
-        {
-          "x": 0.74,
-          "y": 0.1,
-          "size": 34,
-          "color": "#111111",
-          "angle": -6,
-          "text": {
-            "en": "GRRRH",
-            "it": "GRRRH",
-            "de": "GRRRH",
-            "fr": "GRRRH"
-          },
-          "audio": "assets/sfx/d6171bd6a6125ed49e942ee1576e6794.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
-        },
-        {
-          "x": 0.72,
-          "y": 0.39,
+          "x": 0.28,
+          "y": 0.22,
           "variant": "bubble",
           "tail": "bottom",
-          "size": 26,
-          "text": {
-            "en": "Behind you. Don't turn — I'll count.",
-            "it": "Dietro di te. Non voltarti — conto io.",
-            "de": "Hinter dir. Dreh dich nicht um — ich zähle.",
-            "fr": "Derrière toi. Ne te retourne pas — je compte."
-          },
-          "audio": "assets/sfx/15634f31670cc3e25d5285f326edcb86.mp3"
-        },
-        {
-          "x": 0.22,
-          "y": 0.72,
-          "variant": "bubble",
-          "tail": "bottom-right",
           "size": 30,
           "text": {
-            "en": "I only need one hand.",
-            "it": "Mi basta una mano.",
-            "de": "Mir reicht eine Hand.",
-            "fr": "Une seule main me suffit."
-          },
-          "audio": "assets/sfx/2f248804cd979abd9a5aabef12123df0.mp3"
-        }
-      ]
-    },
-    {
-      "file": "assets/186b41ecb46187504d7f15571f106af1.webp",
-      "words": [
-        {
-          "x": 0.74,
-          "y": 0.06,
-          "variant": "bubble",
-          "tail": "bottom-left",
-          "size": 27,
-          "text": {
-            "en": "This is the small, honest one.",
-            "it": "Questo è quello piccolo e onesto.",
-            "de": "Das ist der kleine, ehrliche.",
-            "fr": "Voilà le petit, l'honnête."
-          },
-          "audio": "assets/sfx/44eefd9b9bdaabb5776aab1b1ca9c561.mp3"
+            "en": "My King — the two girls. They're hunting you."
+          }
         },
         {
-          "x": 0.24,
-          "y": 0.2,
-          "size": 30,
+          "x": 0.76,
+          "y": 0.08,
+          "size": 28,
           "color": "#111111",
-          "angle": 8,
+          "angle": 0,
           "text": {
-            "en": "BZZT",
-            "it": "BZZT",
-            "de": "BZZT",
-            "fr": "BZZT"
+            "en": "GRRRH"
           },
-          "audio": "assets/sfx/bb133793a026daf1bf4b74317e482492.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
         {
           "x": 0.5,
-          "y": 0.6,
-          "variant": "burst",
-          "size": 56,
-          "angle": -8,
-          "text": {
-            "en": "KRAKOOM",
-            "it": "KRAKOOM",
-            "de": "KRAKOOM",
-            "fr": "KRAKOOM"
-          },
-          "audio": "assets/sfx/9fadf2f1ea89672d0b66cde3842d2b66.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
-        }
-      ]
-    },
-    {
-      "file": "assets/3349df3aed7debbedb7e6ac352760f61.webp",
-      "words": [
-        {
-          "x": 0.26,
-          "y": 0.06,
-          "variant": "bubble",
-          "tail": "bottom-right",
-          "size": 27,
-          "text": {
-            "en": "Hold the road. Give her the gate.",
-            "it": "Tieni la strada. Lasciale il cancello.",
-            "de": "Halt die Straße. Gib ihr das Tor.",
-            "fr": "Tiens la route. Laisse-lui la porte."
-          },
-          "audio": "assets/sfx/539bdf90bd4c0863a0c427654cd9746e.mp3"
-        },
-        {
-          "x": 0.62,
-          "y": 0.58,
-          "variant": "burst",
-          "size": 52,
-          "angle": 6,
-          "text": {
-            "en": "GRAAAM",
-            "it": "GRAAAM",
-            "de": "GRAAAM",
-            "fr": "GRAAAM"
-          },
-          "audio": "assets/sfx/229d0a1269068ad685fd4e3bbcfbe5d0.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
-        }
-      ]
-    },
-    {
-      "file": "assets/990ab141350a7ac86c73cb6669cf989a.webp",
-      "words": [
-        {
-          "x": 0.24,
-          "y": 0.08,
-          "variant": "bubble",
-          "tail": "bottom",
-          "size": 28,
-          "text": {
-            "en": "The sky tore open twice, my King.",
-            "it": "Il cielo si è squarciato due volte, mio Re.",
-            "de": "Der Himmel riss zweimal auf, mein König.",
-            "fr": "Le ciel s'est déchiré deux fois, mon Roi."
-          },
-          "audio": "assets/sfx/c5ae3e2dd630449f080b58d792d2d275.mp3"
-        },
-        {
-          "x": 0.78,
-          "y": 0.08,
-          "variant": "bubble",
-          "tail": "bottom-left",
-          "size": 30,
-          "text": {
-            "en": "Twice?",
-            "it": "Due volte?",
-            "de": "Zweimal?",
-            "fr": "Deux fois ?"
-          },
-          "audio": "assets/sfx/e13c94c0a7e245c9de17ccd6a9bee5bf.mp3"
-        },
-        {
-          "x": 0.68,
-          "y": 0.67,
-          "variant": "bubble",
-          "tail": "bottom-left",
-          "size": 28,
-          "text": {
-            "en": "The second one came back for us.",
-            "it": "La seconda è tornata per noi.",
-            "de": "Die zweite kam für uns zurück.",
-            "fr": "La deuxième est revenue pour nous."
-          },
-          "audio": "assets/sfx/21981f1efff34f060790e45244f2e9a2.mp3"
-        }
-      ]
-    },
-    {
-      "file": "assets/af378781b989ad30b04a428fc2fd2109.webp",
-      "words": [
-        {
-          "x": 0.24,
-          "y": 0.06,
-          "variant": "bubble",
-          "tail": "bottom-right",
-          "size": 30,
-          "text": {
-            "en": "Something opened my sky.",
-            "it": "Qualcuno ha aperto il mio cielo.",
-            "de": "Etwas hat meinen Himmel geöffnet.",
-            "fr": "Quelque chose a ouvert mon ciel."
-          },
-          "audio": "assets/sfx/6ac03e1ab7799b551ae3c40662ed916d.mp3"
-        },
-        {
-          "x": 0.7,
-          "y": 0.82,
-          "size": 38,
+          "y": 0.48,
+          "size": 40,
           "color": "#111111",
-          "angle": -7,
+          "angle": -4,
           "text": {
-            "en": "WHAMM",
-            "it": "WHAMM",
-            "de": "WHAMM",
-            "fr": "WHAMM"
+            "en": "KRAKK"
           },
-          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
         {
-          "x": 0.32,
-          "y": 0.6,
-          "variant": "burst",
-          "size": 48,
-          "angle": -5,
+          "x": 0.5,
+          "y": 0.75,
+          "variant": "bubble",
+          "tail": "top",
+          "size": 30,
           "text": {
-            "en": "FIND HER.",
-            "it": "TROVATELA.",
-            "de": "FINDET SIE.",
-            "fr": "TROUVEZ-LA."
-          },
-          "audio": "assets/sfx/d9c4dca88c450363ae631cc87ec5bae9.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+            "en": "They're not stopping."
+          }
         }
       ]
     },
     {
-      "file": "assets/df8ed8d4e1fe810f47ca0c722b9ff5da.jpg",
+      "file": "assets/4489422fac7c5f35042f68c5c14b9e8c.webp",
       "words": [
         {
           "x": 0.2,
-          "y": 0.12,
+          "y": 0.08,
           "variant": "bubble",
           "tail": "bottom-right",
           "size": 30,
           "text": {
-            "en": "She's in there.",
-            "it": "È là dentro.",
-            "de": "Sie ist da drin.",
-            "fr": "Elle est là-dedans."
-          },
-          "audio": "assets/sfx/93c668c62f12f3513829935ef66d0aea.mp3"
+            "en": "The ground kept its promise. This one didn't."
+          }
         },
         {
-          "x": 0.8,
-          "y": 0.12,
-          "variant": "bubble",
-          "tail": "bottom-left",
-          "size": 28,
-          "text": {
-            "en": "So is everything else.",
-            "it": "E anche tutto il resto.",
-            "de": "Und alles andere auch.",
-            "fr": "Et tout le reste aussi."
-          },
-          "audio": "assets/sfx/2f0bfe66fbb8487fcdec8e025a61d9a9.mp3"
-        }
-      ]
-    },
-    {
-      "file": "assets/969963e9d07a0e8ac38d26b89d6aedb4.webp",
-      "words": [
-        {
-          "x": 0.26,
-          "y": 0.3,
-          "size": 40,
+          "x": 0.5,
+          "y": 0.45,
+          "size": 36,
           "color": "#111111",
-          "angle": -7,
+          "angle": 6,
           "text": {
-            "en": "RRRAAAGH",
-            "it": "RRRAAAGH",
-            "de": "RRRAAAGH",
-            "fr": "RRRAAAGH"
+            "en": "CRACK"
           },
-          "audio": "assets/sfx/15f2f6558ee573bae8226df7aec2b696.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
         {
-          "x": 0.74,
-          "y": 0.09,
+          "x": 0.22,
+          "y": 0.36,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "Excuse me."
+          }
+        },
+        {
+          "x": 0.24,
+          "y": 0.7,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "That's the whole army."
+          }
+        },
+        {
+          "x": 0.76,
+          "y": 0.7,
           "variant": "bubble",
           "tail": "bottom-left",
-          "size": 29,
+          "size": 30,
           "text": {
-            "en": "You came to my house.",
-            "it": "Siete venute a casa mia.",
-            "de": "Ihr seid in mein Haus gekommen.",
-            "fr": "Vous êtes venues chez moi."
-          },
-          "audio": "assets/sfx/569cea23cd1e5e3a447e9d69c1e56fa5.mp3"
+            "en": "Then let's meet the one who sent it."
+          }
         }
       ]
     },
     {
-      "file": "assets/70398e02271f047166c8847f4bbcf565.webp",
+      "file": "assets/cee38483b025b476c188625b8ba8309e.webp",
+      "words": [
+        {
+          "x": 0.72,
+          "y": 0.06,
+          "variant": "burst",
+          "tail": "bottom-left",
+          "size": 40,
+          "text": {
+            "en": "Bring me the girl who breaks doors!"
+          }
+        },
+        {
+          "x": 0.24,
+          "y": 0.28,
+          "size": 34,
+          "color": "#111111",
+          "angle": -6,
+          "text": {
+            "en": "RAAGH"
+          },
+          "stroke": "#ffffff",
+          "strokeThickness": 8
+        },
+        {
+          "x": 0.26,
+          "y": 0.86,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "Stone dogs. Cute."
+          }
+        },
+        {
+          "x": 0.74,
+          "y": 0.86,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "text": {
+            "en": "Don't provoke the architecture."
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/072efb1acff5eeb308b0edc4851bf172.webp",
       "words": [
         {
           "x": 0.74,
           "y": 0.06,
           "variant": "bubble",
           "tail": "bottom-left",
-          "size": 29,
+          "size": 30,
           "text": {
-            "en": "They let us in on purpose.",
-            "it": "Ci hanno fatti entrare apposta.",
-            "de": "Sie haben uns absichtlich hereingelassen.",
-            "fr": "Ils nous ont laissés entrer exprès."
-          },
-          "audio": "assets/sfx/536c6d35177d385e296fde0f54a44db5.mp3"
+            "en": "There he is."
+          }
         },
         {
-          "x": 0.22,
-          "y": 0.39,
-          "variant": "bubble",
+          "x": 0.24,
+          "y": 0.2,
+          "variant": "burst",
           "tail": "bottom-right",
-          "size": 29,
+          "size": 40,
           "text": {
-            "en": "Back to back. Don't fall.",
-            "it": "Schiena contro schiena. Non cadere.",
-            "de": "Rücken an Rücken. Fall nicht.",
-            "fr": "Dos à dos. Ne tombe pas."
-          },
-          "audio": "assets/sfx/d742c0c0e3542b8d10bbdf1d66ddd509.mp3"
+            "en": "MINE!"
+          }
         },
         {
-          "x": 0.76,
-          "y": 0.69,
-          "variant": "bubble",
-          "tail": "bottom-left",
-          "size": 29,
-          "text": {
-            "en": "Count for me this time.",
-            "it": "Stavolta conta tu per me.",
-            "de": "Diesmal zählst du für mich.",
-            "fr": "Cette fois, compte pour moi."
-          },
-          "audio": "assets/sfx/afb3292066c32416fc3c00c1ad64732d.mp3"
-        }
-      ]
-    },
-    {
-      "file": "assets/eebe4c2a4bf2e730a4f6176360875491.jpg",
-      "words": [
-        {
-          "x": 0.22,
-          "y": 0.07,
-          "variant": "bubble",
-          "tail": "bottom-right",
-          "size": 28,
-          "text": {
-            "en": "I've put him down before.",
-            "it": "L'ho già steso una volta.",
-            "de": "Ich habe ihn schon einmal erledigt.",
-            "fr": "Je l'ai déjà mis à terre."
-          },
-          "audio": "assets/sfx/43feccaa1db090a5764f0f7ff026925c.mp3"
-        },
-        {
-          "x": 0.76,
-          "y": 0.07,
-          "variant": "bubble",
-          "tail": "bottom-left",
-          "size": 28,
-          "text": {
-            "en": "That one was smaller.",
-            "it": "Quello era più piccolo.",
-            "de": "Der war kleiner.",
-            "fr": "Celui-là était plus petit."
-          },
-          "audio": "assets/sfx/cf1e645cbd0389edafb411575dd078b6.mp3"
-        },
-        {
-          "x": 0.3,
-          "y": 0.55,
-          "size": 34,
+          "x": 0.5,
+          "y": 0.48,
+          "size": 38,
           "color": "#111111",
-          "angle": 6,
+          "angle": 5,
           "text": {
-            "en": "KLANG",
-            "it": "KLANG",
-            "de": "KLANG",
-            "fr": "KLANG"
+            "en": "CRUNCH"
           },
-          "audio": "assets/sfx/9ed016342ec442dda507806e650cb30f.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
         {
-          "x": 0.76,
-          "y": 0.55,
+          "x": 0.72,
+          "y": 0.85,
           "variant": "bubble",
           "tail": "bottom-left",
-          "size": 28,
+          "size": 30,
           "text": {
-            "en": "That one was a boy I sent.",
-            "it": "Quello era un ragazzo che avevo mandato io.",
-            "de": "Das war ein Junge, den ich geschickt habe.",
-            "fr": "Celui-là était un garçon que j'avais envoyé."
-          },
-          "audio": "assets/sfx/5beb8b9dc54da55ff455b9d728058fc8.mp3"
+            "en": "You're still standing."
+          }
+        },
+        {
+          "x": 0.26,
+          "y": 0.85,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "Barely counts."
+          }
         }
       ]
     },
     {
-      "file": "assets/32f49f480c564209399ef5c69ed30b29.jpg",
+      "file": "assets/b5b523c98163bf520d2e863fabce1928.webp",
       "words": [
+        {
+          "x": 0.24,
+          "y": 0.06,
+          "variant": "burst",
+          "tail": "bottom-right",
+          "size": 40,
+          "text": {
+            "en": "Hold still."
+          }
+        },
+        {
+          "x": 0.76,
+          "y": 0.3,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "text": {
+            "en": "Make me."
+          }
+        },
+        {
+          "x": 0.5,
+          "y": 0.48,
+          "size": 34,
+          "color": "#111111",
+          "angle": -3,
+          "text": {
+            "en": "GRRNCH"
+          },
+          "stroke": "#ffffff",
+          "strokeThickness": 8
+        },
+        {
+          "x": 0.74,
+          "y": 0.72,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "text": {
+            "en": "Not this time."
+          }
+        },
+        {
+          "x": 0.26,
+          "y": 0.9,
+          "size": 36,
+          "color": "#111111",
+          "angle": 4,
+          "text": {
+            "en": "THOK"
+          },
+          "stroke": "#ffffff",
+          "strokeThickness": 8
+        }
+      ]
+    },
+    {
+      "file": "assets/e6ff9ac9a4b1895fbdc9be7482b24724.webp",
+      "words": [
+        {
+          "x": 0.24,
+          "y": 0.06,
+          "variant": "burst",
+          "tail": "bottom-right",
+          "size": 40,
+          "text": {
+            "en": "Small is easy to bury."
+          }
+        },
+        {
+          "x": 0.76,
+          "y": 0.3,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "text": {
+            "en": "Funny. I was about to say that."
+          }
+        },
+        {
+          "x": 0.5,
+          "y": 0.48,
+          "size": 34,
+          "color": "#111111",
+          "angle": -5,
+          "text": {
+            "en": "VRRRNN"
+          },
+          "stroke": "#ffffff",
+          "strokeThickness": 8
+        },
+        {
+          "x": 0.5,
+          "y": 0.85,
+          "variant": "burst",
+          "tail": "none",
+          "size": 44,
+          "text": {
+            "en": "BOOOM"
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/7d1a3a9bc4a797494143da021a34e7a5.webp",
+      "words": [
+        {
+          "x": 0.5,
+          "y": 0.2,
+          "size": 32,
+          "color": "#111111",
+          "angle": 0,
+          "text": {
+            "en": "STOMP STOMP"
+          },
+          "stroke": "#ffffff",
+          "strokeThickness": 8
+        },
+        {
+          "x": 0.7,
+          "y": 0.4,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "text": {
+            "en": "I built this throne from smaller things than you."
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/047f5789ddcd2cddd076b011792d1fa9.webp",
+      "words": [
+        {
+          "x": 0.5,
+          "y": 0.08,
+          "variant": "bubble",
+          "tail": "bottom",
+          "size": 30,
+          "text": {
+            "en": "Tell the rest. He's done."
+          }
+        },
+        {
+          "x": 0.7,
+          "y": 0.86,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "text": {
+            "en": "Let it hold him a little longer."
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/cefc5b3e6b7b28182d75ad3c95d7a386.webp",
+      "words": [
+        {
+          "x": 0.24,
+          "y": 0.08,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "Doors go both ways."
+          }
+        },
+        {
+          "x": 0.26,
+          "y": 0.86,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "Go find a smaller door."
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/17df24e9b9864f6c68d9d6ab626afb7b.webp",
+      "words": [
+        {
+          "x": 0.24,
+          "y": 0.7,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "Race you home."
+          }
+        },
         {
           "x": 0.5,
           "y": 0.88,
