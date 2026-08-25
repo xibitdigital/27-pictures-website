@@ -86,51 +86,51 @@
       ]
     },
     {
-      "file": "assets/41a32bc6545726301d859bf2f4aa5e0b.webp",
+      "file": "assets/38d9cacce196c8a5f1eb7499e4f56302.webp",
       "words": [
         {
-          "x": 0.8,
-          "y": 0.52,
-          "size": 34,
-          "color": "#111111",
-          "angle": -10,
-          "text": {
-            "en": "FWOOSH",
-            "it": "FWOOSH",
-            "de": "FWOOSH",
-            "fr": "FWOOSH"
-          },
-          "audio": "assets/sfx/459317ada9c8ca94bab341973b4bcd0e.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
-        },
-        {
-          "x": 0.22,
-          "y": 0.34,
-          "variant": "burst",
-          "tail": "bottom-right",
-          "size": 40,
-          "text": {
-            "en": "AAAGH—!",
-            "it": "AAAGH—!",
-            "de": "AAAGH—!",
-            "fr": "AAAGH—!"
-          },
-          "audio": "assets/sfx/0d328b0586daaec459500b4adda96028.mp3"
-        },
-        {
           "x": 0.74,
-          "y": 0.12,
+          "y": 0.06,
           "variant": "bubble",
           "tail": "bottom-left",
           "size": 30,
           "text": {
-            "en": "Quiet, little door-breaker.",
-            "it": "Zitta, piccola sfonda-porte.",
-            "de": "Ruhe, kleine Türenbrecherin.",
-            "fr": "Silence, petite brise-portes."
+            "en": "Comfortable?"
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.28,
+          "size": 30,
+          "color": "#111111",
+          "angle": -3,
+          "text": {
+            "en": "FWOOSH"
           },
-          "audio": "assets/sfx/94024e44ef6c33e2e0e71b77437c00f7.mp3"
+          "stroke": "#ffffff",
+          "strokeThickness": 8
+        },
+        {
+          "x": 0.5,
+          "y": 0.4,
+          "size": 34,
+          "color": "#111111",
+          "angle": 4,
+          "text": {
+            "en": "RRIP"
+          },
+          "stroke": "#ffffff",
+          "strokeThickness": 8
+        },
+        {
+          "x": 0.5,
+          "y": 0.72,
+          "variant": "burst",
+          "tail": "bottom",
+          "size": 40,
+          "text": {
+            "en": "Let. Go."
+          }
         }
       ]
     },
