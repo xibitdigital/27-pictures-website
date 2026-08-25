@@ -70,10 +70,10 @@ export const COVER: Record<string, CoverCopy> = {
       fr: "La vengeance",
     },
     synopsis: {
-      en: "Erin tears a portal open and crosses into the goblin world. She wakes in a forest that is already watching her, and something winged and made of stone takes her out of it. What saves her is a stranger who can move the ground itself — and who is willing to teach. Erin came looking for a missing child. She goes back for the debt.",
-      it: "Erin squarcia un portale e attraversa il mondo dei goblin. Si sveglia in una foresta che già la osserva, e qualcosa di alato, fatto di pietra, la porta via. A salvarla è uno sconosciuto che muove la terra stessa — e che è disposto a insegnarle. Erin era venuta a cercare un bambino scomparso. Torna per il debito.",
-      de: "Erin reißt ein Portal auf und tritt in die Goblinwelt. Sie erwacht in einem Wald, der sie schon beobachtet, und etwas Geflügeltes aus Stein holt sie heraus. Was sie rettet, ist ein Fremder, der den Boden selbst bewegen kann — und der bereit ist zu lehren. Erin kam wegen eines vermissten Kindes. Sie geht zurück wegen der Schuld.",
-      fr: "Erin déchire un portail et passe dans le monde des gobelins. Elle se réveille dans une forêt qui la regarde déjà, et quelque chose d'ailé, fait de pierre, l'en arrache. Ce qui la sauve, c'est un inconnu qui peut bouger la terre elle-même — et qui accepte de lui apprendre. Erin venait chercher un enfant disparu. Elle y retourne pour la dette.",
+      en: "Erin tears a portal open and crosses into the goblin world. She wakes in a forest that is already watching her, and something winged and made of stone takes her out of it. What saves her is a stranger who can move the ground itself — and who is willing to teach. Erin came back to defeat the Goblin King.",
+      it: "Erin squarcia un portale e attraversa il mondo dei goblin. Si sveglia in una foresta che già la osserva, e qualcosa di alato, fatto di pietra, la porta via. A salvarla è uno sconosciuto che muove la terra stessa — e che è disposto a insegnarle. Erin è tornata per sconfiggere il Re Goblin.",
+      de: "Erin reißt ein Portal auf und tritt in die Goblinwelt. Sie erwacht in einem Wald, der sie schon beobachtet, und etwas Geflügeltes aus Stein holt sie heraus. Was sie rettet, ist ein Fremder, der den Boden selbst bewegen kann — und der bereit ist zu lehren. Erin kam zurück, um den Goblinkönig zu besiegen.",
+      fr: "Erin déchire un portail et passe dans le monde des gobelins. Elle se réveille dans une forêt qui la regarde déjà, et quelque chose d'ailé, fait de pierre, l'en arrache. Ce qui la sauve, c'est un inconnu qui peut bouger la terre elle-même — et qui accepte de lui apprendre. Erin est revenue pour vaincre le Roi Gobelin.",
     },
   },
   nero: {
