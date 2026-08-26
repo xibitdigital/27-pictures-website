@@ -552,9 +552,10 @@
         {
           "x": 0.45,
           "y": 0.62,
-          "variant": "burst",
+          "variant": "bubble",
           "tail": "left",
           "size": 38,
+          "voice": "goblinking",
           "text": {
             "en": "GRAAAH!",
             "it": "GRAAAH!",

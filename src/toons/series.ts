@@ -59,7 +59,7 @@ export const SERIES: Series[] = [
         title: "The Revenge",
         url: "/toons/erin-the-revenge/",
         pages: 23,
-        status: "draft",
+        status: "published",
       },
       { n: 3, title: "Coming soon", status: "soon" },
     ],
