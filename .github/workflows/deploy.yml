@@ -89,6 +89,20 @@ jobs:
           wranglerVersion: "4.86.0"
           command: pages deploy dist --project-name=twentyseven-pictures-staging --branch=staging --commit-dirty=true
 
+      # Unique <hash>.pages.dev URLs are the deployment itself. Keep the newest
+      # (live custom domain) and delete superseded snapshots.
+      - name: Prune old Pages deployments
+        if: steps.deploy-prod.outcome == 'success' || steps.deploy-staging.outcome == 'success'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            npm run prune-pages-deployments -- --project twentyseven-pictures
+          else
+            npm run prune-pages-deployments -- --project twentyseven-pictures-staging
+          fi
+
       - name: Summary
         if: steps.deploy-prod.outcome == 'success' || steps.deploy-staging.outcome == 'success'
         run: |

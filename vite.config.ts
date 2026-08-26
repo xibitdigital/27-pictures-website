@@ -136,7 +136,7 @@ export default defineConfig({
     globals: true,
     // vite/ is covered too: the build plugins have behaviour worth testing
     // (hashedCss decides what URL every page loads its CSS from).
-    include: ["src/**/*.{test,spec}.{ts,tsx}", "vite/**/*.{test,spec}.ts"],
+    include: ["src/**/*.{test,spec}.{ts,tsx}", "vite/**/*.{test,spec}.ts", "scripts/**/*.{test,spec}.js"],
     setupFiles: ["src/test/setup.ts"],
     css: true,
     // Do not inherit these from developer .env — unit tests use relative paths
