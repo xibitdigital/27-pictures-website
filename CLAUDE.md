@@ -169,26 +169,56 @@ episode list has already forked.
 ### Website (Cloudflare Pages)
 
 **Artifact:** `dist/` (not raw `public/`).
-**Domain:** `twentyseven.pictures`.
+**Usual path:** push the branch; GitHub Actions builds and deploys.
+**Workflow:** `.github/workflows/deploy.yml` (Node 24, `wrangler@4.86.0`).
+
+| Push to | Pages project | Site |
+| --- | --- | --- |
+| `staging` | `twentyseven-pictures-staging` | https://staging.twentyseven.pictures |
+| `main` | `twentyseven-pictures` | https://twentyseven.pictures |
+
+A push never updates both. Merge `staging` → `main` to ship production. Manual
+runs from the Actions tab use whichever branch you pick.
+
+Each Actions run, in order:
+
+1. Hash every `content/toons/*/config.json` and put **new** objects on R2
+   (`config.<md5>.json` — each toon keeps its own md5; unchanged books skip the
+   put). Rewrite `src/toons/config-lock.json` **in the job**.
+2. `npm run build` so the JS bundle asks for those names.
+3. `wrangler pages deploy dist` to that branch's Pages project.
+4. Prune superseded unique `<hash>.<project>.pages.dev` snapshots. Keep the
+   newest (the live custom domain) and any still-aliased deploy; never
+   `--force`.
+
+The unique `pages.dev` URL **is** that snapshot — deleting the current one
+takes the custom domain down. Cloudflare always mints it; the job summary
+lists only the custom hostname. Those aliases use the same HTTP Basic Auth as
+staging.
+
+**Staging is `https://staging.twentyseven.pictures` and is password gated** —
+it answers 401 without credentials (Cloudflare Pages secrets), so `curl`
+checks against it need auth. To verify a deploy without credentials, grep the
+built `dist/assets/*.js` instead (cover copy stamps `VITE_FLIPFRAME_BUILD` =
+git short SHA). The old `staging.twentyseven-pictures.pages.dev` alias is
+gone; `<hash>.twentyseven-pictures-staging.pages.dev` still exists for the
+current snapshot and is password gated the same way.
+
+Local wrangler still works when you need it:
 
 ```bash
 # .env must set VITE_ASSET_BASE or `vite build` fails
 make deploy        # require base → build → Pages production (main)
 make deploy-cdn    # upload R2, then make deploy
-make preview-deploy  # CDN build → staging branch
+make preview-deploy  # CDN build → staging project
 ```
 
-**Staging is `https://staging.twentyseven.pictures` and is password gated** —
-it answers 401 without credentials (Cloudflare Pages secrets), so `curl` checks
-against it need auth. To verify a deploy without credentials, grep the built
-`dist/assets/*.js` instead. The old `staging.twentyseven-pictures.pages.dev`
-alias is gone.
-
-**A published toon config does not reach production on its own.**
-`publish-toon-config` puts the JSON on R2 and updates `src/toons/config-lock.json`
-in the repo, but the hash the reader asks for is compiled into the JS bundle.
-Until `make deploy` runs, production keeps requesting the previous hash — which
-is how RED SMILE sat at 7 live pages while the repo had 12.
+**A toon config JSON is not the live book until the lock is in the bundle.**
+Actions publishes configs before build, so a push of `content/toons/*/config.json`
+is enough for the JSON. New **plates and audio** still have to be on R2 first
+(`make ship` / `upload-assets`) or the reader 404s. Local `vite` reads
+`content/` via `/__dev/toon-config/` and will look different from staging until
+you push.
 
 ### Local
 
@@ -651,23 +681,25 @@ Wire-up pattern:
   `FrontCoverInstructions.vue` (shared), not per-toon config.
 
 ```bash
-# After editing content/toons/<toon>/config.json — one command, right order
-make ship TOON=jax              # → staging
+# After new plates/audio — one command, right order (then push, or it deploys itself)
+make ship TOON=jax              # → staging (local wrangler)
 make ship TOON=jax PROD=1       # → twentyseven.pictures
 make ship TOON=jax DRY=1        # plan + asset check only
 ```
 
-`ship-toon.js` chains the four steps that must all happen, in order: upload
-local assets → **verify every plate and clip the config references resolves on
-R2** → publish the config (rewrites `config-lock.json`) → build and deploy.
-Publish a config whose plates are not up yet and the live page breaks; publish
-without deploying and nothing changes at all. It refuses a production run on a
-dirty tree, because `wrangler pages deploy` ships `dist/` built from the
-working directory.
+Caption-only edits: commit `content/toons/<toon>/config.json` and push. Actions
+hashes every toon, puts new JSON on R2, compiles the lock, deploys.
+
+New **media**: `ship-toon.js` still chains upload → **verify every plate and
+clip the config references resolves on R2** → publish the config → build and
+deploy. Publish a config whose plates are not up yet and the live page breaks.
+It refuses a production run on a dirty tree, because `wrangler pages deploy`
+ships `dist/` built from the working directory.
 
 The individual steps still exist (`npm run upload-assets`,
-`npm run publish-toon-config -- --toon jax`) for when you want one of them
-alone.
+`npm run publish-toon-config -- --toon jax`,
+`npm run prune-pages-deployments -- --project twentyseven-pictures-staging`)
+for when you want one of them alone.
 
 ### YouTube embeds: click-to-play façades
 
@@ -1298,11 +1330,13 @@ curl -sS https://twentyseven.pictures/robots.txt
 
 ## Git Workflow
 
-- **Main branch:** `main` — what production serves (`make deploy`)
-- **Staging branch:** `staging` — what `make preview-deploy` publishes to
-  `https://staging.twentyseven.pictures`. Carries work in review, plus the
-  revert that makes Erin EP 2 visible and indexable there while `main` keeps it
-  unlisted. Merge `staging` → `main` to ship.
+- **Main branch:** `main` — push deploys production (`https://twentyseven.pictures`)
+  via GitHub Actions.
+- **Staging branch:** `staging` — push deploys
+  `https://staging.twentyseven.pictures` (HTTP Basic Auth). Carries work in
+  review. Merge `staging` → `main` to ship.
+- **Local fallback:** `make preview-deploy` / `make deploy` still talk to
+  Wrangler directly when you need a one-off without a push.
 - **Remote:** `git@github.com:xibitdigital/27-pictures-website.git`
 - **Contributors:**
   - Marco Sangalli (sangalli.marco@gmail.com)

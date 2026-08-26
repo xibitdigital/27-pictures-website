@@ -88,10 +88,12 @@ make add-image SRC=… TOON=jax|erin|nero [CONFIG=1] [UPLOAD=1]
 | Jax | `/toons/jax/` | Multilingual + sound |
 | Nero | `/toons/nero/` | Scotland Yard case (Nero / Eve / The Dog) |
 
-Edit captions in `content/toons/<toon>/config.json`, then:
+Edit captions in `content/toons/<toon>/config.json` and **push** — Actions
+publishes every toon's hashed JSON to R2, then builds. For new plates/audio:
 
 ```bash
-npm run publish-toon-config -- --toon nero
+make ship TOON=nero            # upload + verify + publish + staging deploy
+npm run publish-toon-config -- --toon nero   # JSON only, one toon
 ```
 
 ## Media (R2)
@@ -140,14 +142,18 @@ CORS locked to `https://twentyseven.pictures`.
 
 ## Deploy notes
 
-- Production domain: **https://twentyseven.pictures**
-- Deploy artifact is **`dist/`**, not raw `public/`
+- **Usual path:** push. `staging` → https://staging.twentyseven.pictures
+  (HTTP Basic Auth); `main` → https://twentyseven.pictures. See `CLAUDE.md`.
+- Artifact is **`dist/`**, not raw `public/`
 - `npm run build` **hard-fails** if `VITE_ASSET_BASE` is missing
+- Actions publishes toon configs before build, then prunes old unique
+  `pages.dev` snapshots (keeps the live custom-domain deploy)
 - After shared CSS changes, `npm run hash-assets` (also runs as part of `build`)
+- Local fallback: `make deploy` / `make preview-deploy`
 
 ## Git
 
-- **Branch:** `main`
+- **Branches:** `staging` (review) → merge to `main` (production)
 - **Remote:** `git@github.com:xibitdigital/27-pictures-website.git`
 
 More detail for agents and long-running workflows: **[CLAUDE.md](./CLAUDE.md)**.

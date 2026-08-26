@@ -20,8 +20,9 @@ Editable source of truth for toon page lists + captions. **Not deployed** with t
 | `erin-the-revenge` | `content/toons/erin-the-revenge/` | ERIN & THE GOBLINS ep 2 — The Revenge |
 
 ```bash
-# After editing config.json
-npm run publish-toon-config -- --toon jax   # or erin | nero
+# After editing config.json — push is enough (Actions publishes all toons)
+# Local / one toon:
+npm run publish-toon-config -- --toon jax   # or erin | nero | erin-the-revenge
 
 # Restore reference from CDN
 npm run download-toon-config -- --toon jax
@@ -31,10 +32,14 @@ make add-image SRC=~/page.jpg TOON=nero CONFIG=1 UPLOAD=1
 ```
 
 **Dev:** `make dev` / `vite` injects this file at `/__dev/toon-config/<toon>.json`
-(no publish needed). Edit + refresh.
+(no publish needed). Edit + refresh. That is why local can show a different book
+than staging until you push.
 
-**Prod:** readers load via `VITE_ASSET_BASE` + `config-lock.json` — never from Pages.
-Deploy the site after `config-lock.json` changes so production picks up the new hash.
+**Staging / prod:** readers load via `VITE_ASSET_BASE` + the hashed name in
+`config-lock.json` — never from Pages. GitHub Actions runs
+`publish-toon-config --skip-unchanged` (every toon, each keeps its own md5)
+before `vite build`, then deploys. New plates/audio still need to be on R2
+first (`make ship` / `upload-assets`).
 
 ## What a word entry says
 
