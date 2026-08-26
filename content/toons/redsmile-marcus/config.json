@@ -826,20 +826,20 @@
           "audio": "assets/sfx/123d644adfb2dc8eed12f0cb06f20c1a.mp3"
         },
         {
-          "x": 0.76,
+          "x": 0.8,
           "y": 0.78,
           "variant": "bubble",
           "tail": "left",
           "size": 18,
           "angle": 1,
           "text": {
-            "en": "Elena's house. Then Halina — and nobody else finds that wrist.",
-            "it": "La casa di Elena. Poi Halina — e quel polso non lo trova nessun altro.",
-            "de": "Elenas Haus. Dann Halina — und dieses Handgelenk findet niemand sonst.",
-            "fr": "La maison d'Elena. Puis Halina — et personne d'autre ne trouve ce poignet."
+            "en": "There are two more agents\n offline and unreachable\n Mabel and Halina.",
+            "it": "Ci sono altri due agenti\n offline e irraggiungibili\n Mabel e Halina.",
+            "de": "Zwei weitere Agenten sind\n offline und unerreichbar\n Mabel und Halina.",
+            "fr": "Il y a deux autres agents\n hors ligne et injoignables\n Mabel et Halina."
           },
           "speaker": "viktor",
-          "audio": "assets/sfx/3a008a24c97f8d2f1da864eecce06674.mp3"
+          "audio": "assets/sfx/93dac77bb77349fea0f8b047fa51a2dc.mp3"
         }
       ]
     },
@@ -878,18 +878,34 @@
           "audio": "assets/sfx/1fb78f9f85da544c892ec0f5aeee6b8a.mp3"
         },
         {
-          "x": 0.26,
+          "x": 0.35,
           "y": 0.7,
           "variant": "bubble",
           "tail": "bottom-right",
           "angle": -2,
           "text": {
-            "en": "I'll check Elena's mother first. Then Halina.",
-            "it": "Prima controllo la madre di Elena. Poi Halina.",
-            "de": "Ich sehe zuerst nach Elenas Mutter. Dann Halina.",
-            "fr": "Je vais d'abord voir la mère d'Elena. Puis Halina."
+            "en": "I'll check on both of them. If it's as we fear, and they're down...",
+            "it": "Controllo tutte e due. Se è come temiamo, e sono cadute...",
+            "de": "Ich sehe nach beiden. Wenn es so ist, wie wir fürchten, und sie gefallen sind...",
+            "fr": "Je vais voir les deux. Si c'est comme nous le craignons, et qu'elles sont tombées..."
           },
-          "audio": "assets/sfx/20872177e665be55123be54fef28bdaa.mp3"
+          "audio": "assets/sfx/51329143c436b4f3067dd1326aa7c190.mp3"
+        },
+        {
+          "x": 0.3,
+          "y": 0.9,
+          "variant": "bubble",
+          "tail": "left",
+          "size": 18,
+          "angle": 1,
+          "text": {
+            "en": "Tokiro,\n we need to make sure\n their tattoos are not found.",
+            "it": "Tokiro,\n dobbiamo assicurarci che i loro tatuaggi non vengano trovati.",
+            "de": "Tokiro,\n wir müssen sicherstellen, dass ihre\n Tätowierungen nicht gefunden werden.",
+            "fr": "Tokiro,\n il faut s'assurer que\n leurs tatouages ne soient pas trouvés."
+          },
+          "speaker": "viktor",
+          "audio": "assets/sfx/ac680f1c90669b0a262af1115d74d241.mp3"
         },
         {
           "x": 0.84,
