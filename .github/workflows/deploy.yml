@@ -65,6 +65,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.86.0"
           command: pages deploy dist --project-name=twentyseven-pictures --branch=main --commit-dirty=true
 
       - name: Deploy to staging (twentyseven-pictures-staging)
@@ -74,6 +75,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.86.0"
           command: pages deploy dist --project-name=twentyseven-pictures-staging --branch=staging --commit-dirty=true
 
       - name: Summary
