@@ -1547,6 +1547,9 @@ body.view-vertical.is-fullscreen .reader {
 .jax-word--bubble {
   display: inline-block;
   position: absolute;
+  /* Prefer the authored wrap (max-width in ch). Without this, shrink-to-fit
+     uses min-content and a long burst stacks one word per line. */
+  width: max-content;
   max-width: inherit;
 }
 

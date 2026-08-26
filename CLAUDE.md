@@ -714,7 +714,7 @@ Each bio splits into two halves that are read very differently:
 
 Each also carries a **compact prose lock** — a paste-ready block for a
 `/horror-toon-page` prompt when the sheet is not attached — and voice direction,
-since none of these characters has an entry in `scripts/jax-voices.json` yet.
+since none of these characters has an entry in `scripts/voices.json` yet.
 
 Two things a bio is the right place to record, because they are invisible in the
 art and expensive to rediscover: how a character must be **inked** (Adaeze's deep
@@ -925,10 +925,13 @@ in `bubbles.ts`). Diagonals are the common case; a caption in the top band
 almost always wants `bottom-left` / `bottom-right`.
 
 **A word entry says what it is, never how it is styled.** Position, variant,
-`tail`, text, clip — that is a complete caption:
+`tail`, text, clip — that is a complete caption. Spoken lines also carry
+`voice`: a key from `scripts/voices.json` (`erin`, `venus`, `goblinking`,
+`jax`, …), never the ElevenLabs UUID. Onomatopoeia omit it.
 
 ```json
 { "x": 0.2, "y": 0.15, "variant": "thought", "tail": "top-left",
+  "voice": "erin",
   "text": { "en": "No signal." }, "audio": "assets/sfx/….mp3" }
 ```
 
@@ -1004,7 +1007,7 @@ ffmpeg -y -i clip.mp3 -af "volume=12dB" -codec:a libmp3lame -b:a 192k /tmp/out.m
 Onomatopoeia (`CLANK`, `WHOOSH`, …) go through `generate-jax-sfx.py` (Sound
 Effects API — non-verbal). Actual dialogue should be Text-to-Speech:
 
-1. Voices are locked by name in `scripts/jax-voices.json` (`name ->
+1. Voices are locked by name in `scripts/voices.json` (`name ->
 voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
    `badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, `erin`, `venus`, `goblinking`,
    `narrator`. To add a new one: open the voice
@@ -1029,7 +1032,17 @@ voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
    `asset-page-dir` resolves on the CDN (default toon is `jax`). Prints the
    `"audio": "assets/sfx/<hash>.mp3"` line to paste into config.
 
-3. Paste into `content/toons/<toon>/config.json`, then
+   Prefer the config as the source of truth. Each spoken word should already
+   have `"voice": "<voices.json key>"`. Generate every line that has a voice
+   and no clip (or regenerate with `--force`):
+
+   ```bash
+   python3 scripts/generate-jax-voice.py --from-config --toon erin-the-revenge
+   python3 scripts/generate-jax-voice.py --from-config --toon erin-the-revenge --force
+   ```
+
+3. Paste into `content/toons/<toon>/config.json` (one-off), or let
+   `--from-config` write `audio` for you, then
    `npm run upload-assets` and `npm run publish-toon-config -- --toon <toon>`.
 
 #### Levelling caption audio (EBU R128 + true peak)

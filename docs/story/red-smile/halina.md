@@ -21,7 +21,7 @@ agent, though not a senior one**, and **killed by [Marcus](marcus.md) in episode
 >
 > Harder and less warm than the alternatives, which is why it was chosen. Three
 > syllables, no diacritics — *ha-LEE-na* — so ElevenLabs will manage it in
-> EN/IT/DE/FR, and it becomes the `halina` key in `scripts/jax-voices.json`.
+> EN/IT/DE/FR, and it becomes the `halina` key in `scripts/voices.json`.
 >
 > **The story should withhold it.** Nobody in that building knows what she is
 > called; to them she is the cleaner. The panel where one of the three finally
@@ -175,7 +175,7 @@ about that helps her, and Marcus chairs a meeting the next morning.
 
 ## Voice
 
-Voice: `halina` → `USEQXnsXRJlw2k9LUzG4` in `scripts/jax-voices.json`.
+Voice: `halina` → `USEQXnsXRJlw2k9LUzG4` in `scripts/voices.json`.
 
 Direction: low, unhurried, an Eastern European accent worn smooth by decades in
 England. Few words, dry, entirely unimpressed. Eleven v3, high stability — she is

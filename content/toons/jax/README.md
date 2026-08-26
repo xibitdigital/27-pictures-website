@@ -18,7 +18,7 @@ Netrunner, cracked porcelain skin, heavy cyber arm, trench coat. Sick, stubborn,
 
 ### Supporting (as tagged in captions)
 
-- **Riu**, **Nova** (AI HUD), **ripperdoc**, **badai** (hostile AI) — see `scripts/jax-voices.json` and `config.json` page words.
+- **Riu**, **Nova** (AI HUD), **ripperdoc**, **badai** (hostile AI) — see `scripts/voices.json` and `config.json` page words.
 
 ## Captions / audio
 

@@ -23,7 +23,7 @@ King**. Venus — a stranger who can move matter — catches her, teaches her, a
 walks with her. They name themselves on page 5 (handshake). Captions EN/IT/DE/FR.
 New plates carry **no baked lettering**; words live in `config.json` → `words[]`.
 
-Ep-2 voices: `erin`, `venus`, `goblinking` (`scripts/jax-voices.json`). The
+Ep-2 voices: `erin`, `venus`, `goblinking` (`scripts/voices.json`). The
 goblin rider is `goblinking` pitched **+12%**.
 
 ## Prompt archive
@@ -106,7 +106,8 @@ Forest-stretch captions (do not re-invent): p4 *She's flying this. / Stay on
 it. / Don't miss. / I don't.* · p5 *Erin. I'm here for the King. / Venus. Then
 you don't go alone. / FWOOSH / Move!* · p6 *Stay behind me. / WHAMM / I've got
 the pieces.* · p7 *You caught me. / I felt your door. / The ground can answer
-you. / Then teach me.*
+you. / Then teach me.* · p8 *Almost. / I know the way. / That's the whole
+army. / That's his house. / Together. Push the earth down.*
 
 ## Characters
 

@@ -147,7 +147,7 @@ Do not show the reader the moment he turns. He is far more frightening as a cour
 
 ## Voice
 
-Voice: `marcus` → `yhf80q1381zd2JJQ4tM7` in `scripts/jax-voices.json`.
+Voice: `marcus` → `yhf80q1381zd2JJQ4tM7` in `scripts/voices.json`.
 
 Direction: warm, articulate, expensively educated English — but a younger voice
 than the old sheet implies. The register of a man used to being listened to and

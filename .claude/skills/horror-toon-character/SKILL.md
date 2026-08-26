@@ -191,7 +191,7 @@ A sheet is an input, not a deliverable. Once the user is happy with it:
    ```
 2. **Do not run it through `make add-image`.** That bakes the `twentyseven.pictures` watermark and appends the image to a toon's config as a story page. A sheet is neither. If you want it on the CDN so `--ref-asset` can reach it, put it under a reference path and upload with `npm run upload-assets`, or use `--no-watermark` deliberately
 3. Add the character's compact lock to the **Character locks** section of `/horror-toon-page`, so pages can be prompted even when the sheet is not attached
-4. If the character speaks, add a voice to `scripts/jax-voices.json` — see CLAUDE.md, *Generating a spoken voice line*
+4. If the character speaks, add a voice to `scripts/voices.json` — see CLAUDE.md, *Generating a spoken voice line*
 
 ## Fix mode (user attaches a bad sheet)
 

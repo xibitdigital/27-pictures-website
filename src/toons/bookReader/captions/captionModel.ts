@@ -246,7 +246,14 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
   if (!isBubble && !isCredit) style.color = w.color || "#fff";
   // An explicit maxWidth is a fraction of the plate; the automatic one is in
   // `ch`, so it keeps its shape when the same caption is read at another size.
-  style["max-width"] = maxW != null ? `${maxW}%` : `${autoWrapCh(text)}ch`;
+  // Round balloons add padding *inside* this box (see below), so a long burst
+  // would otherwise wrap one word per line — padX hits 3.2em a side and 14ch
+  // of content is gone. Expand after padding is known.
+  // Bursts use a condensed shout face whose letters run wider than `ch`
+  // (the "0" glyph). Half-length wrap (14) then stacks "BRING ME THE
+  // DOOR-BREAKER!" one word per line. Floor at 20 so a two-line shout fits.
+  const wrapCh = variant === "burst" ? Math.max(20, autoWrapCh(text)) : autoWrapCh(text);
+  style["max-width"] = maxW != null ? `${maxW}%` : `${wrapCh}ch`;
   if (isCredit) style["text-transform"] = "none";
   // Bubbles (and any word with SFX) must capture hits — the layer is
   // pointer-events:none so stray clicks fall through to .nav-zone (page turn).
@@ -282,11 +289,12 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     // block is measured in em from the wrap width and the line count, so the
     // padding tracks the type size like the rest of the chrome.
     const roundShape = style_.shape === "organic" || style_.shape === "thought" || style_.shape === "star";
-    const pad = roundShape
-      ? ellipsePadding(text, w.maxWidth != null ? null : autoWrapCh(text), style_, style_.shape)
-      : style_;
+    const pad = roundShape ? ellipsePadding(text, w.maxWidth != null ? null : wrapCh, style_, style_.shape) : style_;
     const padX = `${pad.padX}em`;
     const padY = `${pad.padY}em`;
+    if (maxW == null && roundShape) {
+      style["max-width"] = `calc(${wrapCh}ch + ${2 * pad.padX}em)`;
+    }
     // The tail eats into the balloon on its own side, so pad that side out.
     // Thought bubbles have no lobe (dots sit fully outside), so no tail padding.
     const tailPad = `calc(${padY} + 0.35em)`;

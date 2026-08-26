@@ -23,7 +23,7 @@ Detective and **ex-military**. Lost a hand in a **terrorist attack** and now fig
 
 - **Cyberware is asymmetric.** The **left arm** is steel from the **elbow down** — bare cracked-porcelain upper arm under a dark pauldron, segmented steel forearm, articulated metal fingers. The **right arm** is ordinary flesh ending in a **cybernetic hand**, prosthetic from the wrist down.
 - Never a third arm, never two chrome forearms, never a flesh left hand. Sides are set by the `nero.png` key art: facing camera, the steel forearm reads on the viewer's right, i.e. his anatomical left. Pin this in every image prompt.
-- Voice lock: `nero` in `scripts/jax-voices.json`
+- Voice lock: `nero` in `scripts/voices.json`
 
 ### Eve
 

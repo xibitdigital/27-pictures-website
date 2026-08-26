@@ -35,7 +35,7 @@ character sheets and every future plate is pinned against them.
 - **Compact prose lock.** Paste straight into a `/horror-toon-page` prompt when
   the sheet is not attached. Same purpose as the *Character locks* section in
   that skill.
-- **Voice.** None of these three has an entry in `scripts/jax-voices.json` yet.
+- **Voice.** None of these three has an entry in `scripts/voices.json` yet.
   Add one before generating any line — see CLAUDE.md, *Generating a spoken voice
   line*.
 

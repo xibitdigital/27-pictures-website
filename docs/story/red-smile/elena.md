@@ -21,7 +21,7 @@ from behind for most of page 1; slight build; at home in soft clothes. The only
 close study of her face in the episode is the final panel of page 1 — one eye,
 enormous, with the sigil surfacing in the iris.
 
-Voice: `elena` → `HBDoL4wkcalemIO0nUAu` in `scripts/jax-voices.json`. The only
+Voice: `elena` → `HBDoL4wkcalemIO0nUAu` in `scripts/voices.json`. The only
 character in this bible who already has one.
 
 ## What episode 1 establishes

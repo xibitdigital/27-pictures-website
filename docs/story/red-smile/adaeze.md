@@ -11,7 +11,7 @@ pitch.
 >
 > Four syllables, no diacritics: **ah-dah-EH-zeh**. That matters because the name
 > is read aloud by ElevenLabs in EN/IT/DE/FR and becomes a key in
-> `scripts/jax-voices.json` — check the pronunciation on the first generated line
+> `scripts/voices.json` — check the pronunciation on the first generated line
 > and spell it phonetically in the TTS input if it comes back wrong. Caption
 > display text keeps the real spelling either way.
 >
@@ -127,7 +127,7 @@ for the panel where the reader has already relaxed.
 
 ## Voice
 
-`adaeze` → `jv41DhCf464zw0TI7I1w` in `scripts/jax-voices.json`.
+`adaeze` → `jv41DhCf464zw0TI7I1w` in `scripts/voices.json`.
 
 Direction: warm, articulate, unhurried — a voice it is pleasant to be talked to
 by. The horror is the content, never the delivery. Eleven v3, moderate

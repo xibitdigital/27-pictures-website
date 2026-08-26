@@ -7448,6 +7448,222 @@
     "toons/erin-the-revenge/assets/47066c274dba2e0cf3accdab767ad64e.webp": {
       "size": 512812,
       "uploadedAt": "2026-08-26T06:10:48.951Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/0828b4eff9cf4943794cb7ac5431c009.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-26T06:37:58.860Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/17bf4562876241cc89934c162cae194c.mp3": {
+      "size": 24493,
+      "uploadedAt": "2026-08-26T06:38:00.873Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/184c3d58ebd13b1006b1a26e6ee470f7.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-26T06:38:02.894Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/1ccc9a082872cb3cfb42b32727f142ab.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-26T06:38:05.177Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/1d4c688ab886fb507da931fdadf6aa9e.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-26T06:38:07.431Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/1ee4666bff82b4ca609d10fc09d6ed36.mp3": {
+      "size": 32016,
+      "uploadedAt": "2026-08-26T06:38:10.097Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/24108a636cd94fd1a5a984732c7d275b.mp3": {
+      "size": 44555,
+      "uploadedAt": "2026-08-26T06:38:12.480Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/2967b0099bce7a14651d252d48bd1eab.mp3": {
+      "size": 62736,
+      "uploadedAt": "2026-08-26T06:38:14.427Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/369d21d7347713170dfcc5a98a9f3e03.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-26T06:38:16.651Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/386258556b69ab23db89af22e677a8f6.mp3": {
+      "size": 30136,
+      "uploadedAt": "2026-08-26T06:38:18.690Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/3aea1cc267890ff7b55773125a5e4f0e.mp3": {
+      "size": 51035,
+      "uploadedAt": "2026-08-26T06:38:20.736Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/3ee028b5d6ba6084f610e15c28755ce1.mp3": {
+      "size": 18224,
+      "uploadedAt": "2026-08-26T06:38:22.820Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/4768138c33bd9b963432de3c68689cc1.mp3": {
+      "size": 80291,
+      "uploadedAt": "2026-08-26T06:38:24.914Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/49d1ee129566c899632b97b368ee02d0.mp3": {
+      "size": 32016,
+      "uploadedAt": "2026-08-26T06:38:26.798Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/4aceff3db8310436ca8c02ad0707e71b.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-26T06:38:29.217Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/535aff668a743a8a7c012e16982c1b62.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-26T06:38:31.405Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/58daee2c184c7c6b313b7e7f55d373d3.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-26T06:38:33.450Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/5b595d64c0c4d2f837af526a0bdae162.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-26T06:38:35.670Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/5cac43473add04cb14c975c451262e26.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-26T06:38:37.591Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/600b0d11cd29ea8b4505214120e1a197.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-26T06:38:39.684Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/61a513108c5624474e6a6c4cdad0ad66.mp3": {
+      "size": 72141,
+      "uploadedAt": "2026-08-26T06:38:41.695Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/640af4d281a2e0b8d079458fb47d0e24.mp3": {
+      "size": 33897,
+      "uploadedAt": "2026-08-26T06:38:43.634Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/759da5f186b3318a77c469714bca09ae.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-26T06:38:45.536Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/7c8f686cc9c77a642e9b3e1cdbee64b9.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-26T06:38:47.566Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/8525d09c8e25358d91958152444797bf.mp3": {
+      "size": 60856,
+      "uploadedAt": "2026-08-26T06:38:49.632Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/87b3366ecc12642d981f3706e3be098d.mp3": {
+      "size": 36405,
+      "uploadedAt": "2026-08-26T06:38:51.661Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/8879c9e6cfe867f71f6fc9bd56307207.mp3": {
+      "size": 55213,
+      "uploadedAt": "2026-08-26T06:38:53.757Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/8b679de6572d9d07e3493cc8eb9a8529.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-26T06:38:55.967Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/8dbd7ebf185e8c828f37d0596336075b.mp3": {
+      "size": 43928,
+      "uploadedAt": "2026-08-26T06:38:58.032Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/8e377ae0a1b92e52cb3025f910310750.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-26T06:39:00.104Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/90b7510e915cb87eb447736672e518ed.mp3": {
+      "size": 28882,
+      "uploadedAt": "2026-08-26T06:39:02.146Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/99d8e45a35362d630d65aba2e55831c8.mp3": {
+      "size": 58975,
+      "uploadedAt": "2026-08-26T06:39:04.233Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/9a90c478e97df7c5de2ed8fe7a131977.mp3": {
+      "size": 65244,
+      "uploadedAt": "2026-08-26T06:39:06.422Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/a2f889bee2c288517daf7e83514174e6.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-26T06:39:08.447Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/a446a8e74d7ba9ce1389ed72b7a2fec1.mp3": {
+      "size": 32016,
+      "uploadedAt": "2026-08-26T06:39:10.524Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/ae5c4424b1c061993586b6b0cc317c16.mp3": {
+      "size": 20106,
+      "uploadedAt": "2026-08-26T06:39:12.767Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/b5f1d17768521db5d5b3c251f079dc7f.mp3": {
+      "size": 17180,
+      "uploadedAt": "2026-08-26T06:39:14.996Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/bcc34c167f46d4866cce43fd99f2bb3d.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-26T06:39:17.056Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/c1b07d2d1428c72858d5bfddbdd5ee64.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-26T06:39:19.108Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/c4b1c3cdd807bdf57e2c4cc2e131aad0.mp3": {
+      "size": 84052,
+      "uploadedAt": "2026-08-26T06:39:21.727Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/c5fef77e5e310c4908570dbb25fb84e0.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-26T06:39:24.350Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/c7430d44fe404cbd82d1145c0b4bebe7.mp3": {
+      "size": 47690,
+      "uploadedAt": "2026-08-26T06:39:26.450Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/cd2c38dbbef33fed1500235da3e7145f.mp3": {
+      "size": 38286,
+      "uploadedAt": "2026-08-26T06:39:28.553Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/cd316c0af0eda5dad0829196c44a6686.mp3": {
+      "size": 28255,
+      "uploadedAt": "2026-08-26T06:39:30.790Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/d4d22ea86d87f824b453fa6388677340.mp3": {
+      "size": 34524,
+      "uploadedAt": "2026-08-26T06:39:32.648Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/dab8c6ad556c247bad87c1484ce4ae7f.mp3": {
+      "size": 30136,
+      "uploadedAt": "2026-08-26T06:39:34.799Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/dd472ab0160661d6e16aff648592f1c2.mp3": {
+      "size": 13836,
+      "uploadedAt": "2026-08-26T06:39:37.271Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/ddcd0e215e427dfcfdc3ca8539ec41ea.mp3": {
+      "size": 20732,
+      "uploadedAt": "2026-08-26T06:39:39.393Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/ddeb4800ee80538ffbfc65455080b727.mp3": {
+      "size": 67125,
+      "uploadedAt": "2026-08-26T06:39:41.476Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/e5f8da3381b30391eb63e39eaa554d23.mp3": {
+      "size": 25747,
+      "uploadedAt": "2026-08-26T06:39:43.387Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/e8b945358577bcf8a041f396b762bba8.mp3": {
+      "size": 32016,
+      "uploadedAt": "2026-08-26T06:39:45.310Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/f3ff08461521bc55453d92a4670e4768.mp3": {
+      "size": 76529,
+      "uploadedAt": "2026-08-26T06:39:47.388Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/f80c448f46d837e6ec78019e8fb89ffd.mp3": {
+      "size": 49571,
+      "uploadedAt": "2026-08-26T06:39:49.397Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/f97e7dce5b16c8af966fa2f939632ecc.mp3": {
+      "size": 13208,
+      "uploadedAt": "2026-08-26T06:39:51.425Z"
     }
   }
 }

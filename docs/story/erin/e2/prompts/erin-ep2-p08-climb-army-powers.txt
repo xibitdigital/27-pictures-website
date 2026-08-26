@@ -2,6 +2,7 @@
 # mode: image-to-image
 # style: Erin & the Goblins — B&W dark fantasy manga, no lettering
 # derived-from: shipped /toons/erin-the-revenge/ plate 08 (reverse-engineered so a re-roll can match)
+# captions: bottom Venus (left) — Together. Push the earth down.
 # refs: Image 1 = Erin sheet, Image 2 = Venus, Image 3 = goblin pack, Image 4 = castle from prior pages
 
 FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~40% / 24% / 36%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, speed lines. No colour.

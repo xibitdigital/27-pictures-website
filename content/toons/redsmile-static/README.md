@@ -27,7 +27,7 @@ need a config-schema change first.
 
 ## Cast / voices
 
-| Character | ElevenLabs voice (`scripts/jax-voices.json`) |
+| Character | ElevenLabs voice (`scripts/voices.json`) |
 | --------- | -------------------------------------------- |
 | Elena     | `elena` → `HBDoL4wkcalemIO0nUAu`             |
 

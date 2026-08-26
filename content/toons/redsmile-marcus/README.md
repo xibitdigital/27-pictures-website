@@ -42,7 +42,7 @@ darker is lurking.
 
 ## Cast / voices
 
-| Character | ElevenLabs voice (`scripts/jax-voices.json`) |
+| Character | ElevenLabs voice (`scripts/voices.json`) |
 | --------- | -------------------------------------------- |
 | Marcus    | `marcus` → `yhf80q1381zd2JJQ4tM7`            |
 | Halina    | `halina` → `USEQXnsXRJlw2k9LUzG4`            |

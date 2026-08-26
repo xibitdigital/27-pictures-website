@@ -185,6 +185,12 @@ export interface WordEntry {
   /** Legacy alias for `bubble.opacity` (fill only, 0–1 or 0–100). */
   bubbleOpacity?: number;
   fontFamily?: string;
+  /**
+   * Locked speaker for TTS. Must be a key in `scripts/voices.json`
+   * (`erin`, `venus`, `goblinking`, …) — not the ElevenLabs UUID.
+   * Omit on onomatopoeia / SFX. The reader ignores this; generators use it.
+   */
+  voice?: string;
   audio?: string;
   /** Playback gain 0–1 for `audio` (default 1). Louder needs a hotter source file. */
   volume?: number;

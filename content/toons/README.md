@@ -88,7 +88,7 @@ before a line needs a smaller `y` than that line, or the same row and a smaller
 ## Captions / voices
 
 Word overlays live in each page’s `words[]` (`variant`, `text`, optional `audio`).
-Locked ElevenLabs names: `scripts/jax-voices.json` (`jax`, `riu`, `nova`, `ripperdoc`,
+Locked ElevenLabs names: `scripts/voices.json` (`jax`, `riu`, `nova`, `ripperdoc`,
 `badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, `narrator`, …).
 
 ```bash

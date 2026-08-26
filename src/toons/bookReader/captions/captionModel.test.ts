@@ -159,9 +159,16 @@ describe("config defaults (a lean word entry)", () => {
     // Size, colour and wrap width all come from the code now.
     expect(c.style["font-size"]).toBe("22px");
     expect(c.textStyle.color).toBe("#111111");
-    expect(c.style["max-width"]).toBe("14ch");
+    expect(c.style["max-width"]).toMatch(/^calc\(14ch \+/);
     // Padding is derived from the bubble style, never authored per caption.
     expect(c.textStyle.padding).toBeTruthy();
+  });
+
+  it("gives a long burst room for its spike padding so it wraps to two lines", () => {
+    const shout = "BRING ME THE DOOR-BREAKER!";
+    const c = buildCaption({ x: 0.72, y: 0.06, variant: "burst", text: { en: shout } }, 0, ctx)!;
+    expect(autoWrapCh(shout)).toBe(14);
+    expect(c.style["max-width"]).toBe("calc(20ch + 6.4em)");
   });
 
   it("draws onomatopoeia larger than speech without being told", () => {
