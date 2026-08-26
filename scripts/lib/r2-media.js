@@ -128,8 +128,14 @@ function putObject(
     "--remote",
   ]);
   if (res.status !== 0) {
+    const err = (res.stderr || res.stdout || "").trim();
     console.error(`FAIL ${objectKey}`);
-    console.error((res.stderr || res.stdout || "").trim().slice(0, 500));
+    console.error(err.slice(0, 800));
+    if (/403|10000|Authentication error/i.test(err)) {
+      console.error(
+        "hint: wrangler r2 object put talks to the Cloudflare REST API. The token needs Account → Workers R2 Storage → Admin Read & Write. Object Read & Write tokens and Pages Edit alone return 403 here."
+      );
+    }
     return false;
   }
   console.log(`ok   ${objectKey}`);

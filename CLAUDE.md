@@ -185,6 +185,10 @@ Each Actions run, in order:
 1. Hash every `content/toons/*/config.json` and put **new** objects on R2
    (`config.<md5>.json` — each toon keeps its own md5; unchanged books skip the
    put). Rewrite `src/toons/config-lock.json` **in the job**.
+   `CLOUDFLARE_API_TOKEN` must include **Workers R2 Storage: Admin Read & Write**.
+   Wrangler talks to the REST API; Object Read & Write tokens (and Pages Edit
+   alone) 403 with `Authentication error [code: 10000]`. Unchanged hashes hide
+   this until a config actually changes.
 2. `npm run build` so the JS bundle asks for those names.
 3. `wrangler pages deploy dist` to that branch's Pages project.
 4. Prune superseded unique `<hash>.<project>.pages.dev` snapshots. Keep the

@@ -58,6 +58,8 @@ jobs:
       # Hash every content/toons/*/config.json, put new objects on R2, rewrite
       # config-lock.json in this job so the bundle below asks for those names.
       # Unchanged books keep their existing md5 (no R2 put).
+      # CLOUDFLARE_API_TOKEN must include Workers R2 Storage: Admin Read & Write
+      # — wrangler uses the REST API, so Object Read & Write tokens 403.
       - name: Publish toon configs
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
