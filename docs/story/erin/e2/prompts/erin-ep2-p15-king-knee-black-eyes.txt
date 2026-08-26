@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# insert: after current plate 14 (boulder / BOOOM); before the Erin-hit plate (generate_scene 12)
+# refs: Image 1 = Goblin King, Image 2 = shipped plate 14 (courtyard / castle / blast)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~32% / 24% / 44%), thin white gutters, thin black keylines, white page margin. Crisp ink, cross-hatching, grey wash, deep blacks, speed lines. No colour.
+
+PANEL BORDERS: top rectangle; middle a slanted wedge band; bottom rectangle. Reading order top to bottom. No triangle panels. No lightning outline — the black eyes are the shock.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): King from Image 1. Courtyard cobbles and gothic cathedral-castle from Image 2. Same ground he was blasted across — he has landed, not a new location. No Erin, no Venus.
+
+TOP (~32%): The Goblin King has been hit so hard he is driven down onto one knee. Huge hunched body, bone crown, long pale hair hanging, one knee and one fist in the cracked cobbles, debris still in the air. Wounded, not dead. Dark flat space at the top for a caption.
+
+MIDDLE (wedge, ~24%): Extreme close-up of his eyes only — both eyes completely black, no iris, no highlight, no pupil. Trance. Pale hair and the edge of the jagged crown. Slack, empty expression, not a roar. The spell is on. Quiet top of the wedge for a caption.
+
+BOTTOM (~44%): He gets up. Still on the rise, huge, black eyes empty, coming toward us, cobbles breaking under his hands. Castle and storm sky behind. He is standing up into the next attack, not crawling, not limp. Same black trance eyes as the middle panel.
+
+SUBJECT LOCK: Goblin King — huge broad-shouldered goblin, jagged bone crown, long pale hair, heavy scaled plate, spiked pauldrons, X-strap on a bare muscled chest, hide kilt, brutal goblin face scaled up. Eyes in middle and bottom are solid black, no white, no gleam — a trance, not injury, not closed lids. Exactly two arms and two legs.
+
+No blood, no gore. Dust, grit, cracked stone. No white-rim glow, no portal, no sparkle.
+
+COMPOSITION: leave dark or flat space in the top band of each panel for captions; never crowd the frame edge with faces; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs. No extra limbs, no ghost hands.
+
+CHANGE: only this scene; preserve identity, courtyard and ink from the pins.

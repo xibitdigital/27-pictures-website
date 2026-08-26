@@ -654,7 +654,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Jax               | `/toons/jax-the-chip/`     | **Jax is the series; `The Chip` is episode 1.** Series landing at `/toons/jax/`. Netrunner / Robin Hood of mind-tech; multilingual SFX (see `content/toons/jax/README.md`)                       |
 | Nero              | `/toons/nero-the-dog/`     | **Nero is the series; `The Dog` is episode 1.** Series landing at `/toons/nero/`. Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback (see `content/toons/nero/README.md`) |
 | RED SMILE: static | `/toons/redsmile-static/`  | **RED SMILE is the series; `static` is episode 1** — 12 plates. Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                     |
-| Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 18 plates, EN/IT/DE/FR. Erin returns to defeat the Goblin King; Venus teaches matter. Prompts in `docs/story/erin/e2/prompts/` (`erin-ep2-*`). See `content/toons/erin/README.md` |
+| Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 21 plates, EN/IT/DE/FR. Erin returns to defeat the Goblin King; Venus teaches matter. Prompts in `docs/story/erin/e2/prompts/` (`erin-ep2-*`). See `content/toons/erin/README.md` |
 
 **Erin EP 2 has shipped (2026-08)**: `/toons/erin-the-revenge/` is live and
 `index, follow`, listed in the sitemap and `llms.txt`, and reachable through
@@ -1072,6 +1072,19 @@ voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
    python3 scripts/generate-jax-voice.py --from-config --toon erin-the-revenge
    python3 scripts/generate-jax-voice.py --from-config --toon erin-the-revenge --force
    ```
+
+   **Place reverb** is a named acoustic space on the config, not a bubble
+   style. Book default, page override, word `"none"` to skip. Types live in
+   `scripts/reverb-types.json` (`plaza`, `plaza-deep`). `--from-config`
+   applies the resolved type after TTS so a regenerate matches the courtyard.
+   One-off: `--reverb plaza` (or `--reverb none`).
+
+   ```json
+   { "reverb": "plaza", "pages": [ { "reverb": "plaza-deep", "file": "…", "words": [] } ] }
+   ```
+
+   Erin EP 2 is `plaza`; pages 19–20 are `plaza-deep` (keep / chamber). The
+   reader ignores the key — it is baked into the mp3.
 
 3. Paste into `content/toons/<toon>/config.json` (one-off), or let
    `--from-config` write `audio` for you, then

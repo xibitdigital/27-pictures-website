@@ -1,7 +1,7 @@
 # Erin & the Goblins — character & world lock
 
 Derived from the shipped plates in `cdn-backup/toons/erin/assets/`
-(ep 1, 27 pages) and `cdn-backup/toons/erin-the-revenge/assets/` (ep 2, 18
+(ep 1, 27 pages) and `cdn-backup/toons/erin-the-revenge/assets/` (ep 2, 21
 pages), 1152×1728, B&W except the ep-1 cover.
 
 Prompts: `docs/story/erin/e1/prompts/` (`erin-ep1-*`) and

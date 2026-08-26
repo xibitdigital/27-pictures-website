@@ -96,6 +96,11 @@ Word overlays live in each page’s `words[]` (`variant`, `text`, optional `audi
 Locked ElevenLabs names: `scripts/voices.json` (`jax`, `riu`, `nova`, `ripperdoc`,
 `badai`, `nero`, `thedog`, `eve`, `barman`, `elena`, `narrator`, …).
 
+Place reverb (outdoor courtyard, keep, …) is a config key, not a caption
+style: book `"reverb": "plaza"`, a page may override (`plaza-deep`), a word
+may set `"none"`. Types and ffmpeg chains: `scripts/reverb-types.json`.
+`--from-config` applies it after TTS. The reader never reads this field.
+
 ```bash
 set -a; source .env; set +a
 

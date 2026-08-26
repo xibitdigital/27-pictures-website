@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# insert: after the Erin-hit plate (generate_scene 12 / crater); this is witch mode unlocking
+# refs: Image 1 = Erin sheet, Image 2 = Goblin King, Image 3 = generate_scene (12) (crater / courtyard)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~26% / 30% / 44%), thin white gutters, thin black keylines, white page margin. Crisp ink, cross-hatching, grey wash, deep blacks, speed lines. No colour.
+
+PANEL BORDERS: top a slanted wedge band; middle rectangle; bottom outlined in a jagged lightning-bolt border. Reading order top to bottom. No triangle panels. One effect border only — the lightning outline on the spear splash.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): Erin from Image 1 with torn left shoulder. King from Image 2. Courtyard cobbles, crater and gothic cathedral-castle from Image 3. Same ground she was slammed into. No Venus in frame.
+
+TOP (wedge, ~26%): Extreme close-up of Erin's mouth only — lips parted, a thin smear of blood at the corner and on the teeth from the blow. Not a spray, not a pool. Fringe and chin. Dark space at the top of the wedge for a caption.
+
+MIDDLE (~30%): Erin getting up from the crater. One knee, one hand on the stones, body rising. Both eyes solid white, no iris, no pupil — trance, blind, a lot of power. White rim light on her black jacket. The cobbles around her crack and lift in radial seams, grit and clods hanging in the air. Face is fury, not a smile. Quiet top band for a caption.
+
+BOTTOM (~44%, lightning-bolt border): Low camera, near the cobbles, looking up. Erin seen from behind — back of the short choppy bob, black track jacket, torn left shoulder, both hands toward the ground, small in the lower left. A spear of packed dirt and stone shoots on a steep diagonal from the cracked ground at her feet, up and across the panel, and HITS the Goblin King in the upper right — into his torso, point punching out, not a vertical spike standing beside him. He is huge, bone crown, pale hair, scaled plate, body twisting as the diagonal spear transfixes him. Storm sky and gothic cathedral-castle behind. Debris. He is struck, not posing. No blood fountain.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with straight fringe and side tufts, large sharp eyes (here solid white, no iris), black zip track jacket, left shoulder seam ripped, black trousers with thin side stripe, combat boots, wiry athletic build. Goblin King — huge broad-shouldered goblin, jagged bone crown, long pale hair, heavy scaled plate, spiked pauldrons, X-strap on a bare chest, hide kilt. Dirt spear is packed earth and stones with white stress-seams, same matter language as Venus's slabs — not metal, not lightning.
+
+Mouth blood is a smear only. No blood pools, no gore. Dust, grit, cracked ground.
+
+COMPOSITION: leave dark or flat space in the top band of each panel for captions; never crowd the frame edge with faces; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. King included. No extra limbs.
+
+CHANGE: only this scene; preserve identity, courtyard and ink from the pins.

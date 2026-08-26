@@ -19,6 +19,7 @@
       "label": "FR"
     }
   ],
+  "reverb": "plaza",
   "pages": [
     {
       "file": "assets/2d53051c4e01d2238c4ce679c17810a0.webp",
@@ -35,7 +36,7 @@
             "de": "VZZT",
             "fr": "VZZT"
           },
-          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3",
+          "audio": "assets/sfx/b2b784be9da5c9b636a016368bb650ef.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -43,7 +44,7 @@
           "x": 0.2,
           "y": 0.26,
           "variant": "bubble",
-          "tail": "right",
+          "tail": "top-right",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -52,13 +53,13 @@
             "de": "Beim zweiten Mal ist es leichter.",
             "fr": "La deuxième fois est plus facile."
           },
-          "audio": "assets/sfx/07633743130c30cefb9190f9c09d656f.mp3"
+          "audio": "assets/sfx/023df755e62ab543e8a9ac57b5cd3ca0.mp3"
         },
         {
           "x": 0.74,
           "y": 0.4,
           "variant": "bubble",
-          "tail": "left",
+          "tail": "bottom-left",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -67,7 +68,7 @@
             "de": "Keine Straße. Keine Karte. Gut.",
             "fr": "Pas de route. Pas de carte. Bien."
           },
-          "audio": "assets/sfx/93060b101550728089510a230fdb87a4.mp3"
+          "audio": "assets/sfx/c0ec6427db5f3ce9429d42e8fde29dc0.mp3"
         },
         {
           "x": 0.79,
@@ -81,7 +82,7 @@
             "de": "KRK... KRK",
             "fr": "KRK... KRK"
           },
-          "audio": "assets/sfx/ffc40fc6668b8cd3807ca9bc946adba5.mp3",
+          "audio": "assets/sfx/d4e4257ead187f09598634d1289da13e.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         }
@@ -103,7 +104,7 @@
             "de": "Hab dich.",
             "fr": "Je t'ai."
           },
-          "audio": "assets/sfx/640af4d281a2e0b8d079458fb47d0e24.mp3"
+          "audio": "assets/sfx/2a13ffce2f6d70e8a1219ab7e908a6ee.mp3"
         },
         {
           "x": 0.22,
@@ -117,7 +118,7 @@
             "de": "FWOOSH",
             "fr": "FWOOSH"
           },
-          "audio": "assets/sfx/dab8c6ad556c247bad87c1484ce4ae7f.mp3",
+          "audio": "assets/sfx/2a0f53f2625d1187ad602fe7b9ddfba1.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -133,7 +134,7 @@
             "de": "RRIP",
             "fr": "RRIP"
           },
-          "audio": "assets/sfx/3ee028b5d6ba6084f610e15c28755ce1.mp3",
+          "audio": "assets/sfx/2b3e445090b45d3749030c36f88e67bf.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -150,7 +151,7 @@
             "de": "LOSLASSEN!",
             "fr": "LÂCHE-MOI !"
           },
-          "audio": "assets/sfx/7c8f686cc9c77a642e9b3e1cdbee64b9.mp3"
+          "audio": "assets/sfx/d1955bd7188eb12e2d1e55d12952009b.mp3"
         }
       ]
     },
@@ -159,7 +160,7 @@
       "words": [
         {
           "x": 0.22,
-          "y": 0.07,
+          "y": 0.2,
           "variant": "thought",
           "tail": "right",
           "size": 30,
@@ -170,7 +171,7 @@
             "de": "Nicht hinunterschauen.",
             "fr": "Ne regarde pas en bas."
           },
-          "audio": "assets/sfx/1ccc9a082872cb3cfb42b32727f142ab.mp3"
+          "audio": "assets/sfx/a88498fd09f6719df527490ffc914141.mp3"
         },
         {
           "x": 0.26,
@@ -184,15 +185,15 @@
             "de": "SKREEE",
             "fr": "SKREEE"
           },
-          "audio": "assets/sfx/2f5b57a07d6fdfda2db09082a1380737.mp3",
+          "audio": "assets/sfx/67b7e7c7be3caa55275fda0b4a3e06a4.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
         {
           "x": 0.24,
-          "y": 0.72,
+          "y": 0.67,
           "variant": "bubble",
-          "tail": "right",
+          "tail": "bottom-right",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -201,7 +202,7 @@
             "de": "...das war nicht ich.",
             "fr": "...ce n'était pas moi."
           },
-          "audio": "assets/sfx/2998aedbf642ded7cb963289c47f63cc.mp3"
+          "audio": "assets/sfx/d96b6042f2d9deaf173a2fb985c2d884.mp3"
         },
         {
           "x": 0.74,
@@ -215,7 +216,7 @@
             "de": "THUD",
             "fr": "THUD"
           },
-          "audio": "assets/sfx/c53551b93eacb5a94df8caf8e7044a96.mp3",
+          "audio": "assets/sfx/bdb9ca5f917727dca66a1513767d61e2.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         }
@@ -237,7 +238,7 @@
             "de": "Sie fliegt das.",
             "fr": "Elle fait voler ça."
           },
-          "audio": "assets/sfx/2967b0099bce7a14651d252d48bd1eab.mp3"
+          "audio": "assets/sfx/3792074d1fe0a91a185140b2fe164bf7.mp3"
         },
         {
           "x": 0.2,
@@ -252,13 +253,13 @@
             "de": "Bleib drauf.",
             "fr": "Reste dessus."
           },
-          "audio": "assets/sfx/87b3366ecc12642d981f3706e3be098d.mp3"
+          "audio": "assets/sfx/e2a41b42cf46336770a3d13607cc0e51.mp3"
         },
         {
           "x": 0.2,
           "y": 0.7,
           "variant": "bubble",
-          "tail": "bottom-right",
+          "tail": "right",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -267,7 +268,7 @@
             "de": "Verfehl mich nicht.",
             "fr": "Ne me rate pas."
           },
-          "audio": "assets/sfx/9a90c478e97df7c5de2ed8fe7a131977.mp3"
+          "audio": "assets/sfx/ce561b55ed306725fbde0cf7f1a8364e.mp3"
         },
         {
           "x": 0.8,
@@ -282,7 +283,7 @@
             "de": "Tu ich nicht.",
             "fr": "Jamais."
           },
-          "audio": "assets/sfx/5b595d64c0c4d2f837af526a0bdae162.mp3"
+          "audio": "assets/sfx/bbb45b1d570c089609f3b62475d36762.mp3"
         }
       ]
     },
@@ -302,7 +303,7 @@
             "de": "Erin. Ich bin wegen des Königs hier.",
             "fr": "Erin. Je suis là pour le Roi."
           },
-          "audio": "assets/sfx/1d4c688ab886fb507da931fdadf6aa9e.mp3"
+          "audio": "assets/sfx/4f497d57267f8738e617fa872e664cd4.mp3"
         },
         {
           "x": 0.76,
@@ -317,7 +318,7 @@
             "de": "Venus. Dann gehst du nicht allein.",
             "fr": "Venus. Alors tu n'y vas pas seule."
           },
-          "audio": "assets/sfx/c4b1c3cdd807bdf57e2c4cc2e131aad0.mp3"
+          "audio": "assets/sfx/c0a4511e18e1ddec9f94a95c20ff3d65.mp3"
         },
         {
           "x": 0.5,
@@ -331,7 +332,7 @@
             "de": "FWOOSH",
             "fr": "FWOOSH"
           },
-          "audio": "assets/sfx/dab8c6ad556c247bad87c1484ce4ae7f.mp3",
+          "audio": "assets/sfx/2a0f53f2625d1187ad602fe7b9ddfba1.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -348,7 +349,7 @@
             "de": "Beweg dich!",
             "fr": "Bouge !"
           },
-          "audio": "assets/sfx/a446a8e74d7ba9ce1389ed72b7a2fec1.mp3"
+          "audio": "assets/sfx/e6e71470c826dbb37646bf3b07f9c718.mp3"
         }
       ]
     },
@@ -368,7 +369,7 @@
             "de": "Bleib hinter mir.",
             "fr": "Reste derrière moi."
           },
-          "audio": "assets/sfx/c1b07d2d1428c72858d5bfddbdd5ee64.mp3"
+          "audio": "assets/sfx/919b2c17cb89eb6c7ccadfcbfa6c45d1.mp3"
         },
         {
           "x": 0.62,
@@ -382,7 +383,7 @@
             "de": "WHAMM",
             "fr": "WHAMM"
           },
-          "audio": "assets/sfx/dd472ab0160661d6e16aff648592f1c2.mp3",
+          "audio": "assets/sfx/4c8ed517b5d65c9b433048035f217eff.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -390,7 +391,7 @@
           "x": 0.88,
           "y": 0.655,
           "variant": "bubble",
-          "tail": "left",
+          "tail": "bottom-left",
           "size": 30,
           "voice": "venus",
           "text": {
@@ -399,7 +400,7 @@
             "de": "Die Stücke hab ich.",
             "fr": "Je tiens les morceaux."
           },
-          "audio": "assets/sfx/5cac43473add04cb14c975c451262e26.mp3"
+          "audio": "assets/sfx/e055ad42e4accda70df5c39641a943d9.mp3"
         }
       ]
     },
@@ -419,7 +420,7 @@
             "de": "Du hast mich aufgefangen.",
             "fr": "Tu m'as rattrapée."
           },
-          "audio": "assets/sfx/8879c9e6cfe867f71f6fc9bd56307207.mp3"
+          "audio": "assets/sfx/0532ae3cb790ab104545f7062ed21952.mp3"
         },
         {
           "x": 0.82,
@@ -434,7 +435,7 @@
             "de": "Ich habe deine Tür gespürt.",
             "fr": "J'ai senti ta porte."
           },
-          "audio": "assets/sfx/bcc34c167f46d4866cce43fd99f2bb3d.mp3"
+          "audio": "assets/sfx/9dd1726dc7dc45767c06f315569389e2.mp3"
         },
         {
           "x": 0.78,
@@ -449,7 +450,7 @@
             "de": "Der Boden kann dir antworten.",
             "fr": "La terre peut te répondre."
           },
-          "audio": "assets/sfx/759da5f186b3318a77c469714bca09ae.mp3"
+          "audio": "assets/sfx/c86a25d567eb433c23c94c79d1adebde.mp3"
         },
         {
           "x": 0.22,
@@ -464,7 +465,7 @@
             "de": "Dann bring es mir bei.",
             "fr": "Alors apprends-moi."
           },
-          "audio": "assets/sfx/99d8e45a35362d630d65aba2e55831c8.mp3"
+          "audio": "assets/sfx/06717cabab81b56b50f5602a4c1aff42.mp3"
         }
       ]
     },
@@ -484,14 +485,14 @@
             "de": "Fast.",
             "fr": "Presque."
           },
-          "audio": "assets/sfx/8525d09c8e25358d91958152444797bf.mp3"
+          "audio": "assets/sfx/bc108da2fa2436b1029138eb7209b88f.mp3"
         },
         {
           "x": 0.78,
           "y": 0.08,
           "variant": "bubble",
-          "tail": "left",
-          "size": 30,
+          "tail": "bottom-left",
+          "size": 24,
           "voice": "venus",
           "text": {
             "en": "I know the way.",
@@ -499,7 +500,7 @@
             "de": "Ich kenne den Weg.",
             "fr": "Je connais le chemin."
           },
-          "audio": "assets/sfx/58daee2c184c7c6b313b7e7f55d373d3.mp3"
+          "audio": "assets/sfx/eeb692326a1f0917d66846dd5a263c49.mp3"
         },
         {
           "x": 0.32,
@@ -514,7 +515,7 @@
             "de": "Das ist die ganze Armee.",
             "fr": "C'est toute l'armée."
           },
-          "audio": "assets/sfx/600b0d11cd29ea8b4505214120e1a197.mp3"
+          "audio": "assets/sfx/f3570e4616193107216e854df23b001b.mp3"
         },
         {
           "x": 0.74,
@@ -529,7 +530,7 @@
             "de": "Das ist sein Haus.",
             "fr": "C'est chez lui."
           },
-          "audio": "assets/sfx/ddeb4800ee80538ffbfc65455080b727.mp3"
+          "audio": "assets/sfx/d4b2c2d953a2b9d2c63fabda6442fcac.mp3"
         },
         {
           "x": 0.18,
@@ -544,7 +545,7 @@
             "de": "Zusammen. Drück die Erde runter.",
             "fr": "Ensemble. Pousse la terre."
           },
-          "audio": "assets/sfx/4768138c33bd9b963432de3c68689cc1.mp3"
+          "audio": "assets/sfx/589f02f0a9260b4cd9dfcf950f1a4b71.mp3"
         }
       ]
     },
@@ -553,10 +554,10 @@
       "words": [
         {
           "x": 0.22,
-          "y": 0.34,
+          "y": 0.3,
           "variant": "bubble",
           "tail": "right",
-          "size": 30,
+          "size": 23,
           "voice": "goblinking",
           "text": {
             "en": "Two girls. Coming for you.",
@@ -564,7 +565,7 @@
             "de": "Zwei Mädchen. Sie kommen.",
             "fr": "Deux filles. Elles arrivent."
           },
-          "audio": "assets/sfx/61a513108c5624474e6a6c4cdad0ad66.mp3"
+          "audio": "assets/sfx/8bfed693066ea7feaf14d1d9e44f7361.mp3"
         },
         {
           "x": 0.5,
@@ -578,7 +579,7 @@
             "de": "KRAKK",
             "fr": "KRAKK"
           },
-          "audio": "assets/sfx/ddcd0e215e427dfcfdc3ca8539ec41ea.mp3",
+          "audio": "assets/sfx/c4e7e7ee6e3c2377eff22bd9ebdf5200.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -595,7 +596,7 @@
             "de": "Sie hören nicht auf.",
             "fr": "Elles ne s'arrêtent pas."
           },
-          "audio": "assets/sfx/24108a636cd94fd1a5a984732c7d275b.mp3"
+          "audio": "assets/sfx/824756a0accb44c51845999accb1c329.mp3"
         }
       ]
     },
@@ -615,7 +616,7 @@
             "de": "Der Weg gehört mir.",
             "fr": "La route est à moi."
           },
-          "audio": "assets/sfx/184c3d58ebd13b1006b1a26e6ee470f7.mp3"
+          "audio": "assets/sfx/2d7d574142e649c17e29be2358e3d7ad.mp3"
         },
         {
           "x": 0.58,
@@ -629,7 +630,7 @@
             "de": "CRACK",
             "fr": "CRACK"
           },
-          "audio": "assets/sfx/b5f1d17768521db5d5b3c251f079dc7f.mp3",
+          "audio": "assets/sfx/6011066f5784e8be218976fb49bf8dc9.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -646,13 +647,13 @@
             "de": "Unglaublich.",
             "fr": "Incroyable."
           },
-          "audio": "assets/sfx/f80c448f46d837e6ec78019e8fb89ffd.mp3"
+          "audio": "assets/sfx/771d6fc389db031d3a451fc900516512.mp3"
         },
         {
-          "x": 0.76,
-          "y": 0.7,
+          "x": 0.26,
+          "y": 0.75,
           "variant": "bubble",
-          "tail": "left",
+          "tail": "bottom-right",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -661,7 +662,7 @@
             "de": "Als Nächstes er.",
             "fr": "Lui, maintenant."
           },
-          "audio": "assets/sfx/a2f889bee2c288517daf7e83514174e6.mp3"
+          "audio": "assets/sfx/0f82cc5a1cb4e5316821af61da22378b.mp3"
         }
       ]
     },
@@ -681,7 +682,7 @@
             "de": "BRINGT MIR DIE\nTÜRZERBRECHERIN!",
             "fr": "AMENEZ-MOI\nLA BRISE-PORTE !"
           },
-          "audio": "assets/sfx/3aea1cc267890ff7b55773125a5e4f0e.mp3"
+          "audio": "assets/sfx/54ccd17ee2a1296c55b403e41e29c592.mp3"
         },
         {
           "x": 0.26,
@@ -696,7 +697,7 @@
             "de": "Die auch?",
             "fr": "Eux aussi ?"
           },
-          "audio": "assets/sfx/4aceff3db8310436ca8c02ad0707e71b.mp3"
+          "audio": "assets/sfx/96f9004a73ad5907ba810f2ff1d96193.mp3"
         },
         {
           "x": 0.74,
@@ -711,7 +712,7 @@
             "de": "Lass sie.",
             "fr": "Laisse-les."
           },
-          "audio": "assets/sfx/535aff668a743a8a7c012e16982c1b62.mp3"
+          "audio": "assets/sfx/0cf60eaab0061c9a40a40df4f78cad45.mp3"
         }
       ]
     },
@@ -731,7 +732,7 @@
             "de": "MEINS!",
             "fr": "À MOI !"
           },
-          "audio": "assets/sfx/cd2c38dbbef33fed1500235da3e7145f.mp3"
+          "audio": "assets/sfx/558f8c3d8ded3408564e2eb66c542ab9.mp3"
         },
         {
           "x": 0.5,
@@ -745,7 +746,7 @@
             "de": "WHOOM",
             "fr": "WHOOM"
           },
-          "audio": "assets/sfx/ae5c4424b1c061993586b6b0cc317c16.mp3",
+          "audio": "assets/sfx/e2297dfb97080872d742d373bbfa8927.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -762,7 +763,7 @@
             "de": "Mauer. Jetzt.",
             "fr": "Un mur. Maintenant."
           },
-          "audio": "assets/sfx/f3ff08461521bc55453d92a4670e4768.mp3"
+          "audio": "assets/sfx/8b4fa1896cd02c9ef25e7b05934f8e0c.mp3"
         }
       ]
     },
@@ -782,7 +783,7 @@
             "de": "HALT STILL.",
             "fr": "NE BOUGE PLUS."
           },
-          "audio": "assets/sfx/8dbd7ebf185e8c828f37d0596336075b.mp3"
+          "audio": "assets/sfx/cdf8eb88c52d2b1b65e139d34f66e372.mp3"
         },
         {
           "x": 0.76,
@@ -797,7 +798,7 @@
             "de": "Nein.",
             "fr": "Non."
           },
-          "audio": "assets/sfx/49d1ee129566c899632b97b368ee02d0.mp3"
+          "audio": "assets/sfx/44a0a9ae03cc32cf86459e6320511dc4.mp3"
         },
         {
           "x": 0.5,
@@ -811,7 +812,7 @@
             "de": "GRRNCH",
             "fr": "GRRNCH"
           },
-          "audio": "assets/sfx/8e377ae0a1b92e52cb3025f910310750.mp3",
+          "audio": "assets/sfx/e3b6c8f3786dbb379b0bd23775a8d7ab.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -819,7 +820,7 @@
           "x": 0.74,
           "y": 0.42,
           "variant": "bubble",
-          "tail": "left",
+          "tail": "bottom-right",
           "size": 30,
           "voice": "venus",
           "text": {
@@ -828,7 +829,7 @@
             "de": "Nicht durch mich.",
             "fr": "Pas à travers moi."
           },
-          "audio": "assets/sfx/d4d22ea86d87f824b453fa6388677340.mp3"
+          "audio": "assets/sfx/827e0bf29d82e9b3e4287baa5d23a23b.mp3"
         },
         {
           "x": 0.26,
@@ -842,7 +843,7 @@
             "de": "THOK",
             "fr": "THOK"
           },
-          "audio": "assets/sfx/f97e7dce5b16c8af966fa2f939632ecc.mp3",
+          "audio": "assets/sfx/da47768511eebcecad89b0ee16fc8142.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         }
@@ -864,7 +865,7 @@
             "de": "KLEINES DING.",
             "fr": "PETITE CHOSE."
           },
-          "audio": "assets/sfx/8b679de6572d9d07e3493cc8eb9a8529.mp3"
+          "audio": "assets/sfx/ceb7f376c81190be3b060a64ac53c02f.mp3"
         },
         {
           "x": 0.22,
@@ -879,7 +880,7 @@
             "de": "Fang.",
             "fr": "Attrape."
           },
-          "audio": "assets/sfx/17bf4562876241cc89934c162cae194c.mp3"
+          "audio": "assets/sfx/a1a30f58d818f3f74312cc63b3c135b8.mp3"
         },
         {
           "x": 0.5,
@@ -893,7 +894,7 @@
             "de": "VRRRNN",
             "fr": "VRRRNN"
           },
-          "audio": "assets/sfx/e5f8da3381b30391eb63e39eaa554d23.mp3",
+          "audio": "assets/sfx/2da3684d95e3a5bc7c9522805667caa7.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -909,7 +910,130 @@
             "de": "BOOOM",
             "fr": "BOOOM"
           },
-          "audio": "assets/sfx/1ee4666bff82b4ca609d10fc09d6ed36.mp3"
+          "audio": "assets/sfx/b44b3716f035ec06636d12915bdd9d4b.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/aaa84439ec5a48f2774369db305ac745.webp",
+      "words": [
+        {
+          "x": 0.5,
+          "y": 0.08,
+          "variant": "burst",
+          "tail": "bottom",
+          "size": 32,
+          "voice": "goblinking",
+          "text": {
+            "en": "Not done.",
+            "it": "Non ho finito.",
+            "de": "Noch nicht.",
+            "fr": "Pas fini."
+          },
+          "audio": "assets/sfx/54405a9a8c074f42fa53c03085b40021.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.42,
+          "variant": "burst",
+          "tail": "none",
+          "size": 28,
+          "voice": "goblinking",
+          "text": {
+            "en": "Fog her eyes.",
+            "it": "Offusca i suoi occhi.",
+            "de": "Trübe ihre Augen.",
+            "fr": "Voile-lui les yeux."
+          },
+          "audio": "assets/sfx/bcf84eecfbd2389471a483e328322e6d.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/58595adc9bc9f73181364cd558d09f20.webp",
+      "words": [
+        {
+          "x": 0.22,
+          "y": 0.08,
+          "variant": "burst",
+          "tail": "right",
+          "size": 32,
+          "voice": "goblinking",
+          "text": {
+            "en": "Stay down.",
+            "it": "Resta a terra.",
+            "de": "Bleib liegen.",
+            "fr": "Reste à terre."
+          },
+          "audio": "assets/sfx/460d500417d1b8f9809afa40c7dafc56.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.38,
+          "size": 40,
+          "color": "#111111",
+          "angle": -6,
+          "text": {
+            "en": "KRAKK",
+            "it": "KRAKK",
+            "de": "KRAKK",
+            "fr": "KRAKK"
+          },
+          "audio": "assets/sfx/c4e7e7ee6e3c2377eff22bd9ebdf5200.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
+        },
+        {
+          "x": 0.78,
+          "y": 0.88,
+          "variant": "bubble",
+          "tail": "left",
+          "size": 30,
+          "voice": "venus",
+          "text": {
+            "en": "Erin—!",
+            "it": "Erin—!",
+            "de": "Erin—!",
+            "fr": "Erin— !"
+          },
+          "audio": "assets/sfx/fcb08e8d19c7ec55e84d86cb4b72a63a.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/87ba3d91cb93d418bca2fe6804e9349a.webp",
+      "words": [
+        {
+          "x": 0.25,
+          "y": 0.36,
+          "variant": "burst",
+          "tail": "bottom",
+          "size": 30,
+          "voice": "erin",
+          "text": {
+            "en": "Get off me.",
+            "it": "Togliti di dosso.",
+            "de": "Runter von mir.",
+            "fr": "Lâche-moi."
+          },
+          "audio": "assets/sfx/58be1f5286758078b5580240bee0cb83.mp3"
+        },
+        {
+          "x": 0.55,
+          "y": 0.72,
+          "variant": "burst",
+          "tail": "none",
+          "size": 62,
+          "angle": -18,
+          "text": {
+            "en": "SKRRK",
+            "it": "SKRRK",
+            "de": "SKRRK",
+            "fr": "SKRRK"
+          },
+          "audio": "assets/sfx/42ac1a5d7db02718392e14d9b62b7e7f.mp3",
+          "stroke": "#ffffff",
+          "strokeThickness": 8
         }
       ]
     },
@@ -929,48 +1053,79 @@
             "de": "Der König!",
             "fr": "Le Roi !"
           },
-          "audio": "assets/sfx/90b7510e915cb87eb447736672e518ed.mp3"
+          "audio": "assets/sfx/830f8e69164cbd49a572a28f601d0c3e.mp3"
         },
         {
-          "x": 0.78,
-          "y": 0.4,
+          "x": 0.82,
+          "y": 0.44,
           "variant": "bubble",
           "tail": "left",
-          "size": 30,
+          "size": 26,
           "voice": "goblinking",
           "text": {
-            "en": "Nnh—",
-            "it": "Nnh—",
-            "de": "Nnh—",
-            "fr": "Nnh—"
+            "en": "Nnh— give me my krown!",
+            "it": "Nnh— Dammi la mia corona!",
+            "de": "Nnh— Gib mir meine Krone!",
+            "fr": "Nnh— Rends-moi ma couronne !"
           },
-          "audio": "assets/sfx/cd316c0af0eda5dad0829196c44a6686.mp3"
+          "audio": "assets/sfx/998d5ac92ef4c0e3290d918bb0412894.mp3"
+        },
+        {
+          "x": 0.16,
+          "y": 0.7,
+          "variant": "burst",
+          "tail": "bottom-right",
+          "size": 28,
+          "voice": "goblinking",
+          "text": {
+            "en": "Get up!",
+            "it": "Alzati!",
+            "de": "Steh auf!",
+            "fr": "Lève-toi !"
+          },
+          "audio": "assets/sfx/8786b948cac20f73f74617d0601423b8.mp3"
+        },
+        {
+          "x": 0.86,
+          "y": 0.7,
+          "variant": "burst",
+          "tail": "bottom-left",
+          "size": 26,
+          "voice": "goblinking",
+          "text": {
+            "en": "On your feet, King!",
+            "it": "In piedi, Re!",
+            "de": "Auf die Füße, König!",
+            "fr": "Debout, Roi !"
+          },
+          "audio": "assets/sfx/4b27f87e2f699d9183461135c3d2ce8c.mp3"
         }
       ]
     },
     {
       "file": "assets/047f5789ddcd2cddd076b011792d1fa9.webp",
+      "reverb": "plaza-deep",
       "words": [
         {
-          "x": 0.5,
+          "x": 0.8,
           "y": 0.08,
           "variant": "bubble",
-          "tail": "bottom",
+          "tail": "left",
           "size": 30,
           "voice": "erin",
           "text": {
-            "en": "Go home.",
-            "it": "Andatevene.",
-            "de": "Geht nach Hause.",
-            "fr": "Rentrez chez vous."
+            "en": "This time you stay.",
+            "it": "Questa volta resti.",
+            "de": "Diesmal bleibst du.",
+            "fr": "Cette fois tu restes."
           },
-          "audio": "assets/sfx/c5fef77e5e310c4908570dbb25fb84e0.mp3"
+          "audio": "assets/sfx/14b54416718315acc6a3a9ccb742c11d.mp3"
         },
         {
           "x": 0.7,
-          "y": 0.86,
+          "y": 0.68,
           "variant": "bubble",
-          "tail": "left",
+          "tail": "bottom-left",
           "size": 30,
           "voice": "venus",
           "text": {
@@ -979,19 +1134,20 @@
             "de": "Ich halte ihn.",
             "fr": "Je le retiens."
           },
-          "audio": "assets/sfx/369d21d7347713170dfcc5a98a9f3e03.mp3"
+          "audio": "assets/sfx/d6154701fc0b384fd3800d82740c9d40.mp3"
         }
       ]
     },
     {
       "file": "assets/cefc5b3e6b7b28182d75ad3c95d7a386.webp",
+      "reverb": "plaza-deep",
       "words": [
         {
-          "x": 0.24,
+          "x": 0.64,
           "y": 0.08,
           "variant": "bubble",
-          "tail": "right",
-          "size": 30,
+          "tail": "left",
+          "size": 26,
           "voice": "erin",
           "text": {
             "en": "Doors go both ways.",
@@ -999,7 +1155,7 @@
             "de": "Türen gehen beide Wege.",
             "fr": "Les portes vont dans les deux sens."
           },
-          "audio": "assets/sfx/c7430d44fe404cbd82d1145c0b4bebe7.mp3"
+          "audio": "assets/sfx/f8a27e47db5ffd161e136169387dc43e.mp3"
         },
         {
           "x": 0.78,
@@ -1013,7 +1169,7 @@
             "de": "VZZT",
             "fr": "VZZT"
           },
-          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3",
+          "audio": "assets/sfx/228cf3e44b25f6e925c952d8c45c4676.mp3",
           "stroke": "#ffffff",
           "strokeThickness": 8
         },
@@ -1021,16 +1177,16 @@
           "x": 0.26,
           "y": 0.22,
           "variant": "bubble",
-          "tail": "right",
+          "tail": "top-right",
           "size": 30,
           "voice": "erin",
           "text": {
-            "en": "Go find a smaller door.",
-            "it": "Trova una porta più piccola.",
-            "de": "Such dir eine kleinere Tür.",
-            "fr": "Va trouver une plus petite porte."
+            "en": "This one is mine.",
+            "it": "Questa è mia.",
+            "de": "Die hier gehört mir.",
+            "fr": "Celle-ci est à moi."
           },
-          "audio": "assets/sfx/0828b4eff9cf4943794cb7ac5431c009.mp3"
+          "audio": "assets/sfx/e2795500966ce2fafe813b07d9bf0a03.mp3"
         },
         {
           "x": 0.5,
@@ -1045,13 +1201,28 @@
             "de": "NEIN—!",
             "fr": "NON— !"
           },
-          "audio": "assets/sfx/386258556b69ab23db89af22e677a8f6.mp3"
+          "audio": "assets/sfx/54a99cdb4ec5b3f32cc118b57ef25d38.mp3"
         }
       ]
     },
     {
       "file": "assets/17df24e9b9864f6c68d9d6ab626afb7b.webp",
       "words": [
+        {
+          "x": 0.18,
+          "y": 0.08,
+          "variant": "burst",
+          "tail": "none",
+          "size": 56,
+          "voice": "goblinking",
+          "text": {
+            "en": "AAAAAH—!",
+            "it": "AAAAAH—!",
+            "de": "AAAAAH—!",
+            "fr": "AAAAAH— !"
+          },
+          "audio": "assets/sfx/ab0c21da200092f140241d9641b8fd2d.mp3"
+        },
         {
           "x": 0.24,
           "y": 0.7,
@@ -1065,7 +1236,7 @@
             "de": "Wettrennen nach Hause.",
             "fr": "Course jusqu'à la maison."
           },
-          "audio": "assets/sfx/e8b945358577bcf8a041f396b762bba8.mp3"
+          "audio": "assets/sfx/c7f44e99cc50d5a586972faed5f9640d.mp3"
         },
         {
           "x": 0.5,
@@ -1081,7 +1252,7 @@
             "de": "Fortsetzung folgt…",
             "fr": "À suivre…"
           },
-          "audio": "assets/sfx/afc225c9463b057989b19c85b20cb600.mp3"
+          "audio": "assets/sfx/3ca5c9c6307345bf89686c6c49590af1.mp3"
         }
       ]
     }

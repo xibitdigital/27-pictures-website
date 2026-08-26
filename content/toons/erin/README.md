@@ -17,14 +17,15 @@ Episode 1 is **ERIN & THE GOBLINS — the missing CHILD** (Volume 1 Prequel),
 town, finds goblins behind it, opens a portal and fights the Goblin King, then
 walks the child home.
 
-Episode 2 is **The Revenge**, own reader `/toons/erin-the-revenge/`, **18
+Episode 2 is **The Revenge**, own reader `/toons/erin-the-revenge/`, **21
 plates**. Erin tears a portal back into the goblin world to **defeat the Goblin
 King**. Venus — a stranger who can move matter — catches her, teaches her, and
 walks with her. They name themselves on page 5 (handshake). Captions EN/IT/DE/FR.
 New plates carry **no baked lettering**; words live in `config.json` → `words[]`.
 
 Ep-2 voices: `erin`, `venus`, `goblinking` (`scripts/voices.json`). The
-goblin rider is `goblinking` pitched **+12%**.
+goblin rider is `goblinking` pitched **+12%**. Place reverb is `plaza` on
+the book, `plaza-deep` on pages 19–20 (`scripts/reverb-types.json`).
 
 ## Prompt archive
 
@@ -95,10 +96,13 @@ Config order today (`content/toons/erin-the-revenge/config.json`):
 | 12 | King leaps, throws a column, Venus raises a wall | `erin-ep2-p12-king-leap-column-venus-wall.txt` |
 | 13 | Column vs dirt cone | `erin-ep2-p13-column-dirt-block.txt` |
 | 14 | Boulder, Erin catches, King blasted | `erin-ep2-p14-boulder-catch-king-blast.txt` |
-| 15 | Army flees, King down | `erin-ep2-p15-army-flees-king-down.txt` |
-| 16 | Erin glows; Venus holds the King on a slab | `erin-ep2-p16-erin-glow-eyes-venus-slab.txt` |
-| 17 | Erin opens a portal; King falls in | `erin-ep2-p17-portal-vortex-king-falls.txt` |
-| 18 | King in the spiral; goblins hide; both smiling | `erin-ep2-p18-king-spiral-goblins-hide-smile.txt` |
+| 15 | King comes back — knee, black eyes (generate_scene 13) | `erin-ep2-p15-king-knee-black-eyes.txt` |
+| 16 | King hits Erin (generate_scene 12) | `erin-ep2-p17-king-final-blow.txt` |
+| 17 | Erin white-eyes, dirt spear (generate_scene 16) | `erin-ep2-erin-white-eyes-dirt-spear.txt` |
+| 18 | Army flees, King down | `erin-ep2-p15-army-flees-king-down.txt` |
+| 19 | Erin glows; Venus holds the King on a slab | `erin-ep2-p16-erin-glow-eyes-venus-slab.txt` |
+| 20 | Erin opens a portal; King falls in | `erin-ep2-p17-portal-vortex-king-falls.txt` |
+| 21 | King in the spiral; goblins hide; both smiling | `erin-ep2-p18-king-spiral-goblins-hide-smile.txt` |
 
 From page 2 on, Erin’s **left shoulder seam is torn**. Jacket stays that way.
 
@@ -108,6 +112,10 @@ you don't go alone. / FWOOSH / Move!* · p6 *Stay behind me. / WHAMM / I've got
 the pieces.* · p7 *You caught me. / I felt your door. / The ground can answer
 you. / Then teach me.* · p8 *Almost. / I know the way. / That's the whole
 army. / That's his house. / Together. Push the earth down.*
+Climax: p15 *Not done. / Fog her eyes.* · p16 *Stay down. / KRAKK / Erin—!* ·
+p17 *Get off me. / SKRRK* · p18 *The King! / Nnh— I need the known! / Nnh— give me my krown! / Get up! / On your feet, King!* · p19 *This time you stay. / I'll hold
+him.* · p20 *Doors go both ways. / This one is mine. / NO—!* · p21 *AAAAAH—! / Race you
+home.*
 
 ## Characters
 

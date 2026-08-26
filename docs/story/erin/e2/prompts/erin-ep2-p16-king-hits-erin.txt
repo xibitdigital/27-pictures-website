@@ -1,0 +1,31 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# insert: after shipped plate 15 (King face-down); current 16 (glow / witch mode) becomes 17
+# planned captions: King "Stay down." · KRAK · Venus "Erin—!"
+# next page is the door going nuclear (scale/anger), not a first portal — she already walked one on p01
+# refs: Image 1 = Goblin King, Image 2 = Erin sheet, Image 3 = Venus, Image 4 = shipped plate 15 (courtyard)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~26% / 28% / 46%), thin white gutters, thin black keylines, white page margin. Crisp ink, cross-hatching, grey wash, deep blacks, speed lines. No colour.
+
+PANEL BORDERS: top rectangle; middle a slanted wedge band; bottom outlined in a jagged lightning-bolt border. Reading order top to bottom. No triangle panels. One effect border only — the lightning outline on the impact splash.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): King from Image 1. Erin from Image 2 with torn left shoulder. Venus from Image 3. Courtyard cobbles and gothic cathedral-castle from Image 4. Same ground he was face-down on. Do not give Erin the white radial glow yet — that unlocks on the next page.
+
+TOP (~26%): King has a knee under him, huge, bone crown, pale hair, blade or fist cocked back for a killing blow. Erin small in front of him, torn jacket, both hands up, not glowing, about to be hit. Dark space at the top for a caption.
+
+MIDDLE (wedge, ~28%): The blow lands. Extreme close on the King's massive fist / forearm filling the left; Erin on the right, body folding, fringe flying, teeth clenched, eyes wide — trauma, not a cool pose. White impact bloom and speed lines. No blood. Quiet top of the wedge for a caption.
+
+BOTTOM (~46%, lightning-bolt border): Aftermath splash. Erin slammed into the cobbles, cratered stone, body small and crumpled, one eye still open. The King towers over her, still swinging through, debris in the air, castle in the storm. Venus in the foreground, back three-quarter, both arms into the dirt, raising a slab in panic — too late to stop the hit. Erin is down. No witch glow, no portal, no fleeing army crowding the frame.
+
+SUBJECT LOCK: Goblin King — huge broad-shouldered goblin, jagged bone crown, long pale hair, heavy scaled plate, spiked pauldrons, X-strap on a bare muscled chest, hide kilt, brutal goblin face scaled up, wounded, furious, eyes open. Erin — teenage girl, pale skin, short choppy dark bob with straight fringe, large sharp eyes, black zip track jacket, left shoulder seam ripped, black trousers with thin side stripe, combat boots, wiry athletic build. Venus — adult woman, long dark hair, pale headband, dark frog-button tunic, star-buckle belt.
+
+No blood pools, no gore. Dust, grit, cracked cobbles, radial burst. Not sparkle, not white-rim witch light.
+
+COMPOSITION: leave dark or flat space in the top band of each panel for captions; never crowd the frame edge with faces; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. King included. No extra limbs, no ghost hands.
+
+CHANGE: only this scene; preserve identity, courtyard and ink from the pins.

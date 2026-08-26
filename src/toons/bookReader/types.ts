@@ -96,6 +96,11 @@ export interface ToonBookApi {
 export interface ToonPage {
   /** Relative image path (e.g. `assets/<hash>.jpg`). */
   file: string;
+  /**
+   * Place reverb for every clip on this page. Overrides book `reverb`.
+   * Types: `scripts/reverb-types.json`. `"none"` skips. The reader ignores this.
+   */
+  reverb?: string;
   /** Caption / SFX entries for this page. */
   words?: WordEntry[];
 }
@@ -111,6 +116,11 @@ export interface ToonConfig {
   defaultLang?: LangCode;
   languages?: LangOption[];
   fontFamily?: string;
+  /**
+   * Default place reverb for generated clips (`plaza`, `plaza-deep`, …).
+   * Page / word `reverb` overrides. Baked into the mp3; the reader ignores this.
+   */
+  reverb?: string;
   /** Ordered pages: each has `file` + optional `words`. */
   pages?: ToonPage[];
 }
@@ -191,6 +201,11 @@ export interface WordEntry {
    * Omit on onomatopoeia / SFX. The reader ignores this; generators use it.
    */
   voice?: string;
+  /**
+   * Place reverb type for this clip (`plaza`, `plaza-deep`, or `"none"` to skip
+   * a book/page default). Generators apply it after TTS; the reader ignores it.
+   */
+  reverb?: string;
   audio?: string;
   /** Playback gain 0–1 for `audio` (default 1). Louder needs a hotter source file. */
   volume?: number;

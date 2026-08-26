@@ -1,0 +1,10 @@
+{
+  "plaza": {
+    "label": "Open stone courtyard — short early reflections, quiet late air",
+    "filter": "aecho=0.8:0.9:40|110|320:0.25|0.14|0.08,highpass=f=80,lowpass=f=8500,volume=3dB,alimiter=limit=0.89"
+  },
+  "plaza-deep": {
+    "label": "Same courtyard, longer tail — keep, chamber, or enclosed stone",
+    "filter": "aecho=0.8:0.9:45|120|360|560:0.32|0.22|0.14|0.10,highpass=f=80,lowpass=f=8000,volume=3dB,alimiter=limit=0.89"
+  }
+}

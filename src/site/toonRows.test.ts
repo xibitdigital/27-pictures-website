@@ -21,7 +21,7 @@ const EPISODES: SeriesEpisode[] = [
     n: 2,
     title: "The Revenge",
     url: "/toons/erin-the-revenge/",
-    pages: 18,
+    pages: 21,
     status: "draft",
     seriesTitle: "Erin & the Goblins",
     art: "erin-the-revenge.jpg",

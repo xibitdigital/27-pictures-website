@@ -14,6 +14,8 @@ Usage:
   python3 scripts/generate-jax-voice.py "..." --voice eve --toon nero   # write under public/toons/nero/
   python3 scripts/generate-jax-voice.py --from-config --toon erin-the-revenge
       # uses each word's "voice" key (voices.json name); skips lines that already have audio unless --force
+      # applies config reverb (book / page / word) after TTS — see scripts/reverb-types.json
+  python3 scripts/generate-jax-voice.py "Get up!" --voice goblinking --toon erin-the-revenge --reverb plaza
   # Emotional delivery (Eleven v3 audio tags only — ignored on multilingual_v2):
   python3 scripts/generate-jax-voice.py "[scared] Nero—!" --voice eve --toon nero --model eleven_v3
 
@@ -47,6 +49,9 @@ import sys
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import reverb  # noqa: E402
+
 VOICES_FILE = os.path.join(ROOT, 'scripts', 'voices.json')
 DEFAULT_VOICE_NAME = 'jax'
 DEFAULT_TOON = 'jax'
@@ -79,7 +84,9 @@ def resolve_voice(voices, voice_name, voice_id=None):
     return voice_name, vid
 
 
-def tts_to_file(text, voice_name, voice_id, toon, model_id, stability, similarity, api_key):
+def tts_to_file(
+    text, voice_name, voice_id, toon, model_id, stability, similarity, api_key, reverb_type=None
+):
     body = json.dumps(
         {
             'text': text,
@@ -106,8 +113,11 @@ def tts_to_file(text, voice_name, voice_id, toon, model_id, stability, similarit
     out_path = os.path.join(out_dir, f"{h}.mp3")
     with open(out_path, 'wb') as f:
         f.write(audio)
+    if reverb_type:
+        h, out_path = reverb.apply_reverb_file(out_path, reverb_type, replace=True)
+        print(f"reverb {reverb_type} → {h}.mp3")
     print(
-        f"ok: {out_path} ({len(audio)} bytes) — voice={voice_name} ({voice_id}) "
+        f"ok: {out_path} ({os.path.getsize(out_path)} bytes) — voice={voice_name} ({voice_id}) "
         f"toon={toon} model={model_id}"
     )
     print(f'  "audio": "assets/sfx/{h}.mp3"')
@@ -123,7 +133,7 @@ def display_en(word):
     return ' '.join(str(raw).replace('\n', ' ').split())
 
 
-def run_from_config(toon, voices, model_id, stability, similarity, api_key, force):
+def run_from_config(toon, voices, model_id, stability, similarity, api_key, force, reverb_override=None):
     cfg_path = os.path.join(ROOT, 'content', 'toons', toon, 'config.json')
     if not os.path.exists(cfg_path):
         print(f'error: no config at {cfg_path}', file=sys.stderr)
@@ -144,8 +154,19 @@ def run_from_config(toon, voices, model_id, stability, similarity, api_key, forc
                 print(f"skip  p{pi + 1}[{wi}] empty text", file=sys.stderr)
                 continue
             _, voice_id = resolve_voice(voices, voice_name)
-            print(f"tts   p{pi + 1}[{wi}] {voice_name} {text!r}")
-            h = tts_to_file(text, voice_name, voice_id, toon, model_id, stability, similarity, api_key)
+            try:
+                reverb_type = reverb.resolve_reverb(
+                    cfg, page, word, override=reverb_override
+                )
+            except ValueError as e:
+                print(f"error: p{pi + 1}[{wi}] {e}", file=sys.stderr)
+                sys.exit(1)
+            print(f"tts   p{pi + 1}[{wi}] {voice_name} {text!r}"
+                  + (f" reverb={reverb_type}" if reverb_type else ''))
+            h = tts_to_file(
+                text, voice_name, voice_id, toon, model_id, stability, similarity, api_key,
+                reverb_type=reverb_type,
+            )
             word['audio'] = f'assets/sfx/{h}.mp3'
             n += 1
     with open(cfg_path, 'w') as f:
@@ -160,8 +181,8 @@ def main():
     if not args or (args[0].startswith('--') and not from_config):
         print(
             'usage: generate-jax-voice.py "text" [--voice NAME] [--voice-id ID] [--toon TOON] '
-            '[--model MODEL] [--stability N] [--similarity N]\n'
-            '       generate-jax-voice.py --from-config --toon TOON [--force] [--model MODEL] …',
+            '[--reverb TYPE] [--model MODEL] [--stability N] [--similarity N]\n'
+            '       generate-jax-voice.py --from-config --toon TOON [--force] [--reverb TYPE] …',
             file=sys.stderr,
         )
         sys.exit(1)
@@ -176,6 +197,7 @@ def main():
     stability = 0.45
     similarity = 0.8
     force = False
+    reverb_override = None
 
     i = 0 if from_config or (args and args[0].startswith('--')) else 1
     while i < len(args):
@@ -185,6 +207,9 @@ def main():
         elif args[i] == '--force':
             force = True
             i += 1
+        elif args[i] == '--reverb':
+            reverb_override = args[i + 1]
+            i += 2
         elif args[i] == '--voice':
             voice_name = args[i + 1]
             i += 2
@@ -215,7 +240,10 @@ def main():
         if toon == DEFAULT_TOON and '--toon' not in args:
             print('error: --from-config requires --toon', file=sys.stderr)
             sys.exit(1)
-        run_from_config(toon, voices, model_id, stability, similarity, api_key, force)
+        run_from_config(
+            toon, voices, model_id, stability, similarity, api_key, force,
+            reverb_override=reverb_override,
+        )
         return
 
     if not text:
@@ -223,7 +251,17 @@ def main():
         sys.exit(1)
 
     voice_name, voice_id = resolve_voice(voices, voice_name, voice_id)
-    tts_to_file(text, voice_name, voice_id, toon, model_id, stability, similarity, api_key)
+    reverb_type = None
+    if reverb_override is not None:
+        try:
+            reverb_type = reverb.resolve_reverb(override=reverb_override)
+        except ValueError as e:
+            print(f"error: {e}", file=sys.stderr)
+            sys.exit(1)
+    tts_to_file(
+        text, voice_name, voice_id, toon, model_id, stability, similarity, api_key,
+        reverb_type=reverb_type,
+    )
 
 
 if __name__ == '__main__':

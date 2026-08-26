@@ -174,7 +174,7 @@ Venus (ep 2): adult woman, long dark hair, pale headband, dark frog-button tunic
 Anti-drift: Erin never gets long hair, a skirt, colour, a cape or armour; she
 is in the same black track suit and boots every page. Ep 2 keeps the torn left
 shoulder after the gargoyle grab. Goblins stay grey-green ink-toned gremlins —
-no orcs, no trolls, no humanoid warriors. Ep 2 is 18 plates; names land on
+no orcs, no trolls, no humanoid warriors. Ep 2 is 21 plates; names land on
 p05. p06 bottom is Venus trapping the gargoyle pieces in dirt — never a
 second earth-golem.
 
@@ -287,23 +287,11 @@ make swap-page SRC=/tmp/flat.png TOON=erin-the-revenge PAGE=7   # replace page 7
 Then write `words[]` in that toon’s `content/toons/<toon>/config.json`.
 `--publish` / `make ship` only on request. Staging is `make preview-deploy`.
 
-## Fix mode (user attaches a bad generation)
+## Bad generation (do not write a -fix i2i against the plate)
 
-```
-# model: bytedance/seedream-5.0-pro
-# mode: image-to-image
-# refs: Image 1 = page to fix; Image 2 = Erin sheet
-
-PIN from Image 1: keep the panel layout, B&W ink style, alley setting, Erin's pose.
-
-CHANGE / FIX:
-- remove every balloon, caption box and lettering; fill that area with artwork
-- Erin keeps the short dark bob and black track jacket from Image 2
-- each figure exactly two arms and two legs
-- do not restyle faces into different people
-
-FORMAT: same vertical 1152x1728 B&W manga page, no text of any kind.
-```
+Rewrite the **original** prompt and re-roll from the character/style refs.
+Never PIN a failed generation as Image 1 — the model copies the mistake.
+Keep the old `.txt` only if the beat is worth tracing; do not add `*-fix.txt`.
 
 ## Anti-patterns
 
