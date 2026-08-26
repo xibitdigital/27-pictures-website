@@ -1,0 +1,27 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin/ plate 20
+# refs: Image 1 = Erin sheet, Image 2 = Goblin King
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, a tilted strip of four small fight panels over a large bottom splash. Crisp ink, cross-hatching, grey screentone, deep blacks. No colour.
+
+PANEL BORDERS: one effect: tilted/offset small panels over a splash. Reading order: the four small left-to-right/top-to-bottom, then the splash.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only. Occult marks on props may exist as abstract glyphs, never readable words.
+
+PIN (keep from refs): Erin from Image 1, kicks and punches. King from Image 2.
+
+SMALL PANELS: Erin punches his face; Erin knee-strike; Erin punch to the jaw; extreme close-up of the King's roaring crowned head.
+
+SPLASH: The King staggers toward a tunnel mouth, roaring; Erin small behind him reaching; cave dark.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with straight fringe and side tufts, large sharp eyes, heavy lashes, black zip-up track jacket, black trousers with a thin side stripe, black combat boots. Goblin King — huge goblin, jagged bone crown, long pale hair, scaled plate and spiked pauldrons, brutal scaled-up goblin face.
+
+No lettering. No blood.
+
+COMPOSITION: leave flat space in the top band of each panel for caption overlays; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. Goblins four limbs. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

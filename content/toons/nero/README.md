@@ -123,9 +123,11 @@ Bubble tails: `none` | `bottom` | `bottom-left` | `bottom-right` | `top` | `top-
 
 ## Replacing or adding one page's plate (WebP + watermark, no `public/`)
 
-`make add-image` is for _new_ pages with the classic JPG/PNG + `--config`
-flow. For a single WebP page swap or addition — watermark, WebP, content
-hash, straight to R2, update `config.json` — use the one-shot script:
+`make add-image` is for _new_ JPG/PNG pages with the classic `--config`
+append flow. For a single WebP page **swap** or **append** — watermark, WebP,
+content hash, straight to R2, update `config.json` — use the one-shot script.
+It cannot **insert** mid-list (`PAGE=4` replaces page 4). Recipe for that,
+flatten, and `TOON` slugs: Claude.md → “Adding a new toon page image”.
 
 ```bash
 # Replace page 1's art, keeping its existing captions

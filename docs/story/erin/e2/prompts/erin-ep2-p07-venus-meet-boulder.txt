@@ -1,0 +1,30 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin-the-revenge/ plate 07 (reverse-engineered so a re-roll can match)
+# captions: names already given on p05 — this page is the door / ground / teach beat
+# refs: Image 1 = Erin sheet, Image 2 = Venus reference, Image 3 = forest/ruin ink
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~40% / 24% / 36%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, speed lines. No colour.
+
+PANEL BORDERS: top and bottom are plain rectangles; the one effect border is the middle panel drawn as a slanted wedge band narrowing across the page. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin from Image 1 including the torn left shoulder. Keep Venus's exact face, hair, headband and frog-button tunic from Image 2. Do not redesign identity.
+
+TOP (~40%): Medium two-shot under ivy-clad stone arches; a cobbled path leads to the distant gothic castle; Erin on the left (torn jacket, dirt on her hands) faces Venus on the right; they stand still, watching each other.
+
+MIDDLE (wedge, ~24%): Venus in profile, both hands out, a massive rough boulder floating and turning in front of her, smaller stones and grit orbiting, ruined towers behind her.
+
+BOTTOM (~36%): Low in a dark tree corridor, Erin looks up as the same boulder hangs above her, rim-lit, her face open with shock, trees framing a tunnel of sky.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with a straight fringe and side tufts, large sharp eyes with heavy lashes, hard determined brow, black zip-up track jacket with high collar and ribbed cuffs, left shoulder seam ripped open showing pale skin, black trousers with a thin side stripe, black lace-up combat boots, wiry athletic build. Venus — adult woman, long dark hair, pale decorative headband across the brow, large dark eyes, dark high-collar frog-button tunic, belt with a star buckle, short tunic hem over dark trousers, calm unhurried stance, faintly rim-lit. Same faces and outfits in every panel. No goblins on this page.
+
+EFFECT LOOK: the boulder is solid stone with fine white stress seams and floating grit, not sparkle or lightning. No blood.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. No extra hands, no ghost limbs, no extra fingers.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

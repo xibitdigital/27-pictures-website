@@ -1,0 +1,31 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin/ plate 16
+# refs: Image 1 = Erin sheet, Image 2 = goblin pack
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, four stacked bands (~28% / 22% / 22% / 28%). Crisp ink, cross-hatching, grey screentone, deep blacks. No colour.
+
+PANEL BORDERS: straight rectangles. Reading order top to bottom.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only. Occult marks on props may exist as abstract glyphs, never readable words.
+
+PIN (keep from refs): Erin from Image 1, bare-handed (no daggers). Goblins from Image 2.
+
+TOP: Erin in a spinning kick in the cave, white circular speed trail, goblins around with clubs.
+
+SECOND: Erin from the left punches a goblin, white impact, the goblin's face screaming.
+
+THIRD: Extreme close-up of Erin's glare, teeth bared, lightning-speed lines.
+
+BOTTOM: Wide — Erin standing, goblins kneeling/down in a ring around her, cave walls.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with straight fringe and side tufts, large sharp eyes, heavy lashes, black zip-up track jacket, black trousers with a thin side stripe, black combat boots, fists and kicks only. Goblins — hunched waist-height goblin, warty knobbed skull, pointed ears, bulging pale eyes, fanged grin, ragged rags.
+
+No blades. No blood.
+
+COMPOSITION: leave flat space in the top band of each panel for caption overlays; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. Goblins four limbs. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

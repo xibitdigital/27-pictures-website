@@ -1,0 +1,31 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# place: reader page 04 (after aerial break / dirt platform)
+# refs: Image 1 = Erin sheet, Image 2 = Venus reference, Image 3 = forest page, Image 4 = previous page (platform)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~36% / 28% / 36%), thin white gutters, thin black keylines, white page margin. Crisp ink, cross-hatching, grey screentone, deep blacks, speed lines. No colour.
+
+PANEL BORDERS: top and bottom are plain rectangles; the one effect border is the middle panel, a slanted wedge band narrowing across the page. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): Erin's face, short choppy dark bob, black track jacket torn at the left shoulder, trousers, boots from Image 1. Venus's face, long dark hair, pale headband, frog-button tunic, star-buckle belt from Image 2. Forest ink from Image 3. Packed-dirt platform (clods, roots, stones, white seams) from Image 4. Do not redesign identity.
+
+TOP (~36%): Erin's POV straight down over the broken edge of the floating dirt platform — her gloveless hands and one knee gripping the rim in the near foreground, clods falling; far below in a clearing Venus stands with both arms raised towards us, palms open, driving the slab. Steep drop, converging trunks, mist.
+
+MIDDLE (wedge, ~28%): Low-angle close on Venus — arms up, fingers spread, jaw set, hair and tunic lifted by the down-draft; stones, roots and dead leaves hanging around her, white stress seams in the dirt, no sparkle.
+
+BOTTOM (~36%): Side-wide of the descent — the dirt platform dropping through a gap in the canopy, Erin crouched on it holding the edge, a column of grit and leaves trailing up; Venus on the forest floor still driving it, the slab a few metres above her head and coming in. Night forest, huge trunks. No castle.
+
+SUBJECT LOCK: Erin — short choppy dark bob, black track jacket torn at the left shoulder, black trousers, combat boots, dirt on hands and knees. Venus — exactly as Image 2, faintly rim-lit, calm under strain. Same faces and outfits in every panel.
+
+EFFECT LOOK: platform is matter held and lowered — solid clods, roots, stones, white seams, floating grit. No glow on Venus's hands beyond a faint rim. No fire, lightning, runes, sparkle or lens flare.
+
+NO CREATURES: gargoyle and goblin rider gone. Only Erin and Venus. No blood.
+
+COMPOSITION: leave flat space in the top band of each panel for caption overlays; no keyline cutting a face in half. Shot scale: extreme high POV, then low-angle close, then side-wide of the drop.
+
+ANATOMY: exactly two arms and two legs per figure. No extra hands, no ghost limbs.
+
+CHANGE: only the three beats above; preserve identity and ink style from the pins.

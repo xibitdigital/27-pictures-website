@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin-the-revenge/ plate 10 (reverse-engineered so a re-roll can match)
+# refs: Image 1 = Erin sheet, Image 2 = Venus, Image 3 = goblin pack, Image 4 = castle
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~34% / 32% / 34%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, speed lines. No colour.
+
+PANEL BORDERS: straight rectangles. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin from Image 1 with torn shoulder. Keep Venus from Image 2. Keep goblins from Image 3. Keep the castle from Image 4.
+
+TOP (~34%): Venus seen from behind on a cracked road, a deep chasm splitting the path, goblins clinging to the far lip; {CASTLE} on the horizon under a storm sky.
+
+MIDDLE (~32%): Erin from the left punches a goblin in the face with a white impact bloom, the goblin reeling, her torn shoulder visible, speed lines.
+
+BOTTOM (~34%): Erin and Venus walk toward us through smoke at the castle gates, Venus left, Erin right, the black facade filling the background.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with a straight fringe and side tufts, large sharp eyes with heavy lashes, hard determined brow, black zip-up track jacket with high collar and ribbed cuffs, left shoulder seam ripped open showing pale skin, black trousers with a thin side stripe, black lace-up combat boots, wiry athletic build. Venus — adult woman, long dark hair, pale decorative headband across the brow, large dark eyes, dark high-collar frog-button tunic, belt with a star buckle, short tunic hem over dark trousers, calm unhurried stance, faintly rim-lit. Goblins — hunched waist-height creature, warty knobbed skull, long pointed ears, bulging pale eyes, wide fanged grin, sinewy arms, ragged rags. CASTLE — a vast black gothic cathedral-castle of needle spires on a storm sky.
+
+The chasm is split cobble and dirt, not magic sparkle. Punch is a white bloom. No blood.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. No extra hands, no ghost limbs, no extra fingers.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

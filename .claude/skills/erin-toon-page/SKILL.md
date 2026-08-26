@@ -14,8 +14,8 @@ argument-hint: "[beat / scene for the Erin page]"
 
 # Erin Toon Page — Seedream 5.0 Pro (i2i) Prompt Generator
 
-Book: **ERIN & THE GOBLINS — the missing CHILD** (Volume 1 Prequel).
-Reader: `/toons/erin/`, config `content/toons/erin/config.json`.
+Book: **ERIN & THE GOBLINS**. Ep 1 — the missing CHILD (`/toons/erin/`).
+Ep 2 — The Revenge (`/toons/erin-the-revenge/`). Same skill for both.
 Target model: **`bytedance/seedream-5.0-pro` · image-to-image**.
 
 Siblings: `/toon-page` (cyberpunk), `/horror-toon-page` (horror). This one is
@@ -35,9 +35,10 @@ the art**.
   she???") and `45febe7c…` ("It's time… / Open."). That is legacy. Those plates are still the best refs
   for **border grammar**, so attach them freely — but never without the ban
   clause below, or the model copies their balloons too.
-- Words arrive later as FlipFrame overlays: `words[]` entries in
-  `content/toons/erin/config.json`, with `variant: bubble | burst`, tails
-  aimed at the sound source. See the caption rules in `CLAUDE.md`.
+- Words arrive later as FlipFrame overlays: `words[]` in
+  `content/toons/erin/config.json` or `content/toons/erin-the-revenge/config.json`,
+  with `variant: bubble | burst`, tails aimed at the sound source. See the
+  caption rules in `CLAUDE.md`.
 - Leave **readable dead space** in the top band of each panel so an overlay
   bubble has somewhere to sit without covering a face.
 
@@ -49,7 +50,8 @@ NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no cap
 
 ## Output rules (strict)
 
-- Build the full prompt, **always save it as a `.txt`** under `docs/story/<series>/prompts/` (tracked)
+- Build the full prompt, **always save it as a `.txt`** under
+  `docs/story/erin/e1/prompts/` or `docs/story/erin/e2/prompts/` (tracked)
 - Also show it in chat as one copyable fenced block
 - **Under ~550 English words** (Seedream scatters detail past ~600)
 - **Prompt-only by default.** Write the file and stop — user attaches refs and
@@ -100,18 +102,19 @@ PIN from references: keep Erin's face, short choppy dark bob with straight fring
 **Primary location is the repo, tracked:**
 
 ```
-docs/story/<series>/prompts/
+docs/story/erin/e1/prompts/   # episode 1
+docs/story/erin/e2/prompts/   # episode 2
 ```
 
-`<series>` is the toon the plate belongs to — `nero`, `jax`, `erin`,
-`red-smile`. Name it for what it makes, with no timestamp; git already has the
-dates, and a timestamped filename stops being the obvious current version as soon
-as there are two of them:
+Name it for what it makes, **no timestamp** (git already has the dates):
 
-- `page-<episode>-<slug>.txt` — a story plate
-- `page-<episode>-<slug>-fix.txt` — a fix pass against a generated plate
-- `character-<name>.txt` — a character sheet
-- add `-superseded` when a prompt is replaced but worth keeping for traceability
+- `erin-ep1-pNN-<slug>.txt` / `erin-ep2-pNN-<slug>.txt` — a story plate
+- `erin-epN-pNN-<slug>-fix.txt` — a fix pass against a generated plate
+- `erin-epN-character-<name>.txt` — a character sheet
+- keep an old slug (or a second file) when a prompt is replaced but worth
+  keeping for traceability — do not reuse the current page’s filename
+
+Running order: `content/toons/erin/README.md`. Index: `docs/story/erin/README.md`.
 
 **Why tracked:** the generated images are not in git — plates live on R2 and
 generation references live in `references/`, which is gitignored. The prompt is
@@ -161,12 +164,19 @@ Goblins: hunched knee-high-to-waist creatures, warty knobbed skulls, long pointe
 ```
 
 ```
-Goblin King: huge broad-shouldered goblin, jagged bone crown, long pale hair, heavy scaled plate armour and spiked pauldrons, cave-throne setting
+Goblin King: huge broad-shouldered goblin, jagged bone crown, long pale hair, heavy scaled plate armour and spiked pauldrons, cave-throne (ep 1) or gothic cathedral-castle (ep 2)
+```
+
+```
+Venus (ep 2): adult woman, long dark hair, pale headband, dark frog-button tunic, star-buckle belt, calm, faintly rim-lit; pin the face from the reference
 ```
 
 Anti-drift: Erin never gets long hair, a skirt, colour, a cape or armour; she
-is in the same black track suit and boots every page. Goblins stay grey-green
-ink-toned gremlins — no orcs, no trolls, no humanoid warriors.
+is in the same black track suit and boots every page. Ep 2 keeps the torn left
+shoulder after the gargoyle grab. Goblins stay grey-green ink-toned gremlins —
+no orcs, no trolls, no humanoid warriors. Ep 2 is 18 plates; names land on
+p05. p06 bottom is Venus trapping the gargoyle pieces in dirt — never a
+second earth-golem.
 
 ## Panel borders — the page grammar
 
@@ -246,7 +256,7 @@ Trim filler adjectives first if over ~550 words.
 ```bash
 set -a; source .env; set +a
 python3 scripts/generate-toon-page.py \
-  --prompt-file docs/story/erin/prompts/page-<episode>-<slug>.txt \
+  --prompt-file docs/story/erin/e2/prompts/erin-ep2-pNN-<slug>.txt \
   --mode image-to-image \
   --ref-asset toons/erin/assets/c363b4d490e8b574c61f92716bdc7dd4.jpg \
   --ref-asset toons/erin/assets/b19084ec3aa6db1355311aea48adfd23.jpg \
@@ -263,15 +273,19 @@ python3 scripts/generate-toon-page.py \
 
 ## Shipping a finished plate (only if asked)
 
+Do not start from `add-image`. Recipe, tool pick, and mid-list insert:
+**Claude.md → “Adding a new toon page image”**.
+
 ```bash
-make add-image SRC=~/Downloads/<file>.jpg TOON=erin UPLOAD=1
-# add captions to content/toons/erin/config.json → words[]
-npm run publish-toon-config -- --toon erin
+magick ~/Downloads/plate.png -colorspace Gray -colorspace sRGB /tmp/flat.png
+# ep 1 reader folder is erin; ep 2 is erin-the-revenge
+make swap-page SRC=/tmp/flat.png TOON=erin-the-revenge          # append
+make swap-page SRC=/tmp/flat.png TOON=erin-the-revenge PAGE=7   # replace page 7
+# insert after page N: swap-page cannot — flatten / watermark / WebP / splice, see Claude.md
 ```
 
-Erin plates are near-neutral already, but flatten any colour cast before
-publishing (`magick <src> -colorspace Gray -colorspace sRGB /tmp/flat.png`).
-Deploy only on request — and "deploy live" means `make preview-deploy`.
+Then write `words[]` in that toon’s `content/toons/<toon>/config.json`.
+`--publish` / `make ship` only on request. Staging is `make preview-deploy`.
 
 ## Fix mode (user attaches a bad generation)
 

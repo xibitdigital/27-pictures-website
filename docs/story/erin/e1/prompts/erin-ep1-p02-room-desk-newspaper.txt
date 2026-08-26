@@ -1,0 +1,25 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin/ plate 02
+# refs: Image 1 = Erin sheet, Image 2 = a prior interior page if any
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, ONE splash, thin keyline, black page field. Crisp ink, cross-hatching, grey screentone, deep blacks. No colour.
+
+PANEL BORDERS: single framed splash. No stacked panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only. Occult marks on props may exist as abstract glyphs, never readable words.
+
+PIN (keep from refs): Erin from Image 1, no daggers. Cracked-plaster room, hanging bulb, iron bed, desk of papers.
+
+SCENE: Erin's room at night. She sits at a battered wooden desk under a single hanging bulb, reading a spread newspaper, glare. Walls papered with maps, notes and torn sheets. Iron bed with rumpled blanket left, stacked books and an inkwell on the desk. Cracked plaster, peeling scraps.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with straight fringe and side tufts, large sharp eyes, heavy lashes, black zip-up track jacket, black trousers with a thin side stripe, black combat boots, no weapons. No other people.
+
+LIGHT: bare bulb, hard falloff. Newspaper photo may show a smiling blonde child as printed photo, not live. No readable headlines.
+
+COMPOSITION: leave flat space in the top band of each panel for caption overlays; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. Goblins four limbs. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

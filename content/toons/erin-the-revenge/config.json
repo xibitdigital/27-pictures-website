@@ -211,64 +211,64 @@
       ]
     },
     {
-      "file": "assets/e208e4bf0b326dc85aad91bfa3356144.webp",
+      "file": "assets/1380bed22b88b6deb27f363bf01be903.webp",
       "words": [
         {
-          "x": 0.18,
-          "y": 0.05,
-          "variant": "bubble",
-          "tail": "bottom-right",
-          "size": 30,
-          "text": {
-            "en": "You caught me.",
-            "it": "Mi hai presa.",
-            "de": "Du hast mich aufgefangen.",
-            "fr": "Tu m'as rattrapée."
-          }
-        },
-        {
-          "x": 0.82,
-          "y": 0.05,
+          "x": 0.2,
+          "y": 0.06,
           "variant": "bubble",
           "tail": "bottom-left",
           "size": 30,
           "text": {
-            "en": "Venus. I felt your door.",
-            "it": "Venus. Ho sentito la tua porta.",
-            "de": "Venus. Ich habe deine Tür gespürt.",
-            "fr": "Venus. J'ai senti ta porte."
+            "en": "She's flying this.",
+            "it": "Lo sta facendo volare.",
+            "de": "Sie fliegt das.",
+            "fr": "Elle fait voler ça."
           }
         },
         {
-          "x": 0.78,
-          "y": 0.56,
-          "variant": "bubble",
-          "tail": "left",
-          "size": 30,
-          "text": {
-            "en": "The ground can answer you.",
-            "it": "La terra può rispondere a te.",
-            "de": "Der Boden kann dir antworten.",
-            "fr": "La terre peut te répondre."
-          }
-        },
-        {
-          "x": 0.22,
-          "y": 0.78,
+          "x": 0.2,
+          "y": 0.38,
           "variant": "bubble",
           "tail": "right",
           "size": 30,
           "text": {
-            "en": "Then teach me.",
-            "it": "Allora insegnami.",
-            "de": "Dann bring es mir bei.",
-            "fr": "Alors apprends-moi."
+            "en": "Stay on it.",
+            "it": "Resta sopra.",
+            "de": "Bleib drauf.",
+            "fr": "Reste dessus."
+          }
+        },
+        {
+          "x": 0.2,
+          "y": 0.7,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "Don't miss.",
+            "it": "Non sbagliare.",
+            "de": "Verfehl mich nicht.",
+            "fr": "Ne me rate pas."
+          }
+        },
+        {
+          "x": 0.8,
+          "y": 0.7,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "text": {
+            "en": "I don't.",
+            "it": "Non sbaglio.",
+            "de": "Tu ich nicht.",
+            "fr": "Jamais."
           }
         }
       ]
     },
     {
-      "file": "assets/248d6f05ab94835f404295ef14c5cca9.webp",
+      "file": "assets/47066c274dba2e0cf3accdab767ad64e.webp",
       "words": [
         {
           "x": 0.24,
@@ -277,10 +277,10 @@
           "tail": "bottom-right",
           "size": 30,
           "text": {
-            "en": "I'm here for the King.",
-            "it": "Sono qui per il Re.",
-            "de": "Ich bin wegen des Königs hier.",
-            "fr": "Je suis là pour le Roi."
+            "en": "Erin. I'm here for the King.",
+            "it": "Erin. Sono qui per il Re.",
+            "de": "Erin. Ich bin wegen des Königs hier.",
+            "fr": "Erin. Je suis là pour le Roi."
           }
         },
         {
@@ -290,10 +290,10 @@
           "tail": "bottom-left",
           "size": 30,
           "text": {
-            "en": "Then you don't go alone.",
-            "it": "Allora non vai da sola.",
-            "de": "Dann gehst du nicht allein.",
-            "fr": "Alors tu n'y vas pas seule."
+            "en": "Venus. Then you don't go alone.",
+            "it": "Venus. Allora non vai da sola.",
+            "de": "Venus. Dann gehst du nicht allein.",
+            "fr": "Venus. Alors tu n'y vas pas seule."
           }
         },
         {
@@ -358,16 +358,73 @@
           "strokeThickness": 8
         },
         {
-          "x": 0.74,
-          "y": 0.72,
+          "x": 0.88,
+          "y": 0.655,
           "variant": "bubble",
           "tail": "left",
           "size": 30,
           "text": {
-            "en": "I've got this one.",
-            "it": "Questa la prendo io.",
-            "de": "Die hier nehme ich.",
-            "fr": "Celle-là, je m'en charge."
+            "en": "I've got the pieces.",
+            "it": "I pezzi li tengo io.",
+            "de": "Die Stücke hab ich.",
+            "fr": "Je tiens les morceaux."
+          }
+        }
+      ]
+    },
+    {
+      "file": "assets/e208e4bf0b326dc85aad91bfa3356144.webp",
+      "words": [
+        {
+          "x": 0.18,
+          "y": 0.05,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "text": {
+            "en": "You caught me.",
+            "it": "Mi hai presa.",
+            "de": "Du hast mich aufgefangen.",
+            "fr": "Tu m'as rattrapée."
+          }
+        },
+        {
+          "x": 0.82,
+          "y": 0.05,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "text": {
+            "en": "I felt your door.",
+            "it": "Ho sentito la tua porta.",
+            "de": "Ich habe deine Tür gespürt.",
+            "fr": "J'ai senti ta porte."
+          }
+        },
+        {
+          "x": 0.78,
+          "y": 0.56,
+          "variant": "bubble",
+          "tail": "left",
+          "size": 30,
+          "text": {
+            "en": "The ground can answer you.",
+            "it": "La terra può rispondere a te.",
+            "de": "Der Boden kann dir antworten.",
+            "fr": "La terre peut te répondre."
+          }
+        },
+        {
+          "x": 0.22,
+          "y": 0.78,
+          "variant": "bubble",
+          "tail": "right",
+          "size": 30,
+          "text": {
+            "en": "Then teach me.",
+            "it": "Allora insegnami.",
+            "de": "Dann bring es mir bei.",
+            "fr": "Alors apprends-moi."
           }
         }
       ]

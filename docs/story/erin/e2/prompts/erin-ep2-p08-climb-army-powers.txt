@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin-the-revenge/ plate 08 (reverse-engineered so a re-roll can match)
+# refs: Image 1 = Erin sheet, Image 2 = Venus, Image 3 = goblin pack, Image 4 = castle from prior pages
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~40% / 24% / 36%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, speed lines. No colour.
+
+PANEL BORDERS: straight rectangles; the middle panel is a shallower band. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin from Image 1 with torn shoulder. Keep Venus from Image 2. Keep goblin design from Image 3. Keep the gothic needle-spire castle from Image 4.
+
+TOP (~40%): Erin climbs a steep rock face, Venus behind her with a hand on Erin's back, storm sky and peaks; no castle yet.
+
+MIDDLE (~24%): From behind, Erin left and Venus right, a packed goblin army with spears filling both flanks, {CASTLE} dead centre at the end of the road.
+
+BOTTOM (~36%): Close two-shot facing us — Venus on the left with earth and roots gathering at her open hands, Erin on the right with a hard white bloom of force in her palms, grit in the air.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with a straight fringe and side tufts, large sharp eyes with heavy lashes, hard determined brow, black zip-up track jacket with high collar and ribbed cuffs, left shoulder seam ripped open showing pale skin, black trousers with a thin side stripe, black lace-up combat boots, wiry athletic build. Venus — adult woman, long dark hair, pale decorative headband across the brow, large dark eyes, dark high-collar frog-button tunic, belt with a star buckle, short tunic hem over dark trousers, calm unhurried stance, faintly rim-lit. Goblins — hunched waist-height creature, warty knobbed skull, long pointed ears, bulging pale eyes, wide fanged grin, sinewy arms, ragged rags, a packed army. CASTLE — a vast black gothic cathedral-castle of needle spires on a storm sky.
+
+EFFECT LOOK: Venus earth is clods and roots; Erin's hands hold a white force bloom, not sparkle. No blood.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. No extra hands, no ghost limbs, no extra fingers.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

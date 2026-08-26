@@ -27,17 +27,22 @@ Default mark: **twentyseven.pictures**, bottom-right corner.
 
 ## Default recipe (27 Pictures)
 
-### New single page (preferred)
+### New / replacement toon plate (do not guess the tool)
 
-Watermark + content-hash + place under the toon assets dir (optional manifest + R2):
+Full pick-the-tool table, flatten, WebP, mid-list insert, and `TOON` slugs:
+**Claude.md → “Adding a new toon page image”**. Short version:
 
 ```bash
-make add-image SRC=~/Downloads/page.jpg TOON=jax
-make add-image SRC=~/Downloads/page.jpg TOON=jax MANIFEST=1 UPLOAD=1
-# or: npm run add-image -- ~/Downloads/page.jpg --toon erin --manifest --upload
+# flatten first, then:
+make swap-page SRC=/tmp/flat.png TOON=erin-the-revenge PAGE=7   # replace N
+make swap-page SRC=/tmp/flat.png TOON=erin-the-revenge          # append
+# mid-list insert: swap-page cannot do it — see Claude.md
 ```
 
-Script: `scripts/add-toon-image.js`. See Claude.md → “Adding a new toon page image”.
+`TOON` is the `content/toons/<toon>/` folder (`erin-the-revenge`, not “Erin”).
+`add-image` keeps the source extension and `--config` only **appends** — do not
+use it for Erin/Nero WebP books or a page that must land after page 3.
+Do not `--publish` unless asked. Already-watermarked files: `--no-watermark`.
 
 ### Batch folder (existing files)
 

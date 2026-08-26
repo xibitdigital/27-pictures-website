@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin-the-revenge/ plate 11 (reverse-engineered so a re-roll can match)
+# refs: Image 1 = Goblin King, Image 2 = Erin sheet, Image 3 = Venus, Image 4 = gargoyle
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~40% / 20% / 40%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, speed lines. No colour.
+
+PANEL BORDERS: top and bottom are plain rectangles; the one effect border is the middle panel as a slanted wedge band. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep the King from Image 1. Keep Erin from Image 2. Keep Venus from Image 3. Keep the gargoyle from Image 4.
+
+TOP (~40%): The Goblin King roars on a battlement, fists out, goblin soldiers on both sides, needle spires behind him, storm sky.
+
+MIDDLE (wedge, ~20%): Extreme close-up of Erin's left eye filling the band, the castle reflected tiny in the iris, lashes and fringe cropped at the edges.
+
+BOTTOM (~40%): From behind, Erin left and Venus right on a stair, {CASTLE} filling the sky; a stone gargoyle perches on a pillar at each side, facing inward.
+
+SUBJECT LOCK: Goblin King — huge broad-shouldered goblin, jagged bone crown, long pale hair, heavy scaled plate and spiked pauldrons, X-strap across a bare muscled chest, wide belt, kilt of hide, brutal goblin face scaled up. Erin — teenage girl, pale skin, short choppy dark bob with a straight fringe and side tufts, large sharp eyes with heavy lashes, hard determined brow, black zip-up track jacket with high collar and ribbed cuffs, left shoulder seam ripped open showing pale skin, black trousers with a thin side stripe, black lace-up combat boots, wiry athletic build. Venus — adult woman, long dark hair, pale decorative headband across the brow, large dark eyes, dark high-collar frog-button tunic, belt with a star buckle, short tunic hem over dark trousers, calm unhurried stance, faintly rim-lit. GARGOYLE — hunched winged stone beast twice Erin's size, cracked granite hide, blunt horned brow, blank pale glowing eyes, heavy ribbed bat wings, four long clawed talons per hand, stone dust flaking off in motion; not a dragon, not a demon, two of them as statues-alive on the pillars.
+
+No blood. Eye panel is quiet; leave the iris readable.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per human; the gargoyle has two arms, two legs and two wings only; goblins have two arms and two legs. No extra limbs, no ghost hands, no extra fingers.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

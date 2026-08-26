@@ -219,11 +219,8 @@ make deploy-cdn    # upload R2 first, then deploy
 Static card-art URLs use the token **`%VITE_ASSET_BASE%/card-art/…`** in HTML/sitemap
 (expanded at build by `vite/plugins/cdnMedia.ts`).
 
-Local workflow for **new** plates:
-
-1. `make add-image SRC=… TOON=jax` → writes under `public/toons/…/assets/` (untracked)
-2. `make add-image … UPLOAD=1` or `npm run upload-assets` → R2
-3. Commit only manifest/words changes, not the binaries
+Local workflow for **new** plates — pick the tool in _Adding a new toon page
+image_ below. Do not start from `add-image` for Erin/Nero WebP books.
 
 - Readers: `resolveAssetUrl()` + `asset-page-dir` on `ToonReaderShell`
 - Keys: `toons/jax/assets/<hash>.jpg`, `card-art/erin.jpg`
@@ -287,36 +284,109 @@ renders 1024×1792 while the prompt still says 1008×1792.
 
 ### Adding a new toon page image
 
-Images are content-hashed (`md5.ext`) under `public/toons/<toon>/assets/` — same convention as
-Jax / Erin / Nero plates. Prefer the one-shot command (watermark + hash + R2):
+`TOON` is the **folder under `content/toons/`**, not a display name:
+`jax` · `erin` · `erin-the-revenge` · `nero` · `redsmile-static`.
+`add-image` warns “unknown toon” for anything outside `jax|erin|nero` — ignore
+it; dest is still `public/toons/<toon>/assets/` and the R2 key is
+`toons/<toon>/assets/<md5>.<ext>`. `swap-page` needs that folder’s
+`config.json`. Flatten colour first (see _Plate colour_ above). Do **not**
+`--publish` / `CONFIG=1` / `make ship` unless asked.
+
+Pick the tool by what the page is doing:
+
+| Job | Tool | Why |
+| --- | --- | --- |
+| **Replace** page N (keep captions) | `make swap-page SRC=… TOON=… PAGE=N` | watermark → WebP q90 → hash → R2 → rewrite `pages[N-1].file` |
+| **Append** at the end | `make swap-page SRC=… TOON=…` (omit `PAGE`, or pass count+1) | same pipeline; new page with `words: []` |
+| **Insert mid-list** (e.g. after page 3) | flatten + watermark + WebP by hand, then splice `config.json` | `swap-page` **cannot insert** — `PAGE=4` on a 17-page book *replaces* page 4 |
+| Stage a raw JPG/PNG, no WebP | `make add-image SRC=… TOON=jax` | keeps the source extension; `--config` **only appends** and publishes |
+
+Erin EP 2 / Nero / RED SMILE plates are **WebP**. `add-image` will upload a
+PNG if that is what you hand it — use `swap-page` (or the mid-insert recipe)
+so the book stays WebP.
 
 ```bash
-# Watermark + hash + optional local stage
-make add-image SRC=~/Downloads/page17.jpg TOON=jax
+# Replace page 7, keep its words[] (flatten first)
+magick ~/Downloads/plate.png -colorspace Gray -colorspace sRGB /tmp/flat.png
+make swap-page SRC=/tmp/flat.png TOON=nero PAGE=7
 
-# Upload to R2 + append page to content/ config + publish hashed config
-make add-image SRC=~/Downloads/page17.jpg TOON=jax CONFIG=1 UPLOAD=1
+# Already watermarked? skip the stamp or it bakes in twice
+make swap-page SRC=/tmp/flat.png TOON=nero PAGE=7 ARGS='--no-watermark'
 
-# npm equivalent (toon: jax | erin | nero)
-npm run add-image -- ~/Downloads/page17.jpg --toon nero --config --upload
+# Append
+make swap-page SRC=/tmp/flat.png TOON=erin-the-revenge
+
+# Dry-run
+make swap-page SRC=/tmp/flat.png TOON=erin-the-revenge PAGE=4 DRY=1
 ```
 
-What it does:
+`swap-page` always uploads the plate. It does **not** write
+`public/toons/<toon>/assets/` (that dir is gitignored staging for `add-image`).
+Without `PUBLISH=1` it prints `npm run publish-toon-config -- --toon <toon>`
+instead of running it. It never deletes the old R2 object — purge later.
 
-1. Copies the source into a temp dir
-2. Bakes `twentyseven.pictures` (ImageMagick via `scripts/watermark-images.sh`) unless `--no-watermark`
-3. Renames by **md5 of the final bytes** → `assets/<md5>.jpg` (CDN key `toons/<toon>/assets/…`)
-4. `--config` / `--manifest` — appends the page to `content/toons/<toon>/config.json` and publishes
-5. `--upload` — `wrangler r2 object put` + updates `scripts/r2-assets-lock.json`
+#### Insert mid-list (swap-page cannot do this)
 
-Batch watermark only (existing folder, no hash/rename):
+`PAGE=N` with `N <= count` replaces. To put a new plate **after** page 3,
+process the bytes, then `splice(3, 0, …)` into `pages[]`. Worked example
+(Erin EP 2 descent, 2026-08):
+
+```bash
+SRC=~/Downloads/erin-generate_scene_00001_\ \(3\).png
+TOON=erin-the-revenge
+WORK=$(mktemp -d)
+
+magick "$SRC" -colorspace Gray -colorspace sRGB "$WORK/plate.png"
+bash scripts/watermark-images.sh "$WORK" --text twentyseven.pictures --force
+magick "$WORK/plate.png" -quality 90 -define webp:method=6 "$WORK/plate.webp"
+
+# hash + R2 + local staging (no --config — that would append)
+node scripts/add-toon-image.js "$WORK/plate.webp" \
+  --toon "$TOON" --no-watermark --upload --keep-local
+# prints: config path: "assets/<md5>.webp"
+```
+
+Then splice — index `3` is “after page 3” — and add `words[]` by hand:
+
+```js
+// node, from repo root
+const fs = require("fs");
+const p = "content/toons/erin-the-revenge/config.json";
+const data = JSON.parse(fs.readFileSync(p, "utf8"));
+data.pages.splice(3, 0, { file: "assets/<md5>.webp", words: [/* captions */] });
+fs.writeFileSync(p, JSON.stringify(data, null, 2) + "\n");
+```
+
+Vite dev reads `content/toons/<toon>/config.json` via `__dev/toon-config`, so
+the new page shows locally once the plate is on R2 (`VITE_ASSET_BASE`). Staging
+and production still serve the **locked** hashed config until
+`make ship TOON=<toon>`.
+
+After an insert, bump page counts (reader fallback, series `pages`, locales
+`ep2Cue`, `llms.txt`) and rename `docs/story/<series>/eN/prompts/` files from
+the high number down so names do not collide.
+
+#### `add-image` (JPG/PNG append / local stage only)
+
+```bash
+make add-image SRC=~/Downloads/page17.jpg TOON=jax              # local stage
+make add-image SRC=~/Downloads/page17.jpg TOON=jax UPLOAD=1     # + R2
+make add-image SRC=~/Downloads/page17.jpg TOON=jax CONFIG=1 UPLOAD=1  # + append + publish
+```
+
+1. Temp copy → `watermark-images.sh` unless `--no-watermark`
+2. Rename by **md5 of the final bytes** → `assets/<md5>.<ext>` (keeps jpg/png/webp)
+3. `--upload` → R2 + `scripts/r2-assets-lock.json`
+4. `--config` / `--manifest` → **append** to `content/toons/<toon>/config.json` and publish
+
+Batch watermark only (no hash, no R2):
 
 ```bash
 make watermark ARGS='public/toons/jax/assets --backup'
-# or: npm run watermark -- public/toons/jax/assets --backup
 ```
 
-Requires ImageMagick 7+ (`brew install imagemagick`).
+Requires ImageMagick 7+ (`brew install imagemagick`). Re-running a watermark
+without restoring from backup **doubles** the stamp.
 
 ### Contact Form Worker
 
@@ -554,7 +624,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Jax               | `/toons/jax-the-chip/`     | **Jax is the series; `The Chip` is episode 1.** Series landing at `/toons/jax/`. Netrunner / Robin Hood of mind-tech; multilingual SFX (see `content/toons/jax/README.md`)                       |
 | Nero              | `/toons/nero-the-dog/`     | **Nero is the series; `The Dog` is episode 1.** Series landing at `/toons/nero/`. Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback (see `content/toons/nero/README.md`) |
 | RED SMILE: static | `/toons/redsmile-static/`  | **RED SMILE is the series; `static` is episode 1** — 12 plates. Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                     |
-| Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 17 plates, EN/IT/DE/FR captions, voiced throughout. Own reader, not more pages on ep 1. Plates from `/erin-toon-page` (see `content/toons/erin/README.md`) |
+| Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 18 plates, EN/IT/DE/FR. Erin returns to defeat the Goblin King; Venus teaches matter. Prompts in `docs/story/erin/e2/prompts/` (`erin-ep2-*`). See `content/toons/erin/README.md` |
 
 **Erin EP 2 has shipped (2026-08)**: `/toons/erin-the-revenge/` is live and
 `index, follow`, listed in the sitemap and `llms.txt`, and reachable through

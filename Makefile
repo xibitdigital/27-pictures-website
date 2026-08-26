@@ -119,7 +119,7 @@ watermark: ## Bake site watermark (pass ARGS=…)
 	$(NPM) run watermark -- $(ARGS)
 
 .PHONY: add-image
-add-image: ## Watermark + hash toon image → R2 (SRC=… TOON=jax|erin|nero [UPLOAD=1] [CONFIG=1] [KEEP_LOCAL=1])
+add-image: ## Watermark + hash (keeps src ext; --config appends only) SRC=… TOON=<content/toons folder> [UPLOAD=1] [CONFIG=1] [KEEP_LOCAL=1]
 	@test -n "$(SRC)" || (echo "Usage: make add-image SRC=path/to.jpg TOON=jax [UPLOAD=1] [CONFIG=1] [KEEP_LOCAL=1]" && exit 1)
 	@test -n "$(TOON)" || (echo "Usage: make add-image SRC=path/to.jpg TOON=jax [UPLOAD=1] [CONFIG=1] [KEEP_LOCAL=1]" && exit 1)
 	$(NPM) run add-image -- "$(SRC)" --toon "$(TOON)" \
@@ -139,7 +139,7 @@ convert-plates: ## Toon plates → WebP in converted/ (TOON=jax|erin|nero [QUALI
 		$(ARGS)
 
 .PHONY: swap-page
-swap-page: ## Replace/add one toon page: watermark → WebP → R2 → config.json (SRC=… TOON=… [PAGE=N] [QUALITY=90] [PUBLISH=1] [DRY=1])
+swap-page: ## Replace page N or append: watermark → WebP → R2 → config (SRC=… TOON=<folder> [PAGE=N] [PUBLISH=1] [DRY=1]). Cannot insert mid-list.
 	@test -n "$(SRC)" || (echo "Usage: make swap-page SRC=path/to.png TOON=nero [PAGE=N] [QUALITY=90] [PUBLISH=1] [DRY=1]" && exit 1)
 	@test -n "$(TOON)" || (echo "Usage: make swap-page SRC=path/to.png TOON=nero [PAGE=N] [QUALITY=90] [PUBLISH=1] [DRY=1]" && exit 1)
 	$(NPM) run swap-page -- "$(SRC)" --toon "$(TOON)" \

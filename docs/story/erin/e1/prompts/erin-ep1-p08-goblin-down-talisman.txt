@@ -1,0 +1,27 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin/ plate 08
+# refs: Image 1 = goblin pack
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, two stacked panels split by a zigzag lightning slash as the gutter (~48% / 52%). Crisp ink, cross-hatching, grey screentone, deep blacks. No colour.
+
+PANEL BORDERS: the one effect is a zigzag lightning slash as the gutter between two panels. Reading order top to bottom.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only. Occult marks on props may exist as abstract glyphs, never readable words.
+
+PIN (keep from refs): Goblin from Image 1. Talisman is a carved tag with abstract occult glyphs, never readable letters.
+
+TOP: A goblin lies on cracked cobbles beside a brick wall, face down, one eye open, out of the fight.
+
+BOTTOM: Close on a tattered leather talisman with a braided cord and three stacked occult marks, a goblin claw reaching in from the right, lightning texture in the ground.
+
+SUBJECT LOCK: Goblin — hunched waist-height goblin, warty knobbed skull, pointed ears, bulging pale eyes, fanged grin, ragged rags. No Erin on this page.
+
+Talisman glyphs are abstract marks, not Latin text. No blood pools.
+
+COMPOSITION: leave flat space in the top band of each panel for caption overlays; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. Goblins four limbs. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

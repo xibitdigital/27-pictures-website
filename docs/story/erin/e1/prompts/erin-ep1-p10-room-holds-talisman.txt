@@ -1,0 +1,25 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin/ plate 10
+# refs: Image 1 = Erin sheet, Image 2 = previous talisman page
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, ONE splash, thin keyline, black page field. Crisp ink, cross-hatching, grey screentone, deep blacks. No colour.
+
+PANEL BORDERS: single framed splash.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only. Occult marks on props may exist as abstract glyphs, never readable words.
+
+PIN (keep from refs): Erin from Image 1. Talisman from Image 2 — same tag, cord, three stacked glyphs, no readable words.
+
+SCENE: Erin's room, full body. She stands holding the talisman in both hands, studying it, white rim glow. Iron bed, desk with scrolls and inkwell, walls of maps and notes, wooden floor.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with straight fringe and side tufts, large sharp eyes, heavy lashes, black zip-up track jacket, black trousers with a thin side stripe, black combat boots. No other people.
+
+Talisman faintly luminous. Bare-bulb room. No lettering on the wall papers.
+
+COMPOSITION: leave flat space in the top band of each panel for caption overlays; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. Goblins four limbs. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

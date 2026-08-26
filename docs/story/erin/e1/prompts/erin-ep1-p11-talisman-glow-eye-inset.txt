@@ -1,0 +1,25 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin/ plate 11
+# refs: Image 1 = Erin sheet, Image 2 = talisman from previous page
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, full-bleed talisman with one small inset overlapping the top-right corner. Crisp ink, cross-hatching, grey screentone, deep blacks. No colour.
+
+PANEL BORDERS: one effect: a small inset panel overlapping the top-right, breaking the keyline. Rest is one splash of the talisman.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only. Occult marks on props may exist as abstract glyphs, never readable words.
+
+PIN (keep from refs): Erin eyes from Image 1. Talisman from Image 2, abstract glyphs only.
+
+SCENE: The talisman fills the page, glowing, hanging by its braided cord against the papered wall. TOP-RIGHT INSET: tight on Erin's glaring eyes and fringe only.
+
+SUBJECT LOCK: Erin — eyes only in the inset, same face as Image 1. Talisman as Image 2.
+
+Glow is a white aura. No readable text on the tag.
+
+COMPOSITION: leave flat space in the top band of each panel for caption overlays; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. Goblins four limbs. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

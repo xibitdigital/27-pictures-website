@@ -1,0 +1,29 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin-the-revenge/ plate 12 (reverse-engineered so a re-roll can match)
+# refs: Image 1 = Erin sheet, Image 2 = Goblin King, Image 3 = Venus
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, three stacked panels (~36% / 28% / 36%), thin white gutters, thin black keylines, white page margin. Crisp ink linework, dense cross-hatching, grey screentone and ink wash, deep solid blacks, speed lines. No colour.
+
+PANEL BORDERS: top and bottom rectangles; the middle panel is a slanted wedge band. Reading order stays top to bottom. No triangle panels.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): keep Erin from Image 1 with torn shoulder. Keep the King from Image 2. Keep Venus from Image 3.
+
+TOP (~36%): The King leaps off a battlement at Erin, who braces on the cobbles to the right, goblin soldiers on the wall behind, storm sky.
+
+MIDDLE (wedge, ~28%): A huge cracked stone column flies through the air as a thrown club, the King a small tumbling mass behind it, speed lines.
+
+BOTTOM (~36%): Venus in the right foreground, both hands in the dirt, raising a rubble wall; Erin runs small in the left background behind the rising stones.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with a straight fringe and side tufts, large sharp eyes with heavy lashes, hard determined brow, black zip-up track jacket with high collar and ribbed cuffs, left shoulder seam ripped open showing pale skin, black trousers with a thin side stripe, black lace-up combat boots, wiry athletic build. Goblin King — huge broad-shouldered goblin, jagged bone crown, long pale hair, heavy scaled plate and spiked pauldrons, X-strap across a bare muscled chest, wide belt, kilt of hide, brutal goblin face scaled up. Venus — adult woman, long dark hair, pale decorative headband across the brow, large dark eyes, dark high-collar frog-button tunic, belt with a star buckle, short tunic hem over dark trousers, calm unhurried stance, faintly rim-lit.
+
+The column is solid masonry. Venus's wall is packed stones and clods with white seams. No blood.
+
+COMPOSITION: leave clear dark or flat space in the top band of each panel for later caption overlays; never crowd the frame edge with faces; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure; the King is a huge goblin with two arms and two legs only. No extra limbs, no ghost hands.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

@@ -77,18 +77,23 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log(`Usage: node scripts/swap-toon-page.js <image> --toon <jax|erin|nero> [options]
+  console.log(`Usage: node scripts/swap-toon-page.js <image> --toon <folder> [options]
 
-  --page N        1-based page to replace. Omit, or pass count+1, to append.
+  --toon          content/toons/<folder> slug (erin-the-revenge, nero, jax, …)
+  --page N        1-based page to REPLACE. Omit, or pass count+1, to append.
+                  N <= count replaces. There is no insert — PAGE=4 on a 17-page
+                  book overwrites page 4. Mid-list insert: Claude.md
+                  → “Adding a new toon page image”.
   --quality N     WebP quality, default 90
-  --no-watermark  Skip baking the site watermark
+  --no-watermark  Skip baking the site watermark (use on already-stamped files)
   --text TEXT     Watermark text, default "twentyseven.pictures"
   --publish       Also publish config.json to R2 (default: prints the command)
   --dry-run       Report what would happen, write and upload nothing
 
-Replacing a page keeps its existing captions — check the new plate's panel
-gutters land where the old ones did (see content/toons/<toon>/README.md,
-"Replacing a page's plate") or captions may drift.
+Pipeline: flatten the source yourself, then this script watermarks, converts
+to WebP, content-hashes, uploads to R2, and rewrites config.json.
+Replacing a page keeps its existing captions — check panel gutters still match
+or captions drift (see content/toons/<toon>/README.md).
 `);
 }
 

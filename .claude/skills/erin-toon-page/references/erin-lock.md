@@ -1,7 +1,11 @@
 # Erin & the Goblins — character & world lock
 
 Derived from the shipped plates in `cdn-backup/toons/erin/assets/`
-(27 pages, 1152×1728, B&W except the cover).
+(ep 1, 27 pages) and `cdn-backup/toons/erin-the-revenge/assets/` (ep 2, 18
+pages), 1152×1728, B&W except the ep-1 cover.
+
+Prompts: `docs/story/erin/e1/prompts/` (`erin-ep1-*`) and
+`docs/story/erin/e2/prompts/` (`erin-ep2-*`).
 
 ## Erin
 
@@ -26,6 +30,9 @@ generation.
 never armour, cape or hood, never colour, never a different jacket. Same
 outfit every page of the prequel.
 
+**Ep 2 tear:** from the gargoyle grab onward the left shoulder seam of the
+jacket is ripped open (pale skin showing). Keep that rip on every later plate.
+
 ## Goblins (pack)
 
 **Ref plates:** `b19084ec3aa6db1355311aea48adfd23.jpg` (alley pack chase),
@@ -49,7 +56,33 @@ lettering — always attach it with the no-text ban clause).
 - Twice Erin's mass, broad shoulders, same goblin face scaled up and brutal
 - Jagged bone/iron crown, long pale hair
 - Heavy scaled plate armour, spiked pauldrons, wide belt
-- Throne-cave setting: stalactites, rubble, torch shadows
+- Throne-cave setting in ep 1: stalactites, rubble, torch shadows
+- Ep 2 also uses a vast black gothic **cathedral-castle** of needle spires
+  (storm sky, battlements, courtyard)
+
+## Venus (ep 2)
+
+Mentor who moves matter (stone, soil, wood — inked as clods, roots, white
+seams, grit; never sparkle). Pin the face from the reference; do not
+paraphrase it.
+
+- Adult woman, long dark hair, pale decorative headband across the brow
+- Dark high-collar frog-button tunic, belt with a star buckle, short tunic
+  hem over dark trousers
+- Calm, unhurried, faintly rim-lit even under strain
+- Named on page 5 (handshake: “Venus.”). She felt Erin’s portal, drives the
+  dirt platform (p4), traps the shattered gargoyle in dirt and roots (p6 —
+  not a second golem, the clod-mass *is* the pieces), teaches the ground
+  (p7), walks against the King
+
+## Gargoyle (ep 2)
+
+Winged stone mount, twice Erin’s size: cracked granite hide, blunt horned
+brow, blank pale glowing eyes, heavy ribbed bat wings, four clawed talons
+per hand. A statue made flesh — not a dragon, not a demon. One goblin
+**rides** its shoulders and does the grabbing (p2). Erin punches it apart
+(p6); Venus binds the fragments in packed dirt and roots so they cannot
+reassemble — do not draw a separate earth-creature in that panel.
 
 ## Supporting
 
@@ -103,4 +136,5 @@ no keyline cutting a face in half.
 
 **None baked into the plate.** Pages 3 and the KRAK/BOOM plate carry legacy
 in-image lettering; every new plate stays clean and gets its words from
-`content/toons/erin/config.json` → `words[]` as FlipFrame overlays.
+`content/toons/erin/config.json` or `content/toons/erin-the-revenge/config.json`
+→ `words[]` as FlipFrame overlays.

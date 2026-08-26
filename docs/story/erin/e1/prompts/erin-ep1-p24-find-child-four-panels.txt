@@ -1,0 +1,31 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# derived-from: shipped /toons/erin/ plate 24
+# refs: Image 1 = Erin sheet, Image 2 = child as on previous page
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, four panels: two on top, two on bottom, slightly tilted. Crisp ink, cross-hatching, grey screentone, deep blacks. No colour.
+
+PANEL BORDERS: four rectangles, light tilts OK. Reading order top-left, top-right, bottom-left, bottom-right. No triangles.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only. Occult marks on props may exist as abstract glyphs, never readable words.
+
+PIN (keep from refs): Erin from Image 1. Child from Image 2, blonde, simple clothes, small cross pendant OK as a shape not a letter.
+
+TOP LEFT: Erin kneeling, hand on the child's shoulder, the child sitting on cave rock.
+
+TOP RIGHT: Erin standing in the tunnel, one hand held out toward us, gentle.
+
+BOTTOM LEFT: Close on the child's teary smiling face.
+
+BOTTOM RIGHT: Child clasping hands, Erin beside her looking aside, cave behind.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with straight fringe and side tufts, large sharp eyes, heavy lashes, black zip-up track jacket, black trousers with a thin side stripe, black combat boots. Child — small blonde girl, shoulder-length hair, simple dress/tunic, not Erin, not a goblin. No goblins.
+
+Soft cave light. No lettering.
+
+COMPOSITION: leave flat space in the top band of each panel for caption overlays; no keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. Goblins four limbs. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

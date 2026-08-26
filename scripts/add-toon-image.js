@@ -63,14 +63,18 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log(`Usage: node scripts/add-toon-image.js <image> --toon <jax|erin|nero> [options]
+  console.log(`Usage: node scripts/add-toon-image.js <image> --toon <folder> [options]
 
+  --toon         content/toons/<folder> slug (jax, erin, erin-the-revenge, nero, …)
   --upload       Put on R2 (CDN). Does not leave a file under public/ unless --keep-local
   --keep-local   Also write public/toons/<toon>/assets/<md5>.ext (gitignored staging)
-  --config       Append page to content/ config + publish config to R2
+  --config       APPEND page to content/ config + publish. Cannot insert mid-list
   --no-watermark | --force | --dry-run | --text TEXT | --dest DIR
 
   --manifest is an alias for --config
+  Keeps the source extension (jpg/png/webp) — no WebP convert.
+  For replace/append WebP books, or a mid-list insert, see Claude.md
+  → “Adding a new toon page image”. Prefer make swap-page for those.
 
   make add-image SRC=~/page.jpg TOON=jax CONFIG=1 UPLOAD=1
 `);
