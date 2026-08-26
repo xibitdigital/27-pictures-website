@@ -552,7 +552,7 @@
         {
           "x": 0.45,
           "y": 0.62,
-          "variant": "bubble",
+          "variant": "burst",
           "tail": "left",
           "size": 38,
           "text": {
