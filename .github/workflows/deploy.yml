@@ -61,7 +61,7 @@ jobs:
       - name: Deploy to production (twentyseven-pictures)
         if: github.ref == 'refs/heads/main'
         id: deploy-prod
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -70,7 +70,7 @@ jobs:
       - name: Deploy to staging (twentyseven-pictures-staging)
         if: github.ref == 'refs/heads/staging'
         id: deploy-staging
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
