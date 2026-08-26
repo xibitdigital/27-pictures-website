@@ -37,7 +37,7 @@ one English URL because their captions are already multilingual.
 - [Interactive Toons index](https://twentyseven.pictures/toons/): all FlipFrame interactive webcomics — page-turn readers with voiced captions
 - [Erin & the Goblins series](https://twentyseven.pictures/toons/erin-and-the-goblins/): dark-fantasy series overview, 2 episodes
 - [Erin — Episode 1](https://twentyseven.pictures/toons/erin/): The Missing Child — 27-page interactive manga reader
-- [Erin — Episode 2](https://twentyseven.pictures/toons/erin-the-revenge/): The Revenge — 18-page B&W dark fantasy toon, EN/IT/DE/FR captions
+- [Erin — Episode 2](https://twentyseven.pictures/toons/erin-the-revenge/): The Revenge — 23-page B&W dark fantasy toon, EN/IT/DE/FR captions
 - [Jax](https://twentyseven.pictures/toons/jax/): 23-page cyberpunk netrunner toon, EN/IT/DE/FR captions
 - [Nero](https://twentyseven.pictures/toons/nero/): 24-page cyberpunk detective toon, EN/IT/DE/FR captions
 - [RED SMILE: static](https://twentyseven.pictures/toons/redsmile-static/): RED SMILE series episode 1 — 12-page psychological horror in B&W gekiga ink, EN/IT/DE/FR captions

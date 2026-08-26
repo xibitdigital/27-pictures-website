@@ -658,7 +658,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | Jax               | `/toons/jax-the-chip/`     | **Jax is the series; `The Chip` is episode 1.** Series landing at `/toons/jax/`. Netrunner / Robin Hood of mind-tech; multilingual SFX (see `content/toons/jax/README.md`)                       |
 | Nero              | `/toons/nero-the-dog/`     | **Nero is the series; `The Dog` is episode 1.** Series landing at `/toons/nero/`. Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback (see `content/toons/nero/README.md`) |
 | RED SMILE: static | `/toons/redsmile-static/`  | **RED SMILE is the series; `static` is episode 1** — 12 plates. Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                     |
-| Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 21 plates, EN/IT/DE/FR. Erin returns to defeat the Goblin King; Venus teaches matter. Prompts in `docs/story/erin/e2/prompts/` (`erin-ep2-*`). See `content/toons/erin/README.md` |
+| Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 23 plates, EN/IT/DE/FR. Erin returns to defeat the Goblin King; Venus teaches matter. Prompts in `docs/story/erin/e2/prompts/` (`erin-ep2-*`). See `content/toons/erin/README.md` |
 
 **Erin EP 2 has shipped (2026-08)**: `/toons/erin-the-revenge/` is live and
 `index, follow`, listed in the sitemap and `llms.txt`, and reachable through

@@ -178,6 +178,32 @@ describe("config defaults (a lean word entry)", () => {
     expect(line.style["font-size"]).toBe("22px");
   });
 
+  it("lets an explicit color and stroke win on credit captions", () => {
+    const c = buildCaption(
+      {
+        x: 0.5,
+        y: 0.3,
+        variant: "credit",
+        size: 40,
+        color: "#111111",
+        stroke: "#fff",
+        strokeThickness: 2,
+        text: { en: "The Revenge" },
+      },
+      0,
+      ctx
+    )!;
+    expect(c.style["--jax-word-color"]).toBe("#111111");
+    expect(c.textStyle.color).toBe("#111111");
+    expect(c.textStyle["-webkit-text-stroke"]).toMatch(/#fff/i);
+  });
+
+  it("does not force white onto a credit caption without color", () => {
+    const c = buildCaption({ x: 0.5, y: 0.9, variant: "credit", text: { en: "To be continued…" } }, 0, ctx)!;
+    expect(c.textStyle.color).toBeUndefined();
+    expect(c.style["--jax-word-color"]).toBeUndefined();
+  });
+
   it("still obeys an explicit size and maxWidth", () => {
     const c = buildCaption(
       { x: 0.2, y: 0.4, variant: "bubble", size: 40, maxWidth: 0.25, text: { en: "Loud." } },

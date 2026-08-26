@@ -1,0 +1,28 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# place: reader page 22 (becomes page 23 once the title is inserted)
+# overlays later: THE END / Volume 3 — Coming Soon / story by Olivia & Marco Sangalli / twentyseven.pictures
+# refs: Image 1 = Erin sheet, Image 2 = Venus, Image 3 = portal plate (energy inking), Image 4 = last story plate (forest two-shot)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, TWO stacked panels (~50% / 50%), thin white gutters, thin black keylines, white page margin. Crisp ink, cross-hatching, grey screentone, deep blacks. No colour.
+
+PANEL BORDERS: two straight rectangles. Reading order stays top to bottom. No triangle panels, no lightning, no tilt.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): Erin from Image 1, from behind, left shoulder seam ripped open. Venus from Image 2, from behind. Portal as a ring of white spiral light from Image 3. Forest ink from Image 4. Do not redesign identity.
+
+TOP (~50%): Erin left and Venus right, both full body from behind, walking away from us down a forest path; her torn left shoulder reads as a pale gap in the black jacket; Venus's long hair and headband readable from the back; pale leaves in the air; a bright white spiral portal already visible at the far end of the path, small. No goblins, no King, no army. Leave the top band of this panel clear of heads.
+
+BOTTOM (~50%): The portal fills the panel — a ring of white spiral light as a door in cave-dark, grit and leaves drawn inward, no figures, no faces. Quiet empty field around the vortex so THE END can sit as an overlay. They have already walked in; we only see the door.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with a straight fringe and side tufts, black zip-up track jacket with high collar, left shoulder seam ripped open showing pale skin, black trousers with a thin side stripe, black lace-up combat boots, wiry athletic build. Venus — adult woman, long dark hair, pale decorative headband, dark high-collar frog-button tunic, belt with a star buckle, short tunic hem over dark trousers, calm unhurried walk. Portal — ring of white spiral light.
+
+LIGHT: the portal is the key. Quiet, no gore. This is the end plate — still no lettering in the art. THE END is a caption overlay, not in the picture.
+
+COMPOSITION: leave clear dark or flat space in the top band of the upper panel; the bottom panel is mostly empty around the vortex. No keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins.

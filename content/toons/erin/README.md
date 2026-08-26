@@ -17,15 +17,16 @@ Episode 1 is **ERIN & THE GOBLINS — the missing CHILD** (Volume 1 Prequel),
 town, finds goblins behind it, opens a portal and fights the Goblin King, then
 walks the child home.
 
-Episode 2 is **The Revenge**, own reader `/toons/erin-the-revenge/`, **21
-plates**. Erin tears a portal back into the goblin world to **defeat the Goblin
+Episode 2 is **The Revenge**, own reader `/toons/erin-the-revenge/`, **23
+story plates**.
+Erin tears a portal back into the goblin world to **defeat the Goblin
 King**. Venus — a stranger who can move matter — catches her, teaches her, and
-walks with her. They name themselves on page 5 (handshake). Captions EN/IT/DE/FR.
+walks with her. They name themselves on page 6 (handshake). Captions EN/IT/DE/FR.
 New plates carry **no baked lettering**; words live in `config.json` → `words[]`.
 
 Ep-2 voices: `erin`, `venus`, `goblinking` (`scripts/voices.json`). The
 goblin rider is `goblinking` pitched **+12%**. Place reverb is `plaza` on
-the book, `plaza-deep` on pages 19–20 (`scripts/reverb-types.json`).
+the book, `plaza-deep` on pages 20–21 (`scripts/reverb-types.json`).
 
 ## Prompt archive
 
@@ -78,44 +79,47 @@ FlipFrame overlay, not baked in (legacy exceptions noted in the skill).
 
 ## Episode 2 — running order (reader)
 
-Config order today (`content/toons/erin-the-revenge/config.json`):
+Config order today (`content/toons/erin-the-revenge/config.json`) is 23
+plates including the title splash:
 
 | Page | Beats | Prompt |
 | ---- | ----- | ------ |
-| 1 | Portal → forest walk → sleep + eyes (no campfire) | `erin-ep2-p01-portal-forest-sleep-eyes.txt` |
-| 2 | Aerial carry / claw through jacket / face ECU | `erin-ep2-p02-gargoyle-carry-claw-tear-face.txt` |
-| 3 | Canopy / break free / dirt platform | `erin-ep2-p03-aerial-break-dirt-platform.txt` |
-| 4 | Venus lowers Erin on the dirt platform | `erin-ep2-p04-platform-descent-venus.txt` |
-| 5 | They name themselves (handshake), walk, gargoyle dives | `erin-ep2-p05-handshake-walk-gargoyle-dive.txt` |
-| 6 | Erin punches the gargoyle; Venus traps the pieces | `erin-ep2-p06-erin-punch-venus-earthform.txt` |
-| 7 | She felt Erin’s door; lifts a boulder; Erin asks to be taught | `erin-ep2-p07-venus-meet-boulder.txt` |
-| 8 | Climb, army + castle, both using power | `erin-ep2-p08-climb-army-powers.txt` |
-| 9 | Rider reports; King slams the floor; rider ECU | `erin-ep2-p09-throne-fist-rider-terror.txt` |
-| 10 | Chasm, Erin punches a goblin, gates | `erin-ep2-p10-chasm-punch-gates.txt` |
-| 11 | King on the wall, Erin’s eye, gargoyles on pillars | `erin-ep2-p11-king-battlement-eye-gargoyles.txt` |
-| 12 | King leaps, throws a column, Venus raises a wall | `erin-ep2-p12-king-leap-column-venus-wall.txt` |
-| 13 | Column vs dirt cone | `erin-ep2-p13-column-dirt-block.txt` |
-| 14 | Boulder, Erin catches, King blasted | `erin-ep2-p14-boulder-catch-king-blast.txt` |
-| 15 | King comes back — knee, black eyes (generate_scene 13) | `erin-ep2-p15-king-knee-black-eyes.txt` |
-| 16 | King hits Erin (generate_scene 12) | `erin-ep2-p17-king-final-blow.txt` |
-| 17 | Erin white-eyes, dirt spear (generate_scene 16) | `erin-ep2-erin-white-eyes-dirt-spear.txt` |
-| 18 | Army flees, King down | `erin-ep2-p15-army-flees-king-down.txt` |
-| 19 | Erin glows; Venus holds the King on a slab | `erin-ep2-p16-erin-glow-eyes-venus-slab.txt` |
-| 20 | Erin opens a portal; King falls in | `erin-ep2-p17-portal-vortex-king-falls.txt` |
-| 21 | King in the spiral; goblins hide; both smiling | `erin-ep2-p18-king-spiral-goblins-hide-smile.txt` |
+| 1 | Empty night sky (narrator) / Erin alone on the path | `erin-ep2-p01-title-forest-castle.txt` |
+| 2 | Portal → forest walk → sleep + eyes (no campfire) | `erin-ep2-p01-portal-forest-sleep-eyes.txt` |
+| 3 | Aerial carry / claw through jacket / face ECU | `erin-ep2-p02-gargoyle-carry-claw-tear-face.txt` |
+| 4 | Canopy / break free / dirt platform | `erin-ep2-p03-aerial-break-dirt-platform.txt` |
+| 5 | Venus lowers Erin on the dirt platform | `erin-ep2-p04-platform-descent-venus.txt` |
+| 6 | They name themselves (handshake), walk, gargoyle dives | `erin-ep2-p05-handshake-walk-gargoyle-dive.txt` |
+| 7 | Erin punches the gargoyle; Venus traps the pieces | `erin-ep2-p06-erin-punch-venus-earthform.txt` |
+| 8 | She felt Erin’s door; lifts a boulder; Erin asks to be taught | `erin-ep2-p07-venus-meet-boulder.txt` |
+| 9 | Climb, army + castle, both using power | `erin-ep2-p08-climb-army-powers.txt` |
+| 10 | Rider reports; King slams the floor; rider ECU | `erin-ep2-p09-throne-fist-rider-terror.txt` |
+| 11 | Chasm, Erin punches a goblin, gates | `erin-ep2-p10-chasm-punch-gates.txt` |
+| 12 | King on the wall, Erin’s eye, gargoyles on pillars | `erin-ep2-p11-king-battlement-eye-gargoyles.txt` |
+| 13 | King leaps, throws a column, Venus raises a wall | `erin-ep2-p12-king-leap-column-venus-wall.txt` |
+| 14 | Column vs dirt cone | `erin-ep2-p13-column-dirt-block.txt` |
+| 15 | Boulder, Erin catches, King blasted | `erin-ep2-p14-boulder-catch-king-blast.txt` |
+| 16 | King comes back — knee, black eyes (generate_scene 13) | `erin-ep2-p15-king-knee-black-eyes.txt` |
+| 17 | King hits Erin (generate_scene 12) | `erin-ep2-p17-king-final-blow.txt` |
+| 18 | Erin white-eyes, dirt spear (generate_scene 16) | `erin-ep2-erin-white-eyes-dirt-spear.txt` |
+| 19 | Army flees, King down | `erin-ep2-p15-army-flees-king-down.txt` |
+| 20 | Erin glows; Venus holds the King on a slab | `erin-ep2-p16-erin-glow-eyes-venus-slab.txt` |
+| 21 | Erin opens a portal; King falls in | `erin-ep2-p17-portal-vortex-king-falls.txt` |
+| 22 | King in the spiral; goblins hide; both smiling | `erin-ep2-p18-king-spiral-goblins-hide-smile.txt` |
+| 23 | Walk toward the portal / the empty door — To be continued | `erin-ep2-p23-end-portal-home.txt` |
 
-From page 2 on, Erin’s **left shoulder seam is torn**. Jacket stays that way.
+From page 3 on, Erin’s **left shoulder seam is torn**. Jacket stays that way.
 
-Forest-stretch captions (do not re-invent): p4 *She's flying this. / Stay on
-it. / Don't miss. / I don't.* · p5 *Erin. I'm here for the King. / Venus. Then
-you don't go alone. / FWOOSH / Move!* · p6 *Stay behind me. / WHAMM / I've got
-the pieces.* · p7 *You caught me. / I felt your door. / The ground can answer
-you. / Then teach me.* · p8 *Almost. / I know the way. / That's the whole
+Forest-stretch captions (do not re-invent): p1 *ERIN & THE GOBLINS / The Revenge / The child is home. / The King got away. / She opens the door again.* · p5 *She's flying this. / Stay on
+it. / Don't miss. / I don't.* · p6 *Erin. I'm here for the King. / Venus. Then
+you don't go alone. / FWOOSH / Move!* · p7 *Stay behind me. / WHAMM / I've got
+the pieces.* · p8 *You caught me. / I felt your door. / The ground can answer
+you. / Then teach me.* · p9 *Almost. / I know the way. / That's the whole
 army. / That's his house. / Together. Push the earth down.*
-Climax: p15 *Not done. / Fog her eyes.* · p16 *Stay down. / KRAKK / Erin—!* ·
-p17 *Get off me. / SKRRK* · p18 *The King! / Nnh— I need the known! / Nnh— give me my krown! / Get up! / On your feet, King!* · p19 *This time you stay. / I'll hold
-him.* · p20 *Doors go both ways. / This one is mine. / NO—!* · p21 *AAAAAH—! / Race you
-home.*
+Climax: p16 *Not done. / Fog her eyes.* · p17 *Stay down. / KRAKK / Erin—!* ·
+p18 *Get off me. / SKRRK* · p19 *The King! / Nnh— I need the known! / Nnh— give me my krown! / Get up! / On your feet, King!* · p20 *This time you stay. / I'll hold
+him.* · p21 *Doors go both ways. / This one is mine. / NO—!* · p22 *AAAAAH—! / Race you
+home.* · p23 *Last door ate my sleeve. / Ha— / To be continued…*
 
 ## Characters
 
@@ -138,7 +142,7 @@ luminous. Pin her from the reference — do not paraphrase the face.
 
 - Long dark hair, pale headband, dark frog-button tunic, star-buckle belt
 - Voice lock: `venus` (`4tRn1lSkEn13EVTuqb0g`)
-- Named on page 5 (“Venus.”). She felt Erin’s door, drives the dirt platform
+- Named on page 6 (“Venus.”). She felt Erin’s door, drives the dirt platform
   (page 4), traps the shattered gargoyle in dirt and roots (page 6 — not a
   second creature), teaches the ground (page 7), walks with Erin against the
   King

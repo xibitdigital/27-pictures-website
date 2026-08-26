@@ -1622,9 +1622,9 @@ body.view-vertical.is-fullscreen .reader {
   text-transform: none !important;
   letter-spacing: 0.06em !important;
   line-height: 1.35 !important;
-  /* Readable on black end-card footers; avoid washed-out silver */
-  color: color-mix(in srgb, var(--text) 72%, transparent) !important;
-  text-shadow: 0 1px 2px color-mix(in srgb, var(--bg-dark) 55%, transparent);
+  /* Default fill; `--jax-word-color` from config `color` always wins. */
+  color: var(--jax-word-color, color-mix(in srgb, var(--text) 72%, transparent));
+  text-shadow: var(--jax-word-shadow, 0 1px 2px color-mix(in srgb, var(--bg-dark) 55%, transparent));
   opacity: 1;
 }
 

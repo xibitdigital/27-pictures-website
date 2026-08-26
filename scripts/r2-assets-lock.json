@@ -6250,8 +6250,8 @@
       "uploadedAt": "2026-08-15T13:28:02.942Z"
     },
     "card-art/erin-the-revenge.jpg": {
-      "size": 808387,
-      "uploadedAt": "2026-08-15T13:37:58.114Z"
+      "size": 560265,
+      "uploadedAt": "2026-08-26T18:00:59.278Z"
     },
     "toons/erin/assets/c87b78742d79a8f04f70ef10d2865099.webp": {
       "size": 368822,
@@ -8040,6 +8040,46 @@
     "toons/erin-the-revenge/config.87b7a747456c5698ac153a227b1684b7.json": {
       "size": 33878,
       "uploadedAt": "2026-08-26T13:05:55.515Z"
+    },
+    "toons/erin-the-revenge/assets/f6a198d61b4c04155afe721630d83a8c.webp": {
+      "size": 564352,
+      "uploadedAt": "2026-08-26T17:30:54.994Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/75d0474cd0c342ec7f4e0d84a8554384.mp3": {
+      "size": 69006,
+      "uploadedAt": "2026-08-26T17:35:36.972Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/b73f329d091809867fbc985e4aa688e0.mp3": {
+      "size": 60856,
+      "uploadedAt": "2026-08-26T17:35:38.767Z"
+    },
+    "toons/erin-the-revenge/assets/67b582be4cc6b32372ac797fa286d2c9.webp": {
+      "size": 335864,
+      "uploadedAt": "2026-08-26T17:52:55.287Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/005ff8530ea810dc4f1ce7ef0a5f810b.mp3": {
+      "size": 42048,
+      "uploadedAt": "2026-08-26T17:53:13.733Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/58f4295224cd4bf375b53b946e32deff.mp3": {
+      "size": 57094,
+      "uploadedAt": "2026-08-26T17:53:15.391Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/83a9f9b62614d199d1a73fc884c8d6a4.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-26T17:53:16.979Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/88b0c0fc02bb50848b70a88ed57a64af.mp3": {
+      "size": 51452,
+      "uploadedAt": "2026-08-26T17:53:18.900Z"
+    },
+    "toons/erin-the-revenge/assets/sfx/a31f2a84b1008f3bfb35a44265d3102a.mp3": {
+      "size": 65244,
+      "uploadedAt": "2026-08-26T17:53:20.650Z"
+    },
+    "card-art/erin-the-revenge-og.jpg": {
+      "size": 280648,
+      "uploadedAt": "2026-08-26T18:01:16.832Z"
     }
   }
 }

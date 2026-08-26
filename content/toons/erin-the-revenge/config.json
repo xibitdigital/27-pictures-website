@@ -22,6 +22,102 @@
   "reverb": "plaza",
   "pages": [
     {
+      "file": "assets/67b582be4cc6b32372ac797fa286d2c9.webp",
+      "words": [
+        {
+          "x": 0.5,
+          "y": 0.2,
+          "variant": "credit",
+          "tail": "none",
+          "size": 58,
+          "color": "#ffffff",
+          "stroke": "#111111",
+          "strokeThickness": 8,
+          "voice": "narrator",
+          "text": {
+            "en": "ERIN & THE GOBLINS",
+            "it": "ERIN & THE GOBLINS",
+            "de": "ERIN & THE GOBLINS",
+            "fr": "ERIN & THE GOBLINS"
+          },
+          "audio": "assets/sfx/a31f2a84b1008f3bfb35a44265d3102a.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.3,
+          "variant": "credit",
+          "tail": "none",
+          "size": 85,
+          "angle": -8,
+          "color": "#111",
+          "stroke": "#fff",
+          "strokeThickness": 2,
+          "voice": "narrator",
+          "text": {
+            "en": "The Revenge",
+            "it": "La vendetta",
+            "de": "Die Rache",
+            "fr": "La vengeance"
+          },
+          "audio": "assets/sfx/005ff8530ea810dc4f1ce7ef0a5f810b.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.38,
+          "variant": "credit",
+          "tail": "none",
+          "size": 28,
+          "color": "#ffffff",
+          "stroke": "#111111",
+          "strokeThickness": 8,
+          "voice": "narrator",
+          "text": {
+            "en": "The child is home.",
+            "it": "La bambina è a casa.",
+            "de": "Das Kind ist zu Hause.",
+            "fr": "L'enfant est rentrée."
+          },
+          "audio": "assets/sfx/58f4295224cd4bf375b53b946e32deff.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.44,
+          "variant": "credit",
+          "tail": "none",
+          "size": 28,
+          "color": "#ffffff",
+          "stroke": "#111111",
+          "strokeThickness": 8,
+          "voice": "narrator",
+          "text": {
+            "en": "The King got away.",
+            "it": "Il Re è scappato.",
+            "de": "Der König ist entkommen.",
+            "fr": "Le Roi s'est enfui."
+          },
+          "audio": "assets/sfx/83a9f9b62614d199d1a73fc884c8d6a4.mp3"
+        },
+        {
+          "x": 0.5,
+          "y": 0.5,
+          "variant": "credit",
+          "tail": "none",
+          "size": 28,
+          "color": "#ffffff",
+          "stroke": "#111111",
+          "strokeThickness": 8,
+          "voice": "narrator",
+          "text": {
+            "en": "She opens the door again.",
+            "it": "Apre di nuovo la porta.",
+            "de": "Sie öffnet die Tür noch einmal.",
+            "fr": "Elle ouvre encore la porte."
+          },
+          "audio": "assets/sfx/88b0c0fc02bb50848b70a88ed57a64af.mp3"
+        }
+      ]
+    },
+    {
       "file": "assets/2d53051c4e01d2238c4ce679c17810a0.webp",
       "words": [
         {
@@ -1225,9 +1321,9 @@
         },
         {
           "x": 0.24,
-          "y": 0.7,
+          "y": 0.8,
           "variant": "bubble",
-          "tail": "right",
+          "tail": "top-right",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -1237,14 +1333,51 @@
             "fr": "Course jusqu'à la maison."
           },
           "audio": "assets/sfx/c7f44e99cc50d5a586972faed5f9640d.mp3"
+        }
+      ]
+    },
+    {
+      "file": "assets/f6a198d61b4c04155afe721630d83a8c.webp",
+      "words": [
+        {
+          "x": 0.18,
+          "y": 0.07,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
+          "voice": "erin",
+          "text": {
+            "en": "Last door ate my sleeve.",
+            "it": "L'ultima porta mi ha mangiato una manica.",
+            "de": "Die letzte Tür hat meinen Ärmel gefressen.",
+            "fr": "La dernière porte m'a bouffé une manche."
+          },
+          "audio": "assets/sfx/75d0474cd0c342ec7f4e0d84a8554384.mp3"
+        },
+        {
+          "x": 0.82,
+          "y": 0.14,
+          "variant": "bubble",
+          "tail": "bottom-left",
+          "size": 30,
+          "voice": "venus",
+          "text": {
+            "en": "Ha—",
+            "it": "Ha—",
+            "de": "Ha—",
+            "fr": "Ha—"
+          },
+          "audio": "assets/sfx/b73f329d091809867fbc985e4aa688e0.mp3"
         },
         {
           "x": 0.5,
-          "y": 0.88,
+          "y": 0.7,
           "variant": "credit",
           "tail": "none",
-          "size": 38,
-          "color": "#111111",
+          "size": 58,
+          "color": "#ffffff",
+          "stroke": "#111111",
+          "strokeThickness": 8,
           "voice": "narrator",
           "text": {
             "en": "To be continued…",

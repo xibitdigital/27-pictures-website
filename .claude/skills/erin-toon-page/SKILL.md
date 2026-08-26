@@ -174,8 +174,8 @@ Venus (ep 2): adult woman, long dark hair, pale headband, dark frog-button tunic
 Anti-drift: Erin never gets long hair, a skirt, colour, a cape or armour; she
 is in the same black track suit and boots every page. Ep 2 keeps the torn left
 shoulder after the gargoyle grab. Goblins stay grey-green ink-toned gremlins —
-no orcs, no trolls, no humanoid warriors. Ep 2 is 21 plates; names land on
-p05. p06 bottom is Venus trapping the gargoyle pieces in dirt — never a
+no orcs, no trolls, no humanoid warriors. Ep 2 is 23 plates; names land on
+p06. p06 bottom is Venus trapping the gargoyle pieces in dirt — never a
 second earth-golem.
 
 ## Panel borders — the page grammar

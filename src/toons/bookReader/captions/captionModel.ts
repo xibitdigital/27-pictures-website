@@ -242,8 +242,13 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     "text-align": textAlign,
     "letter-spacing": isCredit ? "0.06em" : "0.02em",
   };
-  // Credit color is owned by .jax-word--credit CSS (end-card readable).
-  if (!isBubble && !isCredit) style.color = w.color || "#fff";
+  // Credit fill defaults in CSS; an explicit `color` on the word always wins.
+  if (isCredit && w.color) {
+    style["--jax-word-color"] = w.color;
+    style["--jax-word-shadow"] = "none";
+  } else if (!isBubble && !isCredit) {
+    style.color = w.color || "#fff";
+  }
   // An explicit maxWidth is a fraction of the plate; the automatic one is in
   // `ch`, so it keeps its shape when the same caption is read at another size.
   // Round balloons add padding *inside* this box (see below), so a long burst
@@ -318,7 +323,11 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
       textStyle["paint-order"] = "stroke fill";
       textStyle["text-stroke"] = strokeCss;
     }
-    textStyle.color = w.color || "#fff";
+    if (isCredit) {
+      if (w.color) textStyle.color = w.color;
+    } else {
+      textStyle.color = w.color || "#fff";
+    }
   }
 
   const classes = ["jax-word"];

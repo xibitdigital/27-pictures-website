@@ -1,0 +1,28 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# place: intro plate — insert as reader page 01
+# overlays later: narrator copy fills the tall empty TOP panel
+# refs: Image 1 = Erin sheet, Image 2 = goblin pack, Image 3 = Goblin King/castle (ban clause — baked lettering), Image 4 = forest page (woodland ink)
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1152x1728, 2:3 portrait, TWO stacked panels, TOP panel ~70% of the page height, BOTTOM panel ~30%, thin white gutters, thin black keylines, white page margin. The white gutter between the two panels sits about 70% of the way down the page. Crisp ink, cross-hatching, grey screentone, deep blacks. No colour. Do not merge the two panels into one splash. Do not draw a thin black title bar. The top panel is a tall empty sky, not a strip.
+
+PANEL BORDERS: two straight rectangles. Reading order stays top to bottom. No triangle panels, no lightning, no tilt, no full-bleed splash.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN (keep from refs): Erin from Image 1 — face, short choppy dark bob with straight fringe, black zip track jacket, trousers, boots; jacket intact, no torn shoulder, no daggers. Goblins from Image 2. Gothic needle-spire castle as a tiny distant silhouette only, from Image 3. Forest ink from Image 4. Do not redesign identity.
+
+TOP (~70% — TALL EMPTY FIELD): a wide night sky filling most of the page. One full moon, small, high. A tiny distant gothic needle-castle silhouette on the far horizon along the very bottom edge of this panel only — the castle is a speck, not a monument, never large, never mid-panel. A few tree-top silhouettes along that same bottom edge only. No people, no goblins, no gargoyle, no bats as large objects, no faces, no road, no army. Flat black and grey wash must fill the centre so a long block of narrator text can sit in the middle of this tall panel without covering anything.
+
+BOTTOM (~30% — SHORT BAND): waist-to-full-body Erin on a forest path facing us, glare, both empty hands at her sides; packed goblin army with clubs crowds both flanks, small. She is the light source, white rim on the black track suit. No Venus, no King as a figure, no portal, no giant castle in this panel. Keep her head fully inside this short band, well below the gutter — it must not break into the empty sky above.
+
+SUBJECT LOCK: Erin — teenage girl, pale skin, short choppy dark bob with a straight fringe and side tufts, large sharp eyes, heavy lashes, hard determined brow, black zip-up track jacket with high collar and ribbed cuffs, black trousers with a thin side stripe, black lace-up combat boots, wiry athletic build, empty hands. Goblins — hunched waist-height creatures, warty knobbed skulls, long pointed ears, bulging pale eyes, wide fanged grins, sinewy arms, ragged rags, knotted clubs. CASTLE — a tiny black gothic silhouette on the horizon in the TOP panel only.
+
+LIGHT: full moon as a small key in the empty top; bottom lit by white rim on Erin. No blood. Still no lettering in the art.
+
+COMPOSITION: the top panel is the page — keep it empty on purpose. Do not put a face, a figure, a large castle, or a busy tree in its centre. The bottom band is a short establishing strip only. No keyline cutting a face in half.
+
+ANATOMY: exactly two arms and two legs per figure. Goblins four limbs. No extra hands, no ghost limbs.
+
+CHANGE: only the scene described above; preserve identity and ink style from the pins. Keep the two-panel split: tall empty sky over a short Erin-and-army band.
