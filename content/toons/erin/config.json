@@ -31,6 +31,7 @@
           "size": 54,
           "color": "#111111",
           "stroke": "#fff",
+          "strokeThickness": 6,
           "voice": "narrator",
           "text": {
             "en": "ERIN & THE GOBLINS",
@@ -292,9 +293,9 @@
         {
           "x": 0.84,
           "y": 0.14,
-          "variant": "burst",
+          "variant": "bubble",
           "tail": "left",
-          "size": 40,
+          "size": 30,
           "voice": "erin",
           "text": {
             "en": "WHERE IS SHE???",
@@ -407,7 +408,7 @@
           "x": 0.3,
           "y": 0.145,
           "variant": "bubble",
-          "tail": "bottom-right",
+          "tail": "right",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -437,8 +438,8 @@
         {
           "x": 0.74,
           "y": 0.8,
-          "variant": "burst",
-          "tail": "top-left",
+          "variant": "bubble",
+          "tail": "none",
           "size": 50,
           "voice": "erin",
           "text": {
@@ -513,7 +514,7 @@
           "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3"
         },
         {
-          "x": 0.22,
+          "x": 0.45,
           "y": 0.67,
           "variant": "bubble",
           "tail": "bottom-right",
@@ -551,7 +552,7 @@
         {
           "x": 0.45,
           "y": 0.62,
-          "variant": "burst",
+          "variant": "bubble",
           "tail": "left",
           "size": 38,
           "text": {
@@ -622,8 +623,9 @@
         },
         {
           "x": 0.85,
-          "y": 0.21,
-          "variant": "burst",
+          "y": 0.2,
+          "size": 25,
+          "variant": "bubble",
           "tail": "left",
           "voice": "goblinking",
           "text": {
@@ -636,8 +638,8 @@
         },
         {
           "x": 0.84,
-          "y": 0.79,
-          "variant": "burst",
+          "y": 0.85,
+          "variant": "bubble",
           "tail": "top-left",
           "size": 30,
           "voice": "goblinking",
@@ -708,11 +710,11 @@
           "audio": "assets/sfx/6b79f1e1cb904221237bee555e8ad8af.mp3"
         },
         {
-          "x": 0.84,
-          "y": 0.72,
-          "variant": "burst",
-          "tail": "left",
-          "size": 30,
+          "x": 0.7,
+          "y": 0.85,
+          "variant": "bubble",
+          "tail": "top-left",
+          "size": 26,
           "voice": "goblinking",
           "text": {
             "en": "You thought you killed me that easily!",
@@ -723,8 +725,8 @@
           "audio": "assets/sfx/6c4e9f032f22ada689b6d9c597935fb7.mp3"
         },
         {
-          "x": 0.62,
-          "y": 0.9,
+          "x": 0.52,
+          "y": 0.92,
           "size": 42,
           "color": "#111111",
           "angle": -4,
@@ -776,11 +778,11 @@
           "audio": "assets/sfx/9ed016342ec442dda507806e650cb30f.mp3"
         },
         {
-          "x": 0.52,
-          "y": 0.49,
+          "x": 0.5,
+          "y": 0.48,
           "variant": "burst",
           "tail": "none",
-          "size": 40,
+          "size": 24,
           "voice": "narrator",
           "text": {
             "en": "They traded blows for hours. Neither one would fall.",
@@ -829,8 +831,8 @@
         },
         {
           "x": 0.71,
-          "y": 0.67,
-          "variant": "burst",
+          "y": 0.6,
+          "variant": "bubble",
           "tail": "bottom-left",
           "size": 30,
           "voice": "erin",
@@ -848,12 +850,13 @@
       "file": "assets/5cc55a06fa29a774bd29b1b5707d0228.webp",
       "words": [
         {
-          "x": 0.29,
-          "y": 0.07,
+          "x": 0.5,
+          "y": 0.2,
           "variant": "credit",
           "tail": "none",
           "size": 24,
-          "color": "#111111",
+          "color": "#fff",
+          "stroke": "#111111",
           "voice": "narrator",
           "text": {
             "en": "After the Goblin King fled…",
@@ -880,10 +883,10 @@
         },
         {
           "x": 0.82,
-          "y": 0.63,
-          "variant": "burst",
+          "y": 0.5,
+          "variant": "bubble",
           "tail": "left",
-          "size": 40,
+          "size": 30,
           "voice": "erin",
           "text": {
             "en": "But where is she?",
@@ -900,8 +903,8 @@
       "words": [
         {
           "x": 0.72,
-          "y": 0.16,
-          "variant": "burst",
+          "y": 0.22,
+          "variant": "bubble",
           "tail": "bottom",
           "size": 40,
           "voice": "sofia",
@@ -1050,7 +1053,8 @@
           "variant": "credit",
           "tail": "none",
           "size": 60,
-          "color": "#111111",
+          "color": "#fff",
+          "stroke": "#111111",
           "voice": "narrator",
           "text": {
             "en": "THE END",
@@ -1065,22 +1069,24 @@
           "variant": "credit",
           "tail": "none",
           "size": 28,
-          "color": "#111111",
+          "color": "#fff",
+          "stroke": "#111111",
           "voice": "narrator",
           "text": {
-            "en": "Volume 2 — Coming Soon",
-            "it": "Volume 2 — In arrivo",
-            "de": "Band 2 — Demnächst",
-            "fr": "Volume 2 — Bientôt"
+            "en": "Check EP2!",
+            "it": "Guarda l'EP2!",
+            "de": "Schau EP2!",
+            "fr": "Va voir l'EP2 !"
           }
         },
         {
           "x": 0.5,
-          "y": 0.935,
+          "y": 0.92,
           "variant": "credit",
           "tail": "none",
           "size": 24,
-          "color": "#111111",
+          "color": "#fff",
+          "stroke": "#111111",
           "voice": "narrator",
           "text": {
             "en": "story by Olivia & Marco Sangalli",

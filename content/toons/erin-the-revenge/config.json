@@ -137,10 +137,10 @@
           "strokeThickness": 8
         },
         {
-          "x": 0.2,
-          "y": 0.26,
+          "x": 0.23,
+          "y": 0.12,
           "variant": "bubble",
-          "tail": "top-right",
+          "tail": "right",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -152,11 +152,11 @@
           "audio": "assets/sfx/023df755e62ab543e8a9ac57b5cd3ca0.mp3"
         },
         {
-          "x": 0.74,
+          "x": 0.6,
           "y": 0.4,
           "variant": "bubble",
           "tail": "bottom-left",
-          "size": 30,
+          "size": 25,
           "voice": "erin",
           "text": {
             "en": "No road. No map. Good.",
@@ -188,8 +188,8 @@
       "file": "assets/38d9cacce196c8a5f1eb7499e4f56302.webp",
       "words": [
         {
-          "x": 0.74,
-          "y": 0.06,
+          "x": 0.8,
+          "y": 0.1,
           "variant": "bubble",
           "tail": "left",
           "size": 30,
@@ -237,8 +237,8 @@
         {
           "x": 0.5,
           "y": 0.72,
-          "variant": "burst",
-          "tail": "top",
+          "variant": "bubble",
+          "tail": "down",
           "size": 40,
           "voice": "erin",
           "text": {
@@ -368,7 +368,7 @@
         },
         {
           "x": 0.8,
-          "y": 0.7,
+          "y": 0.74,
           "variant": "bubble",
           "tail": "bottom-left",
           "size": 30,
@@ -391,7 +391,7 @@
           "y": 0.05,
           "variant": "bubble",
           "tail": "bottom-right",
-          "size": 30,
+          "size": 25,
           "voice": "erin",
           "text": {
             "en": "Erin. I'm here for the King.",
@@ -406,7 +406,7 @@
           "y": 0.05,
           "variant": "bubble",
           "tail": "bottom-left",
-          "size": 30,
+          "size": 25,
           "voice": "venus",
           "text": {
             "en": "Venus. Then you don't go alone.",
@@ -434,9 +434,9 @@
         },
         {
           "x": 0.26,
-          "y": 0.72,
-          "variant": "burst",
-          "tail": "right",
+          "y": 0.82,
+          "variant": "bubble",
+          "tail": "bottom-right",
           "size": 40,
           "voice": "erin",
           "text": {
@@ -768,8 +768,8 @@
         {
           "x": 0.72,
           "y": 0.06,
-          "variant": "burst",
-          "tail": "none",
+          "variant": "bubble",
+          "tail": "left",
           "size": 30,
           "voice": "goblinking",
           "text": {
@@ -816,11 +816,11 @@
       "file": "assets/072efb1acff5eeb308b0edc4851bf172.webp",
       "words": [
         {
-          "x": 0.24,
-          "y": 0.08,
-          "variant": "burst",
-          "tail": "right",
-          "size": 40,
+          "x": 0.3,
+          "y": 0.05,
+          "variant": "bubble",
+          "tail": "bottom-right",
+          "size": 30,
           "voice": "goblinking",
           "text": {
             "en": "MINE!",
@@ -868,10 +868,10 @@
       "words": [
         {
           "x": 0.24,
-          "y": 0.06,
-          "variant": "burst",
-          "tail": "right",
-          "size": 40,
+          "y": 0.26,
+          "variant": "bubble",
+          "tail": "top-right",
+          "size": 30,
           "voice": "goblinking",
           "text": {
             "en": "HOLD STILL.",
@@ -949,10 +949,10 @@
       "file": "assets/e6ff9ac9a4b1895fbdc9be7482b24724.webp",
       "words": [
         {
-          "x": 0.74,
-          "y": 0.06,
-          "variant": "burst",
-          "tail": "left",
+          "x": 0.7,
+          "y": 0.3,
+          "variant": "bubble",
+          "tail": "top",
           "size": 40,
           "voice": "goblinking",
           "text": {
@@ -965,7 +965,7 @@
         },
         {
           "x": 0.22,
-          "y": 0.38,
+          "y": 0.12,
           "variant": "bubble",
           "tail": "right",
           "size": 30,
@@ -1016,7 +1016,7 @@
         {
           "x": 0.5,
           "y": 0.08,
-          "variant": "burst",
+          "variant": "bubble",
           "tail": "bottom",
           "size": 32,
           "voice": "goblinking",
@@ -1031,8 +1031,8 @@
         {
           "x": 0.5,
           "y": 0.42,
-          "variant": "burst",
-          "tail": "none",
+          "variant": "thought",
+          "tail": "down",
           "size": 28,
           "voice": "goblinking",
           "text": {
@@ -1051,7 +1051,7 @@
         {
           "x": 0.22,
           "y": 0.08,
-          "variant": "burst",
+          "variant": "bubble",
           "tail": "right",
           "size": 32,
           "voice": "goblinking",
@@ -1102,8 +1102,8 @@
         {
           "x": 0.25,
           "y": 0.36,
-          "variant": "burst",
-          "tail": "bottom",
+          "variant": "bubble",
+          "tail": "right",
           "size": 30,
           "voice": "erin",
           "text": {
@@ -1169,7 +1169,7 @@
         {
           "x": 0.16,
           "y": 0.7,
-          "variant": "burst",
+          "variant": "bubble",
           "tail": "bottom-right",
           "size": 28,
           "voice": "goblinking",
@@ -1184,7 +1184,7 @@
         {
           "x": 0.86,
           "y": 0.7,
-          "variant": "burst",
+          "variant": "bubble",
           "tail": "bottom-left",
           "size": 26,
           "voice": "goblinking",
@@ -1286,10 +1286,10 @@
         },
         {
           "x": 0.5,
-          "y": 0.86,
-          "variant": "burst",
+          "y": 0.8,
+          "variant": "bubble",
           "tail": "top",
-          "size": 40,
+          "size": 30,
           "voice": "goblinking",
           "text": {
             "en": "NO—!",
