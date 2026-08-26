@@ -1,0 +1,10 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# aspect_ratio: 2:3 · resolution: 2K (1664x2496)
+# refs: Image 1 = original shipped EP1 plate (the only pin). Never pin a failed gen.
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1664x2496, 2:3 portrait, same pixel framing as Image 1.
+
+PIN from Image 1: keep the entire interior artwork unchanged — every figure, pose, face, hair, outfit, goblin, background, panel count, panel shapes, gutters, lightning-bolt dividers, frame-breaks, overlaps, inner black rooms, ink, screentone, and the thin inner keyline around the art. Do not redraw, restyle, crop, zoom, or recompose. Do not add or remove characters. Do not add speech balloons, captions, titles, credits, or watermarks.
+
+CHANGE: only the outer page margin — the solid black paper field outside the inner keyline. Recolor that outer mat from black to white paper. Same margin thickness. Keep a thin black keyline on the inner edge of the white mat (or keep the existing thin white keyline sitting on white paper). If a lightning-bolt divider or frame-break already spikes into the outer mat, keep that spike on the white paper; do not square it off. Inner blacks stay black: caves, night sky, room shadows, black clothes — those are art, not the mat.

@@ -12,8 +12,8 @@ describe("caption voice lock", () => {
   const voices = loadJson("scripts/voices.json") as Record<string, string>;
   const names = new Set(Object.keys(voices));
 
-  it("every spoken Erin EP 2 line names a voices.json key", () => {
-    const cfg = loadJson("content/toons/erin-the-revenge/config.json") as {
+  it.each(["erin", "erin-the-revenge"])("every spoken %s line names a voices.json key", (toon) => {
+    const cfg = loadJson(`content/toons/${toon}/config.json`) as {
       pages: {
         words?: { voice?: string; variant?: string; text?: { en?: string }; stroke?: unknown }[];
       }[];

@@ -1,0 +1,17 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# aspect_ratio: 2:3 · resolution: 2K (1664x2496)
+# style: Erin & the Goblins — B&W dark fantasy manga, no lettering
+# refs: Image 1 = original shipped EP1 plate (composition). Image 2 = EP2 plate (white margin + keyline only). Never pin a failed gen.
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1664x2496, 2:3 portrait, same panel stack as Image 1, thin white gutters, thin black keylines, white page margin. Crisp ink linework, cross-hatching, grey screentone, deep solid blacks. No colour.
+
+PANEL BORDERS: keep Image 1's panel shapes — splash, rectangles, wedge, lightning-bolt divider, or overlap, whichever that plate already has. Do not add a second effect border. No triangle panels. No extra jagged nicks on a straight keyline.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN from Image 1: keep the entire interior artwork unchanged — every figure, pose, face, hair, outfit, goblin, background, panel count, panel shapes, gutters, bolt dividers, frame-breaks, ink, screentone, crop. Do not redraw, restyle, zoom, or recompose. Do not add or remove characters. Do not copy Image 2's scene, panel count, or characters.
+
+PIN from Image 2: only the outer page grammar — flat white paper margin, thin straight black keyline, thin white gutters. Same relative margin thickness as Image 2.
+
+CHANGE: recolor Image 1's solid black outer mat to Image 2's white page paper. Put Image 2's thin black keyline on that white paper. Art stays inside the keyline unless Image 1 already breaks the frame. Inner blacks stay black: caves, night sky, room shadows, clothes — those are art, not the mat.

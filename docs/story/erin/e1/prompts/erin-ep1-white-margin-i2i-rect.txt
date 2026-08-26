@@ -1,0 +1,15 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# aspect_ratio: 2:3 · resolution: 2K (1664x2496)
+# refs: Image 1 = original shipped EP1 plate (the only pin). Never pin a failed gen.
+# note: tighter than erin-ep1-white-margin-i2i.txt — clean rectangular mat, no extra nicks
+
+FORMAT: Black and white dark-fantasy manga page, vertical 1664x2496, 2:3 portrait, same pixel framing as Image 1. Straight rectangular panel. Thin black keyline. White page margin.
+
+PANEL BORDERS: one straight rectangle. No lightning-bolt outline. No jagged nicks on the keyline. No frame-break. No art spilling past the keyline.
+
+NO TEXT AT ALL: no speech balloons, no thought balloons, no shout bursts, no caption boxes, no narration plates, no onomatopoeia, no SFX lettering, no signage text, no title, no credits, no watermark, and no empty white balloon shapes reserved for text. Pure artwork only.
+
+PIN from Image 1: keep the entire interior artwork unchanged — Erin, pose, face, hair, daggers, track suit, boots, goblins, cave mouth, moon, castle, bats, ink, screentone. Keep the same crop and the same margin thickness. Do not redraw, restyle, zoom, or recompose. Do not add or remove characters.
+
+CHANGE: only the outer page field outside the inner keyline. Recolor that solid black mat to flat white paper. Replace the thin white keyline with a thin straight black keyline on the white paper, same rectangle. All cave rock, clubs, and ink stay inside that rectangle. Inner blacks stay black: cave, night sky, clothes. Do not add lightning scratches, spikes, or torn-paper edges in the white margin.

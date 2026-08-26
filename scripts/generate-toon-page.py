@@ -50,16 +50,30 @@ TERMINAL_BAD = {'cancelled', 'failed', 'error'}
 def api(base, path, token, payload=None, method=None):
     url = f"{base.rstrip('/')}{path}"
     data = json.dumps(payload).encode() if payload is not None else None
-    req = urllib.request.Request(url, data=data, method=method or ('POST' if data else 'GET'))
+    verb = method or ('POST' if data else 'GET')
+    req = urllib.request.Request(url, data=data, method=verb)
     req.add_header('Authorization', f"Bearer {token}")
     if data:
         req.add_header('Content-Type', 'application/json')
-    try:
-        with urllib.request.urlopen(req, timeout=120) as r:
-            return json.loads(r.read().decode())
-    except urllib.error.HTTPError as e:
-        body = e.read().decode(errors='replace')
-        raise SystemExit(f"HTTP {e.code} on {method or 'GET'} {path}\n{body}")
+    # Status/result polls 504 when RunComfy is slow; the job is often still running.
+    attempts = 6 if verb == 'GET' else 1
+    last_err = None
+    for i in range(attempts):
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                return json.loads(r.read().decode())
+        except urllib.error.HTTPError as e:
+            body = e.read().decode(errors='replace')
+            last_err = f"HTTP {e.code} on {verb} {path}\n{body}"
+            if verb != 'GET' or e.code not in (502, 503, 504) or i == attempts - 1:
+                raise SystemExit(last_err)
+            time.sleep(5 * (i + 1))
+        except urllib.error.URLError as e:
+            last_err = f"URL error on {verb} {path}: {e}"
+            if verb != 'GET' or i == attempts - 1:
+                raise SystemExit(last_err)
+            time.sleep(5 * (i + 1))
+    raise SystemExit(last_err)
 
 
 def read_prompt(path):
@@ -103,6 +117,12 @@ def main():
     ap.add_argument('--model', default=DEFAULT_MODEL)
     ap.add_argument('--mode', default=DEFAULT_MODE)
     ap.add_argument('--resolution', choices=['1K', '2K'], default='1K', help='1K bills $0.05/image (default), 2K $0.10')
+    ap.add_argument(
+        '--aspect-ratio',
+        choices=['1:1', '4:3', '3:4', '16:9', '9:16', '3:2', '2:3', '21:9'],
+        default=None,
+        help='output aspect_ratio (API default is 1:1 — omit this and you get a square)',
+    )
     ap.add_argument('--output-format', choices=['png', 'jpeg'], default='png')
     ap.add_argument('--out-dir', default='~/Downloads')
     ap.add_argument('--slug', help='override the output filename slug')
@@ -137,6 +157,8 @@ def main():
         'resolution': args.resolution,
         'output_format': args.output_format,
     }
+    if args.aspect_ratio:
+        payload['aspect_ratio'] = args.aspect_ratio
     path = f"/models/{args.model}/{args.mode}"
 
     if args.dry_run:
@@ -144,7 +166,11 @@ def main():
         print(json.dumps(payload, indent=2)[:2000])
         return
 
-    print(f"→ submit {args.model} {args.mode} ({len(refs)} ref(s), {words} words, {args.resolution} {args.output_format})")
+    ratio = args.aspect_ratio or '1:1 (API default)'
+    print(
+        f"→ submit {args.model} {args.mode} "
+        f"({len(refs)} ref(s), {words} words, {args.resolution} {ratio} {args.output_format})"
+    )
     sub = api(base, path, token, payload)
     rid = sub.get('request_id') or sub.get('id')
     if not rid:

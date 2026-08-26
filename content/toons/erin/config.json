@@ -21,15 +21,17 @@
   ],
   "pages": [
     {
-      "file": "assets/995af4fc548babf21d1e1e467992c2a0.webp",
+      "file": "assets/f22b978bced376a10ab061846d790b54.webp",
       "words": [
         {
           "x": 0.5,
-          "y": 0.085,
+          "y": 0.13,
           "variant": "credit",
           "tail": "none",
           "size": 54,
           "color": "#111111",
+          "stroke": "#fff",
+          "voice": "narrator",
           "text": {
             "en": "ERIN & THE GOBLINS",
             "it": "ERIN & THE GOBLINS",
@@ -40,11 +42,14 @@
         },
         {
           "x": 0.5,
-          "y": 0.185,
+          "y": 0.23,
           "variant": "credit",
           "tail": "none",
           "size": 34,
-          "color": "#111111",
+          "color": "#ffffff",
+          "stroke": "#111111",
+          "strokeThickness": 6,
+          "voice": "narrator",
           "text": {
             "en": "the missing CHILD",
             "it": "la BAMBINA scomparsa",
@@ -52,41 +57,11 @@
             "fr": "l'ENFANT disparue"
           },
           "audio": "assets/sfx/674640fe1ea83a9db268b6f02119bcb7.mp3"
-        },
-        {
-          "x": 0.5,
-          "y": 0.905,
-          "variant": "credit",
-          "tail": "none",
-          "size": 26,
-          "color": "#111111",
-          "text": {
-            "en": "Volume 1 Prequel",
-            "it": "Volume 1 Prequel",
-            "de": "Band 1 Prequel",
-            "fr": "Volume 1 Préquelle"
-          },
-          "audio": "assets/sfx/04e9e00c7b33e1eb4d6906c560521d0e.mp3"
-        },
-        {
-          "x": 0.5,
-          "y": 0.955,
-          "variant": "credit",
-          "tail": "none",
-          "size": 22,
-          "color": "#111111",
-          "text": {
-            "en": "story by Olivia and Marco Sangalli",
-            "it": "storia di Olivia e Marco Sangalli",
-            "de": "Geschichte von Olivia und Marco Sangalli",
-            "fr": "histoire d'Olivia et Marco Sangalli"
-          },
-          "audio": "assets/sfx/e8f6ec7350d69ef6a4c1ac26c23cc9ea.mp3"
         }
       ]
     },
     {
-      "file": "assets/bbb3512e779f1fc314c30d1a50326165.webp",
+      "file": "assets/a649e0151d7833b34963512a0449ebd7.webp",
       "words": [
         {
           "x": 0.22,
@@ -94,31 +69,28 @@
           "size": 60,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "FSSH",
             "it": "FSSH",
             "de": "FSSH",
             "fr": "FSSH"
           },
-          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3"
         }
       ]
     },
     {
-      "file": "assets/fe1a2356bc8dffba59a6a15b7df568af.webp",
+      "file": "assets/3511a0b7aeb009c55b26ba9a683ddb19.webp",
       "words": [
         {
           "x": 0.69,
           "y": 0.19,
           "variant": "burst",
+          "tail": "bottom-left",
           "size": 30,
-          "bubble": {
-            "tail": "bottom-left",
-            "padX": 3,
-            "padY": 3
-          },
+          "voice": "erin",
           "text": {
             "en": "I am going to find you little one.",
             "it": "Ti troverò, piccola.",
@@ -133,6 +105,7 @@
           "variant": "bubble",
           "tail": "bottom-left",
           "size": 34,
+          "voice": "erin",
           "text": {
             "en": "Who took her?",
             "it": "Chi l'ha presa?",
@@ -147,6 +120,7 @@
           "variant": "bubble",
           "tail": "left",
           "size": 20,
+          "voice": "erin",
           "text": {
             "en": "Suspicious strangers…",
             "it": "Sconosciuti sospetti…",
@@ -161,6 +135,7 @@
           "variant": "bubble",
           "tail": "top-left",
           "size": 20,
+          "voice": "erin",
           "text": {
             "en": "The black van at midnight…",
             "it": "Il furgone nero a mezzanotte…",
@@ -175,6 +150,7 @@
           "variant": "bubble",
           "tail": "top-left",
           "size": 20,
+          "voice": "erin",
           "text": {
             "en": "Goblin traffickers in the alleys…",
             "it": "Trafficanti goblin nei vicoli…",
@@ -189,6 +165,7 @@
           "variant": "bubble",
           "tail": "top-left",
           "size": 28,
+          "voice": "erin",
           "text": {
             "en": "An organized kidnapping ring.",
             "it": "Un giro organizzato di rapimenti.",
@@ -200,7 +177,7 @@
       ]
     },
     {
-      "file": "assets/a581c1d0b345b66e697f856611089522.webp",
+      "file": "assets/e7a8256f9296f353bbfdc06dfd9813f6.webp",
       "words": [
         {
           "x": 0.7,
@@ -208,15 +185,15 @@
           "size": 50,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "KREEEAK",
             "it": "KREEEAK",
             "de": "KREEEAK",
             "fr": "KREEEAK"
           },
-          "audio": "assets/sfx/4e22b92b995a81742e5b967de4a35403.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/4e22b92b995a81742e5b967de4a35403.mp3"
         },
         {
           "x": 0.22,
@@ -224,20 +201,20 @@
           "size": 44,
           "color": "#111111",
           "angle": -10,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "DASH",
             "it": "DASH",
             "de": "DASH",
             "fr": "DASH"
           },
-          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3"
         }
       ]
     },
     {
-      "file": "assets/eb4a0f41d85443571ce440dc885b8d97.webp",
+      "file": "assets/1f4a0d2b4d958f8db62c841c9c136279.webp",
       "words": [
         {
           "x": 0.22,
@@ -245,6 +222,7 @@
           "variant": "bubble",
           "tail": "right",
           "size": 24,
+          "voice": "erin",
           "text": {
             "en": "There are traces here…",
             "it": "Ci sono tracce qui…",
@@ -259,20 +237,20 @@
           "size": 42,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "VZZT",
             "it": "VZZT",
             "de": "VZZT",
             "fr": "VZZT"
           },
-          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3"
         }
       ]
     },
     {
-      "file": "assets/e670075541d4fa6679515535dc08381a.webp",
+      "file": "assets/4094d8361d75774196a5b62753dcb29a.webp",
       "words": [
         {
           "x": 0.18,
@@ -280,15 +258,15 @@
           "size": 40,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "GRRRH",
             "it": "GRRRH",
             "de": "GRRRH",
             "fr": "GRRRH"
           },
-          "audio": "assets/sfx/d6171bd6a6125ed49e942ee1576e6794.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/d6171bd6a6125ed49e942ee1576e6794.mp3"
         },
         {
           "x": 0.3,
@@ -296,31 +274,28 @@
           "size": 36,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "WHAMM",
             "it": "WHAMM",
             "de": "WHAMM",
             "fr": "WHAMM"
           },
-          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3"
         }
       ]
     },
     {
-      "file": "assets/48fb5126e9044222b6b5fb00e61e5bff.webp",
+      "file": "assets/76878ff650cb3cbc6652aeebd0a1c3bd.webp",
       "words": [
         {
           "x": 0.84,
           "y": 0.14,
           "variant": "burst",
+          "tail": "left",
           "size": 40,
-          "bubble": {
-            "tail": "left",
-            "padX": 3,
-            "padY": 3
-          },
+          "voice": "erin",
           "text": {
             "en": "WHERE IS SHE???",
             "it": "DOV'È???",
@@ -335,20 +310,20 @@
           "size": 44,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "THUKK",
             "it": "THUKK",
             "de": "THUKK",
             "fr": "THUKK"
           },
-          "audio": "assets/sfx/d0e90aa65be8aa27f325256f9530709a.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/d0e90aa65be8aa27f325256f9530709a.mp3"
         }
       ]
     },
     {
-      "file": "assets/9e1f207fca1b1d62f8d9ecfaad963ef8.webp",
+      "file": "assets/97ecb50783371bb807ba2e65cc0088cf.webp",
       "words": [
         {
           "x": 0.22,
@@ -356,15 +331,15 @@
           "size": 42,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "THUD",
             "it": "THUD",
             "de": "THUD",
             "fr": "THUD"
           },
-          "audio": "assets/sfx/c53551b93eacb5a94df8caf8e7044a96.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/c53551b93eacb5a94df8caf8e7044a96.mp3"
         },
         {
           "x": 0.82,
@@ -372,20 +347,20 @@
           "size": 26,
           "color": "#111111",
           "angle": -4,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "DRIP",
             "it": "DRIP",
             "de": "DRIP",
             "fr": "DRIP"
           },
-          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3"
         }
       ]
     },
     {
-      "file": "assets/f11ee3312ee7ea1aef5c758dfc324cd8.webp",
+      "file": "assets/4c81208b0dda5a64721824bd135738bc.webp",
       "words": [
         {
           "x": 0.22,
@@ -393,15 +368,15 @@
           "size": 32,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "SKREEE",
             "it": "SKREEE",
             "de": "SKREEE",
             "fr": "SKREEE"
           },
-          "audio": "assets/sfx/2f5b57a07d6fdfda2db09082a1380737.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/2f5b57a07d6fdfda2db09082a1380737.mp3"
         },
         {
           "x": 0.28,
@@ -409,24 +384,24 @@
           "size": 54,
           "color": "#111111",
           "angle": -10,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "DASH",
             "it": "DASH",
             "de": "DASH",
             "fr": "DASH"
           },
-          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/ffbdb241b34dd81f13bdf24cbe12572c.mp3"
         }
       ]
     },
     {
-      "file": "assets/a5670f90a9b72ac7fb6f4d1f27043c71.webp",
+      "file": "assets/d5cc86103056ef9fbdf96903d48dfca2.webp",
       "words": []
     },
     {
-      "file": "assets/5e170f3a8073b87c5f62af33324579cd.webp",
+      "file": "assets/e7bf73ffd8137e0c819086bf466533bc.webp",
       "words": [
         {
           "x": 0.3,
@@ -434,6 +409,7 @@
           "variant": "bubble",
           "tail": "bottom-right",
           "size": 30,
+          "voice": "erin",
           "text": {
             "en": "It's time…",
             "it": "È ora…",
@@ -448,26 +424,23 @@
           "size": 30,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "BZZT",
             "it": "BZZT",
             "de": "BZZT",
             "fr": "BZZT"
           },
-          "audio": "assets/sfx/bb133793a026daf1bf4b74317e482492.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/bb133793a026daf1bf4b74317e482492.mp3"
         },
         {
           "x": 0.74,
           "y": 0.8,
           "variant": "burst",
+          "tail": "top-left",
           "size": 50,
-          "bubble": {
-            "tail": "top-left",
-            "padX": 3,
-            "padY": 3
-          },
+          "voice": "erin",
           "text": {
             "en": "Open.",
             "it": "Apriti.",
@@ -479,7 +452,7 @@
       ]
     },
     {
-      "file": "assets/51f9ce5cf8474044c5ce4dfb17fc428b.webp",
+      "file": "assets/c4dbb36d1fd8f01c7afb53f873160879.webp",
       "words": [
         {
           "x": 0.22,
@@ -487,20 +460,20 @@
           "size": 56,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "FWOOSH",
             "it": "FWOOSH",
             "de": "FWOOSH",
             "fr": "FWOOSH"
           },
-          "audio": "assets/sfx/459317ada9c8ca94bab341973b4bcd0e.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/459317ada9c8ca94bab341973b4bcd0e.mp3"
         }
       ]
     },
     {
-      "file": "assets/41518c28b10e6bca963e9413985c4d25.webp",
+      "file": "assets/3d52708a4b896398e50b3f947b23eeba.webp",
       "words": [
         {
           "x": 0.16,
@@ -508,20 +481,20 @@
           "size": 60,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "VZZT",
             "it": "VZZT",
             "de": "VZZT",
             "fr": "VZZT"
           },
-          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/beefd6a062244d1d5d697cb544962d44.mp3"
         }
       ]
     },
     {
-      "file": "assets/60de9fb6d6a4b1f2f400208bc3eadb42.webp",
+      "file": "assets/f0cdd65e910f120a2f54a45771167e70.webp",
       "words": [
         {
           "x": 0.8,
@@ -529,15 +502,15 @@
           "size": 58,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "SHFFF",
             "it": "SHFFF",
             "de": "SHFFF",
             "fr": "SHFFF"
           },
-          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/dc391d73f78c529521563ed7742548f5.mp3"
         },
         {
           "x": 0.22,
@@ -545,6 +518,7 @@
           "variant": "bubble",
           "tail": "bottom-right",
           "size": 24,
+          "voice": "erin",
           "text": {
             "en": "What is this place?",
             "it": "Cos'è questo posto?",
@@ -556,7 +530,7 @@
       ]
     },
     {
-      "file": "assets/8df5a6484db972b460af915870bc893d.webp",
+      "file": "assets/75e2e844b0cb791f70d8115398cb7e40.webp",
       "words": [
         {
           "x": 0.72,
@@ -564,15 +538,15 @@
           "size": 34,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "WHAMM",
             "it": "WHAMM",
             "de": "WHAMM",
             "fr": "WHAMM"
           },
-          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/c72ef800222601e19c486ead43fca61f.mp3"
         },
         {
           "x": 0.45,
@@ -591,7 +565,7 @@
       ]
     },
     {
-      "file": "assets/aa77a4a0ffa74de245c318814b1d5bc7.webp",
+      "file": "assets/c3db897cf5831e02c35e83581ba10032.webp",
       "words": [
         {
           "x": 0.56,
@@ -599,15 +573,15 @@
           "size": 46,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "KRAK",
             "it": "KRAK",
             "de": "KRAK",
             "fr": "KRAK"
           },
-          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3"
         },
         {
           "x": 0.3,
@@ -615,20 +589,20 @@
           "size": 32,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "THKK",
             "it": "THKK",
             "de": "THKK",
             "fr": "THKK"
           },
-          "audio": "assets/sfx/80608c46d3cea3386d51d8e2ea838a43.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/80608c46d3cea3386d51d8e2ea838a43.mp3"
         }
       ]
     },
     {
-      "file": "assets/76b3c5a8df52d6f11a73cdbe9c70cd52.webp",
+      "file": "assets/d46d3b1d8630ed687e533e3abfaeabd9.webp",
       "words": [
         {
           "x": 0.3,
@@ -636,25 +610,22 @@
           "size": 34,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "RRRAAAGH",
             "it": "RRRAAAGH",
             "de": "RRRAAAGH",
             "fr": "RRRAAAGH"
           },
-          "audio": "assets/sfx/425e7dffadc452675ef542ce2fdf5b21.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/425e7dffadc452675ef542ce2fdf5b21.mp3"
         },
         {
           "x": 0.85,
           "y": 0.21,
           "variant": "burst",
-          "bubble": {
-            "tail": "left",
-            "padX": 4,
-            "padY": 4
-          },
+          "tail": "left",
+          "voice": "goblinking",
           "text": {
             "en": "What did you do to my army!",
             "it": "Che cosa hai fatto al mio esercito!",
@@ -667,12 +638,9 @@
           "x": 0.84,
           "y": 0.79,
           "variant": "burst",
+          "tail": "top-left",
           "size": 30,
-          "bubble": {
-            "tail": "top-left",
-            "padX": 2,
-            "padY": 3
-          },
+          "voice": "goblinking",
           "text": {
             "en": "You will pay dearly!",
             "it": "La pagherai cara!",
@@ -684,7 +652,7 @@
       ]
     },
     {
-      "file": "assets/22f88aabc47c6212777b251f3aba92ec.webp",
+      "file": "assets/89974a1c18b3ea2bae176335e8f17c08.webp",
       "words": [
         {
           "x": 0.27,
@@ -692,15 +660,15 @@
           "size": 64,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "KRAK",
             "it": "KRAK",
             "de": "KRAK",
             "fr": "KRAK"
           },
-          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/e17930d71866d71068f521d585cff81f.mp3"
         },
         {
           "x": 0.76,
@@ -708,20 +676,20 @@
           "size": 54,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "BOOM",
             "it": "BOOM",
             "de": "BOOM",
             "fr": "BOOM"
           },
-          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/7c79c84b7d5ef442ccf3e5c46b4328c7.mp3"
         }
       ]
     },
     {
-      "file": "assets/e573e5536e3a494278c9a25681876f92.webp",
+      "file": "assets/9da61534a412442aa377a366388ea94a.webp",
       "words": [
         {
           "x": 0.22,
@@ -729,26 +697,23 @@
           "size": 30,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "GRRNN",
             "it": "GRRNN",
             "de": "GRRNN",
             "fr": "GRRNN"
           },
-          "audio": "assets/sfx/6b79f1e1cb904221237bee555e8ad8af.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/6b79f1e1cb904221237bee555e8ad8af.mp3"
         },
         {
           "x": 0.84,
           "y": 0.72,
           "variant": "burst",
+          "tail": "left",
           "size": 30,
-          "bubble": {
-            "tail": "left",
-            "padX": 2,
-            "padY": 3
-          },
+          "voice": "goblinking",
           "text": {
             "en": "You thought you killed me that easily!",
             "it": "Credevi di avermi ucciso così facilmente!",
@@ -763,20 +728,20 @@
           "size": 42,
           "color": "#111111",
           "angle": -4,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "HAHAHAHAHAHA!",
             "it": "HAHAHAHAHAHA!",
             "de": "HAHAHAHAHAHA!",
             "fr": "HAHAHAHAHAHA!"
           },
-          "audio": "assets/sfx/7b9e3c33bd4fdaccf9d74128f86fbc04.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/7b9e3c33bd4fdaccf9d74128f86fbc04.mp3"
         }
       ]
     },
     {
-      "file": "assets/03250ea1dfaf762af49d91049f74b8ea.webp",
+      "file": "assets/7ddeb14dcd61720b3bf40fe0b0d0bea4.webp",
       "words": [
         {
           "x": 0.2,
@@ -784,15 +749,15 @@
           "size": 34,
           "color": "#111111",
           "angle": -8,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "WHAM",
             "it": "WHAM",
             "de": "WHAM",
             "fr": "WHAM"
           },
-          "audio": "assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/ef6ef5c69180fd666cd2ca33d0ae65ad.mp3"
         },
         {
           "x": 0.8,
@@ -800,26 +765,23 @@
           "size": 32,
           "color": "#111111",
           "angle": -6,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "KLANG",
             "it": "KLANG",
             "de": "KLANG",
             "fr": "KLANG"
           },
-          "audio": "assets/sfx/9ed016342ec442dda507806e650cb30f.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/9ed016342ec442dda507806e650cb30f.mp3"
         },
         {
           "x": 0.52,
           "y": 0.49,
           "variant": "burst",
+          "tail": "none",
           "size": 40,
-          "bubble": {
-            "tail": "none",
-            "padX": 4,
-            "padY": 3
-          },
+          "voice": "narrator",
           "text": {
             "en": "They traded blows for hours. Neither one would fall.",
             "it": "Si colpirono per ore. Nessuno dei due cadeva.",
@@ -831,7 +793,7 @@
       ]
     },
     {
-      "file": "assets/e81f82b73c38253972c8ed9821e16d7d.webp",
+      "file": "assets/4c83bc59d71c99d021e07de73ab323c5.webp",
       "words": [
         {
           "x": 0.28,
@@ -840,6 +802,7 @@
           "tail": "none",
           "size": 24,
           "color": "#111111",
+          "voice": "narrator",
           "text": {
             "en": "Returning to the cave…",
             "it": "Tornando alla caverna…",
@@ -854,26 +817,23 @@
           "size": 26,
           "color": "#111111",
           "angle": -4,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "TAP… TAP",
             "it": "TAP… TAP",
             "de": "TAP… TAP",
             "fr": "TAP… TAP"
           },
-          "audio": "assets/sfx/b598fbd729dcc0f37c04bdc5c8183e36.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/b598fbd729dcc0f37c04bdc5c8183e36.mp3"
         },
         {
           "x": 0.71,
           "y": 0.67,
           "variant": "burst",
-          "size": 32,
-          "bubble": {
-            "tail": "bottom-left",
-            "padX": 2,
-            "padY": 3
-          },
+          "tail": "bottom-left",
+          "size": 30,
+          "voice": "erin",
           "text": {
             "en": "After I save the child, I'll find you!",
             "it": "Dopo aver salvato la bambina, ti troverò!",
@@ -885,7 +845,7 @@
       ]
     },
     {
-      "file": "assets/6d1b0fec4021c943b1a92d345259462d.webp",
+      "file": "assets/5cc55a06fa29a774bd29b1b5707d0228.webp",
       "words": [
         {
           "x": 0.29,
@@ -894,6 +854,7 @@
           "tail": "none",
           "size": 24,
           "color": "#111111",
+          "voice": "narrator",
           "text": {
             "en": "After the Goblin King fled…",
             "it": "Dopo la fuga del Re Goblin…",
@@ -907,26 +868,23 @@
           "size": 26,
           "color": "#111111",
           "angle": -4,
+          "stroke": "#ffffff",
+          "strokeThickness": 8,
           "text": {
             "en": "DRIP",
             "it": "DRIP",
             "de": "DRIP",
             "fr": "DRIP"
           },
-          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3",
-          "stroke": "#ffffff",
-          "strokeThickness": 8
+          "audio": "assets/sfx/f47668f98ab9729c89bc1fb643cdd63b.mp3"
         },
         {
           "x": 0.82,
           "y": 0.63,
           "variant": "burst",
+          "tail": "left",
           "size": 40,
-          "bubble": {
-            "tail": "left",
-            "padX": 3,
-            "padY": 3
-          },
+          "voice": "erin",
           "text": {
             "en": "But where is she?",
             "it": "Ma lei dov'è?",
@@ -938,7 +896,7 @@
       ]
     },
     {
-      "file": "assets/a6d6448840bf296790a553c82795c75f.webp",
+      "file": "assets/90b6a919184e94f4e299f9f853a18444.webp",
       "words": [
         {
           "x": 0.72,
@@ -946,6 +904,7 @@
           "variant": "burst",
           "tail": "bottom",
           "size": 40,
+          "voice": "sofia",
           "text": {
             "en": "I'M SAFE NOW!",
             "it": "ORA SONO SALVA!",
@@ -957,13 +916,14 @@
       ]
     },
     {
-      "file": "assets/83270becc6556461afa38ccab00bb6e8.webp",
+      "file": "assets/5fa458b9fffba75c3e08e12d4ff47af0.webp",
       "words": [
         {
           "x": 0.26,
           "y": 0.05,
           "variant": "bubble",
           "tail": "bottom-right",
+          "voice": "erin",
           "text": {
             "en": "Hi, are you the lost little girl?",
             "it": "Ciao, sei tu la bambina scomparsa?",
@@ -978,6 +938,7 @@
           "variant": "bubble",
           "tail": "bottom-right",
           "size": 24,
+          "voice": "sofia",
           "text": {
             "en": "Yes!",
             "it": "Sì!",
@@ -991,6 +952,7 @@
           "y": 0.105,
           "variant": "bubble",
           "tail": "bottom-left",
+          "voice": "erin",
           "text": {
             "en": "Then I'll take you home. Come with me.",
             "it": "Allora ti porto a casa. Vieni con me.",
@@ -1003,12 +965,9 @@
           "x": 0.41,
           "y": 0.47,
           "variant": "bubble",
+          "tail": "bottom-left",
           "size": 25,
-          "bubble": {
-            "tail": "bottom-left",
-            "padX": 3,
-            "padY": 3
-          },
+          "voice": "sofia",
           "text": {
             "en": "Thank you for saving me from the goblins! I was imprisoned by the guards and you defeated them!",
             "it": "Grazie per avermi salvata dai goblin! Le guardie mi tenevano prigioniera e tu le hai sconfitte!",
@@ -1023,6 +982,7 @@
           "variant": "bubble",
           "tail": "bottom-left",
           "size": 20,
+          "voice": "sofia",
           "text": {
             "en": "Teach me those moves, please please!",
             "it": "Insegnami quelle mosse, ti prego, ti prego!",
@@ -1037,6 +997,7 @@
           "variant": "bubble",
           "tail": "bottom",
           "size": 20,
+          "voice": "erin",
           "text": {
             "en": "Not now. There's no time.",
             "it": "Non ora. Non c'è tempo.",
@@ -1048,13 +1009,14 @@
       ]
     },
     {
-      "file": "assets/c6922be31d2494473aa663d12ab35a10.webp",
+      "file": "assets/bc7cf2e9f4fd6d10d35eba137c08db88.webp",
       "words": [
         {
           "x": 0.25,
           "y": 0.39,
           "variant": "bubble",
           "tail": "bottom-right",
+          "voice": "sofia",
           "text": {
             "en": "When I grow up I want to be a warrior like you!",
             "it": "Da grande voglio diventare una guerriera come te!",
@@ -1068,6 +1030,7 @@
           "y": 0.82,
           "variant": "bubble",
           "tail": "left",
+          "voice": "erin",
           "text": {
             "en": "I'll return to that cave… even stronger this time. He won't escape me!",
             "it": "Tornerò in quella caverna… ancora più forte. Non mi sfuggirà!",
@@ -1079,7 +1042,7 @@
       ]
     },
     {
-      "file": "assets/ffa036dc0b05af4bbb0b340a66673ff1.webp",
+      "file": "assets/8781b023c4a2bd0c517fae07c3ec8e32.webp",
       "words": [
         {
           "x": 0.5,
@@ -1088,6 +1051,7 @@
           "tail": "none",
           "size": 60,
           "color": "#111111",
+          "voice": "narrator",
           "text": {
             "en": "THE END",
             "it": "FINE",
@@ -1102,6 +1066,7 @@
           "tail": "none",
           "size": 28,
           "color": "#111111",
+          "voice": "narrator",
           "text": {
             "en": "Volume 2 — Coming Soon",
             "it": "Volume 2 — In arrivo",
@@ -1116,6 +1081,7 @@
           "tail": "none",
           "size": 24,
           "color": "#111111",
+          "voice": "narrator",
           "text": {
             "en": "story by Olivia & Marco Sangalli",
             "it": "storia di Olivia e Marco Sangalli",
@@ -1130,6 +1096,7 @@
           "tail": "none",
           "size": 20,
           "color": "#111111",
+          "voice": "narrator",
           "text": {
             "en": "https://twentyseven.pictures",
             "it": "https://twentyseven.pictures",
@@ -1140,7 +1107,7 @@
       ]
     },
     {
-      "file": "assets/d139c9363f1b74aca65631ef67ab6804.webp",
+      "file": "assets/34719879bf826c3cb5d53adfa321205f.webp",
       "words": [
         {
           "x": 0.18,
@@ -1149,6 +1116,7 @@
           "tail": "none",
           "size": 48,
           "color": "#111111",
+          "voice": "narrator",
           "text": {
             "en": "ERIN",
             "it": "ERIN",
@@ -1163,6 +1131,7 @@
           "tail": "none",
           "size": 22,
           "color": "#111111",
+          "voice": "narrator",
           "text": {
             "en": "PREQUEL ERA",
             "it": "ERA PREQUEL",
