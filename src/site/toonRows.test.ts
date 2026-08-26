@@ -24,7 +24,7 @@ const EPISODES: SeriesEpisode[] = [
     pages: 23,
     status: "draft",
     seriesTitle: "Erin & the Goblins",
-    art: "erin-the-revenge.jpg",
+    art: "erin-the-revenge-intro.jpg",
   },
   {
     id: "nero",

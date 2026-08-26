@@ -53,7 +53,8 @@ export const SERIES: Series[] = [
       },
       {
         id: "erin-the-revenge",
-        art: "erin-the-revenge.jpg",
+        // intro.png as a new key: card-art is immutable and not content-hashed.
+        art: "erin-the-revenge-intro.jpg",
         n: 2,
         title: "The Revenge",
         url: "/toons/erin-the-revenge/",
