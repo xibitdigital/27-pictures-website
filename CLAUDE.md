@@ -182,14 +182,13 @@ runs from the Actions tab use whichever branch you pick.
 
 Each Actions run, in order:
 
-1. Hash every `content/toons/*/config.json` and put **new** objects on R2
-   (`config.<md5>.json` — each toon keeps its own md5; unchanged books skip the
-   put). Rewrite `src/toons/config-lock.json` **in the job**.
-   `CLOUDFLARE_API_TOKEN` must include **Workers R2 Storage: Admin Read & Write**.
-   Wrangler talks to the REST API; Object Read & Write tokens (and Pages Edit
-   alone) 403 with `Authentication error [code: 10000]`. Unchanged hashes hide
-   this until a config actually changes.
-2. `npm run build` so the JS bundle asks for those names.
+1. Check `src/toons/config-lock.json` against every `content/toons/*/config.json`
+   hash (`npm run publish-toon-config -- --check`). No R2 put — wrangler talks
+   to the REST API and the Actions token 403s without **Workers R2 Storage:
+   Admin Read & Write**. Config objects are put **locally** on commit (pre-commit
+   hook on staged `content/toons/*/config.json`). A lock that does not match
+   fails the job instead of shipping a bundle that asks for a missing JSON.
+2. `npm run build` so the JS bundle asks for the locked names.
 3. `wrangler pages deploy dist` to that branch's Pages project.
 4. Prune superseded unique `<hash>.<project>.pages.dev` snapshots. Keep the
    newest (the live custom domain) and any still-aliased deploy; never
@@ -218,11 +217,12 @@ make preview-deploy  # CDN build → staging project
 ```
 
 **A toon config JSON is not the live book until the lock is in the bundle.**
-Actions publishes configs before build, so a push of `content/toons/*/config.json`
-is enough for the JSON. New **plates and audio** still have to be on R2 first
-(`make ship` / `upload-assets`) or the reader 404s. Local `vite` reads
-`content/` via `/__dev/toon-config/` and will look different from staging until
-you push.
+Staging a `content/toons/*/config.json` runs `publish-toon-config --staged`
+(pre-commit): put `config.<md5>.json` on R2 and add the lock to the same
+commit. CI only `--check`s that lock. New **plates and audio** still have to
+be on R2 first (`make ship` / `upload-assets`) or the reader 404s. Local
+`vite` reads `content/` via `/__dev/toon-config/` and will look different from
+staging until you push.
 
 ### Local
 
@@ -691,8 +691,8 @@ make ship TOON=jax PROD=1       # → twentyseven.pictures
 make ship TOON=jax DRY=1        # plan + asset check only
 ```
 
-Caption-only edits: commit `content/toons/<toon>/config.json` and push. Actions
-hashes every toon, puts new JSON on R2, compiles the lock, deploys.
+Caption-only edits: commit `content/toons/<toon>/config.json`. Pre-commit puts
+the hashed JSON on R2 and stages the lock; Actions `--check`s it, then deploys.
 
 New **media**: `ship-toon.js` still chains upload → **verify every plate and
 clip the config references resolves on R2** → publish the config → build and

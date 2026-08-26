@@ -28,6 +28,19 @@ repos:
         args: [--write]
         stages: [pre-commit]
 
+# Config JSON → hashed object on R2 + lock. After prettier so the hash is the
+# file we actually commit. CI only verifies the lock (the Actions token 403s
+# wrangler R2 puts).
+-   repo: local
+    hooks:
+    -   id: publish-toon-config
+        name: publish staged toon configs to R2
+        entry: node scripts/publish-toon-config.js --staged
+        language: system
+        files: ^content/toons/.+/config\.json$
+        pass_filenames: false
+        stages: [pre-commit]
+
 # Gate pushes: tests + production build (typecheck included via `npm run build`).
 -   repo: local
     hooks:

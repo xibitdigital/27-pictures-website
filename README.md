@@ -88,8 +88,9 @@ make add-image SRC=… TOON=jax|erin|nero [CONFIG=1] [UPLOAD=1]
 | Jax | `/toons/jax/` | Multilingual + sound |
 | Nero | `/toons/nero/` | Scotland Yard case (Nero / Eve / The Dog) |
 
-Edit captions in `content/toons/<toon>/config.json` and **push** — Actions
-publishes every toon's hashed JSON to R2, then builds. For new plates/audio:
+Edit captions in `content/toons/<toon>/config.json` and **commit** — pre-commit
+puts the hashed JSON on R2 and stages the lock. Actions only checks the lock,
+then builds. For new plates/audio:
 
 ```bash
 make ship TOON=nero            # upload + verify + publish + staging deploy
@@ -146,8 +147,8 @@ CORS locked to `https://twentyseven.pictures`.
   (HTTP Basic Auth); `main` → https://twentyseven.pictures. See `CLAUDE.md`.
 - Artifact is **`dist/`**, not raw `public/`
 - `npm run build` **hard-fails** if `VITE_ASSET_BASE` is missing
-- Actions publishes toon configs before build, then prunes old unique
-  `pages.dev` snapshots (keeps the live custom-domain deploy)
+- Actions checks the toon config lock (puts happen on commit), then prunes old
+  unique `pages.dev` snapshots (keeps the live custom-domain deploy)
 - After shared CSS changes, `npm run hash-assets` (also runs as part of `build`)
 - Local fallback: `make deploy` / `make preview-deploy`
 

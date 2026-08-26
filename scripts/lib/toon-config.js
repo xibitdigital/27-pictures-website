@@ -162,6 +162,37 @@ function listToonsWithConfig() {
     .filter((name) => fs.existsSync(referenceConfigPath(name)));
 }
 
+/** `content/toons/<toon>/config.json` → toon folder name, or null. */
+function toonFromConfigPath(filePath) {
+  const norm = String(filePath || "")
+    .replace(/\\/g, "/")
+    .replace(/^\.\//, "");
+  const m = norm.match(/(?:^|\/)content\/toons\/([^/]+)\/config\.json$/);
+  return m ? m[1] : null;
+}
+
+/**
+ * Fail if the lock does not point at this toon's current config hash.
+ * No R2. Used by CI so a forgotten local publish cannot ship.
+ */
+function checkToonConfig(toon) {
+  const data = readConfig(toon);
+  if (!data) {
+    throw new Error(`no reference config at ${path.relative(ROOT, referenceConfigPath(toon))}`);
+  }
+  const { fileName, r2Key, sitePath, md5 } = hashConfigContent(toon, data);
+  const lock = loadConfigLock();
+  const locked = lock[toon] || null;
+  if (locked !== fileName) {
+    throw new Error(
+      `${toon}: lock has ${locked || "(none)"}, config hashes to ${fileName}. ` +
+        `Publish locally (pre-commit, or npm run publish-toon-config -- --toon ${toon}) ` +
+        `and commit src/toons/config-lock.json.`
+    );
+  }
+  return { fileName, r2Key, sitePath, md5, locked: true };
+}
+
 /** Site path for fetch: /toons/jax/config.<md5>.json (served from CDN). */
 function siteConfigPath(toon) {
   const lock = loadConfigLock();
@@ -232,6 +263,8 @@ module.exports = {
   publishToonConfig,
   downloadToonConfig,
   listToonsWithConfig,
+  toonFromConfigPath,
+  checkToonConfig,
   siteConfigPath,
   appendPageToReference,
   replacePageInReference,

@@ -85,5 +85,5 @@ Assets and config are **staged locally only** until uploaded:
 ```bash
 npm run upload-assets                                  # plates + card art → R2
 make ship TOON=redsmile-static                         # verify + publish + staging
-# or: commit config.json and push — Actions publishes every toon then deploys
+# or: commit config.json — pre-commit puts the hashed JSON on R2
 ```
