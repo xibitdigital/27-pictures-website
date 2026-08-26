@@ -86,7 +86,7 @@ jobs:
         run: |
           {
             echo "## Cloudflare Pages"
-            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            if [ "$GITHUB_REF" = "refs/heads/main" ]; then
               echo "- Site: https://twentyseven.pictures"
               echo "- Deployment: $PROD_URL"
             else
