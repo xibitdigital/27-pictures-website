@@ -91,17 +91,12 @@ jobs:
 
       - name: Summary
         if: steps.deploy-prod.outcome == 'success' || steps.deploy-staging.outcome == 'success'
-        env:
-          PROD_URL: ${{ steps.deploy-prod.outputs.deployment-url }}
-          STAGING_URL: ${{ steps.deploy-staging.outputs.deployment-url }}
         run: |
           {
             echo "## Cloudflare Pages"
             if [ "$GITHUB_REF" = "refs/heads/main" ]; then
               echo "- Site: https://twentyseven.pictures"
-              echo "- Deployment: $PROD_URL"
             else
               echo "- Site: https://staging.twentyseven.pictures (HTTP Basic Auth)"
-              echo "- Deployment: $STAGING_URL"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
