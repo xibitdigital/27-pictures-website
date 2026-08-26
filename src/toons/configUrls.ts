@@ -6,8 +6,10 @@
  * - Prod: content-hashed file on CDN from config-lock.json
  *   → `/toons/<toon>/config.<md5>.json` + VITE_ASSET_BASE
  *
- * Edit content/toons/<toon>/config.json, then publish with
- * `npm run publish-toon-config` when ready for production.
+ * Edit content/toons/<toon>/config.json. GitHub Actions runs
+ * `publish-toon-config --skip-unchanged` before `vite build`, so a push to
+ * staging/main publishes any new hashes and compiles them into the bundle.
+ * Local `make ship` still does the same for one toon.
  */
 import lock from "./config-lock.json";
 

@@ -1,6 +1,8 @@
 # Build dist/ and deploy to Cloudflare Pages (not GitHub Pages).
 #   staging → twentyseven-pictures-staging → https://staging.twentyseven.pictures
 #   main    → twentyseven-pictures         → https://twentyseven.pictures
+# Toon configs: publish every content/toons/*/config.json to R2 (config.<md5>.json)
+# then build, so the lock in the JS matches this commit. Each toon keeps its own md5.
 name: Deploy to Cloudflare Pages
 
 on:
@@ -52,6 +54,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # Hash every content/toons/*/config.json, put new objects on R2, rewrite
+      # config-lock.json in this job so the bundle below asks for those names.
+      # Unchanged books keep their existing md5 (no R2 put).
+      - name: Publish toon configs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run publish-toon-config -- --skip-unchanged
 
       - name: Build
         env:

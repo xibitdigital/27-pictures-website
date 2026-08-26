@@ -9,6 +9,7 @@
  *   npm run publish-toon-config -- --toon jax
  *   npm run publish-toon-config -- --dry-run
  *   npm run publish-toon-config -- --lock-only   # hash + lock, skip R2
+ *   npm run publish-toon-config -- --skip-unchanged  # R2 put only when the md5 is new
  */
 const path = require("node:path");
 const {
@@ -21,12 +22,13 @@ const {
 } = require("./lib/toon-config");
 
 function parseArgs(argv) {
-  const opts = { toon: null, dryRun: false, lockOnly: false, help: false };
+  const opts = { toon: null, dryRun: false, lockOnly: false, skipUnchanged: false, help: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "-h" || a === "--help") opts.help = true;
     else if (a === "--dry-run") opts.dryRun = true;
     else if (a === "--lock-only") opts.lockOnly = true;
+    else if (a === "--skip-unchanged") opts.skipUnchanged = true;
     else if (a === "--toon") opts.toon = argv[++i];
     else if (a.startsWith("--toon=")) opts.toon = a.slice("--toon=".length);
     else {
@@ -40,7 +42,7 @@ function parseArgs(argv) {
 function main() {
   const opts = parseArgs(process.argv.slice(2));
   if (opts.help) {
-    console.log(`Usage: node scripts/publish-toon-config.js [--toon jax|erin] [--dry-run] [--lock-only]
+    console.log(`Usage: node scripts/publish-toon-config.js [--toon jax|erin] [--dry-run] [--lock-only] [--skip-unchanged]
 
   Reference: content/toons/<toon>/config.json  (edit this)
   CDN key:   toons/<toon>/config.<md5>.json
@@ -57,12 +59,14 @@ function main() {
 
   if (opts.dryRun) console.log("(dry-run)");
   if (opts.lockOnly) console.log("(lock-only — no R2 upload)");
+  if (opts.skipUnchanged) console.log("(skip-unchanged — R2 put only when the md5 is new)");
 
   for (const toon of toons) {
     try {
       const result = publishToonConfig(toon, {
         dryRun: opts.dryRun,
         skipUpload: opts.lockOnly,
+        skipUnchanged: opts.skipUnchanged,
       });
       console.log(
         `${toon}: ${result.fileName}` +

@@ -83,7 +83,10 @@ function hashConfigContent(toon, data) {
  * Publish reference config to R2 as config.<md5>.json and update config-lock.json.
  * @returns {{ fileName: string, r2Key: string, sitePath: string, md5: string, changed: boolean, uploaded: boolean }}
  */
-function publishToonConfig(toon, { dryRun = false, bucket = DEFAULT_BUCKET, skipUpload = false } = {}) {
+function publishToonConfig(
+  toon,
+  { dryRun = false, bucket = DEFAULT_BUCKET, skipUpload = false, skipUnchanged = false } = {}
+) {
   const data = readConfig(toon);
   if (!data) {
     throw new Error(`no reference config at ${path.relative(ROOT, referenceConfigPath(toon))}`);
@@ -100,7 +103,7 @@ function publishToonConfig(toon, { dryRun = false, bucket = DEFAULT_BUCKET, skip
   }
 
   let uploaded = false;
-  if (!skipUpload) {
+  if (!skipUpload && !(skipUnchanged && !changed)) {
     const tmp = path.join(os.tmpdir(), `toon-config-${toon}-${md5}.json`);
     fs.writeFileSync(tmp, body);
     try {
