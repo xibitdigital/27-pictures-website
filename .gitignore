@@ -19,6 +19,9 @@ node_modules
 /src/de/
 /src/fr/
 
+# Python bytecode
+__pycache__/
+
 # misc
 .DS_Store
 .env
