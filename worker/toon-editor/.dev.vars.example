@@ -1,0 +1,3 @@
+# Copy to .dev.vars (gitignored). `make editor-worker` writes JWT_SECRET if missing.
+# Production: npx wrangler secret put JWT_SECRET
+JWT_SECRET=replace-with-at-least-32-random-characters

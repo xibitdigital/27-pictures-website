@@ -324,6 +324,9 @@
           <header class="toon-series-head">
             <h3 id="browse-series-title" data-i18n="browseTitle">Browse the series</h3>
             <p data-i18n="browseBlurb">Four books · pick one to start reading</p>
+            <!-- Grid is static HTML for crawlers and when the catalog Worker
+                 is down. With JS, initToonCatalog() replaces it with series
+                 containers + ungrouped toons from D1. -->
           </header>
 
           <div class="series-grid">

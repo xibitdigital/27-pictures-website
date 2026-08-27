@@ -48,6 +48,28 @@ describe("LangSwitcher", () => {
     expect(wrapper.find(".toon-lang-toggle-label").text()).toBe("IT");
   });
 
+  it("can be driven with languages + v-model (editor, no captions store)", async () => {
+    const wrapper = mount(LangSwitcher, {
+      attachTo: document.body,
+      props: {
+        modelValue: "en",
+        languages: [
+          { code: "en", label: "EN" },
+          { code: "it", label: "IT" },
+        ],
+      },
+    });
+    expect(wrapper.find(".toon-lang-switcher").exists()).toBe(true);
+    expect(wrapper.find(".toon-lang-toggle-label").text()).toBe("EN");
+    await wrapper.find(".toon-lang-toggle").trigger("click");
+    await flushPromises();
+    const itBtn = wrapper.findAll(".toon-lang-option").find((b) => b.text() === "IT");
+    await itBtn!.trigger("click");
+    await flushPromises();
+    expect(wrapper.emitted("update:modelValue")?.[0][0]).toBe("it");
+    wrapper.unmount();
+  });
+
   it("sets the language and emits change when one is chosen", async () => {
     const store = mockCaptions("en");
     const wrapper = mountSwitcher(store);

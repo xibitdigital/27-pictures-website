@@ -1,0 +1,25 @@
+name = "toon-editor"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Origins whose browser calls are answered. Dev hosts are added in code
+# (localhost / 127.0.0.1 / local.twentyseven.test) so `make dev` can write.
+[vars]
+ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures"
+# JWT_SECRET is a wrangler secret (local: .dev.vars). Never put it here.
+# Public CDN prefix for stored objects. Keys are `editor/<slug>/…`.
+ASSET_BASE = "https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev"
+# Books that may receive likes even before they have a D1 `toons` row.
+ALLOWED_TOONS = "erin,erin-the-revenge,jax,nero,redsmile-static,redsmile-marcus"
+
+# npx wrangler d1 create toon-editor  → paste the id here.
+[[d1_databases]]
+binding = "DB"
+database_name = "toon-editor"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+# Same bucket the rest of the site uses (scripts/lib/r2-media.js).
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "twentyseven-assets"

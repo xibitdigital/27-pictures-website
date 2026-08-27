@@ -5,12 +5,12 @@ import { LikeButton } from "../bookReader/chrome";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "../bookReader/types";
 import { episodeNav } from "../series";
-import { toonConfigUrl } from "../configUrls";
+import { readerConfigUrl } from "../configUrls";
 import { COVER } from "../coverCopy";
 
 const ASSET_PAGE_DIR = "/toons/erin-the-revenge/";
-/** Content-hashed config from config-lock.json. */
-const CONFIG_URL = toonConfigUrl("erin-the-revenge");
+/** Published D1 JSON when the editor API is up; otherwise hashed / file config. */
+const CONFIG_URL = readerConfigUrl("erin-the-revenge");
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
 
 /** Back cover points at the rest of the series, not a generic index. */

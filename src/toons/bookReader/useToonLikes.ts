@@ -1,4 +1,5 @@
 import { onMounted, ref } from "vue";
+import { editorApiBase } from "../editor/api";
 
 /**
  * Like counter for a toon.
@@ -6,10 +7,11 @@ import { onMounted, ref } from "vue";
  * Two sources of truth, on purpose:
  * - **the reader's own vote** lives in localStorage, so the heart stays filled
  *   across reloads even when the network is gone or the API is not configured;
- * - **the total** lives in the Worker (KV), fetched on mount and refreshed by
- *   the POST response.
+ * - **the total** lives in the editor Worker (D1 `toon_likes`), fetched on
+ *   mount and refreshed by the POST response. `VITE_LIKES_API` still wins if
+ *   set; otherwise we use the editor API (`VITE_EDITOR_API` / `/__editor-api`).
  *
- * With no `VITE_LIKES_API` the composable degrades to local-only: the heart
+ * With neither base configured the composable degrades to local-only: the heart
  * still fills and is remembered, `total` simply stays null and the stats
  * readout has nothing to show.
  *
@@ -51,11 +53,12 @@ export function writeStoredLike(toonId: string, liked: boolean): void {
   }
 }
 
-/** Base URL of the likes Worker, or null when unset (local-only mode). */
+/** Base URL of the likes API, or null when unset (local-only mode). */
 export function likesApiBase(): string | null {
   const raw = import.meta.env?.VITE_LIKES_API;
-  const base = typeof raw === "string" ? raw.trim().replace(/\/+$/, "") : "";
-  return base || null;
+  const dedicated = typeof raw === "string" ? raw.trim().replace(/\/+$/, "") : "";
+  if (dedicated) return dedicated;
+  return editorApiBase();
 }
 
 function parseTotal(body: unknown): number | null {

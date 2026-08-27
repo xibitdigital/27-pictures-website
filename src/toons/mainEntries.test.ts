@@ -43,4 +43,13 @@ describe("toon entry modules", () => {
     expect(createApp).toHaveBeenCalled();
     expect(mount).toHaveBeenCalledWith("#app");
   });
+
+  it("editor/main.ts mounts the editor app on #app", async () => {
+    const use = vi.fn().mockReturnValue({ mount });
+    createApp.mockReturnValue({ use, mount });
+    await import("./editor/main");
+    expect(createApp).toHaveBeenCalled();
+    expect(use).toHaveBeenCalled();
+    expect(mount).toHaveBeenCalledWith("#app");
+  });
 });

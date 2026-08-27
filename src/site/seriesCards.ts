@@ -120,59 +120,72 @@ function buildDialog(): HTMLDialogElement {
   return dialog;
 }
 
-export function initSeriesQuickView(root: ParentNode = document): void {
-  const triggers = [...root.querySelectorAll<HTMLAnchorElement>("a[data-quick-view]")];
-  if (!triggers.length || typeof HTMLDialogElement === "undefined") return;
+/**
+ * One listener on the document so catalog-swapped series cards still open
+ * the quick view. Per-card listeners die when the grid is rebuilt from D1.
+ */
+let quickViewBound = false;
+let quickViewDialog: HTMLDialogElement | null = null;
+const quickViewCache = new Map<string, DocumentFragment>();
 
-  let dialog: HTMLDialogElement | null = null;
-  const cache = new Map<string, DocumentFragment>();
+/** Tests: drop cached pages and the dialog node after each case. */
+export function resetSeriesQuickView(): void {
+  quickViewCache.clear();
+  quickViewDialog = null;
+}
 
-  for (const trigger of triggers) {
-    trigger.addEventListener("click", (event) => {
-      // Leave new-tab, middle-click and modified clicks alone — a quick view
-      // must not hijack the ways people deliberately open a real page.
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+export function initSeriesQuickView(_root: ParentNode = document): void {
+  if (quickViewBound || typeof HTMLDialogElement === "undefined") return;
+  quickViewBound = true;
 
-      const href = trigger.getAttribute("href");
-      if (!href) return;
-      event.preventDefault();
+  document.addEventListener("click", (event) => {
+    // Leave new-tab, middle-click and modified clicks alone — a quick view
+    // must not hijack the ways people deliberately open a real page.
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (!(event.target instanceof Element)) return;
+    const trigger = event.target.closest<HTMLAnchorElement>("a[data-quick-view]");
+    if (!trigger || !document.contains(trigger)) return;
+    if (event.button !== 0) return;
 
-      const view = (dialog ??= buildDialog());
-      const body = view.querySelector(".episode-dialog-body") as HTMLElement;
-      const show = (content: Node) => {
-        body.replaceChildren(content);
-        // The badges are filled on the injected copy, not on the cached
-        // fragment: `show` clones it, so a fragment filled once would keep a
-        // stale count for the rest of the session.
-        initEpisodeVotes(body);
-        view.showModal();
-        // Focus the panel, not the close button showModal() would otherwise pick
-        // and not the first episode either: focusing a card drew a ring around
-        // episode one, which reads as "this one is selected" rather than "the
-        // dialog is open". From here Tab still reaches every episode in order.
-        body.focus();
-      };
+    const href = trigger.getAttribute("href");
+    if (!href) return;
+    event.preventDefault();
 
-      const cached = cache.get(href);
-      if (cached) {
-        show(cached.cloneNode(true));
-        return;
-      }
+    const view = (quickViewDialog ??= buildDialog());
+    const body = view.querySelector(".episode-dialog-body") as HTMLElement;
+    const show = (content: Node) => {
+      body.replaceChildren(content);
+      // The badges are filled on the injected copy, not on the cached
+      // fragment: `show` clones it, so a fragment filled once would keep a
+      // stale count for the rest of the session.
+      initEpisodeVotes(body);
+      view.showModal();
+      // Focus the panel, not the close button showModal() would otherwise pick
+      // and not the first episode either: focusing a card drew a ring around
+      // episode one, which reads as "this one is selected" rather than "the
+      // dialog is open". From here Tab still reaches every episode in order.
+      body.focus();
+    };
 
-      view.classList.add("is-loading");
-      void fetch(href, { headers: { Accept: "text/html" } })
-        .then((res) => (res.ok ? res.text() : Promise.reject(new Error(String(res.status)))))
-        .then((html) => {
-          const region = extractSeriesRegion(html);
-          if (!region) throw new Error("no series region");
-          cache.set(href, region);
-          show(region.cloneNode(true));
-        })
-        .catch(() => {
-          // Whatever failed, the link still works — go to the real page.
-          window.location.href = href;
-        })
-        .finally(() => view.classList.remove("is-loading"));
-    });
-  }
+    const cached = quickViewCache.get(href);
+    if (cached) {
+      show(cached.cloneNode(true));
+      return;
+    }
+
+    view.classList.add("is-loading");
+    void fetch(href, { headers: { Accept: "text/html" } })
+      .then((res) => (res.ok ? res.text() : Promise.reject(new Error(String(res.status)))))
+      .then((html) => {
+        const region = extractSeriesRegion(html);
+        if (!region) throw new Error("no series region");
+        quickViewCache.set(href, region);
+        show(region.cloneNode(true));
+      })
+      .catch(() => {
+        // Whatever failed, the link still works — go to the real page.
+        window.location.href = href;
+      })
+      .finally(() => view.classList.remove("is-loading"));
+  });
 }

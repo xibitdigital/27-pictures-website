@@ -5,7 +5,7 @@ import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "../bookReader/types";
 import LangSwitcher from "../bookReader/LangSwitcher.vue";
 import { LikeButton } from "../bookReader/chrome";
-import { toonConfigUrl } from "../configUrls";
+import { readerConfigUrl } from "../configUrls";
 import { COVER } from "../coverCopy";
 
 /** Reader media root — explicit pageDir for CDN relative paths. */
@@ -14,7 +14,7 @@ import { COVER } from "../coverCopy";
 // toons/jax/assets/<md5> on R2 — changing this 404s every page.
 const ASSET_PAGE_DIR = "/toons/jax/";
 /** Content-hashed config from config-lock.json (changes when config bytes change). */
-const CONFIG_URL = toonConfigUrl("jax");
+const CONFIG_URL = readerConfigUrl("jax");
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
 const BG_MUSIC = resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3");
 

@@ -1,32 +1,40 @@
 <script setup lang="ts">
 /**
  * Caption language dropdown for FlipFrame toons (Jax, Nero, …).
- * Languages come from the injected toon captions store (config.json).
+ * Languages come from the injected toon captions store (config.json), or from
+ * `languages` + `modelValue` when used in the editor (no store).
  */
 import { computed } from "vue";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
 import { useToonCaptions } from "./captions/useToonCaptions";
+import type { LangOption } from "./types";
+
+const props = defineProps<{
+  languages?: LangOption[];
+  modelValue?: string;
+}>();
 
 const emit = defineEmits<{
   change: [];
+  "update:modelValue": [code: string];
 }>();
 
 const captions = useToonCaptions();
 
-const languages = computed(() => captions?.languages.value ?? []);
-const lang = computed(() => captions?.lang.value ?? "en");
+const languages = computed(() => props.languages ?? captions?.languages.value ?? []);
+const lang = computed(() => props.modelValue ?? captions?.lang.value ?? "en");
 
 const currentLabel = computed(() => {
   const hit = languages.value.find((l) => l.code === lang.value);
   return hit?.label ?? lang.value.toUpperCase();
 });
 
-/** Nothing to switch between until the config lands (or for caption-less toons). */
-const visible = computed(() => !!captions && languages.value.length > 1);
+/** Nothing to switch between until there are at least two languages. */
+const visible = computed(() => languages.value.length > 1);
 
 function onLangUpdate(code: string): void {
-  if (!captions) return;
-  captions.setLang(code);
+  emit("update:modelValue", code);
+  if (props.modelValue == null) captions?.setLang(code);
   emit("change");
 }
 </script>

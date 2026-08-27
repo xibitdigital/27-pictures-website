@@ -4,12 +4,12 @@ import LangSwitcher from "../bookReader/LangSwitcher.vue";
 import { LikeButton } from "../bookReader/chrome";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "../bookReader/types";
-import { toonConfigUrl } from "../configUrls";
+import { readerConfigUrl } from "../configUrls";
 import { COVER } from "../coverCopy";
 
 const ASSET_PAGE_DIR = "/toons/redsmile-static/";
 /** Content-hashed config from config-lock.json. */
-const CONFIG_URL = toonConfigUrl("redsmile-static");
+const CONFIG_URL = readerConfigUrl("redsmile-static");
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
 
 /** Stable options — shell owns page source, captions, and cover identity. */

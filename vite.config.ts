@@ -125,18 +125,38 @@ export default defineConfig({
     // HTTPS only when DEV_HTTPS=1 injects @vitejs/plugin-basic-ssl certs
     allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1"],
     fs: { allow: [__dirname] },
+    // Editor API: same-origin in `make dev` so login is not a CORS fetch to :8787.
+    proxy: {
+      "/__editor-api": {
+        target: process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/__editor-api/, ""),
+      },
+    },
   },
   preview: {
     port: 4173,
     host: true,
     allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1"],
+    proxy: {
+      "/__editor-api": {
+        target: process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/__editor-api/, ""),
+      },
+    },
   },
   test: {
     environment: "happy-dom",
     globals: true,
     // vite/ is covered too: the build plugins have behaviour worth testing
     // (hashedCss decides what URL every page loads its CSS from).
-    include: ["src/**/*.{test,spec}.{ts,tsx}", "vite/**/*.{test,spec}.ts", "scripts/**/*.{test,spec}.js"],
+    include: [
+      "src/**/*.{test,spec}.{ts,tsx}",
+      "vite/**/*.{test,spec}.ts",
+      "scripts/**/*.{test,spec}.js",
+      "worker/toon-editor/src/**/*.test.js",
+    ],
     setupFiles: ["src/test/setup.ts"],
     css: true,
     // Do not inherit these from developer .env — unit tests use relative paths
@@ -144,6 +164,7 @@ export default defineConfig({
     env: {
       VITE_ASSET_BASE: "",
       VITE_LIKES_API: "",
+      VITE_EDITOR_API: "",
     },
   },
 });

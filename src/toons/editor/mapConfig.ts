@@ -1,0 +1,136 @@
+/**
+ * D1 editor records ↔ reader ToonConfig / WordEntry.
+ * The live FlipFrame reader still loads hashed JSON; this is how a draft
+ * round-trips into that shape without a second schema.
+ */
+import type { LangCode, ToonConfig, WordEntry, WordTextMap } from "../bookReader/types";
+import type { BubbleRecord, PageRecord, ToonRecord } from "./types";
+
+export const BUBBLE_VARIANTS = ["bubble", "thought", "burst", "ai", "badai", "credit"] as const;
+export type BubbleVariant = (typeof BUBBLE_VARIANTS)[number];
+
+export const BUBBLE_TAILS = [
+  "none",
+  "top",
+  "top-left",
+  "top-right",
+  "bottom",
+  "bottom-left",
+  "bottom-right",
+  "left",
+  "right",
+] as const;
+export type BubbleTail = (typeof BUBBLE_TAILS)[number];
+
+export const CAPTION_LANGS = [
+  { code: "en" as const, label: "English" },
+  { code: "it" as const, label: "Italiano" },
+  { code: "de" as const, label: "Deutsch" },
+  { code: "fr" as const, label: "Français" },
+];
+
+export function bubbleTextMap(bubble: BubbleRecord): WordTextMap {
+  if (bubble.textJson) {
+    try {
+      const parsed = JSON.parse(bubble.textJson) as WordTextMap;
+      if (parsed && typeof parsed === "object") {
+        return { ...parsed, en: parsed.en ?? bubble.textEn };
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+  return { en: bubble.textEn };
+}
+
+export function textPatch(
+  bubble: BubbleRecord,
+  lang: LangCode,
+  value: string
+): Pick<BubbleRecord, "textEn" | "textJson"> {
+  const map: WordTextMap = { ...bubbleTextMap(bubble), [lang]: value };
+  return { textEn: map.en ?? "", textJson: JSON.stringify(map) };
+}
+
+export function bubbleExtra(bubble: BubbleRecord): Record<string, unknown> {
+  if (!bubble.extraJson) return {};
+  try {
+    const parsed = JSON.parse(bubble.extraJson) as Record<string, unknown>;
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+export function extraPatch(bubble: BubbleRecord, key: string, value: unknown): Pick<BubbleRecord, "extraJson"> {
+  const extra = { ...bubbleExtra(bubble) };
+  if (value == null || value === "") delete extra[key];
+  else extra[key] = value;
+  return { extraJson: Object.keys(extra).length ? JSON.stringify(extra) : null };
+}
+
+export function bubbleAudio(bubble: BubbleRecord): string {
+  const audio = bubbleExtra(bubble).audio;
+  return typeof audio === "string" ? audio : "";
+}
+
+/** Empty captions still need a glyph so WordCaption / buildCaption will render. */
+export const PLACEHOLDER_TEXT = "…";
+
+export function bubbleToWordEntry(bubble: BubbleRecord): WordEntry {
+  let textMap: Record<string, string> | null = null;
+  if (bubble.textJson) {
+    try {
+      textMap = JSON.parse(bubble.textJson) as Record<string, string>;
+    } catch {
+      textMap = null;
+    }
+  }
+  const text = (textMap?.en || bubble.textEn).trim() ? textMap?.en || bubble.textEn : PLACEHOLDER_TEXT;
+  const entry: WordEntry = {
+    x: bubble.x,
+    y: bubble.y,
+    align: "center",
+    variant: bubble.variant || "bubble",
+    text: textMap && Object.keys(textMap).length ? textMap : { en: text },
+  };
+  if (bubble.tail) entry.tail = bubble.tail;
+  if (bubble.size != null) entry.size = bubble.size;
+  if (bubble.angle != null) entry.angle = bubble.angle;
+  if (bubble.extraJson) {
+    try {
+      Object.assign(entry, JSON.parse(bubble.extraJson) as Record<string, unknown>);
+    } catch {
+      /* ignore */
+    }
+  }
+  return entry;
+}
+
+export function exportToonConfig(
+  toon: Pick<ToonRecord, "title" | "designWidth" | "designHeight">,
+  pages: PageRecord[]
+): ToonConfig {
+  const ordered = pages.slice().sort((a, b) => a.position - b.position);
+  return {
+    title: toon.title,
+    designWidth: toon.designWidth,
+    designHeight: toon.designHeight,
+    defaultLang: "en",
+    languages: [{ code: "en", label: "EN" }],
+    pages: ordered.map((page) => ({
+      file: page.fileKey,
+      words: page.bubbles
+        .slice()
+        .sort((a, b) => a.sort - b.sort)
+        .map((bubble) => {
+          const word = bubbleToWordEntry(bubble);
+          const map = word.text as { en: string };
+          if (map.en === PLACEHOLDER_TEXT && !bubble.textEn.trim()) {
+            word.text = { en: "" };
+          }
+          return word;
+        }),
+    })),
+  };
+}

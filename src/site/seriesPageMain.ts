@@ -9,6 +9,7 @@ import { vMagnetic } from "./directives/magnetic";
 import { rememberDocumentLocale } from "./i18n";
 import { SERIES } from "../toons/series";
 import { initEpisodeVotes } from "./seriesCards";
+import { initToonCatalog } from "./toonCatalog";
 
 rememberDocumentLocale();
 
@@ -40,3 +41,6 @@ app.mount("#site-app");
 
 // Vote counts per episode — silent until the Worker answers, absent at zero.
 initEpisodeVotes();
+
+// Published episodes from D1 fill the series grid; "coming soon" cards stay.
+void initToonCatalog();

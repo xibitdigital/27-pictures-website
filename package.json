@@ -29,7 +29,8 @@
     "format": "prettier --write \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\"",
     "check": "npm test && npm run build",
-    "backup-cdn": "node scripts/backup-cdn-assets.js"
+    "backup-cdn": "node scripts/backup-cdn-assets.js",
+    "import-toon": "node scripts/import-toon-config.js"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
@@ -37,7 +38,8 @@
     "@headlessui/vue": "^1.7.23",
     "pdfkit": "^0.15.0",
     "qrcode": "^1.5.4",
-    "vue": "^3.5.40"
+    "vue": "^3.5.40",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",

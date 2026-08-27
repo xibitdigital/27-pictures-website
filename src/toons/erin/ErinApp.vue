@@ -5,12 +5,12 @@ import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import { LikeButton } from "../bookReader/chrome";
 import type { ToonShellBookOptions } from "../bookReader/types";
 import { episodeNav } from "../series";
-import { toonConfigUrl } from "../configUrls";
+import { readerConfigUrl } from "../configUrls";
 import { COVER } from "../coverCopy";
 
 const ASSET_PAGE_DIR = "/toons/erin/";
 /** Content-hashed config from config-lock.json. */
-const CONFIG_URL = toonConfigUrl("erin");
+const CONFIG_URL = readerConfigUrl("erin");
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
 
 /**

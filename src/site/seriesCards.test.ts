@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { extractSeriesRegion, seriesLikeTotal, initSeriesQuickView, initEpisodeVotes } from "./seriesCards";
+import {
+  extractSeriesRegion,
+  seriesLikeTotal,
+  initSeriesQuickView,
+  initEpisodeVotes,
+  resetSeriesQuickView,
+} from "./seriesCards";
 import { resetLikesCache, fetchLikes } from "./likes";
 
 vi.mock("./likes", async (orig) => ({
@@ -31,6 +37,7 @@ function mountIndex(): HTMLAnchorElement {
 beforeEach(() => {
   vi.restoreAllMocks();
   resetLikesCache();
+  resetSeriesQuickView();
   document.querySelectorAll("dialog").forEach((d) => d.remove());
 });
 

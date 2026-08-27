@@ -27,15 +27,16 @@ function fill(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? ""));
 }
 
-type SeriesEpisode = Episode & { seriesTitle: string };
+export type RowEpisode = Episode & { seriesTitle: string; coverUrl?: string };
 
 const ASSET_BASE = (import.meta.env.VITE_ASSET_BASE as string | undefined) || "";
 
-function artUrl(ep: SeriesEpisode): string {
+function artUrl(ep: RowEpisode): string {
+  if (ep.coverUrl) return ep.coverUrl;
   return ep.art ? `${ASSET_BASE}/card-art/${ep.art}` : "";
 }
 
-function tile(ep: SeriesEpisode, meta: string, extra = ""): string {
+function tile(ep: RowEpisode, meta: string, extra = ""): string {
   const id = `row-${ep.id}-title`;
   const art = artUrl(ep);
   const img = art
@@ -61,13 +62,13 @@ function renderRow(host: HTMLElement, tiles: string[]): void {
 
 /** Ordered by how recently the book was read, most recent first. */
 export function continueReadingTiles(
-  episodes: SeriesEpisode[],
+  episodes: RowEpisode[],
   read: (id: string) => ReadingProgress | null = readProgress,
   labels: RowLabels = defaultLabels()
 ): string[] {
   return episodes
     .map((ep) => ({ ep, progress: ep.id ? read(ep.id) : null }))
-    .filter((row): row is { ep: SeriesEpisode; progress: ReadingProgress } => row.progress !== null)
+    .filter((row): row is { ep: RowEpisode; progress: ReadingProgress } => row.progress !== null)
     .sort((a, b) => b.progress.at - a.progress.at)
     .map(({ ep, progress }) => {
       const pct = Math.round((progress.page / progress.pages) * 100);
@@ -86,7 +87,7 @@ export function continueReadingTiles(
  * what someone deciding what to read next actually wants.
  */
 export function mostLovedTiles(
-  episodes: SeriesEpisode[],
+  episodes: RowEpisode[],
   likes: Map<string, number>,
   labels: RowLabels = defaultLabels()
 ): string[] {
@@ -96,9 +97,7 @@ export function mostLovedTiles(
     .map((ep) => tile(ep, fill(labels.pagesCount, { n: ep.pages ?? 0 })));
 }
 
-export function initToonRows(): void {
-  const episodes = allEpisodes();
-
+export function initToonRows(episodes: RowEpisode[] = allEpisodes()): void {
   const resume = document.getElementById("continue-reading");
   if (resume) renderRow(resume, continueReadingTiles(episodes));
 

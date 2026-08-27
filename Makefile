@@ -86,6 +86,19 @@ local-cdn: require-cdn-base ## Build with CDN media + serve protected on 127.0.0
 	@echo "→ Serving protected local preview"
 	$(NPM) run local
 
+.PHONY: editor-worker
+editor-worker: ## wrangler dev for the toon-editor Worker (D1 + R2 local)
+	@if [ ! -f worker/toon-editor/.dev.vars ] || ! grep -q '^JWT_SECRET=' worker/toon-editor/.dev.vars; then \
+		printf 'JWT_SECRET=%s\n' "$$(openssl rand -hex 32)" >> worker/toon-editor/.dev.vars; \
+		echo "wrote JWT_SECRET to worker/toon-editor/.dev.vars"; \
+	fi
+	cd worker/toon-editor && $(NPX) wrangler d1 migrations apply toon-editor --local
+	cd worker/toon-editor && $(NPX) wrangler dev
+
+.PHONY: import-toon
+import-toon: ## Load content/toons/$(TOON)/config.json into D1 (TOON=… or ALL=1)
+	$(NPM) run import-toon -- $(if $(ALL),--all,--toon $(TOON))
+
 .PHONY: typecheck
 typecheck: ## vue-tsc only
 	$(NPM) run typecheck

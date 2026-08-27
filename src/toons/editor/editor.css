@@ -1,0 +1,323 @@
+/* Internal studio chrome. Bubble look comes from reader-shared.css. */
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
+
+.editor-shell,
+.editor-studio,
+.editor-list,
+.editor-form,
+.editor-gate {
+  min-height: 100%;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.editor-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+}
+
+.editor-list,
+.editor-form,
+.editor-gate {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.editor-list-head,
+.editor-studio-head,
+.editor-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.editor-studio-head h1,
+.editor-list-head h1,
+.editor-form h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.editor-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  background: var(--red-smile);
+  color: var(--text);
+  border: 1px solid var(--red-smile);
+  border-radius: 2px;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.editor-btn:hover,
+.editor-btn:focus-visible {
+  background: var(--red-smile-hover);
+}
+
+.editor-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-session {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.editor-btn--ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border-light);
+}
+
+.editor-muted {
+  color: var(--silver);
+}
+
+.editor-error {
+  color: var(--red-smile);
+}
+
+.editor-card-list {
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.editor-card {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.5rem;
+  background: var(--bg-card);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.editor-card img,
+.editor-card-placeholder,
+.editor-cover-preview,
+.editor-thumb img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--bg-dark);
+  display: block;
+}
+
+.editor-card-placeholder {
+  aspect-ratio: 2 / 3;
+}
+
+.editor-card small {
+  display: block;
+  color: var(--silver);
+}
+
+.editor-form label,
+.editor-inspector label,
+.editor-gate label {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.editor-form input,
+.editor-form textarea,
+.editor-inspector input,
+.editor-inspector textarea,
+.editor-inspector select,
+.editor-gate input {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  font: inherit;
+}
+
+.editor-cover-preview {
+  width: 8rem;
+  margin-bottom: 1rem;
+}
+
+.editor-studio {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: 0.75rem 0.75rem 0;
+}
+
+.editor-studio-body {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr) 18rem;
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-filmstrip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: auto;
+  min-height: 0;
+}
+
+.editor-filmstrip-add {
+  display: grid;
+  place-items: center;
+  min-height: 3.5rem;
+  border: 1px dashed var(--border-light);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 0.4rem;
+}
+
+.editor-filmstrip-add input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.editor-thumb {
+  position: relative;
+  display: block;
+  border: 2px solid transparent;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.editor-thumb.is-active {
+  border-color: var(--red-smile);
+}
+
+.editor-thumb span {
+  position: absolute;
+  left: 0.2rem;
+  bottom: 0.2rem;
+  font-size: 0.7rem;
+  background: var(--bg-dark);
+  padding: 0 0.25rem;
+}
+
+.editor-canvas {
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--bg-dark);
+  position: relative;
+}
+
+.editor-canvas--empty {
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+  min-height: 100%;
+}
+
+.editor-plate {
+  position: relative;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--plate-aspect, 800 / 1424);
+  margin-inline: auto;
+  background: var(--bg-card);
+}
+
+.editor-plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.editor-word-layer {
+  /* Pan the plate; captions below take none so a drag is not a scroll. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.editor-word-layer .jax-word {
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.editor-word-layer.is-dragging,
+.editor-word-layer.is-dragging .jax-word {
+  cursor: grabbing;
+}
+
+.editor-word-layer .jax-word.is-editor-selected {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 4px;
+}
+
+.editor-inspector {
+  min-height: 0;
+  overflow: auto;
+  background: var(--bg-card);
+  padding: 1rem;
+}
+
+.editor-inspector h2 {
+  font-size: 1rem;
+  margin: 0 0 1rem;
+}
+
+@media (pointer: coarse) {
+  .editor-studio-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 5.5rem minmax(0, 1fr) 40%;
+  }
+
+  .editor-filmstrip {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .editor-filmstrip-add,
+  .editor-thumb {
+    flex: 0 0 4.5rem;
+  }
+
+  .editor-inspector {
+    height: 100%;
+  }
+}

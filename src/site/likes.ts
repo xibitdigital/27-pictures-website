@@ -1,5 +1,5 @@
 /**
- * Heart counts from the likes Worker (KV), shared by everything on /toons/
+ * Heart counts from the editor Worker (D1), shared by everything on /toons/
  * that shows them.
  *
  * The result is memoised per page load: the "most loved" rail and the vote
@@ -15,12 +15,25 @@ async function load(ids: string[]): Promise<Map<string, number>> {
   const out = new Map<string, number>();
   const base = likesApiBase();
   if (!base) return out;
+  try {
+    const res = await fetch(`${base}/likes`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const data = (await res.json()) as { likes?: Record<string, unknown>; toon?: string };
+      if (data.likes && typeof data.likes === "object" && !Array.isArray(data.likes) && data.toon == null) {
+        for (const id of ids) {
+          const n = data.likes[id];
+          if (typeof n === "number" && n > 0) out.set(id, n);
+        }
+        return out;
+      }
+    }
+  } catch {
+    /* fall through to one-request-per-book (legacy likes Worker) */
+  }
+
   await Promise.all(
     ids.map(async (id) => {
       try {
-        // The Worker serves /likes; VITE_LIKES_API is only its origin. Asking
-        // the origin directly returns {"error":"not found"}, which is how the
-        // "most loved" row quietly showed nothing at all.
         const res = await fetch(`${base}/likes?toon=${encodeURIComponent(id)}`, {
           headers: { Accept: "application/json" },
         });

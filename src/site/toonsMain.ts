@@ -6,6 +6,7 @@ import SiteApp from "./SiteApp.vue";
 import { vMagnetic } from "./directives/magnetic";
 import { rememberDocumentLocale } from "./i18n";
 import { initSeriesQuickView, initSeriesVotes } from "./seriesCards";
+import { initToonCatalog } from "./toonCatalog";
 import { initToonRows } from "./toonRows";
 
 // So a reader opened from /it/toons/ starts with Italian captions, even though
@@ -16,8 +17,13 @@ const app = createApp(SiteApp, { page: "toons" });
 app.directive("magnetic", vMagnetic);
 app.mount("#site-app");
 
-// Personal + site-wide rows; both hide themselves when they have nothing to show.
+// Continue / most-loved from the static registry first; a catalog hit
+// rebuilds them from D1 (see initToonCatalog).
 initToonRows();
+
+// Published toons from D1 replace the browse grid. Static cards stay if
+// the Worker is down.
+void initToonCatalog();
 
 // Multi-episode cards link to their series page; this shows that page in a
 // dialog instead. Without JS the link simply navigates.

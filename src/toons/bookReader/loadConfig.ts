@@ -4,7 +4,7 @@
  * Apps resolve the current filename via src/toons/config-lock.json.
  */
 import { resolveAssetUrl, resolvePageUrls } from "./assetUrl";
-import { isDevToonConfigUrl } from "../configUrls";
+import { isLocalToonConfigUrl } from "../configUrls";
 import type { ToonConfig, ToonPage } from "./types";
 
 export interface ConfigLoadOptions {
@@ -27,7 +27,7 @@ export function clearConfigCache(): void {
 
 /**
  * Resolve where to fetch config (optional CDN via VITE_ASSET_BASE).
- * - Dev local paths (`/__dev/toon-config/…`) stay same-origin (Vite), never CDN
+ * - Dev local / editor-API paths stay same-origin, never CDN
  * - Absolute http(s) URLs pass through
  * - Root-absolute hashed paths use the CDN base when set
  * - Relative names need `pageDir`
@@ -37,7 +37,7 @@ export function resolveConfigUrl(configUrl: string, pageDir?: string): string {
   if (!url) throw new Error("resolveConfigUrl: configUrl is required");
   if (/^https?:\/\//i.test(url)) return url;
   // Local reference config in vite dev/preview — do not prefix VITE_ASSET_BASE
-  if (isDevToonConfigUrl(url)) return url;
+  if (isLocalToonConfigUrl(url)) return url;
   if (url.startsWith("/")) return resolveAssetUrl(url);
   return resolveAssetUrl(url, pageDir);
 }
@@ -51,13 +51,13 @@ export function pagesFromConfig(config: ToonConfig, opts?: ConfigLoadOptions): s
 
 /**
  * Fetch config.json.
- * - Local `__dev/toon-config/*`: always re-fetch (no long-lived memory cache) so
- *   appending pages under content/toons appears after reload — not a stale map.
+ * - Local `__dev/toon-config/*` and editor `/config/:slug`: always re-fetch
+ *   (no long-lived memory cache) so draft publishes show after reload.
  * - Hashed CDN URLs: cache per URL so shell + captions share one fetch.
  */
 export async function loadConfig(url: string): Promise<ToonConfig> {
   const key = url;
-  const isDevLocal = isDevToonConfigUrl(url);
+  const isDevLocal = isLocalToonConfigUrl(url);
 
   if (!isDevLocal) {
     const hit = resolved.get(key);

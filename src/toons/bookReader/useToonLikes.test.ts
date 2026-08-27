@@ -1,7 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { defineComponent, h, nextTick } from "vue";
-import { LIKE_STORAGE_PREFIX, readStoredLike, statsEnabled, useToonLikes, writeStoredLike } from "./useToonLikes";
+import {
+  LIKE_STORAGE_PREFIX,
+  likesApiBase,
+  readStoredLike,
+  statsEnabled,
+  useToonLikes,
+  writeStoredLike,
+} from "./useToonLikes";
 
 /** Mount a throwaway component so onMounted hooks in the composable run. */
 function useIn(toonId: string) {
@@ -59,6 +66,12 @@ describe("useToonLikes", () => {
     await api.like();
     expect(api.liked.value).toBe(true);
     expect(readStoredLike("erin")).toBe(true);
+  });
+
+  it("falls back to the editor API when VITE_LIKES_API is empty", () => {
+    vi.stubEnv("VITE_LIKES_API", "");
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev");
+    expect(likesApiBase()).toBe("https://editor.example.dev");
   });
 
   it("posts a like and adopts the server total", async () => {

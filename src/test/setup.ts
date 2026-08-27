@@ -8,6 +8,7 @@ import { resetPageQueryCache } from "../toons/bookReader/pageQuery";
 // .env makes the "no API configured" path hit the real Worker.
 vi.stubEnv("VITE_ASSET_BASE", "");
 vi.stubEnv("VITE_LIKES_API", "");
+vi.stubEnv("VITE_EDITOR_API", "");
 
 // Headless UI + many components expect matchMedia in jsdom/happy-dom.
 if (typeof window !== "undefined" && !window.matchMedia) {

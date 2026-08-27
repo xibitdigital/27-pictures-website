@@ -10,6 +10,7 @@
 
 # --- Default: open site ---
 User-agent: *
+Disallow: /toons/editor
 Allow: /
 
 # --- AI search / citation (explicit Allow) ---
