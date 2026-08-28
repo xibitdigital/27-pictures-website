@@ -35,6 +35,15 @@ describe("CaptionInspector", () => {
     expect(wrapper.get("label").text()).toContain("Variant");
   });
 
+  it("puts size and angle on the same row", () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    const size = wrapper.get('input[name="size"]');
+    const angle = wrapper.get('input[name="angle"]');
+    expect(size.element.parentElement?.parentElement?.parentElement).toBe(
+      angle.element.parentElement?.parentElement?.parentElement
+    );
+  });
+
   it("shows one field per language and patches Italian without dropping English", async () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
     const areas = wrapper.findAll("textarea[lang]");
