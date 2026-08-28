@@ -134,10 +134,12 @@ episode list has already forked.
 │   ├── horror-shorts/       # /horror-shorts/ Red Smile hub
 │   ├── site/                # SiteNav, ContactForm, per-page entries
 │   ├── toons/index.html     # /toons/ — Interactive Toons index (was /experiments/)
+│   ├── toons/editor/        # /toons/editor/ — D1 studio (hash router)
 │   ├── toons/bookReader/    # FlipFrame package
 │   ├── toons/jax|erin|nero|redsmile-static/  # Toon apps
 │   └── test/setup.ts        # Vitest (forces empty VITE_ASSET_BASE)
-├── content/toons/           # Editable config.json per toon (publish → R2)
+├── content/toons/           # Per-toon READMEs; live books are D1 (not config.json)
+├── worker/toon-editor/      # TypeScript Worker — D1 + R2 editor API
 ├── docs/story/              # Series bible + cast bios — never shipped
 ├── public/                  # Static → site root in dist/
 │   ├── styles.css, logo.png, the-red-smile.jpg, qr.html, …
@@ -639,6 +641,51 @@ Two things the generator handles that are easy to get wrong by hand:
   without it the whole graph would be rewritten to `/de/#organization` and stop
   resolving.
 
+## Toon editor (`/toons/editor/`)
+
+Live books, series and captions are **D1**, not `content/toons/*/config.json`.
+The Vue studio talks to `worker/toon-editor` (TypeScript). Staging and
+production share that Worker’s remote D1. Local Vite proxies `/__editor-api` to
+`make editor-worker` on `:8787` (Miniflare D1 — a different database until you
+`npm run restore-db`).
+
+JSON the studio and the Worker agree on lives in
+`worker/toon-editor/src/apiTypes.ts` (no Cloudflare types). The Worker keeps D1
+row types in `src/types.ts`. Vue re-exports the contract from
+`src/toons/editor/types.ts`.
+
+| Hash | Screen |
+| ---- | ------ |
+| `#/` | Episodes grouped under each series, ungrouped toons, visibility badges |
+| `#/series/new` · `#/series/:key` | Create / edit series (cover, hub URL, descriptions) |
+| `#/new` · `#/:id` | Create / edit toon (series + episode number + visibility) |
+| `#/:id/pages/:pageId?` | Plate studio |
+
+Visibility: `draft` (editor only) · `staging` (staging + local catalog) ·
+`published` (Public — production catalog too). `/toons/` and `GET /config/:slug`
+never list drafts. Series membership is `seriesKey` + `episodeN` on the toon.
+
+Deploy the Worker from its directory (`cd worker/toon-editor && npx wrangler
+deploy`), not the Pages project at the repo root. Full routes:
+`worker/toon-editor/README.md`.
+
+`.env` (gitignored) for scripts such as `npm run import-toon`:
+
+```
+EDITOR_EMAIL=…
+EDITOR_PASSWORD=…
+```
+
+The browser login form does not read `.env`. JWT signing secret is
+`JWT_SECRET` in `worker/toon-editor/.dev.vars` locally, a Wrangler secret in
+production.
+
+```bash
+make editor-worker    # local Worker
+make dev              # studio at /toons/editor/
+npm run typecheck     # vue-tsc + tsc -p worker/toon-editor
+```
+
 ## Toon Reader (FlipFrame — Erin, Jax, Nero, …)
 
 Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
@@ -647,8 +694,7 @@ Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
 | ------------------------------------ | --------------------------------------------------------- |
 | `src/toons/bookReader/`              | FlipFrame package: engine, shell, chrome, captions, audio |
 | `src/toons/jax-the-chip/` · `erin/` · `nero-the-dog/` | App entry + `ToonReaderShell` config          |
-| `content/toons/<name>/config.json`   | **Edit here** — pages list, captions, audio paths         |
-| `src/toons/config-lock.json`         | Points prod at `config.<md5>.json` on R2                  |
+| Worker `GET /config/:slug`           | Live book JSON from D1 (published; staging hosts also see `staging`) |
 | `public/toons/reader-shared.css`     | Shared book chrome + word/bubble CSS (all toons)          |
 | `public/toons/**/assets/`            | **Gitignored** — load via `VITE_ASSET_BASE`               |
 
@@ -679,7 +725,7 @@ Wire-up pattern:
 />
 ```
 
-- **`config-url`** — `toonConfigUrl("<toon>")` (dev → `content/`; prod → locked CDN hash).
+- **`config-url`** — `readerConfigUrl("<toon>")` / `toonConfigUrl("<toon>")` (D1 `GET /config/:slug`; local Vite via `/__editor-api`).
 - **`asset-page-dir`** is required so relative plate/SFX paths resolve on the CDN.
 - Product attribution **“FlipFrame — by twentyseven.pictures”** lives in
   `FrontCoverInstructions.vue` (shared), not per-toon config.
@@ -691,8 +737,8 @@ make ship TOON=jax PROD=1       # → twentyseven.pictures
 make ship TOON=jax DRY=1        # plan + asset check only
 ```
 
-Caption-only edits: commit `content/toons/<toon>/config.json`. Pre-commit puts
-the hashed JSON on R2 and stages the lock; Actions `--check`s it, then deploys.
+Caption-only edits: change the bubbles in `/toons/editor/` (D1). There is no
+`config.json` publish step for the live reader.
 
 New **media**: `ship-toon.js` still chains upload → **verify every plate and
 clip the config references resolves on R2** → publish the config → build and

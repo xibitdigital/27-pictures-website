@@ -4,6 +4,7 @@
  * editor list share this — density is a property of the container, not a second card.
  */
 import { RouterLink } from "vue-router";
+import type { ToonVisibility } from "../types";
 
 withDefaults(
   defineProps<{
@@ -13,8 +14,10 @@ withDefaults(
     description?: string;
     coverUrl?: string | null;
     to?: string;
+    badge?: string;
+    visibility?: ToonVisibility | "";
   }>(),
-  { meta: "", cue: "", description: "", coverUrl: null, to: "" }
+  { meta: "", cue: "", description: "", coverUrl: null, to: "", badge: "", visibility: "" }
 );
 </script>
 
@@ -23,6 +26,7 @@ withDefaults(
     <span class="series-card-face">
       <span class="series-card-art">
         <img v-if="coverUrl" :src="coverUrl" :alt="title" width="1152" height="1728" />
+        <span v-if="badge" class="editor-visibility-badge" :data-visibility="visibility || undefined">{{ badge }}</span>
       </span>
       <span v-if="meta" class="series-card-meta">{{ meta }}</span>
       <h3 class="series-card-title">{{ title }}</h3>

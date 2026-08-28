@@ -31,9 +31,9 @@ make deploy       # requires VITE_ASSET_BASE in .env
 27-pictures-website/
 ├── src/                         # Vite root (HTML entries + Vue/TS)
 │   ├── index.html               # Homepage
-│   ├── experiments/index.html   # Experiments lab
 │   ├── site/                    # SiteNav, ContactForm, directives
 │   ├── toons/
+│   │   ├── editor/              # /toons/editor/ — D1 studio
 │   │   ├── bookReader/          # FlipFrame package
 │   │   ├── jax/ | erin/ | nero/ # Toon apps + entries
 │   └── test/                    # Vitest setup
@@ -43,11 +43,12 @@ make deploy       # requires VITE_ASSET_BASE in .env
 │   ├── card-art/                # gitignored posters (R2): erin, jax, nero
 │   ├── robots.txt, llms.txt     # crawl policy (AI search allowed)
 │   ├── sitemap.xml, _headers, …
-├── content/toons/               # editable config.json (jax, erin, nero → R2)
+├── content/toons/               # Per-toon READMEs (live books are D1)
 ├── cdn-backup/                  # local R2 image backup (gitignored)
 ├── vite/plugins/cdnMedia.ts     # CDN gate + %VITE_ASSET_BASE% expand
-├── scripts/                     # QR, watermark, R2 upload, toon config
+├── scripts/                     # QR, watermark, R2 upload, toon import
 ├── worker/                      # Contact form Worker
+├── worker/toon-editor/          # TypeScript editor API (D1 + R2)
 ├── dist/                        # Production build (gitignored)
 ├── Makefile
 └── CLAUDE.md                    # Agent / contributor ops notes (incl. SEO)
@@ -60,6 +61,7 @@ make deploy       # requires VITE_ASSET_BASE in .env
 | `VITE_ASSET_BASE` | **Yes** for build/deploy | R2/CDN origin (no trailing slash) |
 | `R2_BUCKET` | No (default `twentyseven-assets`) | Upload target |
 | `PREVIEW_USER` / `PREVIEW_PASS` | No | Basic auth for `make local` |
+| `EDITOR_EMAIL` / `EDITOR_PASSWORD` | For editor scripts | Sign in to the toon-editor Worker (`npm run import-toon`) |
 | `ELEVENLABS_API_KEY` | For SFX/voice scripts | Toon SFX + dialogue TTS |
 
 Copy `.env.example` → `.env`. Unit tests **force an empty** `VITE_ASSET_BASE` so they never depend on your local `.env`.
@@ -78,23 +80,20 @@ make local            # serve dist/ with basic auth on 127.0.0.1
 make local-cdn        # CDN build + protected local serve
 make upload-assets    # sync public/toons + card-art → R2
 make add-image SRC=… TOON=jax|erin|nero [CONFIG=1] [UPLOAD=1]
+make editor-worker    # local toon-editor Worker on :8787
 ```
 
-### Experiments (toons)
+### Interactive toons
 
-| Toon | Path | Lab card |
-|------|------|----------|
-| Erin | `/toons/erin/` | Interactive reader |
-| Jax | `/toons/jax/` | Multilingual + sound |
-| Nero | `/toons/nero/` | Scotland Yard case (Nero / Eve / The Dog) |
-
-Edit captions in `content/toons/<toon>/config.json` and **commit** — pre-commit
-puts the hashed JSON on R2 and stages the lock. Actions only checks the lock,
-then builds. For new plates/audio:
+Live books and series are edited at `/toons/editor/` against D1 (Worker:
+`worker/toon-editor`). Captions, covers, visibility and series grouping are
+not `content/toons/*/config.json`. See `worker/toon-editor/README.md` and
+`CLAUDE.md` → **Toon editor**.
 
 ```bash
-make ship TOON=nero            # upload + verify + publish + staging deploy
-npm run publish-toon-config -- --toon nero   # JSON only, one toon
+make editor-worker             # Miniflare D1 + R2
+make dev                       # studio at http://127.0.0.1:5173/toons/editor/
+npm run import-toon -- --toon nero   # needs EDITOR_EMAIL / EDITOR_PASSWORD in .env
 ```
 
 ## Media (R2)

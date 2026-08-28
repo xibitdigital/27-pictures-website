@@ -3,9 +3,12 @@ import { mount } from "@vue/test-utils";
 import ToonMetaForm from "./ToonMetaForm.vue";
 import * as api from "../api";
 
+const route = { name: "new" as string, params: {} as Record<string, string> };
+const push = vi.fn();
+
 vi.mock("vue-router", () => ({
-  useRoute: () => ({ name: "new", params: {} }),
-  useRouter: () => ({ push: vi.fn() }),
+  useRoute: () => route,
+  useRouter: () => ({ push }),
   RouterLink: { template: "<a><slot /></a>" },
 }));
 
@@ -15,6 +18,9 @@ describe("ToonMetaForm visibility", () => {
   });
 
   beforeEach(() => {
+    route.name = "new";
+    route.params = {};
+    push.mockReset();
     vi.spyOn(api, "listSeries").mockResolvedValue([
       { key: "erin", title: "Erin & the Goblins" },
       { key: "jax", title: "Jax" },
@@ -145,5 +151,45 @@ describe("ToonMetaForm visibility", () => {
     expect(wrapper.text()).toContain("staging.twentyseven.pictures");
     await wrapper.get("form").trigger("submit");
     expect(create.mock.calls[0][0].status).toBe("staging");
+    expect(push).toHaveBeenCalledWith("/t1/pages");
+  });
+
+  it("stays on the meta form after saving an existing toon", async () => {
+    route.name = "meta";
+    route.params = { id: "t1" };
+    vi.spyOn(api, "getToon").mockResolvedValue({
+      id: "t1",
+      slug: "demo",
+      title: "Demo",
+      subtitle: "",
+      description: "",
+      coverKey: null,
+      coverUrl: null,
+      designWidth: 800,
+      designHeight: 1424,
+      status: "draft",
+      pages: [],
+    });
+    const patch = vi.spyOn(api, "patchToon").mockResolvedValue({
+      id: "t1",
+      slug: "demo",
+      title: "Demo",
+      subtitle: "",
+      description: "",
+      coverKey: null,
+      coverUrl: null,
+      designWidth: 800,
+      designHeight: 1424,
+      status: "published",
+      pages: [],
+    });
+    const wrapper = mount(ToonMetaForm, {
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true } },
+    });
+    await vi.waitFor(() => expect(wrapper.get('input[name="title"]').element).toHaveProperty("value", "Demo"));
+    await wrapper.get('select[name="visibility"]').setValue("public");
+    await wrapper.get("form").trigger("submit");
+    expect(patch).toHaveBeenCalledWith("t1", expect.objectContaining({ status: "published" }));
+    expect(push).not.toHaveBeenCalled();
   });
 });

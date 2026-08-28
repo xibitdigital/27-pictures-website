@@ -1,17 +1,10 @@
 /**
  * Toon config URLs.
  *
- * - Dev (`import.meta.env.DEV`): local reference via Vite
- *   → `/__dev/toon-config/<toon>.json` → content/toons/<toon>/config.json
- * - Prod: content-hashed file on CDN from config-lock.json
- *   → `/toons/<toon>/config.<md5>.json` + VITE_ASSET_BASE
- * - Published D1 drafts: `dbToonConfigUrl(slug)` → editor Worker
- *   `/config/<slug>` (dev proxy `/__editor-api/config/<slug>`).
- *
- * Edit content/toons/<toon>/config.json. GitHub Actions runs
- * `publish-toon-config --skip-unchanged` before `vite build`, so a push to
- * staging/main publishes any new hashes and compiles them into the bundle.
- * Local `make ship` still does the same for one toon.
+ * Live readers load FlipFrame JSON from the editor Worker (D1):
+ * `dbToonConfigUrl(slug)` → `/config/<slug>` (dev proxy `/__editor-api/config/<slug>`).
+ * Hashed CDN files from config-lock.json remain a fallback when the API is unset
+ * (Vitest). Edit captions in the studio, not in content/toons.
  */
 import { editorApiBase, withSiteQuery } from "./editor/api";
 import lock from "./config-lock.json";

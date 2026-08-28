@@ -1,12 +1,15 @@
-# Toon config (local reference)
+# Toon notes (not the live book)
 
-Editable source of truth for toon page lists + captions. **Not deployed** with the site.
+Live pages, captions and series live in the **toon-editor D1**, edited at
+`/toons/editor/`. Folders here keep READMEs and story notes. `config.json` is
+not the runtime source — import a snapshot with `npm run import-toon` if you
+still have one.
 
-| Path                                | Role                        |
-| ----------------------------------- | --------------------------- |
-| `content/toons/<toon>/config.json`  | Edit this (git reference)   |
-| R2 `toons/<toon>/config.<md5>.json` | Runtime (CDN only)          |
-| `src/toons/config-lock.json`        | App pointer to current hash |
+| Path | Role |
+| ---- | ---- |
+| `/toons/editor/` | Edit books and series (D1) |
+| Worker `GET /config/:slug` | Runtime FlipFrame JSON |
+| `content/toons/<toon>/README.md` | How that book is supposed to read |
 
 ## Current toons
 
@@ -20,27 +23,15 @@ Editable source of truth for toon page lists + captions. **Not deployed** with t
 | `erin-the-revenge` | `content/toons/erin-the-revenge/` | ERIN & THE GOBLINS ep 2 — The Revenge |
 
 ```bash
-# After editing config.json, commit it. Pre-commit puts config.<md5>.json on
-# R2 and stages the lock. CI only checks the lock (the Actions token cannot put).
-# One toon by hand:
-npm run publish-toon-config -- --toon jax   # or erin | nero | erin-the-revenge
-npm run publish-toon-config -- --check      # what CI runs
-
-# Restore reference from CDN
-npm run download-toon-config -- --toon jax
-
-# Add a page image + append config + upload everything
-make add-image SRC=~/page.jpg TOON=nero CONFIG=1 UPLOAD=1
+make editor-worker
+make dev                 # http://127.0.0.1:5173/toons/editor/
+# optional: load an old snapshot into D1 (needs EDITOR_EMAIL / EDITOR_PASSWORD)
+npm run import-toon -- --toon nero
 ```
 
-**Dev:** `make dev` / `vite` injects this file at `/__dev/toon-config/<toon>.json`
-(no publish needed). Edit + refresh. That is why local can show a different book
-than staging until you push.
-
-**Staging / prod:** readers load via `VITE_ASSET_BASE` + the hashed name in
-`config-lock.json` — never from Pages. Puts happen on commit (`--staged`).
-Actions runs `--check` before `vite build`. New plates/audio still need to be
-on R2 first (`make ship` / `upload-assets`).
+Readers load `GET /config/:slug` from the editor Worker. Local Vite uses
+`/__editor-api`. Staging/production share the remote D1. Plates still live on
+R2 (`VITE_ASSET_BASE`).
 
 ## What a word entry says
 

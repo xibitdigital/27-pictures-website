@@ -15,40 +15,77 @@ import {
   userFromRequest,
   validateCredentials,
   verifyPassword,
-} from "./auth.js";
-import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig.js";
-import { handleLikes } from "./likes.js";
-import { parseStatus, publicStatusesForRequest } from "./visibility.js";
+} from "./auth";
+import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
+import { handleLikes } from "./likes";
+import { parseStatus, publicStatusesForRequest } from "./visibility";
+
+import {
+  DESC_LANGS,
+  type BubbleRecord,
+  type BubbleRow,
+  type CaptionWord,
+  type CorsHeaders,
+  type DescriptionMap,
+  type EditorUser,
+  type Env,
+  type JsonRecord,
+  type PageRecord,
+  type PageRow,
+  type ReaderConfig,
+  type RequestLike,
+  type SeriesMeta,
+  type SeriesOption,
+  type SeriesRow,
+  type ToonListItem,
+  type ToonRecord,
+  type ToonRow,
+  type WordInput,
+} from "./types";
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
-const IMAGE_TYPES = {
+const IMAGE_TYPES: Record<string, string> = {
   "image/webp": "webp",
   "image/jpeg": "jpg",
   "image/png": "png",
 };
-const AUDIO_TYPES = {
+const AUDIO_TYPES: Record<string, string> = {
   "audio/mpeg": "mp3",
   "audio/mp3": "mp3",
+};
+
+type ImageUpload = {
+  bytes: ArrayBuffer;
+  ext: string;
+  type: string;
+  width: number | null;
+  height: number | null;
+};
+
+type AudioUpload = {
+  bytes: ArrayBuffer;
+  ext: string;
+  type: string;
 };
 const DEFAULT_VARIANT = "bubble";
 const DEFAULT_TAIL = "bottom-left";
 
-function isDevOrigin(origin) {
+function isDevOrigin(origin: string): boolean {
   return /^https?:\/\/(localhost|127\.0\.0\.1|local\.twentyseven\.test)(:\d+)?$/.test(origin);
 }
 
-function allowedOriginList(env) {
+function allowedOriginList(env: Env): string[] {
   return String(env.ALLOWED_ORIGINS || "")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
 }
 
-function corsHeaders(request, env) {
+function corsHeaders(request: Request, env: Env): CorsHeaders {
   const origin = request.headers.get("Origin") || "";
-  const headers = {
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+  const headers: CorsHeaders = {
+    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Authorization, Content-Type",
     "Access-Control-Max-Age": "86400",
     Vary: "Origin",
@@ -59,18 +96,18 @@ function corsHeaders(request, env) {
   return headers;
 }
 
-function json(body, status, extraHeaders) {
+function json(body: unknown, status: number, extraHeaders?: CorsHeaders): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store", ...extraHeaders },
   });
 }
 
-function isPublicConfigPath(path) {
+function isPublicConfigPath(path: string): boolean {
   return /^\/config\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(path);
 }
 
-function isPublicRoute(method, path) {
+function isPublicRoute(method: string, path: string): boolean {
   if (method === "GET" && path.startsWith("/media/")) return true;
   if (method === "GET" && path === "/auth/status") return true;
   if (method === "GET" && path === "/catalog") return true;
@@ -81,29 +118,34 @@ function isPublicRoute(method, path) {
 }
 
 /** Listed production origins may POST a like. Dev hosts may only GET counts. */
-function isWriteOrigin(request, env) {
+function isWriteOrigin(request: Request, env: Env): boolean {
   return allowedOriginList(env).includes(request.headers.get("Origin") || "");
 }
 
-async function readJson(request) {
+async function readJson(request: Request): Promise<{ ok: true; body: JsonRecord } | { ok: false; error: string }> {
   try {
-    return { body: await request.json() };
+    return { ok: true, body: (await request.json()) as JsonRecord };
   } catch {
-    return { error: "invalid json" };
+    return { ok: false, error: "invalid json" };
   }
 }
 
-function nowIso() {
+function nowIso(): string {
   return new Date().toISOString();
 }
 
-function mediaUrl(request, key) {
+function mediaUrl(request: RequestLike, key: string | null | undefined): string | null {
   if (!key) return null;
   const origin = new URL(request.url).origin;
   return `${origin}/media/${key}`;
 }
 
-function objectUrl(request, env, key, pageDir) {
+function objectUrl(
+  request: RequestLike,
+  env: Env,
+  key: string | null | undefined,
+  pageDir: string | null | undefined
+): string | null {
   if (!key) return null;
   if (String(key).startsWith("editor/")) return mediaUrl(request, key);
   const base = String(env.ASSET_BASE || "").replace(/\/$/, "");
@@ -115,35 +157,49 @@ function objectUrl(request, env, key, pageDir) {
   return base ? `${base}${dir}${rel}` : `${dir}${rel}`;
 }
 
-function mapBubble(row) {
+function mapBubble(row: BubbleRow | Record<string, unknown>): BubbleRecord {
+  const r = row as BubbleRow;
   return {
-    id: row.id,
-    x: row.x,
-    y: row.y,
-    variant: row.variant,
-    tail: row.tail,
-    size: row.size,
-    angle: row.angle,
-    textEn: row.text_en,
-    textJson: row.text_json || null,
-    extraJson: row.extra_json || null,
-    sort: row.sort,
+    id: r.id,
+    x: r.x,
+    y: r.y,
+    variant: r.variant,
+    tail: r.tail,
+    size: r.size,
+    angle: r.angle,
+    textEn: r.text_en,
+    textJson: r.text_json || null,
+    extraJson: r.extra_json || null,
+    sort: r.sort,
   };
 }
 
-function mapPage(row, request, env, pageDir, bubbles) {
+function mapPage(
+  row: PageRow | Record<string, unknown>,
+  request: RequestLike,
+  env: Env,
+  pageDir: string | null | undefined,
+  bubbles: BubbleRecord[]
+): PageRecord {
+  row = row as PageRow;
   return {
     id: row.id,
     position: row.position,
     fileKey: row.file_key,
-    fileUrl: objectUrl(request, env, row.file_key, pageDir),
+    fileUrl: objectUrl(request, env, row.file_key, pageDir) || "",
     width: row.width,
     height: row.height,
     bubbles: bubbles || [],
   };
 }
 
-function mapToon(row, request, env, pages) {
+function mapToon(
+  row: ToonRow | Record<string, unknown>,
+  request: RequestLike,
+  env: Env,
+  pages: PageRecord[]
+): ToonRecord {
+  row = row as ToonRow;
   return {
     id: row.id,
     slug: row.slug,
@@ -164,69 +220,105 @@ function mapToon(row, request, env, pages) {
   };
 }
 
-function parseSeriesKey(body, fallback) {
+function mapToonListItem(row: ToonRow | Record<string, unknown>, request: RequestLike, env: Env): ToonListItem {
+  row = row as ToonRow;
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    subtitle: row.subtitle,
+    coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
+    pageCount: Number(row.page_count) || 0,
+    status: row.status || "draft",
+    seriesKey: row.series_key || null,
+    episodeN: row.episode_n != null ? Number(row.episode_n) : null,
+  };
+}
+
+function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: RequestLike, env: Env): SeriesOption {
+  if (!row) throw new Error("missing series");
+  row = row as SeriesRow;
+  const descriptions = descriptionMap(row);
+  return {
+    key: row.key,
+    title: row.title,
+    tagline: row.tagline || "",
+    description: descriptions.en || row.description || "",
+    descriptions,
+    coverKey: row.cover_key || null,
+    coverUrl: objectUrl(request, env, row.cover_key, null),
+    hubUrl: row.hub_url || null,
+    sort: Number(row.sort) || 0,
+    toonCount: Number(row.toon_count) || 0,
+  };
+}
+
+function parseSeriesKey(body: JsonRecord | null | undefined, fallback: string | null) {
   if (!body || (!("seriesKey" in body) && !("series_key" in body))) return fallback;
   const raw = String(body.seriesKey ?? body.series_key ?? "").trim();
   return raw || null;
 }
 
-function parseEpisodeN(body, fallback) {
+function parseEpisodeN(body: JsonRecord | null | undefined, fallback: number | null) {
   if (!body || (!("episodeN" in body) && !("episode_n" in body))) return fallback;
   const n = Number(body.episodeN ?? body.episode_n);
   if (!Number.isFinite(n) || n < 1) return null;
   return Math.round(n);
 }
 
-function wordFromBubble(b) {
+function wordFromBubble(b: BubbleRow): CaptionWord {
   return rowToWord(b);
 }
 
 /** FlipFrame readers resolve relative paths on the CDN; editor clips live on this Worker. */
-function publicWord(request, word) {
+function publicWord(request: RequestLike, word: CaptionWord): CaptionWord {
   const audio = word && word.audio;
   if (typeof audio === "string" && audio.startsWith("editor/")) {
-    return { ...word, audio: mediaUrl(request, audio) };
+    return { ...word, audio: mediaUrl(request, audio) || audio };
   }
   return word;
 }
 
-function parseToonExtra(toon) {
+function parseToonExtra(toon: { extra_json?: string | null } | null | undefined): JsonRecord {
   if (!toon || !toon.extra_json) return {};
   try {
     const extra = JSON.parse(toon.extra_json);
-    return extra && typeof extra === "object" ? extra : {};
+    return extra && typeof extra === "object" && !Array.isArray(extra) ? (extra as JsonRecord) : {};
   } catch {
     return {};
   }
 }
 
-const DESC_LANGS = ["en", "it", "de", "fr"];
-
-function langMap(row, extraKey, column) {
+function langMap(row: Record<string, unknown>, extraKey: string, column: string): DescriptionMap {
   const extra = parseToonExtra(row);
   const raw = extra[extraKey];
-  const map = { en: String(row[column] || ""), it: "", de: "", fr: "" };
-  if (raw && typeof raw === "object") {
+  const map: DescriptionMap = { en: String(row[column] || ""), it: "", de: "", fr: "" };
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const rec = raw as JsonRecord;
     for (const lang of DESC_LANGS) {
-      if (typeof raw[lang] === "string") map[lang] = raw[lang];
+      if (typeof rec[lang] === "string") map[lang] = rec[lang];
     }
   }
   if (!String(map.en || "").trim()) map.en = String(row[column] || "");
   return map;
 }
 
-function descriptionMap(row) {
-  return langMap(row, "description", "description");
+function descriptionMap(row: object): DescriptionMap {
+  return langMap(row as Record<string, unknown>, "description", "description");
 }
 
-function titleMap(row) {
-  return langMap(row, "title", "title");
+function titleMap(row: object): DescriptionMap {
+  return langMap(row as Record<string, unknown>, "title", "title");
 }
 
-function applyDescriptions(extra, body, enFallback) {
-  const current = extra.description && typeof extra.description === "object" ? extra.description : {};
-  const incoming = body.descriptions && typeof body.descriptions === "object" ? body.descriptions : null;
-  const map = {};
+function asMap(value: unknown): JsonRecord {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as JsonRecord) : {};
+}
+
+function applyDescriptions(extra: JsonRecord, body: JsonRecord, enFallback: string): DescriptionMap {
+  const current = asMap(extra.description);
+  const incoming = body.descriptions && typeof body.descriptions === "object" ? asMap(body.descriptions) : null;
+  const map: DescriptionMap = { en: "", it: "", de: "", fr: "" };
   for (const lang of DESC_LANGS) {
     if (incoming && incoming[lang] != null) map[lang] = String(incoming[lang]).trim();
     else if (lang === "en" && body.description != null) map.en = String(body.description).trim();
@@ -236,11 +328,11 @@ function applyDescriptions(extra, body, enFallback) {
   return map;
 }
 
-function applyTitles(extra, body, enFallback) {
-  const incoming = body.titles && typeof body.titles === "object" ? body.titles : null;
-  if (!incoming) return extra.title || null;
-  const current = extra.title && typeof extra.title === "object" ? extra.title : {};
-  const map = {};
+function applyTitles(extra: JsonRecord, body: JsonRecord, enFallback: string): DescriptionMap | null {
+  const incoming = body.titles && typeof body.titles === "object" ? asMap(body.titles) : null;
+  if (!incoming) return extra.title ? (asMap(extra.title) as DescriptionMap) : null;
+  const current = asMap(extra.title);
+  const map: DescriptionMap = { en: "", it: "", de: "", fr: "" };
   for (const lang of DESC_LANGS) {
     if (incoming[lang] != null) map[lang] = String(incoming[lang]).trim();
     else map[lang] = String(current[lang] || (lang === "en" ? enFallback : "") || "").trim();
@@ -249,14 +341,15 @@ function applyTitles(extra, body, enFallback) {
   return map;
 }
 
-async function upsertSeries(env, seriesMeta, ts) {
+async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined, ts: string) {
   if (!seriesMeta || !seriesMeta.key) return;
   const skey = String(seriesMeta.key);
-  const extra = {};
+  const extra: JsonRecord = {};
   extra.description = descriptionMapFromMeta(seriesMeta);
   const extraJson = JSON.stringify(extra);
-  const description = extra.description.en || String(seriesMeta.description || "");
-  const found = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(skey).first();
+  const description = descriptionMapFromMeta(seriesMeta).en || String(seriesMeta.description || "");
+  const found = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(skey).first<SeriesRow>();
+  const coverKey = seriesMeta.coverKey !== undefined ? seriesMeta.coverKey || null : (found && found.cover_key) || null;
   if (found) {
     await env.DB.prepare(
       `UPDATE series SET title = ?, tagline = ?, description = ?, cover_key = ?, hub_url = ?, sort = ?, extra_json = ?, updated_at = ?
@@ -266,7 +359,7 @@ async function upsertSeries(env, seriesMeta, ts) {
         String(seriesMeta.title || ""),
         String(seriesMeta.tagline || ""),
         description,
-        seriesMeta.coverKey || null,
+        coverKey,
         seriesMeta.hubUrl || null,
         Number(seriesMeta.sort) || 0,
         extraJson,
@@ -284,7 +377,7 @@ async function upsertSeries(env, seriesMeta, ts) {
         String(seriesMeta.title || ""),
         String(seriesMeta.tagline || ""),
         description,
-        seriesMeta.coverKey || null,
+        coverKey,
         seriesMeta.hubUrl || null,
         Number(seriesMeta.sort) || 0,
         extraJson,
@@ -295,28 +388,28 @@ async function upsertSeries(env, seriesMeta, ts) {
   }
 }
 
-async function readerConfigFromToon(env, toon, request) {
+async function readerConfigFromToon(env: Pick<Env, "DB">, toon: ToonRow, request: RequestLike): Promise<ReaderConfig> {
   const extra = parseToonExtra(toon);
   const pageRows = (
-    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(toon.id).all()
+    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(toon.id).all<PageRow>()
   ).results;
-  const pages = [];
+  const pages: ReaderConfig["pages"] = [];
   for (const page of pageRows) {
     const bubbleRows = (
       await env.DB.prepare("SELECT * FROM bubbles WHERE page_id = ? ORDER BY sort ASC, created_at ASC")
         .bind(page.id)
-        .all()
+        .all<BubbleRow>()
     ).results;
     pages.push({
       file: page.file_key,
       words: bubbleRows.map((row) => publicWord(request, wordFromBubble(row))),
     });
   }
-  const cfg = {
+  const cfg: ReaderConfig = {
     title: toon.title,
     designWidth: toon.design_width,
     designHeight: toon.design_height,
-    defaultLang: extra.defaultLang || "en",
+    defaultLang: String(extra.defaultLang || "en"),
     languages: extra.languages || [{ code: "en", label: "EN" }],
     pages,
   };
@@ -324,13 +417,13 @@ async function readerConfigFromToon(env, toon, request) {
   return cfg;
 }
 
-function clamp01(n) {
+function clamp01(n: unknown): number {
   const v = Number(n);
   if (!Number.isFinite(v)) return 0;
   return Math.max(0, Math.min(1, v));
 }
 
-function normaliseSlug(raw) {
+function normaliseSlug(raw: unknown): string {
   return String(raw || "")
     .trim()
     .toLowerCase()
@@ -338,33 +431,34 @@ function normaliseSlug(raw) {
     .replace(/^-+|-+$/g, "");
 }
 
-async function sha256Hex(buffer) {
+async function sha256Hex(buffer: ArrayBuffer): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", buffer);
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function loadToon(env, request, id) {
-  const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first();
+async function loadToon(env: Env, request: Request, id: string) {
+  const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
   if (!toon) return null;
-  const pageRows = (await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(id).all())
-    .results;
+  const pageRows = (
+    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(id).all<PageRow>()
+  ).results;
   const pages = [];
   for (const page of pageRows) {
     const bubbleRows = (
       await env.DB.prepare("SELECT * FROM bubbles WHERE page_id = ? ORDER BY sort ASC, created_at ASC")
         .bind(page.id)
-        .all()
+        .all<BubbleRow>()
     ).results;
     pages.push(mapPage(page, request, env, toon.asset_page_dir, bubbleRows.map(mapBubble)));
   }
   return mapToon(toon, request, env, pages);
 }
 
-async function getPageOrNull(env, pageId) {
-  return env.DB.prepare("SELECT * FROM pages WHERE id = ?").bind(pageId).first();
+async function getPageOrNull(env: Env, pageId: string) {
+  return env.DB.prepare("SELECT * FROM pages WHERE id = ?").bind(pageId).first<PageRow>();
 }
 
-async function putImage(env, key, bytes, contentType) {
+async function putImage(env: Env, key: string, bytes: ArrayBuffer, contentType: string) {
   await env.ASSETS.put(key, bytes, {
     httpMetadata: {
       contentType,
@@ -373,36 +467,37 @@ async function putImage(env, key, bytes, contentType) {
   });
 }
 
-async function putPageAsset(env, slug, upload) {
+async function putPageAsset(env: Env, slug: string, upload: ImageUpload) {
   const hash = await sha256Hex(upload.bytes);
   const key = `editor/${slug}/assets/${hash}.${upload.ext}`;
   await putImage(env, key, upload.bytes, upload.type);
   return key;
 }
 
-async function readUpload(request) {
+async function readUpload(request: Request): Promise<ImageUpload | { error: string }> {
   const form = await request.formData();
   const file = form.get("file");
-  if (!file || typeof file === "string" || typeof file.arrayBuffer !== "function") {
+  if (!file || typeof file === "string") {
     return { error: "file is required" };
   }
-  const type = file.type || "";
+  const blob = file as File;
+  const type = blob.type || "";
   const ext = IMAGE_TYPES[type];
   if (!ext) return { error: "image must be webp, jpeg, or png" };
-  const bytes = await file.arrayBuffer();
+  const bytes = await blob.arrayBuffer();
   if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "image too large (8MB max)" };
-  const width = form.get("width") != null ? Number(form.get("width")) : null;
-  const height = form.get("height") != null ? Number(form.get("height")) : null;
+  const widthRaw = form.get("width") != null ? Number(form.get("width")) : NaN;
+  const heightRaw = form.get("height") != null ? Number(form.get("height")) : NaN;
   return {
     bytes,
     ext,
     type,
-    width: Number.isFinite(width) && width > 0 ? Math.round(width) : null,
-    height: Number.isFinite(height) && height > 0 ? Math.round(height) : null,
+    width: Number.isFinite(widthRaw) && widthRaw > 0 ? Math.round(widthRaw) : null,
+    height: Number.isFinite(heightRaw) && heightRaw > 0 ? Math.round(heightRaw) : null,
   };
 }
 
-function audioExtFromName(name) {
+function audioExtFromName(name: string): string {
   return String(name || "")
     .toLowerCase()
     .endsWith(".mp3")
@@ -410,21 +505,22 @@ function audioExtFromName(name) {
     : "";
 }
 
-async function readAudioUpload(request) {
+async function readAudioUpload(request: Request): Promise<AudioUpload | { error: string }> {
   const form = await request.formData();
   const file = form.get("file");
-  if (!file || typeof file === "string" || typeof file.arrayBuffer !== "function") {
+  if (!file || typeof file === "string") {
     return { error: "file is required" };
   }
-  const ext = AUDIO_TYPES[file.type] || audioExtFromName(file.name);
+  const blob = file as File;
+  const ext = AUDIO_TYPES[blob.type] || audioExtFromName(blob.name);
   if (!ext) return { error: "audio must be mp3" };
-  const bytes = await file.arrayBuffer();
+  const bytes = await blob.arrayBuffer();
   if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "audio too large (8MB max)" };
   const type = "audio/mpeg";
   return { bytes, ext, type };
 }
 
-async function handle(request, env, cors, session) {
+async function handle(request: Request, env: Env, cors: CorsHeaders, session: EditorUser | null): Promise<Response> {
   const likes = await handleLikes(request, env, cors, json, isWriteOrigin);
   if (likes) return likes;
 
@@ -439,7 +535,7 @@ async function handle(request, env, cors, session) {
   if (method === "POST" && path === "/auth/register") {
     if ((await userCount(env)) > 0) return json({ error: "registration closed" }, 403, cors);
     const parsed = await readJson(request);
-    if (parsed.error) return json({ error: parsed.error }, 400, cors);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const email = normaliseEmail(parsed.body.email);
     const password = String(parsed.body.password || "");
     const invalid = validateCredentials(email, password);
@@ -455,10 +551,12 @@ async function handle(request, env, cors, session) {
 
   if (method === "POST" && path === "/auth/login") {
     const parsed = await readJson(request);
-    if (parsed.error) return json({ error: parsed.error }, 400, cors);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const email = normaliseEmail(parsed.body.email);
     const password = String(parsed.body.password || "");
-    const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
+    const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?")
+      .bind(email)
+      .first<{ id: string; email: string; password_hash: string }>();
     if (!user || !(await verifyPassword(password, user.password_hash))) {
       return json({ error: "invalid email or password" }, 401, cors);
     }
@@ -467,6 +565,7 @@ async function handle(request, env, cors, session) {
   }
 
   if (method === "GET" && path === "/auth/me") {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
     return json({ user: publicUser(session) }, 200, cors);
   }
 
@@ -476,7 +575,7 @@ async function handle(request, env, cors, session) {
 
   if (method === "POST" && path === "/auth/users") {
     const parsed = await readJson(request);
-    if (parsed.error) return json({ error: parsed.error }, 400, cors);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const email = normaliseEmail(parsed.body.email);
     const password = String(parsed.body.password || "");
     const invalid = validateCredentials(email, password);
@@ -511,22 +610,71 @@ async function handle(request, env, cors, session) {
       `SELECT * FROM toons WHERE slug = ? AND status IN (${statuses.map(() => "?").join(",")})`
     )
       .bind(slug, ...statuses)
-      .first();
+      .first<ToonRow>();
     if (!toon) return json({ error: "not found" }, 404, cors);
     return json(await readerConfigFromToon(env, toon, request), 200, cors);
   }
 
   if (method === "GET" && path === "/series") {
     const rows = (
-      await env.DB.prepare("SELECT key, title, tagline, sort FROM series ORDER BY sort ASC, title ASC").all()
+      await env.DB.prepare(
+        `SELECT series.*,
+                (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+         FROM series ORDER BY sort ASC, title ASC`
+      ).all()
+    ).results;
+    return json({ series: rows.map((row) => mapSeries(row, request, env)) }, 200, cors);
+  }
+
+  const seriesCoverMatch = path.match(/^\/series\/([^/]+)\/cover$/);
+  if (seriesCoverMatch && method === "POST") {
+    const key = seriesCoverMatch[1];
+    if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
+    const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const upload = await readUpload(request);
+    if ("error" in upload) return json({ error: upload.error }, 400, cors);
+    const hash = await sha256Hex(upload.bytes);
+    const objectKey = `editor/_series/${key}/cover/${hash}.${upload.ext}`;
+    await putImage(env, objectKey, upload.bytes, upload.type);
+    await env.DB.prepare(`UPDATE series SET cover_key = ?, updated_at = ? WHERE key = ?`)
+      .bind(objectKey, nowIso(), key)
+      .run();
+    const row = await env.DB.prepare(
+      `SELECT series.*,
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+       FROM series WHERE key = ?`
+    )
+      .bind(key)
+      .first();
+    return json(mapSeries(row, request, env), 200, cors);
+  }
+
+  const seriesOneMatch = path.match(/^\/series\/([^/]+)$/);
+  if (seriesOneMatch && method === "GET") {
+    const key = seriesOneMatch[1];
+    if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
+    const row = await env.DB.prepare(
+      `SELECT series.*,
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+       FROM series WHERE key = ?`
+    )
+      .bind(key)
+      .first();
+    if (!row) return json({ error: "not found" }, 404, cors);
+    const toonRows = (
+      await env.DB.prepare(
+        `SELECT toons.*,
+                (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
+         FROM toons WHERE series_key = ? ORDER BY episode_n ASC, title ASC`
+      )
+        .bind(key)
+        .all()
     ).results;
     return json(
       {
-        series: rows.map((row) => ({
-          key: row.key,
-          title: row.title,
-          tagline: row.tagline || "",
-        })),
+        series: mapSeries(row, request, env),
+        toons: toonRows.map((item) => mapToonListItem(item, request, env)),
       },
       200,
       cors
@@ -535,22 +683,20 @@ async function handle(request, env, cors, session) {
 
   if (method === "PUT" && path === "/series") {
     const parsed = await readJson(request);
-    if (parsed.error) return json({ error: parsed.error }, 400, cors);
-    if (!parsed.body.key) return json({ error: "key required" }, 400, cors);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const key = normaliseSlug(parsed.body.key);
+    if (!key || !SLUG_RE.test(key) || key.length > 64) return json({ error: "invalid key" }, 400, cors);
+    parsed.body.key = key;
+    if (!parsed.body.hubUrl) parsed.body.hubUrl = `/toons/${key}/`;
     await upsertSeries(env, parsed.body, nowIso());
-    const row = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(String(parsed.body.key)).first();
-    const descriptions = descriptionMap(row);
-    return json(
-      {
-        key: row.key,
-        title: row.title,
-        tagline: row.tagline,
-        description: descriptions.en || row.description,
-        descriptions,
-      },
-      200,
-      cors
-    );
+    const row = await env.DB.prepare(
+      `SELECT series.*,
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+       FROM series WHERE key = ?`
+    )
+      .bind(key)
+      .first();
+    return json(mapSeries(row, request, env), 200, cors);
   }
 
   if (method === "GET" && path === "/catalog") {
@@ -560,8 +706,11 @@ async function handle(request, env, cors, session) {
       await env.DB.prepare(
         `SELECT series_key AS key, COUNT(*) AS n FROM toons
          WHERE series_key IS NOT NULL AND series_key != ''
+           AND status IN (${statuses.map(() => "?").join(",")})
          GROUP BY series_key`
-      ).all()
+      )
+        .bind(...statuses)
+        .all()
     ).results;
     const episodeCounts = new Map(countRows.map((row) => [row.key, Number(row.n) || 0]));
     const toonRows = (
@@ -575,24 +724,26 @@ async function handle(request, env, cors, session) {
         .bind(...statuses)
         .all()
     ).results;
-    const asEpisode = (row) => {
-      const descriptions = descriptionMap(row);
-      const titles = titleMap(row);
+    const asEpisode = (row: ToonRow | Record<string, unknown>) => {
+      const t = row as ToonRow;
+      const descriptions = descriptionMap(t);
+      const titles = titleMap(t);
       return {
-        id: row.slug,
-        slug: row.slug,
-        title: titles.en || row.title,
+        id: t.slug,
+        slug: t.slug,
+        title: titles.en || t.title,
         titles,
-        subtitle: row.subtitle,
+        subtitle: t.subtitle,
         description: descriptions.en,
         descriptions,
-        coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
-        pageCount: Number(row.page_count) || 0,
-        readerUrl: row.reader_url || null,
-        n: row.episode_n,
+        coverUrl: objectUrl(request, env, t.cover_key, t.asset_page_dir),
+        pageCount: Number(t.page_count) || 0,
+        readerUrl: t.reader_url || null,
+        n: t.episode_n,
       };
     };
-    const episodesOf = (key) => toonRows.filter((row) => row.series_key === key).map(asEpisode);
+    const episodesOf = (key: string) =>
+      toonRows.filter((row) => (row as unknown as ToonRow).series_key === key).map(asEpisode);
     const series = seriesRows
       .map((row) => {
         const descriptions = descriptionMap(row);
@@ -602,30 +753,35 @@ async function handle(request, env, cors, session) {
           tagline: row.tagline,
           description: descriptions.en || row.description,
           descriptions,
-          coverUrl: objectUrl(request, env, row.cover_key, null),
-          hubUrl: row.hub_url || null,
-          episodes: episodesOf(row.key),
-          episodeCount: episodeCounts.get(row.key) || 0,
+          coverUrl: objectUrl(request, env, String(row.cover_key || "") || null, null),
+          hubUrl: (row.hub_url as string | null) || null,
+          episodes: episodesOf(String(row.key)),
+          episodeCount: episodeCounts.get(String(row.key)) || 0,
         };
       })
       .filter((item) => item.episodes.length > 0);
     const grouped = new Set(series.flatMap((item) => item.episodes.map((ep) => ep.slug)));
-    const ungrouped = toonRows.filter((row) => !row.series_key || !grouped.has(row.slug)).map(asEpisode);
+    const ungrouped = toonRows
+      .filter((row) => {
+        const t = row as unknown as ToonRow;
+        return !t.series_key || !grouped.has(t.slug);
+      })
+      .map(asEpisode);
     return json({ series, ungrouped }, 200, cors);
   }
 
   if (method === "POST" && path === "/toons/import") {
     const parsed = await readJson(request);
-    if (parsed.error) return json({ error: parsed.error }, 400, cors);
-    const config = parsed.body.config;
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const config = parsed.body.config as { pages?: { file: string; words?: WordInput[] }[] } | undefined;
     if (!config || !Array.isArray(config.pages)) return json({ error: "config.pages required" }, 400, cors);
     const pack = configToImport(config, parsed.body);
     const slug = normaliseSlug(pack.slug);
     if (!slug || !SLUG_RE.test(slug)) return json({ error: "invalid slug" }, 400, cors);
     const ts = nowIso();
-    await upsertSeries(env, parsed.body.series, ts);
-    let id = parsed.body.id || null;
-    const existing = await env.DB.prepare("SELECT * FROM toons WHERE slug = ?").bind(slug).first();
+    await upsertSeries(env, parsed.body.series as SeriesMeta | undefined, ts);
+    let id: string | null = typeof parsed.body.id === "string" ? parsed.body.id : null;
+    const existing = await env.DB.prepare("SELECT * FROM toons WHERE slug = ?").bind(slug).first<ToonRow>();
     if (existing) {
       id = existing.id;
       const pageRows = (await env.DB.prepare("SELECT id FROM pages WHERE toon_id = ?").bind(id).all()).results;
@@ -724,7 +880,7 @@ async function handle(request, env, cors, session) {
           .run();
       }
     }
-    return json(await loadToon(env, request, id), existing ? 200 : 201, cors);
+    return json(await loadToon(env, request, id as string), existing ? 200 : 201, cors);
   }
 
   if (method === "GET" && path === "/toons") {
@@ -736,27 +892,16 @@ async function handle(request, env, cors, session) {
       ).all()
     ).results;
     return json(
-      rows.map((row) => ({
-        id: row.id,
-        slug: row.slug,
-        title: row.title,
-        subtitle: row.subtitle,
-        coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
-        pageCount: Number(row.page_count) || 0,
-        status: row.status || "draft",
-      })),
+      rows.map((row) => mapToonListItem(row, request, env)),
       200,
       cors
     );
   }
 
   if (method === "POST" && path === "/toons") {
-    let body;
-    try {
-      body = await request.json();
-    } catch {
-      return json({ error: "invalid json" }, 400, cors);
-    }
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const body = parsed.body;
     const slug = normaliseSlug(body.slug || body.title);
     if (!slug || !SLUG_RE.test(slug) || slug.length > 64) {
       return json({ error: "invalid slug" }, 400, cors);
@@ -766,7 +911,7 @@ async function handle(request, env, cors, session) {
     const id = crypto.randomUUID();
     const ts = nowIso();
     const status = parseStatus(body.status, "draft");
-    const extra = {};
+    const extra: JsonRecord = {};
     const desc = applyDescriptions(extra, body, String(body.description || "").trim());
     const seriesKey = parseSeriesKey(body, null);
     const episodeN = seriesKey ? parseEpisodeN(body, null) : null;
@@ -801,23 +946,20 @@ async function handle(request, env, cors, session) {
       return json(toon, 200, cors);
     }
     if (method === "PATCH") {
-      const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first();
+      const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
       if (!current) return json({ error: "not found" }, 404, cors);
-      let body;
-      try {
-        body = await request.json();
-      } catch {
-        return json({ error: "invalid json" }, 400, cors);
-      }
+      const parsed = await readJson(request);
+      if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+      const body = parsed.body;
       const title = body.title != null ? String(body.title).trim() : current.title;
       const subtitle = body.subtitle != null ? String(body.subtitle).trim() : current.subtitle;
-      const status = parseStatus(body.status, current.status || "draft");
+      const status = parseStatus(body.status, parseStatus(current.status, "draft"));
       const extra = parseToonExtra(current);
       const desc = applyDescriptions(extra, body, current.description);
       const description = desc.en;
       applyTitles(extra, body, title);
       const seriesKey = parseSeriesKey(body, current.series_key || null);
-      const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n) : null;
+      const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
       await env.DB.prepare(
         `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, updated_at = ? WHERE id = ?`
       )
@@ -830,10 +972,10 @@ async function handle(request, env, cors, session) {
   const coverMatch = path.match(/^\/toons\/([^/]+)\/cover$/);
   if (coverMatch && method === "POST") {
     const id = coverMatch[1];
-    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first();
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(request);
-    if (upload.error) return json({ error: upload.error }, 400, cors);
+    if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const hash = await sha256Hex(upload.bytes);
     const key = `editor/${current.slug}/cover/${hash}.${upload.ext}`;
     await putImage(env, key, upload.bytes, upload.type);
@@ -844,10 +986,10 @@ async function handle(request, env, cors, session) {
   const audioMatch = path.match(/^\/toons\/([^/]+)\/audio$/);
   if (audioMatch && method === "POST") {
     const id = audioMatch[1];
-    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first();
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readAudioUpload(request);
-    if (upload.error) return json({ error: upload.error }, 400, cors);
+    if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const hash = await sha256Hex(upload.bytes);
     const key = `editor/${current.slug}/sfx/${hash}.${upload.ext}`;
     await putImage(env, key, upload.bytes, upload.type);
@@ -857,10 +999,10 @@ async function handle(request, env, cors, session) {
   const pagesMatch = path.match(/^\/toons\/([^/]+)\/pages$/);
   if (pagesMatch && method === "POST") {
     const id = pagesMatch[1];
-    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first();
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(request);
-    if (upload.error) return json({ error: upload.error }, 400, cors);
+    if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const key = await putPageAsset(env, current.slug, upload);
     const posRow = await env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?")
       .bind(id)
@@ -888,10 +1030,10 @@ async function handle(request, env, cors, session) {
   if (replacePageMatch && method === "POST") {
     const page = await getPageOrNull(env, replacePageMatch[1]);
     if (!page) return json({ error: "not found" }, 404, cors);
-    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first();
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(request);
-    if (upload.error) return json({ error: upload.error }, 400, cors);
+    if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const key = await putPageAsset(env, current.slug, upload);
     const width = upload.width || page.width || null;
     const height = upload.height || page.height || null;
@@ -904,7 +1046,7 @@ async function handle(request, env, cors, session) {
 
   const exportMatch = path.match(/^\/toons\/([^/]+)\/export$/);
   if (exportMatch && method === "GET") {
-    const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(exportMatch[1]).first();
+    const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(exportMatch[1]).first<ToonRow>();
     if (!toon) return json({ error: "not found" }, 404, cors);
     return json(await readerConfigFromToon(env, toon, request), 200, cors);
   }
@@ -926,15 +1068,12 @@ async function handle(request, env, cors, session) {
   if (addBubbleMatch && method === "POST") {
     const page = await getPageOrNull(env, addBubbleMatch[1]);
     if (!page) return json({ error: "not found" }, 404, cors);
-    let body;
-    try {
-      body = await request.json();
-    } catch {
-      return json({ error: "invalid json" }, 400, cors);
-    }
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const body = parsed.body;
     const sortRow = await env.DB.prepare("SELECT COALESCE(MAX(sort), -1) AS max_sort FROM bubbles WHERE page_id = ?")
       .bind(page.id)
-      .first();
+      .first<{ max_sort: number }>();
     const sort = (sortRow && Number(sortRow.max_sort) > -1 ? Number(sortRow.max_sort) : -1) + 1;
     const id = crypto.randomUUID();
     const ts = nowIso();
@@ -959,14 +1098,15 @@ async function handle(request, env, cors, session) {
         ts
       )
       .run();
-    const row = await env.DB.prepare("SELECT * FROM bubbles WHERE id = ?").bind(id).first();
+    const row = await env.DB.prepare("SELECT * FROM bubbles WHERE id = ?").bind(id).first<BubbleRow>();
     await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(ts, page.toon_id).run();
+    if (!row) return json({ error: "not found" }, 404, cors);
     return json(mapBubble(row), 201, cors);
   }
 
   const bubbleMatch = path.match(/^\/bubbles\/([^/]+)$/);
   if (bubbleMatch) {
-    const row = await env.DB.prepare("SELECT * FROM bubbles WHERE id = ?").bind(bubbleMatch[1]).first();
+    const row = await env.DB.prepare("SELECT * FROM bubbles WHERE id = ?").bind(bubbleMatch[1]).first<BubbleRow>();
     if (!row) return json({ error: "not found" }, 404, cors);
     if (method === "DELETE") {
       await env.DB.prepare("DELETE FROM bubbles WHERE id = ?").bind(row.id).run();
@@ -977,12 +1117,9 @@ async function handle(request, env, cors, session) {
       return json({ ok: true }, 200, cors);
     }
     if (method === "PATCH") {
-      let body;
-      try {
-        body = await request.json();
-      } catch {
-        return json({ error: "invalid json" }, 400, cors);
-      }
+      const parsed = await readJson(request);
+      if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+      const body = parsed.body;
       const x = body.x != null ? clamp01(body.x) : row.x;
       const y = body.y != null ? clamp01(body.y) : row.y;
       const variant = body.variant != null ? String(body.variant) : row.variant;
@@ -1002,7 +1139,7 @@ async function handle(request, env, cors, session) {
         }
       } else if (body.textEn != null || body.text_en != null) {
         try {
-          const map = textJson ? JSON.parse(textJson) : {};
+          const map = (textJson ? JSON.parse(textJson) : {}) as JsonRecord;
           map.en = textEn;
           textJson = JSON.stringify(map);
         } catch {
@@ -1021,7 +1158,8 @@ async function handle(request, env, cors, session) {
       )
         .bind(x, y, variant, tail, size, angle, textEn, textJson, extraJson, ts, row.id)
         .run();
-      const next = await env.DB.prepare("SELECT * FROM bubbles WHERE id = ?").bind(row.id).first();
+      const next = await env.DB.prepare("SELECT * FROM bubbles WHERE id = ?").bind(row.id).first<BubbleRow>();
+      if (!next) return json({ error: "not found" }, 404, cors);
       return json(mapBubble(next), 200, cors);
     }
   }
@@ -1031,7 +1169,7 @@ async function handle(request, env, cors, session) {
 
 export { publicWord, readerConfigFromToon };
 
-export default {
+const worker: ExportedHandler<Env> = {
   async fetch(request, env) {
     const cors = corsHeaders(request, env);
 
@@ -1052,7 +1190,9 @@ export default {
       }
       return await handle(request, env, cors, session);
     } catch (err) {
-      return json({ error: err && err.message ? err.message : "server error" }, 500, cors);
+      return json({ error: err instanceof Error ? err.message : "server error" }, 500, cors);
     }
   },
 };
+
+export default worker;

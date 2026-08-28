@@ -155,7 +155,7 @@ export default defineConfig({
       "src/**/*.{test,spec}.{ts,tsx}",
       "vite/**/*.{test,spec}.ts",
       "scripts/**/*.{test,spec}.js",
-      "worker/toon-editor/src/**/*.test.js",
+      "worker/toon-editor/src/**/*.test.ts",
     ],
     setupFiles: ["src/test/setup.ts"],
     css: true,

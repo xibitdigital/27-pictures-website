@@ -3,9 +3,11 @@ import {
   createToon,
   editorApiBase,
   getToken,
+  getSeries,
   listSeries,
   login,
   replacePage,
+  saveSeries,
   setToken,
   uploadAudio,
   withSiteQuery,
@@ -91,6 +93,43 @@ describe("editor api", () => {
     const rows = await listSeries();
     expect(rows).toEqual([{ key: "erin", title: "Erin & the Goblins" }]);
     expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/series");
+  });
+
+  it("GETs one series with its toons", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          series: { key: "erin", title: "Erin & the Goblins" },
+          toons: [{ id: "a", slug: "erin", title: "Erin", coverUrl: null }],
+        }),
+        { status: 200 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const body = await getSeries("erin");
+    expect(body.series.key).toBe("erin");
+    expect(body.toons).toHaveLength(1);
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/series/erin");
+  });
+
+  it("PUTs series metadata", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ key: "erin", title: "Erin & the Goblins" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const row = await saveSeries({
+      key: "erin",
+      title: "Erin & the Goblins",
+      tagline: "Dark fantasy",
+      description: "",
+    });
+    expect(row.key).toBe("erin");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/series");
+    expect((fetchMock.mock.calls[0][1] as RequestInit).method).toBe("PUT");
   });
 
   it("POSTs bubble audio as FormData", async () => {

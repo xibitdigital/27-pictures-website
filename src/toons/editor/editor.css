@@ -46,6 +46,25 @@ body {
   padding: 1.25rem 1.75rem 4rem;
 }
 
+.editor-list-section {
+  margin-bottom: 2.25rem;
+}
+
+.editor-list-heading {
+  font-size: 1.15rem;
+  margin: 0 0 0.85rem;
+}
+
+.editor-list-heading a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.editor-list-heading a:hover,
+.editor-list-heading a:focus-visible {
+  color: var(--red-smile);
+}
+
 .editor-gate {
   max-width: 40rem;
   margin: 0 auto;
@@ -139,6 +158,25 @@ body {
   color: var(--silver);
 }
 
+.editor-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.editor-field-link {
+  color: var(--silver);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.editor-field-link:hover,
+.editor-field-link:focus-visible {
+  color: var(--text);
+  text-decoration: underline;
+}
+
 .editor-error {
   color: var(--red-smile);
 }
@@ -148,6 +186,40 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   gap: 0.75rem;
+}
+
+.editor-card-list .series-card-art,
+.editor-form-preview .series-card-art {
+  position: relative;
+}
+
+.editor-visibility-badge {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 1;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--bg-dark);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+}
+
+.editor-visibility-badge[data-visibility="draft"] {
+  color: var(--silver);
+}
+
+.editor-visibility-badge[data-visibility="staging"] {
+  color: var(--text);
+  border-color: var(--red-smile);
+}
+
+.editor-visibility-badge[data-visibility="public"] {
+  color: var(--success);
+  border-color: var(--success);
 }
 
 .editor-card {

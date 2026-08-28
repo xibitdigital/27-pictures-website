@@ -1,17 +1,11 @@
 import { describe, expect, it } from "vitest";
-import {
-  callerHostname,
-  isStagingHostname,
-  parseStatus,
-  publicStatuses,
-  publicStatusesForRequest,
-} from "./visibility.js";
+import { callerHostname, isStagingHostname, parseStatus, publicStatuses, publicStatusesForRequest } from "./visibility";
 
-function req({ origin, referer, url } = {}) {
+function req({ origin, referer, url }: { origin?: string; referer?: string; url?: string } = {}) {
   return {
     url: url || "https://toon-editor.example/catalog",
     headers: {
-      get: (k) => {
+      get: (k: string) => {
         const key = k.toLowerCase();
         if (key === "origin") return origin || null;
         if (key === "referer") return referer || null;

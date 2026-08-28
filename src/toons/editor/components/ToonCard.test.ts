@@ -23,4 +23,14 @@ describe("ToonCard", () => {
     expect(wrapper.get(".series-card-desc").text()).toContain("netrunner");
     expect(wrapper.get("img").attributes("src")).toContain("jax.jpg");
   });
+
+  it("paints a visibility badge on the cover", () => {
+    const wrapper = mount(ToonCard, {
+      props: { title: "Marcus", badge: "Draft", visibility: "draft" },
+    });
+    const badge = wrapper.get("[data-visibility]");
+    expect(badge.text()).toBe("Draft");
+    expect(badge.attributes("data-visibility")).toBe("draft");
+    expect(badge.classes()).toContain("editor-visibility-badge");
+  });
 });

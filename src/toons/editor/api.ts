@@ -1,11 +1,16 @@
-import type { BubbleRecord, SeriesOption, ToonListItem, ToonMetaInput, ToonRecord } from "./types";
+import type {
+  BubbleRecord,
+  EditorUser,
+  SeriesInput,
+  SeriesOption,
+  ToonListItem,
+  ToonMetaInput,
+  ToonRecord,
+} from "./types";
 
 const TOKEN_KEY = "toon-editor-token";
 
-export interface EditorUser {
-  id: string;
-  email: string;
-}
+export type { EditorUser } from "./types";
 
 export interface AuthPayload {
   token: string;
@@ -122,6 +127,28 @@ export function listToons(): Promise<ToonListItem[]> {
 export async function listSeries(): Promise<SeriesOption[]> {
   const body = await api<{ series?: SeriesOption[] }>("/series");
   return Array.isArray(body.series) ? body.series : [];
+}
+
+export function getSeries(key: string): Promise<{ series: SeriesOption; toons: ToonListItem[] }> {
+  return api<{ series: SeriesOption; toons: ToonListItem[] }>(`/series/${key}`);
+}
+
+export function saveSeries(input: SeriesInput): Promise<SeriesOption> {
+  return api<SeriesOption>("/series", { method: "PUT", body: JSON.stringify(input) });
+}
+
+export function uploadSeriesCover(
+  key: string,
+  file: File,
+  size?: { width: number; height: number }
+): Promise<SeriesOption> {
+  const body = new FormData();
+  body.set("file", file);
+  if (size) {
+    body.set("width", String(size.width));
+    body.set("height", String(size.height));
+  }
+  return api<SeriesOption>(`/series/${key}/cover`, { method: "POST", body });
 }
 
 export function createToon(input: ToonMetaInput): Promise<ToonRecord> {

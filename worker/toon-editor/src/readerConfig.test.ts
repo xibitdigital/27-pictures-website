@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { publicWord, readerConfigFromToon } from "./index.js";
+import { publicWord, readerConfigFromToon } from "./index";
 
 function requestAt(url) {
   return { url };

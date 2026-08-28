@@ -59,21 +59,21 @@ describe("toonCatalog", () => {
     expect(html).toContain("data-quick-view");
     expect(html).toContain('href="/toons/erin-and-the-goblins/"');
     expect(html).toContain("Erin &amp; the Goblins");
-    expect(html).toContain("2 episodes");
+    expect(html).toContain("1 episode");
     expect(html).not.toContain("/toons/erin-the-revenge/");
   });
 
-  it("counts every series member, not only the visible episodes", () => {
+  it("counts only catalog episodes, not drafts or the static registry", () => {
     const html = seriesCardHtml({
       ...series,
       episodes: [episode],
-      episodeCount: 2,
     });
-    expect(html).toContain("2 episodes");
-    expect(html).not.toContain("1 episode");
+    expect(html).toContain("1 episode");
+    expect(html).not.toContain("2 episodes");
+    expect(seriesItemCount(series)).toBe(1);
   });
 
-  it("counts RED SMILE static and Marcus even when Marcus is draft", () => {
+  it("does not count a draft series member on the public card", () => {
     const redSmile: CatalogSeries = {
       key: "red-smile",
       title: "RED SMILE",
@@ -83,8 +83,8 @@ describe("toonCatalog", () => {
       hubUrl: "/toons/red-smile/",
       episodes: [{ ...episode, id: "redsmile-static", slug: "redsmile-static", title: "static", n: 1 }],
     };
-    expect(seriesItemCount(redSmile)).toBe(2);
-    expect(seriesCardHtml(redSmile)).toContain("2 episodes");
+    expect(seriesItemCount(redSmile)).toBe(1);
+    expect(seriesCardHtml(redSmile)).toContain("1 episode");
   });
 
   it("renders an episode card for the series page grid", () => {
@@ -143,12 +143,12 @@ describe("toonCatalog", () => {
     expect(standaloneCardHtml(loose)).toContain("/toons/studio-demo/");
   });
 
-  it("fills the series-page episode grid and keeps coming-soon", () => {
+  it("fills the series-page episode grid from the catalog only", () => {
     const grid = document.createElement("div");
     grid.innerHTML = `<div class="series-card series-card--soon">Coming soon</div>`;
     applyEpisodeCatalog(grid, [episode]);
     expect(grid.querySelector(".series-card--episode")).toBeTruthy();
-    expect(grid.querySelector(".series-card--soon")?.textContent).toContain("Coming soon");
+    expect(grid.querySelector(".series-card--soon")).toBeNull();
   });
 
   it("flattens catalog episodes for continue-reading / most-loved", () => {

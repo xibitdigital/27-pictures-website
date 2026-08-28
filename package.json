@@ -23,11 +23,11 @@
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "local": "node scripts/serve-protected.js",
-    "typecheck": "vue-tsc -b --noEmit",
+    "typecheck": "vue-tsc -b --noEmit && tsc -p worker/toon-editor --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "format": "prettier --write \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\" \"worker/toon-editor/src/**/*.{ts,js}\"",
+    "format:check": "prettier --check \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\" \"worker/toon-editor/src/**/*.{ts,js}\"",
     "check": "npm test && npm run build",
     "backup-cdn": "node scripts/backup-cdn-assets.js",
     "backup-db": "node scripts/backup-toon-db.js",
@@ -44,6 +44,7 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260702.1",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^26.1.2",
     "@vitejs/plugin-basic-ssl": "^2.3.0",

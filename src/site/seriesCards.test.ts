@@ -5,6 +5,8 @@ import {
   initSeriesQuickView,
   initEpisodeVotes,
   resetSeriesQuickView,
+  setSeriesEpisodeMarkup,
+  fillSeriesEpisodeGrid,
 } from "./seriesCards";
 import { resetLikesCache, fetchLikes } from "./likes";
 
@@ -39,6 +41,23 @@ beforeEach(() => {
   resetLikesCache();
   resetSeriesQuickView();
   document.querySelectorAll("dialog").forEach((d) => d.remove());
+});
+
+describe("fillSeriesEpisodeGrid", () => {
+  it("replaces static episode cards with catalog markup, dropping drafts", () => {
+    document.body.innerHTML = `<div data-series-page>
+      <div class="series-grid">
+        <a class="series-card series-card--episode" href="/toons/redsmile-static/">static</a>
+        <a class="series-card series-card--episode" href="/toons/redsmile-marcus/">Marcus</a>
+      </div>
+    </div>`;
+    setSeriesEpisodeMarkup(
+      new Map([["red-smile", `<a class="series-card series-card--episode" href="/toons/redsmile-static/">static</a>`]])
+    );
+    fillSeriesEpisodeGrid(document.body, "red-smile");
+    const hrefs = [...document.querySelectorAll("a")].map((a) => a.getAttribute("href"));
+    expect(hrefs).toEqual(["/toons/redsmile-static/"]);
+  });
 });
 
 describe("extractSeriesRegion", () => {

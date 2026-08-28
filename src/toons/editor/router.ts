@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import ToonList from "./components/ToonList.vue";
 import ToonMetaForm from "./components/ToonMetaForm.vue";
+import SeriesForm from "./components/SeriesForm.vue";
 import PageStudio from "./components/PageStudio.vue";
 
 export const router = createRouter({
@@ -10,6 +11,8 @@ export const router = createRouter({
   routes: [
     { path: "/", name: "list", component: ToonList },
     { path: "/new", name: "new", component: ToonMetaForm },
+    { path: "/series/new", name: "series-new", component: SeriesForm },
+    { path: "/series/:key", name: "series-edit", component: SeriesForm },
     { path: "/:id", name: "meta", component: ToonMetaForm },
     { path: "/:id/pages/:pageId?", name: "studio", component: PageStudio },
   ],

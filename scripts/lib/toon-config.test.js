@@ -11,11 +11,7 @@ describe("toonFromConfigPath", () => {
 });
 
 describe("checkToonConfig", () => {
-  it("accepts every locked toon in this checkout", () => {
-    const toons = listToonsWithConfig();
-    expect(toons.length).toBeGreaterThan(0);
-    for (const toon of toons) {
-      expect(() => checkToonConfig(toon), toon).not.toThrow();
-    }
+  it("finds no reference configs once readers load from D1", () => {
+    expect(listToonsWithConfig()).toEqual([]);
   });
 });

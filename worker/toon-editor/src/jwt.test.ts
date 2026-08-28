@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { requireJwtSecret, signJwt, verifyJwt } from "./jwt.js";
+import { requireJwtSecret, signJwt, verifyJwt } from "./jwt";
 
 const SECRET = "a".repeat(32);
 const OTHER = "b".repeat(32);

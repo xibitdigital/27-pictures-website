@@ -1,48 +1,89 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
-import { listToons } from "../api";
-import { visibilityLabel, type ToonListItem } from "../types";
+import { listSeries, listToons } from "../api";
+import { visibilityFromStatus, visibilityLabel, type SeriesOption, type ToonListItem } from "../types";
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
 
 const toons = ref<ToonListItem[]>([]);
+const seriesList = ref<SeriesOption[]>([]);
 const error = ref("");
 const loading = ref(true);
 
 onMounted(async () => {
   try {
-    toons.value = await listToons();
+    const [books, shelves] = await Promise.all([listToons(), listSeries()]);
+    toons.value = books;
+    seriesList.value = shelves;
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Failed to load";
   } finally {
     loading.value = false;
   }
 });
+
+const grouped = computed(() =>
+  seriesList.value.map((series) => ({
+    series,
+    toons: toons.value
+      .filter((toon) => toon.seriesKey === series.key)
+      .sort((a, b) => (a.episodeN ?? 99) - (b.episodeN ?? 99)),
+  }))
+);
+
+const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey));
 </script>
 
 <template>
   <section class="editor-list">
     <EditorBar title="Toon editor" :home="false">
       <template #actions>
+        <RouterLink class="editor-btn editor-btn--ghost" to="/series/new">New series</RouterLink>
         <RouterLink class="editor-btn" to="/new">New toon</RouterLink>
       </template>
     </EditorBar>
     <div class="editor-list-body">
       <p v-if="loading">Loading…</p>
       <p v-else-if="error" class="editor-error" role="alert">{{ error }}</p>
-      <p v-else-if="!toons.length" class="editor-muted">No drafts yet.</p>
-      <ul v-else class="editor-card-list">
-        <li v-for="toon in toons" :key="toon.id">
-          <ToonCard
-            :to="`/${toon.id}`"
-            :title="toon.title || toon.slug"
-            :meta="visibilityLabel(toon.status)"
-            :cue="toon.pageCount ? `${toon.pageCount} pages` : toon.slug"
-            :cover-url="toon.coverUrl"
-          />
-        </li>
-      </ul>
+      <template v-else>
+        <p v-if="!seriesList.length && !toons.length" class="editor-muted">No series yet.</p>
+        <section v-for="group in grouped" :key="group.series.key" class="editor-list-section">
+          <h2 class="editor-list-heading">
+            <RouterLink :to="`/series/${group.series.key}`">{{ group.series.title }}</RouterLink>
+          </h2>
+          <p v-if="!group.toons.length" class="editor-muted">No episodes yet.</p>
+          <ul v-else class="editor-card-list">
+            <li v-for="toon in group.toons" :key="toon.id">
+              <ToonCard
+                :to="`/${toon.id}`"
+                :title="toon.title || toon.slug"
+                :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
+                :cue="toon.pageCount ? `${toon.pageCount} pages` : toon.slug"
+                :cover-url="toon.coverUrl"
+                :badge="visibilityLabel(toon.status)"
+                :visibility="visibilityFromStatus(toon.status)"
+              />
+            </li>
+          </ul>
+        </section>
+        <section v-if="ungrouped.length" class="editor-list-section">
+          <h2 class="editor-list-heading">Ungrouped</h2>
+          <ul class="editor-card-list">
+            <li v-for="toon in ungrouped" :key="toon.id">
+              <ToonCard
+                :to="`/${toon.id}`"
+                :title="toon.title || toon.slug"
+                :meta="toon.subtitle || ''"
+                :cue="toon.pageCount ? `${toon.pageCount} pages` : toon.slug"
+                :cover-url="toon.coverUrl"
+                :badge="visibilityLabel(toon.status)"
+                :visibility="visibilityFromStatus(toon.status)"
+              />
+            </li>
+          </ul>
+        </section>
+      </template>
     </div>
   </section>
 </template>

@@ -146,7 +146,8 @@ async function onSubmit(ev: Event): Promise<void> {
       const size = await readImageSize(coverFile.value);
       toon = await uploadCover(toon.id, coverFile.value, size);
     }
-    await router.push(`/${toon.id}/pages`);
+    existing.value = toon;
+    if (isCreate.value) await router.push(`/${toon.id}/pages`);
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Save failed";
   } finally {
@@ -199,15 +200,26 @@ async function onSubmit(ev: Event): Promise<void> {
         </label>
         <div class="editor-pair-row editor-form-span">
           <label>
-            Series
+            <span class="editor-label-row">
+              Series
+              <RouterLink class="editor-field-link" to="/series/new">New series</RouterLink>
+            </span>
             <select v-model="seriesKey" name="series">
               <option value="">None (standalone)</option>
               <option v-for="item in seriesList" :key="item.key" :value="item.key">{{ item.title }}</option>
             </select>
           </label>
-          <label v-if="seriesKey">
+          <label>
             Episode
-            <input v-model="episodeN" type="number" name="episode-n" min="1" step="1" placeholder="1" />
+            <input
+              v-model="episodeN"
+              type="number"
+              name="episode-n"
+              min="1"
+              step="1"
+              placeholder="1"
+              :disabled="!seriesKey"
+            />
           </label>
         </div>
         <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
@@ -239,9 +251,11 @@ async function onSubmit(ev: Event): Promise<void> {
           <ToonCard
             :title="title.trim() || slug || 'Untitled'"
             :meta="subtitle.trim()"
-            :cue="previewPages ? `${previewCue} · ${previewPages} pages` : previewCue"
+            :cue="previewPages ? `${previewPages} pages` : ''"
             :description="descriptions.en.trim()"
             :cover-url="coverPreview || null"
+            :badge="previewCue"
+            :visibility="visibility"
           />
         </div>
       </aside>

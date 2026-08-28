@@ -7,9 +7,8 @@
  */
 import { editorApiBase, withSiteQuery } from "../toons/editor/api";
 import { pickDescription, type DescriptionMap } from "../toons/editor/types";
-import { SERIES } from "../toons/series";
 import { documentLocale, UI, withCaptionLang } from "./i18n";
-import { initEpisodeVotes, initSeriesVotes } from "./seriesCards";
+import { fillSeriesEpisodeGrid, initEpisodeVotes, initSeriesVotes, setSeriesEpisodeMarkup } from "./seriesCards";
 import { initToonRows, type RowEpisode } from "./toonRows";
 
 export interface CatalogEpisode {
@@ -35,8 +34,6 @@ export interface CatalogSeries {
   coverUrl: string | null;
   hubUrl: string | null;
   episodes: CatalogEpisode[];
-  /** All series members in D1, including drafts the grid does not list. */
-  episodeCount?: number;
 }
 
 export interface CatalogPayload {
@@ -62,10 +59,9 @@ function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-/** Books that belong to the series, including drafts the public grid hides. */
+/** Episodes this site can show (catalog already dropped drafts). */
 export function seriesItemCount(series: CatalogSeries): number {
-  const canon = SERIES.find((s) => s.key === series.key)?.episodes.filter((ep) => ep.id).length ?? 0;
-  return Math.max(Number(series.episodeCount) || 0, series.episodes.length, canon);
+  return series.episodes.length;
 }
 
 export function seriesCardHtml(series: CatalogSeries, assetW = 1152, assetH = 1728): string {
@@ -160,9 +156,7 @@ export function renderLandingGrid(grid: Element, payload: CatalogPayload): void 
 }
 
 export function applyEpisodeCatalog(grid: Element, episodes: CatalogEpisode[]): void {
-  if (!episodes.length) return;
-  const soon = [...grid.querySelectorAll(".series-card--soon")].map((el) => el.outerHTML);
-  grid.innerHTML = episodes.map((ep) => episodeCardHtml(ep)).join("\n") + soon.join("\n");
+  grid.innerHTML = episodes.map((ep) => episodeCardHtml(ep)).join("\n");
 }
 
 export function catalogAsRowEpisodes(payload: CatalogPayload): RowEpisode[] {
@@ -199,6 +193,12 @@ export async function initToonCatalog(root: ParentNode = document): Promise<Cata
   const items = await loadCatalog();
   if (!items) return null;
 
+  const markup = new Map<string, string>();
+  for (const s of items.series) {
+    markup.set(s.key, s.episodes.map((ep) => episodeCardHtml(ep)).join("\n"));
+  }
+  setSeriesEpisodeMarkup(markup);
+
   const shelf = root.querySelector("[data-toon-catalog]");
   if (shelf) {
     renderLandingGrid(shelf, items);
@@ -218,6 +218,8 @@ export async function initToonCatalog(root: ParentNode = document): Promise<Cata
     if (series) {
       applyEpisodeCatalog(episodeGrid, series.episodes);
       initEpisodeVotes(episodeGrid);
+    } else {
+      fillSeriesEpisodeGrid(root, seriesKey);
     }
   }
   return items;

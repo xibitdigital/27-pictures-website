@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { configToImport, rowToWord, wordToRow } from "../../../worker/toon-editor/src/importConfig.js";
+import { configToImport, rowToWord, wordToRow } from "../../../worker/toon-editor/src/importConfig";
 
 describe("config import", () => {
   it("keeps multilingual text and extra caption fields", () => {

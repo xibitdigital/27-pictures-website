@@ -6,24 +6,26 @@
  *   POST /likes { toon }     -> { toon, likes, counted }
  */
 
+import type { CorsHeaders, Env, JsonRecord, JsonResponse } from "./types";
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 const TOON_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-function allowList(env) {
+function allowList(env: Env): string[] {
   return String(env.ALLOWED_TOONS || "")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
 }
 
-export async function isKnownToon(env, toon) {
+export async function isKnownToon(env: Env, toon: string): Promise<boolean> {
   if (!toon || !TOON_RE.test(toon) || toon.length > 64) return false;
   if (allowList(env).includes(toon)) return true;
-  const row = await env.DB.prepare("SELECT slug FROM toons WHERE slug = ?").bind(toon).first();
+  const row = await env.DB.prepare("SELECT slug FROM toons WHERE slug = ?").bind(toon).first<{ slug: string }>();
   return Boolean(row);
 }
 
-async function ipHash(request, toon) {
+async function ipHash(request: Request, toon: string): Promise<string> {
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const bytes = new TextEncoder().encode(`${toon}:${ip}`);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
@@ -33,8 +35,8 @@ async function ipHash(request, toon) {
     .join("");
 }
 
-async function readCount(env, toon) {
-  const row = await env.DB.prepare("SELECT count FROM toon_likes WHERE toon = ?").bind(toon).first();
+async function readCount(env: Env, toon: string): Promise<number> {
+  const row = await env.DB.prepare("SELECT count FROM toon_likes WHERE toon = ?").bind(toon).first<{ count: number }>();
   const n = row ? Number(row.count) : 0;
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
@@ -42,7 +44,13 @@ async function readCount(env, toon) {
 /**
  * @returns {Promise<Response | null>} null if this request is not a likes route.
  */
-export async function handleLikes(request, env, cors, json, isWriteOrigin) {
+export async function handleLikes(
+  request: Request,
+  env: Env,
+  cors: CorsHeaders,
+  json: JsonResponse,
+  isWriteOrigin: (request: Request, env: Env) => boolean
+): Promise<Response | null> {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/$/, "") || "/";
   if (path !== "/likes") return null;
@@ -50,8 +58,9 @@ export async function handleLikes(request, env, cors, json, isWriteOrigin) {
   if (request.method === "GET") {
     const toon = url.searchParams.get("toon") || "";
     if (!toon) {
-      const rows = (await env.DB.prepare("SELECT toon, count FROM toon_likes").all()).results;
-      const likes = {};
+      const rows = (await env.DB.prepare("SELECT toon, count FROM toon_likes").all<{ toon: string; count: number }>())
+        .results;
+      const likes: Record<string, number> = {};
       for (const row of rows) likes[row.toon] = Number(row.count) || 0;
       return json({ likes }, 200, cors);
     }
@@ -62,9 +71,9 @@ export async function handleLikes(request, env, cors, json, isWriteOrigin) {
   if (request.method !== "POST") return json({ error: "method not allowed" }, 405, cors);
   if (!isWriteOrigin(request, env)) return json({ error: "forbidden origin" }, 403, cors);
 
-  let payload = {};
+  let payload: JsonRecord = {};
   try {
-    payload = await request.json();
+    payload = (await request.json()) as JsonRecord;
   } catch {
     return json({ error: "invalid json" }, 400, cors);
   }
@@ -75,7 +84,7 @@ export async function handleLikes(request, env, cors, json, isWriteOrigin) {
   const hash = await ipHash(request, toon);
   const seen = await env.DB.prepare("SELECT created_at FROM toon_like_votes WHERE toon = ? AND ip_hash = ?")
     .bind(toon, hash)
-    .first();
+    .first<{ created_at: string }>();
   const fresh = seen && Date.now() - Date.parse(seen.created_at) < DAY_MS;
   if (fresh) {
     return json({ toon, likes: await readCount(env, toon), counted: false }, 200, cors);

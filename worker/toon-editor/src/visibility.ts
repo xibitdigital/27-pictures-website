@@ -1,6 +1,8 @@
 /** Catalog / public reader visibility, keyed off the calling site hostname. */
 
-export function parseStatus(raw, fallback) {
+import type { RequestLike, ToonStatus } from "./types";
+
+export function parseStatus(raw: unknown, fallback: ToonStatus): ToonStatus {
   if (raw == null || raw === "") return fallback;
   const s = String(raw).trim().toLowerCase();
   if (s === "published" || s === "public") return "published";
@@ -9,7 +11,7 @@ export function parseStatus(raw, fallback) {
   return fallback;
 }
 
-export function hostnameOf(value) {
+export function hostnameOf(value: unknown): string {
   const raw = String(value || "").trim();
   if (!raw) return "";
   try {
@@ -20,7 +22,7 @@ export function hostnameOf(value) {
   return raw.split("/")[0].split(":")[0].toLowerCase();
 }
 
-export function isStagingHostname(host) {
+export function isStagingHostname(host: string): boolean {
   const h = String(host || "").toLowerCase();
   if (h === "localhost" || h === "127.0.0.1") return true;
   if (h === "staging.twentyseven.pictures") return true;
@@ -33,8 +35,8 @@ export function isStagingHostname(host) {
  * Prefer Origin (cannot be spoofed by a `site` query on a production page).
  * Fall back to `?site=` then Referer — staging Pages and local Vite send those.
  */
-export function callerHostname(request) {
-  const originHost = hostnameOf(request.headers.get("Origin") || "");
+export function callerHostname(request: RequestLike): string {
+  const originHost = hostnameOf(request.headers?.get("Origin") || "");
   if (originHost) return originHost;
   let site = "";
   try {
@@ -44,14 +46,14 @@ export function callerHostname(request) {
   }
   const siteHost = hostnameOf(site);
   if (siteHost) return siteHost;
-  return hostnameOf(request.headers.get("Referer") || "");
+  return hostnameOf(request.headers?.get("Referer") || "");
 }
 
 /** Draft never. Staging host → published + staging. Production / unknown → published only. */
-export function publicStatuses(isStaging) {
+export function publicStatuses(isStaging: boolean): ToonStatus[] {
   return isStaging ? ["published", "staging"] : ["published"];
 }
 
-export function publicStatusesForRequest(request) {
+export function publicStatusesForRequest(request: RequestLike): ToonStatus[] {
   return publicStatuses(isStagingHostname(callerHostname(request)));
 }

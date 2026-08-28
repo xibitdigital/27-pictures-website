@@ -127,11 +127,26 @@ function buildDialog(): HTMLDialogElement {
 let quickViewBound = false;
 let quickViewDialog: HTMLDialogElement | null = null;
 const quickViewCache = new Map<string, DocumentFragment>();
+/** D1 catalog markup per series key — drafts never included. */
+let seriesEpisodeMarkup = new Map<string, string>();
+
+export function setSeriesEpisodeMarkup(bySeries: Map<string, string>): void {
+  seriesEpisodeMarkup = bySeries;
+}
+
+/** Fill a series grid from the catalog. Empty string clears leftover static cards. */
+export function fillSeriesEpisodeGrid(root: ParentNode, seriesKey: string): void {
+  const html = seriesEpisodeMarkup.get(seriesKey);
+  const grid = root.querySelector(".series-grid");
+  if (!grid || html === undefined) return;
+  grid.innerHTML = html;
+}
 
 /** Tests: drop cached pages and the dialog node after each case. */
 export function resetSeriesQuickView(): void {
   quickViewCache.clear();
   quickViewDialog = null;
+  seriesEpisodeMarkup = new Map();
 }
 
 export function initSeriesQuickView(_root: ParentNode = document): void {
@@ -155,6 +170,8 @@ export function initSeriesQuickView(_root: ParentNode = document): void {
     const body = view.querySelector(".episode-dialog-body") as HTMLElement;
     const show = (content: Node) => {
       body.replaceChildren(content);
+      const seriesKey = trigger.getAttribute("data-series") || "";
+      if (seriesKey) fillSeriesEpisodeGrid(body, seriesKey);
       // The badges are filled on the injected copy, not on the cached
       // fragment: `show` clones it, so a fragment filled once would keep a
       // stale count for the rest of the session.
