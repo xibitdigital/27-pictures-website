@@ -151,6 +151,17 @@ export function uploadPage(id: string, file: File, size?: { width: number; heigh
   return api<ToonRecord>(`/toons/${id}/pages`, { method: "POST", body });
 }
 
+/** Swap the plate on an existing page. Captions stay; the file is a new hashed key. */
+export function replacePage(pageId: string, file: File, size?: { width: number; height: number }): Promise<ToonRecord> {
+  const body = new FormData();
+  body.set("file", file);
+  if (size) {
+    body.set("width", String(size.width));
+    body.set("height", String(size.height));
+  }
+  return api<ToonRecord>(`/pages/${pageId}/file`, { method: "POST", body });
+}
+
 export interface AudioUpload {
   key: string;
   url: string;

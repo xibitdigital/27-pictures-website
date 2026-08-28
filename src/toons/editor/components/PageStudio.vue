@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
-import { addBubble, deleteBubble, getToon, patchBubble, readImageSize, uploadPage } from "../api";
+import { addBubble, deleteBubble, getToon, patchBubble, readImageSize, replacePage, uploadPage } from "../api";
 import type { LangCode } from "../../bookReader/types";
 import type { BubbleRecord, ToonRecord } from "../types";
+import { mergeReplacedPage } from "../pageFile";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, CAPTION_LANGS } from "../mapConfig";
 import CaptionInspector from "./CaptionInspector.vue";
@@ -22,6 +23,7 @@ const previewLang = ref<LangCode>("en");
 const error = ref("");
 const loading = ref(true);
 const saving = ref(false);
+const replacing = ref(false);
 const dirtyIds = ref(new Set<string>());
 
 const toonId = computed(() => String(route.params.id || ""));
@@ -85,6 +87,22 @@ async function onUpload(file: File): Promise<void> {
     if (last) await router.push(`/${next.id}/pages/${last.id}`);
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Upload failed";
+  }
+}
+
+async function onReplace(file: File): Promise<void> {
+  const page = activePage.value;
+  if (!page) return;
+  error.value = "";
+  replacing.value = true;
+  try {
+    const size = await readImageSize(file);
+    const next = await replacePage(page.id, file, size);
+    toon.value = toon.value ? mergeReplacedPage(toon.value, next, page.id) : next;
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : "Replace failed";
+  } finally {
+    replacing.value = false;
   }
 }
 
@@ -198,6 +216,7 @@ async function onRemove(): Promise<void> {
         <PageFilmstrip :toon-id="toon.id" :pages="toon.pages" :active-id="activePage?.id ?? null" @upload="onUpload" />
         <PlateCanvas
           v-if="activePage"
+          :key="activePage.fileKey"
           :src="activePage.fileUrl"
           :page-num="activePage.position + 1"
           :bubbles="activePage.bubbles"
@@ -205,10 +224,12 @@ async function onRemove(): Promise<void> {
           :lang="previewLang"
           :design-width="toon.designWidth"
           :design-height="toon.designHeight"
+          :replacing="replacing"
           @select="selectedId = $event"
           @move="onMove"
           @persist="onPersist"
           @add="onAdd"
+          @replace="onReplace"
         />
         <div v-else class="editor-canvas editor-canvas--empty">
           <p class="editor-muted">Upload a page to start placing bubbles.</p>

@@ -358,6 +358,13 @@ async function putImage(env, key, bytes, contentType) {
   });
 }
 
+async function putPageAsset(env, slug, upload) {
+  const hash = await sha256Hex(upload.bytes);
+  const key = `editor/${slug}/assets/${hash}.${upload.ext}`;
+  await putImage(env, key, upload.bytes, upload.type);
+  return key;
+}
+
 async function readUpload(request) {
   const form = await request.formData();
   const file = form.get("file");
@@ -816,9 +823,7 @@ async function handle(request, env, cors, session) {
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(request);
     if (upload.error) return json({ error: upload.error }, 400, cors);
-    const hash = await sha256Hex(upload.bytes);
-    const key = `editor/${current.slug}/assets/${hash}.${upload.ext}`;
-    await putImage(env, key, upload.bytes, upload.type);
+    const key = await putPageAsset(env, current.slug, upload);
     const posRow = await env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?")
       .bind(id)
       .first();
@@ -839,6 +844,24 @@ async function handle(request, env, cors, session) {
       await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), id).run();
     }
     return json(await loadToon(env, request, id), 201, cors);
+  }
+
+  const replacePageMatch = path.match(/^\/pages\/([^/]+)\/file$/);
+  if (replacePageMatch && method === "POST") {
+    const page = await getPageOrNull(env, replacePageMatch[1]);
+    if (!page) return json({ error: "not found" }, 404, cors);
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const upload = await readUpload(request);
+    if (upload.error) return json({ error: upload.error }, 400, cors);
+    const key = await putPageAsset(env, current.slug, upload);
+    const width = upload.width || page.width || null;
+    const height = upload.height || page.height || null;
+    await env.DB.prepare(`UPDATE pages SET file_key = ?, width = ?, height = ? WHERE id = ?`)
+      .bind(key, width, height, page.id)
+      .run();
+    await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), page.toon_id).run();
+    return json(await loadToon(env, request, page.toon_id), 200, cors);
   }
 
   const exportMatch = path.match(/^\/toons\/([^/]+)\/export$/);

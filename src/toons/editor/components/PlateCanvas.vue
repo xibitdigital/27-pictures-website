@@ -11,6 +11,7 @@ const props = defineProps<{
   lang?: string;
   designWidth: number;
   designHeight: number;
+  replacing?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -18,12 +19,21 @@ const emit = defineEmits<{
   move: [id: string, x: number, y: number];
   persist: [id: string, x: number, y: number];
   add: [pos: { x: number; y: number }];
+  replace: [file: File];
 }>();
 
 const imgEl = ref<HTMLImageElement | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
 const plateStyle = computed(() => ({
   "--plate-aspect": `${props.designWidth} / ${props.designHeight}`,
 }));
+
+function onReplaceFile(ev: Event): void {
+  const input = ev.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (file) emit("replace", file);
+}
 </script>
 
 <template>
@@ -44,6 +54,29 @@ const plateStyle = computed(() => ({
         @persist="(id, x, y) => emit('persist', id, x, y)"
         @add="emit('add', $event)"
       />
+      <input
+        ref="fileInput"
+        type="file"
+        name="replace-page-file"
+        accept="image/webp,image/jpeg,image/png"
+        hidden
+        :disabled="replacing"
+        @change="onReplaceFile"
+      />
+      <button
+        class="editor-plate-replace"
+        type="button"
+        name="replace-page"
+        :disabled="replacing"
+        :aria-label="replacing ? 'Replacing plate' : 'Replace plate'"
+        :title="replacing ? 'Replacing plate' : 'Replace plate'"
+        @click="fileInput?.click()"
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 2.5v8M5 5.5 8 2.5 11 5.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.4" />
+        </svg>
+        {{ replacing ? "Replacing…" : "Replace" }}
+      </button>
     </div>
   </div>
 </template>

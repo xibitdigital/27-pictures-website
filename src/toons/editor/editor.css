@@ -4,6 +4,7 @@ html,
 body,
 #app {
   height: 100%;
+  color-scheme: dark;
 }
 
 body {
@@ -190,19 +191,148 @@ body {
   font-size: 0.85rem;
 }
 
-.editor-form input,
+.editor-form input:not([type="range"]):not([type="file"]):not([hidden]),
 .editor-form textarea,
 .editor-form select,
-.editor-inspector input:not([type="range"]),
+.editor-inspector input:not([type="range"]):not([type="file"]):not([hidden]),
 .editor-inspector textarea,
 .editor-inspector select,
-.editor-gate input {
+.editor-gate input:not([hidden]) {
+  box-sizing: border-box;
   width: 100%;
-  padding: 0.5rem 0.6rem;
-  background: var(--bg-card);
+  min-height: 2.35rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--bg-dark);
   color: var(--text);
   border: 1px solid var(--border-light);
+  border-radius: 2px;
   font: inherit;
+  line-height: 1.35;
+  box-shadow: none;
+  outline: none;
+}
+
+.editor-form textarea,
+.editor-inspector textarea {
+  min-height: 5.5rem;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  resize: vertical;
+}
+
+.editor-form input::placeholder,
+.editor-form textarea::placeholder,
+.editor-inspector input::placeholder,
+.editor-inspector textarea::placeholder,
+.editor-gate input::placeholder {
+  color: var(--silver);
+  opacity: 1;
+}
+
+.editor-form input:hover,
+.editor-form textarea:hover,
+.editor-form select:hover,
+.editor-inspector input:not([type="range"]):hover,
+.editor-inspector textarea:hover,
+.editor-inspector select:hover,
+.editor-gate input:hover {
+  border-color: var(--silver);
+}
+
+.editor-form input:focus-visible,
+.editor-form textarea:focus-visible,
+.editor-form select:focus-visible,
+.editor-inspector input:not([type="range"]):focus-visible,
+.editor-inspector textarea:focus-visible,
+.editor-inspector select:focus-visible,
+.editor-gate input:focus-visible {
+  border-color: var(--red-smile);
+  outline: 2px solid var(--red-smile);
+  outline-offset: 1px;
+}
+
+.editor-form input:disabled,
+.editor-form textarea:disabled,
+.editor-form select:disabled,
+.editor-inspector input:disabled,
+.editor-inspector textarea:disabled,
+.editor-inspector select:disabled,
+.editor-gate input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-form select,
+.editor-inspector select {
+  appearance: none;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.editor-form select option,
+.editor-inspector select option {
+  background: var(--bg-dark);
+  color: var(--text);
+}
+
+.editor-form label:has(> select),
+.editor-inspector label:has(> select) {
+  position: relative;
+}
+
+.editor-form label:has(> select)::after,
+.editor-inspector label:has(> select)::after {
+  content: "";
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.9rem;
+  width: 0.42em;
+  height: 0.42em;
+  border-right: 1.5px solid var(--silver);
+  border-bottom: 1.5px solid var(--silver);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.editor-form input[type="number"],
+.editor-inspector input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.editor-form input[type="number"]::-webkit-inner-spin-button,
+.editor-form input[type="number"]::-webkit-outer-spin-button,
+.editor-inspector input[type="number"]::-webkit-inner-spin-button,
+.editor-inspector input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.editor-form input[type="file"] {
+  width: 100%;
+  padding: 0;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  font: inherit;
+}
+
+.editor-form input[type="file"]::file-selector-button {
+  appearance: none;
+  margin: 0 0.75rem 0 0;
+  padding: 0.45rem 0.9rem;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.editor-form input[type="file"]::file-selector-button:hover,
+.editor-form input[type="file"]::file-selector-button:focus-visible {
+  color: var(--text);
+  border-color: var(--red-smile);
 }
 
 .editor-pair-row {
@@ -236,13 +366,46 @@ body {
   margin-top: 0.35rem;
 }
 
+.editor-form input[type="range"],
 .editor-inspector input[type="range"] {
+  appearance: none;
   width: 100%;
+  height: 0.35rem;
   margin: 0;
   padding: 0;
-  background: transparent;
+  background: var(--border-light);
   border: none;
+  border-radius: 999px;
   accent-color: var(--red-smile);
+}
+
+.editor-form input[type="range"]::-webkit-slider-thumb,
+.editor-inspector input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--red-smile);
+  cursor: pointer;
+}
+
+.editor-form input[type="range"]::-moz-range-track,
+.editor-inspector input[type="range"]::-moz-range-track {
+  height: 0.35rem;
+  background: var(--border-light);
+  border: none;
+  border-radius: 999px;
+}
+
+.editor-form input[type="range"]::-moz-range-thumb,
+.editor-inspector input[type="range"]::-moz-range-thumb {
+  width: 0.9rem;
+  height: 0.9rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--red-smile);
+  cursor: pointer;
 }
 
 .editor-prompt-head {
@@ -450,6 +613,41 @@ body {
   height: 100%;
   object-fit: contain;
   display: block;
+}
+
+.editor-plate-replace {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.editor-plate-replace:hover,
+.editor-plate-replace:focus-visible {
+  border-color: var(--red-smile);
+  color: var(--text);
+}
+
+.editor-plate-replace:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.editor-plate-replace svg {
+  display: block;
+  flex-shrink: 0;
 }
 
 .editor-word-layer {

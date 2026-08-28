@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createToon, editorApiBase, getToken, login, setToken, uploadAudio, withSiteQuery } from "./api";
+import { createToon, editorApiBase, getToken, login, replacePage, setToken, uploadAudio, withSiteQuery } from "./api";
 
 describe("editor api", () => {
   afterEach(() => {
@@ -91,6 +91,31 @@ describe("editor api", () => {
     expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/toons/t1/audio");
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     expect(init.body).toBeInstanceOf(FormData);
+    const headers = new Headers(init.headers);
+    expect(headers.get("Authorization")).toBe("Bearer sess-1");
+    expect(headers.get("Content-Type")).toBeNull();
+  });
+
+  it("POSTs a replacement plate as FormData onto the existing page", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ id: "t1", pages: [{ id: "p1", fileKey: "editor/demo/assets/new.webp" }] }), {
+        status: 200,
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const file = new File([new Uint8Array([1, 2, 3])], "plate.webp", { type: "image/webp" });
+    const out = await replacePage("p1", file, { width: 1152, height: 1728 });
+    expect(out.pages[0].fileKey).toBe("editor/demo/assets/new.webp");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/pages/p1/file");
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(init.method).toBe("POST");
+    expect(init.body).toBeInstanceOf(FormData);
+    const body = init.body as FormData;
+    expect(body.get("file")).toBe(file);
+    expect(body.get("width")).toBe("1152");
+    expect(body.get("height")).toBe("1728");
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer sess-1");
     expect(headers.get("Content-Type")).toBeNull();
