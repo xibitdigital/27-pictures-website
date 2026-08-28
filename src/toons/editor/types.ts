@@ -90,6 +90,8 @@ export interface ToonRecord {
   designWidth: number;
   designHeight: number;
   status?: string;
+  readerUrl?: string | null;
+  assetPageDir?: string | null;
   pages: PageRecord[];
 }
 
