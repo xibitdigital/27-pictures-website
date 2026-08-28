@@ -39,7 +39,6 @@ const selectedBubble = computed(() => {
 });
 
 const dirtyCount = computed(() => dirtyIds.value.size);
-const selectedDirty = computed(() => Boolean(selectedId.value && dirtyIds.value.has(selectedId.value)));
 
 function markDirty(id: string): void {
   const next = new Set(dirtyIds.value);
@@ -230,11 +229,8 @@ async function onRemove(): Promise<void> {
           :bubble="selectedBubble"
           :toon-id="toon.id"
           :asset-page-dir="toon.assetPageDir"
-          :dirty="selectedDirty"
-          :saving="saving"
           @change="onInspectChange"
           @preview="previewLang = $event"
-          @save="saveDirty"
           @remove="onRemove"
         />
       </div>

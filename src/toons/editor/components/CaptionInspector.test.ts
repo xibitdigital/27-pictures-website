@@ -175,11 +175,9 @@ describe("CaptionInspector", () => {
     expect(prompt).toContain("[whispers] Hi");
   });
 
-  it("emits save only when the bubble is dirty", async () => {
-    const wrapper = mount(CaptionInspector, { props: { bubble, dirty: false } });
-    expect(wrapper.get('button[name="save"]').attributes("disabled")).toBeDefined();
-    await wrapper.setProps({ dirty: true });
-    await wrapper.get('button[name="save"]').trigger("click");
-    expect(wrapper.emitted("save")).toHaveLength(1);
+  it("does not put a second Save in the inspector", () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    expect(wrapper.find('button[name="save"]').exists()).toBe(false);
+    expect(wrapper.get('button[name="delete"]').text()).toContain("Delete");
   });
 });

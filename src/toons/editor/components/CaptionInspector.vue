@@ -27,14 +27,11 @@ const props = defineProps<{
   bubble: BubbleRecord | null;
   toonId?: string;
   assetPageDir?: string | null;
-  dirty?: boolean;
-  saving?: boolean;
 }>();
 
 const emit = defineEmits<{
   change: [patch: Partial<BubbleRecord>];
   preview: [lang: LangCode];
-  save: [];
   remove: [];
 }>();
 
@@ -408,9 +405,6 @@ async function copyPrompt(): Promise<void> {
         <textarea name="eleven-prompt" rows="4" readonly :value="elevenPrompt" spellcheck="false" />
       </label>
       <div class="editor-form-actions">
-        <button class="editor-btn" type="button" name="save" :disabled="!dirty || saving" @click="emit('save')">
-          {{ saving ? "Saving…" : "Save" }}
-        </button>
         <button class="editor-btn editor-btn--ghost" type="button" name="delete" @click="emit('remove')">
           Delete bubble
         </button>
