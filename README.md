@@ -71,7 +71,7 @@ Copy `.env.example` → `.env`. Unit tests **force an empty** `VITE_ASSET_BASE` 
 ```bash
 make help
 
-make dev              # Vite dev (127.0.0.1)
+make dev              # Vite + editor Worker (site :5173, API :8787)
 make test
 make build            # fails without VITE_ASSET_BASE
 make deploy           # build + Pages production (main)
@@ -80,7 +80,6 @@ make local            # serve dist/ with basic auth on 127.0.0.1
 make local-cdn        # CDN build + protected local serve
 make upload-assets    # sync public/toons + card-art → R2
 make add-image SRC=… TOON=jax|erin|nero [CONFIG=1] [UPLOAD=1]
-make editor-worker    # local toon-editor Worker on :8787
 ```
 
 ### Interactive toons
@@ -91,8 +90,8 @@ not `content/toons/*/config.json`. See `worker/toon-editor/README.md` and
 `CLAUDE.md` → **Toon editor**.
 
 ```bash
-make editor-worker             # Miniflare D1 + R2
-make dev                       # studio at http://127.0.0.1:5173/toons/editor/
+make dev                       # site + editor Worker
+# studio: http://127.0.0.1:5173/toons/editor/
 npm run import-toon -- --toon nero   # needs EDITOR_EMAIL / EDITOR_PASSWORD in .env
 ```
 

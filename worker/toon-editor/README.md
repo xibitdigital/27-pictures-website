@@ -111,12 +111,13 @@ project at the repo root.
 ## Local
 
 ```bash
-make editor-worker    # migrations + wrangler dev on :8787
-make dev              # Vite; proxies /__editor-api → :8787
+make dev              # Vite :5173 + this Worker on :8787
+make editor-worker    # Worker only
 ```
 
-`make dev` does **not** need `VITE_EDITOR_API`. Keep `make editor-worker` in
-another terminal. That process uses **local Miniflare D1**, not the remote one.
+`make dev` does **not** need `VITE_EDITOR_API`: Vite proxies `/__editor-api` to
+`:8787`. That Worker uses **local Miniflare D1**, not the remote one. Ctrl-C
+stops both.
 
 `.env` (repo root, gitignored):
 

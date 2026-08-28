@@ -229,7 +229,7 @@ staging until you push.
 ### Local
 
 ```bash
-make dev           # Vite on 127.0.0.1 (set VITE_ASSET_BASE so toon media loads)
+make dev           # Vite :5173 + editor Worker :8787 (set VITE_ASSET_BASE so toon media loads)
 make local         # serve dist/ + HTTP Basic Auth (127.0.0.1)
 make local-cdn     # require base → CDN build → protected serve
 make test          # unit tests (CDN base forced empty)
@@ -645,8 +645,8 @@ Two things the generator handles that are easy to get wrong by hand:
 
 Live books, series and captions are **D1**, not `content/toons/*/config.json`.
 The Vue studio talks to `worker/toon-editor` (TypeScript). Staging and
-production share that Worker’s remote D1. Local Vite proxies `/__editor-api` to
-`make editor-worker` on `:8787` (Miniflare D1 — a different database until you
+production share that Worker’s remote D1. `make dev` proxies `/__editor-api` to
+the Worker on `:8787` (Miniflare D1 — a different database until you
 `npm run restore-db`).
 
 JSON the studio and the Worker agree on lives in
@@ -681,8 +681,7 @@ The browser login form does not read `.env`. JWT signing secret is
 production.
 
 ```bash
-make editor-worker    # local Worker
-make dev              # studio at /toons/editor/
+make dev              # Vite :5173 + editor Worker :8787
 npm run typecheck     # vue-tsc + tsc -p worker/toon-editor
 ```
 

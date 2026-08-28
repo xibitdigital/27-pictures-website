@@ -23,7 +23,6 @@ still have one.
 | `erin-the-revenge` | `content/toons/erin-the-revenge/` | ERIN & THE GOBLINS ep 2 — The Revenge |
 
 ```bash
-make editor-worker
 make dev                 # http://127.0.0.1:5173/toons/editor/
 # optional: load an old snapshot into D1 (needs EDITOR_EMAIL / EDITOR_PASSWORD)
 npm run import-toon -- --toon nero

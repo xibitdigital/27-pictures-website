@@ -54,9 +54,26 @@ local-ci: ## Run pre-commit on all files
 # App
 # ---------------------------------------------------------------------------
 
+.PHONY: editor-worker-prep
+editor-worker-prep:
+	@if [ ! -f worker/toon-editor/.dev.vars ] || ! grep -q '^JWT_SECRET=' worker/toon-editor/.dev.vars; then \
+		printf 'JWT_SECRET=%s\n' "$$(openssl rand -hex 32)" >> worker/toon-editor/.dev.vars; \
+		echo "wrote JWT_SECRET to worker/toon-editor/.dev.vars"; \
+	fi
+	cd worker/toon-editor && $(NPX) wrangler d1 migrations apply toon-editor --local
+
 .PHONY: dev
-dev: ## Vite dev server (127.0.0.1 — same-origin media from public/)
-	$(NPM) run dev
+dev: editor-worker-prep ## Vite + editor Worker (site :5173, API :8787)
+	@echo "→ http://127.0.0.1:5173/   editor API :8787"
+	@if lsof -iTCP:8787 -sTCP:LISTEN >/dev/null 2>&1; then \
+		echo "→ editor Worker already on :8787"; \
+		$(NPM) run dev; \
+	else \
+		(cd worker/toon-editor && $(NPX) wrangler dev) & \
+		WORKER_PID=$$!; \
+		trap 'kill $$WORKER_PID 2>/dev/null; wait $$WORKER_PID 2>/dev/null' INT TERM EXIT; \
+		$(NPM) run dev; \
+	fi
 
 .PHONY: build
 build: ## Typecheck + production build → dist/
@@ -87,12 +104,7 @@ local-cdn: require-cdn-base ## Build with CDN media + serve protected on 127.0.0
 	$(NPM) run local
 
 .PHONY: editor-worker
-editor-worker: ## wrangler dev for the toon-editor Worker (local Miniflare D1 + R2)
-	@if [ ! -f worker/toon-editor/.dev.vars ] || ! grep -q '^JWT_SECRET=' worker/toon-editor/.dev.vars; then \
-		printf 'JWT_SECRET=%s\n' "$$(openssl rand -hex 32)" >> worker/toon-editor/.dev.vars; \
-		echo "wrote JWT_SECRET to worker/toon-editor/.dev.vars"; \
-	fi
-	cd worker/toon-editor && $(NPX) wrangler d1 migrations apply toon-editor --local
+editor-worker: editor-worker-prep ## wrangler dev only (local Miniflare D1 + R2)
 	cd worker/toon-editor && $(NPX) wrangler dev
 
 .PHONY: backup-db
