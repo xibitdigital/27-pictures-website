@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createToon, editorApiBase, getToken, login, setToken, withSiteQuery } from "./api";
+import { createToon, editorApiBase, getToken, login, setToken, uploadAudio, withSiteQuery } from "./api";
 
 describe("editor api", () => {
   afterEach(() => {
@@ -67,5 +67,32 @@ describe("editor api", () => {
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer sess-1");
+  });
+
+  it("POSTs bubble audio as FormData", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          key: "editor/demo/sfx/abc.mp3",
+          url: "https://x/media/editor/demo/sfx/abc.mp3",
+          audio: "editor/demo/sfx/abc.mp3",
+        }),
+        {
+          status: 201,
+        }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const file = new File([new Uint8Array([1, 2, 3])], "line.mp3", { type: "audio/mpeg" });
+    const out = await uploadAudio("t1", file);
+    expect(out.audio).toBe("editor/demo/sfx/abc.mp3");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/toons/t1/audio");
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(init.body).toBeInstanceOf(FormData);
+    const headers = new Headers(init.headers);
+    expect(headers.get("Authorization")).toBe("Bearer sess-1");
+    expect(headers.get("Content-Type")).toBeNull();
   });
 });

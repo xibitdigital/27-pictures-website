@@ -27,6 +27,15 @@ const IMAGE_TYPES = {
   "image/jpeg": "jpg",
   "image/png": "png",
 };
+const AUDIO_TYPES = {
+  "audio/mpeg": "mp3",
+  "audio/mp3": "mp3",
+  "audio/wav": "wav",
+  "audio/x-wav": "wav",
+  "audio/wave": "wav",
+  "audio/ogg": "ogg",
+  "audio/webm": "webm",
+};
 const DEFAULT_VARIANT = "bubble";
 const DEFAULT_TAIL = "bottom-left";
 
@@ -162,6 +171,15 @@ function wordFromBubble(b) {
   return rowToWord(b);
 }
 
+/** FlipFrame readers resolve relative paths on the CDN; editor clips live on this Worker. */
+function publicWord(request, word) {
+  const audio = word && word.audio;
+  if (typeof audio === "string" && audio.startsWith("editor/")) {
+    return { ...word, audio: mediaUrl(request, audio) };
+  }
+  return word;
+}
+
 function parseToonExtra(toon) {
   if (!toon || !toon.extra_json) return {};
   try {
@@ -281,7 +299,7 @@ async function readerConfigFromToon(env, toon) {
     ).results;
     pages.push({
       file: page.file_key,
-      words: bubbleRows.map(wordFromBubble),
+      words: bubbleRows.map((row) => publicWord(request, wordFromBubble(row))),
     });
   }
   const cfg = {
@@ -365,6 +383,29 @@ async function readUpload(request) {
     width: Number.isFinite(width) && width > 0 ? Math.round(width) : null,
     height: Number.isFinite(height) && height > 0 ? Math.round(height) : null,
   };
+}
+
+function audioExtFromName(name) {
+  const lower = String(name || "").toLowerCase();
+  if (lower.endsWith(".mp3")) return "mp3";
+  if (lower.endsWith(".wav")) return "wav";
+  if (lower.endsWith(".ogg")) return "ogg";
+  if (lower.endsWith(".webm")) return "webm";
+  return "";
+}
+
+async function readAudioUpload(request) {
+  const form = await request.formData();
+  const file = form.get("file");
+  if (!file || typeof file === "string" || typeof file.arrayBuffer !== "function") {
+    return { error: "file is required" };
+  }
+  const ext = AUDIO_TYPES[file.type] || audioExtFromName(file.name);
+  if (!ext) return { error: "audio must be mp3, wav, ogg, or webm" };
+  const bytes = await file.arrayBuffer();
+  if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "audio too large (8MB max)" };
+  const type = file.type && AUDIO_TYPES[file.type] ? file.type : ext === "mp3" ? "audio/mpeg" : `audio/${ext}`;
+  return { bytes, ext, type };
 }
 
 async function handle(request, env, cors, session) {
@@ -759,6 +800,19 @@ async function handle(request, env, cors, session) {
     await putImage(env, key, upload.bytes, upload.type);
     await env.DB.prepare(`UPDATE toons SET cover_key = ?, updated_at = ? WHERE id = ?`).bind(key, nowIso(), id).run();
     return json(await loadToon(env, request, id), 200, cors);
+  }
+
+  const audioMatch = path.match(/^\/toons\/([^/]+)\/audio$/);
+  if (audioMatch && method === "POST") {
+    const id = audioMatch[1];
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const upload = await readAudioUpload(request);
+    if (upload.error) return json({ error: upload.error }, 400, cors);
+    const hash = await sha256Hex(upload.bytes);
+    const key = `editor/${current.slug}/sfx/${hash}.${upload.ext}`;
+    await putImage(env, key, upload.bytes, upload.type);
+    return json({ key, url: mediaUrl(request, key), audio: key }, 201, cors);
   }
 
   const pagesMatch = path.match(/^\/toons\/([^/]+)\/pages$/);

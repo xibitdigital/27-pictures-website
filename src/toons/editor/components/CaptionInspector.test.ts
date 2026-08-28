@@ -1,7 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import CaptionInspector from "./CaptionInspector.vue";
+import * as api from "../api";
 import type { BubbleRecord } from "../types";
+
+vi.mock("../api", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../api")>();
+  return { ...actual, uploadAudio: vi.fn() };
+});
 
 const bubble: BubbleRecord = {
   id: "b1",
@@ -17,6 +23,10 @@ const bubble: BubbleRecord = {
 };
 
 describe("CaptionInspector", () => {
+  afterEach(() => {
+    vi.mocked(api.uploadAudio).mockReset();
+  });
+
   it("puts variant and tail on the first row", () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
     const variant = wrapper.get('select[name="variant"]');
@@ -105,6 +115,22 @@ describe("CaptionInspector", () => {
     await wrapper.get('input[name="audio"]').setValue("assets/sfx/a.mp3");
     const patch = wrapper.emitted("change")?.[0][0] as Partial<BubbleRecord>;
     expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin", audio: "assets/sfx/a.mp3" });
+  });
+
+  it("uploads a clip and patches the audio key", async () => {
+    vi.mocked(api.uploadAudio).mockResolvedValue({
+      key: "editor/demo/sfx/abc.mp3",
+      url: "https://editor.example/media/editor/demo/sfx/abc.mp3",
+      audio: "editor/demo/sfx/abc.mp3",
+    });
+    const wrapper = mount(CaptionInspector, { props: { bubble, toonId: "t1" } });
+    const input = wrapper.get('input[name="audio-file"]');
+    const file = new File([new Uint8Array([1, 2, 3])], "line.mp3", { type: "audio/mpeg" });
+    Object.defineProperty(input.element, "files", { value: [file] });
+    await input.trigger("change");
+    await vi.waitFor(() => expect(api.uploadAudio).toHaveBeenCalledWith("t1", file));
+    const patch = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
+    expect(JSON.parse(patch.extraJson as string)).toEqual({ audio: "editor/demo/sfx/abc.mp3" });
   });
 
   it("emits remove", async () => {

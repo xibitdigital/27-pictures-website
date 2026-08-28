@@ -228,6 +228,8 @@ async function onRemove(): Promise<void> {
         </div>
         <CaptionInspector
           :bubble="selectedBubble"
+          :toon-id="toon.id"
+          :asset-page-dir="toon.assetPageDir"
           :dirty="selectedDirty"
           :saving="saving"
           @change="onInspectChange"

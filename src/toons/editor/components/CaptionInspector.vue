@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
+import { editorApiBase, uploadAudio } from "../api";
 import {
   BUBBLE_TAILS,
   BUBBLE_VARIANTS,
@@ -13,6 +14,7 @@ import {
   suggestElevenPrompt,
   textPatch,
 } from "../mapConfig";
+import { resolveAssetUrl } from "../../bookReader/assetUrl";
 import type { LangCode } from "../../bookReader/types";
 import type { BubbleRecord } from "../types";
 
@@ -23,6 +25,8 @@ const ANGLE_MAX = 45;
 
 const props = defineProps<{
   bubble: BubbleRecord | null;
+  toonId?: string;
+  assetPageDir?: string | null;
   dirty?: boolean;
   saving?: boolean;
 }>();
@@ -40,6 +44,9 @@ const sizeFocused = ref(false);
 const angleDraft = ref("");
 const angleFocused = ref(false);
 const copied = ref(false);
+const uploading = ref(false);
+const uploadError = ref("");
+const audioFileInput = ref<HTMLInputElement | null>(null);
 let copiedTimer = 0;
 
 const elevenPrompt = computed(() => {
@@ -58,8 +65,25 @@ watch(
   () => props.bubble?.id,
   () => {
     copied.value = false;
+    uploadError.value = "";
   }
 );
+
+function audioPreviewSrc(path: string): string {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path) || path.startsWith("data:") || path.startsWith("blob:")) return path;
+  if (path.startsWith("editor/")) {
+    const base = editorApiBase();
+    return base ? `${base}/media/${path}` : "";
+  }
+  try {
+    return resolveAssetUrl(path, props.assetPageDir || undefined);
+  } catch {
+    return path;
+  }
+}
+
+const audioSrc = computed(() => (props.bubble ? audioPreviewSrc(bubbleAudio(props.bubble)) : ""));
 
 watch(
   () => [props.bubble?.id, props.bubble?.size] as const,
@@ -188,6 +212,23 @@ function onVoiceChange(ev: Event): void {
   emit("change", extraPatch(props.bubble, "voice", (ev.target as HTMLSelectElement).value));
 }
 
+async function onAudioFile(ev: Event): Promise<void> {
+  const input = ev.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (!file || !props.bubble || !props.toonId) return;
+  uploading.value = true;
+  uploadError.value = "";
+  try {
+    const out = await uploadAudio(props.toonId, file);
+    emit("change", extraPatch(props.bubble, "audio", out.audio));
+  } catch (err) {
+    uploadError.value = err instanceof Error ? err.message : "Upload failed";
+  } finally {
+    uploading.value = false;
+  }
+}
+
 async function copyPrompt(): Promise<void> {
   const text = elevenPrompt.value;
   try {
@@ -305,19 +346,41 @@ async function copyPrompt(): Promise<void> {
           <option v-for="name in VOICE_NAMES" :key="name" :value="name">{{ name }}</option>
         </select>
       </label>
-      <label>
-        Audio
-        <input
-          type="text"
-          name="audio"
-          :value="bubbleAudio(bubble)"
-          placeholder="assets/sfx/….mp3"
-          spellcheck="false"
-          autocomplete="off"
-          @input="onAudioInput"
-          @blur="onAudioBlur"
-        />
-      </label>
+      <div class="editor-audio-field">
+        <span>Audio</span>
+        <span class="editor-audio-row">
+          <input
+            type="text"
+            name="audio"
+            :value="bubbleAudio(bubble)"
+            placeholder="assets/sfx/….mp3"
+            spellcheck="false"
+            autocomplete="off"
+            @input="onAudioInput"
+            @blur="onAudioBlur"
+          />
+          <input
+            ref="audioFileInput"
+            type="file"
+            name="audio-file"
+            accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,.mp3,.wav,.ogg"
+            hidden
+            :disabled="uploading || !toonId"
+            @change="onAudioFile"
+          />
+          <button
+            class="editor-btn"
+            type="button"
+            name="audio-upload"
+            :disabled="uploading || !toonId"
+            @click="audioFileInput?.click()"
+          >
+            {{ uploading ? "Uploading…" : "Upload" }}
+          </button>
+        </span>
+        <audio v-if="audioSrc" controls preload="none" :src="audioSrc" />
+        <p v-if="uploadError" class="editor-error" role="alert">{{ uploadError }}</p>
+      </div>
       <label>
         <span class="editor-prompt-head">
           ElevenLabs Studio prompt

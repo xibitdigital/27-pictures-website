@@ -151,6 +151,18 @@ export function uploadPage(id: string, file: File, size?: { width: number; heigh
   return api<ToonRecord>(`/toons/${id}/pages`, { method: "POST", body });
 }
 
+export interface AudioUpload {
+  key: string;
+  url: string;
+  audio: string;
+}
+
+export function uploadAudio(id: string, file: File): Promise<AudioUpload> {
+  const body = new FormData();
+  body.set("file", file);
+  return api<AudioUpload>(`/toons/${id}/audio`, { method: "POST", body });
+}
+
 export function deletePage(pageId: string): Promise<{ ok: boolean }> {
   return api<{ ok: boolean }>(`/pages/${pageId}`, { method: "DELETE" });
 }
