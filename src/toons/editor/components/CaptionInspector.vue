@@ -271,78 +271,74 @@ async function copyPrompt(): Promise<void> {
           </select>
         </label>
       </div>
-      <div class="editor-lang-grid">
-        <label v-for="lang in CAPTION_LANGS" :key="lang.code">
-          {{ lang.label }}
-          <textarea
-            :value="textMap[lang.code] || ''"
-            rows="2"
-            :lang="lang.code"
-            @focus="emit('preview', lang.code)"
-            @input="onLangInput(lang.code, $event)"
+      <label v-for="lang in CAPTION_LANGS" :key="lang.code">
+        {{ lang.label }}
+        <textarea
+          :value="textMap[lang.code] || ''"
+          rows="3"
+          :lang="lang.code"
+          @focus="emit('preview', lang.code)"
+          @input="onLangInput(lang.code, $event)"
+        />
+      </label>
+      <label>
+        Size
+        <span class="editor-slider-row">
+          <input
+            type="range"
+            name="size-slider"
+            :min="SIZE_MIN"
+            :max="SIZE_MAX"
+            step="1"
+            :value="sizeSlider"
+            :aria-valuemin="SIZE_MIN"
+            :aria-valuemax="SIZE_MAX"
+            :aria-valuenow="sizeSlider"
+            @input="onSizeSlider"
           />
-        </label>
-      </div>
-      <div class="editor-pair-row">
-        <label>
-          Size
-          <span class="editor-slider-row">
-            <input
-              type="range"
-              name="size-slider"
-              :min="SIZE_MIN"
-              :max="SIZE_MAX"
-              step="1"
-              :value="sizeSlider"
-              :aria-valuemin="SIZE_MIN"
-              :aria-valuemax="SIZE_MAX"
-              :aria-valuenow="sizeSlider"
-              @input="onSizeSlider"
-            />
-            <input
-              type="number"
-              name="size"
-              :min="SIZE_MIN"
-              :max="SIZE_MAX"
-              step="1"
-              v-model="sizeDraft"
-              :placeholder="String(defaultSize(bubble.variant))"
-              @focus="sizeFocused = true"
-              @input="onSizeInput"
-              @blur="onSizeBlur"
-            />
-          </span>
-        </label>
-        <label>
-          Angle
-          <span class="editor-slider-row">
-            <input
-              type="range"
-              name="angle-slider"
-              min="-45"
-              max="45"
-              step="1"
-              :value="angleSlider"
-              :aria-valuemin="-45"
-              :aria-valuemax="45"
-              :aria-valuenow="angleSlider"
-              @input="onAngleSlider"
-            />
-            <input
-              type="number"
-              name="angle"
-              min="-45"
-              max="45"
-              step="1"
-              v-model="angleDraft"
-              placeholder="0"
-              @focus="angleFocused = true"
-              @input="onAngleInput"
-              @blur="onAngleBlur"
-            />
-          </span>
-        </label>
-      </div>
+          <input
+            type="number"
+            name="size"
+            :min="SIZE_MIN"
+            :max="SIZE_MAX"
+            step="1"
+            v-model="sizeDraft"
+            :placeholder="String(defaultSize(bubble.variant))"
+            @focus="sizeFocused = true"
+            @input="onSizeInput"
+            @blur="onSizeBlur"
+          />
+        </span>
+      </label>
+      <label>
+        Angle
+        <span class="editor-slider-row">
+          <input
+            type="range"
+            name="angle-slider"
+            min="-45"
+            max="45"
+            step="1"
+            :value="angleSlider"
+            :aria-valuemin="-45"
+            :aria-valuemax="45"
+            :aria-valuenow="angleSlider"
+            @input="onAngleSlider"
+          />
+          <input
+            type="number"
+            name="angle"
+            min="-45"
+            max="45"
+            step="1"
+            v-model="angleDraft"
+            placeholder="0"
+            @focus="angleFocused = true"
+            @input="onAngleInput"
+            @blur="onAngleBlur"
+          />
+        </span>
+      </label>
       <label>
         Voice
         <select name="voice" :value="bubbleVoice(bubble)" @change="onVoiceChange">
@@ -409,7 +405,7 @@ async function copyPrompt(): Promise<void> {
             </svg>
           </button>
         </span>
-        <textarea name="eleven-prompt" rows="3" readonly :value="elevenPrompt" spellcheck="false" />
+        <textarea name="eleven-prompt" rows="4" readonly :value="elevenPrompt" spellcheck="false" />
       </label>
       <div class="editor-form-actions">
         <button class="editor-btn" type="button" name="save" :disabled="!dirty || saving" @click="emit('save')">
