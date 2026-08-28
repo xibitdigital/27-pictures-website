@@ -5,6 +5,10 @@ import {
   bubbleToWordEntry,
   exportToonConfig,
   extraPatch,
+  bubbleWritePayload,
+  bubbleVoice,
+  suggestElevenPrompt,
+  VOICE_NAMES,
   PLACEHOLDER_TEXT,
   textPatch,
 } from "./mapConfig";
@@ -55,6 +59,35 @@ describe("bubbleToWordEntry", () => {
     const patch = extraPatch(b, "audio", "assets/sfx/a.mp3");
     expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin", audio: "assets/sfx/a.mp3" });
     expect(extraPatch(b, "audio", "").extraJson).toBe(JSON.stringify({ voice: "erin" }));
+  });
+
+  it("reads the locked voice key and builds an ElevenLabs Studio prompt", () => {
+    expect(VOICE_NAMES).toContain("erin");
+    expect(bubbleVoice(bubble({ extraJson: JSON.stringify({ voice: "erin" }) }))).toBe("erin");
+    const prompt = suggestElevenPrompt({ voice: "eve", text: "Nero—!", variant: "burst" });
+    expect(prompt).toContain("eleven_v3");
+    expect(prompt).toContain("Voice: eve");
+    expect(prompt).toContain("[shouts] Nero—!");
+  });
+
+  it("builds a Worker write payload from a bubble", () => {
+    const payload = bubbleWritePayload(
+      bubble({
+        extraJson: JSON.stringify({ audio: "assets/sfx/a.mp3" }),
+        textJson: JSON.stringify({ en: "Hello" }),
+      })
+    );
+    expect(payload).toEqual({
+      x: 0.2,
+      y: 0.15,
+      variant: "bubble",
+      tail: "bottom-left",
+      size: 22,
+      angle: null,
+      textEn: "Hello",
+      textJson: JSON.stringify({ en: "Hello" }),
+      extraJson: JSON.stringify({ audio: "assets/sfx/a.mp3" }),
+    });
   });
 });
 

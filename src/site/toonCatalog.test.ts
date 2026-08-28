@@ -46,6 +46,7 @@ const loose: CatalogEpisode = {
 describe("toonCatalog", () => {
   afterEach(() => {
     document.body.innerHTML = "";
+    document.documentElement.lang = "en";
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
   });
@@ -67,6 +68,46 @@ describe("toonCatalog", () => {
     expect(html).toContain("Episode 2");
     expect(html).toContain("23 pages");
     expect(html).toContain("/toons/erin-the-revenge/");
+  });
+
+  it("uses the page locale for a toon title", () => {
+    document.documentElement.lang = "fr";
+    const html = episodeCardHtml({
+      ...episode,
+      titles: { en: "The Revenge", it: "La vendetta", de: "Die Rache", fr: "La vengeance" },
+    });
+    expect(html).toContain('<h3 class="series-card-title">La vengeance</h3>');
+    expect(html).not.toContain('<h3 class="series-card-title">The Revenge</h3>');
+  });
+
+  it("uses the page locale for a toon description", () => {
+    document.documentElement.lang = "it";
+    const html = episodeCardHtml({
+      ...episode,
+      descriptions: {
+        en: "Erin came back to defeat the Goblin King.",
+        it: "Erin è tornata per sconfiggere il Re Goblin.",
+        de: "",
+        fr: "",
+      },
+    });
+    expect(html).toContain("Erin è tornata per sconfiggere il Re Goblin.");
+    expect(html).not.toContain("Erin came back to defeat the Goblin King.");
+  });
+
+  it("uses the page locale for a series description", () => {
+    document.documentElement.lang = "fr";
+    const html = seriesCardHtml({
+      ...series,
+      descriptions: {
+        en: "Half human, half vampire.",
+        it: "",
+        de: "",
+        fr: "Mi-humaine, mi-vampire.",
+      },
+    });
+    expect(html).toContain("Mi-humaine, mi-vampire.");
+    expect(html).not.toContain("Half human, half vampire.");
   });
 
   it("replaces the landing grid with DB series and ungrouped toons", () => {

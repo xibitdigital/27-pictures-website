@@ -26,6 +26,15 @@ export function editorApiBase(): string | null {
   return null;
 }
 
+/** Tell the Worker which site is asking, so staging hosts see staging + public toons. */
+export function withSiteQuery(url: string, origin?: string): string {
+  const site = origin ?? (typeof window !== "undefined" ? window.location.origin : "");
+  if (!site || site === "null") return url;
+  if (/[?&]site=/.test(url)) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}site=${encodeURIComponent(site)}`;
+}
+
 export function getToken(): string {
   if (typeof sessionStorage === "undefined") return "";
   return sessionStorage.getItem(TOKEN_KEY) || "";

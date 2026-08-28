@@ -3,8 +3,11 @@
  * The live FlipFrame reader still loads hashed JSON; this is how a draft
  * round-trips into that shape without a second schema.
  */
+import voicesLock from "../../../scripts/voices.json";
 import type { LangCode, ToonConfig, WordEntry, WordTextMap } from "../bookReader/types";
 import type { BubbleRecord, PageRecord, ToonRecord } from "./types";
+
+export const VOICE_NAMES = Object.keys(voicesLock as Record<string, string>).sort();
 
 export const BUBBLE_VARIANTS = ["bubble", "thought", "burst", "ai", "badai", "credit"] as const;
 export type BubbleVariant = (typeof BUBBLE_VARIANTS)[number];
@@ -72,6 +75,53 @@ export function extraPatch(bubble: BubbleRecord, key: string, value: unknown): P
 export function bubbleAudio(bubble: BubbleRecord): string {
   const audio = bubbleExtra(bubble).audio;
   return typeof audio === "string" ? audio : "";
+}
+
+export function bubbleVoice(bubble: BubbleRecord): string {
+  const voice = bubbleExtra(bubble).voice;
+  return typeof voice === "string" ? voice : "";
+}
+
+const VARIANT_AUDIO_TAG: Record<string, string> = {
+  burst: "[shouts]",
+  thought: "[whispers]",
+  credit: "[flatly]",
+  ai: "[flatly]",
+  badai: "[angry]",
+};
+
+/**
+ * Paste-ready ElevenLabs Studio / Speech Synthesis prompt (eleven_v3 audio tags).
+ * Caption display text stays clean; only this string carries performance tags.
+ */
+export function suggestElevenPrompt(input: { voice: string; text: string; variant: string }): string {
+  const line = String(input.text || "").trim();
+  const tag = VARIANT_AUDIO_TAG[input.variant] || "";
+  const spoken = [tag, line].filter(Boolean).join(" ");
+  const voice = input.voice.trim() || "(no voice — SFX / skip TTS)";
+  return [
+    "ElevenLabs Studio · Speech Synthesis",
+    "Model: eleven_v3",
+    `Voice: ${voice}`,
+    "Stability: 0.3 (Creative so audio tags land)",
+    "",
+    spoken || "(type the English caption)",
+  ].join("\n");
+}
+
+/** Fields the Worker PATCH accepts for a caption. */
+export function bubbleWritePayload(bubble: BubbleRecord): Partial<BubbleRecord> {
+  return {
+    x: bubble.x,
+    y: bubble.y,
+    variant: bubble.variant,
+    tail: bubble.tail,
+    size: bubble.size,
+    angle: bubble.angle,
+    textEn: bubble.textEn,
+    textJson: bubble.textJson ?? null,
+    extraJson: bubble.extraJson ?? null,
+  };
 }
 
 /** Empty captions still need a glyph so WordCaption / buildCaption will render. */

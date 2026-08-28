@@ -19,7 +19,7 @@ const bubble: BubbleRecord = {
 describe("CaptionInspector", () => {
   it("shows one field per language and patches Italian without dropping English", async () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
-    const areas = wrapper.findAll("textarea");
+    const areas = wrapper.findAll("textarea[lang]");
     expect(areas).toHaveLength(4);
     expect((areas[0].element as HTMLTextAreaElement).value).toBe("Hi");
     expect((areas[1].element as HTMLTextAreaElement).value).toBe("Ciao");
@@ -71,7 +71,34 @@ describe("CaptionInspector", () => {
 
   it("emits remove", async () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
-    await wrapper.get("button").trigger("click");
+    await wrapper.get('button[name="delete"]').trigger("click");
     expect(wrapper.emitted("remove")).toHaveLength(1);
+  });
+
+  it("patches voice into extraJson", async () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    await wrapper.get('select[name="voice"]').setValue("erin");
+    const patch = wrapper.emitted("change")?.[0][0] as Partial<BubbleRecord>;
+    expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin" });
+  });
+
+  it("suggests an ElevenLabs Studio prompt from voice, text and variant", () => {
+    const spoken: BubbleRecord = {
+      ...bubble,
+      variant: "thought",
+      extraJson: JSON.stringify({ voice: "erin" }),
+    };
+    const wrapper = mount(CaptionInspector, { props: { bubble: spoken } });
+    const prompt = (wrapper.get('textarea[name="eleven-prompt"]').element as HTMLTextAreaElement).value;
+    expect(prompt).toContain("Voice: erin");
+    expect(prompt).toContain("[whispers] Hi");
+  });
+
+  it("emits save only when the bubble is dirty", async () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble, dirty: false } });
+    expect(wrapper.get('button[name="save"]').attributes("disabled")).toBeDefined();
+    await wrapper.setProps({ dirty: true });
+    await wrapper.get('button[name="save"]').trigger("click");
+    expect(wrapper.emitted("save")).toHaveLength(1);
   });
 });

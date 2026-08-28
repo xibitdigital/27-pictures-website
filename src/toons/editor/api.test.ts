@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createToon, editorApiBase, getToken, login, setToken } from "./api";
+import { createToon, editorApiBase, getToken, login, setToken, withSiteQuery } from "./api";
 
 describe("editor api", () => {
   afterEach(() => {
@@ -11,6 +11,15 @@ describe("editor api", () => {
   it("returns null when VITE_EDITOR_API is unset under Vitest", () => {
     vi.stubEnv("VITE_EDITOR_API", "");
     expect(editorApiBase()).toBeNull();
+  });
+
+  it("tags catalog and config URLs with the page origin", () => {
+    expect(withSiteQuery("/__editor-api/catalog", "https://staging.twentyseven.pictures")).toBe(
+      "/__editor-api/catalog?site=https%3A%2F%2Fstaging.twentyseven.pictures"
+    );
+    expect(withSiteQuery("/__editor-api/catalog?site=http://localhost:5173", "https://twentyseven.pictures")).toBe(
+      "/__editor-api/catalog?site=http://localhost:5173"
+    );
   });
 
   it("maps a network failure to the start-the-Worker hint", async () => {

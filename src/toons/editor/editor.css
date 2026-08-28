@@ -13,8 +13,8 @@ body {
 .editor-shell,
 .editor-studio,
 .editor-list,
-.editor-form,
-.editor-gate {
+.editor-gate,
+.editor-page {
   min-height: 100%;
   min-height: 100dvh;
   background: var(--bg);
@@ -29,29 +29,72 @@ body {
   overflow: auto;
 }
 
-.editor-list,
+.editor-page,
+.editor-list {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .editor-form,
+.editor-list-body {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.25rem 1.75rem 4rem;
+}
+
 .editor-gate {
   max-width: 40rem;
   margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
 }
 
-.editor-list-head,
-.editor-studio-head,
-.editor-form-actions {
+.editor-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 0.85rem 1.75rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
 }
 
-.editor-studio-head h1,
-.editor-list-head h1,
+.editor-bar-start,
+.editor-bar-end {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.editor-bar-end {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.editor-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+}
+
+.editor-bar h1,
 .editor-form h1 {
   font-size: 1.5rem;
   margin: 0;
+}
+
+.editor-btn svg {
+  flex-shrink: 0;
+  display: block;
 }
 
 .editor-btn {
@@ -102,6 +145,7 @@ body {
 .editor-card-list {
   list-style: none;
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   gap: 0.75rem;
 }
 
@@ -148,6 +192,7 @@ body {
 
 .editor-form input,
 .editor-form textarea,
+.editor-form select,
 .editor-inspector input,
 .editor-inspector textarea,
 .editor-inspector select,
@@ -160,9 +205,58 @@ body {
   font: inherit;
 }
 
-.editor-cover-preview {
-  width: 8rem;
-  margin-bottom: 1rem;
+.editor-form-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 1.5rem;
+  align-items: start;
+}
+
+.editor-form-main > .editor-muted,
+.editor-form-main > .editor-error,
+.editor-form-main > .editor-form-span {
+  grid-column: 1 / -1;
+}
+
+.editor-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(min(280px, 100%), 22rem);
+  align-items: start;
+  column-gap: 1.75rem;
+}
+
+.editor-form-preview {
+  position: sticky;
+  top: 1rem;
+}
+
+.editor-form-preview .series-grid {
+  margin-top: 0.75rem;
+}
+
+.editor-form-preview .series-card-art {
+  aspect-ratio: 2 / 3;
+}
+
+.editor-form > .editor-error {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .editor-form {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-form-preview {
+    position: static;
+    max-width: 22rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .editor-form-main {
+    grid-template-columns: 1fr;
+  }
 }
 
 .editor-studio {
@@ -170,7 +264,7 @@ body {
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding: 0.75rem 0.75rem 0;
+  padding: 0;
 }
 
 .editor-studio-body {
@@ -179,6 +273,7 @@ body {
   gap: 0.75rem;
   flex: 1;
   min-height: 0;
+  padding: 0.75rem 0.75rem 0;
 }
 
 .editor-filmstrip {
@@ -190,15 +285,32 @@ body {
 }
 
 .editor-filmstrip-add {
+  position: relative;
   display: grid;
   place-items: center;
-  min-height: 3.5rem;
-  border: 1px dashed var(--border-light);
-  color: var(--text-muted);
+  align-content: center;
+  gap: 0.15rem;
+  aspect-ratio: 2 / 3;
+  border: 2px solid var(--red-smile);
+  background: var(--bg-card);
+  color: var(--text);
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   text-align: center;
-  padding: 0.4rem;
+  padding: 0.35rem;
+}
+
+.editor-filmstrip-add:hover,
+.editor-filmstrip-add:focus-within {
+  background: var(--red-smile);
+}
+
+.editor-filmstrip-add-plus {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 700;
 }
 
 .editor-filmstrip-add input {
@@ -298,6 +410,12 @@ body {
 .editor-inspector h2 {
   font-size: 1rem;
   margin: 0 0 1rem;
+}
+
+.editor-inspector .editor-form-actions {
+  margin: 1rem 0 0;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 @media (pointer: coarse) {

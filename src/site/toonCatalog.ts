@@ -5,7 +5,8 @@
  * (`series-card--series` + quick-view); published toons with no series render
  * as standalone cards. Static HTML is the no-JS / fetch-fail fallback.
  */
-import { editorApiBase } from "../toons/editor/api";
+import { editorApiBase, withSiteQuery } from "../toons/editor/api";
+import { pickDescription, type DescriptionMap } from "../toons/editor/types";
 import { documentLocale, UI, withCaptionLang } from "./i18n";
 import { initEpisodeVotes, initSeriesVotes } from "./seriesCards";
 import { initToonRows, type RowEpisode } from "./toonRows";
@@ -14,8 +15,10 @@ export interface CatalogEpisode {
   id: string;
   slug: string;
   title: string;
+  titles?: DescriptionMap;
   subtitle: string;
   description: string;
+  descriptions?: DescriptionMap;
   coverUrl: string | null;
   pageCount: number;
   readerUrl: string | null;
@@ -27,6 +30,7 @@ export interface CatalogSeries {
   title: string;
   tagline: string;
   description: string;
+  descriptions?: DescriptionMap;
   coverUrl: string | null;
   hubUrl: string | null;
   episodes: CatalogEpisode[];
@@ -40,7 +44,15 @@ export interface CatalogPayload {
 export function catalogUrl(): string | null {
   const base = editorApiBase();
   if (!base) return null;
-  return `${base}/catalog`;
+  return withSiteQuery(`${base}/catalog`);
+}
+
+function cardDescription(item: { description?: string; descriptions?: DescriptionMap }): string {
+  return pickDescription(item.descriptions, documentLocale(), item.description || "");
+}
+
+function cardTitle(item: { title: string; titles?: DescriptionMap }): string {
+  return pickDescription(item.titles, documentLocale(), item.title);
 }
 
 function esc(s: string): string {
@@ -66,7 +78,7 @@ export function seriesCardHtml(series: CatalogSeries, assetW = 1152, assetH = 17
       <span class="series-card-cue"><span>${esc(cue)}</span> <span aria-hidden="true">→</span></span>
       <span class="series-card-votes" data-votes-for="${esc(series.key)}" hidden></span>
     </span>
-    <span class="series-card-desc">${esc(series.description || "")}</span>
+    <span class="series-card-desc">${esc(cardDescription(series))}</span>
   </a>`;
 }
 
@@ -83,10 +95,10 @@ export function standaloneCardHtml(ep: CatalogEpisode, assetW = 1152, assetH = 1
     <span class="series-card-face">
       <span class="series-card-art">${img}</span>
       <span class="series-card-meta">${esc(ep.subtitle || "")}</span>
-      <h3 class="series-card-title">${esc(ep.title)}</h3>
+      <h3 class="series-card-title">${esc(cardTitle(ep))}</h3>
       <span class="series-card-cue"><span>${esc(cue)}</span> <span aria-hidden="true">→</span></span>
     </span>
-    <span class="series-card-desc">${esc(ep.description || "")}</span>
+    <span class="series-card-desc">${esc(cardDescription(ep))}</span>
   </a>`;
 }
 
@@ -104,11 +116,11 @@ export function episodeCardHtml(ep: CatalogEpisode, assetW = 1152, assetH = 1728
     <span class="series-card-face">
       <span class="series-card-art">${img}</span>
       <span class="series-card-meta">${esc(meta)}</span>
-      <h3 class="series-card-title">${esc(ep.title)}</h3>
+      <h3 class="series-card-title">${esc(cardTitle(ep))}</h3>
       <span class="series-card-cue"><span>${esc(cue)}</span> <span aria-hidden="true">→</span></span>
       <span class="series-card-votes" data-votes-episode="${esc(ep.slug)}" hidden></span>
     </span>
-    <span class="series-card-desc">${esc(ep.description || "")}</span>
+    <span class="series-card-desc">${esc(cardDescription(ep))}</span>
   </a>`;
 }
 

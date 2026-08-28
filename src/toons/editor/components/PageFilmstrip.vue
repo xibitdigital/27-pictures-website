@@ -23,8 +23,9 @@ function onFile(ev: Event): void {
 <template>
   <nav class="editor-filmstrip" aria-label="Pages">
     <label class="editor-filmstrip-add">
+      <span class="editor-filmstrip-add-plus" aria-hidden="true">+</span>
       <span>Add page</span>
-      <input type="file" accept="image/webp,image/jpeg,image/png" @change="onFile" />
+      <input type="file" accept="image/webp,image/jpeg,image/png" aria-label="Add page" @change="onFile" />
     </label>
     <RouterLink
       v-for="page in pages"

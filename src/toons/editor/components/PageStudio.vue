@@ -2,13 +2,12 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { addBubble, deleteBubble, getToon, patchBubble, readImageSize, uploadPage } from "../api";
-import { debounce } from "../debounce";
 import type { LangCode } from "../../bookReader/types";
 import type { BubbleRecord, ToonRecord } from "../types";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
-import { CAPTION_LANGS } from "../mapConfig";
+import { bubbleWritePayload, CAPTION_LANGS } from "../mapConfig";
 import CaptionInspector from "./CaptionInspector.vue";
-import EditorSession from "./EditorSession.vue";
+import EditorBar from "./EditorBar.vue";
 import PageFilmstrip from "./PageFilmstrip.vue";
 import PlateCanvas from "./PlateCanvas.vue";
 
@@ -22,6 +21,8 @@ const selectedId = ref<string | null>(null);
 const previewLang = ref<LangCode>("en");
 const error = ref("");
 const loading = ref(true);
+const saving = ref(false);
+const dirtyIds = ref(new Set<string>());
 
 const toonId = computed(() => String(route.params.id || ""));
 const pageId = computed(() => (route.params.pageId ? String(route.params.pageId) : null));
@@ -37,12 +38,29 @@ const selectedBubble = computed(() => {
   return activePage.value.bubbles.find((b) => b.id === selectedId.value) || null;
 });
 
+const dirtyCount = computed(() => dirtyIds.value.size);
+const selectedDirty = computed(() => Boolean(selectedId.value && dirtyIds.value.has(selectedId.value)));
+
+function markDirty(id: string): void {
+  const next = new Set(dirtyIds.value);
+  next.add(id);
+  dirtyIds.value = next;
+}
+
+function clearDirty(id: string): void {
+  if (!dirtyIds.value.has(id)) return;
+  const next = new Set(dirtyIds.value);
+  next.delete(id);
+  dirtyIds.value = next;
+}
+
 async function load(): Promise<void> {
   loading.value = true;
   error.value = "";
   try {
     const next = await getToon(toonId.value);
     toon.value = next;
+    dirtyIds.value = new Set();
     if (!pageId.value && next.pages[0]) {
       await router.replace(`/${next.id}/pages/${next.pages[0].id}`);
     }
@@ -63,6 +81,7 @@ async function onUpload(file: File): Promise<void> {
     const size = await readImageSize(file);
     const next = await uploadPage(toon.value.id, file, size);
     toon.value = next;
+    dirtyIds.value = new Set();
     const last = next.pages[next.pages.length - 1];
     if (last) await router.push(`/${next.id}/pages/${last.id}`);
   } catch (err) {
@@ -70,52 +89,62 @@ async function onUpload(file: File): Promise<void> {
   }
 }
 
-function applyLocal(id: string, patch: Partial<BubbleRecord>): void {
-  const page = activePage.value;
-  if (!page) return;
-  const i = page.bubbles.findIndex((b) => b.id === id);
-  if (i < 0) return;
-  page.bubbles[i] = { ...page.bubbles[i], ...patch };
+function findBubble(id: string): BubbleRecord | null {
+  if (!toon.value) return null;
+  for (const page of toon.value.pages) {
+    const found = page.bubbles.find((b) => b.id === id);
+    if (found) return found;
+  }
+  return null;
 }
 
-const persistText = debounce((id: string, patch: Pick<BubbleRecord, "textEn" | "textJson">) => {
-  void patchBubble(id, patch).catch((err: unknown) => {
-    error.value = err instanceof Error ? err.message : "Save failed";
-  });
-}, 300);
-
-const persistExtra = debounce((id: string, extraJson: string | null) => {
-  void patchBubble(id, { extraJson }).catch((err: unknown) => {
-    error.value = err instanceof Error ? err.message : "Save failed";
-  });
-}, 300);
+function applyLocal(id: string, patch: Partial<BubbleRecord>): void {
+  if (!toon.value) return;
+  for (const page of toon.value.pages) {
+    const i = page.bubbles.findIndex((b) => b.id === id);
+    if (i < 0) continue;
+    page.bubbles[i] = { ...page.bubbles[i], ...patch };
+    return;
+  }
+}
 
 function onInspectChange(patch: Partial<BubbleRecord>): void {
   if (!selectedId.value) return;
   applyLocal(selectedId.value, patch);
-  if (patch.textEn != null || patch.textJson != null) {
-    persistText(selectedId.value, {
-      textEn: patch.textEn ?? selectedBubble.value?.textEn ?? "",
-      textJson: patch.textJson ?? selectedBubble.value?.textJson ?? null,
-    });
-  } else if (patch.extraJson !== undefined) {
-    persistExtra(selectedId.value, patch.extraJson ?? null);
-  } else {
-    void patchBubble(selectedId.value, patch).catch((err: unknown) => {
-      error.value = err instanceof Error ? err.message : "Save failed";
-    });
-  }
+  markDirty(selectedId.value);
 }
 
 function onMove(id: string, x: number, y: number): void {
   applyLocal(id, { x, y });
+  markDirty(id);
 }
 
 function onPersist(id: string, x: number, y: number): void {
   applyLocal(id, { x, y });
-  void patchBubble(id, { x, y }).catch((err: unknown) => {
+  markDirty(id);
+}
+
+async function saveDirty(): Promise<void> {
+  const ids = [...dirtyIds.value];
+  if (!ids.length) return;
+  saving.value = true;
+  error.value = "";
+  try {
+    for (const id of ids) {
+      const bubble = findBubble(id);
+      if (!bubble) {
+        clearDirty(id);
+        continue;
+      }
+      const saved = await patchBubble(id, bubbleWritePayload(bubble));
+      applyLocal(id, saved);
+      clearDirty(id);
+    }
+  } catch (err) {
     error.value = err instanceof Error ? err.message : "Save failed";
-  });
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function onAdd(pos: { x: number; y: number }): Promise<void> {
@@ -136,6 +165,7 @@ async function onRemove(): Promise<void> {
   try {
     await deleteBubble(id);
     activePage.value.bubbles = activePage.value.bubbles.filter((b) => b.id !== id);
+    clearDirty(id);
     selectedId.value = null;
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Delete failed";
@@ -145,15 +175,23 @@ async function onRemove(): Promise<void> {
 
 <template>
   <div class="editor-studio">
-    <header class="editor-studio-head">
-      <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">Meta</RouterLink>
-      <h1>{{ toon?.title || "Pages" }}</h1>
-      <span class="editor-form-actions">
+    <EditorBar :title="toon?.title || 'Pages'">
+      <template #start>
+        <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">Meta</RouterLink>
+      </template>
+      <template #actions>
         <LangSwitcher :languages="switchLangs" v-model="previewLang" />
-        <EditorSession />
-        <RouterLink class="editor-btn editor-btn--ghost" to="/">All toons</RouterLink>
-      </span>
-    </header>
+        <button
+          class="editor-btn"
+          type="button"
+          name="save-bubbles"
+          :disabled="!dirtyCount || saving"
+          @click="saveDirty"
+        >
+          {{ saving ? "Saving…" : dirtyCount ? `Save (${dirtyCount})` : "Save" }}
+        </button>
+      </template>
+    </EditorBar>
     <p v-if="error" class="editor-error" role="alert">{{ error }}</p>
     <p v-if="loading">Loading…</p>
     <template v-else-if="toon">
@@ -190,8 +228,11 @@ async function onRemove(): Promise<void> {
         </div>
         <CaptionInspector
           :bubble="selectedBubble"
+          :dirty="selectedDirty"
+          :saving="saving"
           @change="onInspectChange"
           @preview="previewLang = $event"
+          @save="saveDirty"
           @remove="onRemove"
         />
       </div>

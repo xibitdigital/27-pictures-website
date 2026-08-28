@@ -52,6 +52,19 @@ export function rowToWord(row) {
   return word;
 }
 
+const DESC_LANGS = ["en", "it", "de", "fr"];
+
+/** Episode card copy from the current series pages → extra.description. */
+export function descriptionMapFromMeta(meta) {
+  const map = { en: "", it: "", de: "", fr: "" };
+  const incoming = meta && meta.descriptions && typeof meta.descriptions === "object" ? meta.descriptions : null;
+  for (const lang of DESC_LANGS) {
+    if (incoming && incoming[lang] != null) map[lang] = String(incoming[lang]).trim();
+  }
+  if (!map.en) map.en = String((meta && meta.description) || "").trim();
+  return map;
+}
+
 export function configToImport(config, meta) {
   const pages = (config.pages || []).map((page, i) => ({
     position: i,
@@ -62,11 +75,15 @@ export function configToImport(config, meta) {
   if (config.defaultLang) extra.defaultLang = config.defaultLang;
   if (config.languages) extra.languages = config.languages;
   if (config.reverb) extra.reverb = config.reverb;
+  extra.description = descriptionMapFromMeta(meta);
+  if (meta && meta.titles) {
+    extra.title = descriptionMapFromMeta({ descriptions: meta.titles, description: meta.title });
+  }
   return {
     slug: meta.slug,
     title: String(config.title || meta.title || meta.slug),
     subtitle: String(meta.subtitle || ""),
-    description: String(meta.description || ""),
+    description: extra.description.en,
     coverKey: meta.coverKey || null,
     assetPageDir: meta.assetPageDir || null,
     readerUrl: meta.readerUrl || null,
@@ -75,7 +92,7 @@ export function configToImport(config, meta) {
     episodeN: meta.episodeN != null ? Number(meta.episodeN) : null,
     designWidth: Number(config.designWidth || meta.designWidth || 1152),
     designHeight: Number(config.designHeight || meta.designHeight || 1728),
-    extraJson: Object.keys(extra).length ? JSON.stringify(extra) : null,
+    extraJson: JSON.stringify(extra),
     pages,
   };
 }

@@ -13,7 +13,7 @@
  * staging/main publishes any new hashes and compiles them into the bundle.
  * Local `make ship` still does the same for one toon.
  */
-import { editorApiBase } from "./editor/api";
+import { editorApiBase, withSiteQuery } from "./editor/api";
 import lock from "./config-lock.json";
 
 export type ToonId = keyof typeof lock;
@@ -31,7 +31,7 @@ export function isDevToonConfigUrl(url: string): boolean {
 export function dbToonConfigUrl(slug: string): string | null {
   const base = editorApiBase();
   if (!base) return null;
-  return `${base}/config/${slug}`;
+  return withSiteQuery(`${base}/config/${slug}`);
 }
 
 export function isEditorToonConfigUrl(url: string): boolean {

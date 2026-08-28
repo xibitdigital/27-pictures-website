@@ -2,7 +2,7 @@
  * Toon editor API — D1 drafts + R2 plates/covers.
  *
  * Public: CORS preflight, GET /media/editor/…, GET /auth/status,
- * GET /catalog, GET /config/:slug (published reader JSON), GET/POST /likes,
+ * GET /catalog, GET /config/:slug (published; staging hosts also see status=staging), GET/POST /likes,
  * POST /auth/login, POST /auth/register (first account only).
  * Everything else needs a JWT: Authorization: Bearer <login token>.
  */
@@ -16,8 +16,9 @@ import {
   validateCredentials,
   verifyPassword,
 } from "./auth.js";
-import { configToImport, rowToWord } from "./importConfig.js";
+import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig.js";
 import { handleLikes } from "./likes.js";
+import { parseStatus, publicStatusesForRequest } from "./visibility.js";
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
@@ -145,6 +146,7 @@ function mapToon(row, request, env, pages) {
     title: row.title,
     subtitle: row.subtitle,
     description: row.description,
+    descriptions: descriptionMap(row),
     coverKey: row.cover_key,
     coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
     designWidth: row.design_width,
@@ -167,6 +169,101 @@ function parseToonExtra(toon) {
     return extra && typeof extra === "object" ? extra : {};
   } catch {
     return {};
+  }
+}
+
+const DESC_LANGS = ["en", "it", "de", "fr"];
+
+function langMap(row, extraKey, column) {
+  const extra = parseToonExtra(row);
+  const raw = extra[extraKey];
+  const map = { en: String(row[column] || ""), it: "", de: "", fr: "" };
+  if (raw && typeof raw === "object") {
+    for (const lang of DESC_LANGS) {
+      if (typeof raw[lang] === "string") map[lang] = raw[lang];
+    }
+  }
+  if (!String(map.en || "").trim()) map.en = String(row[column] || "");
+  return map;
+}
+
+function descriptionMap(row) {
+  return langMap(row, "description", "description");
+}
+
+function titleMap(row) {
+  return langMap(row, "title", "title");
+}
+
+function applyDescriptions(extra, body, enFallback) {
+  const current = extra.description && typeof extra.description === "object" ? extra.description : {};
+  const incoming = body.descriptions && typeof body.descriptions === "object" ? body.descriptions : null;
+  const map = {};
+  for (const lang of DESC_LANGS) {
+    if (incoming && incoming[lang] != null) map[lang] = String(incoming[lang]).trim();
+    else if (lang === "en" && body.description != null) map.en = String(body.description).trim();
+    else map[lang] = String(current[lang] || (lang === "en" ? enFallback : "") || "").trim();
+  }
+  extra.description = map;
+  return map;
+}
+
+function applyTitles(extra, body, enFallback) {
+  const incoming = body.titles && typeof body.titles === "object" ? body.titles : null;
+  if (!incoming) return extra.title || null;
+  const current = extra.title && typeof extra.title === "object" ? extra.title : {};
+  const map = {};
+  for (const lang of DESC_LANGS) {
+    if (incoming[lang] != null) map[lang] = String(incoming[lang]).trim();
+    else map[lang] = String(current[lang] || (lang === "en" ? enFallback : "") || "").trim();
+  }
+  extra.title = map;
+  return map;
+}
+
+async function upsertSeries(env, seriesMeta, ts) {
+  if (!seriesMeta || !seriesMeta.key) return;
+  const skey = String(seriesMeta.key);
+  const extra = {};
+  extra.description = descriptionMapFromMeta(seriesMeta);
+  const extraJson = JSON.stringify(extra);
+  const description = extra.description.en || String(seriesMeta.description || "");
+  const found = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(skey).first();
+  if (found) {
+    await env.DB.prepare(
+      `UPDATE series SET title = ?, tagline = ?, description = ?, cover_key = ?, hub_url = ?, sort = ?, extra_json = ?, updated_at = ?
+       WHERE key = ?`
+    )
+      .bind(
+        String(seriesMeta.title || ""),
+        String(seriesMeta.tagline || ""),
+        description,
+        seriesMeta.coverKey || null,
+        seriesMeta.hubUrl || null,
+        Number(seriesMeta.sort) || 0,
+        extraJson,
+        ts,
+        skey
+      )
+      .run();
+  } else {
+    await env.DB.prepare(
+      `INSERT INTO series (key, title, tagline, description, cover_key, hub_url, sort, extra_json, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    )
+      .bind(
+        skey,
+        String(seriesMeta.title || ""),
+        String(seriesMeta.tagline || ""),
+        description,
+        seriesMeta.coverKey || null,
+        seriesMeta.hubUrl || null,
+        Number(seriesMeta.sort) || 0,
+        extraJson,
+        ts,
+        ts
+      )
+      .run();
   }
 }
 
@@ -352,44 +449,82 @@ async function handle(request, env, cors, session) {
   if (publicConfigMatch && method === "GET") {
     const slug = publicConfigMatch[1];
     if (!SLUG_RE.test(slug)) return json({ error: "not found" }, 404, cors);
-    const toon = await env.DB.prepare("SELECT * FROM toons WHERE slug = ? AND status = 'published'").bind(slug).first();
+    const statuses = publicStatusesForRequest(request);
+    const toon = await env.DB.prepare(
+      `SELECT * FROM toons WHERE slug = ? AND status IN (${statuses.map(() => "?").join(",")})`
+    )
+      .bind(slug, ...statuses)
+      .first();
     if (!toon) return json({ error: "not found" }, 404, cors);
     return json(await readerConfigFromToon(env, toon), 200, cors);
   }
 
+  if (method === "PUT" && path === "/series") {
+    const parsed = await readJson(request);
+    if (parsed.error) return json({ error: parsed.error }, 400, cors);
+    if (!parsed.body.key) return json({ error: "key required" }, 400, cors);
+    await upsertSeries(env, parsed.body, nowIso());
+    const row = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(String(parsed.body.key)).first();
+    const descriptions = descriptionMap(row);
+    return json(
+      {
+        key: row.key,
+        title: row.title,
+        tagline: row.tagline,
+        description: descriptions.en || row.description,
+        descriptions,
+      },
+      200,
+      cors
+    );
+  }
+
   if (method === "GET" && path === "/catalog") {
     const seriesRows = (await env.DB.prepare("SELECT * FROM series ORDER BY sort ASC, title ASC").all()).results;
+    const statuses = publicStatusesForRequest(request);
     const toonRows = (
       await env.DB.prepare(
         `SELECT toons.*,
                 (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
          FROM toons
-         WHERE status = 'published'
+         WHERE status IN (${statuses.map(() => "?").join(",")})
          ORDER BY episode_n ASC, title ASC`
-      ).all()
+      )
+        .bind(...statuses)
+        .all()
     ).results;
-    const asEpisode = (row) => ({
-      id: row.slug,
-      slug: row.slug,
-      title: row.title,
-      subtitle: row.subtitle,
-      description: row.description,
-      coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
-      pageCount: Number(row.page_count) || 0,
-      readerUrl: row.reader_url || null,
-      n: row.episode_n,
-    });
+    const asEpisode = (row) => {
+      const descriptions = descriptionMap(row);
+      const titles = titleMap(row);
+      return {
+        id: row.slug,
+        slug: row.slug,
+        title: titles.en || row.title,
+        titles,
+        subtitle: row.subtitle,
+        description: descriptions.en,
+        descriptions,
+        coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
+        pageCount: Number(row.page_count) || 0,
+        readerUrl: row.reader_url || null,
+        n: row.episode_n,
+      };
+    };
     const episodesOf = (key) => toonRows.filter((row) => row.series_key === key).map(asEpisode);
     const series = seriesRows
-      .map((row) => ({
-        key: row.key,
-        title: row.title,
-        tagline: row.tagline,
-        description: row.description,
-        coverUrl: objectUrl(request, env, row.cover_key, null),
-        hubUrl: row.hub_url || null,
-        episodes: episodesOf(row.key),
-      }))
+      .map((row) => {
+        const descriptions = descriptionMap(row);
+        return {
+          key: row.key,
+          title: row.title,
+          tagline: row.tagline,
+          description: descriptions.en || row.description,
+          descriptions,
+          coverUrl: objectUrl(request, env, row.cover_key, null),
+          hubUrl: row.hub_url || null,
+          episodes: episodesOf(row.key),
+        };
+      })
       .filter((item) => item.episodes.length > 0);
     const grouped = new Set(series.flatMap((item) => item.episodes.map((ep) => ep.slug)));
     const ungrouped = toonRows.filter((row) => !row.series_key || !grouped.has(row.slug)).map(asEpisode);
@@ -405,45 +540,7 @@ async function handle(request, env, cors, session) {
     const slug = normaliseSlug(pack.slug);
     if (!slug || !SLUG_RE.test(slug)) return json({ error: "invalid slug" }, 400, cors);
     const ts = nowIso();
-    const seriesMeta = parsed.body.series;
-    if (seriesMeta && seriesMeta.key) {
-      const skey = String(seriesMeta.key);
-      const found = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(skey).first();
-      if (found) {
-        await env.DB.prepare(
-          `UPDATE series SET title = ?, tagline = ?, description = ?, cover_key = ?, hub_url = ?, sort = ?, updated_at = ?
-           WHERE key = ?`
-        )
-          .bind(
-            String(seriesMeta.title || ""),
-            String(seriesMeta.tagline || ""),
-            String(seriesMeta.description || ""),
-            seriesMeta.coverKey || null,
-            seriesMeta.hubUrl || null,
-            Number(seriesMeta.sort) || 0,
-            ts,
-            skey
-          )
-          .run();
-      } else {
-        await env.DB.prepare(
-          `INSERT INTO series (key, title, tagline, description, cover_key, hub_url, sort, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        )
-          .bind(
-            skey,
-            String(seriesMeta.title || ""),
-            String(seriesMeta.tagline || ""),
-            String(seriesMeta.description || ""),
-            seriesMeta.coverKey || null,
-            seriesMeta.hubUrl || null,
-            Number(seriesMeta.sort) || 0,
-            ts,
-            ts
-          )
-          .run();
-      }
-    }
+    await upsertSeries(env, parsed.body.series, ts);
     let id = parsed.body.id || null;
     const existing = await env.DB.prepare("SELECT * FROM toons WHERE slug = ?").bind(slug).first();
     if (existing) {
@@ -453,6 +550,17 @@ async function handle(request, env, cors, session) {
         await env.DB.prepare("DELETE FROM bubbles WHERE page_id = ?").bind(p.id).run();
       }
       await env.DB.prepare("DELETE FROM pages WHERE toon_id = ?").bind(id).run();
+      const prevExtra = parseToonExtra(existing);
+      let nextExtra = {};
+      if (pack.extraJson) {
+        try {
+          const parsed = JSON.parse(pack.extraJson);
+          if (parsed && typeof parsed === "object") nextExtra = parsed;
+        } catch {
+          /* keep empty */
+        }
+      }
+      const extraJson = JSON.stringify({ ...prevExtra, ...nextExtra });
       await env.DB.prepare(
         `UPDATE toons SET title = ?, subtitle = ?, description = ?, cover_key = ?,
          design_width = ?, design_height = ?, status = ?, reader_url = ?, asset_page_dir = ?,
@@ -468,7 +576,7 @@ async function handle(request, env, cors, session) {
           pack.status,
           pack.readerUrl,
           pack.assetPageDir,
-          pack.extraJson,
+          extraJson,
           pack.seriesKey,
           pack.episodeN,
           ts,
@@ -574,16 +682,21 @@ async function handle(request, env, cors, session) {
     if (existing) return json({ error: "slug taken" }, 409, cors);
     const id = crypto.randomUUID();
     const ts = nowIso();
+    const status = parseStatus(body.status, "draft");
+    const extra = {};
+    const desc = applyDescriptions(extra, body, String(body.description || "").trim());
     await env.DB.prepare(
-      `INSERT INTO toons (id, slug, title, subtitle, description, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO toons (id, slug, title, subtitle, description, status, extra_json, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         id,
         slug,
         String(body.title || "").trim(),
         String(body.subtitle || "").trim(),
-        String(body.description || "").trim(),
+        desc.en,
+        status,
+        JSON.stringify(extra),
         ts,
         ts
       )
@@ -611,9 +724,15 @@ async function handle(request, env, cors, session) {
       }
       const title = body.title != null ? String(body.title).trim() : current.title;
       const subtitle = body.subtitle != null ? String(body.subtitle).trim() : current.subtitle;
-      const description = body.description != null ? String(body.description).trim() : current.description;
-      await env.DB.prepare(`UPDATE toons SET title = ?, subtitle = ?, description = ?, updated_at = ? WHERE id = ?`)
-        .bind(title, subtitle, description, nowIso(), id)
+      const status = parseStatus(body.status, current.status || "draft");
+      const extra = parseToonExtra(current);
+      const desc = applyDescriptions(extra, body, current.description);
+      const description = desc.en;
+      applyTitles(extra, body, title);
+      await env.DB.prepare(
+        `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, updated_at = ? WHERE id = ?`
+      )
+        .bind(title, subtitle, description, status, JSON.stringify(extra), nowIso(), id)
         .run();
       return json(await loadToon(env, request, id), 200, cors);
     }

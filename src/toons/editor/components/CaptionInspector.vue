@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
 import {
   BUBBLE_TAILS,
   BUBBLE_VARIANTS,
   CAPTION_LANGS,
+  VOICE_NAMES,
   bubbleAudio,
   bubbleTextMap,
+  bubbleVoice,
   extraPatch,
+  suggestElevenPrompt,
   textPatch,
 } from "../mapConfig";
 import type { LangCode } from "../../bookReader/types";
@@ -18,17 +21,41 @@ const SIZE_MAX = 120;
 
 const props = defineProps<{
   bubble: BubbleRecord | null;
+  dirty?: boolean;
+  saving?: boolean;
 }>();
 
 const emit = defineEmits<{
   change: [patch: Partial<BubbleRecord>];
   preview: [lang: LangCode];
+  save: [];
   remove: [];
 }>();
 
 const textMap = computed(() => (props.bubble ? bubbleTextMap(props.bubble) : {}));
 const sizeDraft = ref("");
 const sizeFocused = ref(false);
+const copied = ref(false);
+let copiedTimer = 0;
+
+const elevenPrompt = computed(() => {
+  if (!props.bubble) return "";
+  const map = textMap.value;
+  return suggestElevenPrompt({
+    voice: bubbleVoice(props.bubble),
+    text: map.en || props.bubble.textEn || "",
+    variant: props.bubble.variant,
+  });
+});
+
+onBeforeUnmount(() => window.clearTimeout(copiedTimer));
+
+watch(
+  () => props.bubble?.id,
+  () => {
+    copied.value = false;
+  }
+);
 
 watch(
   () => [props.bubble?.id, props.bubble?.size] as const,
@@ -88,6 +115,25 @@ function onAudioBlur(ev: Event): void {
   const trimmed = (ev.target as HTMLInputElement).value.trim();
   emit("change", extraPatch(props.bubble, "audio", trimmed));
 }
+
+function onVoiceChange(ev: Event): void {
+  if (!props.bubble) return;
+  emit("change", extraPatch(props.bubble, "voice", (ev.target as HTMLSelectElement).value));
+}
+
+async function copyPrompt(): Promise<void> {
+  const text = elevenPrompt.value;
+  try {
+    await navigator.clipboard.writeText(text);
+    copied.value = true;
+    window.clearTimeout(copiedTimer);
+    copiedTimer = window.setTimeout(() => {
+      copied.value = false;
+    }, 1600);
+  } catch {
+    copied.value = false;
+  }
+}
 </script>
 
 <template>
@@ -121,6 +167,13 @@ function onAudioBlur(ev: Event): void {
         />
       </label>
       <label>
+        Voice
+        <select name="voice" :value="bubbleVoice(bubble)" @change="onVoiceChange">
+          <option value="">None (SFX)</option>
+          <option v-for="name in VOICE_NAMES" :key="name" :value="name">{{ name }}</option>
+        </select>
+      </label>
+      <label>
         Audio
         <input
           type="text"
@@ -133,6 +186,13 @@ function onAudioBlur(ev: Event): void {
           @blur="onAudioBlur"
         />
       </label>
+      <label>
+        ElevenLabs Studio prompt
+        <textarea name="eleven-prompt" rows="6" readonly :value="elevenPrompt" spellcheck="false" />
+      </label>
+      <button class="editor-btn editor-btn--ghost" type="button" name="copy-prompt" @click="copyPrompt">
+        {{ copied ? "Copied" : "Copy prompt" }}
+      </button>
       <label>
         Variant
         <select
@@ -151,7 +211,14 @@ function onAudioBlur(ev: Event): void {
           <option v-for="t in BUBBLE_TAILS" :key="t" :value="t">{{ t }}</option>
         </select>
       </label>
-      <button class="editor-btn editor-btn--ghost" type="button" @click="emit('remove')">Delete bubble</button>
+      <div class="editor-form-actions">
+        <button class="editor-btn" type="button" name="save" :disabled="!dirty || saving" @click="emit('save')">
+          {{ saving ? "Saving…" : "Save" }}
+        </button>
+        <button class="editor-btn editor-btn--ghost" type="button" name="delete" @click="emit('remove')">
+          Delete bubble
+        </button>
+      </div>
     </template>
   </aside>
 </template>
