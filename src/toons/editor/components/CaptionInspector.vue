@@ -8,9 +8,15 @@ import {
   CAPTION_LANGS,
   VOICE_NAMES,
   bubbleAudio,
+  bubbleColor,
+  bubbleStrokeColor,
+  bubbleStrokeThickness,
   bubbleTextMap,
   bubbleVoice,
   extraPatch,
+  hasLetteringOverride,
+  letteringPatch,
+  parseHexColor,
   suggestElevenPrompt,
   textPatch,
 } from "../mapConfig";
@@ -22,6 +28,9 @@ const SIZE_MIN = 10;
 const SIZE_MAX = 100;
 const ANGLE_MIN = -45;
 const ANGLE_MAX = 45;
+const STROKE_MIN = 0;
+const STROKE_MAX = 16;
+const FALLBACK_SWATCH = "#111111";
 
 const props = defineProps<{
   bubble: BubbleRecord | null;
@@ -40,6 +49,11 @@ const sizeDraft = ref("");
 const sizeFocused = ref(false);
 const angleDraft = ref("");
 const angleFocused = ref(false);
+const colorDraft = ref("");
+const strokeDraft = ref("");
+const strokeThickDraft = ref("");
+const strokeThickFocused = ref(false);
+const advancedOpen = ref(false);
 const copied = ref(false);
 const uploading = ref(false);
 const uploadError = ref("");
@@ -63,7 +77,9 @@ watch(
   () => {
     copied.value = false;
     uploadError.value = "";
-  }
+    advancedOpen.value = props.bubble ? hasLetteringOverride(props.bubble) : false;
+  },
+  { immediate: true }
 );
 
 function audioPreviewSrc(path: string): string {
@@ -99,6 +115,107 @@ watch(
   },
   { immediate: true }
 );
+
+watch(
+  () => [props.bubble?.id, props.bubble?.extraJson] as const,
+  () => {
+    if (!props.bubble) {
+      colorDraft.value = "";
+      strokeDraft.value = "";
+      if (!strokeThickFocused.value) strokeThickDraft.value = "";
+      return;
+    }
+    colorDraft.value = bubbleColor(props.bubble);
+    strokeDraft.value = bubbleStrokeColor(props.bubble);
+    if (strokeThickFocused.value) return;
+    const thick = bubbleStrokeThickness(props.bubble);
+    strokeThickDraft.value = thick != null ? String(thick) : "";
+  },
+  { immediate: true }
+);
+
+const colorSwatch = computed(() => parseHexColor(colorDraft.value) || FALLBACK_SWATCH);
+const strokeSwatch = computed(() => parseHexColor(strokeDraft.value) || FALLBACK_SWATCH);
+
+function onColorPicker(ev: Event): void {
+  if (!props.bubble) return;
+  const hex = parseHexColor((ev.target as HTMLInputElement).value);
+  if (!hex) return;
+  colorDraft.value = hex;
+  emit("change", letteringPatch(props.bubble, { color: hex }));
+}
+
+function onColorInput(ev: Event): void {
+  if (!props.bubble) return;
+  colorDraft.value = (ev.target as HTMLInputElement).value;
+  const hex = parseHexColor(colorDraft.value);
+  if (hex) emit("change", letteringPatch(props.bubble, { color: hex }));
+}
+
+function onColorBlur(): void {
+  if (!props.bubble) return;
+  const hex = parseHexColor(colorDraft.value);
+  colorDraft.value = hex || "";
+  emit("change", letteringPatch(props.bubble, { color: hex }));
+}
+
+function onStrokePicker(ev: Event): void {
+  if (!props.bubble) return;
+  const hex = parseHexColor((ev.target as HTMLInputElement).value);
+  if (!hex) return;
+  strokeDraft.value = hex;
+  emit("change", letteringPatch(props.bubble, { stroke: hex }));
+}
+
+function onStrokeInput(ev: Event): void {
+  if (!props.bubble) return;
+  strokeDraft.value = (ev.target as HTMLInputElement).value;
+  const hex = parseHexColor(strokeDraft.value);
+  if (hex) emit("change", letteringPatch(props.bubble, { stroke: hex }));
+}
+
+function onStrokeBlur(): void {
+  if (!props.bubble) return;
+  const hex = parseHexColor(strokeDraft.value);
+  strokeDraft.value = hex || "";
+  emit("change", letteringPatch(props.bubble, { stroke: hex }));
+}
+
+function parseStrokeThick(raw: string): number | null {
+  if (raw.trim() === "") return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : null;
+}
+
+function clampStrokeThick(n: number): number {
+  return Math.max(STROKE_MIN, Math.min(STROKE_MAX, Math.round(n)));
+}
+
+function onStrokeThickInput(ev: Event): void {
+  if (!props.bubble) return;
+  const raw = (ev.target as HTMLInputElement).value;
+  strokeThickDraft.value = raw;
+  const n = parseStrokeThick(raw);
+  emit("change", letteringPatch(props.bubble, { strokeThickness: n == null ? null : Math.round(n) }));
+}
+
+function onStrokeThickBlur(): void {
+  if (!props.bubble) return;
+  strokeThickFocused.value = false;
+  const n = parseStrokeThick(strokeThickDraft.value);
+  if (n == null) {
+    strokeThickDraft.value = "";
+    emit("change", letteringPatch(props.bubble, { strokeThickness: null }));
+    return;
+  }
+  const clamped = clampStrokeThick(n);
+  strokeThickDraft.value = String(clamped);
+  emit("change", letteringPatch(props.bubble, { strokeThickness: clamped }));
+}
+
+function onAdvancedToggle(ev: Event): void {
+  advancedOpen.value = (ev.target as HTMLDetailsElement).open;
+}
 
 function onLangInput(lang: LangCode, ev: Event): void {
   if (!props.bubble) return;
@@ -382,6 +499,68 @@ async function copyPrompt(): Promise<void> {
         <audio v-if="audioSrc" controls preload="none" :src="audioSrc" />
         <p v-if="uploadError" class="editor-error" role="alert">{{ uploadError }}</p>
       </div>
+      <details class="editor-advanced" :open="advancedOpen" @toggle="onAdvancedToggle">
+        <summary>Advanced</summary>
+        <label>
+          Color
+          <span class="editor-color-row">
+            <input
+              type="color"
+              name="color-swatch"
+              :value="colorSwatch"
+              :aria-label="colorDraft ? 'Lettering color' : 'Lettering color (default)'"
+              @input="onColorPicker"
+            />
+            <input
+              type="text"
+              name="color"
+              :value="colorDraft"
+              placeholder="default"
+              spellcheck="false"
+              autocomplete="off"
+              @input="onColorInput"
+              @blur="onColorBlur"
+            />
+          </span>
+        </label>
+        <label>
+          Stroke
+          <span class="editor-color-row">
+            <input
+              type="color"
+              name="stroke-swatch"
+              :value="strokeSwatch"
+              :aria-label="strokeDraft ? 'Lettering stroke' : 'Lettering stroke (default)'"
+              @input="onStrokePicker"
+            />
+            <input
+              type="text"
+              name="stroke"
+              :value="strokeDraft"
+              placeholder="default"
+              spellcheck="false"
+              autocomplete="off"
+              @input="onStrokeInput"
+              @blur="onStrokeBlur"
+            />
+          </span>
+        </label>
+        <label>
+          Stroke thickness
+          <input
+            type="number"
+            name="stroke-thickness"
+            :min="STROKE_MIN"
+            :max="STROKE_MAX"
+            step="1"
+            v-model="strokeThickDraft"
+            placeholder="default"
+            @focus="strokeThickFocused = true"
+            @input="onStrokeThickInput"
+            @blur="onStrokeThickBlur"
+          />
+        </label>
+      </details>
       <label>
         <span class="editor-prompt-head">
           ElevenLabs Studio prompt

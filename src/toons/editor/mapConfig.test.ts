@@ -1,10 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
   bubbleAudio,
+  bubbleColor,
+  bubbleStrokeColor,
+  bubbleStrokeThickness,
   bubbleTextMap,
   bubbleToWordEntry,
   exportToonConfig,
   extraPatch,
+  letteringPatch,
+  parseHexColor,
   bubbleWritePayload,
   bubbleVoice,
   suggestElevenPrompt,
@@ -68,6 +73,31 @@ describe("bubbleToWordEntry", () => {
     expect(prompt).toContain("eleven_v3");
     expect(prompt).toContain("Voice: eve");
     expect(prompt).toContain("[shouts] Nero—!");
+  });
+
+  it("normalises hex colors and reads lettering extras", () => {
+    expect(parseHexColor("#fff")).toBe("#ffffff");
+    expect(parseHexColor("b30000")).toBe("#b30000");
+    expect(parseHexColor("nope")).toBeNull();
+    expect(parseHexColor("")).toBeNull();
+    const ink = bubble({
+      extraJson: JSON.stringify({
+        color: "#111111",
+        stroke: { color: "#ffffff", thickness: 8 },
+        voice: "erin",
+      }),
+    });
+    expect(bubbleColor(ink)).toBe("#111111");
+    expect(bubbleStrokeColor(ink)).toBe("#ffffff");
+    expect(bubbleStrokeThickness(ink)).toBe(8);
+    const patch = letteringPatch(ink, { strokeThickness: 6 });
+    expect(JSON.parse(patch.extraJson as string)).toEqual({
+      color: "#111111",
+      stroke: "#ffffff",
+      strokeThickness: 6,
+      voice: "erin",
+    });
+    expect(JSON.parse(letteringPatch(ink, { color: null }).extraJson as string).color).toBeUndefined();
   });
 
   it("builds a Worker write payload from a bubble", () => {

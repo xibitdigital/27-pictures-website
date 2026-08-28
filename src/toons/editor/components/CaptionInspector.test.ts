@@ -149,6 +149,55 @@ describe("CaptionInspector", () => {
     expect(wrapper.emitted("remove")).toHaveLength(1);
   });
 
+  it("opens Advanced when the bubble already has lettering extras", () => {
+    const inked: BubbleRecord = {
+      ...bubble,
+      extraJson: JSON.stringify({ color: "#ffffff", stroke: "#000000", strokeThickness: 8 }),
+    };
+    const wrapper = mount(CaptionInspector, { props: { bubble: inked } });
+    expect(wrapper.get("details").attributes("open")).toBeDefined();
+    expect((wrapper.get('input[name="color"]').element as HTMLInputElement).value).toBe("#ffffff");
+    expect((wrapper.get('input[name="stroke"]').element as HTMLInputElement).value).toBe("#000000");
+    expect((wrapper.get('input[name="stroke-thickness"]').element as HTMLInputElement).value).toBe("8");
+  });
+
+  it("patches lettering color, stroke and thickness into extraJson", async () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    await wrapper.get('input[name="color"]').setValue("#fff");
+    await wrapper.get('input[name="color"]').trigger("blur");
+    let patch = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
+    expect(JSON.parse(patch.extraJson as string)).toEqual({ color: "#ffffff" });
+
+    const withColor: BubbleRecord = { ...bubble, extraJson: patch.extraJson };
+    await wrapper.setProps({ bubble: withColor });
+    await wrapper.get('input[name="stroke"]').setValue("#000");
+    await wrapper.get('input[name="stroke"]').trigger("blur");
+    patch = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
+    expect(JSON.parse(patch.extraJson as string)).toEqual({ color: "#ffffff", stroke: "#000000" });
+
+    const withStroke: BubbleRecord = { ...bubble, extraJson: patch.extraJson };
+    await wrapper.setProps({ bubble: withStroke });
+    await wrapper.get('input[name="stroke-thickness"]').setValue("8");
+    patch = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
+    expect(JSON.parse(patch.extraJson as string)).toEqual({
+      color: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: 8,
+    });
+  });
+
+  it("clears lettering extras when the fields are emptied", async () => {
+    const inked: BubbleRecord = {
+      ...bubble,
+      extraJson: JSON.stringify({ color: "#ffffff", voice: "erin" }),
+    };
+    const wrapper = mount(CaptionInspector, { props: { bubble: inked } });
+    await wrapper.get('input[name="color"]').setValue("");
+    await wrapper.get('input[name="color"]').trigger("blur");
+    const patch = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
+    expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin" });
+  });
+
   it("patches voice into extraJson", async () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
     await wrapper.get('select[name="voice"]').setValue("erin");

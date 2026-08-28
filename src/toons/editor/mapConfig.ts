@@ -72,6 +72,102 @@ export function extraPatch(bubble: BubbleRecord, key: string, value: unknown): P
   return { extraJson: Object.keys(extra).length ? JSON.stringify(extra) : null };
 }
 
+/** `#rgb` / `#rrggbb` → `#rrggbb`. Null when empty or not a hex color. */
+export function parseHexColor(raw: string): string | null {
+  const s = String(raw || "").trim();
+  if (!s) return null;
+  const m = s.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (!m) return null;
+  let h = m[1].toLowerCase();
+  if (h.length === 3)
+    h = h
+      .split("")
+      .map((c) => `${c}${c}`)
+      .join("");
+  return `#${h}`;
+}
+
+export function bubbleColor(bubble: BubbleRecord): string {
+  const extra = bubbleExtra(bubble);
+  return typeof extra.color === "string" ? extra.color : "";
+}
+
+export function bubbleStrokeColor(bubble: BubbleRecord): string {
+  const extra = bubbleExtra(bubble);
+  if (typeof extra.strokeColor === "string") return extra.strokeColor;
+  if (typeof extra.stroke === "string") return extra.stroke;
+  if (extra.stroke && typeof extra.stroke === "object") {
+    const s = extra.stroke as Record<string, unknown>;
+    if (typeof s.color === "string") return s.color;
+    if (typeof s.strokeColor === "string") return s.strokeColor;
+  }
+  return "";
+}
+
+export function bubbleStrokeThickness(bubble: BubbleRecord): number | null {
+  const extra = bubbleExtra(bubble);
+  if (typeof extra.strokeThickness === "number" && Number.isFinite(extra.strokeThickness)) {
+    return extra.strokeThickness;
+  }
+  if (typeof extra.strokeWidth === "number" && Number.isFinite(extra.strokeWidth)) {
+    return extra.strokeWidth;
+  }
+  if (extra.stroke && typeof extra.stroke === "object") {
+    const s = extra.stroke as Record<string, unknown>;
+    const t = s.thickness ?? s.width;
+    if (typeof t === "number" && Number.isFinite(t)) return t;
+  }
+  return null;
+}
+
+export function hasLetteringOverride(bubble: BubbleRecord): boolean {
+  return Boolean(bubbleColor(bubble) || bubbleStrokeColor(bubble) || bubbleStrokeThickness(bubble) != null);
+}
+
+/**
+ * Lettering extras the reader already understands (`color`, `stroke`,
+ * `strokeThickness`). Object-shaped `stroke` from old configs is flattened.
+ */
+export function letteringPatch(
+  bubble: BubbleRecord,
+  patch: { color?: string | null; stroke?: string | null; strokeThickness?: number | null }
+): Pick<BubbleRecord, "extraJson"> {
+  const extra: Record<string, unknown> = { ...bubbleExtra(bubble) };
+  if (extra.stroke && typeof extra.stroke === "object") {
+    const s = extra.stroke as Record<string, unknown>;
+    const color = s.color || s.strokeColor;
+    const t = s.thickness ?? s.width;
+    delete extra.stroke;
+    if (typeof color === "string" && extra.strokeColor == null) extra.stroke = color;
+    if (typeof t === "number" && extra.strokeThickness == null && extra.strokeWidth == null) {
+      extra.strokeThickness = t;
+    }
+  }
+  if ("color" in patch) {
+    if (!patch.color) delete extra.color;
+    else extra.color = patch.color;
+  }
+  if ("stroke" in patch) {
+    if (!patch.stroke) {
+      delete extra.stroke;
+      delete extra.strokeColor;
+    } else {
+      extra.stroke = patch.stroke;
+      delete extra.strokeColor;
+    }
+  }
+  if ("strokeThickness" in patch) {
+    if (patch.strokeThickness == null) {
+      delete extra.strokeThickness;
+      delete extra.strokeWidth;
+    } else {
+      extra.strokeThickness = patch.strokeThickness;
+      delete extra.strokeWidth;
+    }
+  }
+  return { extraJson: Object.keys(extra).length ? JSON.stringify(extra) : null };
+}
+
 export function bubbleAudio(bubble: BubbleRecord): string {
   const audio = bubbleExtra(bubble).audio;
   return typeof audio === "string" ? audio : "";

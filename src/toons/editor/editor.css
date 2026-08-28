@@ -361,6 +361,65 @@ body {
   font-size: 0.85rem;
 }
 
+.editor-advanced {
+  margin: 0.25rem 0 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+}
+
+.editor-advanced > summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.65rem;
+  list-style: none;
+}
+
+.editor-advanced > summary::-webkit-details-marker {
+  display: none;
+}
+
+.editor-advanced > summary::before {
+  content: "";
+  display: inline-block;
+  width: 0.38em;
+  height: 0.38em;
+  margin-right: 0.45rem;
+  border-right: 1.5px solid var(--silver);
+  border-bottom: 1.5px solid var(--silver);
+  transform: rotate(-45deg);
+  vertical-align: 0.15em;
+}
+
+.editor-advanced[open] > summary::before {
+  transform: rotate(45deg);
+  vertical-align: 0.25em;
+}
+
+.editor-color-row {
+  display: grid;
+  grid-template-columns: 2.35rem minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.editor-inspector input[type="color"] {
+  box-sizing: border-box;
+  width: 2.35rem;
+  min-height: 2.35rem;
+  padding: 0.15rem;
+  cursor: pointer;
+}
+
+.editor-inspector input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.editor-inspector input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 1px;
+}
+
 .editor-inspector audio {
   width: 100%;
   margin-top: 0.35rem;

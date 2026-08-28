@@ -4,18 +4,12 @@ import LangSwitcher from "../bookReader/LangSwitcher.vue";
 import { LikeButton } from "../bookReader/chrome";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "../bookReader/types";
-import { toonConfigUrl } from "../configUrls";
+import { readerConfigUrl } from "../configUrls";
 import { COVER } from "../coverCopy";
 
 const ASSET_PAGE_DIR = "/toons/redsmile-marcus/";
-/**
- * One page so far, so the reader stays `noindex` — but the config and its plate
- * are on the CDN, so the locked hash is the real source, same as every other
- * toon. Republish with `npm run publish-toon-config -- --toon redsmile-marcus`
- * after editing content/toons/redsmile-marcus/config.json, or production keeps
- * asking for the previous hash.
- */
-const CONFIG_URL = toonConfigUrl("redsmile-marcus");
+/** Published D1 JSON when the editor API is up; otherwise hashed / file config. */
+const CONFIG_URL = readerConfigUrl("redsmile-marcus");
 /** Same cover stock as episode 1 — one series, one book. */
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
 
