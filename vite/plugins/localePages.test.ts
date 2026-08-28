@@ -169,15 +169,13 @@ it("renders the real toons landing template into Italian", () => {
   expect(html).toContain('hreflang="x-default" href="https://twentyseven.pictures/toons/"');
   expect(html).toContain('rel="canonical" href="https://twentyseven.pictures/it/toons/"');
   expect(html).toContain('"inLanguage": "it"');
-  // Series landings are path-localized; readers keep one URL and take ?lang=.
-  // Nero moved from the second group to the first when it became a series.
-  expect(html).toContain('href="/it/toons/nero/"');
-  expect(html).toContain('href="/it/toons/erin-and-the-goblins/"');
-  expect(html).toContain('href="/it/toons/red-smile/"');
-  expect(html).toContain('href="/it/toons/jax/"');
-  // Every card on this page is a series landing now, so nothing here takes
-  // ?lang=. The invariant that still bites is the other direction: a reader
-  // path must never be prefixed, or the switcher points at a 404.
+  expect(html).toContain("data-toon-catalog");
+  // Series landings in schema are path-localized; the browse grid itself is
+  // filled from D1. Readers keep one URL and take ?lang=.
+  expect(html).toContain("https://twentyseven.pictures/it/toons/nero/");
+  expect(html).toContain("https://twentyseven.pictures/it/toons/erin-and-the-goblins/");
+  expect(html).toContain("https://twentyseven.pictures/it/toons/jax/");
+  // A reader path must never be prefixed, or the switcher points at a 404.
   for (const reader of ["nero-the-dog", "jax-the-chip", "redsmile-static", "erin", "erin-the-revenge"]) {
     expect(html, reader).not.toContain(`/it/toons/${reader}/`);
   }
