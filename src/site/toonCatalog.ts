@@ -34,6 +34,8 @@ export interface CatalogSeries {
   coverUrl: string | null;
   hubUrl: string | null;
   episodes: CatalogEpisode[];
+  /** All series members in D1, including drafts the grid does not list. */
+  episodeCount?: number;
 }
 
 export interface CatalogPayload {
@@ -66,7 +68,7 @@ export function seriesCardHtml(series: CatalogSeries, assetW = 1152, assetH = 17
         series.title
       )} interactive toon cover art" width="${assetW}" height="${assetH}" loading="lazy" decoding="async" />`
     : "";
-  const n = series.episodes.length;
+  const n = series.episodeCount ?? series.episodes.length;
   const cue = n === 1 ? "1 episode" : `${n} episodes`;
   return `<a class="series-card series-card--series" id="series-${esc(series.key)}" data-series="${esc(
     series.key

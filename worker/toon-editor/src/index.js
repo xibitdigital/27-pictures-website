@@ -482,6 +482,14 @@ async function handle(request, env, cors, session) {
   if (method === "GET" && path === "/catalog") {
     const seriesRows = (await env.DB.prepare("SELECT * FROM series ORDER BY sort ASC, title ASC").all()).results;
     const statuses = publicStatusesForRequest(request);
+    const countRows = (
+      await env.DB.prepare(
+        `SELECT series_key AS key, COUNT(*) AS n FROM toons
+         WHERE series_key IS NOT NULL AND series_key != ''
+         GROUP BY series_key`
+      ).all()
+    ).results;
+    const episodeCounts = new Map(countRows.map((row) => [row.key, Number(row.n) || 0]));
     const toonRows = (
       await env.DB.prepare(
         `SELECT toons.*,
@@ -523,6 +531,7 @@ async function handle(request, env, cors, session) {
           coverUrl: objectUrl(request, env, row.cover_key, null),
           hubUrl: row.hub_url || null,
           episodes: episodesOf(row.key),
+          episodeCount: episodeCounts.get(row.key) || 0,
         };
       })
       .filter((item) => item.episodes.length > 0);

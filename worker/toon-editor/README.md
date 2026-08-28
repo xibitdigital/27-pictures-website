@@ -46,6 +46,6 @@ npx wrangler d1 migrations apply toon-editor --local
 npx wrangler dev
 ```
 
-Local Vite (`make dev`) does **not** need `VITE_EDITOR_API`: it proxies `/__editor-api` to this Worker on `:8787`. Keep `make editor-worker` running in a second terminal.
+Local Vite (`make dev`) does **not** need `VITE_EDITOR_API`: it proxies `/__editor-api` to this Worker on `:8787`. Keep `make editor-worker` running in a second terminal. That process uses a **local Miniflare D1**, not the remote one.
 
-Production / staging: set `VITE_EDITOR_API` to the deployed Worker origin and add that origin to `connect-src` in `public/_headers` (already listed as `https://toon-editor.sangalli-marco.workers.dev`).
+Staging and production Pages both call the same deployed Worker, so they share the remote D1. Dump it with `npm run backup-db`.

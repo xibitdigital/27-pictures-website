@@ -12,7 +12,8 @@ ASSET_BASE = "https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev"
 # Books that may receive likes even before they have a D1 `toons` row.
 ALLOWED_TOONS = "erin,erin-the-revenge,jax,nero,redsmile-static,redsmile-marcus"
 
-# npx wrangler d1 create toon-editor  → paste the id here.
+# Staging and production share this D1 (one Worker). Local `wrangler dev`
+# uses Miniflare. Do not add env-specific d1_databases.
 [[d1_databases]]
 binding = "DB"
 database_name = "toon-editor"

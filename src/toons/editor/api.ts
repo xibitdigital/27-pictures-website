@@ -27,6 +27,7 @@ export function editorApiBase(): string | null {
   // Unit tests run with DEV=true; don't pretend the proxy exists there.
   if (import.meta.env.DEV && !import.meta.env.VITEST) return DEV_EDITOR_API;
   if (import.meta.env.VITEST) return null;
+  // Staging and production Pages share the deployed Worker (and its D1).
   return DEFAULT_EDITOR_API;
 }
 

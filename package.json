@@ -30,6 +30,7 @@
     "format:check": "prettier --check \"src/**/*.{vue,ts,js,css,html,json}\" \"public/**/*.{css,html,js,json}\" \"vite/**/*.ts\"",
     "check": "npm test && npm run build",
     "backup-cdn": "node scripts/backup-cdn-assets.js",
+    "backup-db": "node scripts/backup-toon-db.js",
     "import-toon": "node scripts/import-toon-config.js"
   },
   "dependencies": {

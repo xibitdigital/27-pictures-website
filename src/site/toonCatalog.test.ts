@@ -62,6 +62,16 @@ describe("toonCatalog", () => {
     expect(html).not.toContain("/toons/erin-the-revenge/");
   });
 
+  it("counts every series member, not only the visible episodes", () => {
+    const html = seriesCardHtml({
+      ...series,
+      episodes: [episode],
+      episodeCount: 2,
+    });
+    expect(html).toContain("2 episodes");
+    expect(html).not.toContain("1 episode");
+  });
+
   it("renders an episode card for the series page grid", () => {
     const html = episodeCardHtml(episode);
     expect(html).toContain("series-card--episode");
