@@ -30,11 +30,6 @@ const IMAGE_TYPES = {
 const AUDIO_TYPES = {
   "audio/mpeg": "mp3",
   "audio/mp3": "mp3",
-  "audio/wav": "wav",
-  "audio/x-wav": "wav",
-  "audio/wave": "wav",
-  "audio/ogg": "ogg",
-  "audio/webm": "webm",
 };
 const DEFAULT_VARIANT = "bubble";
 const DEFAULT_TAIL = "bottom-left";
@@ -386,12 +381,11 @@ async function readUpload(request) {
 }
 
 function audioExtFromName(name) {
-  const lower = String(name || "").toLowerCase();
-  if (lower.endsWith(".mp3")) return "mp3";
-  if (lower.endsWith(".wav")) return "wav";
-  if (lower.endsWith(".ogg")) return "ogg";
-  if (lower.endsWith(".webm")) return "webm";
-  return "";
+  return String(name || "")
+    .toLowerCase()
+    .endsWith(".mp3")
+    ? "mp3"
+    : "";
 }
 
 async function readAudioUpload(request) {
@@ -401,10 +395,10 @@ async function readAudioUpload(request) {
     return { error: "file is required" };
   }
   const ext = AUDIO_TYPES[file.type] || audioExtFromName(file.name);
-  if (!ext) return { error: "audio must be mp3, wav, ogg, or webm" };
+  if (!ext) return { error: "audio must be mp3" };
   const bytes = await file.arrayBuffer();
   if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "audio too large (8MB max)" };
-  const type = file.type && AUDIO_TYPES[file.type] ? file.type : ext === "mp3" ? "audio/mpeg" : `audio/${ext}`;
+  const type = "audio/mpeg";
   return { bytes, ext, type };
 }
 

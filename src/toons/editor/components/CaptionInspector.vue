@@ -353,7 +353,7 @@ async function copyPrompt(): Promise<void> {
             ref="audioFileInput"
             type="file"
             name="audio-file"
-            accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,.mp3,.wav,.ogg"
+            accept="audio/mpeg,.mp3"
             hidden
             :disabled="uploading || !toonId"
             @change="onAudioFile"

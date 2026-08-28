@@ -124,6 +124,7 @@ describe("CaptionInspector", () => {
     expect(btn.classes()).not.toContain("editor-btn");
     expect(btn.text().trim()).toBe("");
     expect(btn.attributes("aria-label")).toBe("Upload audio");
+    expect(wrapper.get('input[name="audio-file"]').attributes("accept")).toBe("audio/mpeg,.mp3");
   });
 
   it("uploads a clip and patches the audio key", async () => {
