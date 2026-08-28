@@ -187,6 +187,19 @@ function clampStrokeThick(n: number): number {
   return Math.max(STROKE_MIN, Math.min(STROKE_MAX, Math.round(n)));
 }
 
+const strokeThickSlider = computed(() => {
+  const n = parseStrokeThick(strokeThickDraft.value);
+  if (n != null) return clampStrokeThick(n);
+  return STROKE_MIN;
+});
+
+function onStrokeThickSlider(ev: Event): void {
+  if (!props.bubble) return;
+  const n = clampStrokeThick(Number((ev.target as HTMLInputElement).value));
+  strokeThickDraft.value = String(n);
+  emit("change", letteringPatch(props.bubble, { strokeThickness: n }));
+}
+
 function onStrokeThickInput(ev: Event): void {
   if (!props.bubble) return;
   const raw = (ev.target as HTMLInputElement).value;
@@ -491,18 +504,32 @@ async function copyPrompt(): Promise<void> {
       </label>
       <label>
         Stroke thickness
-        <input
-          type="number"
-          name="stroke-thickness"
-          :min="STROKE_MIN"
-          :max="STROKE_MAX"
-          step="1"
-          v-model="strokeThickDraft"
-          placeholder="default"
-          @focus="strokeThickFocused = true"
-          @input="onStrokeThickInput"
-          @blur="onStrokeThickBlur"
-        />
+        <span class="editor-slider-row">
+          <input
+            type="range"
+            name="stroke-thickness-slider"
+            :min="STROKE_MIN"
+            :max="STROKE_MAX"
+            step="1"
+            :value="strokeThickSlider"
+            :aria-valuemin="STROKE_MIN"
+            :aria-valuemax="STROKE_MAX"
+            :aria-valuenow="strokeThickSlider"
+            @input="onStrokeThickSlider"
+          />
+          <input
+            type="number"
+            name="stroke-thickness"
+            :min="STROKE_MIN"
+            :max="STROKE_MAX"
+            step="1"
+            v-model="strokeThickDraft"
+            placeholder="default"
+            @focus="strokeThickFocused = true"
+            @input="onStrokeThickInput"
+            @blur="onStrokeThickBlur"
+          />
+        </span>
       </label>
       <label>
         Voice

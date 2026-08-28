@@ -159,6 +159,18 @@ describe("CaptionInspector", () => {
     expect((wrapper.get('input[name="color"]').element as HTMLInputElement).value).toBe("#ffffff");
     expect((wrapper.get('input[name="stroke"]').element as HTMLInputElement).value).toBe("#000000");
     expect((wrapper.get('input[name="stroke-thickness"]').element as HTMLInputElement).value).toBe("8");
+    expect((wrapper.get('input[name="stroke-thickness-slider"]').element as HTMLInputElement).value).toBe("8");
+  });
+
+  it("has a stroke thickness slider from 0 to 16", async () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    const slider = wrapper.get('input[name="stroke-thickness-slider"]');
+    expect((slider.element as HTMLInputElement).min).toBe("0");
+    expect((slider.element as HTMLInputElement).max).toBe("16");
+    await slider.setValue("8");
+    const patch = wrapper.emitted("change")![0][0] as Partial<BubbleRecord>;
+    expect(JSON.parse(patch.extraJson as string)).toEqual({ strokeThickness: 8 });
+    expect((wrapper.get('input[name="stroke-thickness"]').element as HTMLInputElement).value).toBe("8");
   });
 
   it("patches lettering color, stroke and thickness into extraJson", async () => {
