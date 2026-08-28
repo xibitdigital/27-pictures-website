@@ -120,10 +120,6 @@ export function bubbleStrokeThickness(bubble: BubbleRecord): number | null {
   return null;
 }
 
-export function hasLetteringOverride(bubble: BubbleRecord): boolean {
-  return Boolean(bubbleColor(bubble) || bubbleStrokeColor(bubble) || bubbleStrokeThickness(bubble) != null);
-}
-
 /**
  * Lettering extras the reader already understands (`color`, `stroke`,
  * `strokeThickness`). Object-shaped `stroke` from old configs is flattened.

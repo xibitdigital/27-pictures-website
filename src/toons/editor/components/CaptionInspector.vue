@@ -14,7 +14,6 @@ import {
   bubbleTextMap,
   bubbleVoice,
   extraPatch,
-  hasLetteringOverride,
   letteringPatch,
   parseHexColor,
   suggestElevenPrompt,
@@ -53,7 +52,6 @@ const colorDraft = ref("");
 const strokeDraft = ref("");
 const strokeThickDraft = ref("");
 const strokeThickFocused = ref(false);
-const advancedOpen = ref(false);
 const copied = ref(false);
 const uploading = ref(false);
 const uploadError = ref("");
@@ -77,9 +75,7 @@ watch(
   () => {
     copied.value = false;
     uploadError.value = "";
-    advancedOpen.value = props.bubble ? hasLetteringOverride(props.bubble) : false;
-  },
-  { immediate: true }
+  }
 );
 
 function audioPreviewSrc(path: string): string {
@@ -211,10 +207,6 @@ function onStrokeThickBlur(): void {
   const clamped = clampStrokeThick(n);
   strokeThickDraft.value = String(clamped);
   emit("change", letteringPatch(props.bubble, { strokeThickness: clamped }));
-}
-
-function onAdvancedToggle(ev: Event): void {
-  advancedOpen.value = (ev.target as HTMLDetailsElement).open;
 }
 
 function onLangInput(lang: LangCode, ev: Event): void {
@@ -454,6 +446,65 @@ async function copyPrompt(): Promise<void> {
         </span>
       </label>
       <label>
+        Color
+        <span class="editor-color-row">
+          <input
+            type="color"
+            name="color-swatch"
+            :value="colorSwatch"
+            :aria-label="colorDraft ? 'Lettering color' : 'Lettering color (default)'"
+            @input="onColorPicker"
+          />
+          <input
+            type="text"
+            name="color"
+            :value="colorDraft"
+            placeholder="default"
+            spellcheck="false"
+            autocomplete="off"
+            @input="onColorInput"
+            @blur="onColorBlur"
+          />
+        </span>
+      </label>
+      <label>
+        Stroke
+        <span class="editor-color-row">
+          <input
+            type="color"
+            name="stroke-swatch"
+            :value="strokeSwatch"
+            :aria-label="strokeDraft ? 'Lettering stroke' : 'Lettering stroke (default)'"
+            @input="onStrokePicker"
+          />
+          <input
+            type="text"
+            name="stroke"
+            :value="strokeDraft"
+            placeholder="default"
+            spellcheck="false"
+            autocomplete="off"
+            @input="onStrokeInput"
+            @blur="onStrokeBlur"
+          />
+        </span>
+      </label>
+      <label>
+        Stroke thickness
+        <input
+          type="number"
+          name="stroke-thickness"
+          :min="STROKE_MIN"
+          :max="STROKE_MAX"
+          step="1"
+          v-model="strokeThickDraft"
+          placeholder="default"
+          @focus="strokeThickFocused = true"
+          @input="onStrokeThickInput"
+          @blur="onStrokeThickBlur"
+        />
+      </label>
+      <label>
         Voice
         <select name="voice" :value="bubbleVoice(bubble)" @change="onVoiceChange">
           <option value="">None (SFX)</option>
@@ -499,68 +550,6 @@ async function copyPrompt(): Promise<void> {
         <audio v-if="audioSrc" controls preload="none" :src="audioSrc" />
         <p v-if="uploadError" class="editor-error" role="alert">{{ uploadError }}</p>
       </div>
-      <details class="editor-advanced" :open="advancedOpen" @toggle="onAdvancedToggle">
-        <summary>Advanced</summary>
-        <label>
-          Color
-          <span class="editor-color-row">
-            <input
-              type="color"
-              name="color-swatch"
-              :value="colorSwatch"
-              :aria-label="colorDraft ? 'Lettering color' : 'Lettering color (default)'"
-              @input="onColorPicker"
-            />
-            <input
-              type="text"
-              name="color"
-              :value="colorDraft"
-              placeholder="default"
-              spellcheck="false"
-              autocomplete="off"
-              @input="onColorInput"
-              @blur="onColorBlur"
-            />
-          </span>
-        </label>
-        <label>
-          Stroke
-          <span class="editor-color-row">
-            <input
-              type="color"
-              name="stroke-swatch"
-              :value="strokeSwatch"
-              :aria-label="strokeDraft ? 'Lettering stroke' : 'Lettering stroke (default)'"
-              @input="onStrokePicker"
-            />
-            <input
-              type="text"
-              name="stroke"
-              :value="strokeDraft"
-              placeholder="default"
-              spellcheck="false"
-              autocomplete="off"
-              @input="onStrokeInput"
-              @blur="onStrokeBlur"
-            />
-          </span>
-        </label>
-        <label>
-          Stroke thickness
-          <input
-            type="number"
-            name="stroke-thickness"
-            :min="STROKE_MIN"
-            :max="STROKE_MAX"
-            step="1"
-            v-model="strokeThickDraft"
-            placeholder="default"
-            @focus="strokeThickFocused = true"
-            @input="onStrokeThickInput"
-            @blur="onStrokeThickBlur"
-          />
-        </label>
-      </details>
       <label>
         <span class="editor-prompt-head">
           ElevenLabs Studio prompt

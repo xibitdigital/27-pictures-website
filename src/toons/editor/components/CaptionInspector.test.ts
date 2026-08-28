@@ -149,13 +149,13 @@ describe("CaptionInspector", () => {
     expect(wrapper.emitted("remove")).toHaveLength(1);
   });
 
-  it("opens Advanced when the bubble already has lettering extras", () => {
+  it("shows lettering color, stroke and thickness on the inspector", () => {
     const inked: BubbleRecord = {
       ...bubble,
       extraJson: JSON.stringify({ color: "#ffffff", stroke: "#000000", strokeThickness: 8 }),
     };
     const wrapper = mount(CaptionInspector, { props: { bubble: inked } });
-    expect(wrapper.get("details").attributes("open")).toBeDefined();
+    expect(wrapper.find("details").exists()).toBe(false);
     expect((wrapper.get('input[name="color"]').element as HTMLInputElement).value).toBe("#ffffff");
     expect((wrapper.get('input[name="stroke"]').element as HTMLInputElement).value).toBe("#000000");
     expect((wrapper.get('input[name="stroke-thickness"]').element as HTMLInputElement).value).toBe("8");

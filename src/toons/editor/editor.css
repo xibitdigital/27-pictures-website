@@ -361,41 +361,6 @@ body {
   font-size: 0.85rem;
 }
 
-.editor-advanced {
-  margin: 0.25rem 0 1rem;
-  border-top: 1px solid var(--border);
-  padding-top: 0.65rem;
-}
-
-.editor-advanced > summary {
-  cursor: pointer;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  margin-bottom: 0.65rem;
-  list-style: none;
-}
-
-.editor-advanced > summary::-webkit-details-marker {
-  display: none;
-}
-
-.editor-advanced > summary::before {
-  content: "";
-  display: inline-block;
-  width: 0.38em;
-  height: 0.38em;
-  margin-right: 0.45rem;
-  border-right: 1.5px solid var(--silver);
-  border-bottom: 1.5px solid var(--silver);
-  transform: rotate(-45deg);
-  vertical-align: 0.15em;
-}
-
-.editor-advanced[open] > summary::before {
-  transform: rotate(45deg);
-  vertical-align: 0.25em;
-}
-
 .editor-color-row {
   display: grid;
   grid-template-columns: 2.35rem minmax(0, 1fr);
