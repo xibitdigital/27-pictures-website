@@ -280,7 +280,7 @@ async function upsertSeries(env, seriesMeta, ts) {
   }
 }
 
-async function readerConfigFromToon(env, toon) {
+async function readerConfigFromToon(env, toon, request) {
   const extra = parseToonExtra(toon);
   const pageRows = (
     await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(toon.id).all()
@@ -491,7 +491,7 @@ async function handle(request, env, cors, session) {
       .bind(slug, ...statuses)
       .first();
     if (!toon) return json({ error: "not found" }, 404, cors);
-    return json(await readerConfigFromToon(env, toon), 200, cors);
+    return json(await readerConfigFromToon(env, toon, request), 200, cors);
   }
 
   if (method === "PUT" && path === "/series") {
@@ -845,7 +845,7 @@ async function handle(request, env, cors, session) {
   if (exportMatch && method === "GET") {
     const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(exportMatch[1]).first();
     if (!toon) return json({ error: "not found" }, 404, cors);
-    return json(await readerConfigFromToon(env, toon), 200, cors);
+    return json(await readerConfigFromToon(env, toon, request), 200, cors);
   }
 
   const pageMatch = path.match(/^\/pages\/([^/]+)$/);
@@ -967,6 +967,8 @@ async function handle(request, env, cors, session) {
 
   return json({ error: "not found" }, 404, cors);
 }
+
+export { publicWord, readerConfigFromToon };
 
 export default {
   async fetch(request, env) {
