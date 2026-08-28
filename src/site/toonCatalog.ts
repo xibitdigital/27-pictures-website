@@ -7,6 +7,7 @@
  */
 import { editorApiBase, withSiteQuery } from "../toons/editor/api";
 import { pickDescription, type DescriptionMap } from "../toons/editor/types";
+import { SERIES } from "../toons/series";
 import { documentLocale, UI, withCaptionLang } from "./i18n";
 import { initEpisodeVotes, initSeriesVotes } from "./seriesCards";
 import { initToonRows, type RowEpisode } from "./toonRows";
@@ -61,6 +62,12 @@ function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+/** Books that belong to the series, including drafts the public grid hides. */
+export function seriesItemCount(series: CatalogSeries): number {
+  const canon = SERIES.find((s) => s.key === series.key)?.episodes.filter((ep) => ep.id).length ?? 0;
+  return Math.max(Number(series.episodeCount) || 0, series.episodes.length, canon);
+}
+
 export function seriesCardHtml(series: CatalogSeries, assetW = 1152, assetH = 1728): string {
   const href = withCaptionLang(series.hubUrl || `/toons/${series.key}/`);
   const img = series.coverUrl
@@ -68,7 +75,7 @@ export function seriesCardHtml(series: CatalogSeries, assetW = 1152, assetH = 17
         series.title
       )} interactive toon cover art" width="${assetW}" height="${assetH}" loading="lazy" decoding="async" />`
     : "";
-  const n = series.episodeCount ?? series.episodes.length;
+  const n = seriesItemCount(series);
   const cue = n === 1 ? "1 episode" : `${n} episodes`;
   return `<a class="series-card series-card--series" id="series-${esc(series.key)}" data-series="${esc(
     series.key

@@ -5,6 +5,7 @@ import {
   episodeCardHtml,
   renderLandingGrid,
   seriesCardHtml,
+  seriesItemCount,
   standaloneCardHtml,
 } from "./toonCatalog";
 import type { CatalogEpisode, CatalogSeries } from "./toonCatalog";
@@ -58,7 +59,7 @@ describe("toonCatalog", () => {
     expect(html).toContain("data-quick-view");
     expect(html).toContain('href="/toons/erin-and-the-goblins/"');
     expect(html).toContain("Erin &amp; the Goblins");
-    expect(html).toContain("1 episode");
+    expect(html).toContain("2 episodes");
     expect(html).not.toContain("/toons/erin-the-revenge/");
   });
 
@@ -70,6 +71,20 @@ describe("toonCatalog", () => {
     });
     expect(html).toContain("2 episodes");
     expect(html).not.toContain("1 episode");
+  });
+
+  it("counts RED SMILE static and Marcus even when Marcus is draft", () => {
+    const redSmile: CatalogSeries = {
+      key: "red-smile",
+      title: "RED SMILE",
+      tagline: "Horror",
+      description: "Elena.",
+      coverUrl: null,
+      hubUrl: "/toons/red-smile/",
+      episodes: [{ ...episode, id: "redsmile-static", slug: "redsmile-static", title: "static", n: 1 }],
+    };
+    expect(seriesItemCount(redSmile)).toBe(2);
+    expect(seriesCardHtml(redSmile)).toContain("2 episodes");
   });
 
   it("renders an episode card for the series page grid", () => {
