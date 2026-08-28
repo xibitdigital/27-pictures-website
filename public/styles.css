@@ -2571,7 +2571,7 @@ button:focus-visible {
 
 /* ── Series shelf ──
    One card per series instead of every episode of every book at once. The
-   dynamic rows above (continue reading, most loved) stay as scrolling rails;
+   dynamic continue-reading row stays as a scrolling rail;
    this is the standing catalogue, so it is a grid that wraps rather than a
    row that hides books off-screen. */
 /* One grid for every card shelf: /toons/ and each series landing.

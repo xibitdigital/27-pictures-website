@@ -2,9 +2,9 @@
  * Heart counts from the editor Worker (D1), shared by everything on /toons/
  * that shows them.
  *
- * The result is memoised per page load: the "most loved" rail and the vote
- * counts on the series cards want the same numbers, and asking the Worker
- * twice for every book would double the requests to show one figure twice.
+ * The result is memoised per page load: series cards and episode cards
+ * want the same numbers, and asking the Worker twice for every book would
+ * double the requests to show one figure twice.
  */
 
 import { likesApiBase } from "../toons/bookReader/useToonLikes";

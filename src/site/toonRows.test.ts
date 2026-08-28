@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { continueReadingTiles, mostLovedTiles } from "./toonRows";
+import { continueReadingTiles } from "./toonRows";
 import type { Episode } from "../toons/series";
 import type { ReadingProgress } from "../toons/bookReader/readingProgress";
 
@@ -61,32 +61,5 @@ describe("continueReadingTiles", () => {
 
   it("renders nothing when no book has been started", () => {
     expect(continueReadingTiles(EPISODES, () => null)).toEqual([]);
-  });
-});
-
-describe("mostLovedTiles", () => {
-  it("ranks by hearts and drops books with none", () => {
-    const tiles = mostLovedTiles(
-      EPISODES,
-      new Map([
-        ["erin", 3],
-        ["nero", 11],
-      ])
-    );
-    expect(tiles).toHaveLength(2);
-    // Ranked by hearts, but the count is not printed — the tile shows length.
-    expect(tiles[0]).toContain("/toons/nero/");
-    expect(tiles[1]).toContain("/toons/erin/");
-    expect(tiles[0]).not.toContain("heart");
-  });
-
-  it("keeps a book with a single vote, and still does not print the count", () => {
-    const [tile] = mostLovedTiles(EPISODES, new Map([["erin", 1]]));
-    expect(tile).toContain("/toons/erin/");
-    expect(tile).not.toContain("heart");
-  });
-
-  it("renders nothing when nobody has voted", () => {
-    expect(mostLovedTiles(EPISODES, new Map())).toEqual([]);
   });
 });

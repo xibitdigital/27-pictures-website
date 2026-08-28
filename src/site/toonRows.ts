@@ -1,26 +1,17 @@
 /**
- * The two rows on /toons/ that cannot be static HTML.
- *
- * - **Continue reading** — per-visitor, from localStorage the readers write.
- * - **Most loved** — per-site, from the likes Worker (KV).
- *
- * Both are additive: the page ships complete without them, and each row only
- * appears once it has something true to say. A row that would show "no
- * progress yet" or an empty ranking is worse than no row.
+ * Continue reading on /toons/ — per-visitor, from localStorage the readers write.
+ * The row stays hidden until there is a book to resume.
  */
-import { fetchLikes } from "./likes";
 import { allEpisodes, episodeLabel, type Episode } from "../toons/series";
 import { readProgress, type ReadingProgress } from "../toons/bookReader/readingProgress";
 import { documentLocale, UI, withCaptionLang } from "./i18n";
 
 export interface RowLabels {
   pageOf: string;
-  pagesCount: string;
 }
 
 function defaultLabels(): RowLabels {
-  const ui = UI[documentLocale()];
-  return { pageOf: ui.pageOf, pagesCount: ui.pagesCount };
+  return { pageOf: UI[documentLocale()].pageOf };
 }
 
 function fill(template: string, vars: Record<string, string | number>): string {
@@ -78,33 +69,7 @@ export function continueReadingTiles(
     });
 }
 
-/**
- * Most hearts first; ties keep series order. Books with no votes are left out.
- *
- * The count ranks the row but is not printed on it: the heading already says
- * these are ranked by hearts, and a tile reading "1 heart" undersells a book
- * rather than recommending it. The tile shows its length instead, which is
- * what someone deciding what to read next actually wants.
- */
-export function mostLovedTiles(
-  episodes: RowEpisode[],
-  likes: Map<string, number>,
-  labels: RowLabels = defaultLabels()
-): string[] {
-  return episodes
-    .filter((ep) => (likes.get(ep.id as string) ?? 0) > 0)
-    .sort((a, b) => (likes.get(b.id as string) ?? 0) - (likes.get(a.id as string) ?? 0))
-    .map((ep) => tile(ep, fill(labels.pagesCount, { n: ep.pages ?? 0 })));
-}
-
 export function initToonRows(episodes: RowEpisode[] = allEpisodes()): void {
   const resume = document.getElementById("continue-reading");
   if (resume) renderRow(resume, continueReadingTiles(episodes));
-
-  const loved = document.getElementById("most-loved");
-  if (loved) {
-    void fetchLikes(episodes.map((ep) => ep.id as string)).then((likes) =>
-      renderRow(loved, mostLovedTiles(episodes, likes))
-    );
-  }
 }

@@ -151,7 +151,7 @@ describe("toonCatalog", () => {
     expect(grid.querySelector(".series-card--soon")).toBeNull();
   });
 
-  it("flattens catalog episodes for continue-reading / most-loved", () => {
+  it("flattens catalog episodes for continue-reading", () => {
     const rows = catalogAsRowEpisodes({ series: [series], ungrouped: [loose] });
     expect(rows.map((r) => r.id)).toEqual(["erin-the-revenge", "studio-demo"]);
     expect(rows[0].seriesTitle).toBe("Erin & the Goblins");

@@ -17,8 +17,8 @@ const app = createApp(SiteApp, { page: "toons" });
 app.directive("magnetic", vMagnetic);
 app.mount("#site-app");
 
-// Continue / most-loved from the static registry first; a catalog hit
-// rebuilds them from D1 (see initToonCatalog).
+// Continue reading from the static registry first; a catalog hit rebuilds
+// it from D1 (see initToonCatalog).
 initToonRows();
 
 // Browse grid is empty until this resolves; cards come only from D1.
@@ -28,5 +28,4 @@ void initToonCatalog();
 // dialog instead. Without JS the link simply navigates.
 initSeriesQuickView();
 
-// Series vote totals; shares the memoised likes fetch with the "most loved" row.
 initSeriesVotes();
