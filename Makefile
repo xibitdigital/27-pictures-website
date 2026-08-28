@@ -99,6 +99,10 @@ editor-worker: ## wrangler dev for the toon-editor Worker (local Miniflare D1 + 
 backup-db: ## Dump the remote toon-editor D1 (staging+prod) to d1-backup/
 	$(NPM) run backup-db
 
+.PHONY: restore-db
+restore-db: ## Load a remote D1 dump into local Miniflare (DUMP=1 to export first)
+	$(NPM) run restore-db -- $(if $(DUMP),--dump,) $(if $(FILE),--file=$(FILE),)
+
 .PHONY: import-toon
 import-toon: ## Load content/toons/$(TOON)/config.json into D1 (TOON=… or ALL=1)
 	$(NPM) run import-toon -- $(if $(ALL),--all,--toon $(TOON))

@@ -31,6 +31,7 @@
     "check": "npm test && npm run build",
     "backup-cdn": "node scripts/backup-cdn-assets.js",
     "backup-db": "node scripts/backup-toon-db.js",
+    "restore-db": "node scripts/restore-toon-db.js",
     "import-toon": "node scripts/import-toon-config.js"
   },
   "dependencies": {
