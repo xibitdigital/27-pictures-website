@@ -117,6 +117,15 @@ describe("CaptionInspector", () => {
     expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin", audio: "assets/sfx/a.mp3" });
   });
 
+  it("puts a small upload icon on the Audio label, not a full editor-btn", () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble, toonId: "t1" } });
+    const btn = wrapper.get('button[name="audio-upload"]');
+    expect(btn.classes()).toContain("editor-icon-btn");
+    expect(btn.classes()).not.toContain("editor-btn");
+    expect(btn.text().trim()).toBe("");
+    expect(btn.attributes("aria-label")).toBe("Upload audio");
+  });
+
   it("uploads a clip and patches the audio key", async () => {
     vi.mocked(api.uploadAudio).mockResolvedValue({
       key: "editor/demo/sfx/abc.mp3",

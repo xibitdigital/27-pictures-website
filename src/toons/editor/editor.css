@@ -231,13 +231,6 @@ body {
   font-size: 0.85rem;
 }
 
-.editor-audio-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.6rem;
-  align-items: center;
-}
-
 .editor-inspector audio {
   width: 100%;
   margin-top: 0.35rem;
@@ -259,6 +252,7 @@ body {
   gap: 0.5rem;
 }
 
+/* Field-adjacent actions (copy, upload). Never use .editor-btn next to an input. */
 .editor-icon-btn {
   display: inline-flex;
   align-items: center;
@@ -278,6 +272,11 @@ body {
 .editor-icon-btn:focus-visible {
   color: var(--text);
   border-color: var(--silver);
+}
+
+.editor-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .editor-icon-btn svg {

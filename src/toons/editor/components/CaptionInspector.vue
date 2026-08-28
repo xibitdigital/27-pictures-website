@@ -347,18 +347,8 @@ async function copyPrompt(): Promise<void> {
         </select>
       </label>
       <div class="editor-audio-field">
-        <span>Audio</span>
-        <span class="editor-audio-row">
-          <input
-            type="text"
-            name="audio"
-            :value="bubbleAudio(bubble)"
-            placeholder="assets/sfx/….mp3"
-            spellcheck="false"
-            autocomplete="off"
-            @input="onAudioInput"
-            @blur="onAudioBlur"
-          />
+        <span class="editor-prompt-head">
+          Audio
           <input
             ref="audioFileInput"
             type="file"
@@ -369,15 +359,29 @@ async function copyPrompt(): Promise<void> {
             @change="onAudioFile"
           />
           <button
-            class="editor-btn"
+            class="editor-icon-btn"
             type="button"
             name="audio-upload"
             :disabled="uploading || !toonId"
+            :aria-label="uploading ? 'Uploading' : 'Upload audio'"
+            :title="uploading ? 'Uploading' : 'Upload audio'"
             @click="audioFileInput?.click()"
           >
-            {{ uploading ? "Uploading…" : "Upload" }}
+            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M8 2.5v8M5 5.5 8 2.5 11 5.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.4" />
+            </svg>
           </button>
         </span>
+        <input
+          type="text"
+          name="audio"
+          :value="bubbleAudio(bubble)"
+          placeholder="assets/sfx/….mp3"
+          spellcheck="false"
+          autocomplete="off"
+          @input="onAudioInput"
+          @blur="onAudioBlur"
+        />
         <audio v-if="audioSrc" controls preload="none" :src="audioSrc" />
         <p v-if="uploadError" class="editor-error" role="alert">{{ uploadError }}</p>
       </div>
