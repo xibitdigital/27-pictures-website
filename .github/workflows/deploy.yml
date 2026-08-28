@@ -66,6 +66,8 @@ jobs:
       - name: Build
         env:
           VITE_ASSET_BASE: ${{ vars.VITE_ASSET_BASE }}
+          # Catalog + public reader config. Override with a repo variable if the Worker origin changes.
+          VITE_EDITOR_API: ${{ vars.VITE_EDITOR_API || 'https://toon-editor.sangalli-marco.workers.dev' }}
         run: npm run build
 
       - name: Deploy to production (twentyseven-pictures)

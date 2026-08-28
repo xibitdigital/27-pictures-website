@@ -16,7 +16,7 @@ ALLOWED_TOONS = "erin,erin-the-revenge,jax,nero,redsmile-static,redsmile-marcus"
 [[d1_databases]]
 binding = "DB"
 database_name = "toon-editor"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "03050176-63bb-4f6a-bf07-56b319d0a516"
 migrations_dir = "migrations"
 
 # Same bucket the rest of the site uses (scripts/lib/r2-media.js).

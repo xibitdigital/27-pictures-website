@@ -13,6 +13,11 @@ describe("editor api", () => {
     expect(editorApiBase()).toBeNull();
   });
 
+  it("uses an explicit VITE_EDITOR_API when set", () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    expect(editorApiBase()).toBe("https://editor.example.dev");
+  });
+
   it("tags catalog and config URLs with the page origin", () => {
     expect(withSiteQuery("/__editor-api/catalog", "https://staging.twentyseven.pictures")).toBe(
       "/__editor-api/catalog?site=https%3A%2F%2Fstaging.twentyseven.pictures"

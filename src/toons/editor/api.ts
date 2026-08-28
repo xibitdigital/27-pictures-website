@@ -15,6 +15,9 @@ export interface AuthPayload {
 /** Vite-dev proxy prefix — same origin, so login is not a CORS fetch. */
 export const DEV_EDITOR_API = "/__editor-api";
 
+/** Deployed Worker origin (also in `public/_headers` connect-src). */
+export const DEFAULT_EDITOR_API = "https://toon-editor.sangalli-marco.workers.dev";
+
 const REACH_ERROR =
   "Can't reach the editor API. In local dev run `make editor-worker` in another terminal, then reload.";
 
@@ -23,7 +26,8 @@ export function editorApiBase(): string | null {
   if (raw) return raw.replace(/\/$/, "");
   // Unit tests run with DEV=true; don't pretend the proxy exists there.
   if (import.meta.env.DEV && !import.meta.env.VITEST) return DEV_EDITOR_API;
-  return null;
+  if (import.meta.env.VITEST) return null;
+  return DEFAULT_EDITOR_API;
 }
 
 /** Tell the Worker which site is asking, so staging hosts see staging + public toons. */
