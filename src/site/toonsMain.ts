@@ -21,8 +21,7 @@ app.mount("#site-app");
 // rebuilds them from D1 (see initToonCatalog).
 initToonRows();
 
-// Published toons from D1 replace the browse grid. Static cards stay if
-// the Worker is down.
+// Browse grid is empty until this resolves; cards come only from D1.
 void initToonCatalog();
 
 // Multi-episode cards link to their series page; this shows that page in a

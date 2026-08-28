@@ -317,149 +317,15 @@
           <div class="experiments-grid"></div>
         </section>
 
-        <!-- One card per series. A single-episode book links straight to its
-             reader; a series links to its own page, which the quick-view dialog
-             also renders. Either way the card is a real link. -->
+        <!-- Cards come from D1 via initToonCatalog(). Series link to their hub
+             (quick-view intercepts the click); ungrouped toons link to the reader. -->
         <section class="toon-series series-shelf" aria-labelledby="browse-series-title">
           <header class="toon-series-head">
             <h3 id="browse-series-title" data-i18n="browseTitle">Browse the series</h3>
-            <p data-i18n="browseBlurb">Four books · pick one to start reading</p>
-            <!-- Grid is static HTML for crawlers and when the catalog Worker
-                 is down. With JS, initToonCatalog() replaces it with series
-                 containers + ungrouped toons from D1. -->
+            <p data-i18n="browseBlurb">Pick one to start reading</p>
           </header>
 
-          <div class="series-grid">
-            <a
-              class="series-card series-card--series"
-              id="series-nero"
-              data-series="nero"
-              data-quick-view
-              href="/toons/nero/"
-            >
-              <span class="series-card-face">
-                <span class="series-card-art"
-                  ><img
-                    src="%VITE_ASSET_BASE%/card-art/nero-page1.jpg"
-                    data-i18n-alt="neroAlt"
-                    alt="Nero interactive cyberpunk sicario toon cover art by 27 Pictures"
-                    width="800"
-                    height="1424"
-                    loading="eager"
-                    decoding="async"
-                    fetchpriority="high"
-                /></span>
-                <span class="series-card-meta" data-i18n="neroMeta">Cyberpunk noir</span>
-                <h3 class="series-card-title">Nero</h3>
-                <span class="series-card-cue"
-                  ><span data-i18n="neroCue">1 episode</span> <span aria-hidden="true">→</span></span
-                >
-                <span class="series-card-votes" data-votes-for="nero" hidden></span>
-              </span>
-              <span class="series-card-desc" data-i18n="neroDesc"
-                >Detective Nero and forensic Eve hunt a sicario called The Dog — crystal tech, AI glasses, and who hired
-                the bullet.</span
-              >
-            </a>
-
-            <a
-              class="series-card series-card--series"
-              id="series-red-smile"
-              data-series="red-smile"
-              data-quick-view
-              href="/toons/red-smile/"
-            >
-              <span class="series-card-face">
-                <span class="series-card-art"
-                  ><img
-                    src="%VITE_ASSET_BASE%/card-art/redsmile-static.jpg"
-                    data-i18n-alt="redsmileAlt"
-                    alt="RED SMILE interactive horror toon series cover art by 27 Pictures"
-                    width="800"
-                    height="1424"
-                    loading="lazy"
-                    decoding="async"
-                /></span>
-                <span class="series-card-meta" data-i18n="redsmileMeta">Horror</span>
-                <h3 class="series-card-title">RED SMILE</h3>
-                <span class="series-card-cue"
-                  ><span data-i18n="redsmileCue">2 episodes</span> <span aria-hidden="true">→</span></span
-                >
-                <span class="series-card-votes" data-votes-for="red-smile" hidden></span>
-              </span>
-              <span class="series-card-desc" data-i18n="redsmileDesc"
-                >Psychological horror in heavy black-and-white gekiga ink. Elena is alone in the flat when the
-                television finds a channel that should not exist.</span
-              >
-            </a>
-
-            <a
-              class="series-card series-card--series"
-              id="series-jax"
-              data-series="jax"
-              data-quick-view
-              href="/toons/jax/"
-            >
-              <span class="series-card-face">
-                <span class="series-card-art"
-                  ><img
-                    src="%VITE_ASSET_BASE%/card-art/jax.jpg"
-                    data-i18n-alt="jaxAlt"
-                    alt="Jax interactive cyberpunk toon cover art by 27 Pictures"
-                    width="1008"
-                    height="1792"
-                    loading="lazy"
-                    decoding="async"
-                /></span>
-                <span class="series-card-meta" data-i18n="jaxMeta">Cyberpunk</span>
-                <h3 class="series-card-title">Jax</h3>
-                <span class="series-card-cue"
-                  ><span data-i18n="jaxCue">1 episode</span> <span aria-hidden="true">→</span></span
-                >
-                <span class="series-card-votes" data-votes-for="jax" hidden></span>
-              </span>
-              <span class="series-card-desc" data-i18n="jaxDesc"
-                >A netrunner with a rare sickness who steals corporate mind-control tech — a future Robin Hood in
-                chrome.</span
-              >
-            </a>
-
-            <!-- Links to the series' own page; JS upgrades the click to a
-                 quick-view dialog showing that page's content. The link is the
-                 structure, the dialog is the enhancement — see
-                 src/site/seriesCards.ts. -->
-            <a
-              class="series-card series-card--series"
-              id="series-erin"
-              data-series="erin"
-              data-quick-view
-              href="/toons/erin-and-the-goblins/"
-            >
-              <span class="series-card-face">
-                <span class="series-card-art">
-                  <img
-                    src="%VITE_ASSET_BASE%/card-art/erin-dark.jpg"
-                    data-i18n-alt="erinAlt"
-                    alt="Erin &amp; the Goblins interactive manga reader cover art by 27 Pictures"
-                    width="1152"
-                    height="1728"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </span>
-                <span class="series-card-meta" data-i18n="erinMeta">Dark fantasy</span>
-                <h3 class="series-card-title">Erin &amp; the Goblins</h3>
-                <span class="series-card-cue"
-                  ><span data-i18n="erinCue">2 episodes</span> <span aria-hidden="true">&rarr;</span></span
-                >
-                <span class="series-card-votes" data-votes-for="erin" hidden></span>
-              </span>
-              <span class="series-card-desc" data-i18n="erinDesc"
-                >Half human, half vampire — she lives in a small town that is the passage between the goblin world and
-                the human one.</span
-              >
-            </a>
-          </div>
+          <div class="series-grid" data-toon-catalog></div>
         </section>
 
         <section class="toon-series" id="most-loved" aria-labelledby="most-loved-title" hidden>

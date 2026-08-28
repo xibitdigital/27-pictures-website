@@ -110,14 +110,9 @@ describe("toonCatalog", () => {
     expect(html).not.toContain("Half human, half vampire.");
   });
 
-  it("replaces the landing grid with DB series and ungrouped toons", () => {
+  it("fills an empty landing grid from the catalog", () => {
     const grid = document.createElement("div");
-    grid.innerHTML = `
-      <a class="series-card series-card--series" data-series="nero" href="/toons/nero/">Nero</a>
-      <a class="series-card series-card--series" data-series="erin" href="/toons/erin-and-the-goblins/">Erin old</a>
-    `;
     renderLandingGrid(grid, { series: [series], ungrouped: [loose] });
-    expect(grid.querySelector("[data-series=nero]")).toBeNull();
     expect(grid.querySelector("[data-series=erin]")?.textContent).toContain("Erin & the Goblins");
     expect(grid.querySelector("#toon-studio-demo")?.textContent).toContain("Studio Demo");
     expect(standaloneCardHtml(loose)).toContain("/toons/studio-demo/");

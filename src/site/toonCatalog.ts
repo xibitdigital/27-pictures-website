@@ -1,9 +1,9 @@
 /**
  * /toons/ catalog from the editor D1.
  *
- * A successful fetch *replaces* the browse grid: series stay series containers
- * (`series-card--series` + quick-view); published toons with no series render
- * as standalone cards. Static HTML is the no-JS / fetch-fail fallback.
+ * Fills `[data-toon-catalog]` on /toons/ from D1 (no static card fallback).
+ * Series hubs still ship episode HTML so the quick-view fetch has markup;
+ * a catalog hit replaces that grid and keeps coming-soon cards.
  */
 import { editorApiBase, withSiteQuery } from "../toons/editor/api";
 import { pickDescription, type DescriptionMap } from "../toons/editor/types";
@@ -190,7 +190,7 @@ export async function initToonCatalog(root: ParentNode = document): Promise<Cata
   const items = await loadCatalog();
   if (!items) return null;
 
-  const shelf = root.querySelector(".series-shelf .series-grid");
+  const shelf = root.querySelector("[data-toon-catalog]");
   if (shelf) {
     renderLandingGrid(shelf, items);
     const blurb = root.querySelector(".series-shelf .toon-series-head p");

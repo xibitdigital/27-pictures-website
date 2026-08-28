@@ -17,6 +17,14 @@ const bubble: BubbleRecord = {
 };
 
 describe("CaptionInspector", () => {
+  it("puts variant and tail on the first row", () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    const variant = wrapper.get('select[name="variant"]');
+    const tail = wrapper.get('select[name="tail"]');
+    expect(variant.element.parentElement?.parentElement).toBe(tail.element.parentElement?.parentElement);
+    expect(wrapper.get("label").text()).toContain("Variant");
+  });
+
   it("shows one field per language and patches Italian without dropping English", async () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
     const areas = wrapper.findAll("textarea[lang]");
@@ -37,7 +45,7 @@ describe("CaptionInspector", () => {
     expect(wrapper.emitted("change")?.[0][0]).toEqual({ size: 40 });
   });
 
-  it("does not clamp a leading 3 to 8 while typing 30", async () => {
+  it("does not clamp a leading 3 to 10 while typing 30", async () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
     const input = wrapper.get('input[name="size"]');
     await input.trigger("focus");
@@ -55,7 +63,37 @@ describe("CaptionInspector", () => {
     await input.setValue("3");
     await input.trigger("blur");
     const last = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
-    expect(last).toEqual({ size: 8 });
+    expect(last).toEqual({ size: 10 });
+  });
+
+  it("has a size slider from 10 to 100", async () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    const slider = wrapper.get('input[name="size-slider"]');
+    expect((slider.element as HTMLInputElement).min).toBe("10");
+    expect((slider.element as HTMLInputElement).max).toBe("100");
+    await slider.setValue("48");
+    expect(wrapper.emitted("change")?.[0][0]).toEqual({ size: 48 });
+    expect((wrapper.get('input[name="size"]').element as HTMLInputElement).value).toBe("48");
+  });
+
+  it("has an angle slider from -45 to 45", async () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    const slider = wrapper.get('input[name="angle-slider"]');
+    expect((slider.element as HTMLInputElement).min).toBe("-45");
+    expect((slider.element as HTMLInputElement).max).toBe("45");
+    await slider.setValue("-12");
+    expect(wrapper.emitted("change")?.[0][0]).toEqual({ angle: -12 });
+    expect((wrapper.get('input[name="angle"]').element as HTMLInputElement).value).toBe("-12");
+  });
+
+  it("clamps angle on blur", async () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    const input = wrapper.get('input[name="angle"]');
+    await input.trigger("focus");
+    await input.setValue("90");
+    await input.trigger("blur");
+    const last = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
+    expect(last).toEqual({ angle: 45 });
   });
 
   it("patches audio into extraJson", async () => {
@@ -80,6 +118,13 @@ describe("CaptionInspector", () => {
     await wrapper.get('select[name="voice"]').setValue("erin");
     const patch = wrapper.emitted("change")?.[0][0] as Partial<BubbleRecord>;
     expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin" });
+  });
+
+  it("puts a copy icon on the ElevenLabs prompt label", () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble } });
+    const btn = wrapper.get('button[name="copy-prompt"]');
+    expect(btn.attributes("aria-label")).toBe("Copy prompt");
+    expect(btn.text().trim()).toBe("");
   });
 
   it("suggests an ElevenLabs Studio prompt from voice, text and variant", () => {
