@@ -1,4 +1,4 @@
-import type { BubbleRecord, ToonListItem, ToonMetaInput, ToonRecord } from "./types";
+import type { BubbleRecord, SeriesOption, ToonListItem, ToonMetaInput, ToonRecord } from "./types";
 
 const TOKEN_KEY = "toon-editor-token";
 
@@ -117,6 +117,11 @@ export async function logout(): Promise<void> {
 
 export function listToons(): Promise<ToonListItem[]> {
   return api<ToonListItem[]>("/toons");
+}
+
+export async function listSeries(): Promise<SeriesOption[]> {
+  const body = await api<{ series?: SeriesOption[] }>("/series");
+  return Array.isArray(body.series) ? body.series : [];
 }
 
 export function createToon(input: ToonMetaInput): Promise<ToonRecord> {

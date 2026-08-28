@@ -158,8 +158,23 @@ function mapToon(row, request, env, pages) {
     status: row.status || "draft",
     readerUrl: row.reader_url || null,
     assetPageDir: row.asset_page_dir || null,
+    seriesKey: row.series_key || null,
+    episodeN: row.episode_n != null ? Number(row.episode_n) : null,
     pages: pages || [],
   };
+}
+
+function parseSeriesKey(body, fallback) {
+  if (!body || (!("seriesKey" in body) && !("series_key" in body))) return fallback;
+  const raw = String(body.seriesKey ?? body.series_key ?? "").trim();
+  return raw || null;
+}
+
+function parseEpisodeN(body, fallback) {
+  if (!body || (!("episodeN" in body) && !("episode_n" in body))) return fallback;
+  const n = Number(body.episodeN ?? body.episode_n);
+  if (!Number.isFinite(n) || n < 1) return null;
+  return Math.round(n);
 }
 
 function wordFromBubble(b) {
@@ -501,6 +516,23 @@ async function handle(request, env, cors, session) {
     return json(await readerConfigFromToon(env, toon, request), 200, cors);
   }
 
+  if (method === "GET" && path === "/series") {
+    const rows = (
+      await env.DB.prepare("SELECT key, title, tagline, sort FROM series ORDER BY sort ASC, title ASC").all()
+    ).results;
+    return json(
+      {
+        series: rows.map((row) => ({
+          key: row.key,
+          title: row.title,
+          tagline: row.tagline || "",
+        })),
+      },
+      200,
+      cors
+    );
+  }
+
   if (method === "PUT" && path === "/series") {
     const parsed = await readJson(request);
     if (parsed.error) return json({ error: parsed.error }, 400, cors);
@@ -736,9 +768,11 @@ async function handle(request, env, cors, session) {
     const status = parseStatus(body.status, "draft");
     const extra = {};
     const desc = applyDescriptions(extra, body, String(body.description || "").trim());
+    const seriesKey = parseSeriesKey(body, null);
+    const episodeN = seriesKey ? parseEpisodeN(body, null) : null;
     await env.DB.prepare(
-      `INSERT INTO toons (id, slug, title, subtitle, description, status, extra_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO toons (id, slug, title, subtitle, description, status, extra_json, series_key, episode_n, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         id,
@@ -748,6 +782,8 @@ async function handle(request, env, cors, session) {
         desc.en,
         status,
         JSON.stringify(extra),
+        seriesKey,
+        episodeN,
         ts,
         ts
       )
@@ -780,10 +816,12 @@ async function handle(request, env, cors, session) {
       const desc = applyDescriptions(extra, body, current.description);
       const description = desc.en;
       applyTitles(extra, body, title);
+      const seriesKey = parseSeriesKey(body, current.series_key || null);
+      const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n) : null;
       await env.DB.prepare(
-        `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, updated_at = ? WHERE id = ?`
+        `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, updated_at = ? WHERE id = ?`
       )
-        .bind(title, subtitle, description, status, JSON.stringify(extra), nowIso(), id)
+        .bind(title, subtitle, description, status, JSON.stringify(extra), seriesKey, episodeN, nowIso(), id)
         .run();
       return json(await loadToon(env, request, id), 200, cors);
     }

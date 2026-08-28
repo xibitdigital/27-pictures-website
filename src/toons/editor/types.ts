@@ -92,7 +92,15 @@ export interface ToonRecord {
   status?: string;
   readerUrl?: string | null;
   assetPageDir?: string | null;
+  seriesKey?: string | null;
+  episodeN?: number | null;
   pages: PageRecord[];
+}
+
+export interface SeriesOption {
+  key: string;
+  title: string;
+  tagline?: string;
 }
 
 export interface ToonListItem {
@@ -112,4 +120,6 @@ export interface ToonMetaInput {
   description: string;
   descriptions?: DescriptionMap;
   status?: ToonStatus;
+  seriesKey?: string | null;
+  episodeN?: number | null;
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
-import { createToon, getToon, patchToon, readImageSize, uploadCover } from "../api";
+import { createToon, getToon, listSeries, patchToon, readImageSize, uploadCover } from "../api";
 import { CAPTION_LANGS } from "../mapConfig";
 import {
   TOON_VISIBILITY,
@@ -11,6 +11,7 @@ import {
   statusFromVisibility,
   visibilityLabel,
   type DescriptionMap,
+  type SeriesOption,
   type ToonRecord,
   type ToonVisibility,
 } from "../types";
@@ -29,6 +30,9 @@ const lastDerivedSlug = ref("");
 const subtitle = ref("");
 const descriptions = reactive<DescriptionMap>(emptyDescriptionMap());
 const visibility = ref<ToonVisibility>("draft");
+const seriesList = ref<SeriesOption[]>([]);
+const seriesKey = ref("");
+const episodeN = ref("");
 const coverPreview = ref("");
 const coverFile = ref<File | null>(null);
 const existing = ref<ToonRecord | null>(null);
@@ -64,6 +68,8 @@ async function loadToon(id: string): Promise<void> {
     subtitle.value = toon.subtitle;
     Object.assign(descriptions, parseDescriptionMap(toon.descriptions, toon.description));
     visibility.value = visibilityFromStatus(toon.status);
+    seriesKey.value = toon.seriesKey || "";
+    episodeN.value = toon.episodeN != null ? String(toon.episodeN) : "";
     coverPreview.value = toon.coverUrl || "";
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Failed to load";
@@ -78,6 +84,21 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(async () => {
+  try {
+    seriesList.value = await listSeries();
+  } catch {
+    seriesList.value = [];
+  }
+});
+
+function episodePayload(): number | null {
+  if (!seriesKey.value.trim()) return null;
+  const n = Number(episodeN.value);
+  if (!Number.isFinite(n) || n < 1) return null;
+  return Math.round(n);
+}
 
 function onCover(ev: Event): void {
   const input = ev.target as HTMLInputElement;
@@ -107,6 +128,8 @@ async function onSubmit(ev: Event): Promise<void> {
         description: desc.en,
         descriptions: desc,
         status: statusFromVisibility(visibility.value),
+        seriesKey: seriesKey.value.trim() || null,
+        episodeN: episodePayload(),
       });
     } else {
       toon = await patchToon(String(route.params.id), {
@@ -115,6 +138,8 @@ async function onSubmit(ev: Event): Promise<void> {
         description: desc.en,
         descriptions: desc,
         status: statusFromVisibility(visibility.value),
+        seriesKey: seriesKey.value.trim() || null,
+        episodeN: episodePayload(),
       });
     }
     if (coverFile.value) {
@@ -172,6 +197,19 @@ async function onSubmit(ev: Event): Promise<void> {
           Subtitle
           <input v-model="subtitle" name="subtitle" />
         </label>
+        <div class="editor-pair-row editor-form-span">
+          <label>
+            Series
+            <select v-model="seriesKey" name="series">
+              <option value="">None (standalone)</option>
+              <option v-for="item in seriesList" :key="item.key" :value="item.key">{{ item.title }}</option>
+            </select>
+          </label>
+          <label v-if="seriesKey">
+            Episode
+            <input v-model="episodeN" type="number" name="episode-n" min="1" step="1" placeholder="1" />
+          </label>
+        </div>
         <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
           Description ({{ lang.label }})
           <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />

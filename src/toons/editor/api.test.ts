@@ -1,5 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createToon, editorApiBase, getToken, login, replacePage, setToken, uploadAudio, withSiteQuery } from "./api";
+import {
+  createToon,
+  editorApiBase,
+  getToken,
+  listSeries,
+  login,
+  replacePage,
+  setToken,
+  uploadAudio,
+  withSiteQuery,
+} from "./api";
 
 describe("editor api", () => {
   afterEach(() => {
@@ -67,6 +77,20 @@ describe("editor api", () => {
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer sess-1");
+  });
+
+  it("lists series for the meta form", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ series: [{ key: "erin", title: "Erin & the Goblins" }] }), { status: 200 })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const rows = await listSeries();
+    expect(rows).toEqual([{ key: "erin", title: "Erin & the Goblins" }]);
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/series");
   });
 
   it("POSTs bubble audio as FormData", async () => {
