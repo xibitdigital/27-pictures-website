@@ -20,7 +20,7 @@ cp .env.example .env
 # VITE_ASSET_BASE=https://pub-….r2.dev
 
 npm install
-make dev          # http://127.0.0.1:5173
+make dev          # Vite :5173 + editor Worker :8787
 make test
 make deploy       # requires VITE_ASSET_BASE in .env
 ```

@@ -6,23 +6,16 @@ Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
 
 |             |                                                             |
 | ----------- | ----------------------------------------------------------- |
-| Config      | `content/toons/redsmile-marcus/config.json` → publish to R2 |
-| Lock        | `src/toons/config-lock.json` → `redsmile-marcus` key        |
+| Book        | D1 `redsmile-marcus` — edit in `/toons/editor/`             |
+| Reader      | `/toons/redsmile-marcus/` (series hub `/toons/red-smile/`)  |
 | Design size | 800 × 1424 (portrait)                                       |
 | Pages       | **13**                                                      |
 
-## Status: published, unlisted
+## Status
 
-The config and every asset are on R2 and the reader resolves the locked hash
-like every other toon, so `/toons/redsmile-marcus/` works in a production build.
-
-It is still **unlisted**: `noindex, nofollow` on the reader, no card on
-`/toons/`, no sitemap or `llms.txt` entry. What it does have is an episode
-card on `/toons/red-smile/` and an entry in that page's `CreativeWorkSeries`
-`hasPart`, because the series page must not claim fewer episodes than it shows.
-
-Shipping the episode = remove the noindex, add the sitemap `<url>` and the
-`llms.txt` line.
+Visibility is D1 (`/toons/editor/`): **Draft** stays off `/toons/` and the
+series hub. Public lists it; Staging shows on staging only. Reader URL
+`/toons/redsmile-marcus/`.
 
 ## Page 10 is an insert
 

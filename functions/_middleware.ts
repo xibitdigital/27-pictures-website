@@ -16,17 +16,22 @@
  * take the preview offline, and production never reaches this branch anyway.
  */
 
+interface PagesEnv {
+  BASIC_AUTH_USER?: string;
+  BASIC_AUTH_PASS?: string;
+}
+
 const PRODUCTION_HOSTS = new Set(["twentyseven.pictures", "www.twentyseven.pictures"]);
 
 /** Constant-time-ish compare so a wrong password cannot be probed byte by byte. */
-function safeEqual(a, b) {
-  if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length) return false;
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
   let diff = 0;
   for (let i = 0; i < a.length; i += 1) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
 }
 
-function unauthorized() {
+function unauthorized(): Response {
   return new Response("Authentication required", {
     status: 401,
     headers: {
@@ -38,7 +43,7 @@ function unauthorized() {
   });
 }
 
-function credentialsOk(request, env) {
+function credentialsOk(request: Request, env: PagesEnv): boolean {
   const header = request.headers.get("Authorization") || "";
   if (!header.startsWith("Basic ")) return false;
   let decoded = "";
@@ -51,10 +56,12 @@ function credentialsOk(request, env) {
   if (sep < 0) return false;
   const user = decoded.slice(0, sep);
   const pass = decoded.slice(sep + 1);
-  return safeEqual(user, env.BASIC_AUTH_USER || "admin") && safeEqual(pass, env.BASIC_AUTH_PASS);
+  const expectedPass = env.BASIC_AUTH_PASS;
+  if (!expectedPass) return false;
+  return safeEqual(user, env.BASIC_AUTH_USER || "admin") && safeEqual(pass, expectedPass);
 }
 
-export async function onRequest(context) {
+export const onRequest: PagesFunction<PagesEnv> = async (context) => {
   const { request, env, next } = context;
   const host = new URL(request.url).hostname;
 
@@ -63,8 +70,7 @@ export async function onRequest(context) {
   if (env.BASIC_AUTH_PASS && !credentialsOk(request, env)) return unauthorized();
 
   const response = await next();
-  // Response is immutable as returned by the asset handler — clone to add headers.
   const guarded = new Response(response.body, response);
   guarded.headers.set("X-Robots-Tag", "noindex, nofollow");
   return guarded;
-}
+};

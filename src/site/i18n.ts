@@ -28,6 +28,9 @@ export const DEFAULT_LOCALE: Locale = "en";
  * Keep in step with `LOCALE_PAGES` in `vite/plugins/localePages.ts` — that list
  * is what actually writes the HTML, and a path here without a page there sends
  * the language switcher to a 404.
+ *
+ * Sitemap: site pages (not series hubs) also go in `LOCALIZED_SITE_PATHS`
+ * (`worker/toon-editor/src/sitemap.ts`). Hubs and readers come from D1.
  */
 export const LOCALIZED_PATHS = [
   "/",

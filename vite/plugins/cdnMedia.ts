@@ -1,7 +1,7 @@
 /**
  * Production CDN media:
  *  - require VITE_ASSET_BASE on `vite build` (not during tests)
- *  - expand %VITE_ASSET_BASE% in HTML entries + sitemap
+ *  - expand %VITE_ASSET_BASE% in HTML entries (+ sitemap.xml if present)
  *  - strip toon + card-art binaries from dist (served from R2)
  *
  * Source HTML should use: %VITE_ASSET_BASE%/card-art/foo.jpg

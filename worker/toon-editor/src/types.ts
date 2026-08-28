@@ -104,6 +104,8 @@ export interface SeriesRow {
   sort: number;
   extra_json?: string | null;
   toon_count?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface UserRow {

@@ -5,9 +5,9 @@ Interactive FlipFrame books. Deep-link pages: `/toons/erin/?page=N` and
 
 |             |                                                                  |
 | ----------- | ---------------------------------------------------------------- |
-| Ep 1 config | `content/toons/erin/config.json`                                 |
-| Ep 2 config | `content/toons/erin-the-revenge/config.json`                     |
-| Lock        | `src/toons/config-lock.json` → `erin` / `erin-the-revenge`       |
+| Ep 1        | `/toons/erin/` — D1 book `erin` (edit in `/toons/editor/`)       |
+| Ep 2        | `/toons/erin-the-revenge/` — D1 book `erin-the-revenge`          |
+| Series      | `/toons/erin-and-the-goblins/`                                   |
 | Plate size  | **1152 × 1728** (2:3 portrait) — not the 9:16 others             |
 | Prompts     | `docs/story/erin/e1/prompts/` and `docs/story/erin/e2/prompts/`   |
 | Skill       | `/erin-toon-page` → `.claude/skills/erin-toon-page/`             |
@@ -22,7 +22,7 @@ story plates**.
 Erin tears a portal back into the goblin world to **defeat the Goblin
 King**. Venus — a stranger who can move matter — catches her, teaches her, and
 walks with her. They name themselves on page 6 (handshake). Captions EN/IT/DE/FR.
-New plates carry **no baked lettering**; words live in `config.json` → `words[]`.
+New plates carry **no baked lettering**; words live in the editor (D1).
 
 Ep-2 voices: `erin`, `venus`, `goblinking` (`scripts/voices.json`). The
 goblin rider is `goblinking` pitched **+12%**. Place reverb is `plaza` on

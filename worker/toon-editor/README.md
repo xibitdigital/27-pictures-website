@@ -63,6 +63,7 @@ and local see published + staging; production sees published only.
 | POST | `/auth/logout` | JWT | client drops the token |
 | POST | `/auth/users` | JWT | add another editor |
 | GET | `/catalog` | public | `{ series, ungrouped }` — filtered by site |
+| GET | `/sitemap.xml` | public | XML: static site pages + visible series/readers |
 | GET | `/config/:slug` | public | FlipFrame JSON if status is visible for the site |
 | GET | `/likes` | public | `{ likes: { [toon]: n } }` |
 | GET | `/likes?toon=` | public | `{ toon, likes }` |
@@ -131,9 +132,48 @@ Used by `npm run import-toon`. The browser login form does not read `.env`.
 Typecheck: `npx tsc -p worker/toon-editor --noEmit` (also part of
 `npm run typecheck`). Tests: `npx vitest run worker/toon-editor`.
 
+## Sitemap (`GET /sitemap.xml`)
+
+Public. Pages (`functions/sitemap.xml.ts`) and local Vite proxy this to the
+site origin. Body = `LOCALIZED_SITE_PATHS` × locales + D1 series hubs (locales)
++ D1 readers (English). Drafts and `/toons/editor/` are omitted.
+
+### Updating `LOCALIZED_SITE_PATHS`
+
+File: `src/sitemap.ts`. English path, trailing slash. The helper emits
+`/path/`, `/it/path/`, `/de/path/`, `/fr/path/`.
+
+**Add a path** when you ship a new **translated site page** that is not a toon
+series hub or reader (homepage, `/watch/`, `/cosplay/`, a horror short, …):
+
+1. The page already has HTML and is in `LOCALE_PAGES` + `LOCALIZED_PATHS`
+   (`src/site/i18n.ts`) so `/de/…` is a real document.
+2. Append the English path to `LOCALIZED_SITE_PATHS`.
+3. Optional OG/card image: `images["/your-path/"]` in `staticSitemapUrls()`.
+4. Redeploy this Worker (`npx wrangler deploy` from this directory). A Pages
+   deploy alone does not pick up the list.
+
+**Do not add**
+
+| URL | Why |
+| --- | --- |
+| `/toons/jax/`, `/toons/red-smile/`, … | Series `hub_url` from D1 when an episode is visible |
+| `/toons/erin/`, `/toons/nero-the-dog/`, … | Reader URL from D1 when Public (Staging on staging) |
+| `/toons/editor/` | `robots.txt` Disallow |
+
+Hubs still belong in `LOCALIZED_PATHS` (language switcher). They just are not
+this sitemap list.
+
+Check:
+
+```bash
+curl -sS "https://toon-editor.sangalli-marco.workers.dev/sitemap.xml?site=https://twentyseven.pictures" \
+  | grep '<loc>'
+```
+
 ## Staging / production
 
 Staging and production Pages both call the same deployed Worker, so they share
 the remote D1. Dump it with `npm run backup-db`. Copy a dump into local
 Miniflare with `npm run restore-db` (or `npm run restore-db -- --dump` to
-export first). Restart `make editor-worker` after a restore.
+export first). Restart `make dev` after a restore.

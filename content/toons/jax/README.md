@@ -18,10 +18,9 @@ Netrunner, cracked porcelain skin, heavy cyber arm, trench coat. Sick, stubborn,
 
 ### Supporting (as tagged in captions)
 
-- **Riu**, **Nova** (AI HUD), **ripperdoc**, **badai** (hostile AI) — see `scripts/voices.json` and `config.json` page words.
+- **Riu**, **Nova** (AI HUD), **ripperdoc**, **badai** (hostile AI) — see `scripts/voices.json` and the captions in `/toons/editor/`.
 
 ## Captions / audio
 
-```bash
-npm run publish-toon-config -- --toon jax
-```
+Edit bubbles in `/toons/editor/`. Voice clips still land under
+`public/toons/jax/assets/sfx/` then R2 (`npm run upload-assets`).

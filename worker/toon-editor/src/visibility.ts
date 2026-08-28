@@ -46,7 +46,9 @@ export function callerHostname(request: RequestLike): string {
   }
   const siteHost = hostnameOf(site);
   if (siteHost) return siteHost;
-  return hostnameOf(request.headers?.get("Referer") || "");
+  const refererHost = hostnameOf(request.headers?.get("Referer") || "");
+  if (refererHost) return refererHost;
+  return hostnameOf(request.url);
 }
 
 /** Draft never. Staging host → published + staging. Production / unknown → published only. */

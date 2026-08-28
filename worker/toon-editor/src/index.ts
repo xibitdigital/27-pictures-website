@@ -2,7 +2,7 @@
  * Toon editor API — D1 drafts + R2 plates/covers.
  *
  * Public: CORS preflight, GET /media/editor/…, GET /auth/status,
- * GET /catalog, GET /config/:slug (published; staging hosts also see status=staging), GET/POST /likes,
+ * GET /catalog, GET /sitemap.xml, GET /config/:slug (published; staging hosts also see status=staging), GET/POST /likes,
  * POST /auth/login, POST /auth/register (first account only).
  * Everything else needs a JWT: Authorization: Bearer <login token>.
  */
@@ -19,6 +19,7 @@ import {
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { handleLikes } from "./likes";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
+import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
 
 import {
   DESC_LANGS,
@@ -96,6 +97,17 @@ function corsHeaders(request: Request, env: Env): CorsHeaders {
   return headers;
 }
 
+function xml(body: string, extraHeaders?: CorsHeaders): Response {
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+      ...extraHeaders,
+    },
+  });
+}
+
 function json(body: unknown, status: number, extraHeaders?: CorsHeaders): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -111,6 +123,7 @@ function isPublicRoute(method: string, path: string): boolean {
   if (method === "GET" && path.startsWith("/media/")) return true;
   if (method === "GET" && path === "/auth/status") return true;
   if (method === "GET" && path === "/catalog") return true;
+  if (method === "GET" && path === "/sitemap.xml") return true;
   if (method === "GET" && isPublicConfigPath(path)) return true;
   if (path === "/likes" && (method === "GET" || method === "POST")) return true;
   if (method === "POST" && (path === "/auth/login" || path === "/auth/register")) return true;
@@ -697,6 +710,41 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .bind(key)
       .first();
     return json(mapSeries(row, request, env), 200, cors);
+  }
+
+  if (method === "GET" && path === "/sitemap.xml") {
+    const origin = siteOriginFromRequest(request);
+    const statuses = publicStatusesForRequest(request);
+    const seriesRows = (await env.DB.prepare("SELECT * FROM series ORDER BY sort ASC, title ASC").all<SeriesRow>())
+      .results;
+    const toonRows = (
+      await env.DB.prepare(
+        `SELECT * FROM toons WHERE status IN (${statuses.map(() => "?").join(",")}) ORDER BY updated_at DESC`
+      )
+        .bind(...statuses)
+        .all<ToonRow>()
+    ).results;
+    const visibleKeys = new Set(toonRows.map((row) => row.series_key).filter((key): key is string => Boolean(key)));
+    const series = seriesRows
+      .filter((row) => visibleKeys.has(row.key))
+      .map((row) => ({
+        hubUrl: row.hub_url,
+        coverUrl: objectUrl(request, env, row.cover_key, null),
+        title: row.title,
+        updatedAt: row.updated_at || null,
+      }));
+    const toons = toonRows.map((row) => ({
+      readerUrl: row.reader_url || null,
+      slug: row.slug,
+      coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
+      title: row.title,
+      updatedAt: row.updated_at || null,
+    }));
+    const urls = [
+      ...staticSitemapUrls(origin, String(env.ASSET_BASE || "")),
+      ...toonSitemapUrls(origin, series, toons),
+    ];
+    return xml(renderSitemapXml(urls), cors);
   }
 
   if (method === "GET" && path === "/catalog") {

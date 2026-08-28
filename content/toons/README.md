@@ -9,6 +9,7 @@ still have one.
 | ---- | ---- |
 | `/toons/editor/` | Edit books and series (D1) |
 | Worker `GET /config/:slug` | Runtime FlipFrame JSON |
+| `GET /sitemap.xml` (Worker) | Series hubs + Public readers; drafts omitted |
 | `content/toons/<toon>/README.md` | How that book is supposed to read |
 
 ## Current toons

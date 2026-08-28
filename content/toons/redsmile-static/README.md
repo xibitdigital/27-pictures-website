@@ -9,7 +9,7 @@ Black-and-white horror short in the **RED SMILE** series. FlipFrame reader at
 | --------- | -------------------------------------------------- |
 | Toon id   | `redsmile-static`                                  |
 | Pages     | 7 (800×1424 PNG, watermarked, R2 only)             |
-| Config    | `content/toons/redsmile-static/config.json`        |
+| Book      | D1 `redsmile-static` — edit in `/toons/editor/`    |
 | App       | `src/toons/redsmile-static/`                       |
 | Card art  | `card-art/redsmile-static.jpg`                     |
 | Languages | `en` · `it` · `de` · `fr` (LangSwitcher in the top bar) |

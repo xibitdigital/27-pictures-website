@@ -4,8 +4,8 @@ Interactive FlipFrame short. Deep-link pages: `/toons/nero/?page=N` (1-based).
 
 |             |                                                  |
 | ----------- | ------------------------------------------------ |
-| Config      | `content/toons/nero/config.json` → publish to R2 |
-| Lock        | `src/toons/config-lock.json` → `nero` key        |
+| Book        | D1 `nero` — edit in `/toons/editor/`             |
+| Reader      | `/toons/nero-the-dog/` (series hub `/toons/nero/`) |
 | Design size | 800 × 1424 (portrait)                            |
 | Pages       | **20** (including time-gap plate)                |
 
@@ -92,12 +92,10 @@ Asset for page 23: `assets/410c1237863c5d55ac9a98815615646c.webp` (shot/reverse 
 ## Captions / audio workflow
 
 ```bash
-# Edit words in content/toons/nero/config.json
-npm run publish-toon-config -- --toon nero
+# Captions: /toons/editor/  (D1)
 
-# New plate
+# New plate (then attach the file in the editor)
 make add-image SRC=~/Downloads/page.png TOON=nero UPLOAD=1
-# then edit config pages[] order / captions, publish again
 
 # Voice (always --toon nero so the clip lands under asset-page-dir)
 set -a; source .env; set +a
