@@ -129,15 +129,22 @@ let quickViewDialog: HTMLDialogElement | null = null;
 const quickViewCache = new Map<string, DocumentFragment>();
 /** D1 catalog markup per series key — drafts never included. */
 let seriesEpisodeMarkup = new Map<string, string>();
+/** Full D1 apply (title, lead, cards). Set by `initToonCatalog`. */
+let seriesFill: ((root: ParentNode, seriesKey: string) => boolean) | null = null;
 
 export function setSeriesEpisodeMarkup(bySeries: Map<string, string>): void {
   seriesEpisodeMarkup = bySeries;
 }
 
+export function setSeriesFill(fn: ((root: ParentNode, seriesKey: string) => boolean) | null): void {
+  seriesFill = fn;
+}
+
 /** Fill a series grid from the catalog. Empty string clears leftover static cards. */
 export function fillSeriesEpisodeGrid(root: ParentNode, seriesKey: string): void {
+  if (seriesFill?.(root, seriesKey)) return;
   const html = seriesEpisodeMarkup.get(seriesKey);
-  const grid = root.querySelector(".series-grid");
+  const grid = root.querySelector("[data-series-episodes]") || root.querySelector(".series-grid");
   if (!grid || html === undefined) return;
   grid.innerHTML = html;
 }
@@ -147,6 +154,7 @@ export function resetSeriesQuickView(): void {
   quickViewCache.clear();
   quickViewDialog = null;
   seriesEpisodeMarkup = new Map();
+  seriesFill = null;
 }
 
 export function initSeriesQuickView(_root: ParentNode = document): void {

@@ -1,14 +1,21 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   applyEpisodeCatalog,
+  applySeriesPage,
   catalogAsRowEpisodes,
   episodeCardHtml,
+  episodesHeading,
+  initToonCatalog,
   renderLandingGrid,
   seriesCardHtml,
+  seriesForDocument,
   seriesItemCount,
   standaloneCardHtml,
 } from "./toonCatalog";
 import type { CatalogEpisode, CatalogSeries } from "./toonCatalog";
+import { resetSeriesQuickView } from "./seriesCards";
 
 const episode: CatalogEpisode = {
   id: "erin-the-revenge",
@@ -48,6 +55,8 @@ describe("toonCatalog", () => {
   afterEach(() => {
     document.body.innerHTML = "";
     document.documentElement.lang = "en";
+    delete document.documentElement.dataset.seriesKey;
+    resetSeriesQuickView();
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
   });
@@ -156,5 +165,93 @@ describe("toonCatalog", () => {
     expect(rows.map((r) => r.id)).toEqual(["erin-the-revenge", "studio-demo"]);
     expect(rows[0].seriesTitle).toBe("Erin & the Goblins");
     expect(rows[0].coverUrl).toContain("erin-the-revenge-intro");
+  });
+
+  it("each series hub HTML carries D1 hooks", () => {
+    const hubs: [string, string][] = [
+      ["src/toons/erin-and-the-goblins/index.html", "erin"],
+      ["src/toons/jax/index.html", "jax"],
+      ["src/toons/nero/index.html", "nero"],
+      ["src/toons/red-smile/index.html", "red-smile"],
+    ];
+    for (const [file, key] of hubs) {
+      const html = readFileSync(resolve(file), "utf8");
+      expect(html, file).toContain(`data-series-key="${key}"`);
+      expect(html, file).toContain("data-series-title");
+      expect(html, file).toContain("data-series-lead");
+      expect(html, file).toContain("data-series-episodes-heading");
+      expect(html, file).toContain("data-series-episodes");
+    }
+  });
+
+  it("paints title, lead, heading and cards from the catalog series", () => {
+    document.body.innerHTML = `
+      <h1 data-series-title>Old</h1>
+      <p data-series-lead>Old lead</p>
+      <h2 data-series-episodes-heading>Old heading</h2>
+      <div data-series-episodes></div>`;
+    applySeriesPage(document.body, { ...series, episodes: [episode, { ...episode, id: "erin", slug: "erin", n: 1 }] });
+    expect(document.querySelector("[data-series-title]")?.textContent).toBe("Erin & the Goblins");
+    expect(document.querySelector("[data-series-lead]")?.textContent).toBe("Half human, half vampire.");
+    expect(document.querySelector("[data-series-episodes-heading]")?.textContent).toBe("2 out, more in the darkroom");
+    expect(document.querySelectorAll(".series-card--episode")).toHaveLength(2);
+  });
+
+  it("counts one episode with the singular heading", () => {
+    expect(episodesHeading(1)).toBe("One out, more in the darkroom");
+    expect(episodesHeading(2)).toBe("2 out, more in the darkroom");
+  });
+
+  it("matches a hub by data-series-key, then by hub URL", () => {
+    const payload = { series: [series], ungrouped: [] };
+    document.documentElement.dataset.seriesKey = "erin";
+    expect(seriesForDocument(payload)?.key).toBe("erin");
+    document.documentElement.dataset.seriesKey = "missing";
+    expect(seriesForDocument(payload)?.key).toBeUndefined();
+    delete document.documentElement.dataset.seriesKey;
+  });
+
+  it("fills the series landing from D1 when html has data-series-key", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.test");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          series: [
+            {
+              key: "red-smile",
+              title: "RED SMILE",
+              tagline: "Horror",
+              description: "Elena.",
+              coverUrl: null,
+              hubUrl: "/toons/red-smile/",
+              episodes: [
+                {
+                  ...episode,
+                  id: "redsmile-static",
+                  slug: "redsmile-static",
+                  title: "static",
+                  n: 1,
+                  readerUrl: "/toons/redsmile-static/",
+                },
+              ],
+            },
+          ],
+          ungrouped: [],
+        }),
+      })
+    );
+    document.documentElement.dataset.seriesKey = "red-smile";
+    document.body.innerHTML = `
+      <h1 data-series-title>RED SMILE</h1>
+      <p data-series-lead>static lead</p>
+      <h2 data-series-episodes-heading>Two out</h2>
+      <div data-series-page><div class="series-grid" data-series-episodes></div></div>`;
+    await initToonCatalog();
+    expect(document.querySelector("[data-series-lead]")?.textContent).toBe("Elena.");
+    expect(document.querySelector("[data-series-episodes-heading]")?.textContent).toBe("One out, more in the darkroom");
+    expect(document.querySelector(".series-card--episode")?.getAttribute("href")).toBe("/toons/redsmile-static/");
+    delete document.documentElement.dataset.seriesKey;
   });
 });

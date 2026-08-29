@@ -168,6 +168,8 @@ type NavKey =
   | "home"
   | "pageOf"
   | "pagesCount"
+  | "episodesOutOne"
+  | "episodesOut"
   | "vote"
   | "votes"
   | "contactFormLabel"
@@ -202,6 +204,8 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     home: "Home",
     pageOf: "Page {page} of {pages}",
     pagesCount: "{n} pages",
+    episodesOutOne: "One out, more in the darkroom",
+    episodesOut: "{n} out, more in the darkroom",
     vote: "vote",
     votes: "votes",
     contactFormLabel: "Contact form",
@@ -236,6 +240,8 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     home: "Start",
     pageOf: "Seite {page} von {pages}",
     pagesCount: "{n} Seiten",
+    episodesOutOne: "Eine draußen, weitere in der Dunkelkammer",
+    episodesOut: "{n} draußen, weitere in der Dunkelkammer",
     vote: "Stimme",
     votes: "Stimmen",
     contactFormLabel: "Kontaktformular",
@@ -269,6 +275,8 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     home: "Home",
     pageOf: "Pagina {page} di {pages}",
     pagesCount: "{n} pagine",
+    episodesOutOne: "Uno fuori, altri in camera oscura",
+    episodesOut: "{n} fuori, altri in camera oscura",
     vote: "voto",
     votes: "voti",
     contactFormLabel: "Modulo di contatto",
@@ -302,6 +310,8 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     home: "Accueil",
     pageOf: "Page {page} sur {pages}",
     pagesCount: "{n} pages",
+    episodesOutOne: "Un sorti, d'autres en chambre noire",
+    episodesOut: "{n} sortis, d'autres en chambre noire",
     vote: "vote",
     votes: "votes",
     contactFormLabel: "Formulaire de contact",

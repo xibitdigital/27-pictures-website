@@ -2,13 +2,19 @@
  * /toons/ catalog from the editor D1.
  *
  * Fills `[data-toon-catalog]` on /toons/ from D1 (no static card fallback).
- * Series hubs still ship episode HTML so the quick-view fetch has markup;
- * a catalog hit replaces that grid and keeps coming-soon cards.
+ * Series hubs (`data-series-key`) take title, lead, episode heading and cards
+ * from the same catalog.
  */
 import { editorApiBase, withSiteQuery } from "../toons/editor/api";
 import { pickDescription, type DescriptionMap } from "../toons/editor/types";
-import { documentLocale, UI, withCaptionLang } from "./i18n";
-import { fillSeriesEpisodeGrid, initEpisodeVotes, initSeriesVotes, setSeriesEpisodeMarkup } from "./seriesCards";
+import { documentLocale, splitLocale, UI, withCaptionLang } from "./i18n";
+import {
+  fillSeriesEpisodeGrid,
+  initEpisodeVotes,
+  initSeriesVotes,
+  setSeriesEpisodeMarkup,
+  setSeriesFill,
+} from "./seriesCards";
 import { initToonRows, type RowEpisode } from "./toonRows";
 
 export interface CatalogEpisode {
@@ -159,6 +165,44 @@ export function applyEpisodeCatalog(grid: Element, episodes: CatalogEpisode[]): 
   grid.innerHTML = episodes.map((ep) => episodeCardHtml(ep)).join("\n");
 }
 
+export function episodesHeading(count: number): string {
+  const ui = UI[documentLocale()];
+  if (count === 1) return ui.episodesOutOne;
+  return ui.episodesOut.replace("{n}", String(count));
+}
+
+/** Title, lead, episode heading and cards from D1. */
+export function applySeriesPage(root: ParentNode, series: CatalogSeries): void {
+  for (const el of root.querySelectorAll("[data-series-title]")) {
+    el.textContent = series.title;
+  }
+  const lead = cardDescription(series);
+  if (lead) {
+    for (const el of root.querySelectorAll("[data-series-lead]")) {
+      el.textContent = lead;
+    }
+  }
+  const heading = episodesHeading(series.episodes.length);
+  for (const el of root.querySelectorAll("[data-series-episodes-heading]")) {
+    el.textContent = heading;
+  }
+  const grid = root.querySelector("[data-series-episodes]");
+  if (grid) applyEpisodeCatalog(grid, series.episodes);
+}
+
+export function seriesForDocument(items: CatalogPayload, doc: Document = document): CatalogSeries | undefined {
+  const key = doc.documentElement.dataset.seriesKey;
+  if (key) {
+    const hit = items.series.find((s) => s.key === key);
+    if (hit) return hit;
+  }
+  const path = splitLocale(typeof location !== "undefined" ? location.pathname : "").path;
+  return items.series.find((s) => {
+    const hub = s.hubUrl || `/toons/${s.key}/`;
+    return splitLocale(hub).path === path;
+  });
+}
+
 export function catalogAsRowEpisodes(payload: CatalogPayload): RowEpisode[] {
   const fromSeries = payload.series.flatMap((s) =>
     s.episodes.map(
@@ -198,6 +242,12 @@ export async function initToonCatalog(root: ParentNode = document): Promise<Cata
     markup.set(s.key, s.episodes.map((ep) => episodeCardHtml(ep)).join("\n"));
   }
   setSeriesEpisodeMarkup(markup);
+  setSeriesFill((fillRoot, key) => {
+    const series = items.series.find((s) => s.key === key);
+    if (!series) return false;
+    applySeriesPage(fillRoot, series);
+    return true;
+  });
 
   const shelf = root.querySelector("[data-toon-catalog]");
   if (shelf) {
@@ -211,16 +261,14 @@ export async function initToonCatalog(root: ParentNode = document): Promise<Cata
     initToonRows(catalogAsRowEpisodes(items));
   }
 
-  const seriesKey = document.documentElement.dataset.seriesKey;
-  const episodeGrid = root.querySelector("[data-series-page] .series-grid");
-  if (seriesKey && episodeGrid) {
-    const series = items.series.find((s) => s.key === seriesKey);
-    if (series) {
-      applyEpisodeCatalog(episodeGrid, series.episodes);
-      initEpisodeVotes(episodeGrid);
-    } else {
-      fillSeriesEpisodeGrid(root, seriesKey);
-    }
+  const series = seriesForDocument(items);
+  if (series) {
+    applySeriesPage(root, series);
+    const grid = root.querySelector("[data-series-episodes]");
+    if (grid) initEpisodeVotes(grid);
+  } else {
+    const seriesKey = document.documentElement.dataset.seriesKey;
+    if (seriesKey) fillSeriesEpisodeGrid(root, seriesKey);
   }
   return items;
 }

@@ -140,7 +140,7 @@
         <span aria-hidden="true">/</span>
         <a href="/toons/" data-i18n="breadcrumbToons">Toons</a>
         <span aria-hidden="true">/</span>
-        <span aria-current="page" data-i18n="h1">Jax</span>
+        <span aria-current="page" data-i18n="h1" data-series-title>Jax</span>
       </nav>
 
       <!-- Everything the quick-view popup shows is inside [data-series-page]. The
@@ -150,8 +150,8 @@
       <div data-series-page>
         <header class="page-header series-header">
           <p class="section-tag" data-i18n="sectionTag">Interactive toons</p>
-          <h1 data-i18n="h1">Jax</h1>
-          <p class="lead" data-i18n="lead">
+          <h1 data-i18n="h1" data-series-title>Jax</h1>
+          <p class="lead" data-i18n="lead" data-series-lead>
             Cyberpunk, drawn in black and white and read a page at a time. Jax is a netrunner dying by inches — a rare
             sickness eating his body while his code still cuts. He does not rob banks; he robs the people who own minds.
           </p>
@@ -159,7 +159,9 @@
 
         <section class="series-section" aria-labelledby="episodes-title">
           <p class="series-section-label" data-i18n="episodesLabel">Episodes</p>
-          <h2 id="episodes-title" class="series-body" data-i18n="episodesTitle">One out, more in the darkroom</h2>
+          <h2 id="episodes-title" class="series-body" data-i18n="episodesTitle" data-series-episodes-heading>
+            One out, more in the darkroom
+          </h2>
 
           <div class="episode-block">
             <div class="series-grid" data-series-episodes></div>
