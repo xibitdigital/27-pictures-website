@@ -95,7 +95,7 @@ describe("seriesLikeTotal", () => {
   it("sums every episode in the series, not just the latest", () => {
     expect(
       seriesLikeTotal(
-        "erin",
+        ["erin", "erin-the-revenge"],
         new Map([
           ["erin", 7],
           ["erin-the-revenge", 5],
@@ -104,9 +104,9 @@ describe("seriesLikeTotal", () => {
     ).toBe(12);
   });
 
-  it("is zero for a series with no votes, and for an unknown key", () => {
-    expect(seriesLikeTotal("jax", new Map())).toBe(0);
-    expect(seriesLikeTotal("nope", new Map([["jax", 9]]))).toBe(0);
+  it("is zero for a series with no votes, and for an empty slug list", () => {
+    expect(seriesLikeTotal(["jax"], new Map())).toBe(0);
+    expect(seriesLikeTotal([], new Map([["jax", 9]]))).toBe(0);
   });
 });
 

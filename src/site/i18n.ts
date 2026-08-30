@@ -6,9 +6,10 @@
  * other locales are subdirectories — `/de/toons/`, `/it/toons/`, `/fr/toons/`.
  *
  * Only pages that actually have a translated HTML document are prefixed. Readers
- * stay on one English URL (captions are already multilingual); a `/de/toons/erin/`
- * with English fallback copy would be a language mismatch, and Google ignores
- * incomplete or dishonest hreflang clusters.
+ * stay on one English URL (captions are already multilingual); a
+ * `/de/toons/erin-and-the-goblins/the-missing-child/` with English fallback
+ * copy would be a language mismatch, and Google ignores incomplete or
+ * dishonest hreflang clusters.
  *
  * The locale of a page is declared once, in its `<html lang>`, and read from
  * there by everything that needs it: the nav labels, the language selector, and
@@ -23,14 +24,16 @@ export const DEFAULT_LOCALE: Locale = "en";
 
 /**
  * Paths that have a real translated document. Trailing slash is required; this
- * is `/toons/` the landing page, not `/toons/erin/` the reader.
+ * is `/toons/` the catalog, not `/toons/<series>/<episode>/` the reader.
  *
  * Keep in step with `LOCALE_PAGES` in `vite/plugins/localePages.ts` — that list
  * is what actually writes the HTML, and a path here without a page there sends
  * the language switcher to a 404.
  *
  * Sitemap: site pages (not series hubs) also go in `LOCALIZED_SITE_PATHS`
- * (`worker/toon-editor/src/sitemap.ts`). Hubs and readers come from D1.
+ * (`worker/toon-editor/src/sitemap.ts`). Hubs come from D1 `series.hub_url`
+ * (`/toons/<series>/`); readers are `/toons/<series>/<episode>/` and stay
+ * English + `?lang=`.
  */
 export const LOCALIZED_PATHS = [
   "/",
@@ -43,11 +46,18 @@ export const LOCALIZED_PATHS = [
   "/horror-shorts/something-is-wrong-with-my-reflection/",
   "/horror-shorts/he-streamed-the-challenge/",
   "/toons/",
-  "/toons/erin-and-the-goblins/",
-  "/toons/red-smile/",
-  "/toons/nero/",
-  "/toons/jax/",
 ] as const;
+
+/** D1 hub shape: `/toons/<series>/`. Not `/toons/`, editor, `_` templates, or `/toons/<series>/<episode>/`. */
+export function isToonSeriesHubPath(pathname: string): boolean {
+  const { path } = splitLocale(pathname);
+  const p = path.endsWith("/") ? path : `${path}/`;
+  if (!p.startsWith("/toons/") || p === "/toons/" || p === "/toons/editor/" || p.startsWith("/toons/_")) {
+    return false;
+  }
+  const rest = p.slice("/toons/".length, -1);
+  return rest.length > 0 && !rest.includes("/");
+}
 
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: "EN",
@@ -94,7 +104,8 @@ export function splitLocale(pathname: string): { locale: Locale; path: string } 
 /** True when this path has a translated HTML page (not just translated captions). */
 export function isLocalizedPath(pathname: string): boolean {
   const { path } = splitLocale(pathname);
-  return (LOCALIZED_PATHS as readonly string[]).includes(path);
+  if ((LOCALIZED_PATHS as readonly string[]).includes(path)) return true;
+  return isToonSeriesHubPath(path);
 }
 
 /**

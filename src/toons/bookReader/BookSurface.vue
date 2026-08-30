@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EpisodeNav } from "../series";
+import type { EpisodeNav } from "../../site/catalogRender";
 /**
  * Declarative FlipFrame surface: slots, flip leaf, nav chrome.
  * Bound to a BookEngine (no DOM mutation in TS).

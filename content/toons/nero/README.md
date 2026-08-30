@@ -1,11 +1,12 @@
 # Nero — cast & synopsis (manual)
 
-Interactive FlipFrame short. Deep-link pages: `/toons/nero/?page=N` (1-based).
+Interactive FlipFrame short. Deep-link pages: `/toons/nero/the-dog/?page=N`
+(1-based). `?page=` on the hub `/toons/nero/` forwards to episode 1.
 
 |             |                                                  |
 | ----------- | ------------------------------------------------ |
 | Book        | D1 `nero` — edit in `/toons/editor/`             |
-| Reader      | `/toons/nero-the-dog/` (series hub `/toons/nero/`) |
+| Reader      | `/toons/nero/the-dog/` (series hub `/toons/nero/`) |
 | Design size | 800 × 1424 (portrait)                            |
 | Pages       | **20** (including time-gap plate)                |
 
@@ -13,7 +14,7 @@ Interactive FlipFrame short. Deep-link pages: `/toons/nero/?page=N` (1-based).
 
 In a rain-soaked city of wetwork and wet labs, detective **Nero** — ex-military, one hand lost to a terrorist attack and rebuilt in steel — follows a trail of blood and crystal. His ally **Eve**, a Scotland Yard forensic specialist whose AI-enhanced glasses can tag faces and materials, reads the evidence he cannot. Between them stands **The Dog**: a cold-blooded sicario who never misses. Together Nero and Eve must crack the crystal case, hunt The Dog through the rooftops and the lab, and uncover who hired the bullet — and what near-invisible implant tech it was meant to protect.
 
-The same prose is on the **front cover** (`coverSynopsis` in `NeroApp.vue`) and in the **mobile Story guide** popup.
+The same prose is the D1 **cover copy** (editor) and the **mobile Story guide** popup.
 
 ## Characters
 

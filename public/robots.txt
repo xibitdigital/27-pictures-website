@@ -11,6 +11,8 @@
 # --- Default: open site ---
 User-agent: *
 Disallow: /toons/editor
+Disallow: /toons/_hub
+Disallow: /toons/_reader
 Allow: /
 
 # --- AI search / citation (explicit Allow) ---

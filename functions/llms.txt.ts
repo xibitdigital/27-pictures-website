@@ -1,23 +1,22 @@
 /**
- * /sitemap.xml at the site origin: static site pages + D1 hubs and readers.
+ * /llms.txt at the site origin — static films/services plus D1 toon hubs and readers.
  */
 import { loadCatalogForOrigin } from "./toonSsr";
-import { DEFAULT_ASSET_BASE, renderCatalogSitemap } from "../src/site/crawlerDocs";
+import { renderLlmsTxt } from "../src/site/crawlerDocs";
 
 export const onRequest: PagesFunction = async (context) => {
   const origin = new URL(context.request.url).origin;
   const payload = await loadCatalogForOrigin(origin);
   if (!payload) {
-    return new Response("sitemap unavailable", {
+    return new Response("llms.txt unavailable", {
       status: 502,
       headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
     });
   }
-  const assetBase = (context.env as { VITE_ASSET_BASE?: string }).VITE_ASSET_BASE || DEFAULT_ASSET_BASE;
-  return new Response(renderCatalogSitemap(origin, payload, assetBase), {
+  return new Response(renderLlmsTxt(origin, payload), {
     status: 200,
     headers: {
-      "Content-Type": "application/xml; charset=utf-8",
+      "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "public, max-age=3600",
     },
   });

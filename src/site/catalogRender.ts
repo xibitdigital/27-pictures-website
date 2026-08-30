@@ -20,6 +20,9 @@ export interface CatalogEpisode {
   pageCount: number;
   readerUrl: string | null;
   n: number | null;
+  assetPageDir?: string | null;
+  designWidth?: number | null;
+  designHeight?: number | null;
 }
 
 export interface CatalogSeries {
@@ -309,4 +312,103 @@ export function isToonIndexPath(pathname: string): boolean {
   const { path } = splitLocale(pathname);
   const norm = path.endsWith("/") ? path : `${path}/`;
   return norm === "/toons/";
+}
+
+export function catalogPath(pathname: string): string {
+  const { path } = splitLocale(pathname);
+  return path.endsWith("/") ? path : `${path}/`;
+}
+
+export function catalogEpisodes(payload: CatalogPayload): CatalogEpisode[] {
+  return [...payload.series.flatMap((s) => s.episodes), ...payload.ungrouped];
+}
+
+const LEGACY_READER_SLUG: Record<string, string> = {
+  "/toons/redsmile-static/": "redsmile-static",
+  "/toons/redsmile-marcus/": "redsmile-marcus",
+  "/toons/jax-the-chip/": "jax",
+  "/toons/nero-the-dog/": "nero",
+  "/toons/erin/": "erin",
+  "/toons/erin-the-revenge/": "erin-the-revenge",
+};
+
+export function episodeForPath(pathname: string, payload: CatalogPayload): CatalogEpisode | undefined {
+  const norm = catalogPath(pathname);
+  const episodes = catalogEpisodes(payload);
+  const aliased = LEGACY_READER_SLUG[norm];
+  if (aliased) return episodes.find((ep) => ep.slug === aliased);
+  return episodes.find((ep) => {
+    const url = ep.readerUrl || `/toons/${ep.slug}/`;
+    const p = splitLocale(url).path;
+    return (p.endsWith("/") ? p : `${p}/`) === norm;
+  });
+}
+
+export function seriesOfEpisode(ep: CatalogEpisode, payload: CatalogPayload): CatalogSeries | undefined {
+  return payload.series.find((s) => s.episodes.some((item) => item.slug === ep.slug));
+}
+
+export type ToonRoute =
+  | { kind: "catalog" }
+  | { kind: "hub"; series: CatalogSeries }
+  | { kind: "reader"; episode: CatalogEpisode; series?: CatalogSeries };
+
+export function matchToonRoute(pathname: string, payload: CatalogPayload): ToonRoute | null {
+  const { path } = splitLocale(pathname);
+  const norm = catalogPath(path);
+  if (norm === "/toons/" || norm === "/toons/editor/" || norm.startsWith("/toons/_")) return null;
+  if (!norm.startsWith("/toons/")) return null;
+  const episode = episodeForPath(pathname, payload);
+  if (episode) return { kind: "reader", episode, series: seriesOfEpisode(episode, payload) };
+  const series = seriesForPath(pathname, payload);
+  if (series) return { kind: "hub", series };
+  return null;
+}
+
+export function readerTokens(ep: CatalogEpisode): {
+  width: number;
+  height: number;
+  spread: number;
+  stripCap: string;
+  paper: "light" | "dark";
+} {
+  const width = ep.designWidth && ep.designWidth > 0 ? ep.designWidth : 800;
+  const height = ep.designHeight && ep.designHeight > 0 ? ep.designHeight : 1424;
+  const spread = height / (2 * width);
+  return {
+    width,
+    height,
+    spread: Math.round(spread * 1000) / 1000,
+    stripCap: `${Math.min(Math.max(width, 720), 1008)}px`,
+    paper: ep.slug.startsWith("erin") ? "light" : "dark",
+  };
+}
+
+export function assetDirForEpisode(ep: CatalogEpisode): string {
+  const dir = ep.assetPageDir || `/toons/${ep.slug}/`;
+  return dir.endsWith("/") ? dir : `${dir}/`;
+}
+
+export interface EpisodeNav {
+  seriesTitle: string;
+  current: string;
+  prev?: { href: string; label: string };
+  /** Absent href = listed in the series but not a readable URL yet. */
+  next?: { href?: string; label: string };
+}
+
+export function episodeNavFromCatalog(series: CatalogSeries | undefined, slug: string): EpisodeNav | null {
+  if (!series || series.episodes.length < 2) return null;
+  const index = series.episodes.findIndex((ep) => ep.slug === slug);
+  if (index < 0) return null;
+  const current = series.episodes[index];
+  const prevEp = series.episodes[index - 1];
+  const nextEp = series.episodes[index + 1];
+  const label = (ep: CatalogEpisode) => (ep.n != null ? `Episode ${ep.n} — ${ep.title}` : ep.title);
+  return {
+    seriesTitle: series.title,
+    current: current.n != null ? `Episode ${current.n}` : current.title,
+    prev: prevEp?.readerUrl ? { href: prevEp.readerUrl, label: label(prevEp) } : undefined,
+    next: nextEp ? { href: nextEp.readerUrl || undefined, label: label(nextEp) } : undefined,
+  };
 }

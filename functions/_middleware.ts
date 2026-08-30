@@ -21,6 +21,7 @@ import { withToonSsr } from "./toonSsr";
 interface PagesEnv {
   BASIC_AUTH_USER?: string;
   BASIC_AUTH_PASS?: string;
+  ASSETS?: { fetch: (input: Request) => Promise<Response> };
 }
 
 const PRODUCTION_HOSTS = new Set(["twentyseven.pictures", "www.twentyseven.pictures"]);
@@ -71,7 +72,7 @@ export const onRequest: PagesFunction<PagesEnv> = async (context) => {
   if (!isProd && env.BASIC_AUTH_PASS && !credentialsOk(request, env)) return unauthorized();
 
   const response = await next();
-  const injected = await withToonSsr(request, response);
+  const injected = await withToonSsr(request, response, fetch, env.ASSETS);
 
   if (isProd) return injected;
   const guarded = new Response(injected.body, {

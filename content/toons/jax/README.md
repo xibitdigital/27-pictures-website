@@ -1,12 +1,13 @@
 # Jax — cast & synopsis (manual)
 
-Interactive FlipFrame toon. Deep-link: `/toons/jax/?page=N`.
+Interactive FlipFrame toon. Deep-link: `/toons/jax/the-chip/?page=N`.
+Series hub: `/toons/jax/` (`?page=` on the hub forwards to episode 1).
 
 ## Synopsis
 
 In a neon city that sells minds by the megacorp, **Jax** is a netrunner dying by inches: a rare sickness eats his body while his code still cuts like a blade. He does not rob banks — he steals mind-control tech from the corporations that build it, then turns their own weapons against the leash. A future Robin Hood in a trench coat and chrome, racing the clock inside his own skull: liberate the street, stay human long enough to finish the run.
 
-Same prose is on the front cover (`coverSynopsis` in `JaxApp.vue`) and in the mobile **Story** guide popup.
+Same prose is the D1 cover copy (editor) and the mobile **Story** guide popup.
 
 ## Characters (core)
 

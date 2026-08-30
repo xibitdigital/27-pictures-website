@@ -20,14 +20,17 @@ export const DEFAULT_SITE_ORIGIN = "https://twentyseven.pictures";
  * 3. Optional: an `images` entry in `staticSitemapUrls()` for OG/card art.
  *
  * Do **not** add:
- * - Series hubs (`/toons/jax/`, `/toons/red-smile/`, …) — D1 `series.hub_url`
+ * - Series hubs (`/toons/jax/`, `/toons/redsmile/`, …) — D1 `series.hub_url`
  *   plus at least one visible episode.
- * - Readers (`/toons/erin/`, `/toons/nero-the-dog/`, …) — D1 `reader_url` /
- *   slug when the toon is Public (or Staging on a staging host). English only.
+ * - Readers (`/toons/redsmile/static/`, `/toons/nero/the-dog/`, …) — D1
+ *   `reader_url` when the toon is Public (or Staging on a staging host).
+ *   English only.
  * - `/toons/editor/` — robots Disallow, never in the sitemap.
  *
  * Trailing slash required. Keep this list a subset of `LOCALIZED_PATHS`
- * (hubs live in i18n, not here). Redeploy the Worker after editing.
+ * (hubs are D1 + `isToonSeriesHubPath`, not this list). A **Pages** deploy
+ * picks the list up (`src/site/crawlerDocs.ts`). Redeploy this Worker only
+ * if you still curl `GET /sitemap.xml` on the Worker host.
  */
 export const LOCALIZED_SITE_PATHS = [
   "/",

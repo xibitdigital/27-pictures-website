@@ -8,20 +8,24 @@ still have one.
 | Path | Role |
 | ---- | ---- |
 | `/toons/editor/` | Edit books and series (D1) |
+| Worker `GET /catalog` | Public shelf JSON (no drafts; staging hosts also see `staging`) |
 | Worker `GET /config/:slug` | Runtime FlipFrame JSON |
-| `GET /sitemap.xml` (Worker) | Series hubs + Public readers; drafts omitted |
+| Pages `/sitemap.xml` · `/llms.txt` | Static site pages + D1 hubs/readers; drafts omitted |
+| Pages Function `functions/toonSsr.ts` | Stamps that catalog into `/toons/`, hubs and readers |
 | `content/toons/<toon>/README.md` | How that book is supposed to read |
 
 ## Current toons
 
-| Toon   | Directory             | Notes                                                                                           |
-| ------ | --------------------- | ----------------------------------------------------------------------------------------------- |
-| `erin` | `content/toons/erin/` | Interactive manga reader                                                                        |
-| `jax`  | `content/toons/jax/`  | Netrunner chronicles — synopsis on cover; multilingual SFX/music (see `jax/README.md`)          |
-| `nero` | `content/toons/nero/` | Scotland Yard case: Nero / Eve / The Dog; `?page=N` deep-links; full manual in `nero/README.md` |
-| `redsmile-static` | `content/toons/redsmile-static/` | RED SMILE: static — B&W horror short; the static learns Elena, and something walks out wearing her |
-| `redsmile-marcus` | `content/toons/redsmile-marcus/` | RED SMILE ep 2 — Marcus and the cleaner (see `redsmile-marcus/README.md`) |
-| `erin-the-revenge` | `content/toons/erin-the-revenge/` | ERIN & THE GOBLINS ep 2 — The Revenge |
+| D1 slug | Public reader | Notes |
+| ------- | ------------- | ----- |
+| `erin` | `/toons/erin-and-the-goblins/the-missing-child/` | Hub `/toons/erin-and-the-goblins/` |
+| `erin-the-revenge` | `/toons/erin-and-the-goblins/the-revenge/` | ERIN & THE GOBLINS ep 2 |
+| `jax` | `/toons/jax/the-chip/` | Hub `/toons/jax/` — `jax/README.md` |
+| `nero` | `/toons/nero/the-dog/` | Hub `/toons/nero/` — `nero/README.md` |
+| `redsmile-static` | `/toons/redsmile/static/` | Hub `/toons/redsmile/` (`key` `red-smile`) |
+| `redsmile-marcus` | `/toons/redsmile/marcus/` | RED SMILE ep 2 — `redsmile-marcus/README.md` |
+
+CDN plates stay under `/toons/<slug>/` (e.g. `toons/jax/assets/…`), not the public reader path.
 
 ```bash
 make dev                 # http://127.0.0.1:5173/toons/editor/

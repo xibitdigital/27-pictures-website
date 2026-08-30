@@ -7,7 +7,7 @@
 import { nextTick, onMounted, ref } from "vue";
 import CoverFirstPage from "./CoverFirstPage.vue";
 import BackCoverLink from "./BackCoverLink.vue";
-import type { EpisodeNav } from "../series";
+import type { EpisodeNav } from "../../site/catalogRender";
 import PageCaptions from "./captions/PageCaptions.vue";
 import type { FlipFaceModel, FlipModel } from "./bookModels";
 

@@ -1,23 +1,25 @@
 # Erin — cast & running order (manual)
 
-Interactive FlipFrame books. Deep-link pages: `/toons/erin/?page=N` and
-`/toons/erin-the-revenge/?page=N` (1-based).
+Interactive FlipFrame books. Deep-link pages:
+`/toons/erin-and-the-goblins/the-missing-child/?page=N` and
+`/toons/erin-and-the-goblins/the-revenge/?page=N` (1-based). Old
+`/toons/erin/` and `/toons/erin-the-revenge/` 301.
 
 |             |                                                                  |
 | ----------- | ---------------------------------------------------------------- |
-| Ep 1        | `/toons/erin/` — D1 book `erin` (edit in `/toons/editor/`)       |
-| Ep 2        | `/toons/erin-the-revenge/` — D1 book `erin-the-revenge`          |
+| Ep 1        | `/toons/erin-and-the-goblins/the-missing-child/` — D1 `erin`     |
+| Ep 2        | `/toons/erin-and-the-goblins/the-revenge/` — D1 `erin-the-revenge` |
 | Series      | `/toons/erin-and-the-goblins/`                                   |
 | Plate size  | **1152 × 1728** (2:3 portrait) — not the 9:16 others             |
 | Prompts     | `docs/story/erin/e1/prompts/` and `docs/story/erin/e2/prompts/`   |
 | Skill       | `/erin-toon-page` → `.claude/skills/erin-toon-page/`             |
 
 Episode 1 is **ERIN & THE GOBLINS — the missing CHILD** (Volume 1 Prequel),
-**27 plates**, `/toons/erin/`. Erin hunts a kidnapping ring through a crumbling
+**27 plates**, `/toons/erin-and-the-goblins/the-missing-child/`. Erin hunts a kidnapping ring through a crumbling
 town, finds goblins behind it, opens a portal and fights the Goblin King, then
 walks the child home.
 
-Episode 2 is **The Revenge**, own reader `/toons/erin-the-revenge/`, **23
+Episode 2 is **The Revenge**, own reader `/toons/erin-and-the-goblins/the-revenge/`, **23
 story plates**.
 Erin tears a portal back into the goblin world to **defeat the Goblin
 King**. Venus — a stranger who can move matter — catches her, teaches her, and
@@ -35,8 +37,8 @@ Reverse-engineered from the **shipped** plates so a re-roll can match. Naming:
 
 | Episode | Reader                       | Prompts                          |
 | ------- | ---------------------------- | -------------------------------- |
-| 1       | `/toons/erin/`               | `docs/story/erin/e1/prompts/`    |
-| 2       | `/toons/erin-the-revenge/`   | `docs/story/erin/e2/prompts/`    |
+| 1       | `/toons/erin-and-the-goblins/the-missing-child/` | `docs/story/erin/e1/prompts/`    |
+| 2       | `/toons/erin-and-the-goblins/the-revenge/`       | `docs/story/erin/e2/prompts/`    |
 
 When two files share a page number, the one **without** a second slug collision
 that matches the config caption is current; older beats keep a distinct slug

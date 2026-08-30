@@ -7,7 +7,6 @@ import { createApp } from "vue";
 import SiteApp from "./SiteApp.vue";
 import { vMagnetic } from "./directives/magnetic";
 import { rememberDocumentLocale } from "./i18n";
-import { SERIES } from "../toons/series";
 import { initEpisodeVotes } from "./seriesCards";
 
 rememberDocumentLocale();
@@ -23,15 +22,9 @@ rememberDocumentLocale();
  * `replace`, not `assign`: the series page was never somewhere the reader
  * meant to be, so it should not sit in history behind the back button.
  */
-const seriesKey = document.documentElement.dataset.seriesKey;
-if (seriesKey) {
-  const params = new URLSearchParams(window.location.search);
-  if (params.has("page")) {
-    const episodeOne = SERIES.find((s) => s.key === seriesKey)?.episodes.find((e) => e.url);
-    if (episodeOne?.url) {
-      window.location.replace(`${episodeOne.url}${window.location.search}${window.location.hash}`);
-    }
-  }
+const episodeOne = document.documentElement.dataset.episodeOne;
+if (episodeOne && new URLSearchParams(window.location.search).has("page")) {
+  window.location.replace(`${episodeOne}${window.location.search}${window.location.hash}`);
 }
 
 const app = createApp(SiteApp, { page: "toons" });

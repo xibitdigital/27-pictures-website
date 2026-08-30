@@ -134,10 +134,6 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/__editor-api/, ""),
       },
-      "/sitemap.xml": {
-        target: process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787",
-        changeOrigin: true,
-      },
     },
   },
   preview: {
@@ -149,10 +145,6 @@ export default defineConfig({
         target: process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/__editor-api/, ""),
-      },
-      "/sitemap.xml": {
-        target: process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787",
-        changeOrigin: true,
       },
     },
   },

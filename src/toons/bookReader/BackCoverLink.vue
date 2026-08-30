@@ -4,7 +4,7 @@
  * belongs to a series shows where to go next, because the last page is where
  * a reader decides whether the series continues for them.
  */
-import type { EpisodeNav } from "../series";
+import type { EpisodeNav } from "../../site/catalogRender";
 
 withDefaults(
   defineProps<{

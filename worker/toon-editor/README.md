@@ -63,7 +63,7 @@ and local see published + staging; production sees published only.
 | POST | `/auth/logout` | JWT | client drops the token |
 | POST | `/auth/users` | JWT | add another editor |
 | GET | `/catalog` | public | `{ series, ungrouped }` — filtered by site |
-| GET | `/sitemap.xml` | public | XML: static site pages + visible series/readers |
+| GET | `/sitemap.xml` | public | Same XML as the site Function (debug). Crawlers should hit the **site origin** |
 | GET | `/config/:slug` | public | FlipFrame JSON if status is visible for the site |
 | GET | `/likes` | public | `{ likes: { [toon]: n } }` |
 | GET | `/likes?toon=` | public | `{ toon, likes }` |
@@ -132,16 +132,39 @@ Used by `npm run import-toon`. The browser login form does not read `.env`.
 Typecheck: `npx tsc -p worker/toon-editor --noEmit` (also part of
 `npm run typecheck`). Tests: `npx vitest run worker/toon-editor`.
 
-## Sitemap (`GET /sitemap.xml`)
+## Catalog HTML is not this Worker
 
-Public. Pages (`functions/sitemap.xml.ts`) and local Vite proxy this to the
-site origin. Body = `LOCALIZED_SITE_PATHS` × locales + D1 series hubs (locales)
-+ D1 readers (English). Drafts and `/toons/editor/` are omitted.
+`GET /catalog` is JSON. The HTML shelf on `/toons/`, series hubs
+(`/toons/<series>/`) and readers (`/toons/<series>/<episode>/`) is stamped
+at the **site origin** by the Pages Function `functions/toonSsr.ts`
+(`withToonSsr` in `_middleware.ts`), using `src/site/catalogRender.ts` and
+`src/site/toonPages.ts`. Local `make dev` does the same inject via
+`vite/plugins/toonSsrDev.ts`. Vue does not paint those cards.
+
+Crawlers that skip JavaScript (Claude, GPTBot, Perplexity) therefore see
+cards and JSON-LD in the first response. Do not serve catalog HTML from
+this Worker host — keep it an API.
+
+## Sitemap (site origin, not this Worker)
+
+Crawlers should fetch `https://twentyseven.pictures/sitemap.xml` (and
+`/llms.txt`). Those are Pages Functions (`functions/sitemap.xml.ts`,
+`functions/llms.txt.ts`) that call `GET /catalog` and render with
+`src/site/crawlerDocs.ts`. Local `make dev` does the same via
+`vite/plugins/toonSsrDev.ts`.
+
+This Worker still serves `GET /sitemap.xml` as the **same XML** for debugging.
+Do not submit the Worker host to Search Console.
+
+Body = `LOCALIZED_SITE_PATHS` × locales + D1 series hubs (locales) + D1
+readers (English). Drafts and `/toons/editor/` are omitted. Staging hosts
+include `status=staging`; production is `published` only.
 
 ### Updating `LOCALIZED_SITE_PATHS`
 
-File: `src/sitemap.ts`. English path, trailing slash. The helper emits
-`/path/`, `/it/path/`, `/de/path/`, `/fr/path/`.
+File: `src/sitemap.ts` (imported by `src/site/crawlerDocs.ts`). English path,
+trailing slash. The helper emits `/path/`, `/it/path/`, `/de/path/`,
+`/fr/path/`.
 
 **Add a path** when you ship a new **translated site page** that is not a toon
 series hub or reader (homepage, `/watch/`, `/cosplay/`, a horror short, …):
@@ -150,25 +173,26 @@ series hub or reader (homepage, `/watch/`, `/cosplay/`, a horror short, …):
    (`src/site/i18n.ts`) so `/de/…` is a real document.
 2. Append the English path to `LOCALIZED_SITE_PATHS`.
 3. Optional OG/card image: `images["/your-path/"]` in `staticSitemapUrls()`.
-4. Redeploy this Worker (`npx wrangler deploy` from this directory). A Pages
-   deploy alone does not pick up the list.
+4. Push **Pages**. The Function imports this file. Redeploy this Worker only
+   if you still curl the Worker host.
 
 **Do not add**
 
 | URL | Why |
 | --- | --- |
-| `/toons/jax/`, `/toons/red-smile/`, … | Series `hub_url` from D1 when an episode is visible |
-| `/toons/erin/`, `/toons/nero-the-dog/`, … | Reader URL from D1 when Public (Staging on staging) |
+| `/toons/jax/`, `/toons/redsmile/`, … | Series `hub_url` from D1 when an episode is visible |
+| `/toons/redsmile/static/`, `/toons/nero/the-dog/`, … | `reader_url` from D1 when Public (Staging on staging) |
 | `/toons/editor/` | `robots.txt` Disallow |
 
-Hubs still belong in `LOCALIZED_PATHS` (language switcher). They just are not
-this sitemap list.
+Hubs are **not** in `LOCALIZED_PATHS`. The language switcher treats
+`/toons/<one-segment>/` as a hub (`isToonSeriesHubPath` in `src/site/i18n.ts`).
 
-Check:
+Check (site origin, not the Worker):
 
 ```bash
+curl -sS https://twentyseven.pictures/sitemap.xml | grep '<loc>'
 curl -sS "https://toon-editor.sangalli-marco.workers.dev/sitemap.xml?site=https://twentyseven.pictures" \
-  | grep '<loc>'
+  | grep '<loc>'   # debug only
 ```
 
 ## Staging / production

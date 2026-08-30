@@ -1,9 +1,11 @@
 /**
- * Build-time locale pages for translated hub HTML.
+ * Build-time locale pages for translated **site** HTML (homepage, films,
+ * `/toons/` catalog, …). Series hubs are not generated here — they are SSR
+ * from D1 (`/de/toons/jax/`). Readers stay English + `?lang=`.
  *
- * English `src/toons/index.html` (and the Erin series page) is the template.
+ * English `src/<path>/index.html` is the template.
  * `src/site/locales/<name>/<locale>.json` holds the other languages.
- * This plugin writes `src/<locale>/toons/index.html` so Vite's MPA build, the
+ * This plugin writes `src/<locale>/…/index.html` so Vite's MPA build, the
  * CDN token expander and hashed CSS all see a real HTML entry — Google gets
  * unique crawlable HTML at `/it/toons/` etc., without four hand-maintained
  * copies of the same markup.
@@ -15,6 +17,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { has, set } from "lodash-es";
 import type { Plugin } from "vite";
+import { isToonSeriesHubPath } from "../../src/site/i18n";
 
 export const ORIGIN = "https://twentyseven.pictures";
 export const DEFAULT_LOCALE = "en";
@@ -86,30 +89,14 @@ export const LOCALE_PAGES: LocalePageSpec[] = [
     copyDir: "site/locales/toons-index",
     urlPath: "/toons/",
   },
-  {
-    template: "toons/erin-and-the-goblins/index.html",
-    copyDir: "site/locales/erin-and-the-goblins",
-    urlPath: "/toons/erin-and-the-goblins/",
-  },
-  {
-    template: "toons/red-smile/index.html",
-    copyDir: "site/locales/red-smile",
-    urlPath: "/toons/red-smile/",
-  },
-  {
-    template: "toons/nero/index.html",
-    copyDir: "site/locales/nero",
-    urlPath: "/toons/nero/",
-  },
-  {
-    template: "toons/jax/index.html",
-    copyDir: "site/locales/jax",
-    urlPath: "/toons/jax/",
-  },
 ];
 
-/** Site pages that exist in every locale — prefix the path, do not add ?lang=. */
+/** Site pages with generated locale HTML — prefix the path, do not add `?lang=`. */
 export const LOCALIZED_PAGE_HREFS = LOCALE_PAGES.map((page) => page.urlPath);
+
+function isPrefixedSitePath(norm: string): boolean {
+  return (LOCALIZED_PAGE_HREFS as readonly string[]).includes(norm) || isToonSeriesHubPath(norm);
+}
 
 /** Flat keys are the legacy per-type copy; `nodes` is the generic form. */
 export interface LocaleSchema {
@@ -200,7 +187,7 @@ export function localizePageUrl(value: string, urlPath: string, locale: PageLoca
   const pathname = hash === -1 ? rest : rest.slice(0, hash);
   const fragment = hash === -1 ? "" : rest.slice(hash);
   const norm = pathname.endsWith("/") ? pathname : `${pathname}/`;
-  if (!(LOCALIZED_PAGE_HREFS as readonly string[]).includes(norm)) return value;
+  if (!isPrefixedSitePath(norm)) return value;
   if (fragment) {
     if (norm === urlPath) {
       if (localizeIds && !localizeIds.includes(fragment)) return value;
@@ -303,7 +290,7 @@ function applySchema(
             const id = typeof item?.["@id"] === "string" ? item["@id"] : "";
             if (id.includes("/jax/") && schema?.jaxDescription) item!.description = schema.jaxDescription;
             if (id.includes("/nero/") && schema?.neroDescription) item!.description = schema.neroDescription;
-            if (id.includes("/red-smile/") && schema?.redsmileDescription)
+            if (id.includes("/redsmile/") && schema?.redsmileDescription)
               item!.description = schema.redsmileDescription;
           }
         }
@@ -324,7 +311,7 @@ export function localizeHrefs(html: string, locale: PageLocale): string {
     const pathname = q === -1 ? path : path.slice(0, q);
     const rest = q === -1 ? "" : path.slice(q);
     const norm = pathname.endsWith("/") ? pathname : `${pathname}/`;
-    if ((LOCALIZED_PAGE_HREFS as readonly string[]).includes(norm)) {
+    if (isPrefixedSitePath(norm)) {
       return `href="/${locale}${pathname}${rest}"`;
     }
     // Everything else that is not a reader — stylesheets, images, the QR page —

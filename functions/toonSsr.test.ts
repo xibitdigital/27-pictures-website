@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { injectToonHtml } from "./toonSsr";
+import { applyHubHtml } from "../src/site/toonPages";
 import type { CatalogPayload } from "../src/site/catalogRender";
 
 const payload: CatalogPayload = {
@@ -12,7 +13,7 @@ const payload: CatalogPayload = {
       tagline: "Horror",
       description: "Elena.",
       coverUrl: "https://cdn.example/red.jpg",
-      hubUrl: "/toons/red-smile/",
+      hubUrl: "/toons/redsmile/",
       episodes: [
         {
           id: "redsmile-static",
@@ -22,7 +23,7 @@ const payload: CatalogPayload = {
           description: "Elena is alone.",
           coverUrl: "https://cdn.example/static.jpg",
           pageCount: 12,
-          readerUrl: "/toons/redsmile-static/",
+          readerUrl: "/toons/redsmile/static/",
           n: 1,
         },
         {
@@ -33,7 +34,7 @@ const payload: CatalogPayload = {
           description: "Marcus works late.",
           coverUrl: "https://cdn.example/marcus.jpg",
           pageCount: 12,
-          readerUrl: "/toons/redsmile-marcus/",
+          readerUrl: "/toons/redsmile/marcus/",
           n: 2,
         },
       ],
@@ -52,15 +53,15 @@ describe("injectToonHtml", () => {
     </body></html>`;
     const out = injectToonHtml(html, payload, "https://twentyseven.pictures/toons/");
     expect(out).toContain('data-series="red-smile"');
-    expect(out).toContain('href="/toons/red-smile/"');
+    expect(out).toContain('href="/toons/redsmile/"');
     expect(out).toContain("RED SMILE");
     expect(out).toContain('"numberOfItems": 1');
-    expect(out).toContain("https://twentyseven.pictures/toons/red-smile/#series");
+    expect(out).toContain("https://twentyseven.pictures/toons/redsmile/#series");
   });
 
   it("fills a series hub including JSON-LD hasPart from D1", () => {
     const html = `<!doctype html><html lang="en" data-series-key="red-smile"><head>
-      <link rel="canonical" href="https://twentyseven.pictures/toons/red-smile/" />
+      <link rel="canonical" href="https://twentyseven.pictures/toons/redsmile/" />
       <script type="application/ld+json" data-series-jsonld>{ "@context": "https://schema.org", "@graph": [] }</script>
     </head><body>
       <h1 data-series-title>RED SMILE</h1>
@@ -68,9 +69,9 @@ describe("injectToonHtml", () => {
       <h2 data-series-episodes-heading>1 episode</h2>
       <div class="series-grid" data-series-episodes></div>
     </body></html>`;
-    const out = injectToonHtml(html, payload, "https://twentyseven.pictures/toons/red-smile/");
-    expect(out).toContain("/toons/redsmile-static/");
-    expect(out).toContain("/toons/redsmile-marcus/");
+    const out = injectToonHtml(html, payload, "https://twentyseven.pictures/toons/redsmile/");
+    expect(out).toContain("/toons/redsmile/static/");
+    expect(out).toContain("/toons/redsmile/marcus/");
     expect(out).toContain("Elena.");
     expect(out).toContain("2 episodes");
     expect(out).toContain('"numberOfEpisodes": 2');
@@ -85,15 +86,15 @@ describe("injectToonHtml", () => {
       <div class="series-grid" data-toon-catalog></div>
     </body></html>`;
     const out = injectToonHtml(html, payload, "https://twentyseven.pictures/de/toons/");
-    expect(out).toContain('href="/de/toons/red-smile/"');
-    expect(out).not.toContain('href="/toons/red-smile/?lang=de"');
+    expect(out).toContain('href="/de/toons/redsmile/"');
+    expect(out).not.toContain('href="/toons/redsmile/?lang=de"');
   });
 
-  it("SSR-fills the real RED SMILE hub template", () => {
-    const html = readFileSync(resolve("src/toons/red-smile/index.html"), "utf8");
-    const out = injectToonHtml(html, payload, "https://twentyseven.pictures/toons/red-smile/");
-    expect(out).toContain('href="/toons/redsmile-static/"');
-    expect(out).toContain('href="/toons/redsmile-marcus/"');
+  it("SSR-fills the shared hub template", () => {
+    const html = readFileSync(resolve("src/toons/_hub/index.html"), "utf8");
+    const out = applyHubHtml(html, payload.series[0], "https://twentyseven.pictures/toons/redsmile/");
+    expect(out).toContain('href="/toons/redsmile/static/"');
+    expect(out).toContain('href="/toons/redsmile/marcus/"');
     expect(out).toContain("series-card--episode");
     expect(out).toContain('"numberOfEpisodes": 2');
     expect(out).toContain("Episode 2 — Marcus");

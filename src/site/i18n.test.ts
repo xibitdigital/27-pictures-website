@@ -39,12 +39,14 @@ describe("isLocalizedPath", () => {
     expect(isLocalizedPath("/it/toons/")).toBe(true);
     expect(isLocalizedPath("/toons/erin-and-the-goblins/")).toBe(true);
     expect(isLocalizedPath("/fr/toons/erin-and-the-goblins/")).toBe(true);
+    expect(isLocalizedPath("/toons/redsmile/")).toBe(true);
     expect(isLocalizedPath("/cosplay/")).toBe(true);
     expect(isLocalizedPath("/it/cosplay/")).toBe(true);
     expect(isLocalizedPath("/horror-shorts/the-doll-moved-again/")).toBe(true);
     expect(isLocalizedPath("/")).toBe(true);
-    // Readers keep one English URL — their captions are already multilingual.
-    expect(isLocalizedPath("/toons/erin/")).toBe(false);
+    // Readers sit under the hub and keep one English URL + ?lang=.
+    expect(isLocalizedPath("/toons/redsmile/static/")).toBe(false);
+    expect(isLocalizedPath("/toons/erin-and-the-goblins/the-missing-child/")).toBe(false);
     expect(isLocalizedPath("/qr.html")).toBe(false);
   });
 });
@@ -59,8 +61,10 @@ describe("localePath", () => {
   });
 
   it("leaves readers and untranslated pages on their English URL", () => {
-    expect(localePath("/toons/erin/", "de")).toBe("/toons/erin/");
-    expect(localePath("/de/toons/erin/", "fr")).toBe("/toons/erin/");
+    expect(localePath("/toons/redsmile/static/", "de")).toBe("/toons/redsmile/static/");
+    expect(localePath("/toons/erin-and-the-goblins/the-revenge/", "fr")).toBe(
+      "/toons/erin-and-the-goblins/the-revenge/"
+    );
     expect(localePath("/qr.html", "it")).toBe("/qr.html");
   });
 

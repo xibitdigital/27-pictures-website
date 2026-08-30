@@ -224,12 +224,12 @@
                 "@type": "ListItem",
                 "position": 4,
                 "name": "RED SMILE",
-                "url": "https://twentyseven.pictures/toons/red-smile/",
+                "url": "https://twentyseven.pictures/toons/redsmile/",
                 "item": {
                   "@type": "CreativeWorkSeries",
-                  "@id": "https://twentyseven.pictures/toons/red-smile/#series",
+                  "@id": "https://twentyseven.pictures/toons/redsmile/#series",
                   "name": "RED SMILE",
-                  "url": "https://twentyseven.pictures/toons/red-smile/",
+                  "url": "https://twentyseven.pictures/toons/redsmile/",
                   "description": "Psychological horror drawn in heavy black-and-white gekiga ink: ordinary rooms, and something in them that should not be. Interactive toon series from 27 Pictures.",
                   "genre": ["Interactive Toon", "Horror"],
                   "inLanguage": ["en", "it", "de", "fr"],
@@ -273,8 +273,8 @@
         </p>
       </header>
 
-      <!-- Cards from D1 via initToonCatalog(). Series link to their hub
-           (quick-view intercepts the click); ungrouped toons link to the reader. -->
+      <!-- Cards + JSON-LD from D1 via functions/toonSsr.ts (empty in dist/;
+           filled at request time). Vue does not paint this grid. -->
       <section class="toon-series series-shelf" aria-labelledby="toons-title">
         <div class="series-grid" data-toon-catalog></div>
       </section>

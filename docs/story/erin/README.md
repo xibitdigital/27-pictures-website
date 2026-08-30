@@ -5,8 +5,8 @@ Tracked Seedream i2i prompts for Erin plates. Binaries are not in git (R2 +
 
 | Episode | Reader | Prompts | Prefix |
 | ------- | ------ | ------- | ------ |
-| 1 — the missing CHILD | `/toons/erin/` | `e1/prompts/` | `erin-ep1-pNN-<slug>.txt` |
-| 2 — The Revenge | `/toons/erin-the-revenge/` | `e2/prompts/` | `erin-ep2-pNN-<slug>.txt` |
+| 1 — the missing CHILD | `/toons/erin-and-the-goblins/the-missing-child/` | `e1/prompts/` | `erin-ep1-pNN-<slug>.txt` |
+| 2 — The Revenge | `/toons/erin-and-the-goblins/the-revenge/` | `e2/prompts/` | `erin-ep2-pNN-<slug>.txt` |
 
 Current files are reverse-engineered from the **shipped** plates (ep 2 is 23
 story pages). Title splash `erin-ep2-p01-title-forest-castle.txt` is reader

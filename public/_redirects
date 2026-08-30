@@ -3,6 +3,30 @@
 /experiments/     /toons/   301
 /experiments/*    /toons/   301
 
+# RED SMILE hub used to be /toons/red-smile/; episodes were always redsmile-*.
+/toons/red-smile      /toons/redsmile/   301
+/toons/red-smile/     /toons/redsmile/   301
+/de/toons/red-smile   /de/toons/redsmile/   301
+/de/toons/red-smile/  /de/toons/redsmile/   301
+/it/toons/red-smile   /it/toons/redsmile/   301
+/it/toons/red-smile/  /it/toons/redsmile/   301
+/fr/toons/red-smile   /fr/toons/redsmile/   301
+/fr/toons/red-smile/  /fr/toons/redsmile/   301
+
+# Readers now sit under the series hub.
+/toons/redsmile-static    /toons/redsmile/static/   301
+/toons/redsmile-static/   /toons/redsmile/static/   301
+/toons/redsmile-marcus    /toons/redsmile/marcus/   301
+/toons/redsmile-marcus/   /toons/redsmile/marcus/   301
+/toons/jax-the-chip       /toons/jax/the-chip/   301
+/toons/jax-the-chip/      /toons/jax/the-chip/   301
+/toons/nero-the-dog       /toons/nero/the-dog/   301
+/toons/nero-the-dog/      /toons/nero/the-dog/   301
+/toons/erin               /toons/erin-and-the-goblins/the-missing-child/   301
+/toons/erin/              /toons/erin-and-the-goblins/the-missing-child/   301
+/toons/erin-the-revenge   /toons/erin-and-the-goblins/the-revenge/   301
+/toons/erin-the-revenge/  /toons/erin-and-the-goblins/the-revenge/   301
+
 # /qr.html was a printed-QR landing page, removed 2026-08-19. The printed code
 # encodes the Instagram profile, not this URL, so nothing in the wild points
 # here — but bookmarks and old links should reach the contact form rather than

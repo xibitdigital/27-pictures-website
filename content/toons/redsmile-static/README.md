@@ -1,7 +1,8 @@
 # RED SMILE: static
 
 Black-and-white horror short in the **RED SMILE** series. FlipFrame reader at
-`/toons/redsmile-static/`.
+`/toons/redsmile/static/`. Series hub: `/toons/redsmile/` (old `/toons/red-smile/`
+and `/toons/redsmile-static/` 301).
 
 **Logline:** The first episode of the RED SMILE series: psychological horror drawn in heavy black-and-white gekiga ink — crushed shadows, hand-inked plates, light that never quite reaches the corners. Elena is alone in the flat when the television finds a channel that should not exist.
 
@@ -10,15 +11,14 @@ Black-and-white horror short in the **RED SMILE** series. FlipFrame reader at
 | Toon id   | `redsmile-static`                                  |
 | Pages     | 7 (800×1424 PNG, watermarked, R2 only)             |
 | Book      | D1 `redsmile-static` — edit in `/toons/editor/`    |
-| App       | `src/toons/redsmile-static/`                       |
+| App       | `src/toons/_reader/` (slug `redsmile-static`)      |
 | Card art  | `card-art/redsmile-static.jpg`                     |
 | Languages | `en` · `it` · `de` · `fr` (LangSwitcher in the top bar) |
 
 ## Languages
 
-Captions carry `en` / `it` / `de` / `fr`; the switcher is wired in
-`RedSmileStaticApp.vue` and remembers the choice under
-`redsmile-static-toon-lang`.
+Captions carry `en` / `it` / `de` / `fr`; the shared reader switcher remembers
+the choice (site locale + per-toon key).
 
 **Voice-over stays English.** A word's `audio` is a single clip — the schema
 has no per-language variant — so switching language re-letters the captions
@@ -44,9 +44,11 @@ monologue, `bubble` when she speaks aloud, `burst` for the scream) and 11 SFX
 bursts. Three beats stay deliberately silent — the figure in the doorway (p2),
 the empty black doorway (p3) and the door swinging open (p7).
 
-**Auto-read plays `words[]` in array order**, so a panel's SFX has to sit ahead
-of the line it precedes. Current intent: `BZZT` opens page 1; `kreeeee` follows
-"What the hell was that!?"; `NNNK` opens page 7 before the shadow line.
+**Auto-read follows position, not array order** (`readingOrder` in
+`captions/captionModel.ts`). An SFX that must land before a line needs a
+smaller `y` (or the same row and a smaller `x`). Current intent: `BZZT` opens
+page 1; `kreeeee` follows "What the hell was that!?"; `NNNK` opens page 7
+before the shadow line.
 
 SFX slugs live in `scripts/jax-sfx-manifest.json` under the `rs-` prefix:
 

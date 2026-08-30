@@ -1,27 +1,34 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { resolveAssetUrl } from "../bookReader/assetUrl";
-import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
-import type { ToonShellBookOptions } from "../bookReader/types";
 import LangSwitcher from "../bookReader/LangSwitcher.vue";
 import { LikeButton } from "../bookReader/chrome";
+import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
+import type { ToonShellBookOptions } from "../bookReader/types";
 import { readerConfigUrl } from "../configUrls";
 import { COVER } from "../coverCopy";
+import type { EpisodeNav } from "../../site/catalogRender";
 
-/** Reader media root — explicit pageDir for CDN relative paths. */
-// A CDN key prefix, not a site route. The reader moved to /toons/jax-the-chip/
-// when Jax became a series, but the plates are still keyed
-// toons/jax/assets/<md5> on R2 — changing this 404s every page.
-const ASSET_PAGE_DIR = "/toons/jax/";
-/** Content-hashed config from config-lock.json (changes when config bytes change). */
-const CONFIG_URL = readerConfigUrl("jax");
+function readEpisodeNav(): EpisodeNav | null {
+  const el = document.querySelector("script[data-episode-nav]");
+  if (!el?.textContent?.trim()) return null;
+  try {
+    const parsed = JSON.parse(el.textContent) as EpisodeNav | null;
+    return parsed && parsed.seriesTitle ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+const slug = document.documentElement.dataset.toonSlug || "";
+const assetPageDir = document.documentElement.dataset.assetPageDir || `/toons/${slug}/`;
+const cover = COVER[slug];
 const COVER_TEXTURE = resolveAssetUrl("/toons/assets/9e8cbf85e48ac7eb7d1afd5981efb20f.jpg");
-const BG_MUSIC = resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3");
+const isJax = slug === "jax";
+const BG_MUSIC = isJax ? resolveAssetUrl("/toons/jax/assets/music/990f5db70e833cdaa0a411a9f0025275.mp3") : "";
 
 const bgMusicEl = ref<HTMLAudioElement | null>(null);
 const musicEnabled = ref(false);
-
-/** Bumps on every stop so an in-flight play() cannot restart audio after off. */
 let musicPlayGen = 0;
 
 const musicTitle = computed(() => (musicEnabled.value ? "Pause music" : "Play music"));
@@ -64,33 +71,20 @@ async function startBgMusic(): Promise<void> {
 function onMusicClick(): void {
   const bg = bgMusicEl.value;
   if (!bg) return;
-  if (!bg.paused || musicEnabled.value) {
-    stopBgMusic();
-  } else {
-    void startBgMusic();
-  }
+  if (!bg.paused || musicEnabled.value) stopBgMusic();
+  else void startBgMusic();
 }
-
-/** Stable options — shell owns page source, captions, and cover identity. */
-const bookOptions: ToonShellBookOptions = {
-  coverSubtitle: COVER.jax.subtitle,
-  coverSynopsis: COVER.jax.synopsis,
-};
 
 onMounted(() => {
   const bg = bgMusicEl.value;
   if (!bg) return;
   bg.volume = 0.22;
-  // Full buffer, not just metadata — music starts without a network stall.
   bg.preload = "auto";
   try {
     bg.load();
   } catch {
     /* ignore */
   }
-  // Don't also pin music in the shared preload cache — a second element on the
-  // same 4MB src just competes for bandwidth/decoders on mobile; #bgMusic's own
-  // preload="auto" + load() already warms it.
   bg.addEventListener("play", () => {
     musicEnabled.value = true;
   });
@@ -98,28 +92,36 @@ onMounted(() => {
     musicEnabled.value = false;
   });
 });
+
+const bookOptions: ToonShellBookOptions = {
+  coverSubtitle: cover?.subtitle,
+  coverSynopsis: cover?.synopsis,
+  backNav: readEpisodeNav(),
+};
+
+const configUrl = slug ? readerConfigUrl(slug) : "";
 </script>
 
 <template>
   <ToonReaderShell
-    alt-prefix="Jax"
-    :config-url="CONFIG_URL"
-    :asset-page-dir="ASSET_PAGE_DIR"
-    toon-id="jax"
+    v-if="slug && configUrl"
+    :alt-prefix="slug"
+    :config-url="configUrl"
+    :asset-page-dir="assetPageDir"
+    :toon-id="slug"
     front-cover-logo="/logosquare.png"
     :cover-texture="COVER_TEXTURE"
+    :caption-lang-storage-key="`${slug}-toon-lang`"
     :book-options="bookOptions"
   >
-    <template #overlays>
+    <template v-if="isJax" #overlays>
       <audio id="bgMusic" ref="bgMusicEl" :src="BG_MUSIC" loop preload="auto" aria-hidden="true" />
     </template>
-
     <template #top-controls-start>
       <LangSwitcher />
-      <LikeButton toon-id="jax" />
+      <LikeButton :toon-id="slug" />
     </template>
-
-    <template #top-controls-mid>
+    <template v-if="isJax" #top-controls-mid>
       <button
         type="button"
         class="toon-fs-btn"

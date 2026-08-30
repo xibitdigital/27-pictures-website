@@ -1,4 +1,4 @@
-import type { EpisodeNav } from "../series";
+import type { EpisodeNav } from "../../site/catalogRender";
 
 /** Shared types for FlipFrame / toon readers. */
 
@@ -33,7 +33,7 @@ export interface ToonBookOptions {
   manifestUrl?: string;
   backHref?: string;
   backLabel?: string;
-  /** Series navigation on the back cover (see src/toons/series.ts). */
+  /** Series navigation on the back cover (D1 catalog, stamped at SSR). */
   backNav?: EpisodeNav | null;
   frontCoverLogo?: string | null;
   coverTitle?: string;

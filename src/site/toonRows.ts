@@ -2,7 +2,6 @@
  * Continue reading on /toons/ — per-visitor, from localStorage the readers write.
  * The row stays hidden until there is a book to resume.
  */
-import { allEpisodes, episodeLabel, type Episode } from "../toons/series";
 import { readProgress, type ReadingProgress } from "../toons/bookReader/readingProgress";
 import { documentLocale, UI, withCaptionLang } from "./i18n";
 
@@ -18,13 +17,23 @@ function fill(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? ""));
 }
 
-export type RowEpisode = Episode & { seriesTitle: string; coverUrl?: string };
+export type RowEpisode = {
+  id?: string;
+  n: number;
+  title: string;
+  url?: string;
+  pages?: number;
+  seriesTitle: string;
+  seriesEpisodeCount?: number;
+  coverUrl?: string;
+};
 
-const ASSET_BASE = (import.meta.env.VITE_ASSET_BASE as string | undefined) || "";
+export function episodeLabel(ep: RowEpisode): string {
+  return (ep.seriesEpisodeCount ?? 1) > 1 ? `${ep.seriesTitle} · Episode ${ep.n}` : ep.seriesTitle;
+}
 
 function artUrl(ep: RowEpisode): string {
-  if (ep.coverUrl) return ep.coverUrl;
-  return ep.art ? `${ASSET_BASE}/card-art/${ep.art}` : "";
+  return ep.coverUrl || "";
 }
 
 function tile(ep: RowEpisode, meta: string, extra = ""): string {
@@ -69,7 +78,7 @@ export function continueReadingTiles(
     });
 }
 
-export function initToonRows(episodes: RowEpisode[] = allEpisodes()): void {
+export function initToonRows(episodes: RowEpisode[] = []): void {
   const resume = document.getElementById("continue-reading");
   if (resume) renderRow(resume, continueReadingTiles(episodes));
 }

@@ -85,7 +85,7 @@ const SERIES = {
       fr: "Épisode 1 de la série RED SMILE. Horreur psychologique à l'encre gekiga, noir et blanc dense — Elena est seule chez elle quand la télévision trouve une chaîne qui ne devrait pas exister.",
     },
     coverKey: "card-art/redsmile-static.jpg",
-    hubUrl: "/toons/red-smile/",
+    hubUrl: "/toons/redsmile/",
     sort: 40,
   },
 };

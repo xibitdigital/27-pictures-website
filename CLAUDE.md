@@ -106,23 +106,22 @@ Three ways this has actually gone wrong here, each with the fix:
   component. Fix: both read `<html lang>` via `documentLocale()` and pull from
   the one `UI` table in `src/site/i18n.ts`. **A component that renders text owns
   no text.**
-- **A second page that began as a copy.** `/toons/red-smile/`, `/toons/nero/`
-  and `/toons/jax/` are the same series page as `/toons/erin-and-the-goblins/`.
-  They share `seriesPageMain.ts`, the `[data-series-page]` region, the CSS and
-  the schema shape; only copy and the `SERIES` entry differ. Adding a series
-  should be a template plus a locale JSON, never a new layout.
+- **A second page that began as a copy.** `/toons/redsmile/`, `/toons/nero/`
+  and `/toons/jax/` are the same series landing as
+  `/toons/erin-and-the-goblins/`. One `_hub` shell, `seriesPageMain.ts`, and
+  D1 `hub_url` — no per-series HTML. Adding a series is a row in the editor,
+  never a new layout.
 
 Before adding a variant, ask which of these it is:
 
 1. **Same thing, different container** → scope the difference to the container
 2. **Same thing, different content** → pass a prop, or key off existing data
-   (`SERIES`, the `UI` table, `<html lang>`)
+   (D1 catalog, the `UI` table, `<html lang>`)
 3. **Genuinely a different thing** → a new component, and say why in a comment
 
-`src/toons/series.ts` is the worked example of (2): one registry knows which
-books are episodes of what, and the readers' back covers, the `/toons/` cards,
-the series pages and the schema all read from it. A page that hardcodes an
-episode list has already forked.
+The D1 catalog is the worked example of (2): series hubs, readers, cards,
+JSON-LD, sitemap, `llms.txt` and FlipFrame back-cover next/prev all read
+`GET /catalog`. A page that hardcodes an episode list has already forked.
 
 ## Project Structure
 
@@ -133,23 +132,31 @@ episode list has already forked.
 │   ├── cosplay/             # /cosplay/ service page
 │   ├── horror-shorts/       # /horror-shorts/ Red Smile hub
 │   ├── site/                # SiteNav, ContactForm, per-page entries
-│   ├── toons/index.html     # /toons/ — Interactive Toons index (was /experiments/)
+│   │   └── catalogRender.ts # D1 catalog → HTML cards + JSON-LD (no document)
+│   ├── toons/index.html     # /toons/ — catalog shell (SSR fills from D1)
 │   ├── toons/editor/        # /toons/editor/ — D1 studio (hash router)
 │   ├── toons/bookReader/    # FlipFrame package
-│   ├── toons/jax|erin|nero|redsmile-static/  # Toon apps
+│   ├── toons/_hub/          # series landing shell — body written by SSR
+│   ├── toons/_reader/       # one FlipFrame app for every book
 │   └── test/setup.ts        # Vitest (forces empty VITE_ASSET_BASE)
+├── functions/               # Cloudflare Pages Functions (ship with the Pages deploy)
+│   ├── _middleware.ts       # staging Basic Auth + noindex; withToonSsr
+│   ├── toonSsr.ts           # catalog/hub/reader HTML from D1
+│   ├── sitemap.xml.ts       # /sitemap.xml from D1 + LOCALIZED_SITE_PATHS
+│   └── llms.txt.ts          # /llms.txt from D1 + static film/service links
 ├── content/toons/           # Per-toon READMEs; live books are D1 (not config.json)
-├── worker/toon-editor/      # TypeScript Worker — D1 + R2 editor API
+├── worker/toon-editor/      # TypeScript Worker — D1 + R2 editor API (`GET /catalog`)
 ├── docs/story/              # Series bible + cast bios — never shipped
 ├── public/                  # Static → site root in dist/
 │   ├── styles.css, logo.png, the-red-smile.jpg, qr.html, …
 │   ├── toons/               # reader-shared.css; assets on R2
 │   │   └── **/assets/       # gitignored (R2 only)
 │   ├── card-art/            # gitignored posters (R2)
-│   ├── sitemap.xml          # uses %VITE_ASSET_BASE% for card images
+│   ├── robots.txt           # crawl policy (sitemap + llms.txt are SSR)
 │   ├── _redirects           # 301 /experiments* → /toons/
 │   └── _headers             # CSP + cache (allow R2 + CF Insights)
 ├── vite/plugins/cdnMedia.ts # hard CDN gate + token expand + strip media
+├── vite/plugins/toonSsrDev.ts # make dev: same catalog inject as the Function
 ├── scripts/
 │   ├── lib/r2-media.js      # shared R2 put/lock
 │   ├── upload-r2-assets.js
@@ -191,7 +198,10 @@ Each Actions run, in order:
    hook on staged `content/toons/*/config.json`). A lock that does not match
    fails the job instead of shipping a bundle that asks for a missing JSON.
 2. `npm run build` so the JS bundle asks for the locked names.
-3. `wrangler pages deploy dist` to that branch's Pages project.
+3. `wrangler pages deploy dist` to that branch's Pages project. That also
+   ships `functions/` (catalog/hub/reader SSR, sitemap + llms.txt, staging auth). It does
+   **not** deploy `worker/toon-editor` — that is `cd worker/toon-editor &&
+   npx wrangler deploy`.
 4. Prune superseded unique `<hash>.<project>.pages.dev` snapshots. Keep the
    newest (the live custom domain) and any still-aliased deploy; never
    `--force`.
@@ -250,8 +260,10 @@ make deploy        # require base + build + Pages
 make deploy-cdn    # upload R2 first, then deploy
 ```
 
-Static card-art URLs use the token **`%VITE_ASSET_BASE%/card-art/…`** in HTML/sitemap
-(expanded at build by `vite/plugins/cdnMedia.ts`).
+Static card-art URLs use the token **`%VITE_ASSET_BASE%/card-art/…`** in HTML
+(expanded at build by `vite/plugins/cdnMedia.ts`). `/sitemap.xml` and
+`/llms.txt` are Pages Functions (`functions/sitemap.xml.ts`,
+`functions/llms.txt.ts`), not files under `public/`.
 
 Local workflow for **new** plates — pick the tool in _Adding a new toon page
 image_ below. Do not start from `add-image` for Erin/Nero WebP books.
@@ -395,9 +407,10 @@ The plate is on R2 after `add-image --upload`. Attach it to the book in
 `/toons/editor/` (D1). Staging/production readers load that D1 config, not a
 hashed `config.json` on the CDN.
 
-After an insert, bump page counts (reader fallback, series `pages`, locales
-`ep2Cue`, `llms.txt`) and rename `docs/story/<series>/eN/prompts/` files from
-the high number down so names do not collide.
+After an insert, set the page count on the D1 toon (editor) so the SSR
+fallback and catalog match, and rename `docs/story/<series>/eN/prompts/`
+files from the high number down so names do not collide. `/llms.txt` reads
+the catalog — no markdown edit.
 
 #### `add-image` (JPG/PNG append / local stage only)
 
@@ -527,11 +540,15 @@ so no physical material was invalidated.
 | `/horror-shorts/`        | `src/horror-shorts/`        | The Red Smile anthology hub; links out to one page per film |
 | `/horror-shorts/<slug>/` | `src/horror-shorts/<slug>/` | One Red Smile short: player, writeup, `VideoObject`         |
 | `/cosplay/`              | `src/cosplay/`              | Cosplay production service page + FAQ                       |
-| `/toons/`                | `src/toons/index.html`      | Interactive Toons index (readers live at `/toons/<name>/`)  |
+| `/toons/`                | `src/toons/index.html`      | Interactive Toons catalog — D1 cards SSR’d into the HTML    |
+| `/toons/<series>/`       | SSR `src/toons/_hub/`       | Series landing from D1 `hub_url` (no per-series HTML)       |
+| `/toons/<series>/<ep>/`  | SSR `src/toons/_reader/`    | FlipFrame reader from D1 `reader_url`                       |
 | `/watch/`                | `src/watch/`                | Every release in one place — click-to-play façades          |
 
-Every row above also answers under `/de/`, `/it/` and `/fr/`
-— generated, not hand-written; see _Adding a page, and translating it_.
+Site pages also answer under `/de/`, `/it/` and `/fr/` — generated, not
+hand-written. Series hubs take the same locale prefix but are **SSR from D1**
+(no `src/de/toons/jax/` files). Readers stay on one English URL + `?lang=`.
+See _Adding a page, and translating it_.
 
 Each page mounts the same Vue chrome via its own entry in `src/site/`
 (`main.ts`, `toonsMain.ts`, `cosplayMain.ts`, `horrorShortsMain.ts`) and needs a
@@ -541,10 +558,20 @@ homepage-relative (`/#contact`).
 
 **Schema lives with its subject, never duplicated.** The homepage graph keeps
 Organization, WebSite, WebPage, the founders and the VFX Service.
-`CreativeWorkSeries` belongs to `/horror-shorts/`; each short's `VideoObject`
-lives on its own film page under `/horror-shorts/<slug>/`, and the hub
-`ItemList` points at those pages. The cosplay `Service` and `FAQPage` belong
-to `/cosplay/`. Split pages add `BreadcrumbList` and reference the org by `@id`.
+`CreativeWorkSeries` for the **films** belongs to `/horror-shorts/`; each
+short's `VideoObject` lives on its own film page under
+`/horror-shorts/<slug>/`, and the hub `ItemList` points at those pages. The
+cosplay `Service` and `FAQPage` belong to `/cosplay/`. Split pages add
+`BreadcrumbList` and reference the org by `@id`.
+
+**Toon catalog schema is D1, not a hardcoded episode list.** `/toons/` carries
+`data-toon-jsonld`; each series hub carries `data-series-jsonld`. The Pages
+Function (`functions/toonSsr.ts`) overwrites those scripts from `GET /catalog`
+so the ItemList / CreativeWorkSeries matches what the shelf shows. Do not
+hand-edit episode lists in those JSON-LD blocks — they are stubs.
+
+**Homepage `#darkroom` lab cards** link to series landings (`/toons/nero/`,
+`/toons/jax/`, `/toons/redsmile/`), not a single episode reader.
 
 **`/experiments/` is gone** — renamed Interactive Toons and moved to `/toons/`,
 which was already the parent of every reader URL. `public/_redirects` 301s
@@ -557,8 +584,13 @@ page.
 
 **Shared page furniture:** split pages use the homepage's `THE RED SMILE`
 heading treatment (Playfair, `7vw`, `15vw` under 768px) and its `10%` side
-gutter, so they read as one site. Card grids carry no borders — separation is
-background only.
+gutter, so they read as one site. The **catalog** H1 on `/toons/` is not that
+hero: under 768px it is `clamp(2.5rem, 9vw, 3.25rem)` so “Interactive Toons”
+does not fill the viewport. Card grids carry no borders — separation is
+background only. The catalog puts the **shelf first** (empty
+`[data-toon-catalog]`), then continue-reading, then the about copy. Title is
+`Interactive Toons | 27 Pictures` — do not prefix a second “Interactive Toons”.
+There is no `keywords` meta on the catalog (Google ignores it).
 
 ### Adding a page, and translating it (de / it / fr)
 
@@ -570,20 +602,22 @@ template through a per-locale JSON of copy before Vite scans MPA inputs, so
 and `src/fr/` are gitignored — editing a file there is editing a build artefact.
 
 **Every indexable site page is translated. Readers are not** — their captions
-are already multilingual, and a `/de/toons/nero/` whose chrome is German and
-whose story is English is a language mismatch Google drops the whole cluster
-for.
+are already multilingual, and a `/de/toons/nero/the-dog/` whose chrome is
+German and whose story is English is a language mismatch Google drops the
+whole cluster for. Hubs are the localized series landings
+(`/de/toons/nero/`).
 
 Adding a page:
 
 1. `src/<path>/index.html` + an entry module in `src/site/`, and a matching
    `rollupOptions.input` line only if `htmlEntries()` cannot find it (it walks
    for `index.html`, so usually nothing to do).
-2. `public/llms.txt` and a real internal link — see
+2. A real internal link — `/llms.txt` is SSR from D1 + static site pages; see
    _Sitemap + getting new URLs indexed_.
 3. Then translate it, below. After the path is in `LOCALE_PAGES` and
-   `LOCALIZED_PATHS`, add it to `LOCALIZED_SITE_PATHS` (Worker sitemap) unless
-   it is a toon series hub (those come from D1). Redeploy the Worker.
+   `LOCALIZED_PATHS`, add it to `LOCALIZED_SITE_PATHS` unless it is a toon
+   series hub (those come from D1). A **Pages** deploy picks the list up
+   (`src/site/crawlerDocs.ts` imports it).
 
 Translating it:
 
@@ -603,7 +637,8 @@ Translating it:
    the `i18n.ts` list is what the nav and the language switcher believe. A path
    in one and not the other is a switcher pointing at a 404. If it is a site
    page (not a series hub), also append it to `LOCALIZED_SITE_PATHS` in
-   `worker/toon-editor/src/sitemap.ts` and redeploy the Worker.
+   `worker/toon-editor/src/sitemap.ts`. Push Pages; do not list hubs there
+   (`isToonSeriesHubPath` + D1 `hub_url`).
 4. **Write `src/site/locales/<copyDir>/{de,it,fr}.json`** — one key per tag. A
    missing key keeps the English text, which is a silent half-translated page,
    so diff the keys against the template rather than trusting the build.
@@ -624,8 +659,11 @@ Translating it:
    Paths that do not already exist are ignored, so a stale key cannot invent a
    property. `inLanguage` is set for you.
 
-6. **Sitemap**: one `<url>` per locale (`/de/<path>/`, …) beside the English
-   one, with the locale's own `<image:title>` / `<image:caption>`.
+6. **Sitemap**: if it is a translated **site** page (not a series hub or
+   reader), append the English path to `LOCALIZED_SITE_PATHS` in
+   `worker/toon-editor/src/sitemap.ts`. The Pages Function emits `/path/`,
+   `/it/path/`, `/de/path/`, `/fr/path/`. Series hubs and readers come from
+   D1 — do not list them there. Push Pages.
 7. `npm run format && npm test`, then build — the pages are written at build
    time, so `dist/de/<path>/index.html` existing is the real check.
 
@@ -663,11 +701,12 @@ row types in `src/types.ts`. Vue re-exports the contract from
 | `#/:id/pages/:pageId?` | Plate studio |
 
 Visibility: `draft` (editor only) · `staging` (staging + local catalog) ·
-`published` (Public — production catalog too). `/toons/` and `GET /config/:slug`
-never list drafts. Series membership is `seriesKey` + `episodeN` on the toon.
-The Worker sitemap follows D1 visibility. `public/llms.txt` does not — add
-or remove a line there by hand. `/toons/editor/` is `Disallow` in
-`robots.txt` and is not in the sitemap.
+`published` (Public — production catalog too). `/toons/`, `GET /catalog`,
+`GET /config/:slug` and `/sitemap.xml` never list drafts. Series
+membership is `seriesKey` + `episodeN` on the toon. Episode count on a
+catalog card is **visible** episodes only (a draft sibling does not make
+“2 episodes”). `/llms.txt` is SSR from the catalog. `/toons/editor/` is
+`Disallow` in `robots.txt` and is not in the sitemap.
 
 Deploy the Worker from its directory (`cd worker/toon-editor && npx wrangler
 deploy`), not the Pages project at the repo root. Full routes:
@@ -689,49 +728,79 @@ make dev              # Vite :5173 + editor Worker :8787
 npm run typecheck     # vue-tsc + tsc -p worker/toon-editor
 ```
 
-## Toon Reader (FlipFrame — Erin, Jax, Nero, …)
+## Toon catalog SSR
 
-Readers are **Vue apps** under `src/toons/`, not the old standalone JS shells.
+Google’s renderer eventually runs JavaScript; most AI crawlers (Claude,
+GPTBot, Perplexity) do not. The catalog, series landings and readers therefore
+cannot depend on Vue painting the first HTML.
 
-| Path                                 | Role                                                      |
-| ------------------------------------ | --------------------------------------------------------- |
-| `src/toons/bookReader/`              | FlipFrame package: engine, shell, chrome, captions, audio |
-| `src/toons/jax-the-chip/` · `erin/` · `nero-the-dog/` | App entry + `ToonReaderShell` config          |
-| Worker `GET /config/:slug`           | Live book JSON from D1 (published; staging hosts also see `staging`) |
-| `public/toons/reader-shared.css`     | Shared book chrome + word/bubble CSS (all toons)          |
-| `public/toons/**/assets/`            | **Gitignored** — load via `VITE_ASSET_BASE`               |
+| Layer | What it does |
+| ----- | ------------ |
+| `/toons/` shell | Empty `[data-toon-catalog]`; stub JSON-LD on `data-toon-jsonld` |
+| `src/toons/_hub/` | Empty `<main>` + `seriesPageMain.ts` (nav chrome) |
+| `src/toons/_reader/` | One FlipFrame app (`ToonApp.vue`) for every book |
+| `functions/toonSsr.ts` | `GET /catalog?site=<origin>` (60s cache). Catalog inject; **hubs and readers are written from D1** (`hubMainHtml` / `applyReaderHtml`) |
+| `functions/sitemap.xml.ts` · `llms.txt.ts` | Same catalog: static site pages + hubs + readers |
+| `functions/_middleware.ts` | `withToonSsr`, then staging Basic Auth + `X-Robots-Tag: noindex` |
+| `vite/plugins/toonSsrDev.ts` | Same HTML + `/sitemap.xml` + `/llms.txt` on `make dev` |
+| Browser | Continue-reading, like counts, quick-view. **Does not paint the shelf or hub cards.** |
 
-| Toon              | URL                        | Notes                                                                                                                                                                                            |
-| ----------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Erin              | `/toons/erin/`             | Page-turner prototype                                                                                                                                                                            |
-| Jax               | `/toons/jax-the-chip/`     | **Jax is the series; `The Chip` is episode 1.** Series landing at `/toons/jax/`. Netrunner / Robin Hood of mind-tech; multilingual SFX (see `content/toons/jax/README.md`)                       |
-| Nero              | `/toons/nero-the-dog/`     | **Nero is the series; `The Dog` is episode 1.** Series landing at `/toons/nero/`. Scotland Yard case — Nero, Eve, The Dog; page 4 = _HOURS EARLIER_ flashback (see `content/toons/nero/README.md`) |
-| RED SMILE: static | `/toons/redsmile-static/`  | **RED SMILE is the series; `static` is episode 1** — 12 plates. Elena alone at home, a flickering TV, something watching back; plates from `/horror-toon-page`                                     |
-| Erin EP 2         | `/toons/erin-the-revenge/` | **ERIN & THE GOBLINS — The Revenge**, 23 plates, EN/IT/DE/FR. Erin returns to defeat the Goblin King; Venus teaches matter. Prompts in `docs/story/erin/e2/prompts/` (`erin-ep2-*`). See `content/toons/erin/README.md` |
+`src/site/catalogRender.ts` and `src/site/toonPages.ts` are the builders (no
+`document`). A second client-only card template will drift from what crawlers
+see.
 
-**Erin EP 2 has shipped (2026-08)**: `/toons/erin-the-revenge/` is live and
-`index, follow`, listed in the sitemap and `llms.txt`, and reachable through
-the localized series hub `/toons/erin-and-the-goblins/` (which links both
-episodes and carries the canonical `#series` entity the `/toons/` ItemList
-references by `@id`). The old hide-on-`main` arrangement is history.
+A hub URL is D1 `series.hub_url` (`/toons/<series>/`). An episode URL is D1
+`reader_url` (`/toons/<series>/<episode>/`). CDN plates stay under
+`asset_page_dir` (`/toons/<slug>/` — not the public reader path). The D1
+series **key** may differ from the hub slug (`red-smile` vs `/toons/redsmile/`).
 
-Wire-up pattern:
+Staging and production share one remote D1. Production catalog is `published`
+only; staging (and local Vite, `site=http://127.0.0.1:…`) also shows
+`staging`. Drafts never appear on either. Verify crawler HTML with curl, not
+a screenshot of the Vue app:
 
-```vue
-<ToonReaderShell
-  alt-prefix="Jax"
-  :config-url="toonConfigUrl('jax')"
-  asset-page-dir="/toons/jax/"
-  front-cover-logo="/logosquare.png"
-  :cover-texture="COVER_TEXTURE"
-  :book-options="bookOptions"
-/>
+```bash
+# production (no auth)
+curl -sS https://twentyseven.pictures/toons/ | grep -E 'series-card|data-toon-jsonld'
+# staging (HTTP Basic — Pages secrets; do not put this in GSC)
+curl -sS -u "$PREVIEW_USER:$PREVIEW_PASS" https://staging.twentyseven.pictures/toons/ \
+  | grep -E 'series-card|X-Robots-Tag'
 ```
 
-- **`config-url`** — `readerConfigUrl("<toon>")` / `toonConfigUrl("<toon>")` (D1 `GET /config/:slug`; local Vite via `/__editor-api`).
-- **`asset-page-dir`** is required so relative plate/SFX paths resolve on the CDN.
+The Worker host is the API. Crawlers should hit the **site origin** (`/toons/`,
+`/sitemap.xml`, `/llms.txt`). Do not put catalog HTML on
+`toon-editor.sangalli-marco.workers.dev`.
+
+## Toon Reader (FlipFrame — Erin, Jax, Nero, …)
+
+One reader app (`src/toons/_reader/ToonApp.vue`) serves every book. The Pages
+Function stamps `data-toon-slug` (D1 slug) and `data-asset-page-dir` (CDN
+prefix). Config is `GET /config/:slug`. Jax music is the only slug-specific
+chrome.
+
+| Path | Role |
+| ---- | ---- |
+| `src/toons/bookReader/` | FlipFrame package |
+| `src/toons/_reader/` | Shared reader HTML + `ToonApp.vue` |
+| Worker `GET /config/:slug` | Live book JSON from D1 |
+| `public/toons/reader-shared.css` | Shared book chrome |
+| `public/toons/<slug>/assets/` | **Gitignored** — R2 via `VITE_ASSET_BASE` |
+
+| Toon | Public URL | D1 slug / CDN prefix | Notes |
+| ---- | ---------- | -------------------- | ----- |
+| Erin EP 1 | `/toons/erin-and-the-goblins/the-missing-child/` | `erin` · `/toons/erin/` | 27 plates. Old `/toons/erin/` 301s |
+| Erin EP 2 | `/toons/erin-and-the-goblins/the-revenge/` | `erin-the-revenge` | 23 plates. Old `/toons/erin-the-revenge/` 301s |
+| Jax EP 1 | `/toons/jax/the-chip/` | `jax` · `/toons/jax/` | Hub `/toons/jax/`. Old `/toons/jax-the-chip/` 301s |
+| Nero EP 1 | `/toons/nero/the-dog/` | `nero` · `/toons/nero/` | Hub `/toons/nero/`. Old `/toons/nero-the-dog/` 301s |
+| RED SMILE EP 1 | `/toons/redsmile/static/` | `redsmile-static` | Hub `/toons/redsmile/` (`key` `red-smile`). Old `/toons/redsmile-static/` 301s |
+| RED SMILE EP 2 | `/toons/redsmile/marcus/` | `redsmile-marcus` | Old `/toons/redsmile-marcus/` 301s |
+
+`ASSET_PAGE_DIR` is a **CDN key prefix, not a route**. Jax plates stay
+`toons/jax/assets/<md5>` even though the reader is `/toons/jax/the-chip/`.
+
+- **`config-url`** — `readerConfigUrl("<slug>")` (D1; local Vite `/__editor-api`).
 - Product attribution **“FlipFrame — by twentyseven.pictures”** lives in
-  `FrontCoverInstructions.vue` (shared), not per-toon config.
+  `FrontCoverInstructions.vue` (shared).
 
 ```bash
 # After new plates/audio — one command, right order (then push, or it deploys itself)
@@ -781,10 +850,9 @@ add the init call**, or the placeholder renders empty.
 ### Story bible (`docs/story/<series>/`)
 
 Cast bios and series canon live under **`docs/story/<series>/`** — deliberately
-outside `content/`. Only `content/toons/<toon>/config.json` is ever read by the
-dev plugin or `publish-toon-config`, so markdown there would never have shipped
-— but `content/` is where publishable toon material lives, and unpublished
-pre-production notes do not belong in it.
+outside `content/` and never shipped. Live books are D1 (`/toons/editor/`).
+`content/toons/` holds READMEs and optional import snapshots; unpublished
+pre-production notes do not belong there.
 
 Series level, not per episode: the cast spans episodes, and
 `content/toons/redsmile-static/` is episode 1's folder.
@@ -814,53 +882,47 @@ landing page** listing its episodes, separate from the readers:
 
 | Series | Landing | Episode 1 reader |
 | ------ | ------- | ---------------- |
-| Erin & the Goblins | `/toons/erin-and-the-goblins/` | `/toons/erin/` |
-| Nero | `/toons/nero/` | `/toons/nero-the-dog/` |
-| Jax | `/toons/jax/` | `/toons/jax-the-chip/` |
-| RED SMILE | `/toons/red-smile/` | `/toons/redsmile-static/` |
+| Erin & the Goblins | `/toons/erin-and-the-goblins/` | `/toons/erin-and-the-goblins/the-missing-child/` |
+| Nero | `/toons/nero/` | `/toons/nero/the-dog/` |
+| Jax | `/toons/jax/` | `/toons/jax/the-chip/` |
+| RED SMILE | `/toons/redsmile/` | `/toons/redsmile/static/` |
 
-Landings are indexable and translated (`LOCALE_PAGES` + `LOCALIZED_PATHS`);
-**readers are not** — they keep one URL and take `?lang=`. All four landings
-share `src/site/seriesPageMain.ts`, the `[data-series-page]` region the
-quick-view dialog injects, and one CSS component; only copy differs.
+Landings are indexable and take a locale prefix (`/de/toons/jax/`). The
+language switcher treats `/toons/<series>/` as a hub (one extra path segment);
+readers (`/toons/<series>/<episode>/`) stay on one English URL + `?lang=`.
+`src/toons/_hub/index.html` is an empty shell; `hubMainHtml()` writes the
+`<main>` from D1. Vue only mounts site chrome, like counts, and forwards
+`?page=` using `data-episode-one`. Back-cover next/prev is
+`episodeNavFromCatalog` (D1), not a hardcoded `SERIES` table.
 
-**Nero and Jax used to be readers at those clean URLs.** Two consequences:
+`/toons/red-smile/` 301s to `/toons/redsmile/`. After a hub URL change, set D1
+`series.hub_url` (editor series form). Catalog, sitemap and llms.txt all read
+that field.
 
-- `/toons/nero/` and `/toons/jax/` are **not** redirected — they cannot be, they
-  now serve the series page. The URLs keep their signals but changed content;
-  the readers start fresh at the episode slugs.
-- Their READMEs document `?page=N` deep links against the old URLs.
-  `seriesPageMain.ts` forwards any `?page=` on a landing to episode one, keyed
-  off `data-series-key` on `<html>`. Keep that attribute — and note that
-  `localePages.ts` rewrites the `lang` attribute **in place** precisely so
-  `data-*` on `<html>` survives; replacing the whole tag once shipped every
-  Italian series page as `lang="en"`.
-
-`ASSET_PAGE_DIR` in each reader app is a **CDN key prefix, not a route**. It
-still reads `/toons/nero/` and `/toons/jax/` because the plates are keyed
-`toons/<toon>/assets/<md5>` on R2. Moving it with the route 404s every page.
+**Nero and Jax used to be readers at those clean URLs.** `/toons/nero/` and
+`/toons/jax/` are **not** redirected — they serve the series page. Deep links
+are `/toons/nero/the-dog/?page=N` (1-based). `seriesPageMain.ts` forwards any
+`?page=` on a landing to episode one using `data-episode-one` (and
+`data-series-key` on `<html>`). Keep those attributes.
 
 ### Reader SEO (crawlable fallback)
 
-The readers are client-rendered: without this, `/toons/<name>/` serves an empty
-`<body>` and the story text arrives from a CDN JSON, so crawlers see nothing on
-the four most distinctive URLs on the site.
+Without the Function, a reader URL would serve the empty `_reader` shell and
+the story would arrive from D1 JSON after JS. `applyReaderHtml` stamps the
+shared `src/toons/_reader/index.html`:
 
-Each `src/toons/<name>/index.html` therefore carries:
+- a **fallback article inside `#app`** — title, logline, page count, languages,
+  links to the hub and `/toons/`. Vue replaces it on mount (`.reader-fallback`
+  is gone once `.book-scene` exists). Style is `.reader-fallback` in
+  `reader-shared.css`.
+- **`WebPage` + `BreadcrumbList` + `CreativeWork`** on `data-toon-jsonld`.
+  Cover copy and schema both come from D1.
+- **og/twitter** from D1 cover/OG art (1200×630 landscape crops — portrait
+  card art crops badly on `summary_large_image`).
+- **`data-episode-nav`** JSON (`episodeNavFromCatalog`) so FlipFrame back
+  covers point at the next/prev episode.
 
-- a **fallback article inside `#app`** — premise, page count, languages, links
-  out. Vue replaces it on mount (verified: `.reader-fallback` is gone once
-  `.book-scene` exists), so it is a genuine no-JS view, not hidden text. Style
-  lives in `reader-shared.css` under `.reader-fallback`.
-- **`WebPage` + `BreadcrumbList` + `CreativeWork`** JSON-LD. The CreativeWork
-  description reuses the app's `COVER_SYNOPSIS`, so cover copy and schema
-  cannot drift.
-- **og/twitter tags** pointing at `card-art/<toon>-og.jpg` (1200×630 landscape
-  crops — the portrait card art crops badly on `summary_large_image`), and a title built from
-  the hook rather than "… | Experiments", which no one searches.
-
-Keep the fallback in step with the synopsis when a toon's story changes, and
-keep it inside `#app` — moved outside, it would render twice.
+Keep the fallback inside `#app`. There is no per-toon `index.html`.
 
 ### Reader chrome (progress bar, back link)
 
@@ -889,9 +951,9 @@ index), scroll mode from document scroll.
   mode keeps ~2.75rem of top padding so the spread clears the fixed top-right
   controls. The page-nav arrows are centred **on** the page edges, half over
   the plate and half over the margin, so `--book-width` must keep at least the
-  disc radius clear on each side — that is the `100vw - 64px` term in every
-  toon's `<style>`. Shrink that gutter and `.reader`'s overflow slices the
-  outer half of the disc off.
+  disc radius clear on each side — that is the `100vw - 64px` term in the
+  shared `_reader` `<style>`. Shrink that gutter and `.reader`'s overflow
+  slices the outer half of the disc off.
 
 ### Per-toon geometry tokens (`--plate-aspect`, `--strip-width`)
 
@@ -903,12 +965,13 @@ silently mis-sized every other toon:
 | `--plate-aspect` | `aspect-ratio` of a vertical-scroll page slot | `1008 / 1792`      |
 | `--strip-width`  | Width cap of the scroll strip                 | `min(98vw, 720px)` |
 
-Each toon declares its real values next to its book tokens: Erin and Erin EP 2
-are `1152 / 1728` and raise the strip to `900px`, Nero and RED SMILE are
-`800 / 1424`, Jax keeps the defaults. Get `--plate-aspect` wrong and every page
-scrolls with bands above and below it; leave `--strip-width` at the 9:16 value
-and a wider 2:3 book reads as a narrow locked column next to the same page in
-flip view.
+SSR writes `--plate-w` / `--plate-h` / `--strip-cap` and `data-paper` on the
+shared `_reader` `<html>` from D1 (`designWidth` / `designHeight`). Erin is
+`1152 / 1728` with a 900px strip; Nero and RED SMILE are `800 / 1424`; Jax
+keeps the 9:16 defaults. Get `--plate-aspect` wrong and every page scrolls
+with bands above and below it; leave `--strip-width` at the 9:16 value and a
+wider 2:3 book reads as a narrow locked column next to the same page in flip
+view.
 
 The slot keeps an `aspect-ratio` on purpose — it reserves plate height before
 lazy images decode, so a fast fling does not stall as pages expand under the
@@ -931,18 +994,18 @@ four times, none of it cached across pages. It all lives in
 `public/styles.css` now, under `Site page styles`, and those pages have no
 inline CSS at all.
 
-**Reader pages keep their `<style>` blocks**: those are per-toon book tokens
-(`--book-width`, `--page-bg`, fullscreen overrides), not site chrome.
+**The shared `_reader` template keeps one `<style>` block**: book tokens
+(`--book-width`, `--page-bg`, fullscreen overrides), not site chrome. Paper
+colour is `data-paper="dark"|"light"` on `<html>`.
 
 Anything shared by more than one page belongs in `styles.css`; run
 a build after touching it; `vite/plugins/hashedCss.ts` re-hashes the filename.
 
 ### What goes where (CSS)
 
-A toon entry’s own `<style>` should contain **only**:
-
-1. Book-aspect tokens (`--book-width`, `--book-height`, `--page-bg`, …) + fullscreen/single-page overrides.
-2. Genuinely unique extras (e.g. Jax language switcher / music chrome).
+There is no per-toon HTML. Book-aspect tokens and fullscreen overrides live
+on `src/toons/_reader/index.html`. Jax music is the only slug-specific chrome
+(`ToonApp.vue` when `data-toon-slug="jax"`).
 
 Everything shared belongs in `public/toons/reader-shared.css` — including
 `.jax-word*` / bubble SVG chrome (class names are historical; used by every
@@ -983,9 +1046,9 @@ bubble is resolved via `asset-page-dir`.
 SFX/music binaries are content-hashed and live on **R2** (not in git).
 
 Playback is in `src/toons/bookReader` caption code. Caption SFX play on tap
-(no mute gate). Background music toggle lives in `JaxApp.vue` (`BG_MUSIC` via
-`resolveAssetUrl`). Shared `useSoundGate` remains available for other toons
-that want an opt-in SFX prompt.
+(no mute gate). Background music toggle lives in `ToonApp.vue` when the D1
+slug is `jax` (`BG_MUSIC` via `resolveAssetUrl`). Shared `useSoundGate`
+remains available for other toons that want an opt-in SFX prompt.
 
 **Bubble variants (word overlays):**
 
@@ -1263,8 +1326,8 @@ mv /tmp/bg.mp3 "public/toons/jax/assets/music/$HASH.mp3"
 npm run upload-assets   # push to R2 (path is gitignored)
 ```
 
-Update `BG_MUSIC` in `src/toons/jax/JaxApp.vue` to the new hash, then deploy.
-Do not commit the binary.
+Update `BG_MUSIC` in `src/toons/_reader/ToonApp.vue` to the new hash, then
+deploy. Do not commit the binary.
 
 ## SEO State
 
@@ -1276,12 +1339,24 @@ Do not commit the binary.
 - Person schema: 3 founders (Sonia, Marco, Daniele Sangalli) with `jobTitle`/`description`/`worksFor`, linked from `Organization.founder`
 - Organization location: Switzerland & United Kingdom
 - IndexNow key deployed + submitted (`bdd5e80e21a8430d9316de0deacdb208`)
-- All VideoObject uploadDates and durations use real YouTube values
-- `public/llms.txt` — llms.txt-convention markdown (H1 + blockquote summary +
-  H2 link sections); crawler directives live only in `robots.txt`
+- All VideoObject `uploadDate` values are ISO-8601 with a timezone
+  (`YYYY-MM-DDT00:00:00Z`). A bare date (`2026-04-27`) fails Google’s
+  rich-result check. Durations use real YouTube values.
+- `/llms.txt` — Pages Function; films/services are static, toon hubs and
+  readers come from D1. Crawler directives live only in `robots.txt`
 - `public/robots.txt` — search + AI _citation_ crawlers allowed
-- Indexable hub pages added (2026-08): `/horror-shorts/` and `/cosplay/`, each 800+ words of unique copy; sitemap now lists them with 1200×630 OG art
+- Indexable hub pages added (2026-08): `/horror-shorts/` and `/cosplay/`, each 800+ words of unique copy
 - `/experiments/` → `/toons/` with 301s in `public/_redirects`
+- Toon catalog + series hubs SSR from D1 (`functions/toonSsr.ts`) so
+  crawlers that do not run JS still see cards and JSON-LD
+- Sitemap is a Pages Function at `/sitemap.xml` (static site pages + D1 hubs
+  and readers). Drafts omitted; Public (and Staging on staging) come from D1.
+  Worker `GET /sitemap.xml` still exists as the same list for debugging.
+- RED SMILE: Marcus is Public (`index, follow`)
+- Staging is HTTP Basic + `X-Robots-Tag: noindex` — never submit
+  `staging.twentyseven.pictures` to Search Console
+- No on-site analytics (GA4 / Cloudflare Web Analytics). `privacy.html`
+  says so. Search Console is a Google account, not a tag on the page.
 
 ### 404s
 
@@ -1302,47 +1377,45 @@ anything is wrong.
 ### Sitemap + getting new URLs indexed
 
 **URL:** `https://twentyseven.pictures/sitemap.xml` (in Search Console paste just
-`sitemap.xml`). Generated by the toon-editor Worker (`GET /sitemap.xml`) from
-static site paths plus **D1 published** series hubs and readers. Pages
-`functions/sitemap.xml.ts` proxies that to the site origin so crawlers never
-hit the Worker host. Local `make dev` proxies `/sitemap.xml` to `:8787`.
-Drafts and `/toons/editor/` are omitted. Staging hosts include `staging`
-toons. `robots.txt` still points at this URL.
+`sitemap.xml`). Pages Function (`functions/sitemap.xml.ts` +
+`src/site/crawlerDocs.ts`): `LOCALIZED_SITE_PATHS` × locales plus **D1**
+series hubs (localized) and readers (English). `/llms.txt` is the same catalog
+plus a fixed film/service list. Drafts and `/toons/editor/` are omitted.
+Staging includes `staging` toons. `make dev` serves both the same way.
+`robots.txt` points at `/sitemap.xml`.
 
-Flipping a toon to Public is enough for the sitemap (no XML edit). `llms.txt`
-is still hand-maintained.
+Flipping a toon to Public is enough (no XML or markdown edit).
 
 **`LOCALIZED_SITE_PATHS`** (`worker/toon-editor/src/sitemap.ts`) is the list of
-**site** English paths the Worker expands to en/it/de/fr. It is a subset of
-`LOCALIZED_PATHS` (`src/site/i18n.ts`): hubs like `/toons/jax/` stay in i18n
-(for the switcher) but **not** here — the sitemap takes `series.hub_url` from
-D1 once the series has a visible episode.
+**site** English paths expanded to en/it/de/fr. Hubs and readers are **not**
+on that list — they come from D1 `hub_url` / `reader_url`. The Pages Function
+imports this file, so a **Pages** deploy picks up a new static path. Worker
+`GET /sitemap.xml` is the same list for debugging; redeploy the Worker only
+if you still curl that host.
 
 When you add a translated site page (`/studio/`, a new short, …):
 
 1. HTML + `LOCALE_PAGES` + `LOCALIZED_PATHS` (so `/de/studio/` exists).
 2. Append `"/studio/"` to `LOCALIZED_SITE_PATHS` (trailing slash).
-3. Optional: add `images["/studio/"]` in `staticSitemapUrls()` (CDN or YouTube
-   URL, title, caption).
-4. `cd worker/toon-editor && npx wrangler deploy` — Pages only proxies
-   `/sitemap.xml`; the list lives in the Worker.
-5. `public/llms.txt` + an internal link.
+3. Optional: add `images["/studio/"]` in `staticSitemapUrls()`.
+4. Push Pages. Toons appear when Public in `/toons/editor/`.
+5. An internal link.
 
 Do not put readers or `/toons/editor/` on that list. Verify:
 
 ```bash
-curl -sS "https://toon-editor.sangalli-marco.workers.dev/sitemap.xml?site=https://twentyseven.pictures" \
-  | grep '<loc>'
+curl -sS https://twentyseven.pictures/sitemap.xml | grep '<loc>'
+curl -sS https://twentyseven.pictures/llms.txt | head
 ```
 
 **Adding a page** — every new indexable URL needs these, or it exists but
 nothing points at it:
 
 1. A real HTML page (and locale copies if it is a site page, not a reader)
-2. `public/llms.txt` — the key-pages list
-3. an internal link from somewhere real (nav, homepage section, footer)
-4. Toon readers/series: Public in `/toons/editor/` — the Worker sitemap
-   picks them up. Other site URLs: `LOCALIZED_SITE_PATHS` as above.
+2. An internal link from somewhere real (nav, homepage section, footer)
+3. Toon readers/series: Public in `/toons/editor/` — the Pages Function
+   sitemap and `/llms.txt` pick them up. Other site URLs:
+   `LOCALIZED_SITE_PATHS` as above.
 
 **Then tell the engines:**
 
@@ -1357,6 +1430,10 @@ curl -X POST "https://api.indexnow.org/indexnow" \
 ```
 
 Include the **old** URL too when a page moves, so the 301 gets crawled.
+
+**GSC “Discovered – currently not indexed”** with Last crawled N/A means the
+URL is in the sitemap (or linked) and sitting in the crawl queue — not that
+the page is broken. Request indexing if it is urgent; otherwise wait.
 
 **Google needs Search Console — there is no API-free ping.** The old
 `google.com/ping?sitemap=` endpoint returns **404** and Bing's returns **410**;
@@ -1383,7 +1460,7 @@ strands them.
 | File                              | Role                                                                                                                                            |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `public/robots.txt`               | Authoritative crawl rules shipped in `dist/`                                                                                                    |
-| `public/llms.txt`                 | Markdown site guide for AI engines (llms.txt spec); crawler rules live in robots.txt                                                            |
+| `/llms.txt`                       | Pages Function: films/services + D1 toon hubs/readers (llms.txt spec)                                                                           |
 | Cloudflare **AI Crawl Control**   | Per-bot **Block** toggles (leave **off** for GPT/Claude/Google/Perplexity)                                                                      |
 | Cloudflare **managed robots.txt** | **Must stay disabled** — when enabled it prepends `Disallow: /` for GPTBot, ClaudeBot, Google-Extended, etc. and conflicts with our Allow rules |
 
@@ -1413,7 +1490,7 @@ curl -sS https://twentyseven.pictures/robots.txt
 
 ### Remaining TODOs
 
-- When a new Short is published: add `/horror-shorts/<slug>/` (VideoObject + writeup), then update the hub ItemList, sitemap, `llms.txt` and the homepage film list
+- When a new Short is published: add `/horror-shorts/<slug>/` (VideoObject + writeup, `uploadDate` as `YYYY-MM-DDT00:00:00Z`), then update the hub ItemList, `LOCALIZED_SITE_PATHS` (push Pages), the film list in `src/site/crawlerDocs.ts` (`FILM_LINKS`) and the homepage film list
 - Submit `/toons/`, `/cosplay/`, `/horror-shorts/` (and the retired `/experiments/`) to IndexNow once live on production
 - Watch GSC for homepage vs `/cosplay/` cannibalisation; trim the homepage summary further if both rank for the same query
 - A `/studio/` page for the assembly/beyond copy once it passes ~400 words
@@ -1429,8 +1506,12 @@ curl -sS https://twentyseven.pictures/robots.txt
 - **Main branch:** `main` — push deploys production (`https://twentyseven.pictures`)
   via GitHub Actions.
 - **Staging branch:** `staging` — push deploys
-  `https://staging.twentyseven.pictures` (HTTP Basic Auth). Carries work in
-  review. Merge `staging` → `main` to ship.
+  `https://staging.twentyseven.pictures` (HTTP Basic Auth + `X-Robots-Tag:
+  noindex`). Carries work in review. Merge `staging` → `main` to ship.
+- A Pages push ships `functions/` (catalog/hub/reader SSR, `/sitemap.xml`,
+  `/llms.txt`). Editor API changes need
+  `cd worker/toon-editor && npx wrangler deploy`. `LOCALIZED_SITE_PATHS`
+  is imported by the Function — a Pages deploy is enough for a new site path.
 - **Local fallback:** `make preview-deploy` / `make deploy` still talk to
   Wrangler directly when you need a one-off without a push.
 - **Remote:** `git@github.com:xibitdigital/27-pictures-website.git`

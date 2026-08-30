@@ -20,30 +20,29 @@
  */
 
 import { fetchLikes } from "./likes";
-import { SERIES } from "../toons/series";
 import { documentLocale, UI, withCaptionLang } from "./i18n";
+import type { CatalogPayload } from "./catalogRender";
 
 /**
  * A series card shows the whole series' hearts, not one book's — the card
  * stands for the series, and on a multi-episode book a single episode's count
  * would read as the series total and undercount it.
  */
-export function seriesLikeTotal(key: string, likes: Map<string, number>): number {
-  const series = SERIES.find((s) => s.key === key);
-  if (!series) return 0;
-  return series.episodes.reduce((sum, ep) => sum + (ep.id ? likes.get(ep.id) ?? 0 : 0), 0);
+export function seriesLikeTotal(slugs: string[], likes: Map<string, number>): number {
+  return slugs.reduce((sum, id) => sum + (likes.get(id) ?? 0), 0);
 }
 
 /** Fills the vote badges once the counts arrive; silent when there are none. */
-export function initSeriesVotes(root: ParentNode = document): void {
+export function initSeriesVotes(root: ParentNode = document, catalog?: CatalogPayload | null): void {
   const slots = [...root.querySelectorAll<HTMLElement>("[data-votes-for]")];
-  if (!slots.length) return;
+  if (!slots.length || !catalog) return;
 
-  const ids = SERIES.flatMap((s) => s.episodes.map((e) => e.id).filter((id): id is string => Boolean(id)));
+  const ids = catalog.series.flatMap((s) => s.episodes.map((e) => e.slug));
 
   void fetchLikes(ids).then((likes) => {
     for (const slot of slots) {
-      const total = seriesLikeTotal(slot.dataset.votesFor as string, likes);
+      const series = catalog.series.find((s) => s.key === slot.dataset.votesFor);
+      const total = seriesLikeTotal(series ? series.episodes.map((e) => e.slug) : [], likes);
       if (total <= 0) continue;
       const ui = UI[documentLocale()];
       slot.textContent = `${total} ${total === 1 ? ui.vote : ui.votes}`;
@@ -64,7 +63,7 @@ export function initEpisodeVotes(root: ParentNode = document): void {
   const slots = [...root.querySelectorAll<HTMLElement>("[data-votes-episode]")];
   if (!slots.length) return;
 
-  const ids = SERIES.flatMap((s) => s.episodes.map((e) => e.id).filter((id): id is string => Boolean(id)));
+  const ids = slots.map((slot) => slot.dataset.votesEpisode).filter((id): id is string => Boolean(id));
 
   void fetchLikes(ids).then((likes) => {
     const ui = UI[documentLocale()];

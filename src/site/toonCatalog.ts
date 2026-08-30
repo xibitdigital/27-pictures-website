@@ -125,8 +125,8 @@ export function catalogAsRowEpisodes(payload: CatalogPayload): RowEpisode[] {
         title: ep.title,
         url: ep.readerUrl || `/toons/${ep.slug}/`,
         pages: ep.pageCount,
-        status: "published",
         seriesTitle: s.title,
+        seriesEpisodeCount: s.episodes.length,
         coverUrl: ep.coverUrl ?? undefined,
       })
     )
@@ -138,8 +138,8 @@ export function catalogAsRowEpisodes(payload: CatalogPayload): RowEpisode[] {
       title: ep.title,
       url: ep.readerUrl || `/toons/${ep.slug}/`,
       pages: ep.pageCount,
-      status: "published",
       seriesTitle: ep.title,
+      seriesEpisodeCount: 1,
       coverUrl: ep.coverUrl ?? undefined,
     })
   );
@@ -167,7 +167,7 @@ export async function initToonCatalog(root: ParentNode = document): Promise<Cata
   });
 
   if (root.querySelector("[data-toon-catalog]")) {
-    initSeriesVotes(root);
+    initSeriesVotes(root, items);
     initToonRows(catalogAsRowEpisodes(items));
   }
   return items;

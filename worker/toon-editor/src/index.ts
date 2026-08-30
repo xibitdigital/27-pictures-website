@@ -789,6 +789,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         pageCount: Number(t.page_count) || 0,
         readerUrl: t.reader_url || null,
         n: t.episode_n,
+        assetPageDir: t.asset_page_dir || `/toons/${t.slug}/`,
+        designWidth: t.design_width,
+        designHeight: t.design_height,
       };
     };
     const episodesOf = (key: string) =>

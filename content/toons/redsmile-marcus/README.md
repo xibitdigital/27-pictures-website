@@ -2,20 +2,19 @@
 
 **Episode 2** of the RED SMILE series. Episode 1 is `redsmile-static`.
 
-Interactive FlipFrame short. Deep-link pages: `/toons/redsmile-marcus/?page=N`.
+Interactive FlipFrame short. Deep-link pages: `/toons/redsmile/marcus/?page=N`.
 
 |             |                                                             |
 | ----------- | ----------------------------------------------------------- |
 | Book        | D1 `redsmile-marcus` — edit in `/toons/editor/`             |
-| Reader      | `/toons/redsmile-marcus/` (series hub `/toons/red-smile/`)  |
+| Reader      | `/toons/redsmile/marcus/` (series hub `/toons/redsmile/`)    |
 | Design size | 800 × 1424 (portrait)                                       |
 | Pages       | **13**                                                      |
 
 ## Status
 
-Visibility is D1 (`/toons/editor/`): **Draft** stays off `/toons/` and the
-series hub. Public lists it; Staging shows on staging only. Reader URL
-`/toons/redsmile-marcus/`.
+Visibility is D1 (`/toons/editor/`). This episode is **Public**. Old
+`/toons/redsmile-marcus/` 301s to `/toons/redsmile/marcus/`.
 
 ## Page 10 is an insert
 

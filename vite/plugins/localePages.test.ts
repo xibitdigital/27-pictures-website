@@ -25,8 +25,8 @@ const TEMPLATE = `<!doctype html>
           },
           {
             "@type": "CreativeWork",
-            "@id": "https://twentyseven.pictures/toons/erin/#work",
-            "url": "https://twentyseven.pictures/toons/erin/",
+            "@id": "https://twentyseven.pictures/toons/erin-and-the-goblins/the-missing-child/#work",
+            "url": "https://twentyseven.pictures/toons/erin-and-the-goblins/the-missing-child/",
             "name": "Erin"
           }
         ]
@@ -37,7 +37,7 @@ const TEMPLATE = `<!doctype html>
     <h1 data-i18n="h1">Interactive Toons</h1>
     <p data-i18n-html="lead">Hello <strong>27 Pictures</strong></p>
     <img data-i18n-alt="neroAlt" alt="English alt" />
-    <a href="/toons/nero-the-dog/">Nero: The Dog</a>
+    <a href="/toons/nero/the-dog/">Nero: The Dog</a>
   </body>
 </html>
 `;
@@ -69,9 +69,9 @@ describe("renderLocalePage", () => {
     expect(html).toContain('href="https://twentyseven.pictures/it/toons/"');
     expect(html).toContain('"url": "https://twentyseven.pictures/it/toons/"');
     expect(html).toContain('"@id": "https://twentyseven.pictures/it/toons/#webpage"');
-    expect(html).toContain("https://twentyseven.pictures/toons/erin/");
-    expect(html).not.toContain("https://twentyseven.pictures/it/toons/erin/");
-    expect(html).toContain('href="/toons/nero-the-dog/?lang=it"');
+    expect(html).toContain("https://twentyseven.pictures/toons/erin-and-the-goblins/the-missing-child/");
+    expect(html).not.toContain("https://twentyseven.pictures/it/toons/erin-and-the-goblins/the-missing-child/");
+    expect(html).toContain('href="/toons/nero/the-dog/?lang=it"');
   });
 
   it("prefixes localized hub pages instead of adding ?lang=", () => {
@@ -80,14 +80,14 @@ describe("renderLocalePage", () => {
   <body>
     <a href="/toons/">Index</a>
     <a href="/toons/erin-and-the-goblins/">Series</a>
-    <a href="/toons/erin/">Reader</a>
+    <a href="/toons/erin-and-the-goblins/the-missing-child/">Reader</a>
   </body>
 </html>
 `;
     const html = renderLocalePage(src, "fr", {}, "/toons/");
     expect(html).toContain('href="/fr/toons/"');
     expect(html).toContain('href="/fr/toons/erin-and-the-goblins/"');
-    expect(html).toContain('href="/toons/erin/?lang=fr"');
+    expect(html).toContain('href="/toons/erin-and-the-goblins/the-missing-child/?lang=fr"');
   });
 
   it("keeps the hreflang cluster pointing at every language, including English", () => {
@@ -120,10 +120,10 @@ describe("renderLocalePage", () => {
     const pretty = `<!doctype html>
 <html lang="en">
   <body>
-    <a href="/toons/nero-the-dog/"><span data-i18n="neroDesc"
+    <a href="/toons/nero/the-dog/"><span data-i18n="neroDesc"
       >English nero</span
     ></a>
-    <a href="/toons/jax-the-chip/"><span data-i18n="jaxDesc"
+    <a href="/toons/jax/the-chip/"><span data-i18n="jaxDesc"
       >English jax</span
     ></a>
   </body>
@@ -132,8 +132,8 @@ describe("renderLocalePage", () => {
     const html = renderLocalePage(pretty, "fr", { neroDesc: "Nero FR", jaxDesc: "Jax FR" }, "/toons/");
     expect(html).toContain("Nero FR");
     expect(html).toContain("Jax FR");
-    expect(html).toContain('href="/toons/nero-the-dog/?lang=fr"');
-    expect(html).toContain('href="/toons/jax-the-chip/?lang=fr"');
+    expect(html).toContain('href="/toons/nero/the-dog/?lang=fr"');
+    expect(html).toContain('href="/toons/jax/the-chip/?lang=fr"');
   });
 
   it("keeps English when a key is missing", () => {
@@ -150,8 +150,8 @@ describe("localizePageUrl", () => {
     expect(localizePageUrl("https://twentyseven.pictures/toons/#itemlist", "/toons/", "fr")).toBe(
       "https://twentyseven.pictures/fr/toons/#itemlist"
     );
-    expect(localizePageUrl("https://twentyseven.pictures/toons/jax-the-chip/", "/toons/", "fr")).toBe(
-      "https://twentyseven.pictures/toons/jax-the-chip/"
+    expect(localizePageUrl("https://twentyseven.pictures/toons/jax/the-chip/", "/toons/", "fr")).toBe(
+      "https://twentyseven.pictures/toons/jax/the-chip/"
     );
   });
 });
@@ -175,7 +175,7 @@ it("renders the real toons landing template into Italian", () => {
   expect(html).toContain("https://twentyseven.pictures/it/toons/nero/");
   expect(html).toContain("https://twentyseven.pictures/it/toons/erin-and-the-goblins/");
   expect(html).toContain("https://twentyseven.pictures/it/toons/jax/");
-  expect(html).toContain("https://twentyseven.pictures/it/toons/red-smile/");
+  expect(html).toContain("https://twentyseven.pictures/it/toons/redsmile/");
   expect(html).not.toContain("https://twentyseven.pictures/it/toons/redsmile-static/");
   // A reader path must never be prefixed, or the switcher points at a 404.
   for (const reader of ["nero-the-dog", "jax-the-chip", "redsmile-static", "erin", "erin-the-revenge"]) {

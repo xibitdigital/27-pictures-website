@@ -7,8 +7,9 @@ Production site for [27 Pictures](https://twentyseven.pictures/) — psychologic
 | Layer | Tech |
 |--------|------|
 | App | Vue 3 + Vite + TypeScript (MPA) |
-| Hosting | Cloudflare Pages (`dist/`) |
+| Hosting | Cloudflare Pages (`dist/` + `functions/`) |
 | Media | Cloudflare R2 (CDN) — **required** at build time |
+| Toon studio | Cloudflare Worker + D1 (`worker/toon-editor`) |
 | Contact form | Cloudflare Worker + Resend + Turnstile |
 | Fonts | Google Fonts (Playfair Display, Inter) |
 
@@ -31,27 +32,30 @@ make deploy       # requires VITE_ASSET_BASE in .env
 27-pictures-website/
 ├── src/                         # Vite root (HTML entries + Vue/TS)
 │   ├── index.html               # Homepage
-│   ├── site/                    # SiteNav, ContactForm, directives
+│   ├── site/                    # SiteNav, ContactForm, catalogRender, crawlerDocs
 │   ├── toons/
 │   │   ├── editor/              # /toons/editor/ — D1 studio
 │   │   ├── bookReader/          # FlipFrame package
-│   │   ├── jax/ | erin/ | nero/ # Toon apps + entries
+│   │   ├── _hub/                # series landing shell (SSR fills <main>)
+│   │   └── _reader/             # one FlipFrame app for every book
 │   └── test/                    # Vitest setup
+├── functions/                   # Pages Functions: toon SSR, /sitemap.xml, /llms.txt, staging auth
 ├── public/                      # Static assets → site root in dist/
 │   ├── styles.css, logo.png, …
 │   ├── toons/                   # reader-shared.css; assets gitignored (R2)
-│   ├── card-art/                # gitignored posters (R2): erin, jax, nero
-│   ├── robots.txt, llms.txt     # crawl policy (AI search allowed)
-│   ├── sitemap.xml, _headers, …
+│   ├── card-art/                # gitignored posters (R2)
+│   ├── robots.txt               # crawl policy; sitemap + llms.txt are SSR
+│   ├── _headers, _redirects
 ├── content/toons/               # Per-toon READMEs (live books are D1)
 ├── cdn-backup/                  # local R2 image backup (gitignored)
 ├── vite/plugins/cdnMedia.ts     # CDN gate + %VITE_ASSET_BASE% expand
+├── vite/plugins/toonSsrDev.ts   # make dev: same catalog inject as the Function
 ├── scripts/                     # QR, watermark, R2 upload, toon import
 ├── worker/                      # Contact form Worker
 ├── worker/toon-editor/          # TypeScript editor API (D1 + R2)
 ├── dist/                        # Production build (gitignored)
 ├── Makefile
-└── CLAUDE.md                    # Agent / contributor ops notes (incl. SEO)
+└── CLAUDE.md                    # Agent / contributor ops notes (incl. SEO) — Grok loads this
 ```
 
 ## Environment
@@ -108,10 +112,12 @@ Toon plates, SFX, music, and experiment card art are **not in git**. Source of t
 
 ## SEO / crawlers
 
-- `public/robots.txt` + `public/llms.txt` — allow search and AI *citation* crawlers; block Bytespider/CCBot and `/qr`
+- `public/robots.txt` — allow search and AI *citation* crawlers; block Bytespider/CCBot and `/qr`
+- `/llms.txt` and `/sitemap.xml` — Pages Functions (`functions/llms.txt.ts`, `functions/sitemap.xml.ts`): static site pages + D1 hubs/readers. There is no `public/llms.txt` or `public/sitemap.xml`.
+- `/toons/`, series hubs (`/toons/<series>/`) and readers (`/toons/<series>/<episode>/`): Pages Function stamps D1 HTML + JSON-LD (`functions/toonSsr.ts`). Vue does not paint the shelf.
 - Cloudflare **managed robots.txt** must stay **disabled** (it used to inject `Disallow: /` for GPTBot/ClaudeBot)
 - AI Crawl Control per-bot **Block** toggles: leave **off** for citation bots
-- Details and IndexNow: `CLAUDE.md` → **SEO State**
+- Staging is password-gated and `noindex`. Details and IndexNow: `CLAUDE.md` → **SEO State**
 
 ```bash
 # One-time bucket + CORS
@@ -125,8 +131,8 @@ make deploy-cdn
 New page plate:
 
 ```bash
-make add-image SRC=~/Downloads/page.jpg TOON=jax CONFIG=1 UPLOAD=1
-# commit content/toons/…/config.json + config-lock + r2-assets-lock — not binaries
+make add-image SRC=~/Downloads/page.jpg TOON=jax UPLOAD=1
+# attach the plate in /toons/editor/ (D1). Do not commit binaries.
 ```
 
 ## Contact form Worker
@@ -143,7 +149,9 @@ CORS locked to `https://twentyseven.pictures`.
 
 - **Usual path:** push. `staging` → https://staging.twentyseven.pictures
   (HTTP Basic Auth); `main` → https://twentyseven.pictures. See `CLAUDE.md`.
-- Artifact is **`dist/`**, not raw `public/`
+- Artifact is **`dist/`**, not raw `public/`. Pages also deploys `functions/`
+  (toon SSR, `/sitemap.xml`, `/llms.txt`). The editor Worker is a separate
+  `npx wrangler deploy`.
 - `npm run build` **hard-fails** if `VITE_ASSET_BASE` is missing
 - Actions checks the toon config lock (puts happen on commit), then prunes old
   unique `pages.dev` snapshots (keeps the live custom-domain deploy)

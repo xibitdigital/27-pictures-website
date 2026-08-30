@@ -1,21 +1,22 @@
 /**
- * Stamp D1 catalog cards and JSON-LD into /toons/ and series hubs
- * (/toons/red-smile/, /toons/jax/, … and /de|/it|/fr variants) so crawlers
- * that do not run JavaScript still see the shelf and schema.
+ * Stamp D1 catalog / hub / reader HTML at the site origin so crawlers that
+ * skip JavaScript still see cards, fallback copy and JSON-LD.
  */
 import {
-  cardDescription,
   catalogJsonLd,
+  cardDescription,
   episodeCardHtml,
   episodesHeading,
   isToonIndexPath,
   landingGridHtml,
+  matchToonRoute,
   parseCatalog,
   seriesForRequest,
   seriesJsonLd,
   type CatalogPayload,
 } from "../src/site/catalogRender";
 import { splitLocale } from "../src/site/i18n";
+import { applyHubHtml, applyReaderHtml, HUB_TEMPLATE_PATH, READER_TEMPLATE_PATH } from "../src/site/toonPages";
 
 export const EDITOR_API = "https://toon-editor.sangalli-marco.workers.dev";
 
@@ -98,36 +99,64 @@ export function injectToonHtml(html: string, payload: CatalogPayload, requestUrl
   return out;
 }
 
+export type AssetStore = { fetch: (input: Request) => Promise<Response> };
+
+async function loadTemplate(
+  request: Request,
+  path: string,
+  assets?: AssetStore,
+  fetcher: typeof fetch = fetch
+): Promise<string | null> {
+  const url = new URL(path, request.url);
+  try {
+    const res = assets ? await assets.fetch(new Request(url.toString())) : await fetcher(url.toString());
+    if (!res.ok) return null;
+    return await res.text();
+  } catch {
+    return null;
+  }
+}
+
 export async function withToonSsr(
   request: Request,
   response: Response,
-  fetcher: typeof fetch = fetch
+  fetcher: typeof fetch = fetch,
+  assets?: AssetStore
 ): Promise<Response> {
-  const type = response.headers.get("content-type") || "";
-  if (response.status !== 200 || !type.includes("text/html")) return response;
-
   const pathname = new URL(request.url).pathname;
   const { path } = splitLocale(pathname);
-  if (!path.startsWith("/toons")) return response;
-
-  const html = await response.text();
-  const replay = (body: string, headers?: Headers) =>
-    new Response(body, { status: response.status, headers: headers ?? response.headers });
-
-  if (
-    !html.includes("data-toon-catalog") &&
-    !html.includes("data-series-jsonld") &&
-    !html.includes("data-series-key")
-  ) {
-    return replay(html);
+  if (!path.startsWith("/toons") || path.startsWith("/toons/editor") || path.startsWith("/toons/_")) {
+    return response;
   }
 
   const origin = new URL(request.url).origin;
   const payload = await loadCatalogForOrigin(origin, fetcher);
-  if (!payload) return replay(html);
+  const type = response.headers.get("content-type") || "";
+  const htmlOk = type.includes("text/html");
+  const replay = (body: string, status = 200) => {
+    const headers = new Headers(response.headers);
+    headers.set("Content-Type", "text/html; charset=utf-8");
+    headers.set("Cache-Control", "public, max-age=120, stale-while-revalidate=600");
+    return new Response(body, { status, headers });
+  };
 
-  const injected = injectToonHtml(html, payload, request.url);
-  const headers = new Headers(response.headers);
-  headers.set("Cache-Control", "public, max-age=120, stale-while-revalidate=600");
-  return replay(injected, headers);
+  if (isToonIndexPath(pathname) && response.status === 200 && htmlOk) {
+    if (!payload) return response;
+    const html = await response.text();
+    return replay(injectToonHtml(html, payload, request.url));
+  }
+
+  if (!payload) return response;
+  const route = matchToonRoute(pathname, payload);
+  if (!route) return response;
+
+  if (route.kind === "hub") {
+    const tpl = await loadTemplate(request, HUB_TEMPLATE_PATH, assets, fetcher);
+    if (!tpl) return response;
+    return replay(applyHubHtml(tpl, route.series, request.url));
+  }
+
+  const tpl = await loadTemplate(request, READER_TEMPLATE_PATH, assets, fetcher);
+  if (!tpl) return response;
+  return replay(applyReaderHtml(tpl, route.episode, route.series, payload, request.url));
 }

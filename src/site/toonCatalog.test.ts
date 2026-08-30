@@ -90,7 +90,7 @@ describe("toonCatalog", () => {
       tagline: "Horror",
       description: "Elena.",
       coverUrl: null,
-      hubUrl: "/toons/red-smile/",
+      hubUrl: "/toons/redsmile/",
       episodes: [{ ...episode, id: "redsmile-static", slug: "redsmile-static", title: "static", n: 1 }],
     };
     expect(seriesItemCount(redSmile)).toBe(1);
@@ -168,23 +168,13 @@ describe("toonCatalog", () => {
     expect(rows[0].coverUrl).toContain("erin-the-revenge-intro");
   });
 
-  it("each series hub HTML carries D1 hooks", () => {
-    const hubs: [string, string][] = [
-      ["src/toons/erin-and-the-goblins/index.html", "erin"],
-      ["src/toons/jax/index.html", "jax"],
-      ["src/toons/nero/index.html", "nero"],
-      ["src/toons/red-smile/index.html", "red-smile"],
-    ];
-    for (const [file, key] of hubs) {
-      const html = readFileSync(resolve(file), "utf8");
-      expect(html, file).toContain(`data-series-key="${key}"`);
-      expect(html, file).toContain("data-series-title");
-      expect(html, file).toContain("data-series-lead");
-      expect(html, file).toContain("data-series-episodes-heading");
-      expect(html, file).toContain("data-series-episodes");
-      expect(html, file).toContain("data-series-jsonld");
-      expect(html, file).not.toContain("redsmile-marcus");
-    }
+  it("the hub shell has no series copy — SSR writes the page from D1", () => {
+    const html = readFileSync(resolve("src/toons/_hub/index.html"), "utf8");
+    expect(html).toContain("data-series-key");
+    expect(html).toContain("data-series-jsonld");
+    expect(html).toContain('src="/site/seriesPageMain.ts"');
+    expect(html).not.toContain("RED SMILE");
+    expect(html).not.toContain("data-series-title");
   });
 
   it("paints title, lead, heading and cards from the catalog series", () => {
@@ -252,7 +242,7 @@ describe("toonCatalog", () => {
               tagline: "Horror",
               description: "Elena.",
               coverUrl: null,
-              hubUrl: "/toons/red-smile/",
+              hubUrl: "/toons/redsmile/",
               episodes: [
                 {
                   ...episode,
@@ -260,7 +250,7 @@ describe("toonCatalog", () => {
                   slug: "redsmile-static",
                   title: "static",
                   n: 1,
-                  readerUrl: "/toons/redsmile-static/",
+                  readerUrl: "/toons/redsmile/static/",
                 },
               ],
             },

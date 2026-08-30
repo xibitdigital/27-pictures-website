@@ -41,8 +41,8 @@ export function isLocalToonConfigUrl(url: string): boolean {
 }
 
 /** Published D1 JSON when the editor API is up; otherwise hashed / file config. */
-export function readerConfigUrl(toon: ToonId): string {
-  return dbToonConfigUrl(String(toon)) ?? toonConfigUrl(toon);
+export function readerConfigUrl(toon: string): string {
+  return dbToonConfigUrl(toon) ?? toonConfigUrl(toon);
 }
 
 /**
@@ -50,15 +50,15 @@ export function readerConfigUrl(toon: ToonId): string {
  * Non-production (vite dev / unit tests) → local content/ via Vite middleware.
  * Production build → locked hashed name on CDN.
  */
-export function toonConfigUrl(toon: ToonId): string {
+export function toonConfigUrl(toon: string): string {
   // PROD is true only for production builds (`vite build` / preview of dist).
   // Dev server and Vitest stay on the local reference file.
   if (!import.meta.env.PROD) {
-    return devToonConfigUrl(String(toon));
+    return devToonConfigUrl(toon);
   }
-  const file = lock[toon];
-  if (!file) throw new Error(`toonConfigUrl: no lock entry for "${String(toon)}"`);
-  return `/toons/${String(toon)}/${file}`;
+  const file = (lock as Record<string, string>)[toon];
+  if (!file) throw new Error(`toonConfigUrl: no lock entry for "${toon}"`);
+  return `/toons/${toon}/${file}`;
 }
 
 export { lock as toonConfigLock };
