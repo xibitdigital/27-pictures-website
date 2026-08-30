@@ -739,6 +739,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
       title: row.title,
       updatedAt: row.updated_at || null,
+      status: row.status || "draft",
     }));
     const urls = [
       ...staticSitemapUrls(origin, String(env.ASSET_BASE || "")),

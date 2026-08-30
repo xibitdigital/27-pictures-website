@@ -44,9 +44,21 @@ beforeEach(() => {
 });
 
 describe("fillSeriesEpisodeGrid", () => {
-  it("replaces static episode cards with catalog markup, dropping drafts", () => {
+  it("fills an empty grid from catalog markup", () => {
     document.body.innerHTML = `<div data-series-page>
-      <div class="series-grid">
+      <div class="series-grid" data-series-episodes></div>
+    </div>`;
+    setSeriesEpisodeMarkup(
+      new Map([["red-smile", `<a class="series-card series-card--episode" href="/toons/redsmile-static/">static</a>`]])
+    );
+    fillSeriesEpisodeGrid(document.body, "red-smile");
+    const hrefs = [...document.querySelectorAll("a")].map((a) => a.getAttribute("href"));
+    expect(hrefs).toEqual(["/toons/redsmile-static/"]);
+  });
+
+  it("leaves SSR cards alone", () => {
+    document.body.innerHTML = `<div data-series-page>
+      <div class="series-grid" data-series-episodes>
         <a class="series-card series-card--episode" href="/toons/redsmile-static/">static</a>
         <a class="series-card series-card--episode" href="/toons/redsmile-marcus/">Marcus</a>
       </div>
@@ -56,7 +68,7 @@ describe("fillSeriesEpisodeGrid", () => {
     );
     fillSeriesEpisodeGrid(document.body, "red-smile");
     const hrefs = [...document.querySelectorAll("a")].map((a) => a.getAttribute("href"));
-    expect(hrefs).toEqual(["/toons/redsmile-static/"]);
+    expect(hrefs).toEqual(["/toons/redsmile-static/", "/toons/redsmile-marcus/"]);
   });
 });
 

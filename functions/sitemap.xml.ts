@@ -2,11 +2,11 @@
  * Serve /sitemap.xml from the toon-editor Worker (D1) at the site origin.
  * Crawlers must see https://twentyseven.pictures/sitemap.xml, not the Worker host.
  */
-const EDITOR = "https://toon-editor.sangalli-marco.workers.dev";
+import { EDITOR_API } from "./toonSsr";
 
 export const onRequest: PagesFunction = async (context) => {
   const origin = new URL(context.request.url).origin;
-  const url = `${EDITOR}/sitemap.xml?site=${encodeURIComponent(origin)}`;
+  const url = `${EDITOR_API}/sitemap.xml?site=${encodeURIComponent(origin)}`;
   const res = await fetch(url, { headers: { Accept: "application/xml" } });
   if (!res.ok) {
     return new Response("sitemap unavailable", {

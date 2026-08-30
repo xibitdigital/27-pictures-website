@@ -9,6 +9,7 @@ import { cdnMediaPlugin } from "./vite/plugins/cdnMedia";
 import { toonConfigDevPlugin } from "./vite/plugins/toonConfigDev";
 import { hashedCss } from "./vite/plugins/hashedCss";
 import { generateLocalePages, localePagesPlugin } from "./vite/plugins/localePages";
+import { toonSsrDevPlugin } from "./vite/plugins/toonSsrDev";
 import fs from "node:fs";
 
 /** Every index.html under a root, keyed by its path — "de/toons/erin". */
@@ -98,6 +99,7 @@ export default defineConfig({
     toonConfigDevPlugin(__dirname),
     cdnMediaPlugin(distDir),
     localePagesPlugin(srcDir),
+    toonSsrDevPlugin(),
     // Runs last: it rewrites the HTML cdnMediaPlugin has already touched.
     hashedCss(),
   ],
@@ -164,6 +166,7 @@ export default defineConfig({
       "vite/**/*.{test,spec}.ts",
       "scripts/**/*.{test,spec}.js",
       "worker/toon-editor/src/**/*.test.ts",
+      "functions/**/*.test.ts",
     ],
     setupFiles: ["src/test/setup.ts"],
     css: true,

@@ -16,6 +16,8 @@
  * take the preview offline, and production never reaches this branch anyway.
  */
 
+import { withToonSsr } from "./toonSsr";
+
 interface PagesEnv {
   BASIC_AUTH_USER?: string;
   BASIC_AUTH_PASS?: string;
@@ -64,13 +66,18 @@ function credentialsOk(request: Request, env: PagesEnv): boolean {
 export const onRequest: PagesFunction<PagesEnv> = async (context) => {
   const { request, env, next } = context;
   const host = new URL(request.url).hostname;
+  const isProd = PRODUCTION_HOSTS.has(host);
 
-  if (PRODUCTION_HOSTS.has(host)) return next();
-
-  if (env.BASIC_AUTH_PASS && !credentialsOk(request, env)) return unauthorized();
+  if (!isProd && env.BASIC_AUTH_PASS && !credentialsOk(request, env)) return unauthorized();
 
   const response = await next();
-  const guarded = new Response(response.body, response);
+  const injected = await withToonSsr(request, response);
+
+  if (isProd) return injected;
+  const guarded = new Response(injected.body, {
+    status: injected.status,
+    headers: injected.headers,
+  });
   guarded.headers.set("X-Robots-Tag", "noindex, nofollow");
   return guarded;
 };

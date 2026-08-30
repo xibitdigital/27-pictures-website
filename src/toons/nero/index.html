@@ -74,7 +74,8 @@
     /></noscript>
     <link rel="stylesheet" href="/styles.css" />
 
-    <script type="application/ld+json">
+    <!-- Episode list and copy are written from D1 (data-series-jsonld). -->
+    <script type="application/ld+json" data-series-jsonld>
       {
         "@context": "https://schema.org",
         "@graph": [
@@ -82,8 +83,7 @@
             "@type": "WebPage",
             "@id": "https://twentyseven.pictures/toons/nero/#webpage",
             "url": "https://twentyseven.pictures/toons/nero/",
-            "name": "Nero — Interactive Cyberpunk Noir Toon Series | 27 Pictures",
-            "description": "A rain-soaked cyberpunk noir case you read in the browser, voiced in four languages.",
+            "name": "Nero | 27 Pictures",
             "isPartOf": { "@id": "https://twentyseven.pictures/#website" },
             "publisher": { "@id": "https://twentyseven.pictures/#organization" },
             "inLanguage": "en"
@@ -105,26 +105,9 @@
           {
             "@type": "CreativeWorkSeries",
             "@id": "https://twentyseven.pictures/toons/nero/#series",
-            "character": [
-              { "@type": "Person", "name": "Nero" },
-              { "@type": "Person", "name": "Eve" },
-              { "@type": "Person", "name": "The Dog" }
-            ],
             "name": "Nero",
             "url": "https://twentyseven.pictures/toons/nero/",
-            "description": "Cyberpunk noir: a Scotland Yard detective with a rebuilt arm, a forensic partner who reads what he cannot, and a sicario who never misses.",
-            "genre": ["Cyberpunk", "Noir", "Manga", "Interactive Fiction"],
-            "inLanguage": ["en", "it", "de", "fr"],
-            "numberOfEpisodes": 1,
-            "creator": { "@id": "https://twentyseven.pictures/#organization" },
-            "hasPart": [
-              {
-                "@type": "CreativeWork",
-                "name": "Episode 1 — The Dog",
-                "url": "https://twentyseven.pictures/toons/nero-the-dog/",
-                "numberOfPages": 20
-              }
-            ]
+            "creator": { "@id": "https://twentyseven.pictures/#organization" }
           }
         ]
       }
@@ -161,7 +144,7 @@
         <section class="series-section" aria-labelledby="episodes-title">
           <p class="series-section-label" data-i18n="episodesLabel">Episodes</p>
           <h2 id="episodes-title" class="series-body" data-i18n="episodesTitle" data-series-episodes-heading>
-            One out, more in the darkroom
+            1 episode
           </h2>
 
           <div class="episode-block">

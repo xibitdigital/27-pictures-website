@@ -18,10 +18,8 @@ app.directive("magnetic", vMagnetic);
 app.mount("#site-app");
 
 // Continue reading from the static registry first; a catalog hit rebuilds
-// it from D1 (see initToonCatalog).
+// covers from D1. The shelf itself is SSR (Pages Function / Vite dev plugin).
 initToonRows();
-
-// Browse grid is empty until this resolves; cards come only from D1.
 void initToonCatalog();
 
 // Multi-episode cards link to their series page; this shows that page in a

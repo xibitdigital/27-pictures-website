@@ -20,7 +20,7 @@ still have one.
 | `jax`  | `content/toons/jax/`  | Netrunner chronicles — synopsis on cover; multilingual SFX/music (see `jax/README.md`)          |
 | `nero` | `content/toons/nero/` | Scotland Yard case: Nero / Eve / The Dog; `?page=N` deep-links; full manual in `nero/README.md` |
 | `redsmile-static` | `content/toons/redsmile-static/` | RED SMILE: static — B&W horror short; the static learns Elena, and something walks out wearing her |
-| `redsmile-marcus` | `content/toons/redsmile-marcus/` | RED SMILE ep 2 — Marcus and the cleaner; unlisted while it is short (see `redsmile-marcus/README.md`) |
+| `redsmile-marcus` | `content/toons/redsmile-marcus/` | RED SMILE ep 2 — Marcus and the cleaner (see `redsmile-marcus/README.md`) |
 | `erin-the-revenge` | `content/toons/erin-the-revenge/` | ERIN & THE GOBLINS ep 2 — The Revenge |
 
 ```bash

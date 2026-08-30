@@ -57,4 +57,30 @@ describe("sitemap", () => {
     expect(xml).toContain("<lastmod>2026-08-29</lastmod>");
     expect(xml).toContain("&amp;");
   });
+
+  it("never lists a draft reader", () => {
+    const toonUrls = toonSitemapUrls(
+      "https://twentyseven.pictures",
+      [],
+      [
+        {
+          readerUrl: "/toons/redsmile-static/",
+          slug: "redsmile-static",
+          coverUrl: null,
+          title: "static",
+          status: "published",
+        },
+        {
+          readerUrl: "/toons/redsmile-marcus/",
+          slug: "redsmile-marcus",
+          coverUrl: null,
+          title: "Marcus",
+          status: "draft",
+        },
+      ]
+    );
+    const locs = toonUrls.map((u) => u.loc);
+    expect(locs).toContain("https://twentyseven.pictures/toons/redsmile-static/");
+    expect(locs).not.toContain("https://twentyseven.pictures/toons/redsmile-marcus/");
+  });
 });

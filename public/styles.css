@@ -1678,6 +1678,11 @@ button:focus-visible {
   margin-bottom: 48px;
 }
 
+/* Catalog: one line of type, then the shelf — not a hero then two essays. */
+.experiments-page .experiments-header {
+  margin-bottom: 28px;
+}
+
 .page-footer,
 .experiments-footer,
 .service-footer,
@@ -2318,7 +2323,7 @@ button:focus-visible {
   font-family: "Playfair Display", serif;
   font-size: 7vw;
   line-height: 0.9;
-  margin-bottom: 30px;
+  margin-bottom: 12px;
 }
 
 .experiments-header .lead {
@@ -2327,7 +2332,7 @@ button:focus-visible {
   line-height: 1.75;
   font-weight: 300;
   font-size: 1.05rem;
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
 .experiments-intro {
@@ -3335,8 +3340,9 @@ button:focus-visible {
 /* Visually hidden but available to crawlers / AT */
 
 @media (max-width: 768px) {
+  /* Hero keeps 15vw. This is a catalog, not THE RED SMILE. */
   .experiments-header h1 {
-    font-size: 15vw;
+    font-size: clamp(2.5rem, 9vw, 3.25rem);
   }
 
   .experiments-page {

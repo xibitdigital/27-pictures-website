@@ -174,7 +174,14 @@ export function staticSitemapUrls(origin: string, assetBase: string): SitemapUrl
 export function toonSitemapUrls(
   origin: string,
   series: { hubUrl: string | null; coverUrl: string | null; title: string; updatedAt?: string | null }[],
-  toons: { readerUrl: string | null; slug: string; coverUrl: string | null; title: string; updatedAt?: string | null }[]
+  toons: {
+    readerUrl: string | null;
+    slug: string;
+    coverUrl: string | null;
+    title: string;
+    updatedAt?: string | null;
+    status?: string | null;
+  }[]
 ): SitemapUrl[] {
   const site = origin.replace(/\/$/, "");
   const urls: SitemapUrl[] = [];
@@ -199,6 +206,7 @@ export function toonSitemapUrls(
   }
 
   for (const row of toons) {
+    if (row.status === "draft") continue;
     const path = row.readerUrl || `/toons/${row.slug}/`;
     if (!path.startsWith("/toons/") || path === "/toons/") continue;
     const image: SitemapImage | undefined = row.coverUrl

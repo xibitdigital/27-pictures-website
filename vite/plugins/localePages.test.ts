@@ -164,7 +164,7 @@ it("renders the real toons landing template into Italian", () => {
     unknown
   >;
   const html = renderLocalePage(template, "it", copy as never, "/toons/");
-  expect(html).toContain("<h1>Toon interattivi</h1>");
+  expect(html).toContain('<h1 id="toons-title">Toon interattivi</h1>');
   expect(html).toContain('hreflang="en" href="https://twentyseven.pictures/toons/"');
   expect(html).toContain('hreflang="x-default" href="https://twentyseven.pictures/toons/"');
   expect(html).toContain('rel="canonical" href="https://twentyseven.pictures/it/toons/"');
@@ -175,6 +175,8 @@ it("renders the real toons landing template into Italian", () => {
   expect(html).toContain("https://twentyseven.pictures/it/toons/nero/");
   expect(html).toContain("https://twentyseven.pictures/it/toons/erin-and-the-goblins/");
   expect(html).toContain("https://twentyseven.pictures/it/toons/jax/");
+  expect(html).toContain("https://twentyseven.pictures/it/toons/red-smile/");
+  expect(html).not.toContain("https://twentyseven.pictures/it/toons/redsmile-static/");
   // A reader path must never be prefixed, or the switcher points at a 404.
   for (const reader of ["nero-the-dog", "jax-the-chip", "redsmile-static", "erin", "erin-the-revenge"]) {
     expect(html, reader).not.toContain(`/it/toons/${reader}/`);

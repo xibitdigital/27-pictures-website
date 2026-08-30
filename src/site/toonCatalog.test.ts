@@ -12,6 +12,7 @@ import {
   seriesCardHtml,
   seriesForDocument,
   seriesItemCount,
+  seriesJsonLd,
   standaloneCardHtml,
 } from "./toonCatalog";
 import type { CatalogEpisode, CatalogSeries } from "./toonCatalog";
@@ -181,6 +182,8 @@ describe("toonCatalog", () => {
       expect(html, file).toContain("data-series-lead");
       expect(html, file).toContain("data-series-episodes-heading");
       expect(html, file).toContain("data-series-episodes");
+      expect(html, file).toContain("data-series-jsonld");
+      expect(html, file).not.toContain("redsmile-marcus");
     }
   });
 
@@ -193,13 +196,37 @@ describe("toonCatalog", () => {
     applySeriesPage(document.body, { ...series, episodes: [episode, { ...episode, id: "erin", slug: "erin", n: 1 }] });
     expect(document.querySelector("[data-series-title]")?.textContent).toBe("Erin & the Goblins");
     expect(document.querySelector("[data-series-lead]")?.textContent).toBe("Half human, half vampire.");
-    expect(document.querySelector("[data-series-episodes-heading]")?.textContent).toBe("2 out, more in the darkroom");
+    expect(document.querySelector("[data-series-episodes-heading]")?.textContent).toBe("2 episodes");
     expect(document.querySelectorAll(".series-card--episode")).toHaveLength(2);
   });
 
   it("counts one episode with the singular heading", () => {
-    expect(episodesHeading(1)).toBe("One out, more in the darkroom");
-    expect(episodesHeading(2)).toBe("2 out, more in the darkroom");
+    expect(episodesHeading(1)).toBe("1 episode");
+    expect(episodesHeading(2)).toBe("2 episodes");
+  });
+
+  it("builds series JSON-LD from the catalog, not a hardcoded episode list", () => {
+    const graph = seriesJsonLd(
+      {
+        ...series,
+        episodes: [
+          { ...episode, id: "erin", slug: "erin", n: 1, title: "The Missing Child", readerUrl: "/toons/erin/" },
+          episode,
+        ],
+      },
+      { pageUrl: "https://twentyseven.pictures/toons/erin-and-the-goblins/", locale: "en" }
+    );
+    const nodes = graph["@graph"];
+    const seriesNode = nodes.find((n) => n["@type"] === "CreativeWorkSeries") as {
+      numberOfEpisodes: number;
+      hasPart: { url: string; name: string }[];
+    };
+    expect(seriesNode.numberOfEpisodes).toBe(2);
+    expect(seriesNode.hasPart.map((p) => p.url)).toEqual([
+      "https://twentyseven.pictures/toons/erin/",
+      "https://twentyseven.pictures/toons/erin-the-revenge/",
+    ]);
+    expect(JSON.stringify(graph)).not.toContain("redsmile-marcus");
   });
 
   it("matches a hub by data-series-key, then by hub URL", () => {
@@ -211,7 +238,7 @@ describe("toonCatalog", () => {
     delete document.documentElement.dataset.seriesKey;
   });
 
-  it("fills the series landing from D1 when html has data-series-key", async () => {
+  it("does not paint series cards in the browser — SSR owns the shelf", async () => {
     vi.stubEnv("VITE_EDITOR_API", "https://editor.test");
     vi.stubGlobal(
       "fetch",
@@ -249,9 +276,8 @@ describe("toonCatalog", () => {
       <h2 data-series-episodes-heading>Two out</h2>
       <div data-series-page><div class="series-grid" data-series-episodes></div></div>`;
     await initToonCatalog();
-    expect(document.querySelector("[data-series-lead]")?.textContent).toBe("Elena.");
-    expect(document.querySelector("[data-series-episodes-heading]")?.textContent).toBe("One out, more in the darkroom");
-    expect(document.querySelector(".series-card--episode")?.getAttribute("href")).toBe("/toons/redsmile-static/");
+    expect(document.querySelector("[data-series-lead]")?.textContent).toBe("static lead");
+    expect(document.querySelector(".series-card--episode")).toBeNull();
     delete document.documentElement.dataset.seriesKey;
   });
 });

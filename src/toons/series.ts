@@ -122,8 +122,7 @@ export const SERIES: Series[] = [
         title: "Marcus",
         url: "/toons/redsmile-marcus/",
         pages: 12,
-        // draft: the URL builds and answers, but it is unlisted and noindex.
-        status: "draft",
+        status: "published",
       },
       { n: 3, title: "In the darkroom", status: "soon" },
     ],

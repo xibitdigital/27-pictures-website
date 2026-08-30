@@ -142,9 +142,10 @@ export function setSeriesFill(fn: ((root: ParentNode, seriesKey: string) => bool
 
 /** Fill a series grid from the catalog. Empty string clears leftover static cards. */
 export function fillSeriesEpisodeGrid(root: ParentNode, seriesKey: string): void {
+  const grid = root.querySelector("[data-series-episodes]") || root.querySelector(".series-grid");
+  if (grid?.querySelector(".series-card")) return;
   if (seriesFill?.(root, seriesKey)) return;
   const html = seriesEpisodeMarkup.get(seriesKey);
-  const grid = root.querySelector("[data-series-episodes]") || root.querySelector(".series-grid");
   if (!grid || html === undefined) return;
   grid.innerHTML = html;
 }

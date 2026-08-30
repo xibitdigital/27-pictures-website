@@ -88,7 +88,8 @@
     /></noscript>
     <link rel="stylesheet" href="/styles.css" />
 
-    <script type="application/ld+json">
+    <!-- Episode list and copy are written from D1 (data-series-jsonld). -->
+    <script type="application/ld+json" data-series-jsonld>
       {
         "@context": "https://schema.org",
         "@graph": [
@@ -96,8 +97,7 @@
             "@type": "WebPage",
             "@id": "https://twentyseven.pictures/toons/erin-and-the-goblins/#webpage",
             "url": "https://twentyseven.pictures/toons/erin-and-the-goblins/",
-            "name": "Erin & the Goblins — Interactive Dark Fantasy Manga | 27 Pictures",
-            "description": "A black-and-white dark fantasy manga you read in the browser. Two episodes, voiced in four languages.",
+            "name": "Erin & the Goblins | 27 Pictures",
             "isPartOf": { "@id": "https://twentyseven.pictures/#website" },
             "publisher": { "@id": "https://twentyseven.pictures/#organization" },
             "inLanguage": "en"
@@ -117,30 +117,11 @@
             ]
           },
           {
-            "@type": ["CreativeWorkSeries", "ComicSeries"],
+            "@type": "CreativeWorkSeries",
             "@id": "https://twentyseven.pictures/toons/erin-and-the-goblins/#series",
             "name": "Erin & the Goblins",
             "url": "https://twentyseven.pictures/toons/erin-and-the-goblins/",
-            "description": "Dark fantasy manga: a teenage girl in a town that is really a door between the human world and the goblin one.",
-            "genre": ["Dark Fantasy", "Manga", "Interactive Fiction"],
-            "inLanguage": ["en", "it", "de", "fr"],
-            "creator": { "@id": "https://twentyseven.pictures/#organization" },
-            "hasPart": [
-              {
-                "@type": ["CreativeWork", "ComicStory"],
-                "@id": "https://twentyseven.pictures/toons/erin/#toon",
-                "name": "Episode 1 — The Missing Child",
-                "url": "https://twentyseven.pictures/toons/erin/",
-                "position": 1
-              },
-              {
-                "@type": ["CreativeWork", "ComicStory"],
-                "@id": "https://twentyseven.pictures/toons/erin-the-revenge/#toon",
-                "name": "Episode 2 — The Revenge",
-                "url": "https://twentyseven.pictures/toons/erin-the-revenge/",
-                "position": 2
-              }
-            ]
+            "creator": { "@id": "https://twentyseven.pictures/#organization" }
           }
         ]
       }
@@ -176,7 +157,7 @@
         <section class="series-section" aria-labelledby="episodes-title">
           <p class="series-section-label" data-i18n="episodesLabel">Episodes</p>
           <h2 id="episodes-title" class="series-body" data-i18n="episodesTitle" data-series-episodes-heading>
-            Two out, one in the darkroom
+            2 episodes
           </h2>
 
           <div class="episode-block">

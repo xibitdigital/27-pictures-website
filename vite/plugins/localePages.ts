@@ -253,64 +253,68 @@ function applySchema(
   schema: LocaleSchema | undefined,
   localizeIds?: string[]
 ): string {
-  return html.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/, (_all, raw: string) => {
-    const data = JSON.parse(raw) as { "@graph"?: JsonLd[] };
-    const graph = data["@graph"] ?? [];
-    if (localizeIds) {
+  return html.replace(
+    /<script type="application\/ld\+json"([^>]*)>([\s\S]*?)<\/script>/,
+    (_all, attrs: string, raw: string) => {
+      const data = JSON.parse(raw) as { "@graph"?: JsonLd[] };
+      const graph = data["@graph"] ?? [];
+      if (localizeIds) {
+        for (const node of graph) {
+          const id = typeof node["@id"] === "string" ? node["@id"] : "";
+          const hash = id.indexOf("#");
+          if (hash !== -1 && localizeIds.includes(id.slice(hash))) walkPageUrls(node, urlPath, locale, localizeIds);
+        }
+      } else {
+        walkPageUrls(data, urlPath, locale);
+      }
+      applyNodeOverrides(graph, schema?.nodes);
       for (const node of graph) {
-        const id = typeof node["@id"] === "string" ? node["@id"] : "";
-        const hash = id.indexOf("#");
-        if (hash !== -1 && localizeIds.includes(id.slice(hash))) walkPageUrls(node, urlPath, locale, localizeIds);
-      }
-    } else {
-      walkPageUrls(data, urlPath, locale);
-    }
-    applyNodeOverrides(graph, schema?.nodes);
-    for (const node of graph) {
-      // "@type" may be a string or an array (e.g. ["CreativeWorkSeries", "ComicSeries"]).
-      const rawType = node["@type"];
-      const hasType = (t: string) => (Array.isArray(rawType) ? rawType.includes(t) : rawType === t);
-      if (hasType("CollectionPage") || hasType("WebPage")) {
-        if (schema?.name) node.name = schema.name;
-        if (schema?.headline) node.headline = schema.headline;
-        if (schema?.description) node.description = schema.description;
-        node.inLanguage = locale;
-        const image = node.primaryImageOfPage as JsonLd | undefined;
-        if (image && schema?.imageCaption) image.caption = schema.imageCaption;
-      }
-      if (hasType("BreadcrumbList")) {
-        const items = (node.itemListElement as JsonLd[] | undefined) ?? [];
-        if (items[0] && schema?.breadcrumbHome) items[0].name = schema.breadcrumbHome;
-        if (items.length === 2 && items[1] && schema?.breadcrumbHere) items[1].name = schema.breadcrumbHere;
-        if (items.length >= 3) {
-          if (items[1] && schema?.breadcrumbToons) items[1].name = schema.breadcrumbToons;
-          const last = items[items.length - 1];
-          if (last && schema?.breadcrumbHere) last.name = schema.breadcrumbHere;
+        // "@type" may be a string or an array (e.g. ["CreativeWorkSeries", "ComicSeries"]).
+        const rawType = node["@type"];
+        const hasType = (t: string) => (Array.isArray(rawType) ? rawType.includes(t) : rawType === t);
+        if (hasType("CollectionPage") || hasType("WebPage")) {
+          if (schema?.name) node.name = schema.name;
+          if (schema?.headline) node.headline = schema.headline;
+          if (schema?.description) node.description = schema.description;
+          node.inLanguage = locale;
+          const image = node.primaryImageOfPage as JsonLd | undefined;
+          if (image && schema?.imageCaption) image.caption = schema.imageCaption;
+        }
+        if (hasType("BreadcrumbList")) {
+          const items = (node.itemListElement as JsonLd[] | undefined) ?? [];
+          if (items[0] && schema?.breadcrumbHome) items[0].name = schema.breadcrumbHome;
+          if (items.length === 2 && items[1] && schema?.breadcrumbHere) items[1].name = schema.breadcrumbHere;
+          if (items.length >= 3) {
+            if (items[1] && schema?.breadcrumbToons) items[1].name = schema.breadcrumbToons;
+            const last = items[items.length - 1];
+            if (last && schema?.breadcrumbHere) last.name = schema.breadcrumbHere;
+          }
+        }
+        if (hasType("CreativeWorkSeries")) {
+          if (schema?.seriesDescription) node.description = schema.seriesDescription;
+          const parts = node.hasPart as JsonLd[] | undefined;
+          if (parts?.[0] && schema?.ep1Name) parts[0].name = schema.ep1Name;
+          if (parts?.[1] && schema?.ep2Name) parts[1].name = schema.ep2Name;
+        }
+        if (hasType("ItemList")) {
+          if (schema?.itemListName) node.name = schema.itemListName;
+          for (const li of (node.itemListElement as JsonLd[] | undefined) ?? []) {
+            const item = li.item as JsonLd | undefined;
+            const id = typeof item?.["@id"] === "string" ? item["@id"] : "";
+            if (id.includes("/jax/") && schema?.jaxDescription) item!.description = schema.jaxDescription;
+            if (id.includes("/nero/") && schema?.neroDescription) item!.description = schema.neroDescription;
+            if (id.includes("/red-smile/") && schema?.redsmileDescription)
+              item!.description = schema.redsmileDescription;
+          }
         }
       }
-      if (hasType("CreativeWorkSeries")) {
-        if (schema?.seriesDescription) node.description = schema.seriesDescription;
-        const parts = node.hasPart as JsonLd[] | undefined;
-        if (parts?.[0] && schema?.ep1Name) parts[0].name = schema.ep1Name;
-        if (parts?.[1] && schema?.ep2Name) parts[1].name = schema.ep2Name;
-      }
-      if (hasType("ItemList")) {
-        if (schema?.itemListName) node.name = schema.itemListName;
-        for (const li of (node.itemListElement as JsonLd[] | undefined) ?? []) {
-          const item = li.item as JsonLd | undefined;
-          const id = typeof item?.["@id"] === "string" ? item["@id"] : "";
-          if (id.includes("/jax/") && schema?.jaxDescription) item!.description = schema.jaxDescription;
-          if (id.includes("/nero/") && schema?.neroDescription) item!.description = schema.neroDescription;
-          if (id.includes("/redsmile") && schema?.redsmileDescription) item!.description = schema.redsmileDescription;
-        }
-      }
+      const pretty = JSON.stringify(data, null, 2)
+        .split("\n")
+        .map((line, i) => (i === 0 ? line : `      ${line}`))
+        .join("\n");
+      return `<script type="application/ld+json"${attrs}>\n      ${pretty}\n    </script>`;
     }
-    const pretty = JSON.stringify(data, null, 2)
-      .split("\n")
-      .map((line, i) => (i === 0 ? line : `      ${line}`))
-      .join("\n");
-    return `<script type="application/ld+json">\n      ${pretty}\n    </script>`;
-  });
+  );
 }
 
 /** Localized site pages get a prefix; readers get `?lang=` so captions start right. */

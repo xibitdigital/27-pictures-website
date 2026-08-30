@@ -1,13 +1,12 @@
 {
-  "title": "Toons interactifs | Experiments Lab | 27 Pictures",
-  "description": "Toons interactifs de 27 Pictures — histoires FlipFrame à bulles doublées, à feuilleter comme un livre. Erin, Jax, Nero et RED SMILE: static.",
-  "keywords": "toon interactif, bande dessinée interactive, FlipFrame, lecteur manga interactif, histoire illustrée par IA, toon d'horreur, toon cyberpunk, Erin, Jax, Nero, RED SMILE static, 27 Pictures experiments",
-  "ogTitle": "Toons interactifs | Experiments Lab | 27 Pictures",
+  "title": "Toons interactifs | 27 Pictures",
+  "description": "Toons interactifs de 27 Pictures — histoires FlipFrame à bulles doublées, à feuilleter comme un livre. Erin, Jax, Nero et RED SMILE.",
+  "ogTitle": "Toons interactifs | 27 Pictures",
   "ogDescription": "Toons interactifs FlipFrame de 27 Pictures — des histoires illustrées à bulles doublées, à lire plutôt qu'à regarder.",
   "ogImageAlt": "Nero, toon interactif cyberpunk — couverture de 27 Pictures Experiments",
   "sectionTag": "Archive 03",
   "h1": "Toons interactifs",
-  "lead": "Toons interactifs de <strong>27 Pictures</strong> — des histoires illustrées à lire plutôt qu'à regarder, avec des bulles qui parlent et des pages que l'on tourne.",
+  "lead": "Webcomics FlipFrame de <strong>27 Pictures</strong> — on les lit plutôt qu'on ne les regarde.",
   "introLabel": "À propos du laboratoire",
   "intro1": "Un toon interactif est une histoire FlipFrame : planches en noir et blanc, bulles doublées et un lecteur qui fonctionne comme un livre. Nous les construisons dans ce laboratoire — la même chambre noire que les courts métrages de <a href=\"/horror-shorts/\">The Red Smile</a> et nos <a href=\"/cosplay/\">productions cosplay</a> — pour tester des interfaces narratives avant qu'elles ne deviennent une production plus large.",
   "intro2": "Chaque toon est autonome et volontairement court. Les nouveaux titres apparaissent ici dès qu'ils sortent de la chambre noire.",
@@ -19,6 +18,10 @@
   "breadcrumbLabel": "Fil d'Ariane",
   "breadcrumbHome": "Accueil",
   "breadcrumbHere": "Toons interactifs",
+  "aboutTitle": "Qu'est-ce qu'une bande dessinée interactive ?",
+  "about1": "Une bande dessinée interactive se situe entre la BD et le film. Chaque page est une planche pleine page encrée à la main ; sur ordinateur on tourne les pages comme un livre, sur téléphone on lit une bande verticale. Les bulles sont posées sur le dessin, et chacune peut parler — touchez une légende et elle joue une réplique ou un bruitage, enregistrés, nivelés et mixés comme nos films.",
+  "about2": "Nos lecteurs tournent sur FlipFrame, le moteur de lecture que nous avons construit pour ces histoires. Les légendes existent en anglais, italien, allemand et français, pour que la même page se lise à voix haute dans la langue que vous choisissez. Rien à installer, chaque toon est gratuit : une page à envoyer à n'importe qui par un lien.",
+  "about3": "Les histoires sortent de la même chambre noire que nos courts métrages d'horreur et nos productions cosplay : polar cyberpunk dans <em>Nero</em> et <em>Jax</em>, horreur psychologique dans <em>RED SMILE</em>, dark fantasy dans <em>Erin &amp; the Goblins</em>. Les nouveaux épisodes apparaissent ici dès qu'ils quittent la chambre noire — et nous réalisons aussi des bandes dessinées interactives pour d'autres, comme pilote de série, campagne ou BD avec son propre doublage. <a href=\"/#contact\">Parlez-nous de votre histoire</a> si le format vous convient.",
   "footer": "27 Pictures est un studio de cinéma d'horreur et de cosplay cinématographique. Nos toons interactifs sont des lecteurs FlipFrame — des histoires illustrées à bulles doublées et sound design, publiées comme pièces de laboratoire.",
   "footerNav": "Liens connexes",
   "footerHome": "Accueil",
@@ -26,9 +29,9 @@
   "footerCosplay": "Cosplay",
   "footerContact": "Contact",
   "schema": {
-    "name": "Toons interactifs | Experiments Lab | 27 Pictures",
+    "name": "Toons interactifs | 27 Pictures",
     "headline": "Toons interactifs",
-    "description": "Toons interactifs FlipFrame de 27 Pictures — des histoires illustrées à bulles doublées, à lire plutôt qu'à regarder. Erin, Jax, Nero et RED SMILE: static.",
+    "description": "Toons interactifs FlipFrame de 27 Pictures — des histoires illustrées à bulles doublées, à lire plutôt qu'à regarder. Erin, Jax, Nero et RED SMILE.",
     "imageCaption": "Couverture du toon interactif cyberpunk Nero par 27 Pictures",
     "breadcrumbHome": "Accueil",
     "breadcrumbHere": "Toons interactifs",
@@ -38,6 +41,6 @@
     "erinEp1Description": "Un toon interactif : à moitié humaine, à moitié vampire dans une petite ville entre le monde des gobelins et celui des humains. Page-turner FlipFrame de 27 Pictures.",
     "jaxDescription": "Jax — un netrunner malade qui vole aux entreprises leur technologie de contrôle mental, comme un Robin des Bois du futur. Toon interactif à légendes multilingues de 27 Pictures.",
     "neroDescription": "Toon interactif : le détective Nero et la légiste de Scotland Yard Eve traquent le sicaire The Dog et le complot derrière la technologie de cristal implantable.",
-    "redsmileDescription": "Le premier épisode de la série RED SMILE : horreur psychologique à l'encre gekiga, noir et blanc dense — ombres écrasées, planches encrées à la main, une lumière qui n'atteint jamais tout à fait les coins. Elena est seule chez elle quand la télévision trouve une chaîne qui ne devrait pas exister. Toon d'horreur interactif de 27 Pictures."
+    "redsmileDescription": "Horreur psychologique à l'encre gekiga, noir et blanc dense : des pièces ordinaires, et quelque chose en elles qui ne devrait pas y être. Série de toons interactifs de 27 Pictures."
   }
 }
