@@ -16,7 +16,6 @@ import {
   readerTokens,
   seriesJsonLd,
   type CatalogEpisode,
-  type CatalogPayload,
   type CatalogSeries,
 } from "./catalogRender";
 import { localeAlternates, localePath, splitLocale, UI, type Locale } from "./i18n";
@@ -216,11 +215,7 @@ export function readerJsonLd(
   };
 }
 
-export function readerFallbackHtml(
-  ep: CatalogEpisode,
-  series: CatalogSeries | undefined,
-  payload: CatalogPayload
-): string {
+export function readerFallbackHtml(ep: CatalogEpisode, series: CatalogSeries | undefined): string {
   const title = series ? `${series.title}: ${cardTitle(ep, "en")}` : cardTitle(ep, "en");
   const desc = cardDescription(ep, "en");
   const pages = ep.pageCount > 0 ? `${ep.pageCount} pages` : "interactive toon";
@@ -259,7 +254,6 @@ export function applyReaderHtml(
   html: string,
   ep: CatalogEpisode,
   series: CatalogSeries | undefined,
-  payload: CatalogPayload,
   requestUrl: string
 ): string {
   const pageUrl = `${APEX}${catalogPath(new URL(requestUrl).pathname)}`;
@@ -292,7 +286,7 @@ export function applyReaderHtml(
   out = replaceScript(out, "data-toon-jsonld", readerJsonLd(ep, series, { pageUrl }));
   const nav = episodeNavFromCatalog(series, ep.slug);
   out = replaceScript(out, "data-episode-nav", nav, "application/json");
-  const fallback = readerFallbackHtml(ep, series, payload);
+  const fallback = readerFallbackHtml(ep, series);
   out = out.replace(/<article class="reader-fallback">[\s\S]*?<\/article>/, fallback);
   return out;
 }

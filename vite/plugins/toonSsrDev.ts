@@ -93,10 +93,11 @@ export function toonSsrDevPlugin(): Plugin {
           const raw = fs.readFileSync(file, "utf8");
           const transformed = await server.transformIndexHtml(`/${tplRel}`, raw);
           const requestUrl = `${site}${url.endsWith("/") ? url : `${url}/`}`;
+          if (route.kind !== "hub" && route.kind !== "reader") return next();
           const html =
             route.kind === "hub"
               ? applyHubHtml(transformed, route.series, requestUrl)
-              : applyReaderHtml(transformed, route.episode, route.series, payload, requestUrl);
+              : applyReaderHtml(transformed, route.episode, route.series, requestUrl);
           res.statusCode = 200;
           res.setHeader("Content-Type", "text/html; charset=utf-8");
           res.end(html);

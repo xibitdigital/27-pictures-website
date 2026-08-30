@@ -156,7 +156,8 @@ export async function withToonSsr(
     return replay(applyHubHtml(tpl, route.series, request.url));
   }
 
+  if (route.kind !== "reader") return response;
   const tpl = await loadTemplate(request, READER_TEMPLATE_PATH, assets, fetcher);
   if (!tpl) return response;
-  return replay(applyReaderHtml(tpl, route.episode, route.series, payload, request.url));
+  return replay(applyReaderHtml(tpl, route.episode, route.series, request.url));
 }
