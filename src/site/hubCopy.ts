@@ -5,6 +5,7 @@
 import { localePath, type Locale } from "./i18n";
 
 export interface HubCopy {
+  breadcrumbLabel: string;
   sectionTag: string;
   episodesLabel: string;
   howLabel: string;
@@ -27,6 +28,7 @@ const HOW1_EN =
 
 export const HUB_COPY: Record<Locale, HubCopy> = {
   en: {
+    breadcrumbLabel: "Breadcrumb",
     sectionTag: "Interactive toons",
     episodesLabel: "Episodes",
     howLabel: "How it reads",
@@ -46,6 +48,7 @@ export const HUB_COPY: Record<Locale, HubCopy> = {
       'RED SMILE is also the horror anthology 27 Pictures shoots as short films — <a href="/horror-shorts/">The Red Smile</a> collects them. The toons are the read version of the same appetite: ordinary rooms, a slow wrongness, no jump to hide behind.',
   },
   de: {
+    breadcrumbLabel: "Brotkrumen",
     sectionTag: "Interaktive Toons",
     episodesLabel: "Episoden",
     howLabel: "So liest du",
@@ -65,6 +68,7 @@ export const HUB_COPY: Record<Locale, HubCopy> = {
       'RED SMILE ist auch die Horror-Anthologie, die 27 Pictures als Kurzfilme dreht — <a href="/horror-shorts/">The Red Smile</a> sammelt sie. Die Toons sind die gelesene Form desselben Appetits: gewöhnliche Räume, eine langsame Verkehrtheit, kein Schock zum Verstecken.',
   },
   it: {
+    breadcrumbLabel: "Percorso di navigazione",
     sectionTag: "Toon interattivi",
     episodesLabel: "Episodi",
     howLabel: "Come si legge",
@@ -83,6 +87,7 @@ export const HUB_COPY: Record<Locale, HubCopy> = {
       'RED SMILE è anche l\'antologia horror che 27 Pictures gira come corti — <a href="/horror-shorts/">The Red Smile</a> li raccoglie. I toon sono la versione da leggere dello stesso appetito: stanze ordinarie, un torto lento, nessuno jump scare dietro cui nascondersi.',
   },
   fr: {
+    breadcrumbLabel: "Fil d'Ariane",
     sectionTag: "Toons interactifs",
     episodesLabel: "Épisodes",
     howLabel: "Comment ça se lit",

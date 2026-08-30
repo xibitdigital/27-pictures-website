@@ -53,6 +53,18 @@ export function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+export type BreadcrumbItem = { href?: string; name: string };
+
+/** Visible trail on toons catalog / hubs / reader fallback. */
+export function breadcrumbNavHtml(items: BreadcrumbItem[], ariaLabel: string): string {
+  const parts = items.map((item, i) => {
+    const last = i === items.length - 1;
+    if (last || !item.href) return `<li aria-current="page">${esc(item.name)}</li>`;
+    return `<li><a href="${esc(item.href)}">${esc(item.name)}</a></li>`;
+  });
+  return `<nav class="page-breadcrumb" aria-label="${esc(ariaLabel)}"><ol>${parts.join("")}</ol></nav>`;
+}
+
 export function seriesItemCount(series: CatalogSeries): number {
   return series.episodes.length;
 }

@@ -6,6 +6,8 @@ import {
   APEX,
   absApex,
   assetDirForEpisode,
+  breadcrumbNavHtml,
+  type BreadcrumbItem,
   cardDescription,
   cardTitle,
   catalogPath,
@@ -83,13 +85,10 @@ export function hubMainHtml(series: CatalogSeries, locale: Locale): string {
   const toonsHref = localePath("/toons/", locale);
   const homeHref = localePath("/", locale);
   return `<main class="page series-page" id="main-content" role="main">
-      <nav aria-label="${esc(copy.footerNav)}" class="sr-only-seo">
-        <a href="${esc(homeHref)}">${esc(ui.home)}</a>
-        <span aria-hidden="true">/</span>
-        <a href="${esc(toonsHref)}">${esc(ui.toons)}</a>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page">${esc(series.title)}</span>
-      </nav>
+      ${breadcrumbNavHtml(
+        [{ href: homeHref, name: ui.home }, { href: toonsHref, name: ui.toons }, { name: series.title }],
+        copy.breadcrumbLabel
+      )}
       <div data-series-page>
         <header class="page-header series-header">
           <p class="section-tag">${esc(copy.sectionTag)}</p>
@@ -231,7 +230,15 @@ export function readerFallbackHtml(ep: CatalogEpisode, series: CatalogSeries | u
           .join(" · ")}</p>`
       : "";
   const hub = series?.hubUrl ? `<a href="${esc(series.hubUrl)}">${esc(series.title)} series</a> · ` : "";
+  const ui = UI.en;
+  const crumbs: BreadcrumbItem[] = [
+    { href: "/", name: ui.home },
+    { href: "/toons/", name: ui.toons },
+  ];
+  if (series?.hubUrl) crumbs.push({ href: series.hubUrl, name: series.title });
+  crumbs.push({ name: cardTitle(ep, "en") });
   return `<article class="reader-fallback">
+        ${breadcrumbNavHtml(crumbs, "Breadcrumb")}
         <p class="reader-fallback-tag">Interactive toon · ${esc(pages)} · English, Italian, German, French</p>
         <h1>${esc(title)}</h1>
         <p class="reader-fallback-sub">${sub}</p>

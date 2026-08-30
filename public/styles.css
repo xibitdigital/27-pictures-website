@@ -1643,7 +1643,8 @@ button:focus-visible {
    those are per-toon book tokens, not site chrome.
    ============================================================ */
 
-/* Breadcrumb markup for crawlers; the visible trail is the nav. */
+/* Hidden crumb on most site pages (JSON-LD + this nav). Toons catalog and
+   series hubs use `.page-breadcrumb` so the nested trail is visible. */
 .sr-only-seo {
   position: absolute;
   width: 1px;
@@ -1654,6 +1655,49 @@ button:focus-visible {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.page-breadcrumb {
+  margin: 0 0 1.25rem;
+  font-size: 0.8rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--silver);
+}
+
+.page-breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.page-breadcrumb li {
+  display: flex;
+  align-items: baseline;
+}
+
+.page-breadcrumb li + li::before {
+  content: "/";
+  margin: 0 0.55rem;
+  color: var(--border-light);
+}
+
+.page-breadcrumb a {
+  color: var(--silver);
+  text-decoration: none;
+}
+
+.page-breadcrumb a:hover,
+.page-breadcrumb a:focus-visible {
+  color: var(--text);
+}
+
+.page-breadcrumb [aria-current="page"] {
+  color: var(--text-muted);
 }
 
 /* ── Cosplay service page (/cosplay/) ── */
