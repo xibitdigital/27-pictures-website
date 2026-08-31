@@ -1885,8 +1885,15 @@ body.single-page .flip-page.flipping.from-left {
 
 @media (max-width: 768px) {
   body.toons-reader {
-    /* Notch/status bar only — do not add 1rem on top of the inset (13 mini gap). */
-    --reader-chrome-top: max(0.35rem, env(safe-area-inset-top, 0px));
+    /* Safari's layout origin is already below the status bar. Adding
+       env(safe-area-inset-top) on 13 mini stacked a second inset. */
+    --reader-chrome-top: 0.35rem;
+  }
+
+  @media (display-mode: standalone), (display-mode: fullscreen) {
+    body.toons-reader {
+      --reader-chrome-top: max(0.35rem, env(safe-area-inset-top, 0px));
+    }
   }
 
   .page-slot[data-page-num]::after {
