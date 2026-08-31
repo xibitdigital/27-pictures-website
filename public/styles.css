@@ -49,6 +49,7 @@ body {
   color: var(--text);
   font-family: "Inter", sans-serif;
   overflow-x: hidden;
+  overflow-x: clip;
 }
 h1,
 h2,
@@ -79,6 +80,7 @@ body > header,
   top: 0;
   width: 100%;
   z-index: 1000;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* Scrim under the fixed nav: solid black at the top edge, fading to fully
@@ -1019,7 +1021,7 @@ button:focus-visible {
 /* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
   :root {
-    --nav-offset: 6rem;
+    --nav-offset: calc(6rem + env(safe-area-inset-top, 0px));
   }
 
   /* Navigation */
@@ -1704,54 +1706,78 @@ button:focus-visible {
 }
 
 @media (max-width: 768px) {
-  /* Catalog + series hubs: sit the trail in the header row between logo and burger. */
-  .experiments-page > .page-breadcrumb,
-  .series-page > .page-breadcrumb {
-    position: fixed;
-    z-index: 1001;
-    top: 0;
-    left: calc(1.25rem + 2.5rem + 0.75rem);
-    right: calc(1.25rem + 30px + 0.85rem);
-    height: calc(0.9rem * 2 + 2.5rem);
+  /* Catalog + hubs: SiteNav moves [data-page-trail] into the header row. */
+  body > header nav .page-breadcrumb,
+  #site-app > header nav .page-breadcrumb {
     margin: 0;
-    display: flex;
-    align-items: center;
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
   }
 
   .experiments-page > .page-breadcrumb ol,
-  .series-page > .page-breadcrumb ol {
+  .series-page > .page-breadcrumb ol,
+  body > header nav .page-breadcrumb ol,
+  #site-app > header nav .page-breadcrumb ol {
     flex-wrap: nowrap;
     min-width: 0;
     width: 100%;
   }
 
   .experiments-page > .page-breadcrumb li,
-  .series-page > .page-breadcrumb li {
+  .series-page > .page-breadcrumb li,
+  body > header nav .page-breadcrumb li,
+  #site-app > header nav .page-breadcrumb li {
     flex-shrink: 0;
   }
 
   .experiments-page > .page-breadcrumb li:first-child,
-  .series-page > .page-breadcrumb li:first-child {
+  .series-page > .page-breadcrumb li:first-child,
+  body > header nav .page-breadcrumb li:first-child,
+  #site-app > header nav .page-breadcrumb li:first-child {
     display: none;
   }
 
   .experiments-page > .page-breadcrumb li:first-child + li::before,
-  .series-page > .page-breadcrumb li:first-child + li::before {
+  .series-page > .page-breadcrumb li:first-child + li::before,
+  body > header nav .page-breadcrumb li:first-child + li::before,
+  #site-app > header nav .page-breadcrumb li:first-child + li::before {
     content: none;
   }
 
   .experiments-page > .page-breadcrumb li:last-child,
-  .series-page > .page-breadcrumb li:last-child {
+  .series-page > .page-breadcrumb li:last-child,
+  body > header nav .page-breadcrumb li:last-child,
+  #site-app > header nav .page-breadcrumb li:last-child {
     flex-shrink: 1;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* Ellipsis on the label — a flex li will not clip its own text. */
+  .experiments-page > .page-breadcrumb li:last-child a,
+  .series-page > .page-breadcrumb li:last-child a,
+  body > header nav .page-breadcrumb li:last-child a,
+  #site-app > header nav .page-breadcrumb li:last-child a {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  body:has(.burger-btn[aria-expanded="true"]) .experiments-page > .page-breadcrumb,
-  body:has(.burger-btn[aria-expanded="true"]) .series-page > .page-breadcrumb {
+  .experiments-page > .page-breadcrumb li:last-child[aria-current="page"],
+  .series-page > .page-breadcrumb li:last-child[aria-current="page"],
+  body > header nav .page-breadcrumb li:last-child[aria-current="page"],
+  #site-app > header nav .page-breadcrumb li:last-child[aria-current="page"] {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body:has(.burger-btn[aria-expanded="true"]) header nav .page-breadcrumb {
     visibility: hidden;
     pointer-events: none;
   }
@@ -2264,7 +2290,7 @@ button:focus-visible {
   }
 
   .series-page {
-    padding: 110px 24px 64px;
+    padding: calc(110px + env(safe-area-inset-top, 0px)) 24px 64px;
   }
 
   .series-cta {
@@ -3447,7 +3473,7 @@ button:focus-visible {
   }
 
   .experiments-page {
-    padding: 110px 24px 64px;
+    padding: calc(110px + env(safe-area-inset-top, 0px)) 24px 64px;
   }
 
   .experiments-footer {

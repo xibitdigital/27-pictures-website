@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** Main site chrome (fixed header + mobile menu). */
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import { documentLocale, isLocalizedPath, LOCALES, LOCALE_LABELS, LOCALE_NAMES, localePath, UI } from "../i18n";
 
@@ -91,25 +91,65 @@ function onLangSelect(event: Event): void {
   window.location.assign(next.href);
 }
 
+const navEl = ref<HTMLElement | null>(null);
+const burgerEl = ref<HTMLButtonElement | null>(null);
+let trailHome: { el: Element; parent: Node; next: ChildNode | null } | null = null;
+let trailMq: MediaQueryList | null = null;
+
+function placePageTrail(mobile: boolean): void {
+  const trail = trailHome?.el ?? document.querySelector("[data-page-trail]");
+  if (!trail) return;
+  if (mobile) {
+    if (!navEl.value || !burgerEl.value) return;
+    if (trail.parentElement !== navEl.value) {
+      trailHome = { el: trail, parent: trail.parentNode!, next: trail.nextSibling };
+      navEl.value.insertBefore(trail, burgerEl.value);
+    }
+    return;
+  }
+  if (trailHome) {
+    trailHome.parent.insertBefore(trailHome.el, trailHome.next);
+    trailHome = null;
+  }
+}
+
+function onTrailMq(): void {
+  if (trailMq) placePageTrail(trailMq.matches);
+}
+
 onMounted(() => {
   document.addEventListener("pointerdown", onDocPointerDown);
   document.addEventListener("keydown", onDocKey);
+  if (typeof window.matchMedia === "function") {
+    trailMq = window.matchMedia("(max-width: 768px)");
+    onTrailMq();
+    trailMq.addEventListener("change", onTrailMq);
+  }
+});
+
+onBeforeUnmount(() => {
+  placePageTrail(false);
 });
 
 onUnmounted(() => {
   document.removeEventListener("pointerdown", onDocPointerDown);
   document.removeEventListener("keydown", onDocKey);
+  if (trailMq) {
+    trailMq.removeEventListener("change", onTrailMq);
+    trailMq = null;
+  }
 });
 </script>
 
 <template>
   <header>
-    <nav role="navigation" :aria-label="t.navMain">
+    <nav ref="navEl" role="navigation" :aria-label="t.navMain">
       <a v-magnetic :href="homeHref" class="magnetic" :aria-label="t.navHomeAria">
         <img src="/logo.1a83b92ec2.png" class="nav-logo-img" alt="27 Pictures" :title="t.navLogoTitle" height="40" />
       </a>
 
       <button
+        ref="burgerEl"
         type="button"
         class="burger-btn"
         :class="{ active: menuOpen }"

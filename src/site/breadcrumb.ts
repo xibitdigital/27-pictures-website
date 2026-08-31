@@ -37,7 +37,7 @@ export function breadcrumbNavHtml(items: BreadcrumbItem[], ariaLabel: string): s
     if (last || !item.href) return `<li aria-current="page">${esc(item.name)}</li>`;
     return `<li><a href="${esc(item.href)}">${esc(item.name)}</a></li>`;
   });
-  return `<nav class="page-breadcrumb" aria-label="${esc(ariaLabel)}"><ol>${parts.join("")}</ol></nav>`;
+  return `<nav class="page-breadcrumb" data-page-trail aria-label="${esc(ariaLabel)}"><ol>${parts.join("")}</ol></nav>`;
 }
 
 export function breadcrumbListJsonLd(

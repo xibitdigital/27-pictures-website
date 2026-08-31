@@ -33,6 +33,7 @@ describe("breadcrumbNavHtml / JSON-LD", () => {
     const items = toonTrail({ locale: "en", series, episodeName: "static" });
     const html = breadcrumbNavHtml(items, "Breadcrumb");
     expect(html).toContain('aria-label="Breadcrumb"');
+    expect(html).toContain("data-page-trail");
     expect(html).toContain('href="/toons/redsmile/"');
     expect(html).toContain('aria-current="page">static</li>');
     const ld = breadcrumbListJsonLd(

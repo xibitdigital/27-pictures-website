@@ -211,4 +211,43 @@ describe("SiteNav", () => {
     expect(burger.classes()).toContain("active");
     expect(document.body.style.overflow).toBe("hidden");
   });
+
+  it("moves the page trail into the header row on a phone", async () => {
+    const main = document.createElement("main");
+    main.innerHTML = `<nav class="page-breadcrumb" data-page-trail><ol><li>Home</li><li>Toons</li></ol></nav>`;
+    document.body.appendChild(main);
+
+    const mq = {
+      matches: true,
+      media: "(max-width: 768px)",
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    };
+    vi.spyOn(window, "matchMedia").mockImplementation(() => mq as unknown as MediaQueryList);
+
+    const wrapper = mount(SiteNav, {
+      props: { page: "toons" },
+      attachTo: document.body,
+      global: {
+        stubs: {
+          TransitionRoot: false,
+          TransitionChild: false,
+          Dialog: { template: "<div><slot /></div>" },
+          DialogPanel: { template: "<div><slot /></div>" },
+          DialogTitle: { template: "<div><slot /></div>" },
+        },
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+    const trail = document.querySelector("[data-page-trail]");
+    expect(trail?.parentElement?.getAttribute("aria-label")).toBeTruthy();
+    expect(wrapper.find("nav").element.contains(trail)).toBe(true);
+    expect(main.contains(trail)).toBe(false);
+
+    const trailNode = document.querySelector("[data-page-trail]");
+    wrapper.unmount();
+    expect(trailNode && main.contains(trailNode)).toBe(true);
+    vi.restoreAllMocks();
+  });
 });

@@ -49,7 +49,7 @@ body.toons-reader {
 /* Site logo — same mark as main nav (styles.css .nav-logo-img), fixed top-left */
 .toons-back {
   position: fixed;
-  top: 1.25rem;
+  top: calc(1.25rem + env(safe-area-inset-top, 0px));
   left: 1.25rem;
   z-index: 50;
   display: inline-flex;
@@ -140,9 +140,9 @@ body.toons-reader {
    per-page — see each toon's own <style> block) */
 .toon-top-controls {
   position: fixed;
-  top: 1.5rem;
+  top: calc(1.5rem + env(safe-area-inset-top, 0px));
   right: 1.5rem;
-  z-index: 50;
+  z-index: 51;
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -337,7 +337,7 @@ body.toons-reader::before {
    back logo; hide in fullscreen with the rest of the chrome. */
 body.toons-reader > .page-breadcrumb {
   position: fixed;
-  top: calc(1.25rem + 0.55rem);
+  top: calc(1.25rem + 0.55rem + env(safe-area-inset-top, 0px));
   /* Logo is 1.25rem + --nav-logo-h (~2.5rem); keep a real gutter after it. */
   left: calc(1.25rem + 2.75rem + 1.5rem);
   z-index: 50;
@@ -348,15 +348,18 @@ body.toons-reader > .page-breadcrumb {
 @media (max-width: 768px) {
   /* Toons › series, on the logo row — drop Home and the episode. */
   body.toons-reader > .page-breadcrumb {
-    top: calc(1rem + 0.45rem);
+    top: calc(1rem + 0.45rem + env(safe-area-inset-top, 0px));
     left: calc(1rem + 2.5rem + 0.75rem);
-    max-width: calc(100vw - 12.5rem);
+    right: 10.75rem;
+    max-width: none;
     overflow: hidden;
     white-space: nowrap;
   }
 
   body.toons-reader > .page-breadcrumb ol {
     flex-wrap: nowrap;
+    min-width: 0;
+    max-width: 100%;
   }
 
   body.toons-reader > .page-breadcrumb li:first-child,
@@ -366,6 +369,20 @@ body.toons-reader > .page-breadcrumb {
 
   body.toons-reader > .page-breadcrumb li:first-child + li::before {
     content: none;
+  }
+
+  body.toons-reader > .page-breadcrumb li:nth-last-child(2) {
+    min-width: 0;
+    flex-shrink: 1;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  body.toons-reader > .page-breadcrumb li:nth-last-child(2) a {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -1892,7 +1909,7 @@ body.single-page .flip-page.flipping.from-left {
   }
 
   .toons-back {
-    top: 1rem;
+    top: calc(1rem + env(safe-area-inset-top, 0px));
     left: 1rem;
   }
 
