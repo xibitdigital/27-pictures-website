@@ -346,14 +346,26 @@ body.toons-reader > .page-breadcrumb {
 }
 
 @media (max-width: 768px) {
-  body.toons-reader::before {
-    height: 8rem;
+  /* Toons › series, on the logo row — drop Home and the episode. */
+  body.toons-reader > .page-breadcrumb {
+    top: calc(1rem + 0.45rem);
+    left: calc(1rem + 2.5rem + 0.75rem);
+    max-width: calc(100vw - 12.5rem);
+    overflow: hidden;
+    white-space: nowrap;
   }
 
-  body.toons-reader > .page-breadcrumb {
-    top: calc(1.25rem + 2.75rem);
-    left: 1.25rem;
-    max-width: calc(100vw - 8.5rem);
+  body.toons-reader > .page-breadcrumb ol {
+    flex-wrap: nowrap;
+  }
+
+  body.toons-reader > .page-breadcrumb li:first-child,
+  body.toons-reader > .page-breadcrumb li:last-child {
+    display: none;
+  }
+
+  body.toons-reader > .page-breadcrumb li:first-child + li::before {
+    content: none;
   }
 }
 

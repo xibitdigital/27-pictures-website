@@ -1703,6 +1703,60 @@ button:focus-visible {
   color: var(--text-muted);
 }
 
+@media (max-width: 768px) {
+  /* Catalog + series hubs: sit the trail in the header row between logo and burger. */
+  .experiments-page > .page-breadcrumb,
+  .series-page > .page-breadcrumb {
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: calc(1.25rem + 2.5rem + 0.75rem);
+    right: calc(1.25rem + 30px + 0.85rem);
+    height: calc(0.9rem * 2 + 2.5rem);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .experiments-page > .page-breadcrumb ol,
+  .series-page > .page-breadcrumb ol {
+    flex-wrap: nowrap;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .experiments-page > .page-breadcrumb li,
+  .series-page > .page-breadcrumb li {
+    flex-shrink: 0;
+  }
+
+  .experiments-page > .page-breadcrumb li:first-child,
+  .series-page > .page-breadcrumb li:first-child {
+    display: none;
+  }
+
+  .experiments-page > .page-breadcrumb li:first-child + li::before,
+  .series-page > .page-breadcrumb li:first-child + li::before {
+    content: none;
+  }
+
+  .experiments-page > .page-breadcrumb li:last-child,
+  .series-page > .page-breadcrumb li:last-child {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body:has(.burger-btn[aria-expanded="true"]) .experiments-page > .page-breadcrumb,
+  body:has(.burger-btn[aria-expanded="true"]) .series-page > .page-breadcrumb {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 /* ── Cosplay service page (/cosplay/) ── */
 /* ── Page chrome ──
    /toons/, /watch/, /cosplay/ and /horror-shorts/ are the same page shape:
