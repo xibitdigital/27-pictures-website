@@ -12,7 +12,7 @@ html:has(body.toons-reader) {
   overflow: hidden;
   height: 100%;
   max-width: 100%;
-  --reader-chrome-top: calc(1.25rem + env(safe-area-inset-top, 0px));
+  --reader-chrome-top: 0px;
   --reader-chrome-size: clamp(2rem, 1.75rem + 0.6vw, 2.5rem);
 }
 
@@ -325,16 +325,22 @@ body.toons-reader {
   white-space: nowrap;
 }
 
-/* Same top scrim as the site header (`--nav-scrim`). Behind logo, trail and
-   controls; never captures clicks. Hidden in fullscreen with that chrome. */
+/* Solid bar behind logo, trail and controls. Hidden in fullscreen with that chrome. */
 body.toons-reader::before {
   content: "";
   position: fixed;
-  inset: 0 0 auto;
-  height: 6.5rem;
-  z-index: 40;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: var(--reader-chrome-size);
+  z-index: 48;
   pointer-events: none;
-  background: var(--nav-scrim);
+  background: color-mix(in srgb, var(--bg-dark) 80%, transparent);
+  /* Body is a flex column; don't let align-items shrink or offset this. */
+  flex: none;
+  align-self: stretch;
+  margin: 0;
 }
 
 /* Lives outside #app so FlipFrame mount does not wipe it. Sit beside the
@@ -1888,23 +1894,6 @@ body.single-page .flip-page.flipping.from-left {
 }
 
 @media (max-width: 768px) {
-  html:has(body.toons-reader),
-  body.toons-reader {
-    --reader-chrome-top: 0px;
-  }
-
-  @media (display-mode: standalone), (display-mode: fullscreen) {
-    html:has(body.toons-reader),
-    body.toons-reader {
-      --reader-chrome-top: max(0.35rem, env(safe-area-inset-top, 0px));
-    }
-  }
-
-  /* Cover the chrome row plus a short fade — not a 6.5rem slab. */
-  body.toons-reader::before {
-    height: calc(var(--reader-chrome-size) + 1.5rem);
-  }
-
   .toons-back,
   .toon-top-controls,
   body.toons-reader > .page-breadcrumb {
