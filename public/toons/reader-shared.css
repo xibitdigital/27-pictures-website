@@ -1885,7 +1885,8 @@ body.single-page .flip-page.flipping.from-left {
 
 @media (max-width: 768px) {
   body.toons-reader {
-    --reader-chrome-top: calc(1rem + env(safe-area-inset-top, 0px));
+    /* Notch/status bar only — do not add 1rem on top of the inset (13 mini gap). */
+    --reader-chrome-top: max(0.35rem, env(safe-area-inset-top, 0px));
   }
 
   .page-slot[data-page-num]::after {
