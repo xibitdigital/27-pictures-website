@@ -1885,9 +1885,9 @@ body.single-page .flip-page.flipping.from-left {
 
 @media (max-width: 768px) {
   body.toons-reader {
-    /* Safari's layout origin is already below the status bar. Adding
-       env(safe-area-inset-top) on 13 mini stacked a second inset. */
-    --reader-chrome-top: 0.35rem;
+    /* Web content already starts below Safari's status bar (env() is 0 on
+       13 mini). Any extra offset reads as a gap under the system bar. */
+    --reader-chrome-top: 0px;
   }
 
   @media (display-mode: standalone), (display-mode: fullscreen) {
