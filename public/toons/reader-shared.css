@@ -338,7 +338,8 @@ body.toons-reader::before {
 body.toons-reader > .page-breadcrumb {
   position: fixed;
   top: calc(1.25rem + 0.55rem);
-  left: calc(1.25rem + 2.75rem);
+  /* Logo is 1.25rem + --nav-logo-h (~2.5rem); keep a real gutter after it. */
+  left: calc(1.25rem + 2.75rem + 1.5rem);
   z-index: 50;
   max-width: min(48vw, 26rem);
   margin: 0;

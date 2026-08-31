@@ -1684,8 +1684,8 @@ button:focus-visible {
 }
 
 .page-breadcrumb li + li::before {
-  content: "/";
-  margin: 0 0.55rem;
+  content: "›";
+  margin: 0 0.7rem;
   color: var(--border-light);
 }
 
