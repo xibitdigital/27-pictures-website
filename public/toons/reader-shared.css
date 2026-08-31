@@ -12,6 +12,8 @@ html:has(body.toons-reader) {
   overflow: hidden;
   height: 100%;
   max-width: 100%;
+  --reader-chrome-top: calc(1.25rem + env(safe-area-inset-top, 0px));
+  --reader-chrome-size: clamp(2rem, 1.75rem + 0.6vw, 2.5rem);
 }
 
 body.toons-reader {
@@ -27,8 +29,6 @@ body.toons-reader {
   /* No document scrollbars — nav chrome sits outside the book box */
   overflow: hidden;
   user-select: none;
-  --reader-chrome-top: calc(1.25rem + env(safe-area-inset-top, 0px));
-  --reader-chrome-size: clamp(2rem, 1.75rem + 0.6vw, 2.5rem);
 }
 
 .reader {
@@ -1884,16 +1884,39 @@ body.single-page .flip-page.flipping.from-left {
 }
 
 @media (max-width: 768px) {
+  html:has(body.toons-reader),
   body.toons-reader {
-    /* Web content already starts below Safari's status bar (env() is 0 on
-       13 mini). Any extra offset reads as a gap under the system bar. */
     --reader-chrome-top: 0px;
   }
 
   @media (display-mode: standalone), (display-mode: fullscreen) {
+    html:has(body.toons-reader),
     body.toons-reader {
       --reader-chrome-top: max(0.35rem, env(safe-area-inset-top, 0px));
     }
+  }
+
+  /* Solid bar at the web-view edge so the chrome doesn't float below Safari. */
+  html:has(body.toons-reader)::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--reader-chrome-size);
+    z-index: 49;
+    pointer-events: none;
+    background: var(--bg-dark);
+  }
+
+  html:has(body.is-fullscreen)::before {
+    display: none;
+  }
+
+  .toons-back,
+  .toon-top-controls,
+  body.toons-reader > .page-breadcrumb {
+    top: var(--reader-chrome-top) !important;
   }
 
   .page-slot[data-page-num]::after {
