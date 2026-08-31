@@ -1388,8 +1388,8 @@ a.sound-prompt__btn {
   width: var(--strip-width, min(98vw, 720px));
   margin: 0 auto;
   flex-direction: column;
-  gap: 0;
-  padding: 0;
+  gap: 1rem;
+  padding: 0 0 0.5rem;
 }
 
 /* Scroll mode is the default on desktop too, so the fallback cap has to suit a
@@ -1406,14 +1406,12 @@ a.sound-prompt__btn {
 .vertical-strip .vertical-strip-pages {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 1rem;
   width: 100%;
 }
 
 body.view-vertical .vertical-strip {
   display: flex;
-  width: 100%;
-  max-width: none;
 }
 
 body.view-vertical .book-scene,
@@ -1483,8 +1481,8 @@ body.view-vertical .reader {
   min-height: auto;
   height: auto !important;
   width: 100%;
-  padding: 0;
-  gap: 0;
+  padding-top: 2.25rem;
+  padding-bottom: 1rem;
   touch-action: pan-y;
 }
 
@@ -1518,14 +1516,14 @@ body.view-vertical .jax-word[role="button"]::after {
 }
 
 body.view-vertical.is-fullscreen .reader {
-  padding: 0;
+  padding-top: 1.75rem;
 }
 
 .vertical-page {
   position: relative;
   width: 100%;
   background: var(--page-bg, var(--bg-card));
-  border: none;
+  border: 1px solid var(--border);
   overflow: hidden;
   /* page-slot uses absolute img in book mode; vertical stack needs flow layout */
 }
@@ -1564,7 +1562,7 @@ body.view-vertical.is-fullscreen .reader {
   width: 100%;
   height: 100% !important;
   max-height: none;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 #viewModeBtn.is-active {
@@ -1933,11 +1931,6 @@ body.single-page .flip-page.flipping.from-left {
     gap: 0.7rem;
   }
 
-  body.view-vertical .reader {
-    padding: 0;
-    gap: 0;
-  }
-
   /* Bottom edge on phones; padding-bottom keeps the fill above the home bar. */
   .toon-progress {
     top: auto;
@@ -1960,7 +1953,8 @@ body.single-page .flip-page.flipping.from-left {
   }
 
   /* Mobile: plates run edge to edge — no page frame line (book or scroll mode) */
-  .spread {
+  .spread,
+  .vertical-page {
     border: none;
   }
 
