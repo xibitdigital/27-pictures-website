@@ -27,6 +27,8 @@ body.toons-reader {
   /* No document scrollbars — nav chrome sits outside the book box */
   overflow: hidden;
   user-select: none;
+  --reader-chrome-top: calc(1.25rem + env(safe-area-inset-top, 0px));
+  --reader-chrome-size: clamp(2rem, 1.75rem + 0.6vw, 2.5rem);
 }
 
 .reader {
@@ -49,7 +51,7 @@ body.toons-reader {
 /* Site logo — same mark as main nav (styles.css .nav-logo-img), fixed top-left */
 .toons-back {
   position: fixed;
-  top: calc(1.25rem + env(safe-area-inset-top, 0px));
+  top: var(--reader-chrome-top);
   left: 1.25rem;
   z-index: 50;
   display: inline-flex;
@@ -58,7 +60,7 @@ body.toons-reader {
   text-decoration: none;
   line-height: 0;
   /* Reader defines its own logo height so it works even if nav tokens differ */
-  --nav-logo-h: clamp(2rem, 1.75rem + 0.6vw, 2.5rem);
+  --nav-logo-h: var(--reader-chrome-size);
   transition:
     opacity 0.2s var(--transition),
     filter 0.2s var(--transition);
@@ -140,13 +142,15 @@ body.toons-reader {
    per-page — see each toon's own <style> block) */
 .toon-top-controls {
   position: fixed;
-  top: calc(1.5rem + env(safe-area-inset-top, 0px));
+  top: var(--reader-chrome-top);
   right: 1.5rem;
   z-index: 51;
   display: flex;
   align-items: center;
+  box-sizing: border-box;
+  height: var(--reader-chrome-size);
   gap: 0.35rem;
-  padding: 0.25rem;
+  padding: 0;
   border-radius: 6px;
   /* Contain highlight paint; never let the intro flash touch page layout */
   isolation: isolate;
@@ -337,7 +341,11 @@ body.toons-reader::before {
    back logo; hide in fullscreen with the rest of the chrome. */
 body.toons-reader > .page-breadcrumb {
   position: fixed;
-  top: calc(1.25rem + 0.55rem + env(safe-area-inset-top, 0px));
+  top: var(--reader-chrome-top);
+  height: var(--reader-chrome-size);
+  display: flex;
+  align-items: center;
+  line-height: var(--reader-chrome-size);
   /* Logo is 1.25rem + --nav-logo-h (~2.5rem); keep a real gutter after it. */
   left: calc(1.25rem + 2.75rem + 1.5rem);
   z-index: 50;
@@ -345,10 +353,16 @@ body.toons-reader > .page-breadcrumb {
   margin: 0;
 }
 
+body.toons-reader > .page-breadcrumb ol,
+body.toons-reader > .page-breadcrumb li {
+  align-items: center;
+  height: 100%;
+  line-height: inherit;
+}
+
 @media (max-width: 768px) {
   /* Toons › series, on the logo row — drop Home and the episode. */
   body.toons-reader > .page-breadcrumb {
-    top: calc(1rem + 0.45rem + env(safe-area-inset-top, 0px));
     left: calc(1rem + 2.5rem + 0.75rem);
     right: 10.75rem;
     max-width: none;
@@ -358,6 +372,7 @@ body.toons-reader > .page-breadcrumb {
 
   body.toons-reader > .page-breadcrumb ol {
     flex-wrap: nowrap;
+    align-items: center;
     min-width: 0;
     max-width: 100%;
   }
@@ -1869,6 +1884,10 @@ body.single-page .flip-page.flipping.from-left {
 }
 
 @media (max-width: 768px) {
+  body.toons-reader {
+    --reader-chrome-top: calc(1rem + env(safe-area-inset-top, 0px));
+  }
+
   .page-slot[data-page-num]::after {
     left: 0;
     bottom: 0;
@@ -1909,7 +1928,7 @@ body.single-page .flip-page.flipping.from-left {
   }
 
   .toons-back {
-    top: calc(1rem + env(safe-area-inset-top, 0px));
+    top: var(--reader-chrome-top);
     left: 1rem;
   }
 
@@ -1961,12 +1980,19 @@ body.single-page .flip-page.flipping.from-left {
   }
 
   .toon-top-controls {
-    top: 1rem;
+    top: var(--reader-chrome-top);
     right: 1rem;
     max-width: calc(100vw - 2rem);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
-    row-gap: 0.35rem;
+  }
+
+  .toon-top-controls .toon-fs-btn {
+    box-sizing: border-box;
+    height: var(--reader-chrome-size);
+    min-height: var(--reader-chrome-size);
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }
 
