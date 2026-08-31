@@ -28,6 +28,15 @@
   /* Fixed header + a little air. Studio strip and in-page jumps must
      clear the logo; keep in step with nav padding and --nav-logo-h. */
   --nav-offset: 7.25rem;
+
+  /* Fade under the site header and the FlipFrame top chrome. */
+  --nav-scrim: linear-gradient(
+    to bottom,
+    var(--bg-dark) 0%,
+    color-mix(in srgb, var(--bg-dark) 70%, transparent) 55%,
+    color-mix(in srgb, var(--bg-dark) 30%, transparent) 80%,
+    transparent 100%
+  );
 }
 
 * {
@@ -83,13 +92,7 @@ body > header::before,
   height: 130%;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    var(--bg-dark) 0%,
-    color-mix(in srgb, var(--bg-dark) 70%, transparent) 55%,
-    color-mix(in srgb, var(--bg-dark) 30%, transparent) 80%,
-    transparent 100%
-  );
+  background: var(--nav-scrim);
 }
 body > header nav,
 #site-app > header nav {

@@ -321,8 +321,45 @@ body.toons-reader {
   white-space: nowrap;
 }
 
+/* Same top scrim as the site header (`--nav-scrim`). Behind logo, trail and
+   controls; never captures clicks. Hidden in fullscreen with that chrome. */
+body.toons-reader::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: 6.5rem;
+  z-index: 40;
+  pointer-events: none;
+  background: var(--nav-scrim);
+}
+
+/* Lives outside #app so FlipFrame mount does not wipe it. Sit beside the
+   back logo; hide in fullscreen with the rest of the chrome. */
+body.toons-reader > .page-breadcrumb {
+  position: fixed;
+  top: calc(1.25rem + 0.55rem);
+  left: calc(1.25rem + 2.75rem);
+  z-index: 50;
+  max-width: min(48vw, 26rem);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  body.toons-reader::before {
+    height: 8rem;
+  }
+
+  body.toons-reader > .page-breadcrumb {
+    top: calc(1.25rem + 2.75rem);
+    left: 1.25rem;
+    max-width: calc(100vw - 8.5rem);
+  }
+}
+
 /* Fullscreen chrome: hide nav; shrink title; keep top-right controls */
+body.is-fullscreen::before,
 body.is-fullscreen .toons-back,
+body.is-fullscreen > .page-breadcrumb,
 body.is-fullscreen .controls,
 body.is-fullscreen .page-nav-btn,
 body.is-fullscreen .hint {
@@ -2575,21 +2612,17 @@ body.toons-reader #app {
   margin-top: 1rem;
 }
 
-.reader-fallback a {
+.reader-fallback p a {
   color: var(--text-muted);
   text-decoration: none;
   border-bottom: 1px solid var(--border);
 }
 
-.reader-fallback a:hover {
+.reader-fallback p a:hover {
   color: var(--red-smile);
   border-color: var(--red-smile);
 }
 
 .reader-fallback .page-breadcrumb {
   margin-bottom: 1.5rem;
-}
-
-.reader-fallback .page-breadcrumb a {
-  border-bottom: none;
 }

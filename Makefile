@@ -65,10 +65,16 @@ editor-worker-prep:
 .PHONY: dev
 dev: editor-worker-prep ## Vite + editor Worker (site :5173, API :8787)
 	@echo "→ http://127.0.0.1:5173/   editor API :8787"
-	@if lsof -iTCP:8787 -sTCP:LISTEN >/dev/null 2>&1; then \
+	@if lsof -iTCP:8787 -sTCP:LISTEN >/dev/null 2>&1 \
+		&& curl -sf --max-time 2 'http://127.0.0.1:8787/catalog?site=http://127.0.0.1:5173' >/dev/null; then \
 		echo "→ editor Worker already on :8787"; \
 		$(NPM) run dev; \
 	else \
+		if lsof -iTCP:8787 -sTCP:LISTEN >/dev/null 2>&1; then \
+			echo "→ :8787 is up but /catalog is stuck — restarting wrangler"; \
+			kill $$(lsof -tiTCP:8787 -sTCP:LISTEN) 2>/dev/null || true; \
+			sleep 0.5; \
+		fi; \
 		(cd worker/toon-editor && $(NPX) wrangler dev) & \
 		WORKER_PID=$$!; \
 		trap 'kill $$WORKER_PID 2>/dev/null; wait $$WORKER_PID 2>/dev/null' INT TERM EXIT; \

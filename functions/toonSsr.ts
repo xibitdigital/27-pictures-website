@@ -2,6 +2,7 @@
  * Stamp D1 catalog / hub / reader HTML at the site origin so crawlers that
  * skip JavaScript still see cards, fallback copy and JSON-LD.
  */
+import { breadcrumbNavHtml, toonTrail } from "../src/site/breadcrumb";
 import {
   catalogJsonLd,
   cardDescription,
@@ -15,7 +16,7 @@ import {
   seriesJsonLd,
   type CatalogPayload,
 } from "../src/site/catalogRender";
-import { splitLocale } from "../src/site/i18n";
+import { splitLocale, UI } from "../src/site/i18n";
 import { applyHubHtml, applyReaderHtml, HUB_TEMPLATE_PATH, READER_TEMPLATE_PATH } from "../src/site/toonPages";
 
 export const EDITOR_API = "https://toon-editor.sangalli-marco.workers.dev";
@@ -78,6 +79,10 @@ export function injectToonHtml(html: string, payload: CatalogPayload, requestUrl
 
   if (isToonIndexPath(pathname) && html.includes("data-toon-catalog")) {
     out = fillEmptyDiv(out, "data-toon-catalog", landingGridHtml(payload, locale));
+    out = out.replace(
+      /<nav\b[^>]*\bpage-breadcrumb\b[^>]*>[\s\S]*?<\/nav>/,
+      breadcrumbNavHtml(toonTrail({ locale }), UI[locale].breadcrumb)
+    );
     if (html.includes("data-toon-jsonld")) {
       out = replaceScript(out, "data-toon-jsonld", catalogJsonLd(payload, { pageUrl, locale }));
     }

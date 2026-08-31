@@ -2,12 +2,11 @@
  * Stamp D1 into the shared hub / reader HTML templates.
  */
 import { HUB_COPY, localizeHubCopy } from "./hubCopy";
+import { breadcrumbListJsonLd, breadcrumbNavHtml, toonTrail } from "./breadcrumb";
 import {
   APEX,
   absApex,
   assetDirForEpisode,
-  breadcrumbNavHtml,
-  type BreadcrumbItem,
   cardDescription,
   cardTitle,
   catalogPath,
@@ -83,12 +82,8 @@ export function hubMainHtml(series: CatalogSeries, locale: Locale): string {
   const heading = episodesHeading(series.episodes.length, locale);
   const cards = series.episodes.map((ep) => episodeCardHtml(ep, locale)).join("\n");
   const toonsHref = localePath("/toons/", locale);
-  const homeHref = localePath("/", locale);
   return `<main class="page series-page" id="main-content" role="main">
-      ${breadcrumbNavHtml(
-        [{ href: homeHref, name: ui.home }, { href: toonsHref, name: ui.toons }, { name: series.title }],
-        copy.breadcrumbLabel
-      )}
+      ${breadcrumbNavHtml(toonTrail({ locale, series }), ui.breadcrumb)}
       <div data-series-page>
         <header class="page-header series-header">
           <p class="section-tag">${esc(copy.sectionTag)}</p>
@@ -192,23 +187,15 @@ export function readerJsonLd(
         about: { "@id": `${page}#toon` },
         inLanguage: ["en", "it", "de", "fr"],
       },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${page}#breadcrumb`,
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: `${APEX}/` },
-          { "@type": "ListItem", position: 2, name: "Interactive Toons", item: `${APEX}/toons/` },
-          ...(series?.hubUrl
-            ? [{ "@type": "ListItem", position: 3, name: series.title, item: absApex(series.hubUrl) }]
-            : []),
-          {
-            "@type": "ListItem",
-            position: series?.hubUrl ? 4 : 3,
-            name,
-            item: page,
-          },
-        ],
-      },
+      breadcrumbListJsonLd(
+        toonTrail({
+          locale: "en",
+          series,
+          episodeName: cardTitle(ep, "en"),
+        }),
+        page,
+        APEX
+      ),
       work,
     ],
   };
@@ -230,15 +217,7 @@ export function readerFallbackHtml(ep: CatalogEpisode, series: CatalogSeries | u
           .join(" · ")}</p>`
       : "";
   const hub = series?.hubUrl ? `<a href="${esc(series.hubUrl)}">${esc(series.title)} series</a> · ` : "";
-  const ui = UI.en;
-  const crumbs: BreadcrumbItem[] = [
-    { href: "/", name: ui.home },
-    { href: "/toons/", name: ui.toons },
-  ];
-  if (series?.hubUrl) crumbs.push({ href: series.hubUrl, name: series.title });
-  crumbs.push({ name: cardTitle(ep, "en") });
   return `<article class="reader-fallback">
-        ${breadcrumbNavHtml(crumbs, "Breadcrumb")}
         <p class="reader-fallback-tag">Interactive toon · ${esc(pages)} · English, Italian, German, French</p>
         <h1>${esc(title)}</h1>
         <p class="reader-fallback-sub">${sub}</p>
@@ -293,6 +272,11 @@ export function applyReaderHtml(
   out = replaceScript(out, "data-toon-jsonld", readerJsonLd(ep, series, { pageUrl }));
   const nav = episodeNavFromCatalog(series, ep.slug);
   out = replaceScript(out, "data-episode-nav", nav, "application/json");
+  const trail = breadcrumbNavHtml(
+    toonTrail({ locale: "en", series, episodeName: cardTitle(ep, "en") }),
+    UI.en.breadcrumb
+  ).replace("<nav ", "<nav data-reader-trail ");
+  out = out.replace(/<nav\b[^>]*\bdata-reader-trail\b[^>]*>[\s\S]*?<\/nav>/, trail);
   const fallback = readerFallbackHtml(ep, series);
   out = out.replace(/<article class="reader-fallback">[\s\S]*?<\/article>/, fallback);
   return out;

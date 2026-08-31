@@ -74,10 +74,11 @@ describe("applyHubHtml / applyReaderHtml", () => {
     expect(out).toContain('data-episode-one="/toons/redsmile/static/"');
     expect(out).toContain("Elena.");
     expect(out).toMatch(/<h1>RED SMILE<\/h1>/);
-    expect(out).toContain('class="page-breadcrumb"');
+    expect(out).toContain('aria-label="Breadcrumb"');
     expect(out).toContain('href="/"');
     expect(out).toContain('href="/toons/"');
     expect(out).toContain('aria-current="page">RED SMILE</li>');
+    expect(out).toContain('"name": "Toons"');
     expect(html).not.toContain("<h1>RED SMILE</h1>");
   });
 
@@ -90,8 +91,12 @@ describe("applyHubHtml / applyReaderHtml", () => {
     expect(out).toContain("index, follow");
     expect(out).toContain("/toons/redsmile/marcus/");
     expect(out).toContain('"label": "Episode 2 — Marcus"');
-    expect(out).toContain('class="page-breadcrumb"');
+    expect(out).toContain("data-reader-trail");
+    expect(out).toContain('aria-label="Breadcrumb"');
     expect(out).toContain('href="/toons/redsmile/"');
     expect(out).toContain('aria-current="page">static</li>');
+    expect(out.indexOf("data-reader-trail")).toBeLessThan(out.indexOf('id="app"'));
+    expect(out).toContain('"name": "Toons"');
+    expect(out).not.toContain("Interactive Toons");
   });
 });

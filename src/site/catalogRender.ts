@@ -4,6 +4,7 @@
  * the shelf. The client uses the same builders after fetch.
  */
 import { pickDescription, type DescriptionMap } from "../toons/editor/types";
+import { breadcrumbListJsonLd, toonTrail } from "./breadcrumb";
 import { localePath, splitLocale, UI, withCaptionLang, type Locale } from "./i18n";
 
 export const APEX = "https://twentyseven.pictures";
@@ -51,18 +52,6 @@ export function cardTitle(item: { title: string; titles?: DescriptionMap }, loca
 
 export function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
-export type BreadcrumbItem = { href?: string; name: string };
-
-/** Visible trail on toons catalog / hubs / reader fallback. */
-export function breadcrumbNavHtml(items: BreadcrumbItem[], ariaLabel: string): string {
-  const parts = items.map((item, i) => {
-    const last = i === items.length - 1;
-    if (last || !item.href) return `<li aria-current="page">${esc(item.name)}</li>`;
-    return `<li><a href="${esc(item.href)}">${esc(item.name)}</a></li>`;
-  });
-  return `<nav class="page-breadcrumb" aria-label="${esc(ariaLabel)}"><ol>${parts.join("")}</ol></nav>`;
 }
 
 export function seriesItemCount(series: CatalogSeries): number {
@@ -167,7 +156,6 @@ export function seriesJsonLd(
   const page = opts.pageUrl.endsWith("/") ? opts.pageUrl : `${opts.pageUrl}/`;
   const desc = cardDescription(series, opts.locale);
   const locale = opts.locale;
-  const ui = UI[locale];
   const hasPart = series.episodes.map((ep) => {
     const part: Record<string, unknown> = {
       "@type": "CreativeWork",
@@ -204,15 +192,7 @@ export function seriesJsonLd(
         inLanguage: locale,
         mainEntity: { "@id": `${page}#series` },
       },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${page}#breadcrumb`,
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: ui.home, item: absApex(localePath("/", locale)) },
-          { "@type": "ListItem", position: 2, name: ui.toons, item: absApex(localePath("/toons/", locale)) },
-          { "@type": "ListItem", position: 3, name: series.title, item: page },
-        ],
-      },
+      breadcrumbListJsonLd(toonTrail({ locale, series }), page, APEX),
       seriesNode,
     ],
   };
@@ -273,14 +253,7 @@ export function catalogJsonLd(
         publisher: { "@id": `${APEX}/#organization` },
         mainEntity: { "@id": `${page}#itemlist` },
       },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${page}#breadcrumb`,
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: ui.home, item: absApex(localePath("/", locale)) },
-          { "@type": "ListItem", position: 2, name: ui.toons, item: page },
-        ],
-      },
+      breadcrumbListJsonLd(toonTrail({ locale }), page, APEX),
       {
         "@type": "ItemList",
         "@id": `${page}#itemlist`,

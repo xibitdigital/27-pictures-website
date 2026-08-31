@@ -49,9 +49,12 @@ describe("injectToonHtml", () => {
       <link rel="canonical" href="https://twentyseven.pictures/toons/" />
       <script type="application/ld+json" data-toon-jsonld>{ "@context": "https://schema.org", "@graph": [] }</script>
     </head><body>
+      <nav class="page-breadcrumb" aria-label="old"><ol><li>x</li></ol></nav>
       <div class="series-grid" data-toon-catalog></div>
     </body></html>`;
     const out = injectToonHtml(html, payload, "https://twentyseven.pictures/toons/");
+    expect(out).toContain('aria-current="page">Toons</li>');
+    expect(out).toContain('href="/"');
     expect(out).toContain('data-series="red-smile"');
     expect(out).toContain('href="/toons/redsmile/"');
     expect(out).toContain("RED SMILE");

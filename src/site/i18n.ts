@@ -177,6 +177,7 @@ type NavKey =
   | "contact"
   | "language"
   | "home"
+  | "breadcrumb"
   | "pageOf"
   | "pagesCount"
   | "episodesOutOne"
@@ -213,6 +214,7 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     contact: "Contact",
     language: "Language",
     home: "Home",
+    breadcrumb: "Breadcrumb",
     pageOf: "Page {page} of {pages}",
     pagesCount: "{n} pages",
     episodesOutOne: "1 episode",
@@ -249,6 +251,7 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     contact: "Kontakt",
     language: "Sprache",
     home: "Start",
+    breadcrumb: "Brotkrümelnavigation",
     pageOf: "Seite {page} von {pages}",
     pagesCount: "{n} Seiten",
     episodesOutOne: "1 Folge",
@@ -284,6 +287,7 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     contact: "Contatti",
     language: "Lingua",
     home: "Home",
+    breadcrumb: "Percorso di navigazione",
     pageOf: "Pagina {page} di {pages}",
     pagesCount: "{n} pagine",
     episodesOutOne: "1 episodio",
@@ -319,6 +323,7 @@ export const UI: Record<Locale, Record<NavKey, string>> = {
     contact: "Contact",
     language: "Langue",
     home: "Accueil",
+    breadcrumb: "Fil d'Ariane",
     pageOf: "Page {page} sur {pages}",
     pagesCount: "{n} pages",
     episodesOutOne: "1 épisode",
