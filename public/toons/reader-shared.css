@@ -1900,21 +1900,9 @@ body.single-page .flip-page.flipping.from-left {
     }
   }
 
-  /* Solid bar at the web-view edge so the chrome doesn't float below Safari. */
-  html:has(body.toons-reader)::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--reader-chrome-size);
-    z-index: 49;
-    pointer-events: none;
-    background: var(--bg-dark);
-  }
-
-  html:has(body.is-fullscreen)::before {
-    display: none;
+  /* Cover the chrome row plus a short fade — not a 6.5rem slab. */
+  body.toons-reader::before {
+    height: calc(var(--reader-chrome-size) + 1.5rem);
   }
 
   .toons-back,
