@@ -51,18 +51,19 @@ export function pagesFromConfig(config: ToonConfig, opts?: ConfigLoadOptions): s
 
 /**
  * Fetch config.json.
- * - Local `__dev/toon-config/*` and editor `/config/:slug`: always re-fetch
- *   (no long-lived memory cache) so draft publishes show after reload.
- * - Hashed CDN URLs: cache per URL so shell + captions share one fetch.
+ *
+ * One in-memory entry per URL so the book (`getPages`) and captions
+ * (`loadWords`) share a single request. Editor / `__dev` URLs still fetch
+ * with `cache: "no-store"` so a full reload sees a draft publish; they are
+ * not skipped in `resolved`, or the sequential start() → beforeStart()
+ * pair would hit the network twice.
  */
 export async function loadConfig(url: string): Promise<ToonConfig> {
   const key = url;
   const isDevLocal = isLocalToonConfigUrl(url);
 
-  if (!isDevLocal) {
-    const hit = resolved.get(key);
-    if (hit) return hit;
-  }
+  const hit = resolved.get(key);
+  if (hit) return hit;
 
   let pending = inflight.get(key);
   if (!pending) {
@@ -72,7 +73,7 @@ export async function loadConfig(url: string): Promise<ToonConfig> {
         return (await res.json()) as ToonConfig;
       })
       .then((cfg) => {
-        if (!isDevLocal) resolved.set(key, cfg);
+        resolved.set(key, cfg);
         return cfg;
       })
       .finally(() => {

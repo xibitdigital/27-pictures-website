@@ -401,23 +401,37 @@ async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined,
   }
 }
 
+/** One round-trip for every caption on a toon — N+1 per page is seconds on Miniflare. */
+async function bubblesByPageId(env: Pick<Env, "DB">, toonId: string): Promise<Map<string, BubbleRow[]>> {
+  const rows = (
+    await env.DB.prepare(
+      `SELECT bubbles.* FROM bubbles
+       INNER JOIN pages ON pages.id = bubbles.page_id
+       WHERE pages.toon_id = ?
+       ORDER BY pages.position ASC, bubbles.sort ASC, bubbles.created_at ASC`
+    )
+      .bind(toonId)
+      .all<BubbleRow>()
+  ).results;
+  const map = new Map<string, BubbleRow[]>();
+  for (const row of rows) {
+    const list = map.get(row.page_id);
+    if (list) list.push(row);
+    else map.set(row.page_id, [row]);
+  }
+  return map;
+}
+
 async function readerConfigFromToon(env: Pick<Env, "DB">, toon: ToonRow, request: RequestLike): Promise<ReaderConfig> {
   const extra = parseToonExtra(toon);
   const pageRows = (
     await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(toon.id).all<PageRow>()
   ).results;
-  const pages: ReaderConfig["pages"] = [];
-  for (const page of pageRows) {
-    const bubbleRows = (
-      await env.DB.prepare("SELECT * FROM bubbles WHERE page_id = ? ORDER BY sort ASC, created_at ASC")
-        .bind(page.id)
-        .all<BubbleRow>()
-    ).results;
-    pages.push({
-      file: page.file_key,
-      words: bubbleRows.map((row) => publicWord(request, wordFromBubble(row))),
-    });
-  }
+  const bubbles = await bubblesByPageId(env, toon.id);
+  const pages: ReaderConfig["pages"] = pageRows.map((page) => ({
+    file: page.file_key,
+    words: (bubbles.get(page.id) ?? []).map((row) => publicWord(request, wordFromBubble(row))),
+  }));
   const cfg: ReaderConfig = {
     title: toon.title,
     designWidth: toon.design_width,
@@ -455,15 +469,10 @@ async function loadToon(env: Env, request: Request, id: string) {
   const pageRows = (
     await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(id).all<PageRow>()
   ).results;
-  const pages = [];
-  for (const page of pageRows) {
-    const bubbleRows = (
-      await env.DB.prepare("SELECT * FROM bubbles WHERE page_id = ? ORDER BY sort ASC, created_at ASC")
-        .bind(page.id)
-        .all<BubbleRow>()
-    ).results;
-    pages.push(mapPage(page, request, env, toon.asset_page_dir, bubbleRows.map(mapBubble)));
-  }
+  const bubbles = await bubblesByPageId(env, id);
+  const pages = pageRows.map((page) =>
+    mapPage(page, request, env, toon.asset_page_dir, (bubbles.get(page.id) ?? []).map(mapBubble))
+  );
   return mapToon(toon, request, env, pages);
 }
 

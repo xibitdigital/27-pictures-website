@@ -12,8 +12,13 @@ function dbWith(pages, bubblesByPage) {
         bind(...args) {
           return {
             async all() {
-              if (/FROM pages/.test(sql)) return { results: pages };
-              if (/FROM bubbles/.test(sql)) return { results: bubblesByPage[args[0]] || [] };
+              if (/FROM pages/.test(sql) && !/bubbles/.test(sql)) return { results: pages };
+              if (/FROM bubbles/.test(sql) || /INNER JOIN pages/.test(sql)) {
+                const results = Object.entries(bubblesByPage).flatMap(([pageId, rows]) =>
+                  (rows as { page_id?: string }[]).map((row) => ({ page_id: pageId, ...row }))
+                );
+                return { results };
+              }
               return { results: [] };
             },
           };

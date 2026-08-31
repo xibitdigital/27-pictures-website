@@ -107,16 +107,17 @@ describe("loadConfig / loadConfigPages", () => {
     await expect(loadConfig("config.json")).rejects.toThrow(/toon config 500/);
   });
 
-  it("re-fetches editor-API config instead of caching", async () => {
+  it("dedupes editor-API config in memory, still fetch no-store", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ pages: [{ file: "x.jpg" }] }),
     });
     vi.stubGlobal("fetch", fetchMock);
     const url = "/__editor-api/config/erin-the-revenge";
-    await loadConfig(url);
-    await loadConfig(url);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const a = await loadConfig(url);
+    const b = await loadConfig(url);
+    expect(b).toBe(a);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(url, { cache: "no-store" });
   });
 });
