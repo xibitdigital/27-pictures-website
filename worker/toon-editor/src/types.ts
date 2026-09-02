@@ -27,6 +27,7 @@ export interface Env {
   ASSET_BASE?: string;
   ALLOWED_TOONS?: string;
   JWT_SECRET?: string;
+  ELEVENLABS_API_KEY?: string;
 }
 
 export type JsonRecord = Record<string, unknown>;

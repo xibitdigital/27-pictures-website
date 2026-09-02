@@ -17,6 +17,7 @@ import {
   verifyPassword,
 } from "./auth";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
+import { parseGenerateAudioBody, synthesizeSpeech } from "./elevenlabs";
 import { handleLikes } from "./likes";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
@@ -493,6 +494,13 @@ async function putPageAsset(env: Env, slug: string, upload: ImageUpload) {
   const hash = await sha256Hex(upload.bytes);
   const key = `editor/${slug}/assets/${hash}.${upload.ext}`;
   await putImage(env, key, upload.bytes, upload.type);
+  return key;
+}
+
+async function putCaptionAudio(env: Env, slug: string, bytes: ArrayBuffer): Promise<string> {
+  const hash = await sha256Hex(bytes);
+  const key = `editor/${slug}/sfx/${hash}.mp3`;
+  await putImage(env, key, bytes, "audio/mpeg");
   return key;
 }
 
@@ -1044,6 +1052,24 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json(await loadToon(env, request, id), 200, cors);
   }
 
+  const audioGenerateMatch = path.match(/^\/toons\/([^/]+)\/audio\/generate$/);
+  if (audioGenerateMatch && method === "POST") {
+    const id = audioGenerateMatch[1];
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const apiKey = env.ELEVENLABS_API_KEY?.trim();
+    if (!apiKey) return json({ error: "ElevenLabs is not configured" }, 503, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const input = parseGenerateAudioBody(parsed.body);
+    if (!input.ok) return json({ error: input.error }, 400, cors);
+    const spoken = await synthesizeSpeech(apiKey, input.value);
+    if (!spoken.ok) return json({ error: spoken.error }, spoken.status, cors);
+    if (spoken.bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "audio too large (8MB max)" }, 400, cors);
+    const key = await putCaptionAudio(env, current.slug, spoken.bytes);
+    return json({ key, url: mediaUrl(request, key), audio: key }, 201, cors);
+  }
+
   const audioMatch = path.match(/^\/toons\/([^/]+)\/audio$/);
   if (audioMatch && method === "POST") {
     const id = audioMatch[1];
@@ -1051,9 +1077,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readAudioUpload(request);
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const hash = await sha256Hex(upload.bytes);
-    const key = `editor/${current.slug}/sfx/${hash}.${upload.ext}`;
-    await putImage(env, key, upload.bytes, upload.type);
+    const key = await putCaptionAudio(env, current.slug, upload.bytes);
     return json({ key, url: mediaUrl(request, key), audio: key }, 201, cors);
   }
 

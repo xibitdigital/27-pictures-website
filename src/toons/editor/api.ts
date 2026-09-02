@@ -206,6 +206,13 @@ export function uploadAudio(id: string, file: File): Promise<AudioUpload> {
   return api<AudioUpload>(`/toons/${id}/audio`, { method: "POST", body });
 }
 
+export function generateAudio(
+  id: string,
+  payload: { text: string; voice: string; model?: string; stability?: number }
+): Promise<AudioUpload> {
+  return api<AudioUpload>(`/toons/${id}/audio/generate`, { method: "POST", body: JSON.stringify(payload) });
+}
+
 export function deletePage(pageId: string): Promise<{ ok: boolean }> {
   return api<{ ok: boolean }>(`/pages/${pageId}`, { method: "DELETE" });
 }

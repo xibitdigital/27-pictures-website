@@ -182,14 +182,19 @@ const VARIANT_AUDIO_TAG: Record<string, string> = {
   badai: "[angry]",
 };
 
+/** Spoken TTS line: variant audio tag + English caption. Display text stays clean. */
+export function spokenElevenLine(input: { text: string; variant: string }): string {
+  const line = String(input.text || "").trim();
+  const tag = VARIANT_AUDIO_TAG[input.variant] || "";
+  return [tag, line].filter(Boolean).join(" ");
+}
+
 /**
  * Paste-ready ElevenLabs Studio / Speech Synthesis prompt (eleven_v3 audio tags).
  * Caption display text stays clean; only this string carries performance tags.
  */
 export function suggestElevenPrompt(input: { voice: string; text: string; variant: string }): string {
-  const line = String(input.text || "").trim();
-  const tag = VARIANT_AUDIO_TAG[input.variant] || "";
-  const spoken = [tag, line].filter(Boolean).join(" ");
+  const spoken = spokenElevenLine(input);
   const voice = input.voice.trim() || "(no voice — SFX / skip TTS)";
   return [
     "ElevenLabs Studio · Speech Synthesis",

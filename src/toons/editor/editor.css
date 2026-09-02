@@ -511,6 +511,12 @@ body {
   gap: 0.5rem;
 }
 
+.editor-prompt-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 /* Field-adjacent actions (copy, upload). Never use .editor-btn next to an input. */
 .editor-icon-btn {
   display: inline-flex;

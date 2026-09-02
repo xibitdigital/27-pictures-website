@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
-import { editorApiBase, uploadAudio } from "../api";
+import { editorApiBase, generateAudio, uploadAudio } from "../api";
 import {
   BUBBLE_TAILS,
   BUBBLE_VARIANTS,
@@ -16,6 +16,7 @@ import {
   extraPatch,
   letteringPatch,
   parseHexColor,
+  spokenElevenLine,
   suggestElevenPrompt,
   textPatch,
 } from "../mapConfig";
@@ -54,16 +55,31 @@ const strokeThickDraft = ref("");
 const strokeThickFocused = ref(false);
 const copied = ref(false);
 const uploading = ref(false);
+const generating = ref(false);
 const uploadError = ref("");
 const audioFileInput = ref<HTMLInputElement | null>(null);
+const audioBusy = computed(() => uploading.value || generating.value);
 let copiedTimer = 0;
+
+const englishLine = computed(() => {
+  if (!props.bubble) return "";
+  return (textMap.value.en || props.bubble.textEn || "").trim();
+});
+
+const spokenLine = computed(() => {
+  if (!props.bubble) return "";
+  return spokenElevenLine({ text: englishLine.value, variant: props.bubble.variant });
+});
+
+const canGenerateAudio = computed(() =>
+  Boolean(props.toonId && spokenLine.value && props.bubble && bubbleVoice(props.bubble))
+);
 
 const elevenPrompt = computed(() => {
   if (!props.bubble) return "";
-  const map = textMap.value;
   return suggestElevenPrompt({
     voice: bubbleVoice(props.bubble),
-    text: map.en || props.bubble.textEn || "",
+    text: englishLine.value,
     variant: props.bubble.variant,
   });
 });
@@ -348,6 +364,25 @@ async function onAudioFile(ev: Event): Promise<void> {
   }
 }
 
+async function onGenerateAudio(): Promise<void> {
+  if (!props.bubble || !props.toonId || !canGenerateAudio.value) return;
+  generating.value = true;
+  uploadError.value = "";
+  try {
+    const out = await generateAudio(props.toonId, {
+      text: spokenLine.value,
+      voice: bubbleVoice(props.bubble),
+      model: "eleven_v3",
+      stability: 0.3,
+    });
+    emit("change", extraPatch(props.bubble, "audio", out.audio));
+  } catch (err) {
+    uploadError.value = err instanceof Error ? err.message : "Generate failed";
+  } finally {
+    generating.value = false;
+  }
+}
+
 async function copyPrompt(): Promise<void> {
   const text = elevenPrompt.value;
   try {
@@ -541,28 +576,55 @@ async function copyPrompt(): Promise<void> {
       <div class="editor-audio-field">
         <span class="editor-prompt-head">
           Audio
-          <input
-            ref="audioFileInput"
-            type="file"
-            name="audio-file"
-            accept="audio/mpeg,.mp3"
-            hidden
-            :disabled="uploading || !toonId"
-            @change="onAudioFile"
-          />
-          <button
-            class="editor-icon-btn"
-            type="button"
-            name="audio-upload"
-            :disabled="uploading || !toonId"
-            :aria-label="uploading ? 'Uploading' : 'Upload audio'"
-            :title="uploading ? 'Uploading' : 'Upload audio'"
-            @click="audioFileInput?.click()"
-          >
-            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M8 2.5v8M5 5.5 8 2.5 11 5.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.4" />
-            </svg>
-          </button>
+          <span class="editor-prompt-actions">
+            <input
+              ref="audioFileInput"
+              type="file"
+              name="audio-file"
+              accept="audio/mpeg,.mp3"
+              hidden
+              :disabled="audioBusy || !toonId"
+              @change="onAudioFile"
+            />
+            <button
+              class="editor-icon-btn"
+              type="button"
+              name="audio-upload"
+              :disabled="audioBusy || !toonId"
+              :aria-label="uploading ? 'Uploading' : 'Upload audio'"
+              :title="uploading ? 'Uploading' : 'Upload audio'"
+              @click="audioFileInput?.click()"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 2.5v8M5 5.5 8 2.5 11 5.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.4" />
+              </svg>
+            </button>
+            <button
+              class="editor-icon-btn"
+              type="button"
+              name="audio-generate"
+              :disabled="audioBusy || !canGenerateAudio"
+              :aria-label="generating ? 'Generating' : 'Generate audio'"
+              :title="
+                generating
+                  ? 'Generating'
+                  : canGenerateAudio
+                    ? 'Generate audio with ElevenLabs'
+                    : 'Pick a voice and type an English caption'
+              "
+              @click="onGenerateAudio"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                  d="M4 12.5 11.5 5M10 4.2l1.8 1.8M6.2 3.2 5 2M6.2 3.2 7.4 2M6.2 3.2 5 4.4M12.2 9.2 13.4 8M12.2 9.2 13.4 10.4M12.2 9.2 11 8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="square"
+                />
+              </svg>
+            </button>
+          </span>
         </span>
         <input
           type="text"
