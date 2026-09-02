@@ -79,7 +79,7 @@ and local see published + staging; production sees published only.
 | PATCH | `/toons/:id` | JWT | metadata + series + visibility |
 | POST | `/toons/:id/cover` | JWT | cover |
 | POST | `/toons/:id/audio` | JWT | caption clip |
-| POST | `/toons/:id/audio/generate` | JWT | ElevenLabs TTS → same `{ key, url, audio }` as upload |
+| POST | `/toons/:id/audio/generate` | JWT | ElevenLabs TTS (voice set) or SFX (voice empty) → `{ key, url, audio }` |
 | POST | `/toons/:id/pages` | JWT | append plate |
 | POST | `/toons/import` | JWT | load a reader config JSON |
 | GET | `/toons/:id/export` | JWT | FlipFrame JSON including drafts |

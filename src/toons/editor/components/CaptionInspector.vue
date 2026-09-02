@@ -71,9 +71,7 @@ const spokenLine = computed(() => {
   return spokenElevenLine({ text: englishLine.value, variant: props.bubble.variant });
 });
 
-const canGenerateAudio = computed(() =>
-  Boolean(props.toonId && spokenLine.value && props.bubble && bubbleVoice(props.bubble))
-);
+const canGenerateAudio = computed(() => Boolean(props.toonId && spokenLine.value && props.bubble));
 
 const elevenPrompt = computed(() => {
   if (!props.bubble) return "";
@@ -609,8 +607,10 @@ async function copyPrompt(): Promise<void> {
                 generating
                   ? 'Generating'
                   : canGenerateAudio
-                    ? 'Generate audio with ElevenLabs'
-                    : 'Pick a voice and type an English caption'
+                    ? bubbleVoice(bubble)
+                      ? 'Generate voice with ElevenLabs'
+                      : 'Generate SFX with ElevenLabs'
+                    : 'Type an English caption first'
               "
               @click="onGenerateAudio"
             >

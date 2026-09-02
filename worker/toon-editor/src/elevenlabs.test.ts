@@ -1,10 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { parseGenerateAudioBody, synthesizeSpeech } from "./elevenlabs";
+import { parseGenerateAudioBody, synthesizeSfx, synthesizeSpeech } from "./elevenlabs";
 
 describe("parseGenerateAudioBody", () => {
-  it("requires text and a locked voice key", () => {
+  it("requires text", () => {
     expect(parseGenerateAudioBody({})).toEqual({ ok: false, error: "text is required" });
-    expect(parseGenerateAudioBody({ text: "Hi" })).toEqual({ ok: false, error: "voice is required" });
+  });
+
+  it("treats an empty voice as SFX", () => {
+    expect(parseGenerateAudioBody({ text: "CLANK" })).toEqual({
+      ok: true,
+      value: { kind: "sfx", text: "CLANK" },
+    });
+  });
+
+  it("rejects an unknown voice key", () => {
     const unknown = parseGenerateAudioBody({ text: "Hi", voice: "not-a-cast-member" });
     expect(unknown.ok).toBe(false);
     if (!unknown.ok) expect(unknown.error).toMatch(/unknown voice 'not-a-cast-member'/);
@@ -15,6 +24,7 @@ describe("parseGenerateAudioBody", () => {
     expect(parsed).toEqual({
       ok: true,
       value: {
+        kind: "tts",
         text: "[whispers] Hi",
         voice: "erin",
         voiceId: "esy0r39YPLQjOczyOib8",
@@ -41,6 +51,7 @@ describe("synthesizeSpeech", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const out = await synthesizeSpeech("key-1", {
+      kind: "tts",
       text: "[whispers] Hi",
       voice: "erin",
       voiceId: "esy0r39YPLQjOczyOib8",
@@ -68,6 +79,7 @@ describe("synthesizeSpeech", () => {
         .mockResolvedValue(new Response(JSON.stringify({ detail: { message: "quota exceeded" } }), { status: 401 }))
     );
     const out = await synthesizeSpeech("bad", {
+      kind: "tts",
       text: "Hi",
       voice: "erin",
       voiceId: "esy0r39YPLQjOczyOib8",
@@ -75,5 +87,22 @@ describe("synthesizeSpeech", () => {
       stability: 0.3,
     });
     expect(out).toEqual({ ok: false, error: "quota exceeded", status: 502 });
+  });
+});
+
+describe("synthesizeSfx", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("POSTs sound-generation and returns mp3 bytes", async () => {
+    const bytes = new Uint8Array([9, 8, 7]).buffer;
+    const fetchMock = vi.fn().mockResolvedValue(new Response(bytes, { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await synthesizeSfx("key-1", { kind: "sfx", text: "CLANK" });
+    expect(out).toEqual({ ok: true, bytes });
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe("https://api.elevenlabs.io/v1/sound-generation");
+    expect(JSON.parse(String(init.body))).toEqual({ text: "CLANK", prompt_influence: 0.4 });
   });
 });

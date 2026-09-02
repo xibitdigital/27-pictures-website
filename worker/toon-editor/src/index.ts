@@ -17,7 +17,7 @@ import {
   verifyPassword,
 } from "./auth";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
-import { parseGenerateAudioBody, synthesizeSpeech } from "./elevenlabs";
+import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { handleLikes } from "./likes";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
@@ -1063,10 +1063,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const input = parseGenerateAudioBody(parsed.body);
     if (!input.ok) return json({ error: input.error }, 400, cors);
-    const spoken = await synthesizeSpeech(apiKey, input.value);
-    if (!spoken.ok) return json({ error: spoken.error }, spoken.status, cors);
-    if (spoken.bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "audio too large (8MB max)" }, 400, cors);
-    const key = await putCaptionAudio(env, current.slug, spoken.bytes);
+    const clip = await generateClip(apiKey, input.value);
+    if (!clip.ok) return json({ error: clip.error }, clip.status, cors);
+    if (clip.bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "audio too large (8MB max)" }, 400, cors);
+    const key = await putCaptionAudio(env, current.slug, clip.bytes);
     return json({ key, url: mediaUrl(request, key), audio: key }, 201, cors);
   }
 

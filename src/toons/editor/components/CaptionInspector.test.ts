@@ -128,15 +128,11 @@ describe("CaptionInspector", () => {
     expect(wrapper.get('input[name="audio-file"]').attributes("accept")).toBe("audio/mpeg,.mp3");
   });
 
-  it("disables the generate wand without a voice or English line", () => {
+  it("enables the generate wand with an English line, even without a voice", () => {
     const wrapper = mount(CaptionInspector, { props: { bubble, toonId: "t1" } });
-    expect(wrapper.get('button[name="audio-generate"]').attributes("disabled")).toBeDefined();
+    expect(wrapper.get('button[name="audio-generate"]').attributes("disabled")).toBeUndefined();
 
-    const voiced: BubbleRecord = { ...bubble, extraJson: JSON.stringify({ voice: "erin" }) };
-    const ready = mount(CaptionInspector, { props: { bubble: voiced, toonId: "t1" } });
-    expect(ready.get('button[name="audio-generate"]').attributes("disabled")).toBeUndefined();
-
-    const empty: BubbleRecord = { ...bubble, textEn: "", textJson: "{}", extraJson: JSON.stringify({ voice: "erin" }) };
+    const empty: BubbleRecord = { ...bubble, textEn: "", textJson: "{}" };
     const silent = mount(CaptionInspector, { props: { bubble: empty, toonId: "t1" } });
     expect(silent.get('button[name="audio-generate"]').attributes("disabled")).toBeDefined();
   });
@@ -164,6 +160,27 @@ describe("CaptionInspector", () => {
     );
     const patch = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
     expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin", audio: "editor/demo/sfx/gen.mp3" });
+  });
+
+  it("generates SFX when the voice is empty", async () => {
+    vi.mocked(api.generateAudio).mockResolvedValue({
+      key: "editor/demo/sfx/clank.mp3",
+      url: "https://editor.example/media/editor/demo/sfx/clank.mp3",
+      audio: "editor/demo/sfx/clank.mp3",
+    });
+    const sfx: BubbleRecord = { ...bubble, textEn: "CLANK", textJson: JSON.stringify({ en: "CLANK" }) };
+    const wrapper = mount(CaptionInspector, { props: { bubble: sfx, toonId: "t1" } });
+    await wrapper.get('button[name="audio-generate"]').trigger("click");
+    await vi.waitFor(() =>
+      expect(api.generateAudio).toHaveBeenCalledWith("t1", {
+        text: "CLANK",
+        voice: "",
+        model: "eleven_v3",
+        stability: 0.3,
+      })
+    );
+    const patch = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
+    expect(JSON.parse(patch.extraJson as string)).toEqual({ audio: "editor/demo/sfx/clank.mp3" });
   });
 
   it("uploads a clip and patches the audio key", async () => {
