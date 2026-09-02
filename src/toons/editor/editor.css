@@ -917,7 +917,7 @@ body {
   display: flex;
   flex-direction: column;
   width: min(36rem, calc(100vw - 2rem));
-  max-height: min(90dvh, 44rem);
+  max-height: 90dvh;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -936,7 +936,7 @@ body {
   min-width: 0;
   box-sizing: border-box;
   padding: 1.25rem 1.35rem 1.35rem;
-  max-height: min(90dvh, 44rem);
+  max-height: 90dvh;
   overflow: auto;
 }
 
