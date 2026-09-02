@@ -273,23 +273,10 @@ describe("CaptionInspector", () => {
     expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin" });
   });
 
-  it("puts a copy icon on the ElevenLabs prompt label", () => {
+  it("does not show an ElevenLabs Studio prompt", () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
-    const btn = wrapper.get('button[name="copy-prompt"]');
-    expect(btn.attributes("aria-label")).toBe("Copy prompt");
-    expect(btn.text().trim()).toBe("");
-  });
-
-  it("suggests an ElevenLabs Studio prompt from voice, text and variant", () => {
-    const spoken: BubbleRecord = {
-      ...bubble,
-      variant: "thought",
-      extraJson: JSON.stringify({ voice: "erin" }),
-    };
-    const wrapper = mount(CaptionInspector, { props: { bubble: spoken } });
-    const prompt = (wrapper.get('textarea[name="eleven-prompt"]').element as HTMLTextAreaElement).value;
-    expect(prompt).toContain("Voice: erin");
-    expect(prompt).toContain("[whispers] Hi");
+    expect(wrapper.find('textarea[name="eleven-prompt"]').exists()).toBe(false);
+    expect(wrapper.text()).not.toContain("ElevenLabs Studio prompt");
   });
 
   it("does not put a second Save in the inspector", () => {

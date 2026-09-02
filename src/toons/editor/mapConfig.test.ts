@@ -13,7 +13,6 @@ import {
   bubbleWritePayload,
   bubbleVoice,
   spokenElevenLine,
-  suggestElevenPrompt,
   VOICE_NAMES,
   PLACEHOLDER_TEXT,
   textPatch,
@@ -67,13 +66,9 @@ describe("bubbleToWordEntry", () => {
     expect(extraPatch(b, "audio", "").extraJson).toBe(JSON.stringify({ voice: "erin" }));
   });
 
-  it("reads the locked voice key and builds an ElevenLabs Studio prompt", () => {
+  it("reads the locked voice key and tags spoken ElevenLabs lines", () => {
     expect(VOICE_NAMES).toContain("erin");
     expect(bubbleVoice(bubble({ extraJson: JSON.stringify({ voice: "erin" }) }))).toBe("erin");
-    const prompt = suggestElevenPrompt({ voice: "eve", text: "Nero—!", variant: "burst" });
-    expect(prompt).toContain("eleven_v3");
-    expect(prompt).toContain("Voice: eve");
-    expect(prompt).toContain("[shouts] Nero—!");
     expect(spokenElevenLine({ text: "Nero—!", variant: "burst" })).toBe("[shouts] Nero—!");
     expect(spokenElevenLine({ text: "Hi", variant: "bubble" })).toBe("Hi");
   });

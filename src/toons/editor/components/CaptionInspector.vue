@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
 import { editorApiBase, generateAudio, uploadAudio } from "../api";
 import {
@@ -17,7 +17,6 @@ import {
   letteringPatch,
   parseHexColor,
   spokenElevenLine,
-  suggestElevenPrompt,
   textPatch,
 } from "../mapConfig";
 import { resolveAssetUrl } from "../../bookReader/assetUrl";
@@ -53,13 +52,11 @@ const colorDraft = ref("");
 const strokeDraft = ref("");
 const strokeThickDraft = ref("");
 const strokeThickFocused = ref(false);
-const copied = ref(false);
 const uploading = ref(false);
 const generating = ref(false);
 const uploadError = ref("");
 const audioFileInput = ref<HTMLInputElement | null>(null);
 const audioBusy = computed(() => uploading.value || generating.value);
-let copiedTimer = 0;
 
 const englishLine = computed(() => {
   if (!props.bubble) return "";
@@ -73,21 +70,9 @@ const spokenLine = computed(() => {
 
 const canGenerateAudio = computed(() => Boolean(props.toonId && spokenLine.value && props.bubble));
 
-const elevenPrompt = computed(() => {
-  if (!props.bubble) return "";
-  return suggestElevenPrompt({
-    voice: bubbleVoice(props.bubble),
-    text: englishLine.value,
-    variant: props.bubble.variant,
-  });
-});
-
-onBeforeUnmount(() => window.clearTimeout(copiedTimer));
-
 watch(
   () => props.bubble?.id,
   () => {
-    copied.value = false;
     uploadError.value = "";
   }
 );
@@ -380,20 +365,6 @@ async function onGenerateAudio(): Promise<void> {
     generating.value = false;
   }
 }
-
-async function copyPrompt(): Promise<void> {
-  const text = elevenPrompt.value;
-  try {
-    await navigator.clipboard.writeText(text);
-    copied.value = true;
-    window.clearTimeout(copiedTimer);
-    copiedTimer = window.setTimeout(() => {
-      copied.value = false;
-    }, 1600);
-  } catch {
-    copied.value = false;
-  }
-}
 </script>
 
 <template>
@@ -639,28 +610,6 @@ async function copyPrompt(): Promise<void> {
         <audio v-if="audioSrc" controls preload="none" :src="audioSrc" />
         <p v-if="uploadError" class="editor-error" role="alert">{{ uploadError }}</p>
       </div>
-      <label>
-        <span class="editor-prompt-head">
-          ElevenLabs Studio prompt
-          <button
-            class="editor-icon-btn"
-            type="button"
-            name="copy-prompt"
-            :aria-label="copied ? 'Copied' : 'Copy prompt'"
-            :title="copied ? 'Copied' : 'Copy prompt'"
-            @click.prevent="copyPrompt"
-          >
-            <svg v-if="copied" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="1.6" />
-            </svg>
-            <svg v-else width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-              <rect x="5" y="4.5" width="8" height="9" rx="1" fill="none" stroke="currentColor" stroke-width="1.4" />
-              <path d="M3.5 11.5V3.5H11" fill="none" stroke="currentColor" stroke-width="1.4" />
-            </svg>
-          </button>
-        </span>
-        <textarea name="eleven-prompt" rows="4" readonly :value="elevenPrompt" spellcheck="false" />
-      </label>
       <div class="editor-form-actions">
         <button class="editor-btn editor-btn--ghost" type="button" name="delete" @click="emit('remove')">
           Delete bubble

@@ -189,23 +189,6 @@ export function spokenElevenLine(input: { text: string; variant: string }): stri
   return [tag, line].filter(Boolean).join(" ");
 }
 
-/**
- * Paste-ready ElevenLabs Studio / Speech Synthesis prompt (eleven_v3 audio tags).
- * Caption display text stays clean; only this string carries performance tags.
- */
-export function suggestElevenPrompt(input: { voice: string; text: string; variant: string }): string {
-  const spoken = spokenElevenLine(input);
-  const voice = input.voice.trim() || "(no voice — SFX / skip TTS)";
-  return [
-    "ElevenLabs Studio · Speech Synthesis",
-    "Model: eleven_v3",
-    `Voice: ${voice}`,
-    "Stability: 0.3 (Creative so audio tags land)",
-    "",
-    spoken || "(type the English caption)",
-  ].join("\n");
-}
-
 /** Fields the Worker PATCH accepts for a caption. */
 export function bubbleWritePayload(bubble: BubbleRecord): Partial<BubbleRecord> {
   return {
