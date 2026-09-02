@@ -6,6 +6,15 @@ function env(partial: Partial<Env>): Env {
   return partial as Env;
 }
 
+describe("comfyBase", () => {
+  it("defaults to Comfy Cloud when COMFY_URL is unset", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ prompt_id: "p1" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await comfySubmitPrompt(env({}), { "1": { class_type: "LoadImage" } });
+    expect(String(fetchMock.mock.calls[0][0])).toBe("https://cloud.comfy.org/api/prompt");
+  });
+});
+
 describe("comfySubmitPrompt", () => {
   afterEach(() => {
     vi.unstubAllGlobals();

@@ -1,7 +1,9 @@
 import type { Env } from "./types";
 
+const DEFAULT_COMFY_URL = "https://cloud.comfy.org/api";
+
 export function comfyBase(env: Env): string | null {
-  const url = env.COMFY_URL?.trim();
+  const url = (env.COMFY_URL || DEFAULT_COMFY_URL).trim();
   return url ? url.replace(/\/$/, "") : null;
 }
 
