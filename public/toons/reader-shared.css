@@ -12,7 +12,10 @@ html:has(body.toons-reader) {
   overflow: hidden;
   height: 100%;
   max-width: 100%;
-  --reader-chrome-top: 0px;
+  /* Clears the 4px reading-progress hairline pinned to the very top on
+     desktop, so the logo and top-right controls don't sit half-hidden under
+     it. Reset to 0 on mobile, where the bar moves to the bottom instead. */
+  --reader-chrome-top: 0.65rem;
   --reader-chrome-size: clamp(2rem, 1.75rem + 0.6vw, 2.5rem);
 }
 
@@ -1886,6 +1889,12 @@ body.single-page .flip-page.flipping.from-left {
 }
 
 @media (max-width: 768px) {
+  /* The progress bar moves to the bottom edge below — top chrome can sit
+     flush at 0 again instead of clearing it. */
+  html:has(body.toons-reader) {
+    --reader-chrome-top: 0px;
+  }
+
   .toons-back,
   .toon-top-controls,
   body.toons-reader > .page-breadcrumb {
