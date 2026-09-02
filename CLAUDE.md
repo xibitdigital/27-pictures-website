@@ -709,6 +709,14 @@ catalog card is **visible** episodes only (a draft sibling does not make
 “2 episodes”). `/llms.txt` is SSR from the catalog. `/toons/editor/` is
 `Disallow` in `robots.txt` and is not in the sitemap.
 
+The toon form has no Reader URL field. `POST /toons` and `PATCH /toons/:id`
+derive it from the series' `hub_url` + the toon's own slug
+(`deriveReaderUrl` in `worker/toon-editor/src/index.ts`) whenever the toon
+has a series and no `reader_url` yet — never clobbers one already set.
+A toon created before this existed self-heals the next time it's saved.
+Ungrouped toons (no series) still end up with `reader_url = null`, falling
+back to `/toons/<slug>/` everywhere that reads it.
+
 Deploy the Worker from its directory (`cd worker/toon-editor && npx wrangler
 deploy`), not the Pages project at the repo root. Full routes:
 `worker/toon-editor/README.md`.

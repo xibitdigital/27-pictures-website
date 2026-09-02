@@ -315,6 +315,21 @@ function parseEpisodeN(body: JsonRecord | null | undefined, fallback: number | n
   return Math.round(n);
 }
 
+/**
+ * The editor's toon form has no Reader URL field — a toon created under a
+ * series without one silently sits at the orphan /toons/<slug>/ instead of
+ * nesting under its series hub. Derive it from the series hub_url so every
+ * episode gets the same URL shape as its siblings without anyone typing it.
+ */
+async function deriveReaderUrl(env: Pick<Env, "DB">, seriesKey: string | null, slug: string): Promise<string | null> {
+  if (!seriesKey) return null;
+  const series = await env.DB.prepare("SELECT hub_url FROM series WHERE key = ?")
+    .bind(seriesKey)
+    .first<{ hub_url: string | null }>();
+  if (!series?.hub_url) return null;
+  return `${series.hub_url.replace(/\/*$/, "/")}${slug}/`;
+}
+
 function wordFromBubble(b: BubbleRow): CaptionWord {
   return rowToWord(b);
 }
@@ -1166,9 +1181,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const desc = applyDescriptions(extra, body, String(body.description || "").trim());
     const seriesKey = parseSeriesKey(body, null);
     const episodeN = seriesKey ? parseEpisodeN(body, null) : null;
+    const readerUrl = await deriveReaderUrl(env, seriesKey, slug);
     await env.DB.prepare(
-      `INSERT INTO toons (id, slug, title, subtitle, description, status, extra_json, series_key, episode_n, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO toons (id, slug, title, subtitle, description, status, reader_url, extra_json, series_key, episode_n, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         id,
@@ -1177,6 +1193,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         String(body.subtitle || "").trim(),
         desc.en,
         status,
+        readerUrl,
         JSON.stringify(extra),
         seriesKey,
         episodeN,
@@ -1211,10 +1228,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       applyTitles(extra, body, title);
       const seriesKey = parseSeriesKey(body, current.series_key || null);
       const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
+      const readerUrl = current.reader_url || (await deriveReaderUrl(env, seriesKey, current.slug));
       await env.DB.prepare(
-        `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, updated_at = ? WHERE id = ?`
+        `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, reader_url = ?, updated_at = ? WHERE id = ?`
       )
-        .bind(title, subtitle, description, status, JSON.stringify(extra), seriesKey, episodeN, nowIso(), id)
+        .bind(title, subtitle, description, status, JSON.stringify(extra), seriesKey, episodeN, readerUrl, nowIso(), id)
         .run();
       return json(await loadToon(env, request, id), 200, cors);
     }
@@ -1481,7 +1499,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   return json({ error: "not found" }, 404, cors);
 }
 
-export { publicWord, readerConfigFromToon };
+export { deriveReaderUrl, publicWord, readerConfigFromToon };
 
 const worker: ExportedHandler<Env> = {
   async fetch(request, env) {
