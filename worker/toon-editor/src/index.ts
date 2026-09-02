@@ -60,6 +60,26 @@ const AUDIO_TYPES: Record<string, string> = {
   "audio/mp3": "mp3",
 };
 
+/**
+ * Fallback for browsers/OSes that hand us an empty or wrong `File.type` for a
+ * perfectly valid image (seen with some PNGs) — checked only when the
+ * declared MIME type isn't one of IMAGE_TYPES.
+ */
+function sniffImageType(bytes: ArrayBuffer): { ext: string; type: string } | null {
+  const u = new Uint8Array(bytes.slice(0, 12));
+  if (u[0] === 0x89 && u[1] === 0x50 && u[2] === 0x4e && u[3] === 0x47) return { ext: "png", type: "image/png" };
+  if (u[0] === 0xff && u[1] === 0xd8 && u[2] === 0xff) return { ext: "jpg", type: "image/jpeg" };
+  if (u[0] === 0x52 && u[1] === 0x49 && u[2] === 0x46 && u[3] === 0x46 && u[8] === 0x57 && u[9] === 0x45)
+    return { ext: "webp", type: "image/webp" };
+  return null;
+}
+
+function resolveImageType(declaredType: string, bytes: ArrayBuffer): { ext: string; type: string } | null {
+  const ext = IMAGE_TYPES[declaredType];
+  if (ext) return { ext, type: declaredType };
+  return sniffImageType(bytes);
+}
+
 type ImageUpload = {
   bytes: ArrayBuffer;
   ext: string;
@@ -529,17 +549,16 @@ async function readUpload(request: Request): Promise<ImageUpload | { error: stri
     return { error: "file is required" };
   }
   const blob = file as File;
-  const type = blob.type || "";
-  const ext = IMAGE_TYPES[type];
-  if (!ext) return { error: "image must be webp, jpeg, or png" };
   const bytes = await blob.arrayBuffer();
+  const resolved = resolveImageType(blob.type || "", bytes);
+  if (!resolved) return { error: "image must be webp, jpeg, or png" };
   if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "image too large (8MB max)" };
   const widthRaw = form.get("width") != null ? Number(form.get("width")) : NaN;
   const heightRaw = form.get("height") != null ? Number(form.get("height")) : NaN;
   return {
     bytes,
-    ext,
-    type,
+    ext: resolved.ext,
+    type: resolved.type,
     width: Number.isFinite(widthRaw) && widthRaw > 0 ? Math.round(widthRaw) : null,
     height: Number.isFinite(heightRaw) && heightRaw > 0 ? Math.round(heightRaw) : null,
   };
@@ -795,14 +814,13 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const file = form.get("file");
     if (!file || typeof file === "string") return json({ error: "file is required" }, 400, cors);
     const blob = file as File;
-    const type = blob.type || "";
-    const ext = IMAGE_TYPES[type];
-    if (!ext) return json({ error: "image must be webp, jpeg, or png" }, 400, cors);
     const bytes = await blob.arrayBuffer();
+    const resolved = resolveImageType(blob.type || "", bytes);
+    if (!resolved) return json({ error: "image must be webp, jpeg, or png" }, 400, cors);
     if (bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "image too large (8MB max)" }, 400, cors);
     const hash = await sha256Hex(bytes);
-    const objectKey = `editor/_series/${key}/refs/${alias}/${hash}.${ext}`;
-    await putImage(env, objectKey, bytes, type);
+    const objectKey = `editor/_series/${key}/refs/${alias}/${hash}.${resolved.ext}`;
+    await putImage(env, objectKey, bytes, resolved.type);
     const extra = parseToonExtra(current);
     const generate = parseGenerateConfig(extra.generate);
     const existing = generate.slots.find((slot) => slot.alias === alias);
