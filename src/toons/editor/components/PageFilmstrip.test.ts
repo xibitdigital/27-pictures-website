@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import PageFilmstrip from "./PageFilmstrip.vue";
 
@@ -55,5 +55,37 @@ describe("PageFilmstrip", () => {
     const kids = [...wrapper.get("nav").element.children].map((el) => el.className);
     expect(kids.at(-1)).toContain("editor-filmstrip-add-wrap");
     expect(kids.slice(0, -1).every((c) => c.includes("editor-thumb"))).toBe(true);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("emits remove for a thumb's delete button after confirmation", async () => {
+    const confirmMock = vi.fn().mockReturnValue(true);
+    vi.stubGlobal("confirm", confirmMock);
+    const wrapper = mount(PageFilmstrip, {
+      props: {
+        toonId: "t1",
+        pages: [{ id: "p1", position: 0, fileUrl: "/p1.webp", fileKey: "p1", width: 800, height: 1424, bubbles: [] }],
+        activeId: "p1",
+      },
+    });
+    await wrapper.get(".editor-thumb-remove").trigger("click");
+    expect(confirmMock).toHaveBeenCalled();
+    expect(wrapper.emitted("remove")).toEqual([["p1"]]);
+  });
+
+  it("does not emit remove when the confirmation is declined", async () => {
+    vi.stubGlobal("confirm", vi.fn().mockReturnValue(false));
+    const wrapper = mount(PageFilmstrip, {
+      props: {
+        toonId: "t1",
+        pages: [{ id: "p1", position: 0, fileUrl: "/p1.webp", fileKey: "p1", width: 800, height: 1424, bubbles: [] }],
+        activeId: "p1",
+      },
+    });
+    await wrapper.get(".editor-thumb-remove").trigger("click");
+    expect(wrapper.emitted("remove")).toBeUndefined();
   });
 });

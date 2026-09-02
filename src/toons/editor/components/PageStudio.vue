@@ -4,6 +4,7 @@ import { useRoute, useRouter, RouterLink } from "vue-router";
 import {
   addBubble,
   deleteBubble,
+  deletePage,
   generatePage,
   getJob,
   getSeries,
@@ -154,6 +155,31 @@ async function onUpload(file: File): Promise<void> {
   }
 }
 
+async function onRemovePage(id: string): Promise<void> {
+  if (!toon.value) return;
+  const pages = toon.value.pages;
+  const index = pages.findIndex((p) => p.id === id);
+  if (index < 0) return;
+  const wasActive = activePage.value?.id === id;
+  error.value = "";
+  try {
+    await deletePage(id);
+    const next = pages
+      .filter((p) => p.id !== id)
+      .map((p) => (p.position > index ? { ...p, position: p.position - 1 } : p));
+    toon.value = { ...toon.value, pages: next };
+    if (selectedId.value && !next.some((p) => p.bubbles.some((b) => b.id === selectedId.value))) {
+      selectedId.value = null;
+    }
+    if (wasActive) {
+      const fallback = next[Math.min(index, next.length - 1)];
+      await router.replace(fallback ? `/${toon.value.id}/pages/${fallback.id}` : `/${toon.value.id}/pages`);
+    }
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : "Delete page failed";
+  }
+}
+
 async function onReplace(file: File): Promise<void> {
   const page = activePage.value;
   if (!page) return;
@@ -284,6 +310,7 @@ async function onRemove(): Promise<void> {
           :can-generate="canGenerate"
           @upload="onUpload"
           @generate="generateOpen = true"
+          @remove="onRemovePage"
         />
         <PlateCanvas
           v-if="activePage"

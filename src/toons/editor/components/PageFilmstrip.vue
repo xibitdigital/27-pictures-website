@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { X } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import type { PageRecord } from "../types";
 
@@ -12,6 +13,7 @@ defineProps<{
 const emit = defineEmits<{
   upload: [file: File];
   generate: [];
+  remove: [pageId: string];
 }>();
 
 function onFile(ev: Event): void {
@@ -19,6 +21,13 @@ function onFile(ev: Event): void {
   const file = input.files?.[0];
   if (file) emit("upload", file);
   input.value = "";
+}
+
+function onRemove(ev: Event, page: PageRecord): void {
+  ev.preventDefault();
+  ev.stopPropagation();
+  if (!window.confirm(`Delete page ${page.position + 1}? This also deletes its captions.`)) return;
+  emit("remove", page.id);
 }
 </script>
 
@@ -33,6 +42,15 @@ function onFile(ev: Event): void {
     >
       <img :src="page.fileUrl" :alt="`Page ${page.position + 1}`" />
       <span>{{ page.position + 1 }}</span>
+      <button
+        class="editor-thumb-remove"
+        type="button"
+        :aria-label="`Delete page ${page.position + 1}`"
+        :title="`Delete page ${page.position + 1}`"
+        @click="onRemove($event, page)"
+      >
+        <X :size="12" :stroke-width="2.25" aria-hidden="true" />
+      </button>
     </RouterLink>
     <div class="editor-filmstrip-add-wrap">
       <div class="editor-filmstrip-add">
