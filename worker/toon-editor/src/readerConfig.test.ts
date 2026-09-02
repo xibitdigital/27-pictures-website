@@ -88,4 +88,14 @@ describe("readerConfigFromToon", () => {
       readerConfigFromToon({ DB: dbWith(pages, bubbles) }, toon, requestAt("https://toon-editor.example/"))
     ).resolves.toMatchObject({ title: "The Revenge" });
   });
+
+  it("rewrites an editor-uploaded plate to this Worker's /media origin, same as audio", async () => {
+    const editorPages = [{ id: "page-1", position: 0, file_key: "editor/graph-test/assets/plate.png" }];
+    const cfg = await readerConfigFromToon(
+      { DB: dbWith(editorPages, {}) },
+      toon,
+      requestAt("https://toon-editor.example/config/graph-test")
+    );
+    expect(cfg.pages[0].file).toBe("https://toon-editor.example/media/editor/graph-test/assets/plate.png");
+  });
 });

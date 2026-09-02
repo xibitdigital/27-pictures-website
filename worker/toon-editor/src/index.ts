@@ -328,6 +328,18 @@ function publicWord(request: RequestLike, word: CaptionWord): CaptionWord {
   return word;
 }
 
+/**
+ * A plate uploaded through the editor lives under the `editor/` R2 prefix,
+ * proxied through this Worker's own /media route — not the public CDN the
+ * reader otherwise resolves `pages[].file` against via asset-page-dir. Turn
+ * it into the absolute /media/ URL so resolveAssetUrl() passes it through
+ * instead of joining it onto the CDN base as if it were CDN-relative.
+ */
+function publicPageFile(request: RequestLike, fileKey: string): string {
+  if (fileKey.startsWith("editor/")) return mediaUrl(request, fileKey) || fileKey;
+  return fileKey;
+}
+
 function parseToonExtra(toon: { extra_json?: string | null } | null | undefined): JsonRecord {
   if (!toon || !toon.extra_json) return {};
   try {
@@ -468,7 +480,7 @@ async function readerConfigFromToon(env: Pick<Env, "DB">, toon: ToonRow, request
   ).results;
   const bubbles = await bubblesByPageId(env, toon.id);
   const pages: ReaderConfig["pages"] = pageRows.map((page) => ({
-    file: page.file_key,
+    file: publicPageFile(request, page.file_key),
     words: (bubbles.get(page.id) ?? []).map((row) => publicWord(request, wordFromBubble(row))),
   }));
   const cfg: ReaderConfig = {
