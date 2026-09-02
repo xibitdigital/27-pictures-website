@@ -2,6 +2,7 @@
 /** Main site chrome (fixed header + mobile menu). */
 import { computed, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { ChevronDown } from "@lucide/vue";
 import { documentLocale, isLocalizedPath, LOCALES, LOCALE_LABELS, LOCALE_NAMES, localePath, UI } from "../i18n";
 
 const props = withDefaults(
@@ -195,9 +196,7 @@ onUnmounted(() => {
             @click="langOpen = !langOpen"
           >
             <span aria-hidden="true">{{ LOCALE_LABELS[locale] }}</span>
-            <svg class="nav-lang-chevron" width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
-              <path d="M3 4.5 L6 8 L9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" />
-            </svg>
+            <ChevronDown class="nav-lang-chevron" :size="10" :stroke-width="1.5" aria-hidden="true" />
           </button>
           <div class="nav-lang-menu">
             <a

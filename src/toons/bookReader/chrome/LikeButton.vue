@@ -8,6 +8,7 @@
  * have votes now, and a count nobody can see cannot encourage anyone to add to
  * it. A missing total still renders as nothing rather than as zero.
  */
+import { Heart } from "@lucide/vue";
 import { computed } from "vue";
 import { useToonLikes } from "../useToonLikes";
 
@@ -35,21 +36,7 @@ const countLabel = computed(() => (total.value == null ? "" : String(total.value
     :aria-label="label"
     @click="like"
   >
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      :fill="liked ? 'currentColor' : 'none'"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    >
-      <path
-        d="M12 20.4 4.6 13a4.6 4.6 0 0 1 0-6.5 4.6 4.6 0 0 1 6.5 0l.9.9.9-.9a4.6 4.6 0 0 1 6.5 0 4.6 4.6 0 0 1 0 6.5z"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </svg>
+    <Heart :fill="liked ? 'currentColor' : 'none'" aria-hidden="true" />
     <span class="toon-fs-label">{{ label }}</span>
     <!-- Stacked under the heart, so the bar keeps one icon per control. -->
     <span v-if="countLabel" class="toon-like-count" aria-hidden="true">{{ countLabel }}</span>

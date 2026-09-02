@@ -4,6 +4,7 @@
  * Languages come from the injected toon captions store (config.json), or from
  * `languages` + `modelValue` when used in the editor (no store).
  */
+import { ChevronDown } from "@lucide/vue";
 import { computed } from "vue";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
 import { useToonCaptions } from "./captions/useToonCaptions";
@@ -45,9 +46,7 @@ function onLangUpdate(code: string): void {
       <div class="toon-lang-dropdown" :class="{ 'is-open': open }">
         <ListboxButton class="toon-fs-btn toon-lang-toggle" type="button" :title="`Language: ${currentLabel}`">
           <span class="toon-lang-toggle-label">{{ currentLabel }}</span>
-          <svg class="toon-lang-chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-            <path d="M3 4.5 L6 8 L9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" />
-          </svg>
+          <ChevronDown class="toon-lang-chevron" :size="12" :stroke-width="1.5" aria-hidden="true" />
         </ListboxButton>
 
         <ListboxOptions class="toon-lang-menu" as="div">

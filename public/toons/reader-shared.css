@@ -1253,14 +1253,6 @@ a.sound-prompt__btn {
   color: var(--red-smile);
 }
 
-.front-cover-sound-btn .front-cover-sound-waves {
-  display: none;
-}
-
-.front-cover-sound-btn.is-enabled .front-cover-sound-waves {
-  display: inline;
-}
-
 .front-cover-sound-btn {
   font-size: clamp(0.8rem, 0.72rem + 0.2vw, 0.9rem);
   padding: 0.6rem 1rem;

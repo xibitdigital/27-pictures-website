@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Upload, WandSparkles } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
 import { editorApiBase, generateAudio, uploadAudio } from "../api";
@@ -564,9 +565,7 @@ async function onGenerateAudio(): Promise<void> {
               :title="uploading ? 'Uploading' : 'Upload audio'"
               @click="audioFileInput?.click()"
             >
-              <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M8 2.5v8M5 5.5 8 2.5 11 5.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.4" />
-              </svg>
+              <Upload :size="14" :stroke-width="1.4" aria-hidden="true" />
             </button>
             <button
               class="editor-icon-btn"
@@ -585,15 +584,7 @@ async function onGenerateAudio(): Promise<void> {
               "
               @click="onGenerateAudio"
             >
-              <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-                <path
-                  d="M4 12.5 11.5 5M10 4.2l1.8 1.8M6.2 3.2 5 2M6.2 3.2 7.4 2M6.2 3.2 5 4.4M12.2 9.2 13.4 8M12.2 9.2 13.4 10.4M12.2 9.2 11 8"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  stroke-linecap="square"
-                />
-              </svg>
+              <WandSparkles :size="14" :stroke-width="1.4" aria-hidden="true" />
             </button>
           </span>
         </span>

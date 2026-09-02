@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Upload } from "@lucide/vue";
 import { computed, ref } from "vue";
 import EditorCaptionLayer from "./EditorCaptionLayer.vue";
 import type { BubbleRecord } from "../types";
@@ -72,9 +73,7 @@ function onReplaceFile(ev: Event): void {
         :title="replacing ? 'Replacing plate' : 'Replace plate'"
         @click="fileInput?.click()"
       >
-        <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M8 2.5v8M5 5.5 8 2.5 11 5.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.4" />
-        </svg>
+        <Upload :size="14" :stroke-width="1.4" aria-hidden="true" />
         {{ replacing ? "Replacing…" : "Replace" }}
       </button>
     </div>

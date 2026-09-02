@@ -2,6 +2,7 @@
 /**
  * Book ↔ vertical-scroll toggle in the reader top bar.
  */
+import { BookOpen, ScrollText } from "@lucide/vue";
 import { computed } from "vue";
 
 const props = defineProps<{
@@ -14,6 +15,7 @@ const emit = defineEmits<{
 
 const title = computed(() => (props.isVertical ? "Switch to book view" : "Switch to vertical scroll view"));
 const label = computed(() => (props.isVertical ? "Book" : "Scroll"));
+const icon = computed(() => (props.isVertical ? BookOpen : ScrollText));
 </script>
 
 <template>
@@ -26,17 +28,7 @@ const label = computed(() => (props.isVertical ? "Book" : "Scroll"));
     :aria-label="title"
     @click="emit('toggle')"
   >
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    >
-      <path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
+    <component :is="icon" aria-hidden="true" />
     <span class="toon-fs-label">{{ label }}</span>
   </button>
 </template>

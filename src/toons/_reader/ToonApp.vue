@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Music } from "@lucide/vue";
 import { computed, onMounted, ref } from "vue";
 import { resolveAssetUrl } from "../bookReader/assetUrl";
 import LangSwitcher from "../bookReader/LangSwitcher.vue";
@@ -131,21 +132,7 @@ const configUrl = slug ? readerConfigUrl(slug) : "";
         :aria-label="musicTitle"
         @click.stop="onMusicClick"
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <path
-            d="M9 18V5l10-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm10-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+        <Music aria-hidden="true" />
         <span class="toon-fs-label">{{ musicLabel }}</span>
       </button>
     </template>

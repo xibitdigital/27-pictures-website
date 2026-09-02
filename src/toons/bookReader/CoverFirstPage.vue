@@ -5,6 +5,7 @@
  */
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { Info, Volume, Volume2 } from "@lucide/vue";
 import { resolveCoverStory } from "./coverStory";
 import { pickLocalized, useFlipframeCopy, useReaderLocale, type LocalizedString } from "./flipframeCopy";
 
@@ -85,6 +86,7 @@ const howtoCaption = computed(() => {
 });
 const displayTitle = computed(() => props.title || (isModal.value ? t.value.storyTitle : ""));
 const displaySubtitle = computed(() => pickLocalized(props.subtitle, locale.value, t.value.experiment));
+const soundIcon = computed(() => (props.soundEnabled ? Volume2 : Volume));
 /** Build id from Vite (git short SHA or VITE_FLIPFRAME_BUILD). */
 const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
 </script>
@@ -119,19 +121,7 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
             :aria-label="t.aboutAria"
             @click.stop="aboutOpen = true"
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 11v5" stroke-linecap="round" />
-              <circle cx="12" cy="8" r="0.75" fill="currentColor" stroke="none" />
-            </svg>
+            <Info aria-hidden="true" />
           </button>
         </p>
         <p v-if="buildId" class="front-cover-brand-build" :title="`FlipFrame ${t.build} ${buildId}`">
@@ -222,23 +212,7 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
         :aria-label="soundTitle"
         @click.stop="emit('soundToggle')"
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linecap="round" stroke-linejoin="round" />
-          <path
-            class="front-cover-sound-waves"
-            d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+        <component :is="soundIcon" aria-hidden="true" />
         <span :data-off-label="soundHint">{{ soundLabel }}</span>
       </button>
       <p class="front-cover-sound-note">{{ t.soundNote }}</p>
@@ -258,20 +232,7 @@ const buildId = (import.meta.env.VITE_FLIPFRAME_BUILD || "").trim();
       >
         <div class="sound-prompt" @click.stop>
           <DialogPanel class="sound-prompt__panel">
-            <svg
-              class="sound-prompt__icon"
-              width="40"
-              height="40"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 11v5" stroke-linecap="round" />
-              <circle cx="12" cy="8" r="0.75" fill="currentColor" stroke="none" />
-            </svg>
+            <Info class="sound-prompt__icon" :stroke-width="1.75" aria-hidden="true" />
             <DialogTitle as="h2">{{ t.aboutTitle }}</DialogTitle>
             <p>
               {{ t.aboutLead }}

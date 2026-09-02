@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Maximize2, Minimize2 } from "@lucide/vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 
 const props = defineProps<{
@@ -10,9 +11,7 @@ const supported = ref(true);
 
 const title = computed(() => (isFs.value ? "Exit fullscreen" : "Fullscreen"));
 const label = computed(() => (isFs.value ? "Exit" : "Full"));
-const pathD = computed(() =>
-  isFs.value ? "M8 8H3V3M16 8h5V3M8 16H3v5M16 16h5v5" : "M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"
-);
+const icon = computed(() => (isFs.value ? Minimize2 : Maximize2));
 
 function sync(): void {
   const doc = document as Document & {
@@ -76,17 +75,7 @@ onUnmounted(() => {
     :aria-label="isFs ? 'Exit fullscreen' : 'Enter fullscreen'"
     @click="toggle"
   >
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    >
-      <path :d="pathD" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
+    <component :is="icon" aria-hidden="true" />
     <span class="toon-fs-label">{{ label }}</span>
   </button>
 </template>

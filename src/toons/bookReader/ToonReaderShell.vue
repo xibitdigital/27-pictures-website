@@ -3,6 +3,7 @@
  * Shared FlipFrame chrome for Erin, Jax, and future toons.
  * Owns view-mode, config load, strip, captions, and the Vue book surface.
  */
+import { BookText } from "@lucide/vue";
 import { computed, nextTick, onMounted, onUnmounted, ref, toRef, watch } from "vue";
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
@@ -611,18 +612,7 @@ defineExpose<ToonReaderShellExpose>({
         aria-label="Story and guide"
         @click="openGuide"
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <path d="M4 5h16v14H4z" stroke-linejoin="round" />
-          <path d="M8 9h8M8 13h5" stroke-linecap="round" />
-        </svg>
+        <BookText aria-hidden="true" />
         <span class="toon-fs-label">Story</span>
       </button>
     </template>

@@ -6,6 +6,7 @@
  * a second tap on the art.
  */
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { Volume2 } from "@lucide/vue";
 import { useFlipframeCopy } from "../flipframeCopy";
 
 const t = useFlipframeCopy();
@@ -46,18 +47,7 @@ function onEnable(): void {
       >
         <div class="sound-prompt" @click.stop>
           <DialogPanel class="sound-prompt__panel">
-            <svg
-              class="sound-prompt__icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              aria-hidden="true"
-            >
-              <path d="M11 5L6 9H3v6h3l5 4V5z" stroke-linejoin="round" stroke-linecap="round" />
-              <path d="M15.5 8.5a5 5 0 010 7" stroke-linecap="round" />
-              <path d="M18 6a8.5 8.5 0 010 12" stroke-linecap="round" />
-            </svg>
+            <Volume2 class="sound-prompt__icon" :stroke-width="1.75" aria-hidden="true" />
             <DialogTitle as="h2">{{ t.autoReadTitle }}</DialogTitle>
             <p>{{ t.autoReadBody }}</p>
             <div class="sound-prompt__actions">

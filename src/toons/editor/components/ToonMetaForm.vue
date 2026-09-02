@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Images } from "@lucide/vue";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { createToon, getToon, listSeries, patchToon, readImageSize, uploadCover } from "../api";
@@ -173,19 +174,7 @@ async function onSubmit(ev: Event): Promise<void> {
           {{ saving ? "Saving…" : isCreate ? "Create" : "Save" }}
         </button>
         <RouterLink v-if="existing" class="editor-btn editor-btn--ghost" :to="`/${existing.id}/pages`">
-          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-            <rect
-              x="2.5"
-              y="3.5"
-              width="8.5"
-              height="11"
-              rx="0.75"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-            />
-            <path d="M5 2.5h8.5v11" fill="none" stroke="currentColor" stroke-width="1.4" />
-          </svg>
+          <Images :size="16" :stroke-width="1.4" aria-hidden="true" />
           Pages
         </RouterLink>
       </template>
