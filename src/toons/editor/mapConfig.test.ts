@@ -12,6 +12,7 @@ import {
   parseHexColor,
   bubbleWritePayload,
   bubbleVoice,
+  spokenElevenLine,
   suggestElevenPrompt,
   VOICE_NAMES,
   PLACEHOLDER_TEXT,
@@ -73,6 +74,8 @@ describe("bubbleToWordEntry", () => {
     expect(prompt).toContain("eleven_v3");
     expect(prompt).toContain("Voice: eve");
     expect(prompt).toContain("[shouts] Nero—!");
+    expect(spokenElevenLine({ text: "Nero—!", variant: "burst" })).toBe("[shouts] Nero—!");
+    expect(spokenElevenLine({ text: "Hi", variant: "bubble" })).toBe("Hi");
   });
 
   it("normalises hex colors and reads lettering extras", () => {

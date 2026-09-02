@@ -79,6 +79,7 @@ and local see published + staging; production sees published only.
 | PATCH | `/toons/:id` | JWT | metadata + series + visibility |
 | POST | `/toons/:id/cover` | JWT | cover |
 | POST | `/toons/:id/audio` | JWT | caption clip |
+| POST | `/toons/:id/audio/generate` | JWT | ElevenLabs TTS → same `{ key, url, audio }` as upload |
 | POST | `/toons/:id/pages` | JWT | append plate |
 | POST | `/toons/import` | JWT | load a reader config JSON |
 | GET | `/toons/:id/export` | JWT | FlipFrame JSON including drafts |
@@ -103,6 +104,7 @@ npx wrangler d1 create toon-editor
 # paste database_id into wrangler.toml
 npx wrangler d1 migrations apply toon-editor --remote
 npx wrangler secret put JWT_SECRET
+npx wrangler secret put ELEVENLABS_API_KEY
 npx wrangler deploy
 ```
 
@@ -128,6 +130,9 @@ EDITOR_PASSWORD=…
 ```
 
 Used by `npm run import-toon`. The browser login form does not read `.env`.
+Local wrangler reads `worker/toon-editor/.dev.vars` (`JWT_SECRET`, and
+`ELEVENLABS_API_KEY` for the inspector TTS wand). Production uses Wrangler
+secrets. The studio never sees the ElevenLabs key.
 
 Typecheck: `npx tsc -p worker/toon-editor --noEmit` (also part of
 `npm run typecheck`). Tests: `npx vitest run worker/toon-editor`.

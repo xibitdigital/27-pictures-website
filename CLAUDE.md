@@ -721,7 +721,11 @@ EDITOR_PASSWORD=…
 
 The browser login form does not read `.env`. JWT signing secret is
 `JWT_SECRET` in `worker/toon-editor/.dev.vars` locally, a Wrangler secret in
-production.
+production. Caption TTS from the inspector wand is
+`POST /toons/:id/audio/generate` on this Worker — put `ELEVENLABS_API_KEY` in
+`.dev.vars` locally and `npx wrangler secret put ELEVENLABS_API_KEY` on the
+deployed Worker (the repo-root `.env` key is only for the Python CLI). Upload
+an mp3 still works without it.
 
 ```bash
 make dev              # Vite :5173 + editor Worker :8787

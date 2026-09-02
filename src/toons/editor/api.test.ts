@@ -9,6 +9,7 @@ import {
   replacePage,
   saveSeries,
   setToken,
+  generateAudio,
   uploadAudio,
   withSiteQuery,
 } from "./api";
@@ -157,6 +158,36 @@ describe("editor api", () => {
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer sess-1");
     expect(headers.get("Content-Type")).toBeNull();
+  });
+
+  it("POSTs ElevenLabs generate as JSON", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          key: "editor/demo/sfx/gen.mp3",
+          url: "https://x/media/editor/demo/sfx/gen.mp3",
+          audio: "editor/demo/sfx/gen.mp3",
+        }),
+        { status: 201 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await generateAudio("t1", { text: "[whispers] Hi", voice: "erin", model: "eleven_v3", stability: 0.3 });
+    expect(out.audio).toBe("editor/demo/sfx/gen.mp3");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/toons/t1/audio/generate");
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(String(init.body))).toEqual({
+      text: "[whispers] Hi",
+      voice: "erin",
+      model: "eleven_v3",
+      stability: 0.3,
+    });
+    const headers = new Headers(init.headers);
+    expect(headers.get("Authorization")).toBe("Bearer sess-1");
+    expect(headers.get("Content-Type")).toBe("application/json");
   });
 
   it("POSTs a replacement plate as FormData onto the existing page", async () => {
