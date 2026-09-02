@@ -98,6 +98,7 @@ function onSubmit(): void {
               name="generate-prompt"
               v-model="prompt"
               rows="8"
+              cols="40"
               required
               :disabled="busy"
               placeholder="What happens on this page (no balloons, no SFX lettering)"
