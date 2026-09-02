@@ -89,9 +89,9 @@ make add-image SRC=… TOON=jax|erin|nero [CONFIG=1] [UPLOAD=1]
 ### Interactive toons
 
 Live books and series are edited at `/toons/editor/` against D1 (Worker:
-`worker/toon-editor`). Captions, covers, visibility and series grouping are
-not `content/toons/*/config.json`. See `worker/toon-editor/README.md` and
-`CLAUDE.md` → **Toon editor**.
+`worker/toon-editor`). Captions, covers, visibility, series grouping, and
+optional Comfy / ElevenLabs generate are not `content/toons/*/config.json`.
+See `worker/toon-editor/README.md` and `CLAUDE.md` → **Toon editor**.
 
 ```bash
 make dev                       # site + editor Worker

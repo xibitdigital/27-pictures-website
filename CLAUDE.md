@@ -697,9 +697,9 @@ row types in `src/types.ts`. Vue re-exports the contract from
 | Hash | Screen |
 | ---- | ------ |
 | `#/` | Episodes grouped under each series, ungrouped toons, visibility badges |
-| `#/series/new` · `#/series/:key` | Create / edit series (cover, hub URL, descriptions) |
+| `#/series/new` · `#/series/:key` | Create / edit series (cover, hub URL, descriptions, Comfy flow + sheets) |
 | `#/new` · `#/:id` | Create / edit toon (series + episode number + visibility) |
-| `#/:id/pages/:pageId?` | Plate studio |
+| `#/:id/pages/:pageId?` | Plate studio (upload or Generate) |
 
 Visibility: `draft` (editor only) · `staging` (staging + local catalog) ·
 `published` (Public — production catalog too). `/toons/`, `GET /catalog`,
@@ -722,11 +722,39 @@ EDITOR_PASSWORD=…
 
 The browser login form does not read `.env`. JWT signing secret is
 `JWT_SECRET` in `worker/toon-editor/.dev.vars` locally, a Wrangler secret in
-production. Caption TTS from the inspector wand is
-`POST /toons/:id/audio/generate` on this Worker — put `ELEVENLABS_API_KEY` in
-`.dev.vars` locally and `npx wrangler secret put ELEVENLABS_API_KEY` on the
-deployed Worker (the repo-root `.env` key is only for the Python CLI). Upload
-an mp3 still works without it.
+production.
+
+Caption TTS / SFX from the inspector wand is
+`POST /toons/:id/audio/generate` — `ELEVENLABS_API_KEY` in `.dev.vars` locally
+and `npx wrangler secret put ELEVENLABS_API_KEY` on the Worker (repo-root
+`.env` is only for the Python CLI). Upload an mp3 still works without it.
+
+Plate **Generate** on the filmstrip plus card (after the last thumb) is
+`POST /toons/:id/pages/generate`. The series owns one Comfy **Save API**
+`.json` plus character-sheet slots (`POST /series/:key/flow` and `/refs`).
+The dialog sends a prompt and optional previous plate; the Worker uploads
+slot files to Comfy `/upload/image`, writes LoadImage names + Seedream
+`prompt`, `POST {COMFY_URL}/prompt`, then the studio polls `GET /jobs/:id`.
+Upload a plate still works without Comfy.
+
+The browser never talks to Comfy or ElevenLabs. For Seedream (a Comfy
+**partner node**) you need both:
+
+| Secret | What it is |
+| --- | --- |
+| `COMFY_URL` | Public ComfyUI origin the Worker can `fetch` (`/prompt`, `/upload/image`, `/history`, `/view`). Staging **cannot** use `http://127.0.0.1:8188`. Not the RunComfy square **model** API. |
+| `COMFY_API_KEY` | Comfy **account** key from [platform.comfy.org](https://platform.comfy.org/login) → API Keys (`comfyui-…`). Sent as `extra_data.api_key_comfy_org` (and `Authorization: Bearer`). |
+
+```bash
+cd worker/toon-editor
+npx wrangler secret put COMFY_URL      # https://your-hosted-comfy
+npx wrangler secret put COMFY_API_KEY  # comfyui-…
+npx wrangler deploy
+```
+
+Local `make dev` reads the same names from `worker/toon-editor/.dev.vars`.
+Missing `COMFY_URL` → 503 `ComfyUI is not configured`; the dialog shows that
+string (not the unreachable-API hint).
 
 ```bash
 make dev              # Vite :5173 + editor Worker :8787

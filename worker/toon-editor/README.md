@@ -43,10 +43,10 @@ that, registration is closed and the form is log in. Extra accounts:
 | ---- | ------ |
 | `#/` | Episodes grouped under each series + ungrouped toons |
 | `#/series/new` | Create series |
-| `#/series/:key` | Edit series (cover, hub URL, descriptions) + episode list |
+| `#/series/:key` | Edit series (cover, hub, Comfy Save-API graph + reference sheets) |
 | `#/new` | Create toon (visibility, series, episode number) |
 | `#/:id` | Edit toon metadata |
-| `#/:id/pages/:pageId?` | Plate studio (captions, replace file) |
+| `#/:id/pages/:pageId?` | Plate studio (captions, upload or Generate) |
 
 Visibility on a toon is `draft` | `staging` | `published` (the form labels
 published as Public). Catalog and public config use the calling site: staging
@@ -84,7 +84,7 @@ and local see published + staging; production sees published only.
 | POST | `/toons/:id/audio` | JWT | caption clip |
 | POST | `/toons/:id/audio/generate` | JWT | ElevenLabs TTS (voice set) or SFX (voice empty) → `{ key, url, audio }` |
 | POST | `/toons/:id/pages` | JWT | append plate |
-| POST | `/toons/:id/pages/generate` | JWT | queue Comfy plate from series flow |
+| POST | `/toons/:id/pages/generate` | JWT | JSON `{ prompt, includePrevious, pageId? }` → queue Comfy job |
 | GET | `/jobs/:id` | JWT | poll generate job; includes toon when done |
 | POST | `/toons/import` | JWT | load a reader config JSON |
 | GET | `/toons/:id/export` | JWT | FlipFrame JSON including drafts |
@@ -110,6 +110,8 @@ npx wrangler d1 create toon-editor
 npx wrangler d1 migrations apply toon-editor --remote
 npx wrangler secret put JWT_SECRET
 npx wrangler secret put ELEVENLABS_API_KEY
+npx wrangler secret put COMFY_URL
+npx wrangler secret put COMFY_API_KEY
 npx wrangler deploy
 ```
 
@@ -135,9 +137,19 @@ EDITOR_PASSWORD=…
 ```
 
 Used by `npm run import-toon`. The browser login form does not read `.env`.
-Local wrangler reads `worker/toon-editor/.dev.vars` (`JWT_SECRET`, and
-`ELEVENLABS_API_KEY` for the inspector TTS wand). Production uses Wrangler
-secrets. The studio never sees the ElevenLabs key.
+Local wrangler reads `worker/toon-editor/.dev.vars`. Production uses Wrangler
+secrets. The studio never sees these keys.
+
+| Name | Local | Remote | Purpose |
+| --- | --- | --- | --- |
+| `JWT_SECRET` | `.dev.vars` | secret | editor JWT |
+| `ELEVENLABS_API_KEY` | `.dev.vars` | secret | inspector Generate audio |
+| `COMFY_URL` | `.dev.vars` | secret | ComfyUI origin (`POST /prompt`). Public HTTPS on staging. `http://127.0.0.1:8188` only for `make dev` on the same machine. Not `https://model-api.runcomfy.net`. |
+| `COMFY_API_KEY` | `.dev.vars` | secret | Comfy **account** key from https://platform.comfy.org → API Keys. Seedream partner nodes need it as `extra_data.api_key_comfy_org` on `/prompt`. |
+
+Create the account key once (shown only at creation). Plate Generate also
+needs a series flow + sheet files in the series form. Missing `COMFY_URL` →
+503 `ComfyUI is not configured`.
 
 Typecheck: `npx tsc -p worker/toon-editor --noEmit` (also part of
 `npm run typecheck`). Tests: `npx vitest run worker/toon-editor`.

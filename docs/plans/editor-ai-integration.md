@@ -1,6 +1,10 @@
 # Editor AI generation (ComfyUI plates + ElevenLabs audio)
 
-Branch: `feature/ai-integration` (from `staging`). Do not implement on `staging` directly.
+**Shipped on `staging`.** Living docs: `CLAUDE.md` → Toon editor, and
+`worker/toon-editor/README.md`. This file is the original plan; several
+non-goals and UI notes below are stale (SFX wand exists; ElevenLabs Studio
+prompt was removed; series owns the Comfy graph + sheets; filmstrip plus is
+Upload + Generate at the **end** of the strip).
 
 ## Goal
 
@@ -183,8 +187,8 @@ In `worker/toon-editor` (not Pages, not repo `.env` for production):
 | Name | Where | Purpose |
 | --- | --- | --- |
 | `ELEVENLABS_API_KEY` | wrangler secret + `.dev.vars` | TTS |
-| `COMFY_URL` | `.dev.vars` / `[vars]` or secret | Comfy origin |
-| `COMFY_API_KEY` | secret, optional | hosted Comfy auth |
+| `COMFY_URL` | `.dev.vars` / Wrangler secret | ComfyUI origin (`/prompt`). Hosted HTTPS on staging. |
+| `COMFY_API_KEY` | `.dev.vars` / Wrangler secret | Comfy account key (`comfyui-…` from platform.comfy.org). Sent as `extra_data.api_key_comfy_org`. |
 
 Document in `worker/toon-editor/README.md` and a short note in `Claude.md` under the editor section. Browser CSP unchanged (studio already `connect-src`s the Worker).
 
