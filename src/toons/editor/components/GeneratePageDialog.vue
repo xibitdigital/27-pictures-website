@@ -39,7 +39,12 @@ const missingPrevious = computed(
 );
 
 const canSubmit = computed(
-  () => Boolean(prompt.value.trim()) && !props.busy && !missingSheets.value.length && !missingPrevious.value
+  () =>
+    Boolean(props.generate?.flowKey) &&
+    Boolean(prompt.value.trim()) &&
+    !props.busy &&
+    !missingSheets.value.length &&
+    !missingPrevious.value
 );
 
 function onSubmit(): void {
@@ -54,6 +59,9 @@ function onSubmit(): void {
       <h2>Generate page</h2>
       <p class="editor-muted">
         Uses this series’ Comfy graph and reference sheets. Upload still works from the plus card.
+      </p>
+      <p v-if="!generate?.flowKey" class="editor-error" role="alert">
+        Upload a Comfy Save-API graph and reference sheets on the series first.
       </p>
       <p v-if="error" class="editor-error" role="alert">{{ error }}</p>
       <label>

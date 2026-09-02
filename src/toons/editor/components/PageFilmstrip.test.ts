@@ -15,10 +15,13 @@ describe("PageFilmstrip", () => {
     expect(wrapper.emitted("generate")).toHaveLength(1);
   });
 
-  it("disables Generate when the series has no flow", () => {
+  it("still offers Generate when the series has no flow yet", async () => {
     const wrapper = mount(PageFilmstrip, {
       props: { toonId: "t1", pages: [], activeId: null, canGenerate: false },
     });
-    expect(wrapper.get('button[name="add-page-generate"]').attributes("disabled")).toBeDefined();
+    const btn = wrapper.get('button[name="add-page-generate"]');
+    expect(btn.attributes("disabled")).toBeUndefined();
+    await btn.trigger("click");
+    expect(wrapper.emitted("generate")).toHaveLength(1);
   });
 });
