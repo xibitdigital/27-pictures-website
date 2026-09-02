@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { X } from "@lucide/vue";
+import { ref } from "vue";
+import { LoaderCircle, Upload, X } from "@lucide/vue";
 import { RouterLink } from "vue-router";
+import ConfirmDialog from "./ConfirmDialog.vue";
 import type { PageRecord } from "../types";
 
 defineProps<{
@@ -8,13 +10,17 @@ defineProps<{
   pages: PageRecord[];
   activeId: string | null;
   canGenerate?: boolean;
+  replacingId?: string | null;
 }>();
 
 const emit = defineEmits<{
   upload: [file: File];
   generate: [];
   remove: [pageId: string];
+  replace: [pageId: string, file: File];
 }>();
+
+const pendingRemove = ref<PageRecord | null>(null);
 
 function onFile(ev: Event): void {
   const input = ev.target as HTMLInputElement;
@@ -23,11 +29,23 @@ function onFile(ev: Event): void {
   input.value = "";
 }
 
-function onRemove(ev: Event, page: PageRecord): void {
+function onReplaceFile(ev: Event, page: PageRecord): void {
+  const input = ev.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (file) emit("replace", page.id, file);
+}
+
+function onRemoveClick(ev: Event, page: PageRecord): void {
   ev.preventDefault();
   ev.stopPropagation();
-  if (!window.confirm(`Delete page ${page.position + 1}? This also deletes its captions.`)) return;
-  emit("remove", page.id);
+  pendingRemove.value = page;
+}
+
+function onRemoveConfirm(): void {
+  if (!pendingRemove.value) return;
+  emit("remove", pendingRemove.value.id);
+  pendingRemove.value = null;
 }
 </script>
 
@@ -42,12 +60,29 @@ function onRemove(ev: Event, page: PageRecord): void {
     >
       <img :src="page.fileUrl" :alt="`Page ${page.position + 1}`" />
       <span>{{ page.position + 1 }}</span>
+      <label
+        class="editor-thumb-replace"
+        :class="{ 'is-busy': replacingId === page.id }"
+        :title="replacingId === page.id ? 'Replacing…' : `Replace page ${page.position + 1}`"
+        @click.stop
+      >
+        <LoaderCircle v-if="replacingId === page.id" class="editor-spin" :size="12" aria-hidden="true" />
+        <Upload v-else :size="12" :stroke-width="2.25" aria-hidden="true" />
+        <input
+          type="file"
+          accept="image/webp,image/jpeg,image/png"
+          :aria-label="`Replace page ${page.position + 1}`"
+          :disabled="replacingId === page.id"
+          hidden
+          @change="onReplaceFile($event, page)"
+        />
+      </label>
       <button
         class="editor-thumb-remove"
         type="button"
         :aria-label="`Delete page ${page.position + 1}`"
         :title="`Delete page ${page.position + 1}`"
-        @click="onRemove($event, page)"
+        @click="onRemoveClick($event, page)"
       >
         <X :size="12" :stroke-width="2.25" aria-hidden="true" />
       </button>
@@ -78,4 +113,12 @@ function onRemove(ev: Event, page: PageRecord): void {
       </div>
     </div>
   </nav>
+  <ConfirmDialog
+    :open="Boolean(pendingRemove)"
+    title="Delete page"
+    :message="pendingRemove ? `Delete page ${pendingRemove.position + 1}? This also deletes its captions.` : ''"
+    confirm-label="Delete"
+    @confirm="onRemoveConfirm"
+    @cancel="pendingRemove = null"
+  />
 </template>

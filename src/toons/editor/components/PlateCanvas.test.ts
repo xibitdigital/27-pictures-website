@@ -15,7 +15,7 @@ const bubble: BubbleRecord = {
   sort: 0,
 };
 
-function mountPlate(replacing = false) {
+function mountPlate() {
   return mount(PlateCanvas, {
     props: {
       src: "https://cdn.example/plate.webp",
@@ -24,35 +24,14 @@ function mountPlate(replacing = false) {
       selectedId: null,
       designWidth: 1152,
       designHeight: 1728,
-      replacing,
     },
     global: { stubs: { EditorCaptionLayer: true } },
   });
 }
 
-describe("PlateCanvas replace plate", () => {
-  it("puts a Replace button on the plate", () => {
+describe("PlateCanvas", () => {
+  it("renders the plate image", () => {
     const wrapper = mountPlate();
-    const btn = wrapper.get('button[name="replace-page"]');
-    expect(btn.text()).toContain("Replace");
-    expect(btn.classes()).toContain("editor-plate-replace");
-    expect(wrapper.get('input[name="replace-page-file"]').attributes("accept")).toBe("image/webp,image/jpeg,image/png");
-  });
-
-  it("emits the chosen file without appending a page", async () => {
-    const wrapper = mountPlate();
-    const input = wrapper.get('input[name="replace-page-file"]');
-    const file = new File([new Uint8Array([1, 2, 3])], "plate.webp", { type: "image/webp" });
-    Object.defineProperty(input.element, "files", { value: [file] });
-    await input.trigger("change");
-    expect(wrapper.emitted("replace")).toEqual([[file]]);
-  });
-
-  it("disables the control while a replace is in flight", () => {
-    const wrapper = mountPlate(true);
-    const btn = wrapper.get('button[name="replace-page"]');
-    expect(btn.attributes("disabled")).toBeDefined();
-    expect(btn.text()).toContain("Replacing");
-    expect(wrapper.get('input[name="replace-page-file"]').attributes("disabled")).toBeDefined();
+    expect(wrapper.get("img").attributes("src")).toBe("https://cdn.example/plate.webp");
   });
 });

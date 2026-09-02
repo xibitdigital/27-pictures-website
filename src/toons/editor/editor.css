@@ -1024,10 +1024,10 @@ body {
   padding: 0 0.25rem;
 }
 
-.editor-thumb-remove {
+.editor-thumb-remove,
+.editor-thumb-replace {
   position: absolute;
   top: 0.2rem;
-  right: 0.2rem;
   display: grid;
   place-items: center;
   width: 1.1rem;
@@ -1045,14 +1045,28 @@ body {
     border-color 0.15s var(--transition);
 }
 
+.editor-thumb-remove {
+  right: 0.2rem;
+}
+
+.editor-thumb-replace {
+  left: 0.2rem;
+}
+
 .editor-thumb:hover .editor-thumb-remove,
+.editor-thumb:hover .editor-thumb-replace,
 .editor-thumb:focus-within .editor-thumb-remove,
-.editor-thumb-remove:focus-visible {
+.editor-thumb:focus-within .editor-thumb-replace,
+.editor-thumb-remove:focus-visible,
+.editor-thumb-replace:focus-within,
+.editor-thumb-replace.is-busy {
   opacity: 1;
 }
 
 .editor-thumb-remove:hover,
-.editor-thumb-remove:focus-visible {
+.editor-thumb-remove:focus-visible,
+.editor-thumb-replace:hover,
+.editor-thumb-replace:focus-within {
   background: var(--red-smile);
   border-color: var(--red-smile);
 }
@@ -1087,41 +1101,6 @@ body {
   height: 100%;
   object-fit: contain;
   display: block;
-}
-
-.editor-plate-replace {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  z-index: 40;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.65rem;
-  background: var(--bg-card);
-  color: var(--text);
-  border: 1px solid var(--border-light);
-  border-radius: 2px;
-  font: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-.editor-plate-replace:hover,
-.editor-plate-replace:focus-visible {
-  border-color: var(--red-smile);
-  color: var(--text);
-}
-
-.editor-plate-replace:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.editor-plate-replace svg {
-  display: block;
-  flex-shrink: 0;
 }
 
 .editor-word-layer {

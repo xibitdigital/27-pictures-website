@@ -1,10 +1,12 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { mount } from "@vue/test-utils";
+import { describe, expect, it, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
 import PageFilmstrip from "./PageFilmstrip.vue";
 
 vi.mock("vue-router", () => ({
   RouterLink: { template: "<a><slot /></a>" },
 }));
+
+const onePage = [{ id: "p1", position: 0, fileUrl: "/p1.webp", fileKey: "p1", width: 800, height: 1424, bubbles: [] }];
 
 describe("PageFilmstrip", () => {
   it("emits generate from the Generate control", async () => {
@@ -57,35 +59,47 @@ describe("PageFilmstrip", () => {
     expect(kids.slice(0, -1).every((c) => c.includes("editor-thumb"))).toBe(true);
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  it("emits remove for a thumb's delete button after confirmation", async () => {
-    const confirmMock = vi.fn().mockReturnValue(true);
-    vi.stubGlobal("confirm", confirmMock);
+  it("shows a confirm dialog and emits remove once confirmed", async () => {
     const wrapper = mount(PageFilmstrip, {
-      props: {
-        toonId: "t1",
-        pages: [{ id: "p1", position: 0, fileUrl: "/p1.webp", fileKey: "p1", width: 800, height: 1424, bubbles: [] }],
-        activeId: "p1",
-      },
+      props: { toonId: "t1", pages: onePage, activeId: "p1" },
+      attachTo: document.body,
     });
     await wrapper.get(".editor-thumb-remove").trigger("click");
-    expect(confirmMock).toHaveBeenCalled();
+    await flushPromises();
+    const dialog = document.querySelector(".editor-dialog") as HTMLElement;
+    expect(dialog).toBeTruthy();
+    expect(dialog.textContent).toContain("Delete page 1?");
+    const confirmBtn = [...dialog.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Delete");
+    confirmBtn!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    await flushPromises();
     expect(wrapper.emitted("remove")).toEqual([["p1"]]);
+    wrapper.unmount();
   });
 
-  it("does not emit remove when the confirmation is declined", async () => {
-    vi.stubGlobal("confirm", vi.fn().mockReturnValue(false));
+  it("does not emit remove when the confirm dialog is cancelled", async () => {
     const wrapper = mount(PageFilmstrip, {
-      props: {
-        toonId: "t1",
-        pages: [{ id: "p1", position: 0, fileUrl: "/p1.webp", fileKey: "p1", width: 800, height: 1424, bubbles: [] }],
-        activeId: "p1",
-      },
+      props: { toonId: "t1", pages: onePage, activeId: "p1" },
+      attachTo: document.body,
     });
     await wrapper.get(".editor-thumb-remove").trigger("click");
+    await flushPromises();
+    const dialog = document.querySelector(".editor-dialog") as HTMLElement;
+    const cancelBtn = [...dialog.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Cancel");
+    cancelBtn!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    await flushPromises();
     expect(wrapper.emitted("remove")).toBeUndefined();
+    expect(document.querySelector(".editor-dialog-root")).toBeFalsy();
+    wrapper.unmount();
+  });
+
+  it("emits replace with the chosen file for a thumb", async () => {
+    const wrapper = mount(PageFilmstrip, {
+      props: { toonId: "t1", pages: onePage, activeId: "p1" },
+    });
+    const input = wrapper.get(".editor-thumb-replace input");
+    const file = new File([new Uint8Array([1, 2, 3])], "plate.webp", { type: "image/webp" });
+    Object.defineProperty(input.element, "files", { value: [file] });
+    await input.trigger("change");
+    expect(wrapper.emitted("replace")).toEqual([["p1", file]]);
   });
 });

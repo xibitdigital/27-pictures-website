@@ -36,7 +36,7 @@ const previewLang = ref<LangCode>("en");
 const error = ref("");
 const loading = ref(true);
 const saving = ref(false);
-const replacing = ref(false);
+const replacingId = ref<string | null>(null);
 const dirtyIds = ref(new Set<string>());
 const seriesGenerate = ref<SeriesGenerateConfig | null>(null);
 const generateOpen = ref(false);
@@ -180,19 +180,17 @@ async function onRemovePage(id: string): Promise<void> {
   }
 }
 
-async function onReplace(file: File): Promise<void> {
-  const page = activePage.value;
-  if (!page) return;
+async function onReplaceThumb(pageId: string, file: File): Promise<void> {
   error.value = "";
-  replacing.value = true;
+  replacingId.value = pageId;
   try {
     const size = await readImageSize(file);
-    const next = await replacePage(page.id, file, size);
-    toon.value = toon.value ? mergeReplacedPage(toon.value, next, page.id) : next;
+    const next = await replacePage(pageId, file, size);
+    toon.value = toon.value ? mergeReplacedPage(toon.value, next, pageId) : next;
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Replace failed";
   } finally {
-    replacing.value = false;
+    replacingId.value = null;
   }
 }
 
@@ -308,9 +306,11 @@ async function onRemove(): Promise<void> {
           :pages="toon.pages"
           :active-id="activePage?.id ?? null"
           :can-generate="canGenerate"
+          :replacing-id="replacingId"
           @upload="onUpload"
           @generate="generateOpen = true"
           @remove="onRemovePage"
+          @replace="onReplaceThumb"
         />
         <PlateCanvas
           v-if="activePage"
@@ -322,12 +322,10 @@ async function onRemove(): Promise<void> {
           :lang="previewLang"
           :design-width="toon.designWidth"
           :design-height="toon.designHeight"
-          :replacing="replacing"
           @select="selectedId = $event"
           @move="onMove"
           @persist="onPersist"
           @add="onAdd"
-          @replace="onReplace"
         />
         <div v-else class="editor-canvas editor-canvas--empty">
           <p class="editor-muted">Upload a page to start placing bubbles.</p>
