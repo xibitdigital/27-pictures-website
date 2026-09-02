@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import type { SeriesGenerateConfig } from "../types";
 
 const props = defineProps<{
@@ -16,16 +16,31 @@ const emit = defineEmits<{
   submit: [payload: { prompt: string; includePrevious: boolean }];
 }>();
 
+const dialogEl = ref<HTMLDialogElement | null>(null);
 const prompt = ref("");
 const includePrevious = ref(true);
 
-watch(
-  () => props.open,
-  (open) => {
-    if (!open) return;
+async function syncOpen(open: boolean): Promise<void> {
+  await nextTick();
+  const dialog = dialogEl.value;
+  if (!dialog) return;
+  if (open) {
     includePrevious.value = props.hasPrevious;
+    if (!dialog.open) dialog.showModal();
+    return;
   }
-);
+  if (dialog.open) dialog.close();
+}
+
+watch(() => props.open, syncOpen);
+onMounted(() => {
+  if (props.open) void syncOpen(true);
+});
+
+function onCancel(): void {
+  if (props.busy) return;
+  emit("close");
+}
 
 const missingSheets = computed(() =>
   (props.generate?.slots || []).filter((slot) => slot.kind === "sheet" && !slot.fileKey)
@@ -54,12 +69,10 @@ function onSubmit(): void {
 </script>
 
 <template>
-  <dialog class="editor-dialog" :open="open" @cancel.prevent="emit('close')">
+  <dialog ref="dialogEl" class="editor-dialog" @cancel.prevent="onCancel">
     <form class="editor-dialog-body" @submit.prevent="onSubmit">
       <h2>Generate page</h2>
-      <p class="editor-muted">
-        Uses this series’ Comfy graph and reference sheets. Upload still works from the plus card.
-      </p>
+      <p class="editor-muted">Uses this series’ Comfy graph and reference sheets.</p>
       <p v-if="!generate?.flowKey" class="editor-error" role="alert">
         Upload a Comfy Save-API graph and reference sheets on the series first.
       </p>
@@ -69,7 +82,7 @@ function onSubmit(): void {
         <textarea
           name="generate-prompt"
           v-model="prompt"
-          rows="6"
+          rows="8"
           required
           :disabled="busy"
           placeholder="What happens on this page (no balloons, no SFX lettering)"
@@ -79,9 +92,9 @@ function onSubmit(): void {
         <input v-model="includePrevious" type="checkbox" name="include-previous" :disabled="busy || !hasPrevious" />
         Include previous page
       </label>
-      <ul class="editor-dialog-slots">
-        <li v-for="slot in generate?.slots || []" :key="slot.alias">
-          {{ slot.label || slot.alias }}
+      <ul v-if="generate?.slots.length" class="editor-dialog-slots">
+        <li v-for="slot in generate.slots" :key="slot.alias">
+          <span>{{ slot.label || slot.alias }}</span>
           <span v-if="slot.kind === 'previous'" class="editor-muted">{{
             hasPrevious && includePrevious ? "last plate" : "skipped"
           }}</span>
@@ -91,9 +104,7 @@ function onSubmit(): void {
       </ul>
       <p v-if="busy" class="editor-muted">{{ status || "Generating page…" }}</p>
       <div class="editor-form-actions">
-        <button class="editor-btn editor-btn--ghost" type="button" :disabled="busy" @click="emit('close')">
-          Cancel
-        </button>
+        <button class="editor-btn editor-btn--ghost" type="button" :disabled="busy" @click="onCancel">Cancel</button>
         <button class="editor-btn" type="submit" :disabled="!canSubmit">
           {{ busy ? "Generating…" : "Generate" }}
         </button>
