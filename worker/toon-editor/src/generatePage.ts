@@ -1,6 +1,7 @@
 import { comfyBase, comfyHistory, comfySubmitPrompt, comfyUploadImage, comfyView } from "./comfyClient";
 import { applyLoadImages, applyPagePrompt, applyPlateSize, parseGenerateConfig, type ComfyGraph } from "./comfyFlow";
 import { insertCreditEvent } from "./creditUsage";
+import { toWebp } from "./imageOptimize";
 import type { Env, SeriesRow, ToonRow } from "./types";
 
 export type GenerationJob = {
@@ -160,11 +161,11 @@ export async function pollPageJob(
       .run();
     return { ok: true, job: { ...job, status: "error", error: viewed.error } };
   }
-  const kind = sniffImage(viewed.bytes);
-  const hash = await sha256Hex(viewed.bytes);
-  const fileKey = `editor/${toon.slug}/assets/${hash}.${kind.ext}`;
-  await env.ASSETS.put(fileKey, viewed.bytes, {
-    httpMetadata: { contentType: kind.type, cacheControl: "public, max-age=31536000, immutable" },
+  const optimized = await toWebp({ bytes: viewed.bytes, ...sniffImage(viewed.bytes) });
+  const hash = await sha256Hex(optimized.bytes);
+  const fileKey = `editor/${toon.slug}/assets/${hash}.${optimized.ext}`;
+  await env.ASSETS.put(fileKey, optimized.bytes, {
+    httpMetadata: { contentType: optimized.type, cacheControl: "public, max-age=31536000, immutable" },
   });
 
   let resultPageId = job.page_id;

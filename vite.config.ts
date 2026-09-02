@@ -106,6 +106,16 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": srcDir,
+      // Cloudflare-only wasm codecs pulled in transitively via
+      // worker/toon-editor/src/imageOptimize.ts — see src/test/wasmStub.ts.
+      // Only under Vitest; the site build never imports these.
+      ...(isTest
+        ? {
+            "@jsquash/jpeg/codec/dec/mozjpeg_dec.wasm": path.resolve(srcDir, "test/wasmStub.ts"),
+            "@jsquash/png/codec/pkg/squoosh_png_bg.wasm": path.resolve(srcDir, "test/wasmStub.ts"),
+            "@jsquash/webp/codec/enc/webp_enc_simd.wasm": path.resolve(srcDir, "test/wasmStub.ts"),
+          }
+        : {}),
     },
   },
   build: {

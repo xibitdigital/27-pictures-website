@@ -737,6 +737,16 @@ slot files to Comfy `/upload/image`, writes LoadImage names + Seedream
 `prompt`, `POST {COMFY_URL}/prompt`, then the studio polls `GET /jobs/:id`.
 Upload a plate still works without Comfy.
 
+Comfy hands back PNG (occasionally JPEG). `worker/toon-editor/src/imageOptimize.ts`
+re-encodes it to WebP q90 before it hits R2, via `@jsquash/webp` + `@jsquash/png`/
+`@jsquash/jpeg` — same target as the hand-placed swap-page pipeline, so a
+generated plate doesn't ship 3-5x heavier than everything else. Workers can't
+do dynamic wasm fetches, so each codec's `.wasm` is a static import handed to
+that codec's own `init()`; Vitest can't load raw `.wasm` either, so
+`vite.config.ts` aliases the three specifiers to `src/test/wasmStub.ts` under
+`VITEST` only. Encode failure falls back to the original bytes rather than
+losing the generation.
+
 The browser never talks to Comfy or ElevenLabs. For Seedream (a Comfy
 **partner node**) you need both:
 
