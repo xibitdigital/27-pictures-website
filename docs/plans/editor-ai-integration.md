@@ -11,6 +11,26 @@ Keep `/toons/editor/` as it is (upload plate, upload mp3, place bubbles). Add tw
 
 The browser never talks to ComfyUI or ElevenLabs. Keys stay on the Worker.
 
+## Monthly budgets
+
+Each editor user has **two independent monthly budgets**, not one shared pool:
+
+| Budget | Consumed by | Not consumed by |
+| --- | --- | --- |
+| **audio** | Every ElevenLabs call from the Worker (TTS when a voice is set, sound-generation when Voice is None / SFX) | Manual mp3 upload |
+| **image** | Every ComfyUI / Seedream plate job the Worker queues | Manual plate upload or replace |
+
+An ElevenLabs call never decrements the image budget. A ComfyUI call never decrements the audio budget.
+
+- Scope: the logged-in editor (`users.id`), not the toon.
+- Window: calendar month, UTC. Usage resets at month start; unused credit does not roll over unless we say so later.
+- Check **before** the paid call. If that budget is exhausted → **402** `{ error, budget, used, limit }` and do not hit ElevenLabs or Comfy.
+- Count **1** per successful generate request (one wand click = one audio credit; one plate job = one image credit). Failed upstream calls do not spend.
+- Caps live on the user row or a `user_budgets` table (defaults via Worker vars, e.g. `AUDIO_BUDGET_MONTHLY` / `IMAGE_BUDGET_MONTHLY`). Exact numbers TBD.
+- Studio shows remaining image and remaining audio near the generate controls. Upload buttons stay enabled when a budget is empty.
+
+`GET /auth/me` (or `GET /budgets`) returns `{ audio: { used, limit }, image: { used, limit } }` so the inspector and generate dialog can disable the wand with a real reason instead of a generic error.
+
 ## Non-goals (v1)
 
 - No blank page without a plate (`pages.file_key` stays NOT NULL).
@@ -195,11 +215,11 @@ Worker deploy is separate from Pages (`cd worker/toon-editor && npx wrangler dep
 - SFX wand + reverb/metallic via a sidecar that can run ffmpeg.
 - Prompt library from `docs/story`.
 - Cloudflare Queue/cron so a closed tab still finishes a plate (v1 dies with the poll).
-- Cost/credit display.
+- Exact monthly cap numbers (env defaults vs per-user overrides).
 
 ## Risks
 
 - **Hosted Comfy required off-localhost.** Staging Worker cannot see `127.0.0.1:8188`.
 - **Watermarked previous plates** teach Seedream the site stamp. Only use `editor/` objects as refs.
 - **Worker/Comfy timeouts.** Polling avoids the 30s CPU limit; a stuck Comfy job needs a client-side timeout (~10 min) then `error`.
-- **Credits.** JWT-gated only; no spend cap in v1.
+- **Credits.** Two monthly budgets (audio vs image) as above. JWT still gates who can generate; the budget gates how much.
