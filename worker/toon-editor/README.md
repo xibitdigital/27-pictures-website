@@ -144,7 +144,7 @@ secrets. The studio never sees these keys.
 | --- | --- | --- | --- |
 | `JWT_SECRET` | `.dev.vars` | secret | editor JWT |
 | `ELEVENLABS_API_KEY` | `.dev.vars` | secret | inspector Generate audio |
-| `COMFY_URL` | `.dev.vars` | secret | ComfyUI origin (`POST /prompt`). Public HTTPS on staging. `http://127.0.0.1:8188` only for `make dev` on the same machine. Not `https://model-api.runcomfy.net`. |
+| `COMFY_URL` | `.dev.vars` | secret | Comfy origin. Staging uses `https://cloud.comfy.org/api` (X-API-Key). Local Comfy is `http://127.0.0.1:8188`. Not `https://model-api.runcomfy.net`. |
 | `COMFY_API_KEY` | `.dev.vars` | secret | Comfy **account** key from https://platform.comfy.org → API Keys. Seedream partner nodes need it as `extra_data.api_key_comfy_org` on `/prompt`. |
 
 Create the account key once (shown only at creation). Plate Generate also

@@ -8,7 +8,10 @@ export function comfyBase(env: Env): string | null {
 function comfyHeaders(env: Env, extra?: HeadersInit): Headers {
   const headers = new Headers(extra);
   const key = env.COMFY_API_KEY?.trim();
-  if (key) headers.set("Authorization", `Bearer ${key}`);
+  if (key) {
+    headers.set("Authorization", `Bearer ${key}`);
+    headers.set("X-API-Key", key);
+  }
   return headers;
 }
 
@@ -66,19 +69,22 @@ export async function comfyHistory(
 ): Promise<{ ok: true; images: ComfyHistoryImage[]; pending: boolean } | { ok: false; error: string }> {
   const base = comfyBase(env);
   if (!base) return { ok: false, error: "ComfyUI is not configured" };
-  const res = await fetch(`${base}/history/${encodeURIComponent(promptId)}`, { headers: comfyHeaders(env) });
+  const headers = comfyHeaders(env);
+  let res = await fetch(`${base}/history/${encodeURIComponent(promptId)}`, { headers });
+  if (res.status === 404) {
+    res = await fetch(`${base}/history_v2/${encodeURIComponent(promptId)}`, { headers });
+  }
   if (!res.ok) {
     const text = await res.text();
     return { ok: false, error: `Comfy history failed (${res.status}) ${text.slice(0, 200)}` };
   }
-  const body = (await res.json()) as Record<
-    string,
-    {
-      outputs?: Record<string, { images?: ComfyHistoryImage[] }>;
-      status?: { status_str?: string; completed?: boolean };
-    }
-  >;
-  const entry = body[promptId];
+  const body = (await res.json()) as Record<string, unknown>;
+  type HistoryEntry = {
+    outputs?: Record<string, { images?: ComfyHistoryImage[] }>;
+    status?: { status_str?: string; completed?: boolean };
+  };
+  const keyed = body[promptId] as HistoryEntry | undefined;
+  const entry: HistoryEntry | undefined = keyed || (body.outputs ? (body as HistoryEntry) : undefined);
   if (!entry) return { ok: true, images: [], pending: true };
   const images: ComfyHistoryImage[] = [];
   for (const out of Object.values(entry.outputs || {})) {
@@ -101,7 +107,16 @@ export async function comfyView(
     subfolder: image.subfolder || "",
     type: image.type || "output",
   });
-  const res = await fetch(`${base}/view?${params}`, { headers: comfyHeaders(env) });
+  const res = await fetch(`${base}/view?${params}`, { headers: comfyHeaders(env), redirect: "manual" });
+  if (res.status === 301 || res.status === 302 || res.status === 307 || res.status === 308) {
+    const loc = res.headers.get("location");
+    if (!loc) return { ok: false, error: "Comfy view redirect had no location" };
+    const file = await fetch(loc);
+    if (!file.ok) return { ok: false, error: `Comfy view redirect failed (${file.status})` };
+    const bytes = await file.arrayBuffer();
+    if (!bytes.byteLength) return { ok: false, error: "Comfy view returned empty image" };
+    return { ok: true, bytes };
+  }
   if (!res.ok) return { ok: false, error: `Comfy view failed (${res.status})` };
   const bytes = await res.arrayBuffer();
   if (!bytes.byteLength) return { ok: false, error: "Comfy view returned empty image" };

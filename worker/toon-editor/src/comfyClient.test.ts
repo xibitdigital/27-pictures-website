@@ -23,6 +23,8 @@ describe("comfySubmitPrompt", () => {
       prompt: { "1": { class_type: "LoadImage" } },
       extra_data: { api_key_comfy_org: "comfyui-secret" },
     });
-    expect(new Headers(init.headers).get("Authorization")).toBe("Bearer comfyui-secret");
+    const headers = new Headers(init.headers);
+    expect(headers.get("Authorization")).toBe("Bearer comfyui-secret");
+    expect(headers.get("X-API-Key")).toBe("comfyui-secret");
   });
 });
