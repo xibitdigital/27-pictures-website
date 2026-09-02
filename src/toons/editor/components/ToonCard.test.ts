@@ -24,6 +24,16 @@ describe("ToonCard", () => {
     expect(wrapper.get("img").attributes("src")).toContain("jax.jpg");
   });
 
+  it("renders an add card with a plus and no cover image", () => {
+    const wrapper = mount(ToonCard, {
+      props: { add: true, to: "/new?series=erin&episode=3", title: "Add episode" },
+    });
+    expect(wrapper.classes()).toContain("series-card--add");
+    expect(wrapper.attributes("aria-label")).toBe("Add episode");
+    expect(wrapper.find("img").exists()).toBe(false);
+    expect(wrapper.get("[aria-hidden='true']").text()).toBe("+");
+  });
+
   it("paints a visibility badge on the cover", () => {
     const wrapper = mount(ToonCard, {
       props: { title: "Marcus", badge: "Draft", visibility: "draft" },

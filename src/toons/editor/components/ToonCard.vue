@@ -16,16 +16,24 @@ withDefaults(
     to?: string;
     badge?: string;
     visibility?: ToonVisibility | "";
+    add?: boolean;
   }>(),
-  { meta: "", cue: "", description: "", coverUrl: null, to: "", badge: "", visibility: "" }
+  { meta: "", cue: "", description: "", coverUrl: null, to: "", badge: "", visibility: "", add: false }
 );
 </script>
 
 <template>
-  <component :is="to ? RouterLink : 'div'" class="series-card" :to="to || undefined">
+  <component
+    :is="to ? RouterLink : 'div'"
+    class="series-card"
+    :class="{ 'series-card--add': add }"
+    :to="to || undefined"
+    :aria-label="add ? title : undefined"
+  >
     <span class="series-card-face">
       <span class="series-card-art">
-        <img v-if="coverUrl" :src="coverUrl" :alt="title" width="1152" height="1728" />
+        <span v-if="add" class="editor-add-plus" aria-hidden="true">+</span>
+        <img v-else-if="coverUrl" :src="coverUrl" :alt="title" width="1152" height="1728" />
         <span v-if="badge" class="editor-visibility-badge" :data-visibility="visibility || undefined">{{ badge }}</span>
       </span>
       <span v-if="meta" class="series-card-meta">{{ meta }}</span>

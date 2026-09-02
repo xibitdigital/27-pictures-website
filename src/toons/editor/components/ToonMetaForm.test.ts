@@ -3,7 +3,11 @@ import { mount } from "@vue/test-utils";
 import ToonMetaForm from "./ToonMetaForm.vue";
 import * as api from "../api";
 
-const route = { name: "new" as string, params: {} as Record<string, string> };
+const route = {
+  name: "new" as string,
+  params: {} as Record<string, string>,
+  query: {} as Record<string, string>,
+};
 const push = vi.fn();
 
 vi.mock("vue-router", () => ({
@@ -20,6 +24,7 @@ describe("ToonMetaForm visibility", () => {
   beforeEach(() => {
     route.name = "new";
     route.params = {};
+    route.query = {};
     push.mockReset();
     vi.spyOn(api, "listSeries").mockResolvedValue([
       { key: "erin", title: "Erin & the Goblins" },
@@ -191,5 +196,16 @@ describe("ToonMetaForm visibility", () => {
     await wrapper.get("form").trigger("submit");
     expect(patch).toHaveBeenCalledWith("t1", expect.objectContaining({ status: "published" }));
     expect(push).not.toHaveBeenCalled();
+  });
+
+  it("pre-fills series and episode from the query when adding from a series page", async () => {
+    route.query = { series: "erin", episode: "3" };
+    const wrapper = mount(ToonMetaForm, {
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true } },
+    });
+    await vi.waitFor(() =>
+      expect((wrapper.get('select[name="series"]').element as HTMLSelectElement).value).toBe("erin")
+    );
+    expect((wrapper.get('input[name="episode-n"]').element as HTMLInputElement).value).toBe("3");
   });
 });

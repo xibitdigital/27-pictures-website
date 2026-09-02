@@ -288,6 +288,31 @@ body {
   position: relative;
 }
 
+.editor-card-list .series-card--add .series-card-art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 2 / 3;
+  border: 2px solid var(--red-smile);
+  background: var(--bg-card);
+}
+
+.editor-add-plus {
+  font-size: 3.5rem;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--red-smile);
+}
+
+.editor-card-list .series-card--add:hover .series-card-art,
+.editor-card-list .series-card--add:focus-visible .series-card-art {
+  background: var(--red-smile);
+}
+
+.editor-card-list .series-card--add:hover .editor-add-plus,
+.editor-card-list .series-card--add:focus-visible .editor-add-plus {
+  color: var(--text);
+}
+
 .editor-visibility-badge {
   position: absolute;
   top: 0.55rem;

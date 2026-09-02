@@ -21,6 +21,13 @@ const router = useRouter();
 
 const isCreate = computed(() => route.name === "series-new" || !route.params.key);
 
+const nextEpisodeN = computed(() => {
+  const nums = members.value.map((toon) => toon.episodeN).filter((n): n is number => n != null);
+  return nums.length ? Math.max(...nums) + 1 : 1;
+});
+
+const addEpisodeTo = computed(() => `/new?series=${encodeURIComponent(key.value)}&episode=${nextEpisodeN.value}`);
+
 const key = ref("");
 const keyTouched = ref(false);
 const title = ref("");
@@ -355,8 +362,7 @@ async function onSubmit(ev: Event): Promise<void> {
     </form>
     <div v-if="!isCreate" class="editor-list-body">
       <h2 class="editor-list-heading">Episodes</h2>
-      <p v-if="!members.length" class="editor-muted">No episodes yet. Assign this series on a toon’s metadata.</p>
-      <ul v-else class="editor-card-list">
+      <ul class="editor-card-list">
         <li v-for="toon in members" :key="toon.id">
           <ToonCard
             :to="`/${toon.id}`"
@@ -367,6 +373,9 @@ async function onSubmit(ev: Event): Promise<void> {
             :badge="visibilityLabel(toon.status)"
             :visibility="visibilityFromStatus(toon.status)"
           />
+        </li>
+        <li>
+          <ToonCard add :to="addEpisodeTo" title="Add episode" meta="New" cue="Create" />
         </li>
       </ul>
     </div>

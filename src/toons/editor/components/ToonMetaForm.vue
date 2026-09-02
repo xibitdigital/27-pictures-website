@@ -85,12 +85,21 @@ watch(
   { immediate: true }
 );
 
+function applyCreateQuery(): void {
+  if (!isCreate.value) return;
+  const series = String(route.query.series || "").trim();
+  const episode = String(route.query.episode || "").trim();
+  if (series) seriesKey.value = series;
+  if (episode) episodeN.value = episode;
+}
+
 onMounted(async () => {
   try {
     seriesList.value = await listSeries();
   } catch {
     seriesList.value = [];
   }
+  applyCreateQuery();
 });
 
 function episodePayload(): number | null {
