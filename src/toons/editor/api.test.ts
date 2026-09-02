@@ -9,6 +9,7 @@ import {
   replacePage,
   saveSeries,
   setToken,
+  fetchCredits,
   generateAudio,
   uploadAudio,
   withSiteQuery,
@@ -158,6 +159,27 @@ describe("editor api", () => {
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer sess-1");
     expect(headers.get("Content-Type")).toBeNull();
+  });
+
+  it("GETs monthly credits with the JWT bearer", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          audio: { used: 10, limit: 100, unit: "chars" },
+          image: { used: 0, limit: null, unit: "credits" },
+          periodEnd: null,
+        }),
+        { status: 200 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await fetchCredits();
+    expect(out.audio.used).toBe(10);
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/credits");
+    const headers = new Headers((fetchMock.mock.calls[0][1] as RequestInit).headers);
+    expect(headers.get("Authorization")).toBe("Bearer sess-1");
   });
 
   it("POSTs ElevenLabs generate as JSON", async () => {

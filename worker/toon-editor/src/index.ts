@@ -16,8 +16,9 @@ import {
   validateCredentials,
   verifyPassword,
 } from "./auth";
-import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
+import { insertCreditEvent, loadUserCredits } from "./creditUsage";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
+import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { handleLikes } from "./likes";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
@@ -599,6 +600,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json({ user: publicUser(session) }, 200, cors);
   }
 
+  if (method === "GET" && path === "/credits") {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
+    return json(await loadUserCredits(env, session.id), 200, cors);
+  }
+
   if (method === "POST" && path === "/auth/logout") {
     return json({ ok: true }, 200, cors);
   }
@@ -1067,6 +1073,18 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!clip.ok) return json({ error: clip.error }, clip.status, cors);
     if (clip.bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "audio too large (8MB max)" }, 400, cors);
     const key = await putCaptionAudio(env, current.slug, clip.bytes);
+    if (session) {
+      try {
+        await insertCreditEvent(env, {
+          userId: session.id,
+          kind: "audio",
+          tokens: input.value.text.length,
+          source: "elevenlabs-generate",
+        });
+      } catch {
+        /* generate still succeeded */
+      }
+    }
     return json({ key, url: mediaUrl(request, key), audio: key }, 201, cors);
   }
 

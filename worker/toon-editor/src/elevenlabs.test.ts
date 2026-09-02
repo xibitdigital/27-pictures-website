@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { parseGenerateAudioBody, synthesizeSfx, synthesizeSpeech } from "./elevenlabs";
+import { fetchSubscription, parseGenerateAudioBody, synthesizeSfx, synthesizeSpeech } from "./elevenlabs";
 
 describe("parseGenerateAudioBody", () => {
   it("requires text", () => {
@@ -104,5 +104,32 @@ describe("synthesizeSfx", () => {
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe("https://api.elevenlabs.io/v1/sound-generation");
     expect(JSON.parse(String(init.body))).toEqual({ text: "CLANK", prompt_influence: 0.4 });
+  });
+});
+
+describe("fetchSubscription", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("reads character usage from ElevenLabs", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            character_count: 17231,
+            character_limit: 100000,
+            next_character_count_reset_unix: 1735689600,
+          }),
+          { status: 200 }
+        )
+      )
+    );
+    const out = await fetchSubscription("key-1");
+    expect(out).toEqual({
+      ok: true,
+      value: { characterCount: 17231, characterLimit: 100000, resetUnix: 1735689600 },
+    });
   });
 });

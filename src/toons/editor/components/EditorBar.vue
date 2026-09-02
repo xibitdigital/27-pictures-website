@@ -20,8 +20,8 @@ withDefaults(
     </div>
     <div class="editor-bar-end">
       <slot name="actions" />
-      <EditorSession />
       <RouterLink v-if="home" class="editor-btn editor-btn--ghost" to="/">All toons</RouterLink>
+      <EditorSession />
     </div>
   </header>
 </template>

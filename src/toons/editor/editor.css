@@ -148,6 +148,93 @@ body {
   gap: 0.6rem;
 }
 
+.editor-account {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.editor-account-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.editor-account-btn::-webkit-details-marker {
+  display: none;
+}
+
+.editor-account-btn::marker {
+  content: "";
+}
+
+.editor-account[open] .editor-account-btn,
+.editor-account-btn:hover,
+.editor-account-btn:focus-visible {
+  border-color: var(--silver);
+}
+
+.editor-account-avatar {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.editor-account-panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  z-index: 40;
+  box-sizing: border-box;
+  width: 16.5rem;
+  padding: 0.85rem 0.9rem 0.9rem;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  display: grid;
+  gap: 0.7rem;
+}
+
+.editor-account-email {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.editor-account-credits {
+  margin: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.editor-account-credits div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.editor-account-credits dt {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+.editor-account-credits dd {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
 .editor-btn--ghost {
   background: transparent;
   color: var(--text-muted);

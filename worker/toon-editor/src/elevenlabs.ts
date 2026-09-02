@@ -7,6 +7,13 @@ export const DEFAULT_SIMILARITY = 0.8;
 const ALLOWED_MODELS = new Set(["eleven_v3", "eleven_multilingual_v2"]);
 const TTS_URL = "https://api.elevenlabs.io/v1/text-to-speech";
 const SFX_URL = "https://api.elevenlabs.io/v1/sound-generation";
+const SUBSCRIPTION_URL = "https://api.elevenlabs.io/v1/user/subscription";
+
+export type ElevenSubscription = {
+  characterCount: number;
+  characterLimit: number | null;
+  resetUnix: number | null;
+};
 const SFX_PROMPT_INFLUENCE = 0.4;
 
 export type GenerateAudioInput =
@@ -109,4 +116,33 @@ export async function generateClip(
   input: GenerateAudioInput
 ): Promise<{ ok: true; bytes: ArrayBuffer } | { ok: false; error: string; status: number }> {
   return input.kind === "sfx" ? synthesizeSfx(apiKey, input) : synthesizeSpeech(apiKey, input);
+}
+
+export async function fetchSubscription(
+  apiKey: string
+): Promise<{ ok: true; value: ElevenSubscription } | { ok: false; error: string }> {
+  const res = await fetch(SUBSCRIPTION_URL, {
+    method: "GET",
+    headers: { "xi-api-key": apiKey, Accept: "application/json" },
+  });
+  if (!res.ok) {
+    const raw = await res.text();
+    return { ok: false, error: elevenErrorMessage(raw, res.status) };
+  }
+  const body = (await res.json()) as {
+    character_count?: unknown;
+    character_limit?: unknown;
+    next_character_count_reset_unix?: unknown;
+  };
+  const characterCount = Number(body.character_count);
+  const characterLimit = Number(body.character_limit);
+  const resetUnix = Number(body.next_character_count_reset_unix);
+  return {
+    ok: true,
+    value: {
+      characterCount: Number.isFinite(characterCount) ? characterCount : 0,
+      characterLimit: Number.isFinite(characterLimit) && characterLimit > 0 ? characterLimit : null,
+      resetUnix: Number.isFinite(resetUnix) && resetUnix > 0 ? resetUnix : null,
+    },
+  };
 }

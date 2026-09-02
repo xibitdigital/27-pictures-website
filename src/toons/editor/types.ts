@@ -6,6 +6,8 @@
 export type {
   BubbleRecord,
   CaptionLang,
+  CreditBucket,
+  CreditsSnapshot,
   DescriptionMap,
   EditorUser,
   PageRecord,

@@ -60,6 +60,7 @@ and local see published + staging; production sees published only.
 | POST | `/auth/register` | public while no users | first account |
 | POST | `/auth/login` | public | `{ email, password }` → `{ token, user }` |
 | GET | `/auth/me` | JWT | `{ user }` |
+| GET | `/credits` | JWT | monthly audio (ElevenLabs chars) + image usage |
 | POST | `/auth/logout` | JWT | client drops the token |
 | POST | `/auth/users` | JWT | add another editor |
 | GET | `/catalog` | public | `{ series, ungrouped }` — filtered by site |

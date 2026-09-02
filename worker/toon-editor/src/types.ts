@@ -8,6 +8,8 @@ import type { DescriptionMap } from "./apiTypes";
 export type {
   BubbleRecord,
   CaptionLang,
+  CreditBucket,
+  CreditsSnapshot,
   DescriptionMap,
   EditorUser,
   PageRecord,

@@ -14,6 +14,18 @@ export interface EditorUser {
   email: string;
 }
 
+export interface CreditBucket {
+  used: number;
+  limit: number | null;
+  unit: "chars" | "credits";
+}
+
+export interface CreditsSnapshot {
+  audio: CreditBucket;
+  image: CreditBucket;
+  periodEnd: string | null;
+}
+
 export function emptyDescriptionMap(): DescriptionMap {
   return { en: "", it: "", de: "", fr: "" };
 }

@@ -1,5 +1,6 @@
 import type {
   BubbleRecord,
+  CreditsSnapshot,
   EditorUser,
   SeriesInput,
   SeriesOption,
@@ -109,6 +110,10 @@ export function register(email: string, password: string): Promise<AuthPayload> 
 
 export function fetchMe(): Promise<{ user: EditorUser }> {
   return api<{ user: EditorUser }>("/auth/me");
+}
+
+export function fetchCredits(): Promise<CreditsSnapshot> {
+  return api<CreditsSnapshot>("/credits");
 }
 
 export async function logout(): Promise<void> {
