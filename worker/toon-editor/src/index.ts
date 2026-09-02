@@ -1310,18 +1310,30 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .bind(current.series_key)
       .first<SeriesRow>();
     if (!series) return json({ error: "series not found" }, 404, cors);
-    const parsed = await readJson(request);
-    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
-    const prompt = String(parsed.body.prompt || "").trim();
+    const form = await request.formData();
+    const prompt = String(form.get("prompt") || "").trim();
     if (!prompt) return json({ error: "prompt is required" }, 400, cors);
-    const includePrevious = parsed.body.includePrevious !== false && parsed.body.includePrevious !== "0";
-    const pageId = parsed.body.pageId ? String(parsed.body.pageId) : null;
+    const includePrevious = form.get("includePrevious") !== "0";
+    const pageId = form.get("pageId") ? String(form.get("pageId")) : null;
+    const previousFile = form.get("previousFile");
+    let previousOverride: { bytes: ArrayBuffer; type: string } | null = null;
+    if (previousFile && typeof previousFile !== "string") {
+      const blob = previousFile as File;
+      const bytes = await blob.arrayBuffer();
+      const resolved = resolveImageType(blob.type || "", bytes);
+      if (!resolved) return json({ error: "previous-plate image must be webp, jpeg, or png" }, 400, cors);
+      if (bytes.byteLength > MAX_UPLOAD_BYTES) {
+        return json({ error: "previous-plate image too large (8MB max)" }, 400, cors);
+      }
+      previousOverride = { bytes, type: resolved.type };
+    }
     const started = await startPageGenerate(env, {
       toon: current,
       series,
       prompt,
       includePrevious,
       pageId,
+      previousOverride,
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
     return json(

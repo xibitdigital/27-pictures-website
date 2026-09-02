@@ -14,18 +14,24 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: [];
-  submit: [payload: { prompt: string; includePrevious: boolean }];
+  submit: [payload: { prompt: string; includePrevious: boolean; previousFile: File | null }];
 }>();
 
 const rootEl = ref<HTMLElement | null>(null);
 const prompt = ref("");
 const includePrevious = ref(true);
+const previousFile = ref<File | null>(null);
+const previousFileInput = ref<HTMLInputElement | null>(null);
+
+const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
 
 watch(
   () => props.open,
   async (open) => {
     if (!open) return;
     includePrevious.value = props.hasPrevious;
+    previousFile.value = null;
+    if (previousFileInput.value) previousFileInput.value.value = "";
     await nextTick();
     rootEl.value?.focus();
   }
@@ -40,15 +46,17 @@ function stopPlate(ev: Event): void {
   ev.stopPropagation();
 }
 
+function onPreviousFile(ev: Event): void {
+  const input = ev.target as HTMLInputElement;
+  previousFile.value = input.files?.[0] || null;
+}
+
 const missingSheets = computed(() =>
   (props.generate?.slots || []).filter((slot) => slot.kind === "sheet" && !slot.fileKey)
 );
 
 const missingPrevious = computed(
-  () =>
-    includePrevious.value &&
-    (props.generate?.slots || []).some((slot) => slot.kind === "previous") &&
-    !props.hasPrevious
+  () => includePrevious.value && hasPreviousSlot.value && !props.hasPrevious && !previousFile.value
 );
 
 const canSubmit = computed(
@@ -62,7 +70,11 @@ const canSubmit = computed(
 
 function onSubmit(): void {
   if (!canSubmit.value) return;
-  emit("submit", { prompt: prompt.value.trim(), includePrevious: includePrevious.value && props.hasPrevious });
+  emit("submit", {
+    prompt: prompt.value.trim(),
+    includePrevious: includePrevious.value && props.hasPrevious,
+    previousFile: previousFile.value,
+  });
 }
 </script>
 
@@ -105,15 +117,34 @@ function onSubmit(): void {
               placeholder="What happens on this page (no balloons, no SFX lettering)"
             />
           </label>
-          <label v-if="generate?.slots.some((s) => s.kind === 'previous')" class="editor-check">
-            <input v-model="includePrevious" type="checkbox" name="include-previous" :disabled="busy || !hasPrevious" />
-            Include previous page
-          </label>
+          <template v-if="hasPreviousSlot">
+            <label class="editor-check">
+              <input
+                v-model="includePrevious"
+                type="checkbox"
+                name="include-previous"
+                :disabled="busy || !hasPrevious"
+              />
+              Include previous page
+            </label>
+            <label>
+              Or attach a specific image for the previous-plate slot
+              <input
+                ref="previousFileInput"
+                type="file"
+                name="previous-file"
+                accept="image/webp,image/jpeg,image/png"
+                :disabled="busy"
+                @change="onPreviousFile"
+              />
+            </label>
+            <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of the last plate.</p>
+          </template>
           <ul v-if="generate?.slots.length" class="editor-dialog-slots">
             <li v-for="slot in generate.slots" :key="slot.alias">
               <span>{{ slot.label || slot.alias }}</span>
               <span v-if="slot.kind === 'previous'" class="editor-muted">{{
-                hasPrevious && includePrevious ? "last plate" : "skipped"
+                previousFile ? "custom file" : hasPrevious && includePrevious ? "last plate" : "skipped"
               }}</span>
               <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
               <span v-else class="editor-error">missing sheet</span>

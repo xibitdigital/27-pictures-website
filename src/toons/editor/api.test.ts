@@ -246,7 +246,7 @@ describe("editor api", () => {
     expect(headers.get("Content-Type")).toBe("application/json");
   });
 
-  it("POSTs a page generate job as JSON", async () => {
+  it("POSTs a page generate job as FormData", async () => {
     vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
     setToken("sess-1");
     const fetchMock = vi
@@ -256,10 +256,24 @@ describe("editor api", () => {
     const out = await generatePage("t1", { prompt: "Erin walks in.", includePrevious: true });
     expect(out.id).toBe("job-1");
     expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/toons/t1/pages/generate");
-    expect(JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body))).toEqual({
-      prompt: "Erin walks in.",
-      includePrevious: true,
-    });
+    const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
+    expect(body.get("prompt")).toBe("Erin walks in.");
+    expect(body.get("includePrevious")).toBe("1");
+    expect(body.get("previousFile")).toBeNull();
+  });
+
+  it("attaches a previous-plate override file when given one", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ id: "job-1", status: "running" }), { status: 202 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const file = new File([new Uint8Array([1, 2, 3])], "ref.webp", { type: "image/webp" });
+    await generatePage("t1", { prompt: "Erin walks in.", includePrevious: false, previousFile: file });
+    const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
+    expect(body.get("includePrevious")).toBe("0");
+    expect(body.get("previousFile")).toBe(file);
   });
 
   it("POSTs a replacement plate as FormData onto the existing page", async () => {

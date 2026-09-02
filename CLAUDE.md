@@ -745,6 +745,15 @@ slot files to Comfy `/upload/image`, writes LoadImage names, then writes the
 typed prompt onto the flow before `POST {COMFY_URL}/prompt`, then the studio
 polls `GET /jobs/:id`. Upload a plate still works without Comfy.
 
+`POST /toons/:id/pages/generate` is multipart, not JSON — a `previous` slot
+can take an operator-attached image (`previousFile` field) instead of the
+real last plate: the toon's first page has no previous plate to auto-fill,
+and this also lets you swap in a different reference for one generation.
+The override always wins over the actual last plate when both are present
+(`startPageGenerate`'s `previousOverride` in `generatePage.ts`); it's never
+written to R2 or the series config, just uploaded straight to Comfy for that
+one job.
+
 **Where the prompt lands is configurable, not always the Seedream node.** A
 flow can build the prompt upstream (`StringConcatenate` / `PrimitiveStringMultiline`
 nodes feeding Seedream's `prompt` as a link, e.g. to stack a fixed character-pin

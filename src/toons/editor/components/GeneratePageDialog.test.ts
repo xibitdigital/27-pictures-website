@@ -57,3 +57,68 @@ describe("GeneratePageDialog", () => {
     document.body.removeEventListener("pointerdown", onBody);
   });
 });
+
+describe("GeneratePageDialog previous-plate override", () => {
+  const generateWithPrevious = {
+    width: 1152,
+    height: 1728,
+    model: "seedream",
+    flowKey: "flow.json",
+    flowUrl: "/flow.json",
+    slots: [
+      { alias: "erin", label: "Erin character sheet", kind: "sheet", fileKey: "erin.webp", fileUrl: "/erin.webp" },
+      { alias: "previous", label: "Image 8 — previous", kind: "previous", fileKey: null, fileUrl: null },
+    ],
+  };
+
+  it("submits with previousFile: null when nothing is attached", async () => {
+    // Mount closed then open it, same as real usage — the dialog syncs
+    // includePrevious to hasPrevious in a watcher that only fires on that
+    // false->true transition, not on an already-open initial mount.
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: generateWithPrevious, hasPrevious: false, busy: false, status: "", error: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "Erin walks in.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    (document.querySelector("form") as HTMLFormElement).dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true })
+    );
+    await flushPromises();
+    expect(wrapper.emitted("submit")).toEqual([
+      [{ prompt: "Erin walks in.", includePrevious: false, previousFile: null }],
+    ]);
+    wrapper.unmount();
+  });
+
+  it("lets a first-page generation proceed once a previous-plate file is attached", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: generateWithPrevious, hasPrevious: false, busy: false, status: "", error: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "Erin walks in.";
+    textarea.dispatchEvent(new Event("input"));
+    const fileInput = document.querySelector('input[name="previous-file"]') as HTMLInputElement;
+    const file = new File([new Uint8Array([1, 2, 3])], "ref.webp", { type: "image/webp" });
+    Object.defineProperty(fileInput, "files", { value: [file] });
+    fileInput.dispatchEvent(new Event("change"));
+    await flushPromises();
+    const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(submitBtn.disabled).toBe(false);
+    (document.querySelector("form") as HTMLFormElement).dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true })
+    );
+    await flushPromises();
+    expect(wrapper.emitted("submit")).toEqual([
+      [{ prompt: "Erin walks in.", includePrevious: false, previousFile: file }],
+    ]);
+    wrapper.unmount();
+  });
+});

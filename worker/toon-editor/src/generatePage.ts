@@ -44,7 +44,17 @@ async function getObject(env: Env, key: string): Promise<ArrayBuffer | null> {
 
 export async function startPageGenerate(
   env: Env,
-  input: { toon: ToonRow; series: SeriesRow; prompt: string; includePrevious: boolean; pageId: string | null }
+  input: {
+    toon: ToonRow;
+    series: SeriesRow;
+    prompt: string;
+    includePrevious: boolean;
+    pageId: string | null;
+    /** Operator-attached image for the "previous" slot, e.g. a toon's first
+     *  page (no previous plate exists yet) or swapping in a different
+     *  reference for one generation. Always wins over the real last plate. */
+    previousOverride?: { bytes: ArrayBuffer; type: string } | null;
+  }
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
   if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
   let extra: { generate?: unknown } = {};
@@ -81,11 +91,16 @@ export async function startPageGenerate(
 
   const names: string[] = [];
   for (const slot of generate.slots) {
-    const key = slot.kind === "previous" ? previousKey : slot.fileKey;
-    if (!key) {
-      return { ok: false, error: `missing reference: ${slot.label || slot.alias}`, status: 400 };
+    let bytes: ArrayBuffer | null;
+    if (slot.kind === "previous" && input.previousOverride) {
+      bytes = input.previousOverride.bytes;
+    } else {
+      const key = slot.kind === "previous" ? previousKey : slot.fileKey;
+      if (!key) {
+        return { ok: false, error: `missing reference: ${slot.label || slot.alias}`, status: 400 };
+      }
+      bytes = await getObject(env, key);
     }
-    const bytes = await getObject(env, key);
     if (!bytes) return { ok: false, error: `missing reference file: ${slot.label || slot.alias}`, status: 400 };
     const kind = sniffImage(bytes);
     const uploaded = await comfyUploadImage(env, bytes, `${slot.alias}.${kind.ext}`);

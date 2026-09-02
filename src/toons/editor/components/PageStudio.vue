@@ -108,7 +108,11 @@ async function load(): Promise<void> {
 onMounted(load);
 watch(toonId, load);
 
-async function onGenerateSubmit(payload: { prompt: string; includePrevious: boolean }): Promise<void> {
+async function onGenerateSubmit(payload: {
+  prompt: string;
+  includePrevious: boolean;
+  previousFile: File | null;
+}): Promise<void> {
   if (!toon.value) return;
   generateBusy.value = true;
   generateError.value = "";
