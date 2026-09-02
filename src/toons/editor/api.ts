@@ -89,9 +89,10 @@ export async function api<T>(path: string, init: RequestInit = {}, auth = true):
     }
   }
   if (!res.ok) {
-    if (res.status >= 500) throw new Error(REACH_ERROR);
     const err = body as { error?: string } | null;
-    throw new Error(err?.error || `editor api ${res.status}`);
+    if (err?.error) throw new Error(err.error);
+    if (res.status >= 500) throw new Error(REACH_ERROR);
+    throw new Error(`editor api ${res.status}`);
   }
   return body as T;
 }

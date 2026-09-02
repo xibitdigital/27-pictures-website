@@ -861,20 +861,34 @@ body {
   clip: rect(0 0 0 0);
 }
 
+.editor-dialog-root {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.editor-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg-dark) 72%, transparent);
+}
+
 .editor-dialog {
+  position: relative;
+  z-index: 1;
   width: min(36rem, calc(100vw - 2rem));
   max-height: min(90dvh, 44rem);
-  margin: auto;
+  margin: 0;
   padding: 0;
   overflow: hidden;
   background: var(--bg-menu);
   color: var(--text);
   border: 1px solid var(--border-light);
   box-shadow: 0 12px 28px var(--bg-dark);
-}
-
-.editor-dialog::backdrop {
-  background: color-mix(in srgb, var(--bg-dark) 72%, transparent);
 }
 
 .editor-dialog-body {

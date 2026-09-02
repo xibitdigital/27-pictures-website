@@ -49,6 +49,18 @@ describe("editor api", () => {
     await expect(login("a@b.c", "password1")).rejects.toThrow(/make editor-worker/);
   });
 
+  it("surfaces a Worker 5xx body instead of the unreachable-API hint", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev");
+    setToken("sess-1");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: "ComfyUI is not configured" }), { status: 503 }))
+    );
+    await expect(generatePage("t1", { prompt: "Erin walks in.", includePrevious: false })).rejects.toThrow(
+      "ComfyUI is not configured"
+    );
+  });
+
   it("logs in without a bearer token and stores the JWT", async () => {
     vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
     const fetchMock = vi
