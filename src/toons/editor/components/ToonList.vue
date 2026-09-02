@@ -2,13 +2,13 @@
 import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import { listSeries, listToons } from "../api";
+import { pushToast } from "../toast";
 import { visibilityFromStatus, visibilityLabel, type SeriesOption, type ToonListItem } from "../types";
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
 
 const toons = ref<ToonListItem[]>([]);
 const seriesList = ref<SeriesOption[]>([]);
-const error = ref("");
 const loading = ref(true);
 
 onMounted(async () => {
@@ -17,7 +17,7 @@ onMounted(async () => {
     toons.value = books;
     seriesList.value = shelves;
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Failed to load";
+    pushToast(err instanceof Error ? err.message : "Failed to load");
   } finally {
     loading.value = false;
   }
@@ -45,7 +45,6 @@ const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey));
     </EditorBar>
     <div class="editor-list-body">
       <p v-if="loading">Loading…</p>
-      <p v-else-if="error" class="editor-error" role="alert">{{ error }}</p>
       <template v-else>
         <p v-if="!seriesList.length && !toons.length" class="editor-muted">No series yet.</p>
         <section v-for="group in grouped" :key="group.series.key" class="editor-list-section">

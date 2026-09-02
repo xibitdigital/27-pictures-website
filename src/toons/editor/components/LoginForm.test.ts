@@ -2,11 +2,13 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import LoginForm from "./LoginForm.vue";
 import * as api from "../api";
+import { toasts } from "../toast";
 
 describe("LoginForm", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     sessionStorage.clear();
+    toasts.splice(0, toasts.length);
   });
 
   it("creates the first account when no users exist", async () => {
@@ -43,12 +45,12 @@ describe("LoginForm", () => {
     expect(wrapper.emitted("loggedIn")).toHaveLength(1);
   });
 
-  it("shows the Worker error on a failed login", async () => {
+  it("toasts the Worker error on a failed login", async () => {
     vi.spyOn(api, "login").mockRejectedValue(new Error("invalid email or password"));
     const wrapper = mount(LoginForm, { props: { hasUsers: true } });
     await wrapper.get('input[name="email"]').setValue("x@y.z");
     await wrapper.get('input[name="password"]').setValue("wrong-pass");
     await wrapper.get("form").trigger("submit");
-    expect(wrapper.get('[role="alert"]').text()).toBe("invalid email or password");
+    expect(toasts.map((t) => t.message)).toEqual(["invalid email or password"]);
   });
 });

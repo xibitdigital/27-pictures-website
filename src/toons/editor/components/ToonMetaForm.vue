@@ -4,6 +4,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { createToon, getToon, listSeries, patchToon, readImageSize, uploadCover } from "../api";
 import { CAPTION_LANGS } from "../mapConfig";
+import { pushToast } from "../toast";
 import {
   TOON_VISIBILITY,
   emptyDescriptionMap,
@@ -37,7 +38,6 @@ const episodeN = ref("");
 const coverPreview = ref("");
 const coverFile = ref<File | null>(null);
 const existing = ref<ToonRecord | null>(null);
-const error = ref("");
 const saving = ref(false);
 
 const previewCue = computed(() => visibilityLabel(statusFromVisibility(visibility.value)));
@@ -73,7 +73,7 @@ async function loadToon(id: string): Promise<void> {
     episodeN.value = toon.episodeN != null ? String(toon.episodeN) : "";
     coverPreview.value = toon.coverUrl || "";
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Failed to load";
+    pushToast(err instanceof Error ? err.message : "Failed to load");
   }
 }
 
@@ -120,7 +120,6 @@ function onCover(ev: Event): void {
 
 async function onSubmit(ev: Event): Promise<void> {
   ev.preventDefault();
-  error.value = "";
   saving.value = true;
   try {
     const desc: DescriptionMap = {
@@ -159,7 +158,7 @@ async function onSubmit(ev: Event): Promise<void> {
     existing.value = toon;
     if (isCreate.value) await router.push(`/${toon.id}/pages`);
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Save failed";
+    pushToast(err instanceof Error ? err.message : "Save failed");
   } finally {
     saving.value = false;
   }
@@ -180,7 +179,6 @@ async function onSubmit(ev: Event): Promise<void> {
       </template>
     </EditorBar>
     <form id="toon-meta" class="editor-form" novalidate @submit="onSubmit">
-      <p v-if="error" class="editor-error" role="alert">{{ error }}</p>
       <div class="editor-form-main">
         <label v-if="isCreate" class="editor-form-span">
           Slug

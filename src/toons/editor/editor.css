@@ -310,6 +310,72 @@ body {
   color: var(--red-smile);
 }
 
+.editor-toasts {
+  position: fixed;
+  z-index: 500;
+  bottom: 1rem;
+  right: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  max-width: min(24rem, calc(100vw - 2rem));
+}
+
+.editor-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  background: var(--bg-menu);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  border-left: 3px solid var(--red-smile);
+  box-shadow: 0 12px 28px var(--bg-dark);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  animation: editor-toast-in 0.2s var(--transition);
+}
+
+.editor-toast--success {
+  border-left-color: var(--success);
+}
+
+.editor-toast span {
+  flex: 1;
+}
+
+.editor-toast-close {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--silver);
+  cursor: pointer;
+}
+
+.editor-toast-close:hover,
+.editor-toast-close:focus-visible {
+  color: var(--text);
+}
+
+@keyframes editor-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-toast {
+    animation: none;
+  }
+}
+
 .editor-card-list {
   list-style: none;
   display: grid;

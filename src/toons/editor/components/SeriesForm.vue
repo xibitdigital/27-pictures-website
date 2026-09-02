@@ -3,6 +3,7 @@ import { computed, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getSeries, readImageSize, saveSeries, uploadSeriesCover, uploadSeriesFlow, uploadSeriesRef } from "../api";
 import { CAPTION_LANGS } from "../mapConfig";
+import { pushToast } from "../toast";
 import {
   emptyDescriptionMap,
   parseDescriptionMap,
@@ -41,7 +42,6 @@ const coverPreview = ref("");
 const coverFile = ref<File | null>(null);
 const existing = ref<SeriesOption | null>(null);
 const members = ref<ToonListItem[]>([]);
-const error = ref("");
 const saving = ref(false);
 const plateWidth = ref("1152");
 const plateHeight = ref("1728");
@@ -93,7 +93,7 @@ async function loadSeries(seriesKey: string): Promise<void> {
     coverPreview.value = body.series.coverUrl || "";
     applyGenerate(body.series);
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Failed to load";
+    pushToast(err instanceof Error ? err.message : "Failed to load");
   }
 }
 
@@ -164,17 +164,16 @@ async function onFlow(ev: Event): Promise<void> {
   input.value = "";
   if (!file) return;
   if (isCreate.value || !existing.value) {
-    error.value = "Save the series first, then upload a flow.";
+    pushToast("Save the series first, then upload a flow.");
     return;
   }
-  error.value = "";
   uploadingFlow.value = true;
   try {
     const series = await uploadSeriesFlow(existing.value.key, file);
     existing.value = series;
     applyGenerate(series);
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Flow upload failed";
+    pushToast(err instanceof Error ? err.message : "Flow upload failed");
   } finally {
     uploadingFlow.value = false;
   }
@@ -187,25 +186,25 @@ async function onSlotFile(index: number, ev: Event): Promise<void> {
   if (!file) return;
   const alias = slots.value[index]?.alias.trim();
   if (!alias) {
-    error.value = "Give this slot a name before uploading a sheet for it.";
+    pushToast("Give this slot a name before uploading a sheet for it.");
     return;
   }
   if (alias === "previous") {
-    error.value =
-      'This slot is the previous-plate reference — it\'s filled automatically at generate time, not uploaded. Set its kind to "Previous page" (or give it a different name if it should take its own file).';
+    pushToast(
+      'This slot is the previous-plate reference — it\'s filled automatically at generate time, not uploaded. Set its kind to "Previous page" (or give it a different name if it should take its own file).'
+    );
     return;
   }
   if (isCreate.value || !existing.value) {
-    error.value = "Save the series first, then upload reference sheets.";
+    pushToast("Save the series first, then upload reference sheets.");
     return;
   }
-  error.value = "";
   try {
     const series = await uploadSeriesRef(existing.value.key, alias, file);
     existing.value = series;
     applyGenerate(series);
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Reference upload failed";
+    pushToast(err instanceof Error ? err.message : "Reference upload failed");
   }
 }
 
@@ -219,7 +218,6 @@ function onCover(ev: Event): void {
 
 async function onSubmit(ev: Event): Promise<void> {
   ev.preventDefault();
-  error.value = "";
   saving.value = true;
   try {
     const desc: DescriptionMap = {
@@ -247,7 +245,7 @@ async function onSubmit(ev: Event): Promise<void> {
     applyGenerate(series);
     if (isCreate.value) await router.push(`/series/${series.key}`);
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Save failed";
+    pushToast(err instanceof Error ? err.message : "Save failed");
   } finally {
     saving.value = false;
   }
@@ -264,7 +262,6 @@ async function onSubmit(ev: Event): Promise<void> {
       </template>
     </EditorBar>
     <form id="series-meta" class="editor-form" novalidate @submit="onSubmit">
-      <p v-if="error" class="editor-error" role="alert">{{ error }}</p>
       <div class="editor-form-main">
         <label v-if="isCreate" class="editor-form-span">
           Key

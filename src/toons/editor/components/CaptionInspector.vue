@@ -3,6 +3,7 @@ import { Upload, WandSparkles } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
 import { editorApiBase, generateAudio, uploadAudio } from "../api";
+import { pushToast } from "../toast";
 import {
   BUBBLE_TAILS,
   BUBBLE_VARIANTS,
@@ -55,7 +56,6 @@ const strokeThickDraft = ref("");
 const strokeThickFocused = ref(false);
 const uploading = ref(false);
 const generating = ref(false);
-const uploadError = ref("");
 const audioFileInput = ref<HTMLInputElement | null>(null);
 const audioBusy = computed(() => uploading.value || generating.value);
 
@@ -70,13 +70,6 @@ const spokenLine = computed(() => {
 });
 
 const canGenerateAudio = computed(() => Boolean(props.toonId && spokenLine.value && props.bubble));
-
-watch(
-  () => props.bubble?.id,
-  () => {
-    uploadError.value = "";
-  }
-);
 
 function audioPreviewSrc(path: string): string {
   if (!path) return "";
@@ -337,12 +330,11 @@ async function onAudioFile(ev: Event): Promise<void> {
   input.value = "";
   if (!file || !props.bubble || !props.toonId) return;
   uploading.value = true;
-  uploadError.value = "";
   try {
     const out = await uploadAudio(props.toonId, file);
     emit("change", extraPatch(props.bubble, "audio", out.audio));
   } catch (err) {
-    uploadError.value = err instanceof Error ? err.message : "Upload failed";
+    pushToast(err instanceof Error ? err.message : "Upload failed");
   } finally {
     uploading.value = false;
   }
@@ -351,7 +343,6 @@ async function onAudioFile(ev: Event): Promise<void> {
 async function onGenerateAudio(): Promise<void> {
   if (!props.bubble || !props.toonId || !canGenerateAudio.value) return;
   generating.value = true;
-  uploadError.value = "";
   try {
     const out = await generateAudio(props.toonId, {
       text: spokenLine.value,
@@ -361,7 +352,7 @@ async function onGenerateAudio(): Promise<void> {
     });
     emit("change", extraPatch(props.bubble, "audio", out.audio));
   } catch (err) {
-    uploadError.value = err instanceof Error ? err.message : "Generate failed";
+    pushToast(err instanceof Error ? err.message : "Generate failed");
   } finally {
     generating.value = false;
   }
@@ -599,7 +590,6 @@ async function onGenerateAudio(): Promise<void> {
           @blur="onAudioBlur"
         />
         <audio v-if="audioSrc" controls preload="none" :src="audioSrc" />
-        <p v-if="uploadError" class="editor-error" role="alert">{{ uploadError }}</p>
       </div>
       <div class="editor-form-actions">
         <button class="editor-btn editor-btn--ghost" type="button" name="delete" @click="emit('remove')">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import AuthGate from "./AuthGate.vue";
+import EditorToasts from "./components/EditorToasts.vue";
 </script>
 
 <template>
@@ -9,4 +10,5 @@ import AuthGate from "./AuthGate.vue";
       <RouterView />
     </div>
   </AuthGate>
+  <EditorToasts />
 </template>

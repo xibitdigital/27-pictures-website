@@ -19,6 +19,7 @@ import type { BubbleRecord, SeriesGenerateConfig, ToonRecord } from "../types";
 import { mergeReplacedPage } from "../pageFile";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, CAPTION_LANGS } from "../mapConfig";
+import { pushToast } from "../toast";
 import CaptionInspector from "./CaptionInspector.vue";
 import EditorBar from "./EditorBar.vue";
 import GeneratePageDialog from "./GeneratePageDialog.vue";
@@ -33,7 +34,6 @@ const router = useRouter();
 const toon = ref<ToonRecord | null>(null);
 const selectedId = ref<string | null>(null);
 const previewLang = ref<LangCode>("en");
-const error = ref("");
 const loading = ref(true);
 const saving = ref(false);
 const replacingId = ref<string | null>(null);
@@ -81,7 +81,6 @@ function clearDirty(id: string): void {
 
 async function load(): Promise<void> {
   loading.value = true;
-  error.value = "";
   try {
     const next = await getToon(toonId.value);
     toon.value = next;
@@ -99,7 +98,7 @@ async function load(): Promise<void> {
       await router.replace(`/${next.id}/pages/${next.pages[0].id}`);
     }
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Failed to load";
+    pushToast(err instanceof Error ? err.message : "Failed to load");
   } finally {
     loading.value = false;
   }
@@ -146,7 +145,6 @@ async function onGenerateSubmit(payload: {
 
 async function onUpload(file: File): Promise<void> {
   if (!toon.value) return;
-  error.value = "";
   try {
     const size = await readImageSize(file);
     const next = await uploadPage(toon.value.id, file, size);
@@ -155,7 +153,7 @@ async function onUpload(file: File): Promise<void> {
     const last = next.pages[next.pages.length - 1];
     if (last) await router.push(`/${next.id}/pages/${last.id}`);
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Upload failed";
+    pushToast(err instanceof Error ? err.message : "Upload failed");
   }
 }
 
@@ -165,7 +163,6 @@ async function onRemovePage(id: string): Promise<void> {
   const index = pages.findIndex((p) => p.id === id);
   if (index < 0) return;
   const wasActive = activePage.value?.id === id;
-  error.value = "";
   try {
     await deletePage(id);
     const next = pages
@@ -180,19 +177,18 @@ async function onRemovePage(id: string): Promise<void> {
       await router.replace(fallback ? `/${toon.value.id}/pages/${fallback.id}` : `/${toon.value.id}/pages`);
     }
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Delete page failed";
+    pushToast(err instanceof Error ? err.message : "Delete page failed");
   }
 }
 
 async function onReplaceThumb(pageId: string, file: File): Promise<void> {
-  error.value = "";
   replacingId.value = pageId;
   try {
     const size = await readImageSize(file);
     const next = await replacePage(pageId, file, size);
     toon.value = toon.value ? mergeReplacedPage(toon.value, next, pageId) : next;
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Replace failed";
+    pushToast(err instanceof Error ? err.message : "Replace failed");
   } finally {
     replacingId.value = null;
   }
@@ -237,7 +233,6 @@ async function saveDirty(): Promise<void> {
   const ids = [...dirtyIds.value];
   if (!ids.length) return;
   saving.value = true;
-  error.value = "";
   try {
     for (const id of ids) {
       const bubble = findBubble(id);
@@ -250,7 +245,7 @@ async function saveDirty(): Promise<void> {
       clearDirty(id);
     }
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Save failed";
+    pushToast(err instanceof Error ? err.message : "Save failed");
   } finally {
     saving.value = false;
   }
@@ -264,7 +259,7 @@ async function onAdd(pos: { x: number; y: number }): Promise<void> {
     page.bubbles.push(created);
     selectedId.value = created.id;
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Could not add bubble";
+    pushToast(err instanceof Error ? err.message : "Could not add bubble");
   }
 }
 
@@ -277,7 +272,7 @@ async function onRemove(): Promise<void> {
     clearDirty(id);
     selectedId.value = null;
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Delete failed";
+    pushToast(err instanceof Error ? err.message : "Delete failed");
   }
 }
 </script>
@@ -301,7 +296,6 @@ async function onRemove(): Promise<void> {
         </button>
       </template>
     </EditorBar>
-    <p v-if="error" class="editor-error" role="alert">{{ error }}</p>
     <p v-if="loading">Loading…</p>
     <template v-else-if="toon">
       <div class="editor-studio-body">

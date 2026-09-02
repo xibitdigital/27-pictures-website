@@ -2,6 +2,7 @@
 import { computed, inject, ref } from "vue";
 import { fetchCredits } from "../api";
 import { EDITOR_LOGOUT_KEY, EDITOR_USER_KEY } from "../session";
+import { pushToast } from "../toast";
 import type { CreditsSnapshot } from "../types";
 
 const userRef = inject(EDITOR_USER_KEY);
@@ -10,7 +11,6 @@ const email = computed(() => userRef?.value?.email ?? "");
 const initial = computed(() => (email.value ? email.value.slice(0, 1).toUpperCase() : "?"));
 const loading = ref(false);
 const credits = ref<CreditsSnapshot | null>(null);
-const creditError = ref("");
 let creditsInflight = false;
 
 function formatCount(n: number): string {
@@ -40,11 +40,10 @@ async function onToggle(ev: Event): Promise<void> {
   if (!details.open || creditsInflight) return;
   creditsInflight = true;
   loading.value = true;
-  creditError.value = "";
   try {
     credits.value = await fetchCredits();
   } catch (err) {
-    creditError.value = err instanceof Error ? err.message : "Could not load credits";
+    pushToast(err instanceof Error ? err.message : "Could not load credits");
   } finally {
     loading.value = false;
     creditsInflight = false;
@@ -60,7 +59,6 @@ async function onToggle(ev: Event): Promise<void> {
     <div class="editor-account-panel">
       <p class="editor-account-email">{{ email }}</p>
       <p v-if="loading" class="editor-muted">Loading credits…</p>
-      <p v-else-if="creditError" class="editor-error" role="alert">{{ creditError }}</p>
       <dl v-else-if="credits" class="editor-account-credits">
         <div>
           <dt>Audio this period</dt>

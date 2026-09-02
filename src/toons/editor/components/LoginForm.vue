@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { login, register, setToken, type AuthPayload, type EditorUser } from "../api";
+import { pushToast } from "../toast";
 
 const props = defineProps<{
   hasUsers: boolean;
@@ -12,12 +13,10 @@ const emit = defineEmits<{
 
 const email = ref("");
 const password = ref("");
-const hint = ref("");
 const submitting = ref(false);
 
 async function onSubmit(ev: Event): Promise<void> {
   ev.preventDefault();
-  hint.value = "";
   submitting.value = true;
   try {
     const payload: AuthPayload = props.hasUsers
@@ -26,7 +25,7 @@ async function onSubmit(ev: Event): Promise<void> {
     setToken(payload.token);
     emit("loggedIn", payload.user);
   } catch (err) {
-    hint.value = err instanceof Error ? err.message : "Sign in failed";
+    pushToast(err instanceof Error ? err.message : "Sign in failed");
   } finally {
     submitting.value = false;
   }
@@ -52,7 +51,6 @@ async function onSubmit(ev: Event): Promise<void> {
         required
       />
     </label>
-    <p v-if="hint" class="editor-error" role="alert">{{ hint }}</p>
     <button class="editor-btn" type="submit" :disabled="submitting">
       {{ submitting ? "Please wait…" : hasUsers ? "Log in" : "Create account" }}
     </button>
