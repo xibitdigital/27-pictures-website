@@ -742,7 +742,7 @@ The browser never talks to Comfy or ElevenLabs. For Seedream (a Comfy
 
 | Secret | What it is |
 | --- | --- |
-| `COMFY_URL` | Comfy origin the Worker can `fetch` (`/prompt`, `/upload/image`, `/history`, `/view`). Staging: `https://cloud.comfy.org/api` (Comfy Cloud) or another public host. **Cannot** use `http://127.0.0.1:8188` on staging. Not the RunComfy square **model** API. |
+| `COMFY_URL` | Comfy origin the Worker can `fetch` (`/prompt`, `/upload/image`, `/jobs` or `/history`, `/view`). Staging: `https://cloud.comfy.org/api` (Comfy Cloud) or another public host. **Cannot** use `http://127.0.0.1:8188` on staging. Not the RunComfy square **model** API. |
 | `COMFY_API_KEY` | Comfy **account** key from [platform.comfy.org](https://platform.comfy.org/login) → API Keys (`comfyui-…`). Sent as `extra_data.api_key_comfy_org` (and `Authorization: Bearer`). |
 
 ```bash

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { comfySubmitPrompt } from "./comfyClient";
+import { comfyHistory, comfySubmitPrompt } from "./comfyClient";
 import type { Env } from "./types";
 
 function env(partial: Partial<Env>): Env {
@@ -35,5 +35,55 @@ describe("comfySubmitPrompt", () => {
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer comfyui-secret");
     expect(headers.get("X-API-Key")).toBe("comfyui-secret");
+  });
+});
+
+describe("comfyHistory", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("tries /jobs first and parses a flat JobDetailResponse", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ outputs: { "1": { images: [{ filename: "a.png" }] } }, status: "completed" }), {
+        status: 200,
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await comfyHistory(env({ COMFY_URL: "https://comfy.example" }), "p1");
+    expect(String(fetchMock.mock.calls[0][0])).toBe("https://comfy.example/jobs/p1");
+    expect(out).toEqual({ ok: true, images: [{ filename: "a.png" }], pending: false });
+  });
+
+  it("falls back to /history then /history_v2 when /jobs 404s", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ code: "NOT_FOUND" }), { status: 404 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ code: "NOT_FOUND" }), { status: 404 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            p1: { outputs: { "1": { images: [{ filename: "b.png" }] } }, status: { completed: true } },
+          }),
+          { status: 200 }
+        )
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await comfyHistory(env({ COMFY_URL: "https://comfy.example" }), "p1");
+    expect(fetchMock.mock.calls.map((c) => String(c[0]))).toEqual([
+      "https://comfy.example/jobs/p1",
+      "https://comfy.example/history/p1",
+      "https://comfy.example/history_v2/p1",
+    ]);
+    expect(out).toEqual({ ok: true, images: [{ filename: "b.png" }], pending: false });
+  });
+
+  it("reports a job failure from a plain status string", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ outputs: {}, status: "error" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await comfyHistory(env({ COMFY_URL: "https://comfy.example" }), "p1");
+    expect(out).toEqual({ ok: false, error: "Comfy job failed" });
   });
 });

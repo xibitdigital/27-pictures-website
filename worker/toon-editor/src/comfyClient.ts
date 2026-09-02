@@ -72,10 +72,20 @@ export async function comfyHistory(
   const base = comfyBase(env);
   if (!base) return { ok: false, error: "ComfyUI is not configured" };
   const headers = comfyHeaders(env);
-  let res = await fetch(`${base}/history/${encodeURIComponent(promptId)}`, { headers });
-  if (res.status === 404) {
-    res = await fetch(`${base}/history_v2/${encodeURIComponent(promptId)}`, { headers });
+  // Comfy Cloud tracks jobs under /jobs/{id} (history_v2 is deprecated there
+  // and 404s for cloud-native jobs); self-hosted ComfyUI has no /jobs route
+  // and falls straight through to /history.
+  const attempts = [
+    `${base}/jobs/${encodeURIComponent(promptId)}`,
+    `${base}/history/${encodeURIComponent(promptId)}`,
+    `${base}/history_v2/${encodeURIComponent(promptId)}`,
+  ];
+  let res: Response | undefined;
+  for (const url of attempts) {
+    res = await fetch(url, { headers });
+    if (res.status !== 404) break;
   }
+  if (!res) return { ok: false, error: "Comfy history failed (no response)" };
   if (!res.ok) {
     const text = await res.text();
     return { ok: false, error: `Comfy history failed (${res.status}) ${text.slice(0, 200)}` };
@@ -83,7 +93,7 @@ export async function comfyHistory(
   const body = (await res.json()) as Record<string, unknown>;
   type HistoryEntry = {
     outputs?: Record<string, { images?: ComfyHistoryImage[] }>;
-    status?: { status_str?: string; completed?: boolean };
+    status?: { status_str?: string; completed?: boolean } | string;
   };
   const keyed = body[promptId] as HistoryEntry | undefined;
   const entry: HistoryEntry | undefined = keyed || (body.outputs ? (body as HistoryEntry) : undefined);
@@ -92,9 +102,11 @@ export async function comfyHistory(
   for (const out of Object.values(entry.outputs || {})) {
     if (Array.isArray(out.images)) images.push(...out.images);
   }
-  const failed = String(entry.status?.status_str || "").toLowerCase() === "error";
+  const statusStr = typeof entry.status === "string" ? entry.status : entry.status?.status_str;
+  const completed = typeof entry.status === "string" ? entry.status === "completed" : entry.status?.completed;
+  const failed = String(statusStr || "").toLowerCase() === "error";
   if (failed) return { ok: false, error: "Comfy job failed" };
-  const pending = images.length === 0 && entry.status?.completed !== true;
+  const pending = images.length === 0 && completed !== true;
   return { ok: true, images, pending };
 }
 
