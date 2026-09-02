@@ -49,7 +49,9 @@ import {
 } from "./types";
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+// Raw PNG character sheets (uncompressed, high-res) routinely land well past
+// 8MB — that limit rejected legitimate reference uploads.
+const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 const IMAGE_TYPES: Record<string, string> = {
   "image/webp": "webp",
   "image/jpeg": "jpg",
@@ -579,7 +581,7 @@ async function readUpload(request: Request): Promise<ImageUpload | { error: stri
   const bytes = await blob.arrayBuffer();
   const resolved = resolveImageType(blob.type || "", bytes);
   if (!resolved) return { error: "image must be webp, jpeg, or png" };
-  if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "image too large (8MB max)" };
+  if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "image too large (20MB max)" };
   const widthRaw = form.get("width") != null ? Number(form.get("width")) : NaN;
   const heightRaw = form.get("height") != null ? Number(form.get("height")) : NaN;
   return {
@@ -609,7 +611,7 @@ async function readAudioUpload(request: Request): Promise<AudioUpload | { error:
   const ext = AUDIO_TYPES[blob.type] || audioExtFromName(blob.name);
   if (!ext) return { error: "audio must be mp3" };
   const bytes = await blob.arrayBuffer();
-  if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "audio too large (8MB max)" };
+  if (bytes.byteLength > MAX_UPLOAD_BYTES) return { error: "audio too large (20MB max)" };
   const type = "audio/mpeg";
   return { bytes, ext, type };
 }
@@ -795,7 +797,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       return json({ error: "flow must be a Comfy API .json" }, 400, cors);
     }
     const bytes = await blob.arrayBuffer();
-    if (bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "flow too large (8MB max)" }, 400, cors);
+    if (bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "flow too large (20MB max)" }, 400, cors);
     let parsedJson: unknown;
     try {
       parsedJson = JSON.parse(new TextDecoder().decode(bytes));
@@ -851,7 +853,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const bytes = await blob.arrayBuffer();
     const resolved = resolveImageType(blob.type || "", bytes);
     if (!resolved) return json({ error: "image must be webp, jpeg, or png" }, 400, cors);
-    if (bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "image too large (8MB max)" }, 400, cors);
+    if (bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "image too large (20MB max)" }, 400, cors);
     const hash = await sha256Hex(bytes);
     const objectKey = `editor/_series/${key}/refs/${alias}/${hash}.${resolved.ext}`;
     await putImage(env, objectKey, bytes, resolved.type);
@@ -1272,7 +1274,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!input.ok) return json({ error: input.error }, 400, cors);
     const clip = await generateClip(apiKey, input.value);
     if (!clip.ok) return json({ error: clip.error }, clip.status, cors);
-    if (clip.bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "audio too large (8MB max)" }, 400, cors);
+    if (clip.bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "audio too large (20MB max)" }, 400, cors);
     const key = await putCaptionAudio(env, current.slug, clip.bytes);
     if (session) {
       try {
@@ -1323,7 +1325,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       const resolved = resolveImageType(blob.type || "", bytes);
       if (!resolved) return json({ error: "previous-plate image must be webp, jpeg, or png" }, 400, cors);
       if (bytes.byteLength > MAX_UPLOAD_BYTES) {
-        return json({ error: "previous-plate image too large (8MB max)" }, 400, cors);
+        return json({ error: "previous-plate image too large (20MB max)" }, 400, cors);
       }
       previousOverride = { bytes, type: resolved.type };
     }
