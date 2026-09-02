@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { LoaderCircle } from "@lucide/vue";
 import { computed, nextTick, ref, watch } from "vue";
 import type { SeriesGenerateConfig } from "../types";
 
@@ -123,7 +124,8 @@ function onSubmit(): void {
             <button class="editor-btn editor-btn--ghost" type="button" :disabled="busy" @click="onCancel">
               Cancel
             </button>
-            <button class="editor-btn" type="submit" :disabled="!canSubmit">
+            <button class="editor-btn" type="submit" :class="{ 'is-busy': busy }" :disabled="!canSubmit">
+              <LoaderCircle v-if="busy" class="editor-spin" :size="16" aria-hidden="true" />
               {{ busy ? "Generating…" : "Generate" }}
             </button>
           </div>

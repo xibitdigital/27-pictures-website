@@ -144,6 +144,40 @@ body {
   cursor: not-allowed;
 }
 
+.editor-btn.is-busy {
+  cursor: wait;
+  animation: editor-pulse 1.4s ease-in-out infinite;
+}
+
+.editor-spin {
+  animation: editor-spin 0.9s linear infinite;
+}
+
+@keyframes editor-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes editor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-btn.is-busy {
+    animation: none;
+  }
+  .editor-spin {
+    animation: none;
+  }
+}
+
 .editor-session {
   display: inline-flex;
   align-items: center;
