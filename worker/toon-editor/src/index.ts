@@ -779,7 +779,13 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       existing.kind = "sheet";
       existing.fileKey = objectKey;
     } else {
-      generate.slots.push({ alias, kind: "sheet", fileKey: objectKey, fileUrl: null });
+      generate.slots.push({
+        alias,
+        label: `Image ${generate.slots.length + 1} — ${alias}`,
+        kind: "sheet",
+        fileKey: objectKey,
+        fileUrl: null,
+      });
     }
     extra.generate = generate;
     await env.DB.prepare(`UPDATE series SET extra_json = ?, updated_at = ? WHERE key = ?`)

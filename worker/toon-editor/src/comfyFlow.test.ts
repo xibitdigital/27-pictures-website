@@ -23,8 +23,8 @@ describe("parseComfyApiGraph", () => {
       ok: true,
       model: "seedream 5.0 pro",
       slots: [
-        { alias: "erin", kind: "sheet", fileKey: null, fileUrl: null },
-        { alias: "previous", kind: "previous", fileKey: null, fileUrl: null },
+        { alias: "erin-sheet", label: "Image 1 — Erin sheet", kind: "sheet", fileKey: null, fileUrl: null },
+        { alias: "previous", label: "Image 2 — previous page", kind: "previous", fileKey: null, fileUrl: null },
       ],
     });
   });
@@ -35,7 +35,10 @@ describe("parseComfyApiGraph", () => {
       "6": { class_type: "ByteDanceSeedreamNode", inputs: { model: "seedream 5.0 lite" } },
     });
     expect(parsed.ok).toBe(true);
-    if (parsed.ok) expect(parsed.slots[0].alias).toBe("nero");
+    if (parsed.ok) {
+      expect(parsed.slots[0].alias).toBe("nero-character-sheet");
+      expect(parsed.slots[0].label).toBe("Image 1 — Nero character sheet");
+    }
   });
 });
 
@@ -43,6 +46,7 @@ describe("slotFromLoadTitle", () => {
   it("marks previous-page titles", () => {
     expect(slotFromLoadTitle("Image 3 — previous page (layout / rain)", 3)).toEqual({
       alias: "previous",
+      label: "Image 3 — previous page (layout / rain)",
       kind: "previous",
       fileKey: null,
       fileUrl: null,

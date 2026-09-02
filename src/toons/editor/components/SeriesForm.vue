@@ -115,14 +115,17 @@ function generatePayload() {
     model: model.value.trim(),
     slots: slots.value.map((slot) => ({
       alias: slot.alias.trim(),
+      label: (slot.label || slot.alias).trim(),
       kind: slot.kind,
     })),
   };
 }
 
 function addSlot(): void {
+  const n = slots.value.length + 1;
   slots.value.push({
-    alias: `image-${slots.value.length + 1}`,
+    alias: `image-${n}`,
+    label: `Image ${n}`,
     kind: "sheet",
     fileKey: null,
     fileUrl: null,
@@ -298,8 +301,12 @@ async function onSubmit(ev: Event): Promise<void> {
           <p class="editor-generate-label">Reference slots</p>
           <ol class="editor-slot-list">
             <li v-for="(slot, index) in slots" :key="`${index}-${slot.alias}`" class="editor-slot-row">
-              <span class="editor-muted">Image {{ index + 1 }}</span>
-              <input v-model="slot.alias" :name="`slot-alias-${index}`" :aria-label="`Slot ${index + 1} alias`" />
+              <input
+                v-model="slot.label"
+                :name="`slot-label-${index}`"
+                :aria-label="`Slot ${index + 1} name`"
+                :placeholder="`Image ${index + 1}`"
+              />
               <select v-model="slot.kind" :name="`slot-kind-${index}`" :aria-label="`Slot ${index + 1} kind`">
                 <option value="sheet">Sheet</option>
                 <option value="previous">Previous page</option>

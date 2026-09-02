@@ -23,12 +23,17 @@ function titleOf(node: { _meta?: { title?: unknown } } | undefined): string {
 
 export function slotFromLoadTitle(title: string, index: number): SeriesFlowSlot {
   const fallback = `image-${index}`;
-  if (/\bprevious\b/i.test(title)) {
-    return { alias: "previous", kind: "previous", fileKey: null, fileUrl: null };
+  const label = title.trim() || `Image ${index}`;
+  const after =
+    label
+      .split(/\s*[—–]\s*/)
+      .slice(1)
+      .join(" ")
+      .trim() || label;
+  if (/\bprevious\b/i.test(label)) {
+    return { alias: "previous", label, kind: "previous", fileKey: null, fileUrl: null };
   }
-  const after = title.split(/\s*[—–-]\s*/).pop() || title;
-  const first = after.trim().split(/\s+/)[0] || fallback;
-  return { alias: slugAlias(first, fallback), kind: "sheet", fileKey: null, fileUrl: null };
+  return { alias: slugAlias(after, fallback), label, kind: "sheet", fileKey: null, fileUrl: null };
 }
 
 export function parseComfyApiGraph(
@@ -77,10 +82,18 @@ export function parseGenerateConfig(raw: unknown): SeriesGenerateConfig {
       .map((item, i) => {
         if (!item || typeof item !== "object") return null;
         const slot = item as Record<string, unknown>;
-        const alias = slugAlias(String(slot.alias || ""), `image-${i + 1}`);
-        const kind = String(slot.kind || "") === "previous" ? "previous" : "sheet";
+        const fallback = `image-${i + 1}`;
+        const label = typeof slot.label === "string" && slot.label.trim() ? slot.label.trim() : "";
+        const alias = slugAlias(String(slot.alias || label || ""), fallback);
+        const kind = String(slot.kind || "") === "previous" || /\bprevious\b/i.test(label) ? "previous" : "sheet";
         const fileKey = typeof slot.fileKey === "string" && slot.fileKey.trim() ? slot.fileKey.trim() : null;
-        return { alias, kind, fileKey, fileUrl: null } as SeriesFlowSlot;
+        return {
+          alias,
+          label: label || `Image ${i + 1} — ${alias}`,
+          kind,
+          fileKey,
+          fileUrl: null,
+        } as SeriesFlowSlot;
       })
       .filter((slot): slot is SeriesFlowSlot => Boolean(slot));
   }
@@ -93,8 +106,9 @@ export function mergeGenerate(current: SeriesGenerateConfig, incoming: unknown):
   const byAlias = new Map(current.slots.map((slot) => [slot.alias, slot]));
   const slots = next.slots.map((slot) => {
     const prev = byAlias.get(slot.alias);
-    if (slot.kind === "previous") return { ...slot, fileKey: null };
-    return { ...slot, fileKey: slot.fileKey || prev?.fileKey || null };
+    const label = slot.label || prev?.label || `Image — ${slot.alias}`;
+    if (slot.kind === "previous") return { ...slot, label, fileKey: null };
+    return { ...slot, label, fileKey: slot.fileKey || prev?.fileKey || null };
   });
   return {
     width: next.width,

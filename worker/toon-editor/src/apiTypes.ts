@@ -96,6 +96,7 @@ export type SeriesSlotKind = "sheet" | "previous";
 
 export interface SeriesFlowSlot {
   alias: string;
+  label: string;
   kind: SeriesSlotKind;
   fileKey?: string | null;
   fileUrl?: string | null;

@@ -706,7 +706,7 @@ body {
 
 .editor-slot-row {
   display: grid;
-  grid-template-columns: 4.5rem minmax(0, 1fr) 7.5rem minmax(0, 1fr) auto auto auto auto;
+  grid-template-columns: minmax(8rem, 1.4fr) 7.5rem minmax(0, 1fr) auto auto auto auto;
   gap: 0.4rem;
   align-items: center;
 }
