@@ -82,6 +82,8 @@ body {
   padding: 0.85rem 1.75rem;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
+  position: relative;
+  z-index: 50;
 }
 
 .editor-bar-start,
@@ -192,15 +194,21 @@ body {
   position: absolute;
   top: calc(100% + 0.45rem);
   right: 0;
-  z-index: 40;
+  z-index: 50;
   box-sizing: border-box;
   width: 16.5rem;
   padding: 0.85rem 0.9rem 0.9rem;
-  background: var(--bg-card);
+  background: var(--bg-menu);
   color: var(--text);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--silver);
+  box-shadow: 0 12px 28px var(--bg-dark);
   display: grid;
   gap: 0.7rem;
+}
+
+.editor-account-panel .editor-btn {
+  width: 100%;
+  background: var(--bg-dark);
 }
 
 .editor-account-email {
