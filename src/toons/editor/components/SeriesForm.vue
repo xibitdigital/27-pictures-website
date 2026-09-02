@@ -186,7 +186,15 @@ async function onSlotFile(index: number, ev: Event): Promise<void> {
   input.value = "";
   if (!file) return;
   const alias = slots.value[index]?.alias.trim();
-  if (!alias || alias === "previous") return;
+  if (!alias) {
+    error.value = "Give this slot a name before uploading a sheet for it.";
+    return;
+  }
+  if (alias === "previous") {
+    error.value =
+      'This slot is the previous-plate reference — it\'s filled automatically at generate time, not uploaded. Set its kind to "Previous page" (or give it a different name if it should take its own file).';
+    return;
+  }
   if (isCreate.value || !existing.value) {
     error.value = "Save the series first, then upload reference sheets.";
     return;
