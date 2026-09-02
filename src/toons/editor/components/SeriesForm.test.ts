@@ -34,6 +34,11 @@ describe("SeriesForm", () => {
         title: "RED SMILE",
         tagline: "Horror",
         hubUrl: "/toons/red-smile/",
+        generate: expect.objectContaining({
+          width: 1152,
+          height: 1728,
+          model: "seedream 5.0 pro",
+        }),
       })
     );
     expect(push).toHaveBeenCalledWith("/series/red-smile");

@@ -3,7 +3,7 @@
  * The JSON contract lives in `apiTypes.ts` and is imported by the Vue studio.
  */
 
-import type { DescriptionMap } from "./apiTypes";
+import type { DescriptionMap, SeriesGenerateConfig } from "./apiTypes";
 
 export type {
   BubbleRecord,
@@ -13,6 +13,7 @@ export type {
   DescriptionMap,
   EditorUser,
   PageRecord,
+  SeriesGenerateConfig,
   SeriesInput,
   SeriesOption,
   ToonListItem,
@@ -189,6 +190,7 @@ export interface SeriesMeta {
   coverKey?: string | null;
   hubUrl?: string | null;
   sort?: number;
+  generate?: Partial<SeriesGenerateConfig> | null;
 }
 
 export type CorsHeaders = Record<string, string>;

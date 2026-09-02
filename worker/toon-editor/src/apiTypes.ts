@@ -92,6 +92,24 @@ export interface ToonRecord {
   pages: PageRecord[];
 }
 
+export type SeriesSlotKind = "sheet" | "previous";
+
+export interface SeriesFlowSlot {
+  alias: string;
+  kind: SeriesSlotKind;
+  fileKey?: string | null;
+  fileUrl?: string | null;
+}
+
+export interface SeriesGenerateConfig {
+  width: number | null;
+  height: number | null;
+  model: string;
+  flowKey: string | null;
+  flowUrl: string | null;
+  slots: SeriesFlowSlot[];
+}
+
 export interface SeriesOption {
   key: string;
   title: string;
@@ -103,6 +121,7 @@ export interface SeriesOption {
   description?: string;
   descriptions?: DescriptionMap;
   coverKey?: string | null;
+  generate?: SeriesGenerateConfig;
 }
 
 export interface SeriesInput {
@@ -113,6 +132,7 @@ export interface SeriesInput {
   descriptions?: DescriptionMap;
   hubUrl?: string | null;
   sort?: number;
+  generate?: Partial<SeriesGenerateConfig> | null;
 }
 
 export interface ToonListItem {

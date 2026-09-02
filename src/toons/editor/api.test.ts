@@ -8,6 +8,7 @@ import {
   login,
   replacePage,
   saveSeries,
+  uploadSeriesFlow,
   setToken,
   fetchCredits,
   generateAudio,
@@ -132,6 +133,26 @@ describe("editor api", () => {
     expect(row.key).toBe("erin");
     expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/series");
     expect((fetchMock.mock.calls[0][1] as RequestInit).method).toBe("PUT");
+  });
+
+  it("POSTs a series Comfy flow as FormData", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          key: "erin",
+          generate: { flowKey: "editor/_series/erin/flow/a.json", slots: [{ alias: "erin", kind: "sheet" }] },
+        }),
+        { status: 200 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const file = new File([new Uint8Array([123, 125])], "erin.api.json", { type: "application/json" });
+    const out = await uploadSeriesFlow("erin", file);
+    expect(out.generate?.flowKey).toContain("/flow/");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/series/erin/flow");
+    expect((fetchMock.mock.calls[0][1] as RequestInit).body).toBeInstanceOf(FormData);
   });
 
   it("POSTs bubble audio as FormData", async () => {

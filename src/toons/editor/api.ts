@@ -156,6 +156,19 @@ export function uploadSeriesCover(
   return api<SeriesOption>(`/series/${key}/cover`, { method: "POST", body });
 }
 
+export function uploadSeriesFlow(key: string, file: File): Promise<SeriesOption> {
+  const body = new FormData();
+  body.set("file", file);
+  return api<SeriesOption>(`/series/${key}/flow`, { method: "POST", body });
+}
+
+export function uploadSeriesRef(key: string, alias: string, file: File): Promise<SeriesOption> {
+  const body = new FormData();
+  body.set("alias", alias);
+  body.set("file", file);
+  return api<SeriesOption>(`/series/${key}/refs`, { method: "POST", body });
+}
+
 export function createToon(input: ToonMetaInput): Promise<ToonRecord> {
   return api<ToonRecord>("/toons", { method: "POST", body: JSON.stringify(input) });
 }

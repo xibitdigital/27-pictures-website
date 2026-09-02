@@ -16,6 +16,7 @@ import {
   validateCredentials,
   verifyPassword,
 } from "./auth";
+import { mergeGenerate, parseComfyApiGraph, parseGenerateConfig, slugAlias } from "./comfyFlow";
 import { insertCreditEvent, loadUserCredits } from "./creditUsage";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
@@ -250,6 +251,17 @@ function mapToonListItem(row: ToonRow | Record<string, unknown>, request: Reques
   };
 }
 
+function seriesGenerate(row: SeriesRow, request: RequestLike, env: Env): SeriesOption["generate"] {
+  const extra = parseToonExtra(row);
+  const generate = parseGenerateConfig(extra.generate);
+  generate.flowUrl = objectUrl(request, env, generate.flowKey, null);
+  generate.slots = generate.slots.map((slot) => ({
+    ...slot,
+    fileUrl: slot.fileKey ? objectUrl(request, env, slot.fileKey, null) : null,
+  }));
+  return generate;
+}
+
 function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: RequestLike, env: Env): SeriesOption {
   if (!row) throw new Error("missing series");
   row = row as SeriesRow;
@@ -265,6 +277,7 @@ function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: Req
     hubUrl: row.hub_url || null,
     sort: Number(row.sort) || 0,
     toonCount: Number(row.toon_count) || 0,
+    generate: seriesGenerate(row, request, env),
   };
 }
 
@@ -359,11 +372,14 @@ function applyTitles(extra: JsonRecord, body: JsonRecord, enFallback: string): D
 async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined, ts: string) {
   if (!seriesMeta || !seriesMeta.key) return;
   const skey = String(seriesMeta.key);
-  const extra: JsonRecord = {};
+  const found = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(skey).first<SeriesRow>();
+  const extra: JsonRecord = parseToonExtra(found);
   extra.description = descriptionMapFromMeta(seriesMeta);
+  const currentGenerate = parseGenerateConfig(extra.generate);
+  extra.generate =
+    seriesMeta.generate !== undefined ? mergeGenerate(currentGenerate, seriesMeta.generate) : currentGenerate;
   const extraJson = JSON.stringify(extra);
   const description = descriptionMapFromMeta(seriesMeta).en || String(seriesMeta.description || "");
-  const found = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(skey).first<SeriesRow>();
   const coverKey = seriesMeta.coverKey !== undefined ? seriesMeta.coverKey || null : (found && found.cover_key) || null;
   if (found) {
     await env.DB.prepare(
@@ -675,6 +691,99 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     await putImage(env, objectKey, upload.bytes, upload.type);
     await env.DB.prepare(`UPDATE series SET cover_key = ?, updated_at = ? WHERE key = ?`)
       .bind(objectKey, nowIso(), key)
+      .run();
+    const row = await env.DB.prepare(
+      `SELECT series.*,
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+       FROM series WHERE key = ?`
+    )
+      .bind(key)
+      .first();
+    return json(mapSeries(row, request, env), 200, cors);
+  }
+
+  const seriesFlowMatch = path.match(/^\/series\/([^/]+)\/flow$/);
+  if (seriesFlowMatch && method === "POST") {
+    const key = seriesFlowMatch[1];
+    if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
+    const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const form = await request.formData();
+    const file = form.get("file");
+    if (!file || typeof file === "string") return json({ error: "file is required" }, 400, cors);
+    const blob = file as File;
+    const name = String(blob.name || "").toLowerCase();
+    const type = blob.type || "";
+    if (type && type !== "application/json" && type !== "text/plain" && !name.endsWith(".json")) {
+      return json({ error: "flow must be a Comfy API .json" }, 400, cors);
+    }
+    const bytes = await blob.arrayBuffer();
+    if (bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "flow too large (8MB max)" }, 400, cors);
+    let parsedJson: unknown;
+    try {
+      parsedJson = JSON.parse(new TextDecoder().decode(bytes));
+    } catch {
+      return json({ error: "flow is not valid JSON" }, 400, cors);
+    }
+    const graph = parseComfyApiGraph(parsedJson);
+    if (!graph.ok) return json({ error: graph.error }, 400, cors);
+    const hash = await sha256Hex(bytes);
+    const objectKey = `editor/_series/${key}/flow/${hash}.json`;
+    await putImage(env, objectKey, bytes, "application/json");
+    const extra = parseToonExtra(current);
+    const currentGenerate = parseGenerateConfig(extra.generate);
+    extra.generate = mergeGenerate(currentGenerate, {
+      width: currentGenerate.width,
+      height: currentGenerate.height,
+      model: currentGenerate.model || graph.model,
+      flowKey: objectKey,
+      slots: graph.slots,
+    });
+    await env.DB.prepare(`UPDATE series SET extra_json = ?, updated_at = ? WHERE key = ?`)
+      .bind(JSON.stringify(extra), nowIso(), key)
+      .run();
+    const row = await env.DB.prepare(
+      `SELECT series.*,
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+       FROM series WHERE key = ?`
+    )
+      .bind(key)
+      .first();
+    return json(mapSeries(row, request, env), 200, cors);
+  }
+
+  const seriesRefMatch = path.match(/^\/series\/([^/]+)\/refs$/);
+  if (seriesRefMatch && method === "POST") {
+    const key = seriesRefMatch[1];
+    if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
+    const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const form = await request.formData();
+    const alias = slugAlias(String(form.get("alias") || ""), "");
+    if (!alias || alias === "previous") return json({ error: "alias is required" }, 400, cors);
+    const file = form.get("file");
+    if (!file || typeof file === "string") return json({ error: "file is required" }, 400, cors);
+    const blob = file as File;
+    const type = blob.type || "";
+    const ext = IMAGE_TYPES[type];
+    if (!ext) return json({ error: "image must be webp, jpeg, or png" }, 400, cors);
+    const bytes = await blob.arrayBuffer();
+    if (bytes.byteLength > MAX_UPLOAD_BYTES) return json({ error: "image too large (8MB max)" }, 400, cors);
+    const hash = await sha256Hex(bytes);
+    const objectKey = `editor/_series/${key}/refs/${alias}/${hash}.${ext}`;
+    await putImage(env, objectKey, bytes, type);
+    const extra = parseToonExtra(current);
+    const generate = parseGenerateConfig(extra.generate);
+    const existing = generate.slots.find((slot) => slot.alias === alias);
+    if (existing) {
+      existing.kind = "sheet";
+      existing.fileKey = objectKey;
+    } else {
+      generate.slots.push({ alias, kind: "sheet", fileKey: objectKey, fileUrl: null });
+    }
+    extra.generate = generate;
+    await env.DB.prepare(`UPDATE series SET extra_json = ?, updated_at = ? WHERE key = ?`)
+      .bind(JSON.stringify(extra), nowIso(), key)
       .run();
     const row = await env.DB.prepare(
       `SELECT series.*,

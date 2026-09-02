@@ -72,8 +72,10 @@ and local see published + staging; production sees published only.
 | GET | `/media/editor/…` | public | R2 object under `editor/` |
 | GET | `/series` | JWT | `{ series: SeriesOption[] }` with `toonCount` |
 | GET | `/series/:key` | JWT | `{ series, toons }` |
-| PUT | `/series` | JWT | create/update series metadata |
+| PUT | `/series` | JWT | create/update series metadata (plate size + slot list) |
 | POST | `/series/:key/cover` | JWT | series cover upload |
+| POST | `/series/:key/flow` | JWT | Comfy API `.json` graph for this series |
+| POST | `/series/:key/refs` | JWT | character-sheet image for a slot alias |
 | GET | `/toons` | JWT | list items (`seriesKey`, `episodeN`, `status`) |
 | POST | `/toons` | JWT | create |
 | GET | `/toons/:id` | JWT | full record |

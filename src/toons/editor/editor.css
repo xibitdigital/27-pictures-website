@@ -656,6 +656,50 @@ body {
   grid-column: 1 / -1;
 }
 
+.editor-generate {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0.5rem 0 1.25rem;
+  padding: 0.9rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.editor-generate-label {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.editor-slot-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.editor-slot-row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) 7.5rem minmax(0, 1fr) auto auto auto auto;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.editor-slot-thumb {
+  width: 2.35rem;
+  height: 2.35rem;
+  object-fit: cover;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-light);
+}
+
+@media (max-width: 900px) {
+  .editor-slot-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .editor-form {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(min(280px, 100%), 22rem);
