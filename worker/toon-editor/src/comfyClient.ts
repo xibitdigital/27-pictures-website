@@ -38,10 +38,13 @@ export async function comfySubmitPrompt(
 ): Promise<{ ok: true; promptId: string } | { ok: false; error: string }> {
   const base = comfyBase(env);
   if (!base) return { ok: false, error: "ComfyUI is not configured" };
+  const accountKey = env.COMFY_API_KEY?.trim();
+  const payload: { prompt: object; extra_data?: { api_key_comfy_org: string } } = { prompt: graph };
+  if (accountKey) payload.extra_data = { api_key_comfy_org: accountKey };
   const res = await fetch(`${base}/prompt`, {
     method: "POST",
     headers: comfyHeaders(env, { "Content-Type": "application/json" }),
-    body: JSON.stringify({ prompt: graph }),
+    body: JSON.stringify(payload),
   });
   const text = await res.text();
   if (!res.ok) return { ok: false, error: `Comfy prompt failed (${res.status}) ${text.slice(0, 300)}` };
