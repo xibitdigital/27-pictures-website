@@ -9,6 +9,7 @@ import {
   visibilityFromStatus,
   visibilityLabel,
   type DescriptionMap,
+  type PromptCandidate,
   type SeriesFlowSlot,
   type SeriesOption,
   type ToonListItem,
@@ -48,6 +49,13 @@ const model = ref("seedream 5.0 pro");
 const slots = ref<SeriesFlowSlot[]>([]);
 const flowLabel = ref("");
 const uploadingFlow = ref(false);
+const promptCandidates = ref<PromptCandidate[]>([]);
+/** "" = Auto (legacy: every Seedream node's `prompt`); otherwise `${nodeId}::${inputKey}`. */
+const promptTargetKey = ref("");
+
+function candidateKey(nodeId: string, inputKey: string): string {
+  return `${nodeId}::${inputKey}`;
+}
 
 function slugFromTitle(value: string): string {
   return value
@@ -106,9 +114,13 @@ function applyGenerate(series: SeriesOption): void {
   slots.value = (generate?.slots || []).map((slot) => ({ ...slot }));
   const key = generate?.flowKey || "";
   flowLabel.value = key ? key.split("/").pop() || "uploaded" : "";
+  promptCandidates.value = generate?.promptCandidates || [];
+  const target = generate?.promptTarget;
+  promptTargetKey.value = target ? candidateKey(target.nodeId, target.inputKey) : "";
 }
 
 function generatePayload() {
+  const [nodeId, inputKey] = promptTargetKey.value ? promptTargetKey.value.split("::") : [];
   return {
     width: Number(plateWidth.value) || null,
     height: Number(plateHeight.value) || null,
@@ -118,6 +130,7 @@ function generatePayload() {
       label: (slot.label || slot.alias).trim(),
       kind: slot.kind,
     })),
+    promptTarget: nodeId && inputKey ? { nodeId, inputKey } : null,
   };
 }
 
@@ -297,6 +310,25 @@ async function onSubmit(ev: Event): Promise<void> {
           </label>
           <p v-if="flowLabel" class="editor-muted">Uploaded: {{ flowLabel }}</p>
           <p v-else class="editor-muted">No flow yet. Save the series, then upload the graph.</p>
+
+          <template v-if="promptCandidates.length">
+            <p class="editor-generate-label">Prompt goes into</p>
+            <p class="editor-muted">
+              Where the typed page prompt is written on generate. Auto writes onto every Seedream node's own
+              <code>prompt</code> — pick a specific node if the flow builds the prompt upstream instead (e.g. a
+              <code>Text (Multiline)</code> or <code>Concatenate Text</code> node feeding into it).
+            </p>
+            <select v-model="promptTargetKey" name="prompt-target" aria-label="Prompt target">
+              <option value="">Auto (every Seedream node's prompt)</option>
+              <option
+                v-for="c in promptCandidates"
+                :key="candidateKey(c.nodeId, c.inputKey)"
+                :value="candidateKey(c.nodeId, c.inputKey)"
+              >
+                {{ c.label }} — “{{ c.preview }}”
+              </option>
+            </select>
+          </template>
 
           <p class="editor-generate-label">Reference slots</p>
           <ol class="editor-slot-list">

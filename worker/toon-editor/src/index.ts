@@ -809,12 +809,19 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     await putImage(env, objectKey, bytes, "application/json");
     const extra = parseToonExtra(current);
     const currentGenerate = parseGenerateConfig(extra.generate);
+    // Keep the chosen target only if the new graph still has that exact node
+    // input — a re-uploaded flow can renumber or drop nodes entirely.
+    const target = currentGenerate.promptTarget;
+    const targetStillValid =
+      target && graph.promptCandidates.some((c) => c.nodeId === target.nodeId && c.inputKey === target.inputKey);
     extra.generate = mergeGenerate(currentGenerate, {
       width: currentGenerate.width,
       height: currentGenerate.height,
       model: currentGenerate.model || graph.model,
       flowKey: objectKey,
       slots: graph.slots,
+      promptCandidates: graph.promptCandidates,
+      promptTarget: targetStillValid ? target : null,
     });
     await env.DB.prepare(`UPDATE series SET extra_json = ?, updated_at = ? WHERE key = ?`)
       .bind(JSON.stringify(extra), nowIso(), key)

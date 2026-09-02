@@ -11,6 +11,8 @@ export type {
   DescriptionMap,
   EditorUser,
   PageRecord,
+  PromptCandidate,
+  PromptTarget,
   SeriesFlowSlot,
   SeriesGenerateConfig,
   SeriesInput,

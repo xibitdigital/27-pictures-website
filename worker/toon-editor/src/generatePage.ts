@@ -95,7 +95,7 @@ export async function startPageGenerate(
 
   const withImages = applyLoadImages(graph, names);
   if (!withImages.ok) return { ok: false, error: withImages.error, status: 400 };
-  let next = applyPagePrompt(withImages.graph, input.prompt);
+  let next = applyPagePrompt(withImages.graph, input.prompt, generate.promptTarget);
   next = applyPlateSize(next, generate.width, generate.height);
 
   const submitted = await comfySubmitPrompt(env, next);

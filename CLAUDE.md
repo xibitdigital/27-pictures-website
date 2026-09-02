@@ -741,9 +741,23 @@ Plate **Generate** on the filmstrip plus card (after the last thumb) is
 `POST /toons/:id/pages/generate`. The series owns one Comfy **Save API**
 `.json` plus character-sheet slots (`POST /series/:key/flow` and `/refs`).
 The dialog sends a prompt and optional previous plate; the Worker uploads
-slot files to Comfy `/upload/image`, writes LoadImage names + Seedream
-`prompt`, `POST {COMFY_URL}/prompt`, then the studio polls `GET /jobs/:id`.
-Upload a plate still works without Comfy.
+slot files to Comfy `/upload/image`, writes LoadImage names, then writes the
+typed prompt onto the flow before `POST {COMFY_URL}/prompt`, then the studio
+polls `GET /jobs/:id`. Upload a plate still works without Comfy.
+
+**Where the prompt lands is configurable, not always the Seedream node.** A
+flow can build the prompt upstream (`StringConcatenate` / `PrimitiveStringMultiline`
+nodes feeding Seedream's `prompt` as a link, e.g. to stack a fixed character-pin
+block under the per-page text — see `erin-ep2-generate-switch.api.json`).
+Every flow upload scans the graph for literal string inputs at least 20 chars
+(`findPromptCandidates` in `comfyFlow.ts`) and the series form
+(`SeriesForm.vue`, "Prompt goes into") picks one, stored as `generate.promptTarget`
+(`{nodeId, inputKey}`). `applyPagePrompt` writes there if set; with no target
+picked it falls back to every Seedream node's own `prompt` — but skips any
+whose `prompt` is a link rather than a literal, so a flow with an upstream
+chain and no target chosen yet leaves that chain alone instead of silently
+severing it. Re-uploading a flow drops a stored target that no longer matches
+a candidate in the new graph.
 
 Comfy hands back PNG (occasionally JPEG). `worker/toon-editor/src/imageOptimize.ts`
 re-encodes it to WebP q90 before it hits R2, via `@jsquash/webp` + `@jsquash/png`/

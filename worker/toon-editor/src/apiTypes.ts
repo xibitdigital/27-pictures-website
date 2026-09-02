@@ -102,6 +102,19 @@ export interface SeriesFlowSlot {
   fileUrl?: string | null;
 }
 
+/** One node input in the uploaded flow that could receive the page prompt. */
+export interface PromptCandidate {
+  nodeId: string;
+  inputKey: string;
+  label: string;
+  preview: string;
+}
+
+export interface PromptTarget {
+  nodeId: string;
+  inputKey: string;
+}
+
 export interface SeriesGenerateConfig {
   width: number | null;
   height: number | null;
@@ -109,6 +122,10 @@ export interface SeriesGenerateConfig {
   flowKey: string | null;
   flowUrl: string | null;
   slots: SeriesFlowSlot[];
+  /** Every literal string input found in the flow — for the series form's picker. */
+  promptCandidates: PromptCandidate[];
+  /** Which one the typed prompt is written into. Null = legacy behaviour (every Seedream node's `prompt`). */
+  promptTarget: PromptTarget | null;
 }
 
 export interface SeriesOption {
