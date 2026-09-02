@@ -18,6 +18,7 @@ import {
 } from "./auth";
 import { mergeGenerate, parseComfyApiGraph, parseGenerateConfig, slugAlias } from "./comfyFlow";
 import { insertCreditEvent, loadUserCredits } from "./creditUsage";
+import { pollPageJob, recordImageCredit, startPageGenerate, type GenerationJob } from "./generatePage";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { handleLikes } from "./likes";
@@ -621,6 +622,36 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json(await loadUserCredits(env, session.id), 200, cors);
   }
 
+  const jobMatch = path.match(/^\/jobs\/([^/]+)$/);
+  if (jobMatch && method === "GET") {
+    const job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?")
+      .bind(jobMatch[1])
+      .first<GenerationJob>();
+    if (!job) return json({ error: "not found" }, 404, cors);
+    const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(job.toon_id).first<ToonRow>();
+    if (!toon) return json({ error: "not found" }, 404, cors);
+    const polled = job.status === "running" ? await pollPageJob(env, job, toon) : { ok: true as const, job };
+    if (!polled.ok) return json({ error: polled.error }, polled.status, cors);
+    if (polled.job.status === "done" && job.status !== "done" && session) {
+      try {
+        await recordImageCredit(env, session.id);
+      } catch {
+        /* credit row is secondary */
+      }
+    }
+    const body: JsonRecord = {
+      ...polled.job,
+      id: polled.job.id,
+      status: polled.job.status,
+      error: polled.job.error,
+      resultPageId: polled.job.result_page_id,
+    };
+    if (polled.job.status === "done") {
+      body.toon = await loadToon(env, request, toon.id);
+    }
+    return json(body, 200, cors);
+  }
+
   if (method === "POST" && path === "/auth/logout") {
     return json({ ok: true }, 200, cors);
   }
@@ -1212,6 +1243,41 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const key = await putCaptionAudio(env, current.slug, upload.bytes);
     return json({ key, url: mediaUrl(request, key), audio: key }, 201, cors);
+  }
+
+  const pagesGenerateMatch = path.match(/^\/toons\/([^/]+)\/pages\/generate$/);
+  if (pagesGenerateMatch && method === "POST") {
+    const id = pagesGenerateMatch[1];
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    if (!current.series_key) return json({ error: "toon is not in a series" }, 400, cors);
+    const series = await env.DB.prepare("SELECT * FROM series WHERE key = ?")
+      .bind(current.series_key)
+      .first<SeriesRow>();
+    if (!series) return json({ error: "series not found" }, 404, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const prompt = String(parsed.body.prompt || "").trim();
+    if (!prompt) return json({ error: "prompt is required" }, 400, cors);
+    const includePrevious = parsed.body.includePrevious !== false && parsed.body.includePrevious !== "0";
+    const pageId = parsed.body.pageId ? String(parsed.body.pageId) : null;
+    const started = await startPageGenerate(env, {
+      toon: current,
+      series,
+      prompt,
+      includePrevious,
+      pageId,
+    });
+    if (!started.ok) return json({ error: started.error }, started.status, cors);
+    return json(
+      {
+        id: started.job.id,
+        status: started.job.status,
+        comfyPromptId: started.job.comfy_prompt_id,
+      },
+      202,
+      cors
+    );
   }
 
   const pagesMatch = path.match(/^\/toons\/([^/]+)\/pages$/);

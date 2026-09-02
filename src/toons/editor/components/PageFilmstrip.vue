@@ -6,10 +6,12 @@ defineProps<{
   toonId: string;
   pages: PageRecord[];
   activeId: string | null;
+  canGenerate?: boolean;
 }>();
 
 const emit = defineEmits<{
   upload: [file: File];
+  generate: [];
 }>();
 
 function onFile(ev: Event): void {
@@ -22,11 +24,27 @@ function onFile(ev: Event): void {
 
 <template>
   <nav class="editor-filmstrip" aria-label="Pages">
-    <label class="editor-filmstrip-add">
-      <span class="editor-filmstrip-add-plus" aria-hidden="true">+</span>
-      <span>Add page</span>
-      <input type="file" accept="image/webp,image/jpeg,image/png" aria-label="Add page" @change="onFile" />
-    </label>
+    <div class="editor-filmstrip-add-wrap">
+      <label class="editor-filmstrip-add">
+        <span class="editor-filmstrip-add-plus" aria-hidden="true">+</span>
+        <span>Add page</span>
+        <input type="file" accept="image/webp,image/jpeg,image/png" aria-label="Add page" @change="onFile" />
+      </label>
+      <button
+        class="editor-filmstrip-generate"
+        type="button"
+        name="add-page-generate"
+        :disabled="!canGenerate"
+        :title="
+          canGenerate
+            ? 'Generate page with the series Comfy graph'
+            : 'Upload a Comfy flow and sheets on the series first'
+        "
+        @click="emit('generate')"
+      >
+        Generate
+      </button>
+    </div>
     <RouterLink
       v-for="page in pages"
       :key="page.id"

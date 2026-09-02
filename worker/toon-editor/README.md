@@ -84,6 +84,8 @@ and local see published + staging; production sees published only.
 | POST | `/toons/:id/audio` | JWT | caption clip |
 | POST | `/toons/:id/audio/generate` | JWT | ElevenLabs TTS (voice set) or SFX (voice empty) → `{ key, url, audio }` |
 | POST | `/toons/:id/pages` | JWT | append plate |
+| POST | `/toons/:id/pages/generate` | JWT | queue Comfy plate from series flow |
+| GET | `/jobs/:id` | JWT | poll generate job; includes toon when done |
 | POST | `/toons/import` | JWT | load a reader config JSON |
 | GET | `/toons/:id/export` | JWT | FlipFrame JSON including drafts |
 | POST | `/pages/:id/file` | JWT | replace plate, keep captions |

@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
-import { addBubble, deleteBubble, getToon, patchBubble, readImageSize, replacePage, uploadPage } from "../api";
+import {
+  addBubble,
+  deleteBubble,
+  generatePage,
+  getJob,
+  getSeries,
+  getToon,
+  patchBubble,
+  readImageSize,
+  replacePage,
+  uploadPage,
+} from "../api";
 import type { LangCode } from "../../bookReader/types";
-import type { BubbleRecord, ToonRecord } from "../types";
+import type { BubbleRecord, SeriesGenerateConfig, ToonRecord } from "../types";
 import { mergeReplacedPage } from "../pageFile";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, CAPTION_LANGS } from "../mapConfig";
 import CaptionInspector from "./CaptionInspector.vue";
 import EditorBar from "./EditorBar.vue";
+import GeneratePageDialog from "./GeneratePageDialog.vue";
 import PageFilmstrip from "./PageFilmstrip.vue";
 import PlateCanvas from "./PlateCanvas.vue";
 
@@ -25,6 +37,11 @@ const loading = ref(true);
 const saving = ref(false);
 const replacing = ref(false);
 const dirtyIds = ref(new Set<string>());
+const seriesGenerate = ref<SeriesGenerateConfig | null>(null);
+const generateOpen = ref(false);
+const generateBusy = ref(false);
+const generateStatus = ref("");
+const generateError = ref("");
 
 const toonId = computed(() => String(route.params.id || ""));
 const pageId = computed(() => (route.params.pageId ? String(route.params.pageId) : null));
@@ -41,6 +58,12 @@ const selectedBubble = computed(() => {
 });
 
 const dirtyCount = computed(() => dirtyIds.value.size);
+
+const canGenerate = computed(() => {
+  const generate = seriesGenerate.value;
+  if (!generate?.flowKey) return false;
+  return generate.slots.filter((slot) => slot.kind === "sheet").every((slot) => Boolean(slot.fileKey));
+});
 
 function markDirty(id: string): void {
   const next = new Set(dirtyIds.value);
@@ -62,6 +85,15 @@ async function load(): Promise<void> {
     const next = await getToon(toonId.value);
     toon.value = next;
     dirtyIds.value = new Set();
+    seriesGenerate.value = null;
+    if (next.seriesKey) {
+      try {
+        const body = await getSeries(next.seriesKey);
+        seriesGenerate.value = body.series.generate || null;
+      } catch {
+        seriesGenerate.value = null;
+      }
+    }
     if (!pageId.value && next.pages[0]) {
       await router.replace(`/${next.id}/pages/${next.pages[0].id}`);
     }
@@ -74,6 +106,38 @@ async function load(): Promise<void> {
 
 onMounted(load);
 watch(toonId, load);
+
+async function onGenerateSubmit(payload: { prompt: string; includePrevious: boolean }): Promise<void> {
+  if (!toon.value) return;
+  generateBusy.value = true;
+  generateError.value = "";
+  generateStatus.value = "Queuing…";
+  try {
+    const queued = await generatePage(toon.value.id, { ...payload, pageId: null });
+    const deadline = Date.now() + 10 * 60 * 1000;
+    while (Date.now() < deadline) {
+      const snap = await getJob(queued.id);
+      if (snap.status === "done" && snap.toon) {
+        toon.value = snap.toon;
+        generateOpen.value = false;
+        const last = snap.toon.pages[snap.toon.pages.length - 1];
+        if (last) await router.push(`/${snap.toon.id}/pages/${last.id}`);
+        return;
+      }
+      if (snap.status === "error") {
+        generateError.value = snap.error || "Generate failed";
+        return;
+      }
+      generateStatus.value = "Generating page…";
+      await new Promise((resolve) => window.setTimeout(resolve, 3000));
+    }
+    generateError.value = "Timed out waiting for ComfyUI";
+  } catch (err) {
+    generateError.value = err instanceof Error ? err.message : "Generate failed";
+  } finally {
+    generateBusy.value = false;
+  }
+}
 
 async function onUpload(file: File): Promise<void> {
   if (!toon.value) return;
@@ -213,7 +277,14 @@ async function onRemove(): Promise<void> {
     <p v-if="loading">Loading…</p>
     <template v-else-if="toon">
       <div class="editor-studio-body">
-        <PageFilmstrip :toon-id="toon.id" :pages="toon.pages" :active-id="activePage?.id ?? null" @upload="onUpload" />
+        <PageFilmstrip
+          :toon-id="toon.id"
+          :pages="toon.pages"
+          :active-id="activePage?.id ?? null"
+          :can-generate="canGenerate"
+          @upload="onUpload"
+          @generate="generateOpen = true"
+        />
         <PlateCanvas
           v-if="activePage"
           :key="activePage.fileKey"
@@ -255,6 +326,16 @@ async function onRemove(): Promise<void> {
           @remove="onRemove"
         />
       </div>
+      <GeneratePageDialog
+        :open="generateOpen"
+        :generate="seriesGenerate"
+        :has-previous="toon.pages.length > 0"
+        :busy="generateBusy"
+        :status="generateStatus"
+        :error="generateError"
+        @close="!generateBusy && (generateOpen = false)"
+        @submit="onGenerateSubmit"
+      />
     </template>
   </div>
 </template>

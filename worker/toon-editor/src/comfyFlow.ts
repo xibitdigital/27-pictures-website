@@ -3,6 +3,58 @@ import type { SeriesFlowSlot, SeriesGenerateConfig } from "./apiTypes";
 const SEEDREAM = new Set(["ByteDanceSeedreamNodeV3", "ByteDanceSeedreamNode"]);
 const MAX_REFS = 10;
 
+export type ComfyGraphNode = {
+  class_type?: unknown;
+  inputs?: Record<string, unknown>;
+  _meta?: { title?: unknown };
+};
+export type ComfyGraph = Record<string, ComfyGraphNode>;
+
+export function loadImageIds(graph: ComfyGraph): string[] {
+  return Object.keys(graph)
+    .filter((id) => String(graph[id]?.class_type || "") === "LoadImage")
+    .sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
+}
+
+export function applyLoadImages(
+  graph: ComfyGraph,
+  names: string[]
+): { ok: true; graph: ComfyGraph } | { ok: false; error: string } {
+  const ids = loadImageIds(graph);
+  if (names.length !== ids.length) {
+    return { ok: false, error: `flow expects ${ids.length} images, got ${names.length}` };
+  }
+  const next: ComfyGraph = JSON.parse(JSON.stringify(graph)) as ComfyGraph;
+  ids.forEach((id, i) => {
+    next[id] = { ...next[id], inputs: { ...(next[id].inputs || {}), image: names[i] } };
+  });
+  return { ok: true, graph: next };
+}
+
+export function applyPagePrompt(graph: ComfyGraph, text: string): ComfyGraph {
+  const next: ComfyGraph = JSON.parse(JSON.stringify(graph)) as ComfyGraph;
+  const trimmed = text.trim();
+  if (!trimmed) return next;
+  for (const node of Object.values(next)) {
+    const cls = String(node.class_type || "");
+    if (!SEEDREAM.has(cls)) continue;
+    const inputs = { ...(node.inputs || {}) };
+    inputs.prompt = trimmed;
+    node.inputs = inputs;
+  }
+  return next;
+}
+
+export function applyPlateSize(graph: ComfyGraph, width: number | null, height: number | null): ComfyGraph {
+  if (!width || !height) return graph;
+  const next: ComfyGraph = JSON.parse(JSON.stringify(graph)) as ComfyGraph;
+  for (const node of Object.values(next)) {
+    if (String(node.class_type || "") !== "ImageScale") continue;
+    node.inputs = { ...(node.inputs || {}), width, height };
+  }
+  return next;
+}
+
 export function emptyGenerate(): SeriesGenerateConfig {
   return { width: null, height: null, model: "", flowKey: null, flowUrl: null, slots: [] };
 }

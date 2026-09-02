@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mergeGenerate, parseComfyApiGraph, slotFromLoadTitle } from "./comfyFlow";
+import { applyLoadImages, applyPagePrompt, mergeGenerate, parseComfyApiGraph, slotFromLoadTitle } from "./comfyFlow";
 
 describe("parseComfyApiGraph", () => {
   it("rejects UI-style arrays and graphs with no Seedream node", () => {
@@ -51,6 +51,22 @@ describe("slotFromLoadTitle", () => {
       fileKey: null,
       fileUrl: null,
     });
+  });
+});
+
+describe("applyLoadImages", () => {
+  it("writes Comfy input names onto LoadImage nodes in Image order", () => {
+    const graph = {
+      "1": { class_type: "LoadImage", inputs: { image: "old-a.png" } },
+      "2": { class_type: "LoadImage", inputs: { image: "old-b.png" } },
+      "9": { class_type: "ByteDanceSeedreamNodeV3", inputs: { prompt: "old", model: "seedream 5.0 pro" } },
+    };
+    const out = applyLoadImages(graph, ["erin.png", "prev.png"]);
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.graph["1"].inputs?.image).toBe("erin.png");
+    expect(out.graph["2"].inputs?.image).toBe("prev.png");
+    expect(applyPagePrompt(out.graph, "Erin walks in.")["9"].inputs?.prompt).toBe("Erin walks in.");
   });
 });
 

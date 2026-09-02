@@ -791,6 +791,11 @@ body {
   min-height: 0;
 }
 
+.editor-filmstrip-add-wrap {
+  display: grid;
+  gap: 0.35rem;
+}
+
 .editor-filmstrip-add {
   position: relative;
   display: grid;
@@ -826,6 +831,68 @@ body {
   height: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
+}
+
+.editor-filmstrip-generate {
+  width: 100%;
+  padding: 0.35rem 0.4rem;
+  background: var(--bg-dark);
+  color: var(--text);
+  border: 1px solid var(--red-smile);
+  border-radius: 2px;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.editor-filmstrip-generate:hover,
+.editor-filmstrip-generate:focus-visible {
+  background: var(--red-smile);
+}
+
+.editor-filmstrip-generate:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.editor-dialog {
+  width: min(28rem, calc(100vw - 2rem));
+  padding: 0;
+  background: var(--bg-menu);
+  color: var(--text);
+  border: 1px solid var(--silver);
+  box-shadow: 0 12px 28px var(--bg-dark);
+}
+
+.editor-dialog::backdrop {
+  background: color-mix(in srgb, var(--bg-dark) 72%, transparent);
+}
+
+.editor-dialog-body {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem 1.1rem;
+}
+
+.editor-dialog-body h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.editor-dialog-slots {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.editor-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .editor-thumb {

@@ -12,6 +12,7 @@ import {
   setToken,
   fetchCredits,
   generateAudio,
+  generatePage,
   uploadAudio,
   withSiteQuery,
 } from "./api";
@@ -231,6 +232,22 @@ describe("editor api", () => {
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer sess-1");
     expect(headers.get("Content-Type")).toBe("application/json");
+  });
+
+  it("POSTs a page generate job as JSON", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ id: "job-1", status: "running" }), { status: 202 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await generatePage("t1", { prompt: "Erin walks in.", includePrevious: true });
+    expect(out.id).toBe("job-1");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/toons/t1/pages/generate");
+    expect(JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body))).toEqual({
+      prompt: "Erin walks in.",
+      includePrevious: true,
+    });
   });
 
   it("POSTs a replacement plate as FormData onto the existing page", async () => {

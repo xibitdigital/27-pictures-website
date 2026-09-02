@@ -191,6 +191,23 @@ export function uploadCover(id: string, file: File, size?: { width: number; heig
   return api<ToonRecord>(`/toons/${id}/cover`, { method: "POST", body });
 }
 
+export function generatePage(
+  id: string,
+  payload: { prompt: string; includePrevious: boolean; pageId?: string | null }
+): Promise<{ id: string; status: string; comfyPromptId?: string | null }> {
+  return api(`/toons/${id}/pages/generate`, { method: "POST", body: JSON.stringify(payload) });
+}
+
+export function getJob(id: string): Promise<{
+  id: string;
+  status: string;
+  error?: string | null;
+  resultPageId?: string | null;
+  toon?: ToonRecord;
+}> {
+  return api(`/jobs/${id}`);
+}
+
 export function uploadPage(id: string, file: File, size?: { width: number; height: number }): Promise<ToonRecord> {
   const body = new FormData();
   body.set("file", file);

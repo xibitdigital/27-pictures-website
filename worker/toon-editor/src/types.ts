@@ -31,6 +31,8 @@ export interface Env {
   ALLOWED_TOONS?: string;
   JWT_SECRET?: string;
   ELEVENLABS_API_KEY?: string;
+  COMFY_URL?: string;
+  COMFY_API_KEY?: string;
 }
 
 export type JsonRecord = Record<string, unknown>;
