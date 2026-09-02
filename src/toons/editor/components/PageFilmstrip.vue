@@ -24,6 +24,16 @@ function onFile(ev: Event): void {
 
 <template>
   <nav class="editor-filmstrip" aria-label="Pages">
+    <RouterLink
+      v-for="page in pages"
+      :key="page.id"
+      class="editor-thumb"
+      :class="{ 'is-active': page.id === activeId }"
+      :to="`/${toonId}/pages/${page.id}`"
+    >
+      <img :src="page.fileUrl" :alt="`Page ${page.position + 1}`" />
+      <span>{{ page.position + 1 }}</span>
+    </RouterLink>
     <div class="editor-filmstrip-add-wrap">
       <div class="editor-filmstrip-add">
         <span class="editor-filmstrip-add-plus" aria-hidden="true">+</span>
@@ -49,15 +59,5 @@ function onFile(ev: Event): void {
         </div>
       </div>
     </div>
-    <RouterLink
-      v-for="page in pages"
-      :key="page.id"
-      class="editor-thumb"
-      :class="{ 'is-active': page.id === activeId }"
-      :to="`/${toonId}/pages/${page.id}`"
-    >
-      <img :src="page.fileUrl" :alt="`Page ${page.position + 1}`" />
-      <span>{{ page.position + 1 }}</span>
-    </RouterLink>
   </nav>
 </template>

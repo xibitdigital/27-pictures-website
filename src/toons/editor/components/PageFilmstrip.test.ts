@@ -24,4 +24,36 @@ describe("PageFilmstrip", () => {
     await btn.trigger("click");
     expect(wrapper.emitted("generate")).toHaveLength(1);
   });
+
+  it("puts Add page after the existing thumbs", () => {
+    const wrapper = mount(PageFilmstrip, {
+      props: {
+        toonId: "t1",
+        pages: [
+          {
+            id: "p1",
+            position: 0,
+            fileUrl: "/p1.webp",
+            fileKey: "p1",
+            width: 800,
+            height: 1424,
+            bubbles: [],
+          },
+          {
+            id: "p2",
+            position: 1,
+            fileUrl: "/p2.webp",
+            fileKey: "p2",
+            width: 800,
+            height: 1424,
+            bubbles: [],
+          },
+        ],
+        activeId: "p1",
+      },
+    });
+    const kids = [...wrapper.get("nav").element.children].map((el) => el.className);
+    expect(kids.at(-1)).toContain("editor-filmstrip-add-wrap");
+    expect(kids.slice(0, -1).every((c) => c.includes("editor-thumb"))).toBe(true);
+  });
 });
