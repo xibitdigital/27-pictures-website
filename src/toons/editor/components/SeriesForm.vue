@@ -64,6 +64,15 @@ function slugFromTitle(value: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+function normaliseHubUrl(raw: string): string {
+  const segments = raw
+    .trim()
+    .split("/")
+    .map((segment) => slugFromTitle(segment))
+    .filter(Boolean);
+  return segments.length ? `/${segments.join("/")}/` : "";
+}
+
 watch(
   () => title.value,
   (value) => {
@@ -234,7 +243,7 @@ async function onSubmit(ev: Event): Promise<void> {
       tagline: tagline.value.trim(),
       description: desc.en,
       descriptions: desc,
-      hubUrl: hubUrl.value.trim() || `/toons/${seriesKey}/`,
+      hubUrl: normaliseHubUrl(hubUrl.value) || `/toons/${seriesKey}/`,
       sort: Number(sort.value) || 0,
       generate: generatePayload(),
     });

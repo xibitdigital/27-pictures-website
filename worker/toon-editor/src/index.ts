@@ -431,6 +431,12 @@ async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined,
   const extraJson = JSON.stringify(extra);
   const description = descriptionMapFromMeta(seriesMeta).en || String(seriesMeta.description || "");
   const coverKey = seriesMeta.coverKey !== undefined ? seriesMeta.coverKey || null : (found && found.cover_key) || null;
+  const hubUrl =
+    seriesMeta.hubUrl !== undefined
+      ? normaliseHubUrl(seriesMeta.hubUrl) || `/toons/${skey}/`
+      : found
+        ? found.hub_url
+        : null;
   if (found) {
     await env.DB.prepare(
       `UPDATE series SET title = ?, tagline = ?, description = ?, cover_key = ?, hub_url = ?, sort = ?, extra_json = ?, updated_at = ?
@@ -441,7 +447,7 @@ async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined,
         String(seriesMeta.tagline || ""),
         description,
         coverKey,
-        seriesMeta.hubUrl || null,
+        hubUrl,
         Number(seriesMeta.sort) || 0,
         extraJson,
         ts,
@@ -459,7 +465,7 @@ async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined,
         String(seriesMeta.tagline || ""),
         description,
         coverKey,
-        seriesMeta.hubUrl || null,
+        hubUrl,
         Number(seriesMeta.sort) || 0,
         extraJson,
         ts,
@@ -524,6 +530,16 @@ function normaliseSlug(raw: unknown): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function normaliseHubUrl(raw: unknown): string | null {
+  const segments = String(raw || "")
+    .trim()
+    .split("/")
+    .map((segment) => normaliseSlug(segment))
+    .filter(Boolean);
+  if (!segments.length) return null;
+  return `/${segments.join("/")}/`;
 }
 
 async function sha256Hex(buffer: ArrayBuffer): Promise<string> {
