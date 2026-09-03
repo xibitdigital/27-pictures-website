@@ -46,16 +46,6 @@ const saving = ref(false);
 const previewCue = computed(() => visibilityLabel(statusFromVisibility(visibility.value)));
 const previewPages = computed(() => existing.value?.pages.length ?? 0);
 
-/** Grouped toons follow their series' owner; ungrouped ones carry their own. */
-const effectiveOwnerId = computed<string | null>(() => {
-  if (seriesKey.value) return seriesList.value.find((s) => s.key === seriesKey.value)?.ownerId ?? null;
-  return existing.value?.ownerId ?? null;
-});
-
-const readOnly = computed(
-  () => !isCreate.value && !isAdmin.value && effectiveOwnerId.value !== (userRef?.value?.id ?? null)
-);
-
 const visibilityOptions = computed(() =>
   isAdmin.value ? TOON_VISIBILITY : TOON_VISIBILITY.filter((opt) => opt.value !== "public")
 );
@@ -186,7 +176,7 @@ async function onSubmit(ev: Event): Promise<void> {
   <div class="editor-page">
     <EditorBar :title="isCreate ? 'New toon' : 'Toon'">
       <template #actions>
-        <button v-if="!readOnly" class="editor-btn" type="submit" form="toon-meta" :disabled="saving">
+        <button class="editor-btn" type="submit" form="toon-meta" :disabled="saving">
           {{ saving ? "Saving…" : isCreate ? "Create" : "Save" }}
         </button>
         <RouterLink v-if="existing" class="editor-btn editor-btn--ghost" :to="`/${existing.id}/pages`">
@@ -195,87 +185,84 @@ async function onSubmit(ev: Event): Promise<void> {
         </RouterLink>
       </template>
     </EditorBar>
-    <p v-if="readOnly" class="editor-error" role="alert">Owned by another editor — view only.</p>
-    <fieldset :disabled="readOnly" class="editor-fieldset">
-      <form id="toon-meta" class="editor-form" novalidate @submit="onSubmit">
-        <div class="editor-form-main">
-          <label v-if="isCreate" class="editor-form-span">
-            Slug
-            <input v-model="slug" name="slug" required autocomplete="off" @input="slugTouched = true" />
-          </label>
-          <p v-else class="editor-muted">Slug: {{ slug }}</p>
+    <form id="toon-meta" class="editor-form" novalidate @submit="onSubmit">
+      <div class="editor-form-main">
+        <label v-if="isCreate" class="editor-form-span">
+          Slug
+          <input v-model="slug" name="slug" required autocomplete="off" @input="slugTouched = true" />
+        </label>
+        <p v-else class="editor-muted">Slug: {{ slug }}</p>
 
+        <label>
+          Title
+          <input v-model="title" name="title" required />
+        </label>
+        <label>
+          Subtitle
+          <input v-model="subtitle" name="subtitle" />
+        </label>
+        <div class="editor-pair-row editor-form-span">
           <label>
-            Title
-            <input v-model="title" name="title" required />
-          </label>
-          <label>
-            Subtitle
-            <input v-model="subtitle" name="subtitle" />
-          </label>
-          <div class="editor-pair-row editor-form-span">
-            <label>
-              <span class="editor-label-row">
-                Series
-                <RouterLink class="editor-field-link" to="/series/new">New series</RouterLink>
-              </span>
-              <select v-model="seriesKey" name="series">
-                <option value="">None (standalone)</option>
-                <option v-for="item in seriesList" :key="item.key" :value="item.key">{{ item.title }}</option>
-              </select>
-            </label>
-            <label>
-              Episode
-              <input
-                v-model="episodeN"
-                type="number"
-                name="episode-n"
-                min="1"
-                step="1"
-                placeholder="1"
-                :disabled="!seriesKey"
-              />
-            </label>
-          </div>
-          <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
-            Description ({{ lang.label }})
-            <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />
-          </label>
-          <label>
-            Visibility
-            <select v-model="visibility" name="visibility">
-              <option v-for="opt in visibilityOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+            <span class="editor-label-row">
+              Series
+              <RouterLink class="editor-field-link" to="/series/new">New series</RouterLink>
+            </span>
+            <select v-model="seriesKey" name="series">
+              <option value="">None (standalone)</option>
+              <option v-for="item in seriesList" :key="item.key" :value="item.key">{{ item.title }}</option>
             </select>
           </label>
-          <p class="editor-muted">
-            {{
-              visibility === "public"
-                ? "Public toons appear on /toons/ and their reader loads from the database."
-                : visibility === "staging"
-                  ? "Staging toons appear on staging.twentyseven.pictures and local preview. They stay hidden on production."
-                  : "Draft toons stay in the editor. They are hidden from the website."
-            }}
-          </p>
-          <p v-if="!isAdmin" class="editor-muted">Editors are capped at Draft/Staging — only an admin can publish.</p>
-        </div>
-        <aside class="editor-form-preview">
           <label>
-            Cover image
-            <input type="file" accept="image/webp,image/jpeg,image/png" @change="onCover" />
-          </label>
-          <div class="series-grid">
-            <ToonCard
-              :title="title.trim() || slug || 'Untitled'"
-              :meta="subtitle.trim()"
-              :cue="previewPages ? `${previewPages} pages` : ''"
-              :description="descriptions.en.trim()"
-              :cover-url="coverPreview || null"
-              :badge="previewCue"
-              :visibility="visibility"
+            Episode
+            <input
+              v-model="episodeN"
+              type="number"
+              name="episode-n"
+              min="1"
+              step="1"
+              placeholder="1"
+              :disabled="!seriesKey"
             />
-          </div>
-        </aside>
-      </form>
-    </fieldset>
+          </label>
+        </div>
+        <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
+          Description ({{ lang.label }})
+          <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />
+        </label>
+        <label>
+          Visibility
+          <select v-model="visibility" name="visibility">
+            <option v-for="opt in visibilityOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+          </select>
+        </label>
+        <p class="editor-muted">
+          {{
+            visibility === "public"
+              ? "Public toons appear on /toons/ and their reader loads from the database."
+              : visibility === "staging"
+                ? "Staging toons appear on staging.twentyseven.pictures and local preview. They stay hidden on production."
+                : "Draft toons stay in the editor. They are hidden from the website."
+          }}
+        </p>
+        <p v-if="!isAdmin" class="editor-muted">Editors are capped at Draft/Staging — only an admin can publish.</p>
+      </div>
+      <aside class="editor-form-preview">
+        <label>
+          Cover image
+          <input type="file" accept="image/webp,image/jpeg,image/png" @change="onCover" />
+        </label>
+        <div class="series-grid">
+          <ToonCard
+            :title="title.trim() || slug || 'Untitled'"
+            :meta="subtitle.trim()"
+            :cue="previewPages ? `${previewPages} pages` : ''"
+            :description="descriptions.en.trim()"
+            :cover-url="coverPreview || null"
+            :badge="previewCue"
+            :visibility="visibility"
+          />
+        </div>
+      </aside>
+    </form>
   </div>
 </template>

@@ -15,35 +15,38 @@ describe("isAdmin", () => {
 });
 
 describe("canManageSeries", () => {
-  it("admin can manage any series", () => {
-    expect(canManageSeries(user("admin"), { owner_id: "someone-else" })).toBe(true);
-    expect(canManageSeries(user("admin"), { owner_id: null })).toBe(true);
+  it("admin can manage any series regardless of membership", () => {
+    expect(canManageSeries(user("admin"), false)).toBe(true);
+    expect(canManageSeries(user("admin"), true)).toBe(true);
   });
 
-  it("editor can only manage their own series", () => {
-    expect(canManageSeries(user("editor", "u1"), { owner_id: "u1" })).toBe(true);
-    expect(canManageSeries(user("editor", "u1"), { owner_id: "u2" })).toBe(false);
-    expect(canManageSeries(user("editor", "u1"), { owner_id: null })).toBe(false);
+  it("editor can only manage a series they're assigned to", () => {
+    expect(canManageSeries(user("editor"), true)).toBe(true);
+    expect(canManageSeries(user("editor"), false)).toBe(false);
+  });
+
+  it("no session can never manage", () => {
+    expect(canManageSeries(null, true)).toBe(false);
   });
 });
 
 describe("canManageToon", () => {
-  it("grouped toon permission follows the series owner, not the toon's own owner_id", () => {
+  it("grouped toon permission follows series membership, not the toon's own owner_id", () => {
     const editor = user("editor", "u1");
     const groupedToon = { owner_id: "u2", series_key: "nero" };
-    expect(canManageToon(editor, groupedToon, "u1")).toBe(true);
-    expect(canManageToon(editor, groupedToon, "u2")).toBe(false);
+    expect(canManageToon(editor, groupedToon, true)).toBe(true);
+    expect(canManageToon(editor, groupedToon, false)).toBe(false);
   });
 
   it("ungrouped toon permission follows its own owner_id", () => {
     const editor = user("editor", "u1");
-    expect(canManageToon(editor, { owner_id: "u1", series_key: null }, null)).toBe(true);
-    expect(canManageToon(editor, { owner_id: "u2", series_key: null }, null)).toBe(false);
+    expect(canManageToon(editor, { owner_id: "u1", series_key: null }, false)).toBe(true);
+    expect(canManageToon(editor, { owner_id: "u2", series_key: null }, false)).toBe(false);
   });
 
-  it("admin bypasses ownership entirely", () => {
+  it("admin bypasses membership and ownership entirely", () => {
     const admin = user("admin", "u9");
-    expect(canManageToon(admin, { owner_id: "u2", series_key: "nero" }, "u2")).toBe(true);
+    expect(canManageToon(admin, { owner_id: "u2", series_key: "nero" }, false)).toBe(true);
   });
 });
 

@@ -211,7 +211,7 @@ describe("ToonMetaForm visibility", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
-  it("hides Public from an editor and shows a read-only banner on a toon owned by someone else", async () => {
+  it("hides Public from an editor session", async () => {
     route.name = "meta";
     route.params = { id: "t1" };
     vi.spyOn(api, "getToon").mockResolvedValue({
@@ -225,7 +225,6 @@ describe("ToonMetaForm visibility", () => {
       designWidth: 800,
       designHeight: 1424,
       status: "draft",
-      ownerId: "someone-else",
       pages: [],
     });
     const editorProvide = {
@@ -241,8 +240,6 @@ describe("ToonMetaForm visibility", () => {
         .findAll("option")
         .map((o) => (o.element as HTMLOptionElement).value)
     ).toEqual(["draft", "staging"]);
-    expect(wrapper.text()).toContain("Owned by another editor");
-    expect(wrapper.get("fieldset").attributes("disabled")).toBeDefined();
   });
 
   it("pre-fills series and episode from the query when adding from a series page", async () => {

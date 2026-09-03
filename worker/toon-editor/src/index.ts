@@ -311,6 +311,7 @@ function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: Req
     toonCount: Number(row.toon_count) || 0,
     generate: seriesGenerate(row, request, env),
     ownerId: row.owner_id || null,
+    editorIds: row.editor_ids ? String(row.editor_ids).split(",") : [],
   };
 }
 
@@ -487,6 +488,24 @@ async function upsertSeries(
         ts,
         ts
       )
+      .run();
+  }
+}
+
+async function isSeriesEditor(env: Env, seriesKey: string, userId: string): Promise<boolean> {
+  if (!userId) return false;
+  const row = await env.DB.prepare("SELECT 1 FROM series_editors WHERE series_key = ? AND user_id = ? LIMIT 1")
+    .bind(seriesKey, userId)
+    .first();
+  return Boolean(row);
+}
+
+async function syncSeriesEditors(env: Env, seriesKey: string, editorIds: string[]): Promise<void> {
+  await env.DB.prepare("DELETE FROM series_editors WHERE series_key = ?").bind(seriesKey).run();
+  const ts = nowIso();
+  for (const id of editorIds) {
+    await env.DB.prepare("INSERT INTO series_editors (series_key, user_id, created_at) VALUES (?, ?, ?)")
+      .bind(seriesKey, id, ts)
       .run();
   }
 }
@@ -770,6 +789,13 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json({ user: publicUser({ id, email, username, role }), emailSent }, 201, cors);
   }
 
+  if (method === "GET" && path === "/users") {
+    if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
+    const rows = (await env.DB.prepare("SELECT id, email, username, role FROM users ORDER BY username").all<UserRow>())
+      .results;
+    return json({ users: rows.map((row) => publicUser(row)) }, 200, cors);
+  }
+
   const mediaMatch = path.match(/^\/media\/(.+)$/);
   if (mediaMatch && method === "GET") {
     const key = mediaMatch[1];
@@ -797,13 +823,16 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   if (method === "GET" && path === "/series") {
-    const rows = (
-      await env.DB.prepare(
-        `SELECT series.*,
-                (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
-         FROM series ORDER BY sort ASC, title ASC`
-      ).all()
-    ).results;
+    const seriesListSql = `SELECT series.*,
+                (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+                (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
+         FROM series
+         ${isAdmin(session) ? "" : "WHERE key IN (SELECT series_key FROM series_editors WHERE user_id = ?)"}
+         ORDER BY sort ASC, title ASC`;
+    const stmt = isAdmin(session)
+      ? env.DB.prepare(seriesListSql)
+      : env.DB.prepare(seriesListSql).bind(session ? session.id : "");
+    const rows = (await stmt.all()).results;
     return json({ series: rows.map((row) => mapSeries(row, request, env)) }, 200, cors);
   }
 
@@ -824,7 +853,8 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .run();
     const row = await env.DB.prepare(
       `SELECT series.*,
-              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+              (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
        FROM series WHERE key = ?`
     )
       .bind(key)
@@ -881,7 +911,8 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .run();
     const row = await env.DB.prepare(
       `SELECT series.*,
-              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+              (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
        FROM series WHERE key = ?`
     )
       .bind(key)
@@ -929,7 +960,8 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .run();
     const row = await env.DB.prepare(
       `SELECT series.*,
-              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+              (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
        FROM series WHERE key = ?`
     )
       .bind(key)
@@ -943,12 +975,16 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
     const row = await env.DB.prepare(
       `SELECT series.*,
-              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+              (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
        FROM series WHERE key = ?`
     )
       .bind(key)
       .first();
     if (!row) return json({ error: "not found" }, 404, cors);
+    if (!isAdmin(session) && !(await isSeriesEditor(env, key, session ? session.id : ""))) {
+      return json({ error: "not found" }, 404, cors);
+    }
     const toonRows = (
       await env.DB.prepare(
         `SELECT toons.*,
@@ -973,18 +1009,29 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const key = normaliseSlug(parsed.body.key);
     if (!key || !SLUG_RE.test(key) || key.length > 64) return json({ error: "invalid key" }, 400, cors);
-    const existingSeries = await env.DB.prepare("SELECT owner_id FROM series WHERE key = ?")
-      .bind(key)
-      .first<{ owner_id: string | null }>();
-    if (existingSeries && !canManageSeries(session, existingSeries)) {
+    const existingSeries = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(key).first();
+    const isMember = existingSeries ? await isSeriesEditor(env, key, session ? session.id : "") : false;
+    if (existingSeries && !canManageSeries(session, isMember)) {
       return json({ error: "forbidden" }, 403, cors);
     }
     parsed.body.key = key;
     if (!parsed.body.hubUrl) parsed.body.hubUrl = `/toons/${key}/`;
     await upsertSeries(env, parsed.body, nowIso(), session ? session.id : null);
+    const editorIds = Array.isArray(parsed.body.editorIds)
+      ? parsed.body.editorIds.filter((id: unknown): id is string => typeof id === "string")
+      : null;
+    if (!existingSeries) {
+      // Creating: an editor keeps themselves on it, or an admin's explicit
+      // list is authoritative (may be empty — a house series).
+      const initial = isAdmin(session) && editorIds ? editorIds : session ? [session.id] : [];
+      await syncSeriesEditors(env, key, initial);
+    } else if (isAdmin(session) && editorIds) {
+      await syncSeriesEditors(env, key, editorIds);
+    }
     const row = await env.DB.prepare(
       `SELECT series.*,
-              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+              (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
        FROM series WHERE key = ?`
     )
       .bind(key)
@@ -1216,13 +1263,20 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   if (method === "GET" && path === "/toons") {
-    const rows = (
-      await env.DB.prepare(
-        `SELECT toons.*,
+    const toonsListSql = `SELECT toons.*,
                 (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
-         FROM toons ORDER BY updated_at DESC`
-      ).all()
-    ).results;
+         FROM toons
+         ${
+           isAdmin(session)
+             ? ""
+             : `WHERE (series_key IN (SELECT series_key FROM series_editors WHERE user_id = ?))
+                OR (series_key IS NULL AND owner_id = ?)`
+         }
+         ORDER BY updated_at DESC`;
+    const stmt = isAdmin(session)
+      ? env.DB.prepare(toonsListSql)
+      : env.DB.prepare(toonsListSql).bind(session ? session.id : "", session ? session.id : "");
+    const rows = (await stmt.all()).results;
     return json(
       rows.map((row) => mapToonListItem(row, request, env)),
       200,
@@ -1245,10 +1299,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (publishErr) return json({ error: publishErr }, 403, cors);
     const seriesKey = parseSeriesKey(body, null);
     if (seriesKey) {
-      const series = await env.DB.prepare("SELECT owner_id FROM series WHERE key = ?")
-        .bind(seriesKey)
-        .first<{ owner_id: string | null }>();
-      if (series && !canManageSeries(session, series)) return json({ error: "forbidden" }, 403, cors);
+      const seriesExists = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(seriesKey).first();
+      if (seriesExists) {
+        const isMember = await isSeriesEditor(env, seriesKey, session ? session.id : "");
+        if (!canManageSeries(session, isMember)) return json({ error: "forbidden" }, 403, cors);
+      }
     }
     const id = crypto.randomUUID();
     const ts = nowIso();
@@ -1286,17 +1341,21 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (method === "GET") {
       const toon = await loadToon(env, request, id);
       if (!toon) return json({ error: "not found" }, 404, cors);
+      if (!isAdmin(session)) {
+        const isMember = toon.seriesKey ? await isSeriesEditor(env, toon.seriesKey, session ? session.id : "") : false;
+        if (!canManageToon(session, { owner_id: toon.ownerId, series_key: toon.seriesKey }, isMember)) {
+          return json({ error: "not found" }, 404, cors);
+        }
+      }
       return json(toon, 200, cors);
     }
     if (method === "PATCH") {
       const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
       if (!current) return json({ error: "not found" }, 404, cors);
-      const currentSeriesOwner = current.series_key
-        ? await env.DB.prepare("SELECT owner_id FROM series WHERE key = ?")
-            .bind(current.series_key)
-            .first<{ owner_id: string | null }>()
-        : null;
-      if (!canManageToon(session, current, currentSeriesOwner?.owner_id ?? null)) {
+      const isCurrentMember = current.series_key
+        ? await isSeriesEditor(env, current.series_key, session ? session.id : "")
+        : false;
+      if (!canManageToon(session, current, isCurrentMember)) {
         return json({ error: "forbidden" }, 403, cors);
       }
       const parsed = await readJson(request);
@@ -1313,10 +1372,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       applyTitles(extra, body, title);
       const seriesKey = parseSeriesKey(body, current.series_key || null);
       if (seriesKey && seriesKey !== current.series_key) {
-        const nextSeries = await env.DB.prepare("SELECT owner_id FROM series WHERE key = ?")
-          .bind(seriesKey)
-          .first<{ owner_id: string | null }>();
-        if (nextSeries && !canManageSeries(session, nextSeries)) return json({ error: "forbidden" }, 403, cors);
+        const nextSeriesExists = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(seriesKey).first();
+        if (nextSeriesExists) {
+          const isNextMember = await isSeriesEditor(env, seriesKey, session ? session.id : "");
+          if (!canManageSeries(session, isNextMember)) return json({ error: "forbidden" }, 403, cors);
+        }
       }
       const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
       const readerUrl = (await deriveReaderUrl(env, seriesKey, current.slug)) || current.reader_url;

@@ -118,6 +118,7 @@ export interface SeriesRow {
   extra_json?: string | null;
   toon_count?: number;
   owner_id?: string | null;
+  editor_ids?: string | null;
   created_at?: string;
   updated_at?: string;
 }

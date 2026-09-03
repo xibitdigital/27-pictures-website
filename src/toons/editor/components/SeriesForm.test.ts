@@ -89,12 +89,32 @@ describe("SeriesForm", () => {
     );
   });
 
-  it("shows a read-only banner for an editor who doesn't own the series", async () => {
-    vi.spyOn(api, "getSeries").mockResolvedValue({
-      series: { key: "nero", title: "Nero", tagline: "", ownerId: "someone-else" },
-      toons: [],
+  it("lets an admin assign editors from the roster and sends the selected ids", async () => {
+    vi.spyOn(api, "listUsers").mockResolvedValue([
+      { id: "e1", email: "eve@example.com", username: "eve", role: "editor" },
+      { id: "e2", email: "sam@example.com", username: "sam", role: "editor" },
+      { id: "a1", email: "adm@example.com", username: "adm", role: "admin" },
+    ]);
+    const save = vi.spyOn(api, "saveSeries").mockResolvedValue({ key: "red-smile", title: "RED SMILE" });
+    const wrapper = mount(SeriesForm, {
+      global: {
+        stubs: { EditorBar: true, ToonCard: true, EditorSession: true },
+        provide: {
+          [EDITOR_USER_KEY as symbol]: ref({ id: "u1", email: "a@example.com", username: "a", role: "admin" as const }),
+        },
+      },
     });
-    useRoute.mockReturnValue({ name: "series-edit", params: { key: "nero" } });
+    await flushPromises();
+    const checkboxes = wrapper.findAll('input[type="checkbox"]');
+    expect(checkboxes).toHaveLength(2); // admins aren't offered as series editors
+    await wrapper.get('input[name="title"]').setValue("RED SMILE");
+    await checkboxes[0].setValue(true);
+    await wrapper.get("form").trigger("submit");
+    expect(save).toHaveBeenCalledWith(expect.objectContaining({ editorIds: ["e1"] }));
+  });
+
+  it("hides the Editors section for an editor session", async () => {
+    const listUsers = vi.spyOn(api, "listUsers");
     const wrapper = mount(SeriesForm, {
       global: {
         stubs: { EditorBar: true, ToonCard: true, EditorSession: true },
@@ -109,7 +129,7 @@ describe("SeriesForm", () => {
       },
     });
     await flushPromises();
-    expect(wrapper.text()).toContain("Owned by another editor");
-    expect(wrapper.get("fieldset").attributes("disabled")).toBeDefined();
+    expect(listUsers).not.toHaveBeenCalled();
+    expect(wrapper.text()).not.toContain("Editors");
   });
 });

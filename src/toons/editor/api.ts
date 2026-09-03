@@ -119,6 +119,11 @@ export function inviteUser(input: InviteUserInput): Promise<InviteUserResult> {
   return api<InviteUserResult>("/auth/users", { method: "POST", body: JSON.stringify(input) });
 }
 
+export async function listUsers(): Promise<EditorUser[]> {
+  const body = await api<{ users?: EditorUser[] }>("/users");
+  return Array.isArray(body.users) ? body.users : [];
+}
+
 export function fetchCredits(): Promise<CreditsSnapshot> {
   return api<CreditsSnapshot>("/credits");
 }

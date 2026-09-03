@@ -46,14 +46,6 @@ body {
   padding: 1.25rem 1.75rem 4rem;
 }
 
-/** Wraps a read-only form: reset the browser's default fieldset chrome. */
-.editor-fieldset {
-  border: 0;
-  margin: 0;
-  padding: 0;
-  min-width: 0;
-}
-
 .editor-list-section {
   margin-bottom: 2.25rem;
 }

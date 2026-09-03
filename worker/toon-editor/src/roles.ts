@@ -9,25 +9,26 @@ export function isAdmin(session: EditorUser | null): boolean {
   return session?.role === "admin";
 }
 
-export function canManageSeries(session: EditorUser | null, series: { owner_id?: string | null }): boolean {
+export function canManageSeries(session: EditorUser | null, isMember: boolean): boolean {
   if (isAdmin(session)) return true;
-  return Boolean(session && series.owner_id && series.owner_id === session.id);
+  return Boolean(session) && isMember;
 }
 
 /**
- * A grouped toon's permission follows its series' owner, not the toon's own
- * `owner_id` — "own series only" means every episode under a series an
- * editor created, not a per-episode ownership flag.
+ * A grouped toon's permission follows its series' assigned-editors list, not
+ * the toon's own `owner_id` — an editor manages every episode under a series
+ * they're assigned to, not a per-episode ownership flag. Ungrouped toons
+ * still use their own `owner_id` (the creator) — unchanged single-owner model.
  */
 export function canManageToon(
   session: EditorUser | null,
   toon: { owner_id?: string | null; series_key?: string | null },
-  seriesOwnerId: string | null
+  isSeriesMember: boolean
 ): boolean {
   if (isAdmin(session)) return true;
   if (!session) return false;
-  const ownerId = toon.series_key ? seriesOwnerId : toon.owner_id ?? null;
-  return Boolean(ownerId && ownerId === session.id);
+  if (toon.series_key) return isSeriesMember;
+  return Boolean(toon.owner_id && toon.owner_id === session.id);
 }
 
 export function publishError(session: EditorUser | null, requestedStatus: ToonStatus): string | null {

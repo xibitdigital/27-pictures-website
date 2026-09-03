@@ -148,6 +148,7 @@ export interface SeriesOption {
   coverKey?: string | null;
   generate?: SeriesGenerateConfig;
   ownerId?: string | null;
+  editorIds?: string[];
 }
 
 export interface SeriesInput {
@@ -159,6 +160,8 @@ export interface SeriesInput {
   hubUrl?: string | null;
   sort?: number;
   generate?: Partial<SeriesGenerateConfig> | null;
+  /** Only honoured server-side when the caller is admin. */
+  editorIds?: string[];
 }
 
 export interface ToonListItem {
