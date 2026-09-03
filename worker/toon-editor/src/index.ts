@@ -7,6 +7,7 @@
  * Everything else needs a JWT: Authorization: Bearer <login token>.
  */
 import {
+  generatePassword,
   hashPassword,
   issueToken,
   normaliseEmail,
@@ -14,6 +15,7 @@ import {
   userCount,
   userFromRequest,
   validateCredentials,
+  validateEmail,
   verifyPassword,
 } from "./auth";
 import { mergeGenerate, parseComfyApiGraph, parseGenerateConfig, slugAlias } from "./comfyFlow";
@@ -22,7 +24,9 @@ import { pollPageJob, recordImageCredit, startPageGenerate, type GenerationJob }
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { toWebp } from "./imageOptimize";
+import { sendInviteEmail } from "./inviteEmail";
 import { handleLikes } from "./likes";
+import { canManageSeries, canManageToon, isAdmin, publishError } from "./roles";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
 
@@ -46,6 +50,8 @@ import {
   type ToonListItem,
   type ToonRecord,
   type ToonRow,
+  type UserRole,
+  type UserRow,
   type WordInput,
 } from "./types";
 
@@ -256,6 +262,7 @@ function mapToon(
     assetPageDir: row.asset_page_dir || null,
     seriesKey: row.series_key || null,
     episodeN: row.episode_n != null ? Number(row.episode_n) : null,
+    ownerId: row.owner_id || null,
     pages: pages || [],
   };
 }
@@ -272,6 +279,7 @@ function mapToonListItem(row: ToonRow | Record<string, unknown>, request: Reques
     status: row.status || "draft",
     seriesKey: row.series_key || null,
     episodeN: row.episode_n != null ? Number(row.episode_n) : null,
+    ownerId: row.owner_id || null,
   };
 }
 
@@ -302,6 +310,7 @@ function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: Req
     sort: Number(row.sort) || 0,
     toonCount: Number(row.toon_count) || 0,
     generate: seriesGenerate(row, request, env),
+    ownerId: row.owner_id || null,
   };
 }
 
@@ -420,7 +429,12 @@ function applyTitles(extra: JsonRecord, body: JsonRecord, enFallback: string): D
   return map;
 }
 
-async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined, ts: string) {
+async function upsertSeries(
+  env: Env,
+  seriesMeta: SeriesMeta | null | undefined,
+  ts: string,
+  ownerId: string | null = null
+) {
   if (!seriesMeta || !seriesMeta.key) return;
   const skey = String(seriesMeta.key);
   const found = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(skey).first<SeriesRow>();
@@ -457,8 +471,8 @@ async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined,
       .run();
   } else {
     await env.DB.prepare(
-      `INSERT INTO series (key, title, tagline, description, cover_key, hub_url, sort, extra_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO series (key, title, tagline, description, cover_key, hub_url, sort, extra_json, owner_id, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         skey,
@@ -469,6 +483,7 @@ async function upsertSeries(env: Env, seriesMeta: SeriesMeta | null | undefined,
         hubUrl,
         Number(seriesMeta.sort) || 0,
         extraJson,
+        ownerId,
         ts,
         ts
       )
@@ -655,11 +670,19 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (invalid) return json({ error: invalid }, 400, cors);
     const id = crypto.randomUUID();
     const ts = nowIso();
-    await env.DB.prepare(`INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, ?)`)
-      .bind(id, email, await hashPassword(password), ts)
+    // The very first account ever created is the site owner setting the
+    // studio up — it bootstraps as admin, same as every pre-existing row did
+    // in migration 0009. Username has no form field here; derive it like the
+    // migration's backfill so the column is never left empty.
+    const username = email.split("@")[0] || email;
+    await env.DB.prepare(
+      `INSERT INTO users (id, email, username, role, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+    )
+      .bind(id, email, username, "admin", await hashPassword(password), ts)
       .run();
-    const sess = await issueToken(env, { id, email });
-    return json({ token: sess.token, user: publicUser({ id, email }) }, 201, cors);
+    const user: EditorUser = { id, email, username, role: "admin" };
+    const sess = await issueToken(env, user);
+    return json({ token: sess.token, user: publicUser(user) }, 201, cors);
   }
 
   if (method === "POST" && path === "/auth/login") {
@@ -667,14 +690,13 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const email = normaliseEmail(parsed.body.email);
     const password = String(parsed.body.password || "");
-    const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?")
-      .bind(email)
-      .first<{ id: string; email: string; password_hash: string }>();
-    if (!user || !(await verifyPassword(password, user.password_hash))) {
+    const row = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first<UserRow>();
+    if (!row || !row.password_hash || !(await verifyPassword(password, row.password_hash))) {
       return json({ error: "invalid email or password" }, 401, cors);
     }
-    const sess = await issueToken(env, { id: user.id, email: user.email });
-    return json({ token: sess.token, user: publicUser({ id: user.id, email: user.email }) }, 200, cors);
+    const user: EditorUser = { id: row.id, email: row.email, username: row.username, role: row.role };
+    const sess = await issueToken(env, user);
+    return json({ token: sess.token, user: publicUser(user) }, 200, cors);
   }
 
   if (method === "GET" && path === "/auth/me") {
@@ -722,19 +744,30 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   if (method === "POST" && path === "/auth/users") {
+    if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const email = normaliseEmail(parsed.body.email);
-    const password = String(parsed.body.password || "");
-    const invalid = validateCredentials(email, password);
+    const username = String(parsed.body.username || "").trim();
+    const role: UserRole = parsed.body.role === "admin" ? "admin" : "editor";
+    const invalid = validateEmail(email);
     if (invalid) return json({ error: invalid }, 400, cors);
-    const existing = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
-    if (existing) return json({ error: "email taken" }, 409, cors);
+    if (!username || username.length > 64) return json({ error: "username is required" }, 400, cors);
+    const existingEmail = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
+    if (existingEmail) return json({ error: "email taken" }, 409, cors);
+    const existingUsername = await env.DB.prepare("SELECT id FROM users WHERE username = ?").bind(username).first();
+    if (existingUsername) return json({ error: "username taken" }, 409, cors);
     const id = crypto.randomUUID();
-    await env.DB.prepare(`INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, ?)`)
-      .bind(id, email, await hashPassword(password), nowIso())
+    const password = generatePassword();
+    await env.DB.prepare(
+      `INSERT INTO users (id, email, username, role, password_hash, invited_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
+    )
+      .bind(id, email, username, role, await hashPassword(password), session.id, nowIso())
       .run();
-    return json({ user: publicUser({ id, email }) }, 201, cors);
+    const origin = request.headers.get("Origin") || siteOriginFromRequest(request);
+    const loginUrl = `${origin}/toons/editor/`;
+    const emailSent = await sendInviteEmail(env, { to: email, username, password, loginUrl });
+    return json({ user: publicUser({ id, email, username, role }), emailSent }, 201, cors);
   }
 
   const mediaMatch = path.match(/^\/media\/(.+)$/);
@@ -940,9 +973,15 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const key = normaliseSlug(parsed.body.key);
     if (!key || !SLUG_RE.test(key) || key.length > 64) return json({ error: "invalid key" }, 400, cors);
+    const existingSeries = await env.DB.prepare("SELECT owner_id FROM series WHERE key = ?")
+      .bind(key)
+      .first<{ owner_id: string | null }>();
+    if (existingSeries && !canManageSeries(session, existingSeries)) {
+      return json({ error: "forbidden" }, 403, cors);
+    }
     parsed.body.key = key;
     if (!parsed.body.hubUrl) parsed.body.hubUrl = `/toons/${key}/`;
-    await upsertSeries(env, parsed.body, nowIso());
+    await upsertSeries(env, parsed.body, nowIso(), session ? session.id : null);
     const row = await env.DB.prepare(
       `SELECT series.*,
               (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count
@@ -1201,17 +1240,25 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     }
     const existing = await env.DB.prepare("SELECT id FROM toons WHERE slug = ?").bind(slug).first();
     if (existing) return json({ error: "slug taken" }, 409, cors);
+    const status = parseStatus(body.status, "draft");
+    const publishErr = publishError(session, status);
+    if (publishErr) return json({ error: publishErr }, 403, cors);
+    const seriesKey = parseSeriesKey(body, null);
+    if (seriesKey) {
+      const series = await env.DB.prepare("SELECT owner_id FROM series WHERE key = ?")
+        .bind(seriesKey)
+        .first<{ owner_id: string | null }>();
+      if (series && !canManageSeries(session, series)) return json({ error: "forbidden" }, 403, cors);
+    }
     const id = crypto.randomUUID();
     const ts = nowIso();
-    const status = parseStatus(body.status, "draft");
     const extra: JsonRecord = {};
     const desc = applyDescriptions(extra, body, String(body.description || "").trim());
-    const seriesKey = parseSeriesKey(body, null);
     const episodeN = seriesKey ? parseEpisodeN(body, null) : null;
     const readerUrl = await deriveReaderUrl(env, seriesKey, slug);
     await env.DB.prepare(
-      `INSERT INTO toons (id, slug, title, subtitle, description, status, reader_url, extra_json, series_key, episode_n, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO toons (id, slug, title, subtitle, description, status, reader_url, extra_json, series_key, episode_n, owner_id, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         id,
@@ -1224,6 +1271,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         JSON.stringify(extra),
         seriesKey,
         episodeN,
+        session ? session.id : null,
         ts,
         ts
       )
@@ -1243,17 +1291,33 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (method === "PATCH") {
       const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
       if (!current) return json({ error: "not found" }, 404, cors);
+      const currentSeriesOwner = current.series_key
+        ? await env.DB.prepare("SELECT owner_id FROM series WHERE key = ?")
+            .bind(current.series_key)
+            .first<{ owner_id: string | null }>()
+        : null;
+      if (!canManageToon(session, current, currentSeriesOwner?.owner_id ?? null)) {
+        return json({ error: "forbidden" }, 403, cors);
+      }
       const parsed = await readJson(request);
       if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
       const body = parsed.body;
       const title = body.title != null ? String(body.title).trim() : current.title;
       const subtitle = body.subtitle != null ? String(body.subtitle).trim() : current.subtitle;
       const status = parseStatus(body.status, parseStatus(current.status, "draft"));
+      const publishErr = publishError(session, status);
+      if (publishErr) return json({ error: publishErr }, 403, cors);
       const extra = parseToonExtra(current);
       const desc = applyDescriptions(extra, body, current.description);
       const description = desc.en;
       applyTitles(extra, body, title);
       const seriesKey = parseSeriesKey(body, current.series_key || null);
+      if (seriesKey && seriesKey !== current.series_key) {
+        const nextSeries = await env.DB.prepare("SELECT owner_id FROM series WHERE key = ?")
+          .bind(seriesKey)
+          .first<{ owner_id: string | null }>();
+        if (nextSeries && !canManageSeries(session, nextSeries)) return json({ error: "forbidden" }, 403, cors);
+      }
       const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
       const readerUrl = (await deriveReaderUrl(env, seriesKey, current.slug)) || current.reader_url;
       await env.DB.prepare(

@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+import { ref } from "vue";
 import ToonList from "./ToonList.vue";
 import * as api from "../api";
+import { EDITOR_USER_KEY } from "../session";
 
 vi.mock("vue-router", () => ({
   RouterLink: { template: '<a :href="to"><slot /></a>', props: ["to"] },
@@ -51,5 +53,23 @@ describe("ToonList", () => {
     expect(wrapper.text()).toContain("Loose");
     expect(wrapper.text()).toContain("Public");
     expect(wrapper.text()).toContain("Draft");
+    expect(wrapper.text()).not.toContain("Invite user");
+  });
+
+  it("shows Invite user only for an admin session", async () => {
+    vi.spyOn(api, "listSeries").mockResolvedValue([]);
+    vi.spyOn(api, "listToons").mockResolvedValue([]);
+    const wrapper = mount(ToonList, {
+      global: {
+        stubs: {
+          EditorBar: { template: '<div><slot name="start" /><slot name="actions" /></div>' },
+          EditorSession: true,
+        },
+        provide: {
+          [EDITOR_USER_KEY as symbol]: ref({ id: "u1", email: "a@a.com", username: "a", role: "admin" as const }),
+        },
+      },
+    });
+    await vi.waitFor(() => expect(wrapper.text()).toContain("Invite user"));
   });
 });

@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
+import { ref } from "vue";
 import SeriesForm from "./SeriesForm.vue";
 import * as api from "../api";
+import { EDITOR_USER_KEY } from "../session";
 
 const { push, useRoute } = vi.hoisted(() => ({
   push: vi.fn(),
@@ -85,5 +87,29 @@ describe("SeriesForm", () => {
         generate: expect.objectContaining({ promptTarget: { nodeId: "12", inputKey: "string_b" } }),
       })
     );
+  });
+
+  it("shows a read-only banner for an editor who doesn't own the series", async () => {
+    vi.spyOn(api, "getSeries").mockResolvedValue({
+      series: { key: "nero", title: "Nero", tagline: "", ownerId: "someone-else" },
+      toons: [],
+    });
+    useRoute.mockReturnValue({ name: "series-edit", params: { key: "nero" } });
+    const wrapper = mount(SeriesForm, {
+      global: {
+        stubs: { EditorBar: true, ToonCard: true, EditorSession: true },
+        provide: {
+          [EDITOR_USER_KEY as symbol]: ref({
+            id: "u1",
+            email: "e@example.com",
+            username: "e",
+            role: "editor" as const,
+          }),
+        },
+      },
+    });
+    await flushPromises();
+    expect(wrapper.text()).toContain("Owned by another editor");
+    expect(wrapper.get("fieldset").attributes("disabled")).toBeDefined();
   });
 });

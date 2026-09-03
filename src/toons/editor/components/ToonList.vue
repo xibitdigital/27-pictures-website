@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import { listSeries, listToons } from "../api";
+import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
 import { visibilityFromStatus, visibilityLabel, type SeriesOption, type ToonListItem } from "../types";
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
 
+const userRef = inject(EDITOR_USER_KEY);
+const isAdmin = computed(() => userRef?.value?.role === "admin");
 const toons = ref<ToonListItem[]>([]);
 const seriesList = ref<SeriesOption[]>([]);
 const loading = ref(true);
@@ -39,6 +42,7 @@ const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey));
   <section class="editor-list">
     <EditorBar title="Toon editor" :home="false">
       <template #actions>
+        <RouterLink v-if="isAdmin" class="editor-btn editor-btn--ghost" to="/users">Invite user</RouterLink>
         <RouterLink class="editor-btn editor-btn--ghost" to="/series/new">New series</RouterLink>
         <RouterLink class="editor-btn" to="/new">New toon</RouterLink>
       </template>

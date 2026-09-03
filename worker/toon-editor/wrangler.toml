@@ -13,6 +13,9 @@ ASSET_BASE = "https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev"
 ALLOWED_TOONS = "erin,erin-the-revenge,jax,nero,redsmile-static,redsmile-marcus"
 # Public Comfy Cloud API (not a secret). Override locally in .dev.vars.
 COMFY_URL = "https://cloud.comfy.org/api"
+# Invite email sender. RESEND_API_KEY is a wrangler secret (local: .dev.vars).
+FROM_EMAIL = "noreply@twentyseven.pictures"
+FROM_NAME = "27 Pictures Editor"
 
 # Staging and production share this D1 (one Worker). Local `wrangler dev`
 # uses Miniflare. Do not add env-specific d1_databases.

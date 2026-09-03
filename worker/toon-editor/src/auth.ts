@@ -43,8 +43,14 @@ export function normaliseEmail(raw: unknown): string {
     .toLowerCase();
 }
 
-export function validateCredentials(email: string, password: unknown): string | null {
+export function validateEmail(email: string): string | null {
   if (!EMAIL_RE.test(email) || email.length > 254) return "invalid email";
+  return null;
+}
+
+export function validateCredentials(email: string, password: unknown): string | null {
+  const invalidEmail = validateEmail(email);
+  if (invalidEmail) return invalidEmail;
   if (typeof password !== "string" || password.length < 8 || password.length > 200) {
     return "password must be at least 8 characters";
   }
@@ -91,9 +97,11 @@ export async function userFromRequest(request: Request, env: Env): Promise<Edito
   if (!match) return null;
   const payload = await verifyJwt(match[1], requireJwtSecret(env));
   if (!payload || !payload.sub) return null;
-  const row = await env.DB.prepare("SELECT id, email FROM users WHERE id = ?").bind(payload.sub).first<UserRow>();
+  const row = await env.DB.prepare("SELECT id, email, username, role FROM users WHERE id = ?")
+    .bind(payload.sub)
+    .first<UserRow>();
   if (!row) return null;
-  return { id: row.id, email: row.email };
+  return { id: row.id, email: row.email, username: row.username, role: row.role };
 }
 
 export async function userCount(env: Env): Promise<number> {
@@ -102,5 +110,13 @@ export async function userCount(env: Env): Promise<number> {
 }
 
 export function publicUser(user: EditorUser): EditorUser {
-  return { id: user.id, email: user.email };
+  return { id: user.id, email: user.email, username: user.username, role: user.role };
+}
+
+const PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+
+/** Server-generated invite password — never chosen by the caller, never echoed back. */
+export function generatePassword(length = 16): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(length));
+  return [...bytes].map((b) => PASSWORD_CHARS[b % PASSWORD_CHARS.length]).join("");
 }

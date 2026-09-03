@@ -3,7 +3,7 @@
  * The JSON contract lives in `apiTypes.ts` and is imported by the Vue studio.
  */
 
-import type { DescriptionMap, SeriesGenerateConfig } from "./apiTypes";
+import type { DescriptionMap, SeriesGenerateConfig, UserRole } from "./apiTypes";
 
 export type {
   BubbleRecord,
@@ -12,6 +12,8 @@ export type {
   CreditsSnapshot,
   DescriptionMap,
   EditorUser,
+  InviteUserInput,
+  InviteUserResult,
   PageRecord,
   SeriesGenerateConfig,
   SeriesInput,
@@ -20,6 +22,7 @@ export type {
   ToonMetaInput,
   ToonRecord,
   ToonStatus,
+  UserRole,
 } from "./apiTypes";
 export { DESC_LANGS, emptyDescriptionMap, parseDescriptionMap, pickDescription } from "./apiTypes";
 
@@ -33,6 +36,9 @@ export interface Env {
   ELEVENLABS_API_KEY?: string;
   COMFY_URL?: string;
   COMFY_API_KEY?: string;
+  RESEND_API_KEY?: string;
+  FROM_EMAIL?: string;
+  FROM_NAME?: string;
 }
 
 export type JsonRecord = Record<string, unknown>;
@@ -65,6 +71,7 @@ export interface ToonRow {
   extra_json?: string | null;
   series_key?: string | null;
   episode_n?: number | null;
+  owner_id?: string | null;
   page_count?: number;
   created_at?: string;
   updated_at?: string;
@@ -110,6 +117,7 @@ export interface SeriesRow {
   sort: number;
   extra_json?: string | null;
   toon_count?: number;
+  owner_id?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -117,6 +125,8 @@ export interface SeriesRow {
 export interface UserRow {
   id: string;
   email: string;
+  username: string;
+  role: UserRole;
   password_hash?: string;
 }
 

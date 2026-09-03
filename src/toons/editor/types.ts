@@ -10,6 +10,8 @@ export type {
   CreditsSnapshot,
   DescriptionMap,
   EditorUser,
+  InviteUserInput,
+  InviteUserResult,
   PageRecord,
   PromptCandidate,
   PromptTarget,
@@ -22,6 +24,7 @@ export type {
   ToonMetaInput,
   ToonRecord,
   ToonStatus,
+  UserRole,
 } from "../../../worker/toon-editor/src/apiTypes";
 export {
   DESC_LANGS,

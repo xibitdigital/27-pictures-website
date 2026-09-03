@@ -9,9 +9,13 @@ export type DescriptionMap = Record<CaptionLang, string>;
 
 export type ToonStatus = "draft" | "staging" | "published";
 
+export type UserRole = "admin" | "editor";
+
 export interface EditorUser {
   id: string;
   email: string;
+  username: string;
+  role: UserRole;
 }
 
 export interface CreditBucket {
@@ -89,6 +93,7 @@ export interface ToonRecord {
   assetPageDir?: string | null;
   seriesKey?: string | null;
   episodeN?: number | null;
+  ownerId?: string | null;
   pages: PageRecord[];
 }
 
@@ -142,6 +147,7 @@ export interface SeriesOption {
   descriptions?: DescriptionMap;
   coverKey?: string | null;
   generate?: SeriesGenerateConfig;
+  ownerId?: string | null;
 }
 
 export interface SeriesInput {
@@ -165,6 +171,7 @@ export interface ToonListItem {
   status?: string;
   seriesKey?: string | null;
   episodeN?: number | null;
+  ownerId?: string | null;
 }
 
 export interface ToonMetaInput {
@@ -176,4 +183,15 @@ export interface ToonMetaInput {
   status?: ToonStatus;
   seriesKey?: string | null;
   episodeN?: number | null;
+}
+
+export interface InviteUserInput {
+  username: string;
+  email: string;
+  role?: UserRole;
+}
+
+export interface InviteUserResult {
+  user: EditorUser;
+  emailSent: boolean;
 }

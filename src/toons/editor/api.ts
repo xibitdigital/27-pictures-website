@@ -2,6 +2,8 @@ import type {
   BubbleRecord,
   CreditsSnapshot,
   EditorUser,
+  InviteUserInput,
+  InviteUserResult,
   SeriesInput,
   SeriesOption,
   ToonListItem,
@@ -111,6 +113,10 @@ export function register(email: string, password: string): Promise<AuthPayload> 
 
 export function fetchMe(): Promise<{ user: EditorUser }> {
   return api<{ user: EditorUser }>("/auth/me");
+}
+
+export function inviteUser(input: InviteUserInput): Promise<InviteUserResult> {
+  return api<InviteUserResult>("/auth/users", { method: "POST", body: JSON.stringify(input) });
 }
 
 export function fetchCredits(): Promise<CreditsSnapshot> {
