@@ -23,6 +23,7 @@ withDefaults(
         <slot name="actions" />
       </div>
       <RouterLink v-if="home" class="editor-btn editor-btn--ghost" to="/">All toons</RouterLink>
+      <slot name="primary" />
       <EditorSession />
     </div>
   </header>

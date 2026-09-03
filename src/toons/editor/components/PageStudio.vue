@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Save, Settings2 } from "@lucide/vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import {
@@ -283,8 +284,13 @@ async function onRemove(): Promise<void> {
   <div class="editor-studio">
     <EditorBar :title="toon?.title || 'Pages'">
       <template #actions>
-        <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">Meta</RouterLink>
+        <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">
+          <Settings2 :size="16" :stroke-width="1.4" aria-hidden="true" />
+          Meta
+        </RouterLink>
         <LangSwitcher :languages="switchLangs" v-model="previewLang" />
+      </template>
+      <template #primary>
         <button
           class="editor-btn"
           type="button"
@@ -292,6 +298,7 @@ async function onRemove(): Promise<void> {
           :disabled="!dirtyCount || saving"
           @click="saveDirty"
         >
+          <Save :size="16" :stroke-width="1.4" aria-hidden="true" />
           {{ saving ? "Saving…" : dirtyCount ? `Save (${dirtyCount})` : "Save" }}
         </button>
       </template>

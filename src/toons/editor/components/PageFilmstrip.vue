@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { LoaderCircle, Upload, X } from "@lucide/vue";
+import { LoaderCircle, Plus, Upload, WandSparkles, X } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import ConfirmDialog from "./ConfirmDialog.vue";
 import type { PageRecord } from "../types";
@@ -89,10 +89,11 @@ function onRemoveConfirm(): void {
     </RouterLink>
     <div class="editor-filmstrip-add-wrap">
       <div class="editor-filmstrip-add">
-        <span class="editor-filmstrip-add-plus" aria-hidden="true">+</span>
+        <Plus class="editor-filmstrip-add-plus" :size="22" :stroke-width="2" aria-hidden="true" />
         <span>Add page</span>
         <div class="editor-filmstrip-add-actions">
           <label class="editor-filmstrip-action">
+            <Upload :size="12" :stroke-width="2.25" aria-hidden="true" />
             Upload
             <input type="file" accept="image/webp,image/jpeg,image/png" aria-label="Upload page" @change="onFile" />
           </label>
@@ -107,6 +108,7 @@ function onRemoveConfirm(): void {
             "
             @click="emit('generate')"
           >
+            <WandSparkles :size="12" :stroke-width="2.25" aria-hidden="true" />
             Generate
           </button>
         </div>

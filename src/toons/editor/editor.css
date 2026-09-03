@@ -987,9 +987,7 @@ body {
 }
 
 .editor-filmstrip-add-plus {
-  font-size: 1.6rem;
-  line-height: 1;
-  font-weight: 700;
+  color: var(--red-smile);
 }
 
 .editor-filmstrip-add-actions {
@@ -1000,12 +998,17 @@ body {
 
 .editor-filmstrip-action {
   position: relative;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
   width: 100%;
   padding: 0.28rem 0.2rem;
   background: var(--bg-dark);
   color: var(--text);
-  border: 1px solid var(--red-smile);
+  /* One strong red border on the card is enough — these stay quiet until
+     hovered/focused, instead of every nested box repeating the same color. */
+  border: 1px solid var(--border-light);
   border-radius: 2px;
   font: inherit;
   font-size: 0.62rem;
@@ -1015,10 +1018,15 @@ body {
   text-align: center;
 }
 
+.editor-filmstrip-action svg {
+  flex-shrink: 0;
+}
+
 .editor-filmstrip-action:hover,
 .editor-filmstrip-action:focus-visible,
 .editor-filmstrip-action:focus-within {
   background: var(--red-smile);
+  border-color: var(--red-smile);
 }
 
 .editor-filmstrip-action input {
@@ -1358,10 +1366,6 @@ body {
     aspect-ratio: auto;
     height: 100%;
     min-height: 0;
-  }
-
-  .editor-filmstrip-add-plus {
-    font-size: 1.1rem;
   }
 
   .editor-inspector {
