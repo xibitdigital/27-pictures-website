@@ -24,6 +24,8 @@ import {
 import { resolveAssetUrl } from "../../bookReader/assetUrl";
 import type { LangCode } from "../../bookReader/types";
 import type { BubbleRecord } from "../types";
+import EditorSelect from "./ui/EditorSelect.vue";
+import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
 const SIZE_MIN = 10;
 const SIZE_MAX = 100;
@@ -319,9 +321,9 @@ function onAudioBlur(ev: Event): void {
   emit("change", extraPatch(props.bubble, "audio", trimmed));
 }
 
-function onVoiceChange(ev: Event): void {
+function onVoiceChange(value: string): void {
   if (!props.bubble) return;
-  emit("change", extraPatch(props.bubble, "voice", (ev.target as HTMLSelectElement).value));
+  emit("change", extraPatch(props.bubble, "voice", value));
 }
 
 async function onAudioFile(ev: Event): Promise<void> {
@@ -367,23 +369,23 @@ async function onGenerateAudio(): Promise<void> {
       <div class="editor-pair-row">
         <label>
           Variant
-          <select
+          <EditorSelect
             name="variant"
-            :value="bubble.variant"
-            @change="emit('change', { variant: ($event.target as HTMLSelectElement).value })"
+            :model-value="bubble.variant"
+            @update:model-value="(v) => emit('change', { variant: v })"
           >
-            <option v-for="v in BUBBLE_VARIANTS" :key="v" :value="v">{{ v }}</option>
-          </select>
+            <EditorSelectItem v-for="v in BUBBLE_VARIANTS" :key="v" :value="v">{{ v }}</EditorSelectItem>
+          </EditorSelect>
         </label>
         <label>
           Tail
-          <select
+          <EditorSelect
             name="tail"
-            :value="bubble.tail || 'bottom-left'"
-            @change="emit('change', { tail: ($event.target as HTMLSelectElement).value })"
+            :model-value="bubble.tail || 'bottom-left'"
+            @update:model-value="(v) => emit('change', { tail: v })"
           >
-            <option v-for="t in BUBBLE_TAILS" :key="t" :value="t">{{ t }}</option>
-          </select>
+            <EditorSelectItem v-for="t in BUBBLE_TAILS" :key="t" :value="t">{{ t }}</EditorSelectItem>
+          </EditorSelect>
         </label>
       </div>
       <label v-for="lang in CAPTION_LANGS" :key="lang.code">
@@ -529,10 +531,10 @@ async function onGenerateAudio(): Promise<void> {
       </label>
       <label>
         Voice
-        <select name="voice" :value="bubbleVoice(bubble)" @change="onVoiceChange">
-          <option value="">None (SFX)</option>
-          <option v-for="name in VOICE_NAMES" :key="name" :value="name">{{ name }}</option>
-        </select>
+        <EditorSelect name="voice" :model-value="bubbleVoice(bubble)" @update:model-value="onVoiceChange">
+          <EditorSelectItem value="">None (SFX)</EditorSelectItem>
+          <EditorSelectItem v-for="name in VOICE_NAMES" :key="name" :value="name">{{ name }}</EditorSelectItem>
+        </EditorSelect>
       </label>
       <div class="editor-audio-field">
         <span class="editor-prompt-head">

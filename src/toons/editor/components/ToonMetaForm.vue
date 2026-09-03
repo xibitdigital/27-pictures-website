@@ -20,6 +20,8 @@ import {
 } from "../types";
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
+import EditorSelect from "./ui/EditorSelect.vue";
+import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -207,10 +209,12 @@ async function onSubmit(ev: Event): Promise<void> {
               Series
               <RouterLink class="editor-field-link" to="/series/new">New series</RouterLink>
             </span>
-            <select v-model="seriesKey" name="series">
-              <option value="">None (standalone)</option>
-              <option v-for="item in seriesList" :key="item.key" :value="item.key">{{ item.title }}</option>
-            </select>
+            <EditorSelect v-model="seriesKey" name="series">
+              <EditorSelectItem value="">None (standalone)</EditorSelectItem>
+              <EditorSelectItem v-for="item in seriesList" :key="item.key" :value="item.key">{{
+                item.title
+              }}</EditorSelectItem>
+            </EditorSelect>
           </label>
           <label>
             Episode
@@ -231,9 +235,11 @@ async function onSubmit(ev: Event): Promise<void> {
         </label>
         <label>
           Visibility
-          <select v-model="visibility" name="visibility">
-            <option v-for="opt in visibilityOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-          </select>
+          <EditorSelect v-model="visibility" name="visibility">
+            <EditorSelectItem v-for="opt in visibilityOptions" :key="opt.value" :value="opt.value">{{
+              opt.label
+            }}</EditorSelectItem>
+          </EditorSelect>
         </label>
         <p class="editor-muted">
           {{

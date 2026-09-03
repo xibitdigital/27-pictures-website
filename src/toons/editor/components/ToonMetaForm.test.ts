@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { ref } from "vue";
 import ToonMetaForm from "./ToonMetaForm.vue";
 import * as api from "../api";
 import { EDITOR_USER_KEY } from "../session";
+import { pickOption } from "../testSelect";
 
 const route = {
   name: "new" as string,
@@ -62,18 +63,14 @@ describe("ToonMetaForm visibility", () => {
 
     const wrapper = mount(ToonMetaForm, {
       global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: ADMIN_PROVIDE },
+      attachTo: document.body,
     });
-    const select = wrapper.get('select[name="visibility"]');
-    expect((select.element as HTMLSelectElement).value).toBe("draft");
-    expect(select.findAll("option").map((o) => (o.element as HTMLOptionElement).value)).toEqual([
-      "draft",
-      "staging",
-      "public",
-    ]);
+    await flushPromises();
+    expect(wrapper.get('button[name="visibility"]').text()).toBe("Draft");
 
     await wrapper.get('input[name="slug"]').setValue("demo");
     await wrapper.get('input[name="title"]').setValue("Demo");
-    await select.setValue("public");
+    await pickOption("visibility", "Public");
     await wrapper.get("form").trigger("submit");
 
     expect(create).toHaveBeenCalledWith({
@@ -86,6 +83,7 @@ describe("ToonMetaForm visibility", () => {
       seriesKey: null,
       episodeN: null,
     });
+    wrapper.unmount();
   });
 
   it("posts a series key and episode number", async () => {
@@ -103,17 +101,18 @@ describe("ToonMetaForm visibility", () => {
     });
     const wrapper = mount(ToonMetaForm, {
       global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: ADMIN_PROVIDE },
+      attachTo: document.body,
     });
     await wrapper.get('input[name="slug"]').setValue("demo");
     await wrapper.get('input[name="title"]').setValue("Demo");
-    await vi.waitFor(() =>
-      expect(wrapper.get('select[name="series"]').find('option[value="erin"]').exists()).toBe(true)
-    );
-    await wrapper.get('select[name="series"]').setValue("erin");
+    await vi.waitFor(async () => {
+      await pickOption("series", "Erin & the Goblins");
+    });
     await wrapper.get('input[name="episode-n"]').setValue("2");
     await wrapper.get("form").trigger("submit");
     expect(create.mock.calls[0][0].seriesKey).toBe("erin");
     expect(create.mock.calls[0][0].episodeN).toBe(2);
+    wrapper.unmount();
   });
 
   it("posts a description per language", async () => {
@@ -162,14 +161,16 @@ describe("ToonMetaForm visibility", () => {
     });
     const wrapper = mount(ToonMetaForm, {
       global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: ADMIN_PROVIDE },
+      attachTo: document.body,
     });
     await wrapper.get('input[name="slug"]').setValue("demo");
     await wrapper.get('input[name="title"]').setValue("Demo");
-    await wrapper.get('select[name="visibility"]').setValue("staging");
+    await pickOption("visibility", "Staging");
     expect(wrapper.text()).toContain("staging.twentyseven.pictures");
     await wrapper.get("form").trigger("submit");
     expect(create.mock.calls[0][0].status).toBe("staging");
     expect(push).toHaveBeenCalledWith("/t1/pages");
+    wrapper.unmount();
   });
 
   it("stays on the meta form after saving an existing toon", async () => {
@@ -203,12 +204,14 @@ describe("ToonMetaForm visibility", () => {
     });
     const wrapper = mount(ToonMetaForm, {
       global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: ADMIN_PROVIDE },
+      attachTo: document.body,
     });
     await vi.waitFor(() => expect(wrapper.get('input[name="title"]').element).toHaveProperty("value", "Demo"));
-    await wrapper.get('select[name="visibility"]').setValue("public");
+    await pickOption("visibility", "Public");
     await wrapper.get("form").trigger("submit");
     expect(patch).toHaveBeenCalledWith("t1", expect.objectContaining({ status: "published" }));
     expect(push).not.toHaveBeenCalled();
+    wrapper.unmount();
   });
 
   it("hides Public from an editor session", async () => {
@@ -232,14 +235,14 @@ describe("ToonMetaForm visibility", () => {
     };
     const wrapper = mount(ToonMetaForm, {
       global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: editorProvide },
+      attachTo: document.body,
     });
     await vi.waitFor(() => expect(wrapper.get('input[name="title"]').element).toHaveProperty("value", "Demo"));
-    expect(
-      wrapper
-        .get('select[name="visibility"]')
-        .findAll("option")
-        .map((o) => (o.element as HTMLOptionElement).value)
-    ).toEqual(["draft", "staging"]);
+    await wrapper.get('button[name="visibility"]').trigger("pointerdown");
+    await wrapper.vm.$nextTick();
+    const optionTexts = [...document.querySelectorAll('[role="option"]')].map((el) => el.textContent?.trim());
+    expect(optionTexts).toEqual(["Draft", "Staging"]);
+    wrapper.unmount();
   });
 
   it("pre-fills series and episode from the query when adding from a series page", async () => {
@@ -247,9 +250,7 @@ describe("ToonMetaForm visibility", () => {
     const wrapper = mount(ToonMetaForm, {
       global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: ADMIN_PROVIDE },
     });
-    await vi.waitFor(() =>
-      expect((wrapper.get('select[name="series"]').element as HTMLSelectElement).value).toBe("erin")
-    );
+    await vi.waitFor(() => expect(wrapper.get('button[name="series"]').text()).toBe("Erin & the Goblins"));
     expect((wrapper.get('input[name="episode-n"]').element as HTMLInputElement).value).toBe("3");
   });
 });

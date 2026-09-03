@@ -3,6 +3,7 @@ import { mount } from "@vue/test-utils";
 import CaptionInspector from "./CaptionInspector.vue";
 import * as api from "../api";
 import type { BubbleRecord } from "../types";
+import { pickOption } from "../testSelect";
 
 vi.mock("../api", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../api")>();
@@ -30,8 +31,8 @@ describe("CaptionInspector", () => {
 
   it("puts variant and tail on the first row", () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
-    const variant = wrapper.get('select[name="variant"]');
-    const tail = wrapper.get('select[name="tail"]');
+    const variant = wrapper.get('button[name="variant"]');
+    const tail = wrapper.get('button[name="tail"]');
     expect(variant.element.parentElement?.parentElement).toBe(tail.element.parentElement?.parentElement);
     expect(wrapper.get("label").text()).toContain("Variant");
   });
@@ -267,10 +268,11 @@ describe("CaptionInspector", () => {
   });
 
   it("patches voice into extraJson", async () => {
-    const wrapper = mount(CaptionInspector, { props: { bubble } });
-    await wrapper.get('select[name="voice"]').setValue("erin");
+    const wrapper = mount(CaptionInspector, { props: { bubble }, attachTo: document.body });
+    await pickOption("voice", "erin");
     const patch = wrapper.emitted("change")?.[0][0] as Partial<BubbleRecord>;
     expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin" });
+    wrapper.unmount();
   });
 
   it("does not show an ElevenLabs Studio prompt", () => {

@@ -486,10 +486,8 @@ body {
 
 .editor-form input:not([type="range"]):not([type="file"]):not([type="checkbox"]):not([hidden]),
 .editor-form textarea,
-.editor-form select,
 .editor-inspector input:not([type="range"]):not([type="file"]):not([type="checkbox"]):not([hidden]),
 .editor-inspector textarea,
-.editor-inspector select,
 .editor-gate input:not([type="checkbox"]):not([hidden]),
 .editor-dialog-body textarea {
   box-sizing: border-box;
@@ -527,10 +525,8 @@ body {
 
 .editor-form input:hover,
 .editor-form textarea:hover,
-.editor-form select:hover,
 .editor-inspector input:not([type="range"]):hover,
 .editor-inspector textarea:hover,
-.editor-inspector select:hover,
 .editor-gate input:hover,
 .editor-dialog-body textarea:hover {
   border-color: var(--silver);
@@ -538,10 +534,8 @@ body {
 
 .editor-form input:focus-visible,
 .editor-form textarea:focus-visible,
-.editor-form select:focus-visible,
 .editor-inspector input:not([type="range"]):focus-visible,
 .editor-inspector textarea:focus-visible,
-.editor-inspector select:focus-visible,
 .editor-gate input:focus-visible,
 .editor-dialog-body textarea:focus-visible {
   border-color: var(--red-smile);
@@ -551,45 +545,95 @@ body {
 
 .editor-form input:disabled,
 .editor-form textarea:disabled,
-.editor-form select:disabled,
 .editor-inspector input:disabled,
 .editor-inspector textarea:disabled,
-.editor-inspector select:disabled,
 .editor-gate input:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.editor-form select,
-.editor-inspector select {
-  appearance: none;
-  padding-right: 2rem;
+.editor-select-trigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.35rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--bg-dark);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  font: inherit;
+  line-height: 1.35;
   cursor: pointer;
 }
 
-.editor-form select option,
-.editor-inspector select option {
-  background: var(--bg-dark);
+.editor-select-trigger:hover {
+  border-color: var(--silver);
+}
+
+.editor-select-trigger:focus-visible,
+.editor-select-trigger[data-state="open"] {
+  border-color: var(--red-smile);
+  outline: 2px solid var(--red-smile);
+  outline-offset: 1px;
+}
+
+.editor-select-trigger[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-select-icon {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--silver);
+}
+
+.editor-select-content {
+  z-index: 410;
+  box-sizing: border-box;
+  min-width: var(--reka-select-trigger-width, 8rem);
+  max-height: min(var(--reka-select-content-available-height, 20rem), 20rem);
+  background: var(--bg-menu);
   color: var(--text);
+  border: 1px solid var(--silver);
+  border-radius: 2px;
+  box-shadow: 0 12px 28px var(--bg-dark);
+  overflow: hidden;
 }
 
-.editor-form label:has(> select),
-.editor-inspector label:has(> select) {
-  position: relative;
+.editor-select-viewport {
+  padding: 0.3rem;
 }
 
-.editor-form label:has(> select)::after,
-.editor-inspector label:has(> select)::after {
-  content: "";
-  position: absolute;
-  right: 0.75rem;
-  bottom: 0.9rem;
-  width: 0.42em;
-  height: 0.42em;
-  border-right: 1.5px solid var(--silver);
-  border-bottom: 1.5px solid var(--silver);
-  transform: rotate(45deg);
-  pointer-events: none;
+.editor-select-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.editor-select-item[data-highlighted] {
+  background: var(--red-smile);
+  color: #fff;
+  outline: none;
+}
+
+.editor-select-item[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-select-item-indicator {
+  display: flex;
+  flex-shrink: 0;
 }
 
 .editor-form input[type="number"],
@@ -971,10 +1015,13 @@ body {
   clip: rect(0 0 0 0);
 }
 
+/* Reka's DialogOverlay and DialogContent are portalled as siblings, not
+   parent/child — this used to be `position: absolute` inside a single fixed
+   wrapper div. Both now need their own fixed positioning. */
 .editor-dialog-root {
   position: fixed;
   inset: 0;
-  z-index: 400;
+  z-index: 401;
   display: grid;
   place-items: center;
   padding: 1rem;
@@ -982,8 +1029,9 @@ body {
 }
 
 .editor-dialog-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  z-index: 400;
   background: color-mix(in srgb, var(--bg-dark) 72%, transparent);
 }
 
@@ -1014,6 +1062,15 @@ body {
   padding: 1.25rem 1.35rem 1.35rem;
   max-height: 90dvh;
   overflow: auto;
+}
+
+/* EditorDialog puts a DialogTitle + the caller's slot content as the two
+   direct grid items here — a caller wrapping its fields in a real <form>
+   (for Enter-to-submit) needs that form invisible to this grid so its own
+   children become the grid items instead, same spacing as if there were no
+   form element at all. */
+.editor-dialog-form {
+  display: contents;
 }
 
 .editor-dialog-body h2 {
@@ -1079,12 +1136,42 @@ body {
   font-size: 0.9rem;
 }
 
-.editor-check input[type="checkbox"] {
+.editor-checkbox-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
-  margin: 0;
-  accent-color: var(--red-smile);
+  padding: 0;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.editor-checkbox-root:hover {
+  border-color: var(--silver);
+}
+
+.editor-checkbox-root:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 1px;
+}
+
+.editor-checkbox-root[data-state="checked"] {
+  background: var(--red-smile);
+  border-color: var(--red-smile);
+}
+
+.editor-checkbox-root[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-checkbox-indicator {
+  display: flex;
+  color: #fff;
 }
 
 .editor-thumb {

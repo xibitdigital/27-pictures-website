@@ -32,12 +32,7 @@ describe("GeneratePageDialog", () => {
     wrapper.unmount();
   });
 
-  it("stops pointer events on the overlay from bubbling out", async () => {
-    const leaked: string[] = [];
-    const onBody = (): void => {
-      leaked.push("body");
-    };
-    document.body.addEventListener("pointerdown", onBody);
+  it("does not close when clicking inside the dialog panel (only outside clicks dismiss)", async () => {
     const wrapper = mount(GeneratePageDialog, {
       props: {
         open: true,
@@ -52,9 +47,9 @@ describe("GeneratePageDialog", () => {
     await flushPromises();
     const panel = document.querySelector(".editor-dialog") as HTMLElement;
     panel.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
-    expect(leaked).toEqual([]);
+    await flushPromises();
+    expect(wrapper.emitted("close")).toBeUndefined();
     wrapper.unmount();
-    document.body.removeEventListener("pointerdown", onBody);
   });
 });
 

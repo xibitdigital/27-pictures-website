@@ -6,6 +6,8 @@ import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
 import type { UserRole } from "../types";
 import EditorBar from "./EditorBar.vue";
+import EditorSelect from "./ui/EditorSelect.vue";
+import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
 // Its own Turnstile widget — separate from the contact form's
 // (src/site/components/ContactForm.vue) so rotating one never affects the other.
@@ -138,10 +140,12 @@ onUnmounted(() => {
         </label>
         <label>
           Role
-          <select v-model="role" name="role">
-            <option value="editor">Editor — can create series/toons, capped at draft or staging</option>
-            <option value="admin">Admin — full access, can publish</option>
-          </select>
+          <EditorSelect v-model="role" name="role">
+            <EditorSelectItem value="editor"
+              >Editor — can create series/toons, capped at draft or staging</EditorSelectItem
+            >
+            <EditorSelectItem value="admin">Admin — full access, can publish</EditorSelectItem>
+          </EditorSelect>
         </label>
         <p class="editor-muted">
           A password is generated automatically and emailed to the invited address — it is never shown here.

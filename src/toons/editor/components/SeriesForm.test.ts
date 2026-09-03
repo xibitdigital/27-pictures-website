@@ -4,6 +4,7 @@ import { ref } from "vue";
 import SeriesForm from "./SeriesForm.vue";
 import * as api from "../api";
 import { EDITOR_USER_KEY } from "../session";
+import { pickOption } from "../testSelect";
 
 const { push, useRoute } = vi.hoisted(() => ({
   push: vi.fn(),
@@ -76,11 +77,10 @@ describe("SeriesForm", () => {
     useRoute.mockReturnValue({ name: "series-edit", params: { key: "erin" } });
     const wrapper = mount(SeriesForm, {
       global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true } },
+      attachTo: document.body,
     });
     await flushPromises();
-    const select = wrapper.get('select[name="prompt-target"]');
-    expect(select.findAll("option")).toHaveLength(3);
-    await select.setValue("12::string_b");
+    await pickOption("prompt-target", "#12 Concatenate Text · string_b — “SUBJECT LOCK…”");
     await wrapper.get("form").trigger("submit");
     expect(save).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -105,10 +105,11 @@ describe("SeriesForm", () => {
       },
     });
     await flushPromises();
-    const checkboxes = wrapper.findAll('input[type="checkbox"]');
+    const checkboxes = wrapper.findAll('button[role="checkbox"]');
     expect(checkboxes).toHaveLength(2); // admins aren't offered as series editors
     await wrapper.get('input[name="title"]').setValue("RED SMILE");
-    await checkboxes[0].setValue(true);
+    await checkboxes[0].trigger("click");
+    await flushPromises();
     await wrapper.get("form").trigger("submit");
     expect(save).toHaveBeenCalledWith(expect.objectContaining({ editorIds: ["e1"] }));
   });

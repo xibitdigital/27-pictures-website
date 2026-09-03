@@ -27,6 +27,9 @@ import {
 } from "../types";
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
+import EditorCheckbox from "./ui/EditorCheckbox.vue";
+import EditorSelect from "./ui/EditorSelect.vue";
+import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -335,15 +338,13 @@ async function onSubmit(ev: Event): Promise<void> {
           <p v-if="!editorRoster.length" class="editor-muted">No editor accounts yet — invite one first.</p>
           <ul v-else class="editor-slot-list">
             <li v-for="user in editorRoster" :key="user.id">
-              <label class="editor-check">
-                <input
-                  type="checkbox"
-                  :name="`editor-${user.id}`"
-                  :checked="selectedEditorIds.includes(user.id)"
-                  @change="toggleEditor(user.id, ($event.target as HTMLInputElement).checked)"
-                />
+              <EditorCheckbox
+                :checked="selectedEditorIds.includes(user.id)"
+                :name="`editor-${user.id}`"
+                @update:checked="(checked) => toggleEditor(user.id, checked)"
+              >
                 {{ user.username }} ({{ user.email }})
-              </label>
+              </EditorCheckbox>
             </li>
           </ul>
         </div>
@@ -385,16 +386,16 @@ async function onSubmit(ev: Event): Promise<void> {
               <code>prompt</code> — pick a specific node if the flow builds the prompt upstream instead (e.g. a
               <code>Text (Multiline)</code> or <code>Concatenate Text</code> node feeding into it).
             </p>
-            <select v-model="promptTargetKey" name="prompt-target" aria-label="Prompt target">
-              <option value="">Auto (every Seedream node's prompt)</option>
-              <option
+            <EditorSelect v-model="promptTargetKey" name="prompt-target" aria-label="Prompt target">
+              <EditorSelectItem value="">Auto (every Seedream node's prompt)</EditorSelectItem>
+              <EditorSelectItem
                 v-for="c in promptCandidates"
                 :key="candidateKey(c.nodeId, c.inputKey)"
                 :value="candidateKey(c.nodeId, c.inputKey)"
               >
                 {{ c.label }} — “{{ c.preview }}”
-              </option>
-            </select>
+              </EditorSelectItem>
+            </EditorSelect>
           </template>
 
           <p class="editor-generate-label">Reference slots</p>
@@ -406,14 +407,19 @@ async function onSubmit(ev: Event): Promise<void> {
                 :aria-label="`Slot ${index + 1} name`"
                 :placeholder="`Image ${index + 1}`"
               />
-              <select v-model="slot.kind" :name="`slot-kind-${index}`" :aria-label="`Slot ${index + 1} kind`">
-                <option value="sheet">Sheet</option>
-                <option value="previous">Previous page</option>
-              </select>
-              <label v-if="slot.kind === 'sheet'" class="editor-check editor-slot-optional">
-                <input v-model="slot.optional" type="checkbox" :name="`slot-optional-${index}`" />
+              <EditorSelect v-model="slot.kind" :name="`slot-kind-${index}`" :aria-label="`Slot ${index + 1} kind`">
+                <EditorSelectItem value="sheet">Sheet</EditorSelectItem>
+                <EditorSelectItem value="previous">Previous page</EditorSelectItem>
+              </EditorSelect>
+              <EditorCheckbox
+                v-if="slot.kind === 'sheet'"
+                class="editor-slot-optional"
+                :checked="Boolean(slot.optional)"
+                :name="`slot-optional-${index}`"
+                @update:checked="(checked) => (slot.optional = checked)"
+              >
                 Optional
-              </label>
+              </EditorCheckbox>
               <span v-else></span>
               <input
                 v-if="slot.kind === 'sheet'"
