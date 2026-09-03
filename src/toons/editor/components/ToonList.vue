@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { BookPlus, FolderPlus, UserPlus } from "@lucide/vue";
 import { computed, inject, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import { listSeries, listToons } from "../api";
@@ -42,9 +43,18 @@ const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey));
   <section class="editor-list">
     <EditorBar title="Toon editor" :home="false">
       <template #actions>
-        <RouterLink v-if="isAdmin" class="editor-btn editor-btn--ghost" to="/users">Invite user</RouterLink>
-        <RouterLink class="editor-btn editor-btn--ghost" to="/series/new">New series</RouterLink>
-        <RouterLink class="editor-btn" to="/new">New toon</RouterLink>
+        <RouterLink v-if="isAdmin" class="editor-btn editor-btn--ghost" to="/users">
+          <UserPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
+          Invite user
+        </RouterLink>
+        <RouterLink class="editor-btn editor-btn--ghost" to="/series/new">
+          <FolderPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
+          New series
+        </RouterLink>
+        <RouterLink class="editor-btn" to="/new">
+          <BookPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
+          New toon
+        </RouterLink>
       </template>
     </EditorBar>
     <div class="editor-list-body">

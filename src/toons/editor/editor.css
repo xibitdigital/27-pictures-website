@@ -99,6 +99,20 @@ body {
   justify-content: flex-end;
 }
 
+/* Tighter gap than .editor-bar-end's own — clusters the action buttons
+   themselves so they read as one group, distinct from the "All toons" link
+   and the account avatar sitting after them. */
+.editor-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.editor-bar-actions:empty {
+  display: none;
+}
+
 .editor-form-actions {
   display: flex;
   align-items: center;

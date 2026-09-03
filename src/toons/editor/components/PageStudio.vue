@@ -282,10 +282,8 @@ async function onRemove(): Promise<void> {
 <template>
   <div class="editor-studio">
     <EditorBar :title="toon?.title || 'Pages'">
-      <template #start>
-        <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">Meta</RouterLink>
-      </template>
       <template #actions>
+        <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">Meta</RouterLink>
         <LangSwitcher :languages="switchLangs" v-model="previewLang" />
         <button
           class="editor-btn"
