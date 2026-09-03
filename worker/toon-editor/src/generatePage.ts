@@ -89,7 +89,7 @@ export async function startPageGenerate(
     }
   }
 
-  const names: string[] = [];
+  const names: (string | null)[] = [];
   for (const slot of generate.slots) {
     let bytes: ArrayBuffer | null;
     if (slot.kind === "previous" && input.previousOverride) {
@@ -97,6 +97,11 @@ export async function startPageGenerate(
     } else {
       const key = slot.kind === "previous" ? previousKey : slot.fileKey;
       if (!key) {
+        if (slot.kind === "sheet" && slot.optional) {
+          // No file and nothing required — leave this LoadImage node as-is in the graph.
+          names.push(null);
+          continue;
+        }
         return { ok: false, error: `missing reference: ${slot.label || slot.alias}`, status: 400 };
       }
       bytes = await getObject(env, key);

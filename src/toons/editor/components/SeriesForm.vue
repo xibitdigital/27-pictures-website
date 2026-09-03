@@ -129,6 +129,7 @@ function generatePayload() {
       alias: slot.alias.trim(),
       label: (slot.label || slot.alias).trim(),
       kind: slot.kind,
+      optional: slot.kind === "sheet" ? Boolean(slot.optional) : false,
     })),
     promptTarget: nodeId && inputKey ? { nodeId, inputKey } : null,
   };
@@ -348,6 +349,11 @@ async function onSubmit(ev: Event): Promise<void> {
                 <option value="sheet">Sheet</option>
                 <option value="previous">Previous page</option>
               </select>
+              <label v-if="slot.kind === 'sheet'" class="editor-check editor-slot-optional">
+                <input v-model="slot.optional" type="checkbox" :name="`slot-optional-${index}`" />
+                Optional
+              </label>
+              <span v-else></span>
               <input
                 v-if="slot.kind === 'sheet'"
                 type="file"

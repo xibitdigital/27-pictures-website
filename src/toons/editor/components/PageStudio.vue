@@ -63,7 +63,9 @@ const dirtyCount = computed(() => dirtyIds.value.size);
 const canGenerate = computed(() => {
   const generate = seriesGenerate.value;
   if (!generate?.flowKey) return false;
-  return generate.slots.filter((slot) => slot.kind === "sheet").every((slot) => Boolean(slot.fileKey));
+  return generate.slots
+    .filter((slot) => slot.kind === "sheet" && !slot.optional)
+    .every((slot) => Boolean(slot.fileKey));
 });
 
 function markDirty(id: string): void {

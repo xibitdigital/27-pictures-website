@@ -76,6 +76,18 @@ describe("applyLoadImages", () => {
     expect(out.graph["2"].inputs?.image).toBe("prev.png");
     expect(applyPagePrompt(out.graph, "Erin walks in.")["9"].inputs?.prompt).toBe("Erin walks in.");
   });
+
+  it("leaves a LoadImage node untouched when its name is null (missing optional sheet)", () => {
+    const graph = {
+      "1": { class_type: "LoadImage", inputs: { image: "old-a.png" } },
+      "2": { class_type: "LoadImage", inputs: { image: "old-b.png" } },
+    };
+    const out = applyLoadImages(graph, ["erin.png", null]);
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.graph["1"].inputs?.image).toBe("erin.png");
+    expect(out.graph["2"].inputs?.image).toBe("old-b.png");
+  });
 });
 
 describe("findPromptCandidates", () => {
@@ -163,6 +175,17 @@ describe("mergeGenerate", () => {
     expect(merged.flowKey).toBe("editor/_series/x/flow/a.json");
     expect(merged.slots[0].fileKey).toBe("editor/_series/x/refs/a.png");
     expect(merged.slots[1]).toMatchObject({ alias: "previous", kind: "previous", fileKey: null });
+  });
+
+  it("carries the optional flag through on a sheet slot", () => {
+    const merged = mergeGenerate(baseCurrent, {
+      width: 1152,
+      height: 1728,
+      model: "seedream 5.0 pro",
+      slots: [{ alias: "erin", kind: "sheet", optional: true }],
+      promptTarget: null,
+    });
+    expect(merged.slots[0]).toMatchObject({ optional: true, fileKey: "editor/_series/x/refs/a.png" });
   });
 
   it("keeps promptCandidates on a plain save that doesn't send any", () => {

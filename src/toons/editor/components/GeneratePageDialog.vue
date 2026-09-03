@@ -52,7 +52,7 @@ function onPreviousFile(ev: Event): void {
 }
 
 const missingSheets = computed(() =>
-  (props.generate?.slots || []).filter((slot) => slot.kind === "sheet" && !slot.fileKey)
+  (props.generate?.slots || []).filter((slot) => slot.kind === "sheet" && !slot.optional && !slot.fileKey)
 );
 
 const missingPrevious = computed(
@@ -147,6 +147,7 @@ function onSubmit(): void {
                 previousFile ? "custom file" : hasPrevious && includePrevious ? "last plate" : "skipped"
               }}</span>
               <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
+              <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>
               <span v-else class="editor-error">missing sheet</span>
             </li>
           </ul>

@@ -812,9 +812,14 @@ body {
 
 .editor-slot-row {
   display: grid;
-  grid-template-columns: minmax(8rem, 1.4fr) 7.5rem minmax(0, 1fr) auto auto auto auto;
+  grid-template-columns: minmax(8rem, 1.4fr) 7.5rem 5.5rem minmax(0, 1fr) auto auto auto auto;
   gap: 0.4rem;
   align-items: center;
+}
+
+.editor-slot-optional {
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .editor-slot-thumb {

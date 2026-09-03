@@ -122,3 +122,34 @@ describe("GeneratePageDialog previous-plate override", () => {
     wrapper.unmount();
   });
 });
+
+describe("GeneratePageDialog optional sheet slots", () => {
+  const generateWithOptional = {
+    width: 1152,
+    height: 1728,
+    model: "seedream",
+    flowKey: "flow.json",
+    flowUrl: "/flow.json",
+    slots: [
+      { alias: "victim", label: "Image 3 — Victim", kind: "sheet", fileKey: "victim.webp", fileUrl: "/victim.webp" },
+      { alias: "venue", label: "Image 4 — Venue", kind: "sheet", optional: true, fileKey: null, fileUrl: null },
+    ],
+  };
+
+  it("does not block submit on a missing optional sheet, and shows it as skipped", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: true, generate: generateWithOptional, hasPrevious: false, busy: false, status: "", error: "" },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "A beat.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(submitBtn.disabled).toBe(false);
+    const rows = [...document.querySelectorAll(".editor-dialog-slots li")].map((li) => li.textContent);
+    expect(rows.some((t) => t?.includes("optional") && t?.includes("skipped"))).toBe(true);
+    wrapper.unmount();
+  });
+});

@@ -22,7 +22,8 @@ export function loadImageIds(graph: ComfyGraph): string[] {
 
 export function applyLoadImages(
   graph: ComfyGraph,
-  names: string[]
+  /** `null` skips that LoadImage node entirely — for a missing optional sheet slot, whatever file is already saved on that node stays. */
+  names: (string | null)[]
 ): { ok: true; graph: ComfyGraph } | { ok: false; error: string } {
   const ids = loadImageIds(graph);
   if (names.length !== ids.length) {
@@ -30,7 +31,9 @@ export function applyLoadImages(
   }
   const next: ComfyGraph = JSON.parse(JSON.stringify(graph)) as ComfyGraph;
   ids.forEach((id, i) => {
-    next[id] = { ...next[id], inputs: { ...(next[id].inputs || {}), image: names[i] } };
+    const name = names[i];
+    if (name == null) return;
+    next[id] = { ...next[id], inputs: { ...(next[id].inputs || {}), image: name } };
   });
   return { ok: true, graph: next };
 }
@@ -190,6 +193,7 @@ export function parseGenerateConfig(raw: unknown): SeriesGenerateConfig {
           alias,
           label: label || `Image ${i + 1} — ${alias}`,
           kind,
+          optional: kind === "sheet" ? Boolean(slot.optional) : false,
           fileKey,
           fileUrl: null,
         } as SeriesFlowSlot;

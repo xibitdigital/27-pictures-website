@@ -98,6 +98,8 @@ export interface SeriesFlowSlot {
   alias: string;
   label: string;
   kind: SeriesSlotKind;
+  /** A "sheet" slot with no file doesn't block Generate, and its LoadImage node is left unwired. No effect on "previous". */
+  optional?: boolean;
   fileKey?: string | null;
   fileUrl?: string | null;
 }
