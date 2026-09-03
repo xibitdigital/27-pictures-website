@@ -146,7 +146,7 @@ onUnmounted(() => {
         <p class="editor-muted">
           A password is generated automatically and emailed to the invited address — it is never shown here.
         </p>
-        <div ref="turnstileEl" class="cf-turnstile" />
+        <div ref="turnstileEl" class="cf-turnstile editor-form-span" />
       </div>
     </form>
   </div>

@@ -473,9 +473,9 @@ body {
   color: var(--silver);
 }
 
-.editor-form label,
-.editor-inspector label,
-.editor-gate label,
+.editor-form label:not(.editor-check),
+.editor-inspector label:not(.editor-check),
+.editor-gate label:not(.editor-check),
 .editor-dialog-body > label:not(.editor-check) {
   display: grid;
   gap: 0.35rem;
@@ -779,6 +779,11 @@ body {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   column-gap: 1.5rem;
   align-items: start;
+  /* Without this, a grid item's automatic minimum size defaults to its
+     content's, so a form with no `.editor-form-preview` sibling (its
+     `.editor-form` parent still reserves that 22rem column) can blow the
+     whole page wider than the viewport instead of shrinking to fit. */
+  min-width: 0;
 }
 
 .editor-form-main > .editor-muted,
