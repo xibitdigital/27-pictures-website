@@ -21,6 +21,7 @@ import { insertCreditEvent, loadUserCredits } from "./creditUsage";
 import { pollPageJob, recordImageCredit, startPageGenerate, type GenerationJob } from "./generatePage";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
+import { toWebp } from "./imageOptimize";
 import { handleLikes } from "./likes";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
@@ -781,9 +782,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(request);
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const hash = await sha256Hex(upload.bytes);
-    const objectKey = `editor/_series/${key}/cover/${hash}.${upload.ext}`;
-    await putImage(env, objectKey, upload.bytes, upload.type);
+    const optimized = await toWebp(upload);
+    const hash = await sha256Hex(optimized.bytes);
+    const objectKey = `editor/_series/${key}/cover/${hash}.${optimized.ext}`;
+    await putImage(env, objectKey, optimized.bytes, optimized.type);
     await env.DB.prepare(`UPDATE series SET cover_key = ?, updated_at = ? WHERE key = ?`)
       .bind(objectKey, nowIso(), key)
       .run();
@@ -1253,7 +1255,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       applyTitles(extra, body, title);
       const seriesKey = parseSeriesKey(body, current.series_key || null);
       const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
-      const readerUrl = current.reader_url || (await deriveReaderUrl(env, seriesKey, current.slug));
+      const readerUrl = (await deriveReaderUrl(env, seriesKey, current.slug)) || current.reader_url;
       await env.DB.prepare(
         `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, reader_url = ?, updated_at = ? WHERE id = ?`
       )
@@ -1270,9 +1272,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(request);
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const hash = await sha256Hex(upload.bytes);
-    const key = `editor/${current.slug}/cover/${hash}.${upload.ext}`;
-    await putImage(env, key, upload.bytes, upload.type);
+    const optimized = await toWebp(upload);
+    const hash = await sha256Hex(optimized.bytes);
+    const key = `editor/${current.slug}/cover/${hash}.${optimized.ext}`;
+    await putImage(env, key, optimized.bytes, optimized.type);
     await env.DB.prepare(`UPDATE toons SET cover_key = ?, updated_at = ? WHERE id = ?`).bind(key, nowIso(), id).run();
     return json(await loadToon(env, request, id), 200, cors);
   }
