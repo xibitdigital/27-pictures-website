@@ -25,6 +25,7 @@ import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { toWebp } from "./imageOptimize";
 import { sendInviteEmail } from "./inviteEmail";
+import { verifyTurnstile } from "./turnstile";
 import { handleLikes } from "./likes";
 import { canManageSeries, canManageToon, isAdmin, publishError } from "./roles";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
@@ -766,6 +767,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const turnstileToken = String(parsed.body.turnstileToken || "");
+    const turnstileOk = await verifyTurnstile(env, turnstileToken, request.headers.get("CF-Connecting-IP"));
+    if (!turnstileOk) return json({ error: "verification failed" }, 400, cors);
     const email = normaliseEmail(parsed.body.email);
     const username = String(parsed.body.username || "").trim();
     const role: UserRole = parsed.body.role === "admin" ? "admin" : "editor";

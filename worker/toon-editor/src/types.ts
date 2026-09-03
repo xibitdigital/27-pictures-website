@@ -39,6 +39,7 @@ export interface Env {
   RESEND_API_KEY?: string;
   FROM_EMAIL?: string;
   FROM_NAME?: string;
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 export type JsonRecord = Record<string, unknown>;

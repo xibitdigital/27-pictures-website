@@ -16,6 +16,8 @@ COMFY_URL = "https://cloud.comfy.org/api"
 # Invite email sender. RESEND_API_KEY is a wrangler secret (local: .dev.vars).
 FROM_EMAIL = "noreply@twentyseven.pictures"
 FROM_NAME = "27 Pictures Editor"
+# TURNSTILE_SECRET_KEY is a wrangler secret (local: .dev.vars) — guards
+# POST /auth/users. Same widget/sitekey as the site's contact form.
 
 # Staging and production share this D1 (one Worker). Local `wrangler dev`
 # uses Miniflare. Do not add env-specific d1_databases.

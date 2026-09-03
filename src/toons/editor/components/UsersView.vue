@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { inject, onMounted, ref } from "vue";
+import { inject, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { inviteUser } from "../api";
 import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
 import type { UserRole } from "../types";
 import EditorBar from "./EditorBar.vue";
+
+// Same widget as the site's contact form (src/site/components/ContactForm.vue)
+// — same sitekey, domain-scoped in the Cloudflare dashboard to this site.
+const TURNSTILE_SITE_KEY = "0x4AAAAAACLlfOmi5SSMELBj";
 
 const router = useRouter();
 const userRef = inject(EDITOR_USER_KEY);
@@ -19,11 +23,18 @@ const email = ref("");
 const role = ref<UserRole>("editor");
 const saving = ref(false);
 
-async function onSubmit(ev: Event): Promise<void> {
-  ev.preventDefault();
+let turnstileToken = "";
+let formReadyToSubmit = false;
+
+async function sendInvite(): Promise<void> {
   saving.value = true;
   try {
-    const result = await inviteUser({ username: username.value.trim(), email: email.value.trim(), role: role.value });
+    const result = await inviteUser({
+      username: username.value.trim(),
+      email: email.value.trim(),
+      role: role.value,
+      turnstileToken,
+    });
     if (result.emailSent) {
       pushToast(`Invite sent to ${result.user.email}`, "success");
     } else {
@@ -35,12 +46,75 @@ async function onSubmit(ev: Event): Promise<void> {
     username.value = "";
     email.value = "";
     role.value = "editor";
+    turnstileToken = "";
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Invite failed");
   } finally {
     saving.value = false;
   }
 }
+
+function onSubmit(ev: Event): void {
+  ev.preventDefault();
+  if (turnstileToken) {
+    void sendInvite();
+    return;
+  }
+  formReadyToSubmit = true;
+  saving.value = true;
+  if (window.turnstile) {
+    window.turnstile.execute();
+  } else {
+    void sendInvite();
+  }
+}
+
+function onTurnstileSuccess(token: string): void {
+  turnstileToken = token;
+  if (formReadyToSubmit) {
+    formReadyToSubmit = false;
+    void sendInvite();
+  }
+}
+
+function onTurnstileExpired(): void {
+  turnstileToken = "";
+}
+
+const turnstileEl = ref<HTMLElement | null>(null);
+let turnstileWidgetId: string | null = null;
+
+function renderTurnstile(): void {
+  const el = turnstileEl.value;
+  if (!el || !window.turnstile) return;
+  turnstileWidgetId = window.turnstile.render(el, {
+    sitekey: TURNSTILE_SITE_KEY,
+    appearance: "interaction-only",
+    callback: onTurnstileSuccess,
+    "expired-callback": onTurnstileExpired,
+  });
+}
+
+onMounted(() => {
+  renderTurnstile();
+  const poll = window.setInterval(() => {
+    if (window.turnstile) {
+      renderTurnstile();
+      window.clearInterval(poll);
+    }
+  }, 200);
+  window.setTimeout(() => window.clearInterval(poll), 8000);
+});
+
+onUnmounted(() => {
+  if (turnstileWidgetId && window.turnstile) {
+    try {
+      window.turnstile.remove(turnstileWidgetId);
+    } catch {
+      /* ignore */
+    }
+  }
+});
 </script>
 
 <template>
@@ -72,6 +146,7 @@ async function onSubmit(ev: Event): Promise<void> {
         <p class="editor-muted">
           A password is generated automatically and emailed to the invited address — it is never shown here.
         </p>
+        <div ref="turnstileEl" class="cf-turnstile" />
       </div>
     </form>
   </div>
