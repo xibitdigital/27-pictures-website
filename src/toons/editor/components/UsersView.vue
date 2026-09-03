@@ -7,9 +7,9 @@ import { pushToast } from "../toast";
 import type { UserRole } from "../types";
 import EditorBar from "./EditorBar.vue";
 
-// Same widget as the site's contact form (src/site/components/ContactForm.vue)
-// — same sitekey, domain-scoped in the Cloudflare dashboard to this site.
-const TURNSTILE_SITE_KEY = "0x4AAAAAACLlfOmi5SSMELBj";
+// Its own Turnstile widget — separate from the contact form's
+// (src/site/components/ContactForm.vue) so rotating one never affects the other.
+const TURNSTILE_SITE_KEY = "0x4AAAAAAEmUTf_BMK-zvngt";
 
 const router = useRouter();
 const userRef = inject(EDITOR_USER_KEY);

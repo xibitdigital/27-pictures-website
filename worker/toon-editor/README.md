@@ -178,7 +178,7 @@ secrets. The studio never sees these keys.
 | `COMFY_URL` | `.dev.vars` | secret | Comfy origin. Staging uses `https://cloud.comfy.org/api` (X-API-Key). Local Comfy is `http://127.0.0.1:8188`. Not `https://model-api.runcomfy.net`. |
 | `COMFY_API_KEY` | `.dev.vars` | secret | Comfy **account** key from https://platform.comfy.org → API Keys. Seedream partner nodes need it as `extra_data.api_key_comfy_org` on `/prompt`. |
 | `RESEND_API_KEY` | `.dev.vars` | secret | Invite emails (`src/inviteEmail.ts`). Same provider/domain as the separate `worker/` contact-form Worker, its own key on this Worker. Missing key just no-ops (`emailSent: false`) — the account is still created. |
-| `TURNSTILE_SECRET_KEY` | `.dev.vars` | secret | Verifies `POST /auth/users`' Turnstile token (`src/turnstile.ts`) — same widget/sitekey as `ContactForm.vue`, so the same secret value works. **Fails closed**: missing key or a failed Cloudflare check both return `verification failed`, matching the contact-form Worker's behavior. |
+| `TURNSTILE_SECRET_KEY` | `.dev.vars` | secret | Verifies `POST /auth/users`' Turnstile token (`src/turnstile.ts`) — its own widget, separate from `ContactForm.vue`'s. **Fails closed**: missing key or a failed Cloudflare check both return `verification failed`, matching the contact-form Worker's behavior. |
 | `FROM_EMAIL` / `FROM_NAME` | `[vars]` in `wrangler.toml` | not secret | Invite email sender identity. |
 
 Create the account key once (shown only at creation). Plate Generate also
