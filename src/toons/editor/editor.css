@@ -484,13 +484,13 @@ body {
   font-size: 0.85rem;
 }
 
-.editor-form input:not([type="range"]):not([type="file"]):not([hidden]),
+.editor-form input:not([type="range"]):not([type="file"]):not([type="checkbox"]):not([hidden]),
 .editor-form textarea,
 .editor-form select,
-.editor-inspector input:not([type="range"]):not([type="file"]):not([hidden]),
+.editor-inspector input:not([type="range"]):not([type="file"]):not([type="checkbox"]):not([hidden]),
 .editor-inspector textarea,
 .editor-inspector select,
-.editor-gate input:not([hidden]),
+.editor-gate input:not([type="checkbox"]):not([hidden]),
 .editor-dialog-body textarea {
   box-sizing: border-box;
   width: 100%;
@@ -1072,6 +1072,14 @@ body {
   margin: 0;
   color: var(--text);
   font-size: 0.9rem;
+}
+
+.editor-check input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin: 0;
+  accent-color: var(--red-smile);
 }
 
 .editor-thumb {
