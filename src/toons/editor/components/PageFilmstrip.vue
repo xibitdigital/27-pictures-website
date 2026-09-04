@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { LoaderCircle, Upload, WandSparkles, X } from "@lucide/vue";
+import { nextTick, ref } from "vue";
+import { LoaderCircle, Plus, Upload, WandSparkles, X } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import ConfirmDialog from "./ConfirmDialog.vue";
+import EditorDialog from "./ui/EditorDialog.vue";
 import type { PageRecord } from "../types";
 
-defineProps<{
+const props = defineProps<{
   toonId: string;
   pages: PageRecord[];
   activeId: string | null;
@@ -21,12 +22,25 @@ const emit = defineEmits<{
 }>();
 
 const pendingRemove = ref<PageRecord | null>(null);
+const addOpen = ref(false);
+const pageFile = ref<HTMLInputElement | null>(null);
 
 function onFile(ev: Event): void {
   const input = ev.target as HTMLInputElement;
   const file = input.files?.[0];
   if (file) emit("upload", file);
   input.value = "";
+}
+
+async function onUploadPick(): Promise<void> {
+  addOpen.value = false;
+  await nextTick();
+  pageFile.value?.click();
+}
+
+function onGeneratePick(): void {
+  addOpen.value = false;
+  emit("generate");
 }
 
 function onReplaceFile(ev: Event, page: PageRecord): void {
@@ -89,24 +103,51 @@ function onRemoveConfirm(): void {
         <X :size="12" :stroke-width="2.25" aria-hidden="true" />
       </button>
     </RouterLink>
-    <label class="editor-filmstrip-action">
-      <Upload :size="22" :stroke-width="2" aria-hidden="true" />
-      Upload
-      <input type="file" accept="image/webp,image/jpeg,image/png" aria-label="Upload page" @change="onFile" />
-    </label>
-    <button
-      class="editor-filmstrip-action"
-      type="button"
-      name="add-page-generate"
-      :title="
-        canGenerate ? 'Generate page with the series Comfy graph' : 'Upload a Comfy flow and sheets on the series first'
-      "
-      @click="emit('generate')"
-    >
-      <WandSparkles :size="22" :stroke-width="2" aria-hidden="true" />
-      Generate
-    </button>
+    <div class="editor-filmstrip-add">
+      <input
+        ref="pageFile"
+        type="file"
+        accept="image/webp,image/jpeg,image/png"
+        aria-label="Upload page"
+        hidden
+        @change="onFile"
+      />
+      <button
+        class="editor-filmstrip-action"
+        type="button"
+        name="add-page"
+        aria-label="Add page"
+        aria-haspopup="dialog"
+        :aria-expanded="addOpen"
+        @click="addOpen = true"
+      >
+        <Plus :size="28" :stroke-width="2" aria-hidden="true" />
+      </button>
+    </div>
   </nav>
+  <EditorDialog :open="addOpen" title="Add page" @update:open="(next) => (addOpen = next)">
+    <p class="editor-muted">Upload a plate, or generate one with AI if this series has a Comfy graph loaded.</p>
+    <div class="editor-add-page-choices">
+      <button class="editor-add-page-choice" type="button" name="add-page-upload" @click="onUploadPick">
+        <Upload :size="22" :stroke-width="1.8" aria-hidden="true" />
+        Upload
+      </button>
+      <button
+        class="editor-add-page-choice"
+        type="button"
+        name="add-page-generate"
+        :title="
+          props.canGenerate
+            ? 'Generate page with the series Comfy graph'
+            : 'Upload a Comfy flow and sheets on the series first'
+        "
+        @click="onGeneratePick"
+      >
+        <WandSparkles :size="22" :stroke-width="1.8" aria-hidden="true" />
+        Generate
+      </button>
+    </div>
+  </EditorDialog>
   <ConfirmDialog
     :open="Boolean(pendingRemove)"
     title="Delete page"
