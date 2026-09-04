@@ -115,6 +115,22 @@ describe("EditorCaptionLayer", () => {
     wrapper.unmount();
   });
 
+  it("rotates the tail ring with the bubble angle", async () => {
+    const wrapper = mount(EditorCaptionLayer, {
+      props: {
+        pageNum: 1,
+        bubbles: [bubble({ angle: 20 })],
+        selectedId: "b1",
+        imageEl: makeImage(),
+      },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const host = wrapper.get("[data-bubble-id].editor-caption-host").element as HTMLElement;
+    expect(host.style.transform).toContain("rotate(20deg)");
+    wrapper.unmount();
+  });
+
   it("emits add when the empty plate is clicked", async () => {
     const wrapper = mount(EditorCaptionLayer, {
       props: { pageNum: 1, bubbles: [], imageEl: makeImage() },

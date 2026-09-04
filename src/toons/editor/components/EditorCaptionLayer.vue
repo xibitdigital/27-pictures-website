@@ -122,10 +122,6 @@ let drag: {
 const dragging = ref(false);
 
 function hostedCaption(caption: CaptionModel): CaptionModel {
-  const rotate = (caption.style["--jax-transform"] || "")
-    .split(/\s+/)
-    .filter((part) => part.startsWith("rotate"))
-    .join(" ");
   return {
     ...caption,
     style: {
@@ -133,7 +129,7 @@ function hostedCaption(caption: CaptionModel): CaptionModel {
       position: "relative",
       left: "auto",
       top: "auto",
-      "--jax-transform": rotate || "none",
+      "--jax-transform": "none",
     },
   };
 }
@@ -143,7 +139,7 @@ function hostStyle(caption: CaptionModel): CSSProperties {
     position: "absolute",
     left: caption.style.left,
     top: caption.style.top,
-    transform: "translate(-50%, -50%)",
+    transform: caption.style["--jax-transform"] || "translate(-50%, -50%)",
     zIndex: 36,
   };
 }
