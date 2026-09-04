@@ -5,7 +5,21 @@ import { RouterLink } from "vue-router";
 import { listSeries, listToons } from "../api";
 import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
-import { visibilityFromStatus, visibilityLabel, type SeriesOption, type ToonListItem } from "../types";
+import {
+  TOON_VISIBILITY,
+  visibilityFromStatus,
+  visibilityLabel,
+  type SeriesOption,
+  type ToonListItem,
+  type ToonVisibility,
+} from "../types";
+
+type VisibilityFilter = "all" | ToonVisibility;
+
+const VISIBILITY_FILTERS: { value: VisibilityFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  ...TOON_VISIBILITY,
+];
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
 
@@ -14,6 +28,7 @@ const isAdmin = computed(() => userRef?.value?.role === "admin");
 const toons = ref<ToonListItem[]>([]);
 const seriesList = ref<SeriesOption[]>([]);
 const loading = ref(true);
+const visibilityFilter = ref<VisibilityFilter>("all");
 
 onMounted(async () => {
   try {
@@ -27,21 +42,48 @@ onMounted(async () => {
   }
 });
 
-const grouped = computed(() =>
-  seriesList.value.map((series) => ({
+function matchesFilter(toon: ToonListItem): boolean {
+  if (visibilityFilter.value === "all") return true;
+  return visibilityFromStatus(toon.status) === visibilityFilter.value;
+}
+
+const grouped = computed(() => {
+  const groups = seriesList.value.map((series) => ({
     series,
     toons: toons.value
-      .filter((toon) => toon.seriesKey === series.key)
+      .filter((toon) => toon.seriesKey === series.key && matchesFilter(toon))
       .sort((a, b) => (a.episodeN ?? 99) - (b.episodeN ?? 99)),
-  }))
-);
+  }));
+  if (visibilityFilter.value === "all") return groups;
+  return groups.filter((group) => group.toons.length);
+});
 
-const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey));
+const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey && matchesFilter(toon)));
+
+const filteredCount = computed(
+  () => grouped.value.reduce((n, group) => n + group.toons.length, 0) + ungrouped.value.length
+);
 </script>
 
 <template>
   <section class="editor-list">
     <EditorBar title="Toon editor" :home="false">
+      <template #after-title>
+        <div class="editor-visibility-filter" role="radiogroup" aria-label="Visibility">
+          <button
+            v-for="opt in VISIBILITY_FILTERS"
+            :key="opt.value"
+            type="button"
+            :name="`visibility-filter-${opt.value}`"
+            :aria-pressed="visibilityFilter === opt.value"
+            :data-visibility="opt.value === 'all' ? undefined : opt.value"
+            @click="visibilityFilter = opt.value"
+          >
+            {{ opt.label }}
+          </button>
+        </div>
+        <span data-toon-count>{{ filteredCount }}</span>
+      </template>
       <template #actions>
         <RouterLink v-if="isAdmin" class="editor-btn editor-btn--ghost" to="/users">
           <UserPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
@@ -63,6 +105,7 @@ const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey));
       <p v-if="loading">Loading…</p>
       <template v-else>
         <p v-if="!seriesList.length && !toons.length" class="editor-muted">No series yet.</p>
+        <p v-else-if="!grouped.length && !ungrouped.length" class="editor-muted">No toons match this filter.</p>
         <section v-for="group in grouped" :key="group.series.key" class="editor-list-section">
           <h2 class="editor-list-heading">
             <RouterLink :to="`/series/${group.series.key}`">{{ group.series.title }}</RouterLink>

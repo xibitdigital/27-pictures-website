@@ -57,8 +57,71 @@ body {
   padding: 1.25rem 1.75rem 4rem;
 }
 
+.editor-visibility-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-left: 0.75rem;
+}
+
+.editor-bar-start [data-toon-count] {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.editor-visibility-filter button {
+  padding: 0.25rem 0.55rem;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--bg-dark);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+}
+
+.editor-visibility-filter button:hover,
+.editor-visibility-filter button:focus-visible {
+  color: var(--text);
+  border-color: var(--silver);
+}
+
+.editor-visibility-filter button[aria-pressed="true"] {
+  background: var(--text);
+  color: var(--bg-dark);
+  border-color: var(--text);
+}
+
+.editor-visibility-filter button[data-visibility="draft"][aria-pressed="true"] {
+  background: var(--silver);
+  color: var(--bg-dark);
+  border-color: var(--silver);
+}
+
+.editor-visibility-filter button[data-visibility="staging"][aria-pressed="true"] {
+  background: var(--red-smile);
+  color: var(--text);
+  border-color: var(--red-smile);
+}
+
+.editor-visibility-filter button[data-visibility="public"][aria-pressed="true"] {
+  background: var(--success);
+  color: var(--bg-dark);
+  border-color: var(--success);
+}
+
 .editor-list-section {
-  margin-bottom: 2.25rem;
+  margin: 0 0 2.25rem;
+  padding-bottom: 2.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.editor-list-section:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .editor-list-heading {

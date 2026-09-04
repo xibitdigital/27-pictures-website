@@ -21,6 +21,7 @@ withDefaults(
       <slot name="start" />
       <h1>{{ title }}</h1>
       <span v-if="badge" class="editor-visibility-badge" :data-visibility="visibility || undefined">{{ badge }}</span>
+      <slot name="after-title" />
     </div>
     <div class="editor-bar-end">
       <div class="editor-bar-actions">
