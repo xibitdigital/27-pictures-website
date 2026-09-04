@@ -1632,61 +1632,41 @@ body.view-vertical.is-fullscreen .reader {
 
 /* Sketchy dialog bubble variant (also base for ai / badai / burst) */
 .jax-word--bubble {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  /* Prefer the authored wrap (max-width in ch). Without this, shrink-to-fit
-     uses min-content and a long burst stacks one word per line. */
+  /* Shrink-wrap the balloon to the glyphs. Wrap width is on the inner
+     span (max-width in ch) so a short line is not stretched to wrapCh. */
   width: max-content;
-  max-width: inherit;
 }
 
 .jax-word--bubble .jax-bubble-svg {
-  /* Slightly larger than the text box so the white fill always fully wraps
-     glyphs + padding. Tail coords sit outside viewBox. */
+  /* Body is centred on the text box. Tails sit outside viewBox 0–100 and
+     paint via overflow — stretching this SVG toward the tail shifted the
+     ellipse off the glyphs. */
   position: absolute;
   z-index: 0;
   overflow: visible;
   pointer-events: none;
-  left: -0.35em;
-  top: -0.3em;
+  left: 50%;
+  top: 50%;
   width: calc(100% + 0.7em);
-  height: calc(100% + 0.6em);
-}
-
-.jax-word--bubble[data-tail^="bottom"] .jax-bubble-svg {
-  height: calc(100% + 1.15em);
-}
-
-/* Top tails point up, so the extra room goes above the glyph box, not below. */
-.jax-word--bubble[data-tail^="top"] .jax-bubble-svg {
-  top: -0.85em;
-  height: calc(100% + 1.15em);
-}
-
-.jax-word--bubble[data-tail="left"] .jax-bubble-svg {
-  left: -0.95em;
-  width: calc(100% + 1.3em);
-}
-
-.jax-word--bubble[data-tail="right"] .jax-bubble-svg {
-  width: calc(100% + 1.3em);
-}
-
-/* Thought bubbles have no pointed lobe — the dotted trail is drawn outside the
-   viewBox and painted via overflow:visible. Undo the per-tail box offsets so the
-   ellipse body stays centred on the glyphs instead of drifting toward the tail. */
-.jax-word--thought .jax-bubble-svg {
-  left: -0.35em;
-  top: -0.3em;
-  width: calc(100% + 0.7em);
-  height: calc(100% + 0.6em);
+  height: calc(100% + 0.7em);
+  transform: translate(-50%, -50%) scale(var(--jax-bubble-scale, 1));
 }
 
 .jax-word--bubble .jax-word-text {
   position: relative;
   z-index: 1;
   display: block;
+  box-sizing: content-box;
   white-space: pre-line;
+  text-align: center;
+  /* Cap/alphabetic trim so Bangers' extra line-box air does not sit the
+     glyphs high in the oval. Unsupported browsers keep the even padding. */
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
   /* Keep multi-line comic caps from packing too tight in the fill */
   line-height: 1.2;
 }

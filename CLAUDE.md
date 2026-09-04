@@ -136,6 +136,7 @@ JSON-LD, sitemap, `llms.txt` and FlipFrame back-cover next/prev all read
 │   │   └── catalogRender.ts # D1 catalog → HTML cards + JSON-LD (no document)
 │   ├── toons/index.html     # /toons/ — catalog shell (SSR fills from D1)
 │   ├── toons/editor/        # /toons/editor/ — D1 studio (hash router)
+│   │   └── bubble-lab/      # /toons/editor/bubble-lab/ — caption gallery (no auth)
 │   ├── toons/bookReader/    # FlipFrame package
 │   ├── toons/_hub/          # series landing shell — body written by SSR
 │   ├── toons/_reader/       # one FlipFrame app for every book
@@ -701,6 +702,16 @@ row types in `src/types.ts`. Vue re-exports the contract from
 | `#/new` · `#/:id` | Create / edit toon (series + episode number + visibility) |
 | `#/:id/pages/:pageId?` | Plate studio (upload or Generate) |
 
+**Bubble lab** (`/toons/editor/bubble-lab/`) is a separate MPA, not a hash
+screen. `src/toons/editor/bubble-lab/` mounts `WordCaption` through
+`buildCaption` — the same path as the reader and plate studio — for every
+`BUBBLE_VARIANTS` × `BUBBLE_TAILS` cell. One Line input (`name="lab-line"`)
+feeds all of them; empty uses `PLACEHOLDER_TEXT`. No AuthGate, no D1, nothing
+saved. `htmlEntries()` picks up its `index.html`. The page is `noindex,
+nofollow`; `robots.txt` already `Disallow`s `/toons/editor` and it is not in
+the sitemap. Local: `make dev` →
+`http://127.0.0.1:5173/toons/editor/bubble-lab/`.
+
 Visibility: `draft` (editor only) · `staging` (staging + local catalog) ·
 `published` (Public — production catalog too). `/toons/`, `GET /catalog`,
 `GET /config/:slug` and `/sitemap.xml` never list drafts. Series
@@ -1132,11 +1143,13 @@ Playback is in `src/toons/bookReader` caption code. Caption SFX play on tap
 slug is `jax` (`BG_MUSIC` via `resolveAssetUrl`). Shared `useSoundGate`
 remains available for other toons that want an opt-in SFX prompt.
 
-**Bubble variants (word overlays):**
+**Bubble variants (word overlays):** gallery at `/toons/editor/bubble-lab/`
+(every variant × tail, same caption pipeline; nothing saved).
 
 | `variant` | Look                             | Use                |
 | --------- | -------------------------------- | ------------------ |
 | `bubble`  | Organic speech balloon           | Character dialogue |
+| `thought` | Cloud / lobe balloon             | Inner voice        |
 | `burst`   | Spiky shout                      | Impact lines       |
 | `ai`      | Dark HUD + optional `N›` prefix  | Nova / good system |
 | `badai`   | Inverted light HUD + `!›` prefix | Hostile AI         |

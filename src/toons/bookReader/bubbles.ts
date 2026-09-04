@@ -141,7 +141,9 @@ export function sketchyBubblePath(tail: string, seed?: number): string {
 
   let attachA = Math.PI / 2;
   let tip = [50, 118];
-  let halfW = 0.28;
+  /** Half-angle of the tail mouth on the ellipse. Keep this tight so the
+   *  lobe reads as a pointer, not a second balloon. */
+  let halfW = 0.16;
   if (t === "bottom-left") {
     attachA = Math.PI / 2 + 0.4;
     tip = [28, 116];
@@ -151,11 +153,11 @@ export function sketchyBubblePath(tail: string, seed?: number): string {
   } else if (t === "left") {
     attachA = Math.PI;
     tip = [-16, 52];
-    halfW = 0.26;
+    halfW = 0.15;
   } else if (t === "right") {
     attachA = 0;
     tip = [116, 52];
-    halfW = 0.26;
+    halfW = 0.15;
   } else if (t === "top") {
     attachA = -Math.PI / 2;
     tip = [50, -18];
@@ -181,10 +183,10 @@ export function sketchyBubblePath(tail: string, seed?: number): string {
   // Body: open cubic spline mouthR → … → mouthL
   let d = cubicSplineThrough(body, false, true);
 
-  // Tail sides as cubic splines (3-point open CR: mouth → mid → tip / tip → mid → mouth)
-  // Sharp tip: midpoints slightly offset so the lobe reads as a speech-bubble pointer.
-  const midL = [mouthL[0] * 0.45 + tipJ[0] * 0.55 + j(1.5), mouthL[1] * 0.45 + tipJ[1] * 0.55 + j(1.5)];
-  const midR = [mouthR[0] * 0.45 + tipJ[0] * 0.55 + j(1.5), mouthR[1] * 0.45 + tipJ[1] * 0.55 + j(1.5)];
+  // Tail sides as cubic splines (3-point open CR: mouth → mid → tip / tip → mid → mouth).
+  // Mids sit closer to the tip so the sides do not bow out and re-widen the base.
+  const midL = [mouthL[0] * 0.28 + tipJ[0] * 0.72 + j(1.2), mouthL[1] * 0.28 + tipJ[1] * 0.72 + j(1.2)];
+  const midR = [mouthR[0] * 0.28 + tipJ[0] * 0.72 + j(1.2), mouthR[1] * 0.28 + tipJ[1] * 0.72 + j(1.2)];
 
   d += cubicSplineThrough([mouthL, midL, tipJ], false, false);
   d += cubicSplineThrough([tipJ, midR, mouthR], false, false);

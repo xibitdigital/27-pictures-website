@@ -91,11 +91,13 @@ make add-image SRC=… TOON=jax|erin|nero [CONFIG=1] [UPLOAD=1]
 Live books and series are edited at `/toons/editor/` against D1 (Worker:
 `worker/toon-editor`). Captions, covers, visibility, series grouping, and
 optional Comfy / ElevenLabs generate are not `content/toons/*/config.json`.
+Caption chrome gallery (no login, nothing saved) at `/toons/editor/bubble-lab/`.
 See `worker/toon-editor/README.md` and `CLAUDE.md` → **Toon editor**.
 
 ```bash
 make dev                       # site + editor Worker
 # studio: http://127.0.0.1:5173/toons/editor/
+# bubble lab: http://127.0.0.1:5173/toons/editor/bubble-lab/
 npm run import-toon -- --toon nero   # needs EDITOR_EMAIL / EDITOR_PASSWORD in .env
 ```
 

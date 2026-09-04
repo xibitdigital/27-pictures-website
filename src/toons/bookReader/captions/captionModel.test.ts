@@ -9,6 +9,8 @@ import {
   type CaptionContext,
   autoWrapCh,
   ellipsePadding,
+  paddingCss,
+  textPadding,
 } from "./captionModel";
 import type { WordEntry } from "../types";
 
@@ -159,16 +161,18 @@ describe("config defaults (a lean word entry)", () => {
     // Size, colour and wrap width all come from the code now.
     expect(c.style["font-size"]).toBe("22px");
     expect(c.textStyle.color).toBe("#111111");
-    expect(c.style["max-width"]).toMatch(/^calc\(14ch \+/);
-    // Padding is derived from the bubble style, never authored per caption.
-    expect(c.textStyle.padding).toBeTruthy();
+    expect(c.style["max-width"]).toBeUndefined();
+    expect(c.textStyle["max-width"]).toBe("14ch");
+    expect(c.textStyle.padding).toBe("1em 1em 1em 1em");
   });
 
-  it("gives a long burst room for its spike padding so it wraps to two lines", () => {
-    const shout = "BRING ME THE DOOR-BREAKER!";
-    const c = buildCaption({ x: 0.72, y: 0.06, variant: "burst", text: { en: shout } }, 0, ctx)!;
+  it("wraps a long burst like speech", () => {
+    const shout = "Hello. my dear lady";
+    const burst = buildCaption({ x: 0.72, y: 0.06, variant: "burst", text: { en: shout } }, 0, ctx)!;
+    const bubble = buildCaption({ x: 0.72, y: 0.06, variant: "bubble", text: { en: shout } }, 0, ctx)!;
     expect(autoWrapCh(shout)).toBe(14);
-    expect(c.style["max-width"]).toBe("calc(20ch + 6.4em)");
+    expect(burst.textStyle["max-width"]).toBe("14ch");
+    expect(burst.textStyle["max-width"]).toBe(bubble.textStyle["max-width"]);
   });
 
   it("draws onomatopoeia larger than speech without being told", () => {
@@ -264,5 +268,16 @@ describe("ellipsePadding", () => {
     const generous = ellipsePadding("Hm.", 14, { padX: 1.4, padY: 1.2 });
     expect(generous.padX).toBe(1.4);
     expect(generous.padY).toBe(1.2);
+  });
+});
+
+describe("textPadding", () => {
+  it("keeps the inset even so glyphs sit on the ellipse centre", () => {
+    expect(textPadding(1, 1)).toEqual({ top: 1, right: 1, bottom: 1, left: 1 });
+    expect(textPadding(0.7, 0.5)).toEqual({ top: 0.5, right: 0.7, bottom: 0.5, left: 0.7 });
+  });
+
+  it("writes four-sided padding so the shorthand cannot collapse the box", () => {
+    expect(paddingCss(textPadding(1, 0.8))).toBe("0.8em 1em 0.8em 1em");
   });
 });

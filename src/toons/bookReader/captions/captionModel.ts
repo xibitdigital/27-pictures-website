@@ -201,6 +201,27 @@ export function ellipsePadding(
   };
 }
 
+export interface BoxPadding {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+/**
+ * Text inset from the balloon rim. Always even: the SVG body is centred on
+ * the word box (tails paint outside the viewBox), so extra pad on the lobe
+ * side would shift the glyphs off the ellipse. Four sides so the CSS padding
+ * shorthand cannot collapse a future optical tweak.
+ */
+export function textPadding(padX: number, padY: number): BoxPadding {
+  return { top: padY, right: padX, bottom: padY, left: padX };
+}
+
+export function paddingCss(box: BoxPadding): string {
+  return `${box.top}em ${box.right}em ${box.bottom}em ${box.left}em`;
+}
+
 /** One word entry → the props WordCaption.vue renders (null = nothing to show). */
 export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): CaptionModel | null {
   const text = resolveText(w, ctx.lang);
@@ -251,14 +272,13 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
   }
   // An explicit maxWidth is a fraction of the plate; the automatic one is in
   // `ch`, so it keeps its shape when the same caption is read at another size.
-  // Round balloons add padding *inside* this box (see below), so a long burst
-  // would otherwise wrap one word per line — padX hits 3.2em a side and 14ch
-  // of content is gone. Expand after padding is known.
-  // Bursts use a condensed shout face whose letters run wider than `ch`
-  // (the "0" glyph). Half-length wrap (14) then stacks "BRING ME THE
-  // DOOR-BREAKER!" one word per line. Floor at 20 so a two-line shout fits.
-  const wrapCh = variant === "burst" ? Math.max(20, autoWrapCh(text)) : autoWrapCh(text);
-  style["max-width"] = maxW != null ? `${maxW}%` : `${wrapCh}ch`;
+  // Burst uses the same wrap as speech.
+  const wrapCh = autoWrapCh(text);
+  // Wrap lives on the inner glyph box so a short line shrink-wraps the balloon
+  // instead of stretching to wrapCh. An explicit plate-fraction maxWidth still
+  // caps the outer word.
+  if (maxW != null) style["max-width"] = `${maxW}%`;
+  else if (!isBubble) style["max-width"] = `${wrapCh}ch`;
   if (isCredit) style["text-transform"] = "none";
   // Bubbles (and any word with SFX) must capture hits — the layer is
   // pointer-events:none so stray clicks fall through to .nav-zone (page turn).
@@ -279,7 +299,8 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     const scale = w.scale != null ? Number(w.scale) : 1;
     if (scale && scale !== 1 && !Number.isNaN(scale)) {
       // Scale only the bubble background shape, never the text on top.
-      bubbleStyle = { transform: `scale(${scale})`, "transform-origin": "center" };
+      // Keep the CSS translate(-50%, -50%) that centres the SVG on the word.
+      bubbleStyle = { "--jax-bubble-scale": String(scale) };
     }
 
     // Organic/burst/badai = dark ink; good AI HUD = white.
@@ -295,17 +316,9 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     // padding tracks the type size like the rest of the chrome.
     const roundShape = style_.shape === "organic" || style_.shape === "thought" || style_.shape === "star";
     const pad = roundShape ? ellipsePadding(text, w.maxWidth != null ? null : wrapCh, style_, style_.shape) : style_;
-    const padX = `${pad.padX}em`;
-    const padY = `${pad.padY}em`;
-    if (maxW == null && roundShape) {
-      style["max-width"] = `calc(${wrapCh}ch + ${2 * pad.padX}em)`;
-    }
-    // The tail eats into the balloon on its own side, so pad that side out.
-    // Thought bubbles have no lobe (dots sit fully outside), so no tail padding.
-    const tailPad = `calc(${padY} + 0.35em)`;
-    const hasLobe = style_.tail !== "none" && style_.shape !== "thought";
-    const isTopTail = hasLobe && style_.tail.startsWith("top");
-    textStyle.padding = `${isTopTail ? tailPad : padY} ${padX} ${hasLobe && !isTopTail ? tailPad : padY} ${padX}`;
+    const box = textPadding(pad.padX, pad.padY);
+    textStyle["max-width"] = `${wrapCh}ch`;
+    textStyle.padding = paddingCss(box);
 
     if (stroke) {
       const strokePx = Math.max(0.4, stroke.thickness * ctx.designScale * 0.65);
