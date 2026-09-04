@@ -3,12 +3,35 @@
  * Caption overlay for the studio plate. Same measure math as WordLayer,
  * but the layer is hit-tested: drag existing bubbles, click empty plate to add.
  */
-import { computed, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from "vue";
+import {
+  ArrowDown,
+  ArrowDownLeft,
+  ArrowDownRight,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpLeft,
+  ArrowUpRight,
+  Circle,
+} from "@lucide/vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch, type Component, type CSSProperties } from "vue";
 import WordCaption from "../../bookReader/captions/WordCaption.vue";
 import { buildCaptions, imageContentBox, type CaptionModel } from "../../bookReader/captions/captionModel";
 import { clientToPlateFraction, grabOffset, type ContentBox } from "../plateCoords";
-import { bubbleToWordEntry } from "../mapConfig";
+import { bubbleToWordEntry, type BubbleTail } from "../mapConfig";
 import type { BubbleRecord } from "../types";
+
+const TAIL_PAD: { tail: BubbleTail; label: string; icon: Component }[] = [
+  { tail: "top-left", label: "Top left", icon: ArrowUpLeft },
+  { tail: "top", label: "Top", icon: ArrowUp },
+  { tail: "top-right", label: "Top right", icon: ArrowUpRight },
+  { tail: "left", label: "Left", icon: ArrowLeft },
+  { tail: "none", label: "No tail", icon: Circle },
+  { tail: "right", label: "Right", icon: ArrowRight },
+  { tail: "bottom-left", label: "Bottom left", icon: ArrowDownLeft },
+  { tail: "bottom", label: "Bottom", icon: ArrowDown },
+  { tail: "bottom-right", label: "Bottom right", icon: ArrowDownRight },
+];
 
 const props = withDefaults(
   defineProps<{
@@ -34,6 +57,7 @@ const emit = defineEmits<{
   move: [id: string, x: number, y: number];
   persist: [id: string, x: number, y: number];
   add: [pos: { x: number; y: number }];
+  tail: [id: string, tail: BubbleTail];
 }>();
 
 const rootEl = ref<HTMLElement | null>(null);
@@ -96,6 +120,45 @@ let drag: {
 } | null = null;
 
 const dragging = ref(false);
+
+function hostedCaption(caption: CaptionModel): CaptionModel {
+  const rotate = (caption.style["--jax-transform"] || "")
+    .split(/\s+/)
+    .filter((part) => part.startsWith("rotate"))
+    .join(" ");
+  return {
+    ...caption,
+    style: {
+      ...caption.style,
+      position: "relative",
+      left: "auto",
+      top: "auto",
+      "--jax-transform": rotate || "none",
+    },
+  };
+}
+
+function hostStyle(caption: CaptionModel): CSSProperties {
+  return {
+    position: "absolute",
+    left: caption.style.left,
+    top: caption.style.top,
+    transform: "translate(-50%, -50%)",
+    zIndex: 36,
+  };
+}
+
+function currentTail(id: string): BubbleTail {
+  const found = props.bubbles.find((b) => b.id === id);
+  return (found?.tail as BubbleTail) || "bottom-left";
+}
+
+function onTailClick(ev: Event, id: string, tail: BubbleTail): void {
+  ev.preventDefault();
+  ev.stopPropagation();
+  emit("select", id);
+  emit("tail", id, tail);
+}
 
 function overlayBox(): ContentBox | null {
   const el = rootEl.value;
@@ -228,11 +291,39 @@ watch(
     :style="layerStyle"
     @pointerdown="onPointerDown"
   >
-    <WordCaption
-      v-for="(caption, i) in captions"
-      :key="bubbles[i]?.id || caption.key"
-      :caption="caption"
-      :data-bubble-id="bubbles[i]?.id"
-    />
+    <template v-for="(caption, i) in captions" :key="bubbles[i]?.id || caption.key">
+      <div
+        v-if="bubbles[i]?.id && bubbles[i]?.id === selectedId"
+        class="editor-caption-host"
+        :data-bubble-id="bubbles[i]?.id"
+        :style="hostStyle(caption)"
+      >
+        <WordCaption :caption="hostedCaption(caption)" :data-bubble-id="bubbles[i]?.id" />
+        <div
+          v-if="!dragging"
+          class="editor-tail-ring"
+          role="radiogroup"
+          aria-label="Tail"
+          data-tail-ring
+          @pointerdown.stop
+        >
+          <button
+            v-for="cell in TAIL_PAD"
+            :key="cell.tail"
+            class="editor-icon-btn"
+            type="button"
+            :data-tail="cell.tail"
+            :aria-label="cell.label"
+            :aria-pressed="currentTail(bubbles[i]!.id) === cell.tail"
+            :title="cell.label"
+            @click="onTailClick($event, bubbles[i]!.id, cell.tail)"
+            @pointerdown.stop
+          >
+            <component :is="cell.icon" :size="14" :stroke-width="1.8" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+      <WordCaption v-else :caption="caption" :data-bubble-id="bubbles[i]?.id" />
+    </template>
   </div>
 </template>

@@ -3,6 +3,7 @@ import { X } from "@lucide/vue";
 import { computed, ref } from "vue";
 import EditorCaptionLayer from "./EditorCaptionLayer.vue";
 import type { BubbleRecord } from "../types";
+import type { BubbleTail } from "../mapConfig";
 
 const HINT_KEY = "editor-plate-click-hint";
 
@@ -40,6 +41,7 @@ const emit = defineEmits<{
   move: [id: string, x: number, y: number];
   persist: [id: string, x: number, y: number];
   add: [pos: { x: number; y: number }];
+  tail: [id: string, tail: BubbleTail];
 }>();
 
 const imgEl = ref<HTMLImageElement | null>(null);
@@ -77,6 +79,7 @@ const plateStyle = computed(() => ({
         @move="(id, x, y) => emit('move', id, x, y)"
         @persist="(id, x, y) => emit('persist', id, x, y)"
         @add="emit('add', $event)"
+        @tail="(id, tail) => emit('tail', id, tail)"
       />
     </div>
   </div>

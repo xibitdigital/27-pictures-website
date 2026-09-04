@@ -271,7 +271,7 @@ export function deletePage(pageId: string): Promise<{ ok: boolean }> {
 
 export function addBubble(
   pageId: string,
-  payload: { x: number; y: number; variant?: string; tail?: string; textEn?: string }
+  payload: { x: number; y: number; variant?: string; tail?: string; textEn?: string; size?: number }
 ): Promise<BubbleRecord> {
   return api<BubbleRecord>(`/pages/${pageId}/bubbles`, { method: "POST", body: JSON.stringify(payload) });
 }

@@ -29,11 +29,10 @@ describe("CaptionInspector", () => {
     vi.mocked(api.generateAudio).mockReset();
   });
 
-  it("puts variant and tail on the first row", () => {
+  it("keeps variant in the inspector and does not offer a tail select", () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
-    const variant = wrapper.get('button[name="variant"]');
-    const tail = wrapper.get('button[name="tail"]');
-    expect(variant.element.parentElement?.parentElement).toBe(tail.element.parentElement?.parentElement);
+    expect(wrapper.get('button[name="variant"]').exists()).toBe(true);
+    expect(wrapper.find('button[name="tail"]').exists()).toBe(false);
     expect(wrapper.get("label").text()).toContain("Variant");
   });
 

@@ -100,6 +100,21 @@ describe("EditorCaptionLayer", () => {
     wrapper.unmount();
   });
 
+  it("rings the selected bubble with nine tail buttons and emits tail", async () => {
+    const wrapper = mount(EditorCaptionLayer, {
+      props: { pageNum: 1, bubbles: [bubble()], selectedId: "b1", imageEl: makeImage() },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const ring = wrapper.get("[data-tail-ring]");
+    const buttons = ring.findAll("[data-tail]");
+    expect(buttons).toHaveLength(9);
+    expect(ring.get('[data-tail="bottom-left"]').attributes("aria-pressed")).toBe("true");
+    await ring.get('[data-tail="right"]').trigger("click");
+    expect(wrapper.emitted("tail")).toEqual([["b1", "right"]]);
+    wrapper.unmount();
+  });
+
   it("emits add when the empty plate is clicked", async () => {
     const wrapper = mount(EditorCaptionLayer, {
       props: { pageNum: 1, bubbles: [], imageEl: makeImage() },

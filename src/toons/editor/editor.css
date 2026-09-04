@@ -457,16 +457,20 @@ body {
 }
 
 .editor-visibility-badge[data-visibility="draft"] {
-  color: var(--silver);
+  background: var(--silver);
+  color: var(--bg-dark);
+  border-color: var(--silver);
 }
 
 .editor-visibility-badge[data-visibility="staging"] {
+  background: var(--red-smile);
   color: var(--text);
   border-color: var(--red-smile);
 }
 
 .editor-visibility-badge[data-visibility="public"] {
-  color: var(--success);
+  background: var(--success);
+  color: var(--bg-dark);
   border-color: var(--success);
 }
 
@@ -1055,53 +1059,21 @@ body {
   min-height: 0;
 }
 
-.editor-filmstrip-add-wrap {
-  display: grid;
-  gap: 0.35rem;
-}
-
-.editor-filmstrip-add {
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 0.2rem;
-  aspect-ratio: 2 / 3;
-  border: 2px solid var(--red-smile);
-  background: var(--bg-card);
-  color: var(--text);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-align: center;
-  padding: 0.35rem;
-}
-
-.editor-filmstrip-add-plus {
-  color: var(--red-smile);
-}
-
-.editor-filmstrip-add-actions {
-  display: grid;
-  gap: 0.25rem;
-  width: 100%;
-}
-
 .editor-filmstrip-action {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.3rem;
-  width: 100%;
-  padding: 0.28rem 0.2rem;
-  background: var(--bg-dark);
+  gap: 0.45rem;
+  aspect-ratio: 2 / 3;
+  padding: 0.5rem;
+  background: var(--bg-card);
   color: var(--text);
-  /* One strong red border on the card is enough — these stay quiet until
-     hovered/focused, instead of every nested box repeating the same color. */
-  border: 1px solid var(--border-light);
-  border-radius: 2px;
+  border: 2px solid var(--border-light);
+  border-radius: 0;
   font: inherit;
-  font-size: 0.62rem;
+  font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -1458,6 +1430,50 @@ body {
   outline-offset: 4px;
 }
 
+.editor-word-layer .editor-caption-host .jax-word {
+  position: relative;
+  left: auto;
+  top: auto;
+}
+
+.editor-tail-ring {
+  position: absolute;
+  inset: -2.5rem;
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr) 1.75rem;
+  grid-template-rows: 1.75rem minmax(0, 1fr) 1.75rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.editor-tail-ring .editor-icon-btn {
+  pointer-events: auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.editor-tail-ring .editor-icon-btn[aria-pressed="true"] {
+  color: var(--text);
+  border-color: var(--red-smile);
+}
+
+.editor-tail-ring .editor-icon-btn[data-tail="left"],
+.editor-tail-ring .editor-icon-btn[data-tail="right"] {
+  align-self: center;
+}
+
+.editor-tail-ring .editor-icon-btn[data-tail="top"],
+.editor-tail-ring .editor-icon-btn[data-tail="bottom"] {
+  justify-self: center;
+}
+
+.editor-tail-ring .editor-icon-btn[data-tail="none"] {
+  place-self: start center;
+}
+
 .editor-inspector {
   min-height: 0;
   overflow: auto;
@@ -1492,13 +1508,12 @@ body {
     overflow-y: hidden;
   }
 
-  .editor-filmstrip-add-wrap,
-  .editor-filmstrip-add,
+  .editor-filmstrip-action,
   .editor-thumb {
     flex: 0 0 5.5rem;
   }
 
-  .editor-filmstrip-add {
+  .editor-filmstrip-action {
     aspect-ratio: auto;
     height: 100%;
     min-height: 0;

@@ -27,7 +27,7 @@ describe("PageFilmstrip", () => {
     expect(wrapper.emitted("generate")).toHaveLength(1);
   });
 
-  it("puts Add page after the existing thumbs", () => {
+  it("puts Upload and Generate after the existing thumbs", () => {
     const wrapper = mount(PageFilmstrip, {
       props: {
         toonId: "t1",
@@ -54,9 +54,11 @@ describe("PageFilmstrip", () => {
         activeId: "p1",
       },
     });
-    const kids = [...wrapper.get("nav").element.children].map((el) => el.className);
-    expect(kids.at(-1)).toContain("editor-filmstrip-add-wrap");
-    expect(kids.slice(0, -1).every((c) => c.includes("editor-thumb"))).toBe(true);
+    const kids = [...wrapper.get("nav").element.children];
+    expect(kids.at(-1)?.getAttribute("name")).toBe("add-page-generate");
+    expect(kids.at(-2)?.querySelector('input[aria-label="Upload page"]')).toBeTruthy();
+    expect(kids.slice(0, -2).every((el) => el.classList.contains("editor-thumb"))).toBe(true);
+    expect(wrapper.text()).not.toContain("Add page");
   });
 
   it("shows a confirm dialog and emits remove once confirmed", async () => {

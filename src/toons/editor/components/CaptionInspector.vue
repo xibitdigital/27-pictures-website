@@ -5,7 +5,6 @@ import { defaultSize } from "../../bookReader/captions/captionModel";
 import { editorApiBase, generateAudio, uploadAudio } from "../api";
 import { pushToast } from "../toast";
 import {
-  BUBBLE_TAILS,
   BUBBLE_VARIANTS,
   CAPTION_LANGS,
   VOICE_NAMES,
@@ -366,37 +365,15 @@ async function onGenerateAudio(): Promise<void> {
     <h2>Bubble</h2>
     <p v-if="!bubble" class="editor-muted">Select a bubble, or click the plate to add one.</p>
     <template v-else>
-      <div class="editor-pair-row">
-        <label>
-          Variant
-          <EditorSelect
-            name="variant"
-            :model-value="bubble.variant"
-            @update:model-value="(v) => emit('change', { variant: v })"
-          >
-            <EditorSelectItem v-for="v in BUBBLE_VARIANTS" :key="v" :value="v">{{ v }}</EditorSelectItem>
-          </EditorSelect>
-        </label>
-        <label>
-          Tail
-          <EditorSelect
-            name="tail"
-            :model-value="bubble.tail || 'bottom-left'"
-            @update:model-value="(v) => emit('change', { tail: v })"
-          >
-            <EditorSelectItem v-for="t in BUBBLE_TAILS" :key="t" :value="t">{{ t }}</EditorSelectItem>
-          </EditorSelect>
-        </label>
-      </div>
-      <label v-for="lang in CAPTION_LANGS" :key="lang.code">
-        {{ lang.label }}
-        <textarea
-          :value="textMap[lang.code] || ''"
-          rows="3"
-          :lang="lang.code"
-          @focus="emit('preview', lang.code)"
-          @input="onLangInput(lang.code, $event)"
-        />
+      <label>
+        Variant
+        <EditorSelect
+          name="variant"
+          :model-value="bubble.variant"
+          @update:model-value="(v) => emit('change', { variant: v })"
+        >
+          <EditorSelectItem v-for="v in BUBBLE_VARIANTS" :key="v" :value="v">{{ v }}</EditorSelectItem>
+        </EditorSelect>
       </label>
       <label>
         Size
@@ -455,6 +432,16 @@ async function onGenerateAudio(): Promise<void> {
             @blur="onAngleBlur"
           />
         </span>
+      </label>
+      <label v-for="lang in CAPTION_LANGS" :key="lang.code">
+        {{ lang.label }}
+        <textarea
+          :value="textMap[lang.code] || ''"
+          rows="3"
+          :lang="lang.code"
+          @focus="emit('preview', lang.code)"
+          @input="onLangInput(lang.code, $event)"
+        />
       </label>
       <label>
         Color

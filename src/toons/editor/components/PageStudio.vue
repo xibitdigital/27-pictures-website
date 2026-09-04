@@ -240,6 +240,11 @@ function onPersist(id: string, x: number, y: number): void {
   markDirty(id);
 }
 
+function onTail(id: string, tail: string): void {
+  applyLocal(id, { tail });
+  markDirty(id);
+}
+
 async function saveDirty(): Promise<void> {
   const ids = [...dirtyIds.value];
   if (!ids.length) return;
@@ -266,7 +271,7 @@ async function onAdd(pos: { x: number; y: number }): Promise<void> {
   const page = activePage.value;
   if (!page) return;
   try {
-    const created = await addBubble(page.id, { x: pos.x, y: pos.y, textEn: "" });
+    const created = await addBubble(page.id, { x: pos.x, y: pos.y, textEn: "text", size: 30 });
     page.bubbles.push(created);
     selectedId.value = created.id;
   } catch (err) {
@@ -369,6 +374,7 @@ async function onRemove(): Promise<void> {
           @move="onMove"
           @persist="onPersist"
           @add="onAdd"
+          @tail="onTail"
         />
         <div v-else class="editor-canvas editor-canvas--empty">
           <p class="editor-muted">Upload a page to start placing bubbles.</p>
