@@ -66,12 +66,15 @@ to reset one.
 ## Studio routes (hash)
 
 `/toons/editor/` is an MPA entry with hash history (reload-safe on Pages).
+The Vue studio is for **desktop and iPad**, not phones — no phone layout.
+The top bar is always ghosts → All toons → red CTA (Save / Create / New
+toon) → account avatar last.
 
 | Hash | Screen |
 | ---- | ------ |
 | `#/` | Episodes grouped under each series + ungrouped toons |
 | `#/series/new` | Create series |
-| `#/series/:key` | Edit series (cover, hub, Comfy Save-API graph + reference sheets) |
+| `#/series/:key` | Edit series (cover, hub, Comfy Save-API graph + reference sheets). New toon in the bar pre-fills the next episode |
 | `#/new` | Create toon (visibility, series, episode number) |
 | `#/:id` | Edit toon metadata |
 | `#/:id/pages/:pageId?` | Plate studio (captions, upload or Generate) |

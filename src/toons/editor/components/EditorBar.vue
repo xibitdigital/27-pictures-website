@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Library } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import EditorSession from "./EditorSession.vue";
 
@@ -22,7 +23,10 @@ withDefaults(
       <div class="editor-bar-actions">
         <slot name="actions" />
       </div>
-      <RouterLink v-if="home" class="editor-btn editor-btn--ghost" to="/">All toons</RouterLink>
+      <RouterLink v-if="home" class="editor-btn editor-btn--ghost" to="/">
+        <Library :size="16" :stroke-width="1.4" aria-hidden="true" />
+        All toons
+      </RouterLink>
       <slot name="primary" />
       <EditorSession />
     </div>

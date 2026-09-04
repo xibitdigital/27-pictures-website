@@ -690,6 +690,24 @@ production share that Worker’s remote D1. `make dev` proxies `/__editor-api` t
 the Worker on `:8787` (Miniflare D1 — a different database until you
 `npm run restore-db`).
 
+**Desktop and iPad, not phones.** Do not add a phone layout. iPad uses the
+existing `(pointer: coarse)` studio (filmstrip on top, inspector below); a
+pointer keeps the three-column studio. Forms stack the cover preview below
+900px (iPad portrait). The top bar is out of the scrollport
+(`.editor-bar` `flex-shrink: 0`; `.editor-list-body` / `.editor-form` /
+`.editor-page-body` scroll). A series with no episodes still gets a 2:3
+card — cover art, or `.editor-cover-placeholder` if none.
+
+**Bar order is the same on every screen** (`EditorBar.vue`): ghost actions
+(`#actions`) → All toons (hidden on the list home) → red CTA (`#primary`:
+Save / Create / New toon / Send invite) → account avatar **last**. Ghosts
+never sit after the CTA. An existing series page (`#/series/:key`) puts
+**New toon** in `#actions` (pre-fills `?series=&episode=` for the next
+number). Lucide icons on those bar buttons match the list (BookPlus,
+FolderPlus, Save, Library). The plate studio shows a one-shot hint —
+“Click the page to add a bubble” — until dismissed (`localStorage`
+`editor-plate-click-hint`).
+
 JSON the studio and the Worker agree on lives in
 `worker/toon-editor/src/apiTypes.ts` (no Cloudflare types). The Worker keeps D1
 row types in `src/types.ts`. Vue re-exports the contract from
@@ -697,8 +715,8 @@ row types in `src/types.ts`. Vue re-exports the contract from
 
 | Hash | Screen |
 | ---- | ------ |
-| `#/` | Episodes grouped under each series, ungrouped toons, visibility badges |
-| `#/series/new` · `#/series/:key` | Create / edit series (cover, hub URL, descriptions, Comfy flow + sheets) |
+| `#/` | Episodes grouped under each series, ungrouped toons, visibility badges. Empty series: 2:3 cover card (placeholder if no art) |
+| `#/series/new` · `#/series/:key` | Create / edit series (cover, hub URL, descriptions, Comfy flow + sheets). Edit: New toon in the bar, next episode pre-filled |
 | `#/new` · `#/:id` | Create / edit toon (series + episode number + visibility) |
 | `#/:id/pages/:pageId?` | Plate studio (upload or Generate) |
 

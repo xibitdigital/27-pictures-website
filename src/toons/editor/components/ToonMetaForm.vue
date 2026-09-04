@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Images } from "@lucide/vue";
+import { BookPlus, Images, Save } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { createToon, getToon, listSeries, patchToon, readImageSize, uploadCover } from "../api";
@@ -178,13 +178,17 @@ async function onSubmit(ev: Event): Promise<void> {
   <div class="editor-page">
     <EditorBar :title="isCreate ? 'New toon' : 'Toon'">
       <template #actions>
-        <button class="editor-btn" type="submit" form="toon-meta" :disabled="saving">
-          {{ saving ? "Saving…" : isCreate ? "Create" : "Save" }}
-        </button>
         <RouterLink v-if="existing" class="editor-btn editor-btn--ghost" :to="`/${existing.id}/pages`">
           <Images :size="16" :stroke-width="1.4" aria-hidden="true" />
           Pages
         </RouterLink>
+      </template>
+      <template #primary>
+        <button class="editor-btn" type="submit" form="toon-meta" :disabled="saving">
+          <BookPlus v-if="isCreate" :size="16" :stroke-width="1.4" aria-hidden="true" />
+          <Save v-else :size="16" :stroke-width="1.4" aria-hidden="true" />
+          {{ saving ? "Saving…" : isCreate ? "Create" : "Save" }}
+        </button>
       </template>
     </EditorBar>
     <form id="toon-meta" class="editor-form" novalidate @submit="onSubmit">

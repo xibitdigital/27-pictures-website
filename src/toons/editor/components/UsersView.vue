@@ -122,7 +122,7 @@ onUnmounted(() => {
 <template>
   <div class="editor-page">
     <EditorBar title="Invite user">
-      <template #actions>
+      <template #primary>
         <button class="editor-btn" type="submit" form="invite-user" :disabled="saving">
           {{ saving ? "Sending…" : "Send invite" }}
         </button>

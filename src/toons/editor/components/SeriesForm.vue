@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { BookPlus, FolderPlus, Save } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import {
   getSeries,
   listUsers,
@@ -303,198 +304,210 @@ async function onSubmit(ev: Event): Promise<void> {
   <div class="editor-page">
     <EditorBar :title="isCreate ? 'New series' : 'Series'">
       <template #actions>
+        <RouterLink v-if="!isCreate" class="editor-btn editor-btn--ghost" :to="addEpisodeTo">
+          <BookPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
+          New toon
+        </RouterLink>
+      </template>
+      <template #primary>
         <button class="editor-btn" type="submit" form="series-meta" :disabled="saving">
+          <FolderPlus v-if="isCreate" :size="16" :stroke-width="1.4" aria-hidden="true" />
+          <Save v-else :size="16" :stroke-width="1.4" aria-hidden="true" />
           {{ saving ? "Saving…" : isCreate ? "Create" : "Save" }}
         </button>
       </template>
     </EditorBar>
-    <form id="series-meta" class="editor-form" novalidate @submit="onSubmit">
-      <div class="editor-form-main">
-        <label v-if="isCreate" class="editor-form-span">
-          Key
-          <input v-model="key" name="key" required autocomplete="off" @input="keyTouched = true" />
-        </label>
-        <p v-else class="editor-muted">Key: {{ key }}</p>
-
-        <label>
-          Title
-          <input v-model="title" name="title" required />
-        </label>
-        <label>
-          Tagline
-          <input v-model="tagline" name="tagline" />
-        </label>
-        <label>
-          Hub URL
-          <input v-model="hubUrl" name="hub-url" placeholder="/toons/erin-and-the-goblins/" />
-        </label>
-        <label>
-          Sort
-          <input v-model="sort" type="number" name="sort" step="1" />
-        </label>
-        <div v-if="isAdmin" class="editor-form-span editor-generate">
-          <p class="editor-generate-label">Editors</p>
-          <p class="editor-muted">Who can create/manage toons under this series (capped at draft/staging).</p>
-          <p v-if="!editorRoster.length" class="editor-muted">No editor accounts yet — invite one first.</p>
-          <ul v-else class="editor-slot-list">
-            <li v-for="user in editorRoster" :key="user.id">
-              <EditorCheckbox
-                :checked="selectedEditorIds.includes(user.id)"
-                :name="`editor-${user.id}`"
-                @update:checked="(checked) => toggleEditor(user.id, checked)"
-              >
-                {{ user.username }} ({{ user.email }})
-              </EditorCheckbox>
-            </li>
-          </ul>
-        </div>
-        <label>
-          Plate width
-          <input v-model="plateWidth" type="number" name="plate-width" min="1" step="1" />
-        </label>
-        <label>
-          Plate height
-          <input v-model="plateHeight" type="number" name="plate-height" min="1" step="1" />
-        </label>
-        <label class="editor-form-span">
-          Model
-          <input v-model="model" name="generate-model" placeholder="seedream 5.0 pro" />
-        </label>
-        <div class="editor-form-span editor-generate">
-          <p class="editor-generate-label">ComfyUI flow</p>
-          <p class="editor-muted">
-            One API-format graph for every page in this series (Save API / .api.json). Image 1…N order is the PIN order;
-            previous plate last.
-          </p>
-          <label>
-            Flow (.api.json)
-            <input
-              type="file"
-              name="series-flow"
-              accept="application/json,.json"
-              :disabled="uploadingFlow"
-              @change="onFlow"
-            />
+    <div class="editor-page-body">
+      <form id="series-meta" class="editor-form" novalidate @submit="onSubmit">
+        <div class="editor-form-main">
+          <label v-if="isCreate" class="editor-form-span">
+            Key
+            <input v-model="key" name="key" required autocomplete="off" @input="keyTouched = true" />
           </label>
-          <p v-if="flowLabel" class="editor-muted">Uploaded: {{ flowLabel }}</p>
-          <p v-else class="editor-muted">No flow yet. Save the series, then upload the graph.</p>
+          <p v-else class="editor-muted">Key: {{ key }}</p>
 
-          <template v-if="promptCandidates.length">
-            <p class="editor-generate-label">Prompt goes into</p>
+          <label>
+            Title
+            <input v-model="title" name="title" required />
+          </label>
+          <label>
+            Tagline
+            <input v-model="tagline" name="tagline" />
+          </label>
+          <label>
+            Hub URL
+            <input v-model="hubUrl" name="hub-url" placeholder="/toons/erin-and-the-goblins/" />
+          </label>
+          <label>
+            Sort
+            <input v-model="sort" type="number" name="sort" step="1" />
+          </label>
+          <div v-if="isAdmin" class="editor-form-span editor-generate">
+            <p class="editor-generate-label">Editors</p>
+            <p class="editor-muted">Who can create/manage toons under this series (capped at draft/staging).</p>
+            <p v-if="!editorRoster.length" class="editor-muted">No editor accounts yet — invite one first.</p>
+            <ul v-else class="editor-slot-list">
+              <li v-for="user in editorRoster" :key="user.id">
+                <EditorCheckbox
+                  :checked="selectedEditorIds.includes(user.id)"
+                  :name="`editor-${user.id}`"
+                  @update:checked="(checked) => toggleEditor(user.id, checked)"
+                >
+                  {{ user.username }} ({{ user.email }})
+                </EditorCheckbox>
+              </li>
+            </ul>
+          </div>
+          <label>
+            Plate width
+            <input v-model="plateWidth" type="number" name="plate-width" min="1" step="1" />
+          </label>
+          <label>
+            Plate height
+            <input v-model="plateHeight" type="number" name="plate-height" min="1" step="1" />
+          </label>
+          <label class="editor-form-span">
+            Model
+            <input v-model="model" name="generate-model" placeholder="seedream 5.0 pro" />
+          </label>
+          <div class="editor-form-span editor-generate">
+            <p class="editor-generate-label">ComfyUI flow</p>
             <p class="editor-muted">
-              Where the typed page prompt is written on generate. Auto writes onto every Seedream node's own
-              <code>prompt</code> — pick a specific node if the flow builds the prompt upstream instead (e.g. a
-              <code>Text (Multiline)</code> or <code>Concatenate Text</code> node feeding into it).
+              One API-format graph for every page in this series (Save API / .api.json). Image 1…N order is the PIN
+              order; previous plate last.
             </p>
-            <EditorSelect v-model="promptTargetKey" name="prompt-target" aria-label="Prompt target">
-              <EditorSelectItem value="">Auto (every Seedream node's prompt)</EditorSelectItem>
-              <EditorSelectItem
-                v-for="c in promptCandidates"
-                :key="candidateKey(c.nodeId, c.inputKey)"
-                :value="candidateKey(c.nodeId, c.inputKey)"
-              >
-                {{ c.label }} — “{{ c.preview }}”
-              </EditorSelectItem>
-            </EditorSelect>
-          </template>
-
-          <p class="editor-generate-label">Reference slots</p>
-          <ol class="editor-slot-list">
-            <li v-for="(slot, index) in slots" :key="`${index}-${slot.alias}`" class="editor-slot-row">
+            <label>
+              Flow (.api.json)
               <input
-                v-model="slot.label"
-                :name="`slot-label-${index}`"
-                :aria-label="`Slot ${index + 1} name`"
-                :placeholder="`Image ${index + 1}`"
-              />
-              <EditorSelect v-model="slot.kind" :name="`slot-kind-${index}`" :aria-label="`Slot ${index + 1} kind`">
-                <EditorSelectItem value="sheet">Sheet</EditorSelectItem>
-                <EditorSelectItem value="previous">Previous page</EditorSelectItem>
-              </EditorSelect>
-              <EditorCheckbox
-                v-if="slot.kind === 'sheet'"
-                class="editor-slot-optional"
-                :checked="Boolean(slot.optional)"
-                :name="`slot-optional-${index}`"
-                @update:checked="(checked) => (slot.optional = checked)"
-              >
-                Optional
-              </EditorCheckbox>
-              <span v-else></span>
-              <input
-                v-if="slot.kind === 'sheet'"
                 type="file"
-                accept="image/webp,image/jpeg,image/png"
-                :name="`slot-file-${index}`"
-                :aria-label="`Slot ${index + 1} image`"
-                @change="onSlotFile(index, $event)"
+                name="series-flow"
+                accept="application/json,.json"
+                :disabled="uploadingFlow"
+                @change="onFlow"
               />
-              <span v-else class="editor-muted">Filled from the last plate</span>
-              <img v-if="slot.fileUrl" :src="slot.fileUrl" alt="" class="editor-slot-thumb" />
-              <button
-                class="editor-icon-btn"
-                type="button"
-                :name="`slot-up-${index}`"
-                :disabled="index === 0"
-                @click="moveSlot(index, -1)"
-              >
-                ↑
-              </button>
-              <button
-                class="editor-icon-btn"
-                type="button"
-                :name="`slot-down-${index}`"
-                :disabled="index === slots.length - 1"
-                @click="moveSlot(index, 1)"
-              >
-                ↓
-              </button>
-              <button class="editor-icon-btn" type="button" :name="`slot-remove-${index}`" @click="removeSlot(index)">
-                ×
-              </button>
-            </li>
-          </ol>
-          <button class="editor-btn editor-btn--ghost" type="button" name="add-slot" @click="addSlot">Add slot</button>
+            </label>
+            <p v-if="flowLabel" class="editor-muted">Uploaded: {{ flowLabel }}</p>
+            <p v-else class="editor-muted">No flow yet. Save the series, then upload the graph.</p>
+
+            <template v-if="promptCandidates.length">
+              <p class="editor-generate-label">Prompt goes into</p>
+              <p class="editor-muted">
+                Where the typed page prompt is written on generate. Auto writes onto every Seedream node's own
+                <code>prompt</code> — pick a specific node if the flow builds the prompt upstream instead (e.g. a
+                <code>Text (Multiline)</code> or <code>Concatenate Text</code> node feeding into it).
+              </p>
+              <EditorSelect v-model="promptTargetKey" name="prompt-target" aria-label="Prompt target">
+                <EditorSelectItem value="">Auto (every Seedream node's prompt)</EditorSelectItem>
+                <EditorSelectItem
+                  v-for="c in promptCandidates"
+                  :key="candidateKey(c.nodeId, c.inputKey)"
+                  :value="candidateKey(c.nodeId, c.inputKey)"
+                >
+                  {{ c.label }} — “{{ c.preview }}”
+                </EditorSelectItem>
+              </EditorSelect>
+            </template>
+
+            <p class="editor-generate-label">Reference slots</p>
+            <ol class="editor-slot-list">
+              <li v-for="(slot, index) in slots" :key="`${index}-${slot.alias}`" class="editor-slot-row">
+                <input
+                  v-model="slot.label"
+                  :name="`slot-label-${index}`"
+                  :aria-label="`Slot ${index + 1} name`"
+                  :placeholder="`Image ${index + 1}`"
+                />
+                <EditorSelect v-model="slot.kind" :name="`slot-kind-${index}`" :aria-label="`Slot ${index + 1} kind`">
+                  <EditorSelectItem value="sheet">Sheet</EditorSelectItem>
+                  <EditorSelectItem value="previous">Previous page</EditorSelectItem>
+                </EditorSelect>
+                <EditorCheckbox
+                  v-if="slot.kind === 'sheet'"
+                  class="editor-slot-optional"
+                  :checked="Boolean(slot.optional)"
+                  :name="`slot-optional-${index}`"
+                  @update:checked="(checked) => (slot.optional = checked)"
+                >
+                  Optional
+                </EditorCheckbox>
+                <span v-else></span>
+                <input
+                  v-if="slot.kind === 'sheet'"
+                  type="file"
+                  accept="image/webp,image/jpeg,image/png"
+                  :name="`slot-file-${index}`"
+                  :aria-label="`Slot ${index + 1} image`"
+                  @change="onSlotFile(index, $event)"
+                />
+                <span v-else class="editor-muted">Filled from the last plate</span>
+                <img v-if="slot.fileUrl" :src="slot.fileUrl" alt="" class="editor-slot-thumb" />
+                <button
+                  class="editor-icon-btn"
+                  type="button"
+                  :name="`slot-up-${index}`"
+                  :disabled="index === 0"
+                  @click="moveSlot(index, -1)"
+                >
+                  ↑
+                </button>
+                <button
+                  class="editor-icon-btn"
+                  type="button"
+                  :name="`slot-down-${index}`"
+                  :disabled="index === slots.length - 1"
+                  @click="moveSlot(index, 1)"
+                >
+                  ↓
+                </button>
+                <button class="editor-icon-btn" type="button" :name="`slot-remove-${index}`" @click="removeSlot(index)">
+                  ×
+                </button>
+              </li>
+            </ol>
+            <button class="editor-btn editor-btn--ghost" type="button" name="add-slot" @click="addSlot">
+              Add slot
+            </button>
+          </div>
+          <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
+            Description ({{ lang.label }})
+            <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />
+          </label>
         </div>
-        <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
-          Description ({{ lang.label }})
-          <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />
-        </label>
+        <aside class="editor-form-preview">
+          <label>
+            Cover image
+            <input type="file" accept="image/webp,image/jpeg,image/png" @change="onCover" />
+          </label>
+          <div class="series-grid">
+            <ToonCard
+              :title="title.trim() || key || 'Untitled series'"
+              :meta="tagline.trim()"
+              :cue="members.length ? `${members.length} episodes` : 'Series'"
+              :description="descriptions.en.trim()"
+              :cover-url="coverPreview || null"
+            />
+          </div>
+        </aside>
+      </form>
+      <div v-if="!isCreate" class="editor-list-body">
+        <h2 class="editor-list-heading">Episodes</h2>
+        <ul class="editor-card-list">
+          <li v-for="toon in members" :key="toon.id">
+            <ToonCard
+              :to="`/${toon.id}`"
+              :title="toon.title || toon.slug"
+              :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
+              :cue="toon.pageCount ? `${toon.pageCount} pages` : toon.slug"
+              :cover-url="toon.coverUrl"
+              :badge="visibilityLabel(toon.status)"
+              :visibility="visibilityFromStatus(toon.status)"
+            />
+          </li>
+          <li>
+            <ToonCard add :to="addEpisodeTo" title="Add episode" meta="New" cue="Create" />
+          </li>
+        </ul>
       </div>
-      <aside class="editor-form-preview">
-        <label>
-          Cover image
-          <input type="file" accept="image/webp,image/jpeg,image/png" @change="onCover" />
-        </label>
-        <div class="series-grid">
-          <ToonCard
-            :title="title.trim() || key || 'Untitled series'"
-            :meta="tagline.trim()"
-            :cue="members.length ? `${members.length} episodes` : 'Series'"
-            :description="descriptions.en.trim()"
-            :cover-url="coverPreview || null"
-          />
-        </div>
-      </aside>
-    </form>
-    <div v-if="!isCreate" class="editor-list-body">
-      <h2 class="editor-list-heading">Episodes</h2>
-      <ul class="editor-card-list">
-        <li v-for="toon in members" :key="toon.id">
-          <ToonCard
-            :to="`/${toon.id}`"
-            :title="toon.title || toon.slug"
-            :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
-            :cue="toon.pageCount ? `${toon.pageCount} pages` : toon.slug"
-            :cover-url="toon.coverUrl"
-            :badge="visibilityLabel(toon.status)"
-            :visibility="visibilityFromStatus(toon.status)"
-          />
-        </li>
-        <li>
-          <ToonCard add :to="addEpisodeTo" title="Add episode" meta="New" cue="Create" />
-        </li>
-      </ul>
     </div>
   </div>
 </template>

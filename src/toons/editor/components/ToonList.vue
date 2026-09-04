@@ -51,6 +51,8 @@ const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey));
           <FolderPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
           New series
         </RouterLink>
+      </template>
+      <template #primary>
         <RouterLink class="editor-btn" to="/new">
           <BookPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
           New toon

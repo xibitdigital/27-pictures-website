@@ -14,6 +14,7 @@ const { push, useRoute } = vi.hoisted(() => ({
 vi.mock("vue-router", () => ({
   useRoute,
   useRouter: () => ({ push }),
+  RouterLink: { template: '<a :href="to"><slot /></a>', props: ["to"] },
 }));
 
 describe("SeriesForm", () => {
@@ -21,6 +22,19 @@ describe("SeriesForm", () => {
     vi.restoreAllMocks();
     push.mockReset();
     useRoute.mockReturnValue({ name: "series-new", params: {} });
+  });
+
+  it("offers New toon for the next episode on an existing series", async () => {
+    vi.spyOn(api, "getSeries").mockResolvedValue({
+      series: { key: "erin", title: "Erin & the Goblins" },
+      toons: [{ id: "a", slug: "erin", title: "EP1", episodeN: 1, coverUrl: null, pageCount: 1, status: "draft" }],
+    });
+    useRoute.mockReturnValue({ name: "series-edit", params: { key: "erin" } });
+    const wrapper = mount(SeriesForm, {
+      global: { stubs: { ToonCard: true, EditorSession: true } },
+    });
+    await flushPromises();
+    expect(wrapper.get('a[href="/new?series=erin&episode=2"]').text()).toContain("New toon");
   });
 
   it("puts a new series and sends the key", async () => {

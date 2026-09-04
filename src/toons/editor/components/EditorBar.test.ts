@@ -15,6 +15,27 @@ describe("EditorBar", () => {
     expect(wrapper.get("h1").text()).toBe("Toon");
     expect(wrapper.text()).toContain("All toons");
     expect(wrapper.get("header").classes()).toContain("editor-bar");
+    expect(wrapper.get("a.editor-btn--ghost svg").exists()).toBe(true);
+  });
+
+  it("keeps the account last, after All toons and the primary CTA", () => {
+    const wrapper = mount(EditorBar, {
+      props: { title: "Series" },
+      slots: {
+        actions: '<a class="editor-btn editor-btn--ghost">New toon</a>',
+        primary: '<button class="editor-btn">Save</button>',
+      },
+      global: { stubs: { EditorSession: { template: '<button aria-label="Account menu"></button>' } } },
+    });
+    const labels = [...wrapper.get(".editor-bar-end").element.children].map((el) => {
+      if ((el as HTMLElement).classList.contains("editor-bar-actions")) {
+        return (el as HTMLElement).textContent?.replace(/\s+/g, " ").trim();
+      }
+      return (
+        (el as HTMLElement).textContent?.replace(/\s+/g, " ").trim() || (el as HTMLElement).getAttribute("aria-label")
+      );
+    });
+    expect(labels).toEqual(["New toon", "All toons", "Save", "Account menu"]);
   });
 
   it("hides All toons on the list home", () => {
