@@ -198,16 +198,11 @@ body {
   gap: 0.6rem;
 }
 
-.editor-account {
-  position: relative;
-  flex-shrink: 0;
-}
-
 .editor-account-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  list-style: none;
+  flex-shrink: 0;
   width: 2rem;
   height: 2rem;
   padding: 0;
@@ -218,15 +213,7 @@ body {
   cursor: pointer;
 }
 
-.editor-account-btn::-webkit-details-marker {
-  display: none;
-}
-
-.editor-account-btn::marker {
-  content: "";
-}
-
-.editor-account[open] .editor-account-btn,
+.editor-account-btn[data-state="open"],
 .editor-account-btn:hover,
 .editor-account-btn:focus-visible {
   border-color: var(--silver);
@@ -239,9 +226,6 @@ body {
 }
 
 .editor-account-panel {
-  position: absolute;
-  top: calc(100% + 0.45rem);
-  right: 0;
   z-index: 50;
   box-sizing: border-box;
   width: 16.5rem;

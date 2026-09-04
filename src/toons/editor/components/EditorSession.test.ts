@@ -11,7 +11,7 @@ vi.mock("../api", async (importOriginal) => {
   return { ...actual, fetchCredits: vi.fn() };
 });
 
-function mountSession(user: EditorUser | null, signOut = vi.fn()) {
+function mountSession(user: EditorUser | null, signOut = vi.fn(), options?: { attachTo: HTMLElement }) {
   const Host = defineComponent({
     setup() {
       provide(EDITOR_USER_KEY, ref(user));
@@ -19,7 +19,7 @@ function mountSession(user: EditorUser | null, signOut = vi.fn()) {
       return () => h(EditorSession);
     },
   });
-  return mount(Host);
+  return mount(Host, options);
 }
 
 describe("EditorSession", () => {
@@ -29,7 +29,7 @@ describe("EditorSession", () => {
 
   it("hides the account control when logged out", () => {
     const wrapper = mountSession(null);
-    expect(wrapper.find('summary[aria-label="Account menu"]').exists()).toBe(false);
+    expect(wrapper.find('button[aria-label="Account menu"]').exists()).toBe(false);
   });
 
   it("opens a menu with monthly credits and logout", async () => {
@@ -39,18 +39,20 @@ describe("EditorSession", () => {
       periodEnd: null,
     });
     const signOut = vi.fn();
-    const wrapper = mountSession({ id: "u1", email: "a@b.c" }, signOut);
-    const summary = wrapper.get('summary[aria-label="Account menu"]');
-    expect(summary.text()).toContain("A");
-    wrapper.get("details").element.open = true;
-    await wrapper.get("details").trigger("toggle");
+    const wrapper = mountSession({ id: "u1", email: "a@b.c" }, signOut, { attachTo: document.body });
+    const trigger = wrapper.get('button[aria-label="Account menu"]');
+    expect(trigger.text()).toContain("A");
+    await trigger.trigger("click");
     await flushPromises();
     expect(api.fetchCredits).toHaveBeenCalled();
-    expect(wrapper.text()).toContain("a@b.c");
-    expect(wrapper.text()).toContain("Audio this period");
-    expect(wrapper.text()).toContain("1,234 / 10,000 chars");
-    expect(wrapper.text()).toContain("Image this month");
-    await wrapper.get('button[name="logout"]').trigger("click");
+    const panel = document.querySelector(".editor-account-panel") as HTMLElement;
+    expect(panel.textContent).toContain("a@b.c");
+    expect(panel.textContent).toContain("Audio this period");
+    expect(panel.textContent).toContain("1,234 / 10,000 chars");
+    expect(panel.textContent).toContain("Image this month");
+    (panel.querySelector('button[name="logout"]') as HTMLButtonElement).click();
+    await flushPromises();
     expect(signOut).toHaveBeenCalledTimes(1);
+    wrapper.unmount();
   });
 });

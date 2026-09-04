@@ -6,6 +6,7 @@ export interface ToastEntry {
   id: number;
   kind: ToastKind;
   message: string;
+  durationMs: number;
 }
 
 const DEFAULT_DURATION_MS = 6000;
@@ -21,7 +22,5 @@ export function dismissToast(id: number): void {
 
 export function pushToast(message: string, kind: ToastKind = "error", durationMs = DEFAULT_DURATION_MS): void {
   if (!message) return;
-  const id = nextId++;
-  toasts.push({ id, kind, message });
-  if (durationMs > 0) setTimeout(() => dismissToast(id), durationMs);
+  toasts.push({ id: nextId++, kind, message, durationMs });
 }

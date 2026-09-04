@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { computed, inject, ref } from "vue";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuRoot,
+  DropdownMenuTrigger,
+} from "reka-ui";
 import { fetchCredits } from "../api";
 import { EDITOR_LOGOUT_KEY, EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
@@ -35,9 +42,8 @@ const imageLine = computed(() => {
   return bucketLine(image.used, image.limit, image.unit);
 });
 
-async function onToggle(ev: Event): Promise<void> {
-  const details = ev.target as HTMLDetailsElement;
-  if (!details.open || creditsInflight) return;
+async function onOpenChange(open: boolean): Promise<void> {
+  if (!open || creditsInflight) return;
   creditsInflight = true;
   loading.value = true;
   try {
@@ -52,26 +58,35 @@ async function onToggle(ev: Event): Promise<void> {
 </script>
 
 <template>
-  <details v-if="email" class="editor-account" name="account-menu" @toggle="onToggle">
-    <summary class="editor-account-btn" aria-label="Account menu">
+  <DropdownMenuRoot v-if="email" @update:open="onOpenChange">
+    <DropdownMenuTrigger class="editor-account-btn" aria-label="Account menu">
       <span class="editor-account-avatar" aria-hidden="true">{{ initial }}</span>
-    </summary>
-    <div class="editor-account-panel">
-      <p class="editor-account-email">{{ email }}</p>
-      <p v-if="loading" class="editor-muted">Loading credits…</p>
-      <dl v-else-if="credits" class="editor-account-credits">
-        <div>
-          <dt>Audio this period</dt>
-          <dd>{{ audioLine }}</dd>
-        </div>
-        <div>
-          <dt>Image this month</dt>
-          <dd>{{ imageLine }}</dd>
-        </div>
-      </dl>
-      <button v-if="signOut" class="editor-btn editor-btn--ghost" type="button" name="logout" @click="signOut">
-        Log out
-      </button>
-    </div>
-  </details>
+    </DropdownMenuTrigger>
+    <DropdownMenuPortal>
+      <DropdownMenuContent class="editor-account-panel" align="end" :side-offset="7">
+        <p class="editor-account-email">{{ email }}</p>
+        <p v-if="loading" class="editor-muted">Loading credits…</p>
+        <dl v-else-if="credits" class="editor-account-credits">
+          <div>
+            <dt>Audio this period</dt>
+            <dd>{{ audioLine }}</dd>
+          </div>
+          <div>
+            <dt>Image this month</dt>
+            <dd>{{ imageLine }}</dd>
+          </div>
+        </dl>
+        <DropdownMenuItem
+          v-if="signOut"
+          as="button"
+          class="editor-btn editor-btn--ghost"
+          type="button"
+          name="logout"
+          @select="signOut"
+        >
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenuPortal>
+  </DropdownMenuRoot>
 </template>
