@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import CaptionInspector from "./CaptionInspector.vue";
 import * as api from "../api";
 import type { BubbleRecord } from "../types";
@@ -161,6 +161,29 @@ describe("CaptionInspector", () => {
     );
     const patch = wrapper.emitted("change")!.at(-1)![0] as Partial<BubbleRecord>;
     expect(JSON.parse(patch.extraJson as string)).toEqual({ voice: "erin", audio: "editor/demo/sfx/gen.mp3" });
+  });
+
+  it("swaps the generate wand for a spinner while the API is in flight", async () => {
+    let resolveGen!: (v: { key: string; url: string; audio: string }) => void;
+    vi.mocked(api.generateAudio).mockReturnValue(
+      new Promise((resolve) => {
+        resolveGen = resolve;
+      })
+    );
+    const wrapper = mount(CaptionInspector, { props: { bubble, toonId: "t1" } });
+    await wrapper.get('button[name="audio-generate"]').trigger("click");
+    const busy = wrapper.get('button[name="audio-generate"]');
+    expect(busy.attributes("aria-label")).toBe("Generating");
+    expect(busy.find(".editor-spin").exists()).toBe(true);
+    resolveGen({
+      key: "editor/demo/sfx/gen.mp3",
+      url: "https://editor.example/media/editor/demo/sfx/gen.mp3",
+      audio: "editor/demo/sfx/gen.mp3",
+    });
+    await flushPromises();
+    const idle = wrapper.get('button[name="audio-generate"]');
+    expect(idle.attributes("aria-label")).toBe("Generate audio");
+    expect(idle.find(".editor-spin").exists()).toBe(false);
   });
 
   it("generates SFX when the voice is empty", async () => {

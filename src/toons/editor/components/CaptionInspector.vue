@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Upload, WandSparkles } from "@lucide/vue";
+import { LoaderCircle, Upload, WandSparkles } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
 import { editorApiBase, generateAudio, uploadAudio } from "../api";
@@ -577,7 +577,8 @@ async function onGenerateAudio(): Promise<void> {
               "
               @click="onGenerateAudio"
             >
-              <WandSparkles :size="14" :stroke-width="1.4" aria-hidden="true" />
+              <LoaderCircle v-if="generating" class="editor-spin" :size="14" aria-hidden="true" />
+              <WandSparkles v-else :size="14" :stroke-width="1.4" aria-hidden="true" />
             </button>
           </span>
         </span>
