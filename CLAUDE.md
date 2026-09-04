@@ -50,6 +50,7 @@ scrollport finally has a definite box. All the JS came back out.
   --bg-dark: #000; /* Pure black sections */
   --bg-card: #111; /* Card/frame backgrounds */
   --bg-menu: #1c1c1c; /* Floating menus / popovers */
+  --bg-input: #242424; /* Form fields (editor) */
   --bg-assembly: #050505; /* Assembly section */
 
   /* Text */

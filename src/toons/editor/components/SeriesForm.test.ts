@@ -119,13 +119,27 @@ describe("SeriesForm", () => {
       },
     });
     await flushPromises();
-    const checkboxes = wrapper.findAll('button[role="checkbox"]');
-    expect(checkboxes).toHaveLength(2); // admins aren't offered as series editors
     await wrapper.get('input[name="title"]').setValue("RED SMILE");
-    await checkboxes[0].trigger("click");
+    await wrapper.get('input[name="editor-search"]').trigger("focus");
+    expect(wrapper.find('[data-editor-option="a1"]').exists()).toBe(false);
+    await wrapper.get('[data-editor-option="e1"]').trigger("mousedown");
     await flushPromises();
     await wrapper.get("form").trigger("submit");
     expect(save).toHaveBeenCalledWith(expect.objectContaining({ editorIds: ["e1"] }));
+  });
+
+  it("links empty-roster copy to the invite form", async () => {
+    vi.spyOn(api, "listUsers").mockResolvedValue([]);
+    const wrapper = mount(SeriesForm, {
+      global: {
+        stubs: { EditorBar: true, ToonCard: true, EditorSession: true },
+        provide: {
+          [EDITOR_USER_KEY as symbol]: ref({ id: "u1", email: "a@example.com", username: "a", role: "admin" as const }),
+        },
+      },
+    });
+    await flushPromises();
+    expect(wrapper.get('a[href="/users"]').text()).toBe("invite one first");
   });
 
   it("hides the Editors section for an editor session", async () => {

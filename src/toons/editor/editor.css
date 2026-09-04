@@ -315,6 +315,10 @@ body {
   text-decoration: underline;
 }
 
+.editor-muted .editor-field-link {
+  font-size: inherit;
+}
+
 .editor-error {
   color: var(--red-smile);
 }
@@ -513,7 +517,7 @@ body {
   width: 100%;
   min-height: 2.35rem;
   padding: 0.5rem 0.7rem;
-  background: var(--bg-dark);
+  background: var(--bg-input);
   color: var(--text);
   border: 1px solid var(--border-light);
   border-radius: 2px;
@@ -580,7 +584,7 @@ body {
   width: 100%;
   min-height: 2.35rem;
   padding: 0.5rem 0.7rem;
-  background: var(--bg-dark);
+  background: var(--bg-input);
   color: var(--text);
   border: 1px solid var(--border-light);
   border-radius: 2px;
@@ -876,6 +880,86 @@ body {
   list-style: none;
   display: grid;
   gap: 0.5rem;
+}
+
+.editor-pills {
+  position: relative;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.editor-pills-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.editor-form .editor-pills input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.35rem;
+}
+
+.editor-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.25rem 0.15rem 0.55rem;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.editor-pill-remove {
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  background: transparent;
+  color: var(--silver);
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.editor-pill-remove:hover,
+.editor-pill-remove:focus-visible {
+  color: var(--text);
+  background: var(--red-smile);
+}
+
+.editor-pill-remove svg {
+  display: block;
+}
+
+.editor-pills-menu {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.25rem);
+  margin: 0;
+  padding: 0.25rem 0;
+  list-style: none;
+  max-height: 12rem;
+  overflow: auto;
+  background: var(--bg-menu);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 12px 28px var(--bg-dark);
+}
+
+.editor-pills-menu li {
+  padding: 0.45rem 0.75rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.editor-pills-menu li[aria-selected="true"],
+.editor-pills-menu li:hover {
+  background: var(--bg-card);
 }
 
 .editor-slot-row {

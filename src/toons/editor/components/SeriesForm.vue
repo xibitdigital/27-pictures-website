@@ -29,6 +29,7 @@ import {
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
+import EditorUserPills from "./ui/EditorUserPills.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -61,14 +62,6 @@ const members = ref<ToonListItem[]>([]);
 const roster = ref<EditorUser[]>([]);
 const editorRoster = computed(() => roster.value.filter((u) => u.role === "editor"));
 const selectedEditorIds = ref<string[]>([]);
-
-function toggleEditor(id: string, checked: boolean): void {
-  if (checked) {
-    if (!selectedEditorIds.value.includes(id)) selectedEditorIds.value = [...selectedEditorIds.value, id];
-  } else {
-    selectedEditorIds.value = selectedEditorIds.value.filter((existingId) => existingId !== id);
-  }
-}
 
 onMounted(async () => {
   if (!isAdmin.value) return;
@@ -345,18 +338,11 @@ async function onSubmit(ev: Event): Promise<void> {
           <div v-if="isAdmin" class="editor-form-span editor-generate">
             <p class="editor-generate-label">Editors</p>
             <p class="editor-muted">Who can create/manage toons under this series (capped at draft/staging).</p>
-            <p v-if="!editorRoster.length" class="editor-muted">No editor accounts yet — invite one first.</p>
-            <ul v-else class="editor-slot-list">
-              <li v-for="user in editorRoster" :key="user.id">
-                <EditorCheckbox
-                  :checked="selectedEditorIds.includes(user.id)"
-                  :name="`editor-${user.id}`"
-                  @update:checked="(checked) => toggleEditor(user.id, checked)"
-                >
-                  {{ user.username }} ({{ user.email }})
-                </EditorCheckbox>
-              </li>
-            </ul>
+            <EditorUserPills v-model="selectedEditorIds" :options="editorRoster" />
+            <p v-if="!editorRoster.length" class="editor-muted">
+              No editor accounts yet —
+              <RouterLink class="editor-field-link" to="/users">invite one first</RouterLink>.
+            </p>
           </div>
           <label>
             Plate width

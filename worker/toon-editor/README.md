@@ -42,7 +42,7 @@ path). `admin` has full access, including publish, and sees every series and
 toon. `editor` can create series and toons but is **capped at
 `draft`/`staging`** — a 403 on any attempt to set `published` — and **sees
 only the series they're assigned to** (`series_editors`, a many-to-many join
-table — admin manages the list via a checkbox multiselect on the series
+table — admin manages the list via an autocomplete with pills on the series
 form) **plus their own ungrouped toons** (`toons.owner_id`, unchanged
 single-creator model for toons with no series). This isn't just
 edit-blocked: `GET /series`, `GET /series/:key`, `GET /toons` and
