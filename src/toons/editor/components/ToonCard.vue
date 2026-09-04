@@ -3,6 +3,7 @@
  * Same .series-card the /toons/ landing uses (styles.css). Preview and the
  * editor list share this — density is a property of the container, not a second card.
  */
+import { ImageOff } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import type { ToonVisibility } from "../types";
 
@@ -34,6 +35,9 @@ withDefaults(
       <span class="series-card-art">
         <span v-if="add" class="editor-add-plus" aria-hidden="true">+</span>
         <img v-else-if="coverUrl" :src="coverUrl" :alt="title" width="1152" height="1728" />
+        <span v-else class="editor-cover-placeholder" aria-hidden="true">
+          <ImageOff :size="32" :stroke-width="1.4" />
+        </span>
         <span v-if="badge" class="editor-visibility-badge" :data-visibility="visibility || undefined">{{ badge }}</span>
       </span>
       <span v-if="meta" class="series-card-meta">{{ meta }}</span>

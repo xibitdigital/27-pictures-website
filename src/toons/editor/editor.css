@@ -384,6 +384,16 @@ body {
 .editor-card-list .series-card-art,
 .editor-form-preview .series-card-art {
   position: relative;
+  aspect-ratio: 2 / 3;
+}
+
+.editor-cover-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--silver);
+  background: var(--bg-card);
 }
 
 .editor-card-list .series-card--add .series-card-art {
@@ -897,10 +907,6 @@ body {
 
 .editor-form-preview .series-grid {
   margin-top: 0.75rem;
-}
-
-.editor-form-preview .series-card-art {
-  aspect-ratio: 2 / 3;
 }
 
 .editor-form > .editor-error {

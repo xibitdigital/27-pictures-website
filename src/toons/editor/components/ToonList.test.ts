@@ -17,6 +17,7 @@ describe("ToonList", () => {
   it("lists series and groups episode cards under them", async () => {
     vi.spyOn(api, "listSeries").mockResolvedValue([
       { key: "red-smile", title: "RED SMILE", tagline: "Horror", toonCount: 2, coverUrl: null },
+      { key: "test", title: "Test", tagline: "", toonCount: 0, coverUrl: null },
     ]);
     vi.spyOn(api, "listToons").mockResolvedValue([
       {
@@ -53,6 +54,8 @@ describe("ToonList", () => {
     expect(wrapper.text()).toContain("Loose");
     expect(wrapper.text()).toContain("Public");
     expect(wrapper.text()).toContain("Draft");
+    expect(wrapper.text()).toContain("No episodes yet");
+    expect(wrapper.get(".editor-cover-placeholder").exists()).toBe(true);
     expect(wrapper.text()).not.toContain("Invite user");
   });
 

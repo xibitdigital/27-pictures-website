@@ -31,7 +31,16 @@ describe("ToonCard", () => {
     expect(wrapper.classes()).toContain("series-card--add");
     expect(wrapper.attributes("aria-label")).toBe("Add episode");
     expect(wrapper.find("img").exists()).toBe(false);
+    expect(wrapper.find(".editor-cover-placeholder").exists()).toBe(false);
     expect(wrapper.get("[aria-hidden='true']").text()).toBe("+");
+  });
+
+  it("holds a 2:3 placeholder when there is no cover", () => {
+    const wrapper = mount(ToonCard, {
+      props: { title: "Untitled series" },
+    });
+    expect(wrapper.find("img").exists()).toBe(false);
+    expect(wrapper.get(".editor-cover-placeholder").exists()).toBe(true);
   });
 
   it("paints a visibility badge on the cover", () => {

@@ -65,8 +65,16 @@ const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey));
           <h2 class="editor-list-heading">
             <RouterLink :to="`/series/${group.series.key}`">{{ group.series.title }}</RouterLink>
           </h2>
-          <p v-if="!group.toons.length" class="editor-muted">No episodes yet.</p>
-          <ul v-else class="editor-card-list">
+          <ul class="editor-card-list">
+            <li v-if="!group.toons.length">
+              <ToonCard
+                :to="`/series/${group.series.key}`"
+                :title="group.series.title"
+                :meta="group.series.tagline || ''"
+                cue="No episodes yet"
+                :cover-url="group.series.coverUrl"
+              />
+            </li>
             <li v-for="toon in group.toons" :key="toon.id">
               <ToonCard
                 :to="`/${toon.id}`"
