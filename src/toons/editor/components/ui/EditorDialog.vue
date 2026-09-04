@@ -26,6 +26,7 @@ withDefaults(
 
 const emit = defineEmits<{
   "update:open": [value: boolean];
+  openAutoFocus: [event: Event];
 }>();
 </script>
 
@@ -37,6 +38,7 @@ const emit = defineEmits<{
         class="editor-dialog-root"
         :role="alertdialog ? 'alertdialog' : undefined"
         :aria-describedby="undefined"
+        @open-auto-focus="emit('openAutoFocus', $event)"
       >
         <div class="editor-dialog">
           <div class="editor-dialog-body">

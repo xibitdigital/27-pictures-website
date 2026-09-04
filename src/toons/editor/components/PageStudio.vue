@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Save, Settings2 } from "@lucide/vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import {
   addBubble,
@@ -28,6 +28,7 @@ import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, CAPTION_LANGS } from "../mapConfig";
 import { pushToast } from "../toast";
 import CaptionInspector from "./CaptionInspector.vue";
+import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorBar from "./EditorBar.vue";
 import GeneratePageDialog from "./GeneratePageDialog.vue";
 import PageFilmstrip from "./PageFilmstrip.vue";
@@ -50,6 +51,7 @@ const generateOpen = ref(false);
 const generateBusy = ref(false);
 const generateStatus = ref("");
 const generateError = ref("");
+const confirmingRemove = ref(false);
 
 const toonId = computed(() => String(route.params.id || ""));
 const pageId = computed(() => (route.params.pageId ? String(route.params.pageId) : null));
@@ -272,9 +274,35 @@ async function onAdd(pos: { x: number; y: number }): Promise<void> {
   }
 }
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tag = target.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+  return target.isContentEditable || Boolean(target.closest("[contenteditable='true']"));
+}
+
+function requestRemove(): void {
+  if (!selectedId.value || confirmingRemove.value) return;
+  confirmingRemove.value = true;
+}
+
+function onRemoveKey(ev: KeyboardEvent): void {
+  if (ev.key !== "Delete" && ev.key !== "Backspace") return;
+  if (ev.defaultPrevented || ev.repeat) return;
+  if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  if (!selectedId.value || confirmingRemove.value || generateOpen.value) return;
+  if (isTypingTarget(ev.target)) return;
+  ev.preventDefault();
+  requestRemove();
+}
+
+onMounted(() => window.addEventListener("keydown", onRemoveKey));
+onBeforeUnmount(() => window.removeEventListener("keydown", onRemoveKey));
+
 async function onRemove(): Promise<void> {
   if (!selectedId.value || !activePage.value) return;
   const id = selectedId.value;
+  confirmingRemove.value = false;
   try {
     await deleteBubble(id);
     activePage.value.bubbles = activePage.value.bubbles.filter((b) => b.id !== id);
@@ -363,9 +391,18 @@ async function onRemove(): Promise<void> {
           :asset-page-dir="toon.assetPageDir"
           @change="onInspectChange"
           @preview="previewLang = $event"
-          @remove="onRemove"
+          @remove="requestRemove"
         />
       </div>
+      <ConfirmDialog
+        :open="confirmingRemove"
+        title="Delete bubble"
+        message="Delete this bubble?"
+        confirm-label="OK"
+        focus-confirm
+        @confirm="onRemove"
+        @cancel="confirmingRemove = false"
+      />
       <GeneratePageDialog
         :open="generateOpen"
         :generate="seriesGenerate"

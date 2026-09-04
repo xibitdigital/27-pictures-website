@@ -14,7 +14,7 @@ describe("ConfirmDialog", () => {
     expect(dialog.querySelector("h2")?.textContent).toBe("Delete page?");
     expect(dialog.textContent).toContain("This can't be undone.");
 
-    (document.querySelector('button[type="button"]:not(.editor-btn--ghost)') as HTMLButtonElement).click();
+    (document.querySelector('button[name="confirm"]') as HTMLButtonElement).click();
     expect(wrapper.emitted("confirm")).toHaveLength(1);
 
     (document.querySelector(".editor-btn--ghost") as HTMLButtonElement).click();
@@ -31,6 +31,18 @@ describe("ConfirmDialog", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
     await flushPromises();
     expect(wrapper.emitted("cancel")).toHaveLength(1);
+    wrapper.unmount();
+  });
+
+  it("focuses the confirm button on open when asked", async () => {
+    const wrapper = mount(ConfirmDialog, {
+      props: { open: true, message: "Delete this bubble?", confirmLabel: "OK", focusConfirm: true },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    const confirmBtn = document.querySelector('button[name="confirm"]') as HTMLButtonElement;
+    expect(confirmBtn).toBeTruthy();
+    expect(document.activeElement).toBe(confirmBtn);
     wrapper.unmount();
   });
 });
