@@ -176,7 +176,7 @@ async function onSubmit(ev: Event): Promise<void> {
 
 <template>
   <div class="editor-page">
-    <EditorBar :title="isCreate ? 'New toon' : 'Toon'">
+    <EditorBar :title="isCreate ? 'New toon' : 'Toon'" :badge="previewCue" :visibility="visibility">
       <template #actions>
         <RouterLink v-if="existing" class="editor-btn editor-btn--ghost" :to="`/${existing.id}/pages`">
           <Images :size="16" :stroke-width="1.4" aria-hidden="true" />

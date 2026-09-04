@@ -8,8 +8,10 @@ withDefaults(
     title: string;
     /** List page is already home — hide the All toons link. */
     home?: boolean;
+    badge?: string;
+    visibility?: string;
   }>(),
-  { home: true }
+  { home: true, badge: "", visibility: "" }
 );
 </script>
 
@@ -18,6 +20,7 @@ withDefaults(
     <div class="editor-bar-start">
       <slot name="start" />
       <h1>{{ title }}</h1>
+      <span v-if="badge" class="editor-visibility-badge" :data-visibility="visibility || undefined">{{ badge }}</span>
     </div>
     <div class="editor-bar-end">
       <div class="editor-bar-actions">

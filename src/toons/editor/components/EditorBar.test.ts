@@ -38,6 +38,16 @@ describe("EditorBar", () => {
     expect(labels).toEqual(["New toon", "All toons", "Save", "Account menu"]);
   });
 
+  it("paints a visibility badge next to the title", () => {
+    const wrapper = mount(EditorBar, {
+      props: { title: "The Missing Child", badge: "Public", visibility: "public" },
+      global: { stubs: { EditorSession: true } },
+    });
+    const badge = wrapper.get("[data-visibility]");
+    expect(badge.text()).toBe("Public");
+    expect(badge.attributes("data-visibility")).toBe("public");
+  });
+
   it("hides All toons on the list home", () => {
     const wrapper = mount(EditorBar, {
       props: { title: "Toon editor", home: false },

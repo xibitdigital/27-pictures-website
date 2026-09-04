@@ -16,7 +16,13 @@ import {
   uploadPage,
 } from "../api";
 import type { LangCode } from "../../bookReader/types";
-import type { BubbleRecord, SeriesGenerateConfig, ToonRecord } from "../types";
+import {
+  visibilityFromStatus,
+  visibilityLabel,
+  type BubbleRecord,
+  type SeriesGenerateConfig,
+  type ToonRecord,
+} from "../types";
 import { mergeReplacedPage } from "../pageFile";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, CAPTION_LANGS } from "../mapConfig";
@@ -282,7 +288,11 @@ async function onRemove(): Promise<void> {
 
 <template>
   <div class="editor-studio">
-    <EditorBar :title="toon?.title || 'Pages'">
+    <EditorBar
+      :title="toon?.title || 'Pages'"
+      :badge="toon ? visibilityLabel(toon.status) : ''"
+      :visibility="toon ? visibilityFromStatus(toon.status) : ''"
+    >
       <template #actions>
         <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">
           <Settings2 :size="16" :stroke-width="1.4" aria-hidden="true" />

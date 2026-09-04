@@ -451,6 +451,11 @@ body {
   border: 1px solid var(--border-light);
 }
 
+.editor-bar-start .editor-visibility-badge {
+  position: static;
+  flex-shrink: 0;
+}
+
 .editor-visibility-badge[data-visibility="draft"] {
   color: var(--silver);
 }
