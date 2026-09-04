@@ -65,6 +65,7 @@ function onRemoveConfirm(): void {
         :class="{ 'is-busy': replacingId === page.id }"
         :title="replacingId === page.id ? 'Replacing…' : `Replace page ${page.position + 1}`"
         @click.stop
+        @pointerdown.stop
       >
         <LoaderCircle v-if="replacingId === page.id" class="editor-spin" :size="12" aria-hidden="true" />
         <Upload v-else :size="12" :stroke-width="2.25" aria-hidden="true" />
@@ -83,6 +84,7 @@ function onRemoveConfirm(): void {
         :aria-label="`Delete page ${page.position + 1}`"
         :title="`Delete page ${page.position + 1}`"
         @click="onRemoveClick($event, page)"
+        @pointerdown.stop
       >
         <X :size="12" :stroke-width="2.25" aria-hidden="true" />
       </button>
