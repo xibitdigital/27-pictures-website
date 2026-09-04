@@ -721,6 +721,14 @@ Deploy the Worker from its directory (`cd worker/toon-editor && npx wrangler
 deploy`), not the Pages project at the repo root. Full routes:
 `worker/toon-editor/README.md`.
 
+**Reka UI is scoped to this editor, never the public site.** Dialogs, checkboxes
+and selects under `src/toons/editor/components/ui/` wrap `reka-ui` primitives
+(`EditorDialog.vue`, `EditorCheckbox.vue`, `EditorSelect.vue`). Site pages
+(`SiteNav`, readers, hubs, quick-view dialogs) stay on native `<dialog>` /
+`@headlessui/vue` / plain JS — the site is progressive-enhancement, crawlable
+and usable without JS, and Reka needs a Vue mount point that would break that.
+Docs mirror pulled to `docs/reka-ui/llms.txt`.
+
 `.env` (gitignored) for scripts such as `npm run import-toon`:
 
 ```
