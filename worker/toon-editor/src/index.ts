@@ -151,11 +151,17 @@ function json(body: unknown, status: number, extraHeaders?: CorsHeaders): Respon
   });
 }
 
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS" | "HEAD";
+
+function httpMethod(method: string): HttpMethod {
+  return method.toUpperCase() as HttpMethod;
+}
+
 function isPublicConfigPath(path: string): boolean {
   return /^\/config\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(path);
 }
 
-function isPublicRoute(method: string, path: string): boolean {
+function isPublicRoute(method: HttpMethod, path: string): boolean {
   if (method === "GET" && path.startsWith("/media/")) return true;
   if (method === "GET" && path === "/auth/status") return true;
   if (method === "GET" && path === "/catalog") return true;
@@ -1720,7 +1726,8 @@ const worker: ExportedHandler<Env> = {
   async fetch(request, env) {
     const cors = corsHeaders(request, env);
 
-    if (request.method === "OPTIONS") {
+    const method = httpMethod(request.method);
+    if (method === "OPTIONS") {
       return new Response(null, { status: 204, headers: cors });
     }
 
@@ -1731,8 +1738,9 @@ const worker: ExportedHandler<Env> = {
 
     const path = new URL(request.url).pathname.replace(/\/$/, "") || "/";
     try {
-      const session = isPublicRoute(request.method, path) ? null : await userFromRequest(request, env);
-      if (!isPublicRoute(request.method, path) && !session) {
+      const publicRoute = isPublicRoute(method, path);
+      const session = publicRoute ? null : await userFromRequest(request, env);
+      if (!publicRoute && !session) {
         return json({ error: "unauthorized" }, 401, cors);
       }
       return await handle(request, env, cors, session);
