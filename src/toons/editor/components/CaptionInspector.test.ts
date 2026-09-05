@@ -29,6 +29,24 @@ describe("CaptionInspector", () => {
     vi.mocked(api.generateAudio).mockReset();
   });
 
+  it("moves play order earlier and later", async () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble, playIndex: 1, playCount: 3 } });
+    expect(wrapper.text()).toContain("2 of 3");
+    await wrapper.get('button[name="order-earlier"]').trigger("click");
+    await wrapper.get('button[name="order-later"]').trigger("click");
+    expect(wrapper.emitted("reorder")).toEqual([["earlier"], ["later"]]);
+  });
+
+  it("disables earlier on the first caption and later on the last", () => {
+    const first = mount(CaptionInspector, { props: { bubble, playIndex: 0, playCount: 2 } });
+    expect((first.get('button[name="order-earlier"]').element as HTMLButtonElement).disabled).toBe(true);
+    expect((first.get('button[name="order-later"]').element as HTMLButtonElement).disabled).toBe(false);
+    first.unmount();
+    const last = mount(CaptionInspector, { props: { bubble, playIndex: 1, playCount: 2 } });
+    expect((last.get('button[name="order-later"]').element as HTMLButtonElement).disabled).toBe(true);
+    last.unmount();
+  });
+
   it("keeps variant in the inspector and does not offer a tail select", () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
     expect(wrapper.get('button[name="variant"]').exists()).toBe(true);

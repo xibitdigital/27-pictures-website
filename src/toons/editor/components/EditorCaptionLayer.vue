@@ -18,7 +18,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch, type Component, type 
 import WordCaption from "../../bookReader/captions/WordCaption.vue";
 import { buildCaptions, imageContentBox, type CaptionModel } from "../../bookReader/captions/captionModel";
 import { clientToPlateFraction, grabOffset, type ContentBox } from "../plateCoords";
-import { bubbleToWordEntry, type BubbleTail } from "../mapConfig";
+import { bubbleToWordEntry, bubblesInPlayOrder, type BubbleTail } from "../mapConfig";
 import type { BubbleRecord } from "../types";
 
 const TAIL_PAD: { tail: BubbleTail; label: string; icon: Component }[] = [
@@ -65,9 +65,12 @@ const box = ref<ContentBox | null>(null);
 
 const designScale = computed(() => (box.value ? box.value.width / props.designWidth : 0));
 
+const orderedBubbles = computed(() => bubblesInPlayOrder(props.bubbles));
+
 const captions = computed<CaptionModel[]>(() => {
   if (!box.value || !designScale.value) return [];
-  const words = props.bubbles.map(bubbleToWordEntry);
+  const list = orderedBubbles.value;
+  const words = list.map(bubbleToWordEntry);
   const models = buildCaptions(words, {
     lang: props.lang,
     pageNum: props.pageNum,
@@ -77,7 +80,7 @@ const captions = computed<CaptionModel[]>(() => {
     fontFamily: '"Bangers", cursive',
   });
   return models.map((model, i) => {
-    const id = props.bubbles[i]?.id;
+    const id = list[i]?.id;
     const classes = [...model.classes];
     if (id && id === props.selectedId) classes.push("is-editor-selected");
     return { ...model, key: id || model.key, classes };
@@ -287,16 +290,17 @@ watch(
     :style="layerStyle"
     @pointerdown="onPointerDown"
   >
-    <template v-for="(caption, i) in captions" :key="bubbles[i]?.id || caption.key">
+    <template v-for="(caption, i) in captions" :key="orderedBubbles[i]?.id || caption.key">
       <div
-        v-if="bubbles[i]?.id && bubbles[i]?.id === selectedId"
+        v-if="orderedBubbles[i]?.id"
         class="editor-caption-host"
-        :data-bubble-id="bubbles[i]?.id"
+        :data-bubble-id="orderedBubbles[i]?.id"
         :style="hostStyle(caption)"
       >
-        <WordCaption :caption="hostedCaption(caption)" :data-bubble-id="bubbles[i]?.id" />
+        <span data-play-order aria-hidden="true">{{ i + 1 }}</span>
+        <WordCaption :caption="hostedCaption(caption)" :data-bubble-id="orderedBubbles[i]?.id" />
         <div
-          v-if="!dragging"
+          v-if="orderedBubbles[i]?.id === selectedId && !dragging"
           class="editor-tail-ring"
           role="radiogroup"
           aria-label="Tail"
@@ -310,16 +314,15 @@ watch(
             type="button"
             :data-tail="cell.tail"
             :aria-label="cell.label"
-            :aria-pressed="currentTail(bubbles[i]!.id) === cell.tail"
+            :aria-pressed="currentTail(orderedBubbles[i]!.id) === cell.tail"
             :title="cell.label"
-            @click="onTailClick($event, bubbles[i]!.id, cell.tail)"
+            @click="onTailClick($event, orderedBubbles[i]!.id, cell.tail)"
             @pointerdown.stop
           >
             <component :is="cell.icon" :size="14" :stroke-width="1.8" aria-hidden="true" />
           </button>
         </div>
       </div>
-      <WordCaption v-else :caption="caption" :data-bubble-id="bubbles[i]?.id" />
     </template>
   </div>
 </template>

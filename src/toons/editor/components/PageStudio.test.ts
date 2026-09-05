@@ -133,6 +133,24 @@ describe("PageStudio bubble delete", () => {
     wrapper.unmount();
   });
 
+  it("reorders bubbles so auto-read array order changes", async () => {
+    const toon = sampleToon();
+    toon.pages[0].bubbles = [
+      { ...bubble, id: "b1", sort: 0, textEn: "First" },
+      { ...bubble, id: "b2", sort: 1, textEn: "Second" },
+    ];
+    vi.mocked(api.getToon).mockResolvedValue(toon);
+    const wrapper = mountStudio();
+    await flushPromises();
+    await selectBubble(wrapper);
+    expect(wrapper.text()).toContain("1 of 2");
+    await wrapper.get('button[name="order-later"]').trigger("click");
+    expect(wrapper.text()).toContain("2 of 2");
+    const ids = toon.pages[0].bubbles.map((b) => b.id);
+    expect(ids).toEqual(["b2", "b1"]);
+    wrapper.unmount();
+  });
+
   it("confirms from the inspector Delete bubble button too", async () => {
     const wrapper = mountStudio();
     await flushPromises();

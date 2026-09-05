@@ -201,7 +201,29 @@ export function bubbleWritePayload(bubble: BubbleRecord): Partial<BubbleRecord> 
     textEn: bubble.textEn,
     textJson: bubble.textJson ?? null,
     extraJson: bubble.extraJson ?? null,
+    sort: bubble.sort,
   };
+}
+
+/** Auto-read plays captions in this order (config words[], not plate geometry). */
+export function bubblesInPlayOrder(bubbles: BubbleRecord[]): BubbleRecord[] {
+  return bubbles.slice().sort((a, b) => a.sort - b.sort || a.id.localeCompare(b.id));
+}
+
+export function moveBubbleInPlayOrder(
+  bubbles: BubbleRecord[],
+  id: string,
+  direction: "earlier" | "later"
+): BubbleRecord[] | null {
+  const ordered = bubblesInPlayOrder(bubbles);
+  const i = ordered.findIndex((b) => b.id === id);
+  const j = direction === "earlier" ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= ordered.length) return null;
+  const next = ordered.slice();
+  const swap = next[i];
+  next[i] = next[j];
+  next[j] = swap;
+  return next.map((b, n) => (b.sort === n ? b : { ...b, sort: n }));
 }
 
 /** Empty captions still need a glyph so WordCaption / buildCaption will render. */

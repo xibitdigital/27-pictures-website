@@ -1673,6 +1673,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       const tail = body.tail !== undefined ? (body.tail == null ? null : String(body.tail)) : row.tail;
       const size = body.size !== undefined ? (body.size == null ? null : Number(body.size)) : row.size;
       const angle = body.angle !== undefined ? (body.angle == null ? null : Number(body.angle)) : row.angle;
+      const sort = body.sort != null && Number.isFinite(Number(body.sort)) ? Math.round(Number(body.sort)) : row.sort;
       let textEn =
         body.textEn != null ? String(body.textEn) : body.text_en != null ? String(body.text_en) : row.text_en;
       let textJson = row.text_json;
@@ -1700,10 +1701,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       }
       const ts = nowIso();
       await env.DB.prepare(
-        `UPDATE bubbles SET x = ?, y = ?, variant = ?, tail = ?, size = ?, angle = ?, text_en = ?, text_json = ?, extra_json = ?, updated_at = ?
+        `UPDATE bubbles SET x = ?, y = ?, variant = ?, tail = ?, size = ?, angle = ?, text_en = ?, text_json = ?, extra_json = ?, sort = ?, updated_at = ?
          WHERE id = ?`
       )
-        .bind(x, y, variant, tail, size, angle, textEn, textJson, extraJson, ts, row.id)
+        .bind(x, y, variant, tail, size, angle, textEn, textJson, extraJson, sort, ts, row.id)
         .run();
       const next = await env.DB.prepare("SELECT * FROM bubbles WHERE id = ?").bind(row.id).first<BubbleRow>();
       if (!next) return json({ error: "not found" }, 404, cors);

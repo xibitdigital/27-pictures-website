@@ -25,7 +25,7 @@ import {
 } from "../types";
 import { mergeReplacedPage } from "../pageFile";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
-import { bubbleWritePayload, CAPTION_LANGS } from "../mapConfig";
+import { bubbleWritePayload, bubblesInPlayOrder, CAPTION_LANGS, moveBubbleInPlayOrder } from "../mapConfig";
 import { pushToast } from "../toast";
 import CaptionInspector from "./CaptionInspector.vue";
 import ConfirmDialog from "./ConfirmDialog.vue";
@@ -65,6 +65,14 @@ const activePage = computed(() => {
 const selectedBubble = computed(() => {
   if (!activePage.value || !selectedId.value) return null;
   return activePage.value.bubbles.find((b) => b.id === selectedId.value) || null;
+});
+
+const playOrder = computed(() => {
+  const page = activePage.value;
+  if (!page) return { index: 0, count: 0 };
+  const ordered = bubblesInPlayOrder(page.bubbles);
+  const index = selectedId.value ? ordered.findIndex((b) => b.id === selectedId.value) : -1;
+  return { index: Math.max(0, index), count: ordered.length };
 });
 
 const dirtyCount = computed(() => dirtyIds.value.size);
@@ -245,6 +253,19 @@ function onTail(id: string, tail: string): void {
   markDirty(id);
 }
 
+function onReorder(direction: "earlier" | "later"): void {
+  const page = activePage.value;
+  const id = selectedId.value;
+  if (!page || !id) return;
+  const next = moveBubbleInPlayOrder(page.bubbles, id, direction);
+  if (!next) return;
+  const prevSort = new Map(page.bubbles.map((b) => [b.id, b.sort]));
+  page.bubbles = next;
+  for (const bubble of next) {
+    if (prevSort.get(bubble.id) !== bubble.sort) markDirty(bubble.id);
+  }
+}
+
 async function saveDirty(): Promise<void> {
   const ids = [...dirtyIds.value];
   if (!ids.length) return;
@@ -395,9 +416,12 @@ async function onRemove(): Promise<void> {
           :bubble="selectedBubble"
           :toon-id="toon.id"
           :asset-page-dir="toon.assetPageDir"
+          :play-index="playOrder.index"
+          :play-count="playOrder.count"
           @change="onInspectChange"
           @preview="previewLang = $event"
           @remove="requestRemove"
+          @reorder="onReorder"
         />
       </div>
       <ConfirmDialog

@@ -11,7 +11,9 @@ import {
   letteringPatch,
   parseHexColor,
   bubbleWritePayload,
+  bubblesInPlayOrder,
   bubbleVoice,
+  moveBubbleInPlayOrder,
   spokenElevenLine,
   VOICE_NAMES,
   PLACEHOLDER_TEXT,
@@ -115,7 +117,29 @@ describe("bubbleToWordEntry", () => {
       textEn: "Hello",
       textJson: JSON.stringify({ en: "Hello" }),
       extraJson: JSON.stringify({ audio: "assets/sfx/a.mp3" }),
+      sort: 0,
     });
+  });
+});
+
+describe("play order", () => {
+  it("orders by sort, then id", () => {
+    const a = bubble({ id: "b", sort: 1, textEn: "Second" });
+    const b = bubble({ id: "a", sort: 0, textEn: "First" });
+    expect(bubblesInPlayOrder([a, b]).map((item) => item.id)).toEqual(["a", "b"]);
+  });
+
+  it("moves a bubble earlier and later, compacting sort", () => {
+    const items = [
+      bubble({ id: "one", sort: 0, textEn: "One" }),
+      bubble({ id: "two", sort: 1, textEn: "Two" }),
+      bubble({ id: "three", sort: 2, textEn: "Three" }),
+    ];
+    const later = moveBubbleInPlayOrder(items, "one", "later");
+    expect(later?.map((item) => item.id)).toEqual(["two", "one", "three"]);
+    expect(later?.map((item) => item.sort)).toEqual([0, 1, 2]);
+    expect(moveBubbleInPlayOrder(items, "one", "earlier")).toBeNull();
+    expect(moveBubbleInPlayOrder(items, "three", "later")).toBeNull();
   });
 });
 

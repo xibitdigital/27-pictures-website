@@ -63,6 +63,23 @@ describe("EditorCaptionLayer", () => {
     wrapper.unmount();
   });
 
+  it("shows play-order numbers in sort order, not array order", async () => {
+    const wrapper = mount(EditorCaptionLayer, {
+      props: {
+        pageNum: 1,
+        bubbles: [bubble({ id: "late", sort: 1, textEn: "B" }), bubble({ id: "early", sort: 0, textEn: "A" })],
+        imageEl: makeImage(),
+      },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const marks = wrapper.findAll("[data-play-order]");
+    expect(marks.map((m) => m.text())).toEqual(["1", "2"]);
+    expect(marks[0].element.closest("[data-bubble-id]")?.getAttribute("data-bubble-id")).toBe("early");
+    expect(marks[1].element.closest("[data-bubble-id]")?.getAttribute("data-bubble-id")).toBe("late");
+    wrapper.unmount();
+  });
+
   it("emits persist with clamped plate fractions on drag end", async () => {
     const wrapper = mount(EditorCaptionLayer, {
       props: { pageNum: 1, bubbles: [bubble()], imageEl: makeImage() },

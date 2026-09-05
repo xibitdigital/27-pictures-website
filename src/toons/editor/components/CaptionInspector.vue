@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoaderCircle, Upload, WandSparkles } from "@lucide/vue";
+import { ChevronDown, ChevronUp, LoaderCircle, Upload, WandSparkles } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
 import { editorApiBase, generateAudio, uploadAudio } from "../api";
@@ -38,13 +38,21 @@ const props = defineProps<{
   bubble: BubbleRecord | null;
   toonId?: string;
   assetPageDir?: string | null;
+  playIndex?: number;
+  playCount?: number;
 }>();
 
 const emit = defineEmits<{
   change: [patch: Partial<BubbleRecord>];
   preview: [lang: LangCode];
   remove: [];
+  reorder: [direction: "earlier" | "later"];
 }>();
+
+const playIndex = computed(() => props.playIndex ?? 0);
+const playCount = computed(() => props.playCount ?? 0);
+const canMoveEarlier = computed(() => playCount.value > 1 && playIndex.value > 0);
+const canMoveLater = computed(() => playCount.value > 1 && playIndex.value < playCount.value - 1);
 
 const textMap = computed(() => (props.bubble ? bubbleTextMap(props.bubble) : {}));
 const sizeDraft = ref("");
@@ -516,6 +524,36 @@ async function onGenerateAudio(): Promise<void> {
           />
         </span>
       </label>
+      <div class="editor-audio-field">
+        <span class="editor-prompt-head">
+          Play order
+          <span class="editor-prompt-actions">
+            <button
+              class="editor-icon-btn"
+              type="button"
+              name="order-earlier"
+              :disabled="!canMoveEarlier"
+              aria-label="Play earlier"
+              title="Play earlier"
+              @click="emit('reorder', 'earlier')"
+            >
+              <ChevronUp :size="14" :stroke-width="1.4" aria-hidden="true" />
+            </button>
+            <button
+              class="editor-icon-btn"
+              type="button"
+              name="order-later"
+              :disabled="!canMoveLater"
+              aria-label="Play later"
+              title="Play later"
+              @click="emit('reorder', 'later')"
+            >
+              <ChevronDown :size="14" :stroke-width="1.4" aria-hidden="true" />
+            </button>
+          </span>
+        </span>
+        <p class="editor-muted">{{ playIndex + 1 }} of {{ playCount || 1 }} — captions play in this order</p>
+      </div>
       <label>
         Voice
         <EditorSelect name="voice" :model-value="bubbleVoice(bubble)" @update:model-value="onVoiceChange">
