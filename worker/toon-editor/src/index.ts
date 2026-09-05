@@ -29,6 +29,7 @@ import { sendInviteEmail } from "./inviteEmail";
 import { verifyTurnstile } from "./turnstile";
 import { handleLikes } from "./likes";
 import { canManageSeries, canManageToon, isAdmin, publishError } from "./roles";
+import { isMethod } from "./httpMethod";
 import { isReaderLookupPath, readerStatuses, toonMatchesReaderPath } from "./readerLookup";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
@@ -151,25 +152,19 @@ function json(body: unknown, status: number, extraHeaders?: CorsHeaders): Respon
   });
 }
 
-type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS" | "HEAD";
-
-function httpMethod(method: string): HttpMethod {
-  return method.toUpperCase() as HttpMethod;
-}
-
 function isPublicConfigPath(path: string): boolean {
   return /^\/config\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(path);
 }
 
-function isPublicRoute(method: HttpMethod, path: string): boolean {
-  if (method === "GET" && path.startsWith("/media/")) return true;
-  if (method === "GET" && path === "/auth/status") return true;
-  if (method === "GET" && path === "/catalog") return true;
-  if (method === "GET" && path === "/sitemap.xml") return true;
-  if (method === "GET" && path === "/resolve-reader") return true;
-  if (method === "GET" && isPublicConfigPath(path)) return true;
-  if (path === "/likes" && (method === "GET" || method === "POST")) return true;
-  if (method === "POST" && (path === "/auth/login" || path === "/auth/register")) return true;
+function isPublicRoute(method: string, path: string): boolean {
+  if (isMethod(method, "GET") && path.startsWith("/media/")) return true;
+  if (isMethod(method, "GET") && path === "/auth/status") return true;
+  if (isMethod(method, "GET") && path === "/catalog") return true;
+  if (isMethod(method, "GET") && path === "/sitemap.xml") return true;
+  if (isMethod(method, "GET") && path === "/resolve-reader") return true;
+  if (isMethod(method, "GET") && isPublicConfigPath(path)) return true;
+  if (path === "/likes" && (isMethod(method, "GET") || isMethod(method, "POST"))) return true;
+  if (isMethod(method, "POST") && (path === "/auth/login" || path === "/auth/register")) return true;
   return false;
 }
 
@@ -708,11 +703,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   const path = url.pathname.replace(/\/$/, "") || "/";
   const method = request.method;
 
-  if (method === "GET" && path === "/auth/status") {
+  if (isMethod(method, "GET") && path === "/auth/status") {
     return json({ hasUsers: (await userCount(env)) > 0 }, 200, cors);
   }
 
-  if (method === "POST" && path === "/auth/register") {
+  if (isMethod(method, "POST") && path === "/auth/register") {
     if ((await userCount(env)) > 0) return json({ error: "registration closed" }, 403, cors);
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
@@ -737,7 +732,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json({ token: sess.token, user: publicUser(user) }, 201, cors);
   }
 
-  if (method === "POST" && path === "/auth/login") {
+  if (isMethod(method, "POST") && path === "/auth/login") {
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const email = normaliseEmail(parsed.body.email);
@@ -751,18 +746,18 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json({ token: sess.token, user: publicUser(user) }, 200, cors);
   }
 
-  if (method === "GET" && path === "/auth/me") {
+  if (isMethod(method, "GET") && path === "/auth/me") {
     if (!session) return json({ error: "unauthorized" }, 401, cors);
     return json({ user: publicUser(session) }, 200, cors);
   }
 
-  if (method === "GET" && path === "/credits") {
+  if (isMethod(method, "GET") && path === "/credits") {
     if (!session) return json({ error: "unauthorized" }, 401, cors);
     return json(await loadUserCredits(env, session.id), 200, cors);
   }
 
   const jobMatch = path.match(/^\/jobs\/([^/]+)$/);
-  if (jobMatch && method === "GET") {
+  if (isMethod(method, "GET") && jobMatch) {
     const job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?")
       .bind(jobMatch[1])
       .first<GenerationJob>();
@@ -791,11 +786,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json(body, 200, cors);
   }
 
-  if (method === "POST" && path === "/auth/logout") {
+  if (isMethod(method, "POST") && path === "/auth/logout") {
     return json({ ok: true }, 200, cors);
   }
 
-  if (method === "POST" && path === "/auth/users") {
+  if (isMethod(method, "POST") && path === "/auth/users") {
     if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
@@ -825,7 +820,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json({ user: publicUser({ id, email, username, role }), emailSent }, 201, cors);
   }
 
-  if (method === "GET" && path === "/users") {
+  if (isMethod(method, "GET") && path === "/users") {
     if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
     const rows = (await env.DB.prepare("SELECT id, email, username, role FROM users ORDER BY username").all<UserRow>())
       .results;
@@ -833,7 +828,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const mediaMatch = path.match(/^\/media\/(.+)$/);
-  if (mediaMatch && method === "GET") {
+  if (isMethod(method, "GET") && mediaMatch) {
     const key = mediaMatch[1];
     if (!key.startsWith("editor/")) return json({ error: "not found" }, 404, cors);
     const obj = await env.ASSETS.get(key);
@@ -845,7 +840,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const publicConfigMatch = path.match(/^\/config\/([^/]+)$/);
-  if (publicConfigMatch && method === "GET") {
+  if (isMethod(method, "GET") && publicConfigMatch) {
     const slug = publicConfigMatch[1];
     if (!SLUG_RE.test(slug)) return json({ error: "not found" }, 404, cors);
     const statuses = readerStatuses();
@@ -858,7 +853,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json(await readerConfigFromToon(env, toon, request), 200, cors);
   }
 
-  if (method === "GET" && path === "/resolve-reader") {
+  if (isMethod(method, "GET") && path === "/resolve-reader") {
     let rawPath = "";
     try {
       rawPath = new URL(request.url).searchParams.get("path") || "";
@@ -898,7 +893,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json({ episode, series }, 200, cors);
   }
 
-  if (method === "GET" && path === "/series") {
+  if (isMethod(method, "GET") && path === "/series") {
     const seriesListSql = `SELECT series.*,
                 (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
                 (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
@@ -913,7 +908,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const seriesCoverMatch = path.match(/^\/series\/([^/]+)\/cover$/);
-  if (seriesCoverMatch && method === "POST") {
+  if (isMethod(method, "POST") && seriesCoverMatch) {
     const key = seriesCoverMatch[1];
     if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
     const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
@@ -939,7 +934,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const seriesFlowMatch = path.match(/^\/series\/([^/]+)\/flow$/);
-  if (seriesFlowMatch && method === "POST") {
+  if (isMethod(method, "POST") && seriesFlowMatch) {
     const key = seriesFlowMatch[1];
     if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
     const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
@@ -997,7 +992,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const seriesRefMatch = path.match(/^\/series\/([^/]+)\/refs$/);
-  if (seriesRefMatch && method === "POST") {
+  if (isMethod(method, "POST") && seriesRefMatch) {
     const key = seriesRefMatch[1];
     if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
     const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
@@ -1046,7 +1041,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const seriesOneMatch = path.match(/^\/series\/([^/]+)$/);
-  if (seriesOneMatch && method === "GET") {
+  if (isMethod(method, "GET") && seriesOneMatch) {
     const key = seriesOneMatch[1];
     if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
     const row = await env.DB.prepare(
@@ -1080,7 +1075,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     );
   }
 
-  if (method === "PUT" && path === "/series") {
+  if (isMethod(method, "PUT") && path === "/series") {
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const key = normaliseSlug(parsed.body.key);
@@ -1115,7 +1110,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json(mapSeries(row, request, env), 200, cors);
   }
 
-  if (method === "GET" && path === "/sitemap.xml") {
+  if (isMethod(method, "GET") && path === "/sitemap.xml") {
     const origin = siteOriginFromRequest(request);
     const statuses = publicStatusesForRequest(request);
     const seriesRows = (await env.DB.prepare("SELECT * FROM series ORDER BY sort ASC, title ASC").all<SeriesRow>())
@@ -1151,7 +1146,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return xml(renderSitemapXml(urls), cors);
   }
 
-  if (method === "GET" && path === "/catalog") {
+  if (isMethod(method, "GET") && path === "/catalog") {
     const seriesRows = (await env.DB.prepare("SELECT * FROM series ORDER BY sort ASC, title ASC").all()).results;
     const statuses = publicStatusesForRequest(request);
     const countRows = (
@@ -1206,7 +1201,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json({ series, ungrouped }, 200, cors);
   }
 
-  if (method === "POST" && path === "/toons/import") {
+  if (isMethod(method, "POST") && path === "/toons/import") {
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const config = parsed.body.config as { pages?: { file: string; words?: WordInput[] }[] } | undefined;
@@ -1319,7 +1314,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json(await loadToon(env, request, id as string), existing ? 200 : 201, cors);
   }
 
-  if (method === "GET" && path === "/toons") {
+  if (isMethod(method, "GET") && path === "/toons") {
     const toonsListSql = `SELECT toons.*,
                 (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
          FROM toons
@@ -1341,7 +1336,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     );
   }
 
-  if (method === "POST" && path === "/toons") {
+  if (isMethod(method, "POST") && path === "/toons") {
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const body = parsed.body;
@@ -1393,61 +1388,60 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const toonMatch = path.match(/^\/toons\/([^/]+)$/);
-  if (toonMatch) {
+  if (isMethod(method, "GET") && toonMatch) {
     const id = toonMatch[1];
-    if (method === "GET") {
-      const toon = await loadToon(env, request, id);
-      if (!toon) return json({ error: "not found" }, 404, cors);
-      if (!isAdmin(session)) {
-        const isMember = toon.seriesKey ? await isSeriesEditor(env, toon.seriesKey, session ? session.id : "") : false;
-        if (!canManageToon(session, { owner_id: toon.ownerId, series_key: toon.seriesKey }, isMember)) {
-          return json({ error: "not found" }, 404, cors);
-        }
+    const toon = await loadToon(env, request, id);
+    if (!toon) return json({ error: "not found" }, 404, cors);
+    if (!isAdmin(session)) {
+      const isMember = toon.seriesKey ? await isSeriesEditor(env, toon.seriesKey, session ? session.id : "") : false;
+      if (!canManageToon(session, { owner_id: toon.ownerId, series_key: toon.seriesKey }, isMember)) {
+        return json({ error: "not found" }, 404, cors);
       }
-      return json(toon, 200, cors);
     }
-    if (method === "PATCH") {
-      const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
-      if (!current) return json({ error: "not found" }, 404, cors);
-      const isCurrentMember = current.series_key
-        ? await isSeriesEditor(env, current.series_key, session ? session.id : "")
-        : false;
-      if (!canManageToon(session, current, isCurrentMember)) {
-        return json({ error: "forbidden" }, 403, cors);
-      }
-      const parsed = await readJson(request);
-      if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
-      const body = parsed.body;
-      const title = body.title != null ? String(body.title).trim() : current.title;
-      const subtitle = body.subtitle != null ? String(body.subtitle).trim() : current.subtitle;
-      const status = parseStatus(body.status, parseStatus(current.status, "draft"));
-      const publishErr = publishError(session, status);
-      if (publishErr) return json({ error: publishErr }, 403, cors);
-      const extra = parseToonExtra(current);
-      const desc = applyDescriptions(extra, body, current.description);
-      const description = desc.en;
-      applyTitles(extra, body, title);
-      const seriesKey = parseSeriesKey(body, current.series_key || null);
-      if (seriesKey && seriesKey !== current.series_key) {
-        const nextSeriesExists = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(seriesKey).first();
-        if (nextSeriesExists) {
-          const isNextMember = await isSeriesEditor(env, seriesKey, session ? session.id : "");
-          if (!canManageSeries(session, isNextMember)) return json({ error: "forbidden" }, 403, cors);
-        }
-      }
-      const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
-      const readerUrl = (await deriveReaderUrl(env, seriesKey, current.slug)) || current.reader_url;
-      await env.DB.prepare(
-        `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, reader_url = ?, updated_at = ? WHERE id = ?`
-      )
-        .bind(title, subtitle, description, status, JSON.stringify(extra), seriesKey, episodeN, readerUrl, nowIso(), id)
-        .run();
-      return json(await loadToon(env, request, id), 200, cors);
+    return json(toon, 200, cors);
+  }
+  if (isMethod(method, "PATCH") && toonMatch) {
+    const id = toonMatch[1];
+    const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const isCurrentMember = current.series_key
+      ? await isSeriesEditor(env, current.series_key, session ? session.id : "")
+      : false;
+    if (!canManageToon(session, current, isCurrentMember)) {
+      return json({ error: "forbidden" }, 403, cors);
     }
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const body = parsed.body;
+    const title = body.title != null ? String(body.title).trim() : current.title;
+    const subtitle = body.subtitle != null ? String(body.subtitle).trim() : current.subtitle;
+    const status = parseStatus(body.status, parseStatus(current.status, "draft"));
+    const publishErr = publishError(session, status);
+    if (publishErr) return json({ error: publishErr }, 403, cors);
+    const extra = parseToonExtra(current);
+    const desc = applyDescriptions(extra, body, current.description);
+    const description = desc.en;
+    applyTitles(extra, body, title);
+    const seriesKey = parseSeriesKey(body, current.series_key || null);
+    if (seriesKey && seriesKey !== current.series_key) {
+      const nextSeriesExists = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(seriesKey).first();
+      if (nextSeriesExists) {
+        const isNextMember = await isSeriesEditor(env, seriesKey, session ? session.id : "");
+        if (!canManageSeries(session, isNextMember)) return json({ error: "forbidden" }, 403, cors);
+      }
+    }
+    const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
+    const readerUrl = (await deriveReaderUrl(env, seriesKey, current.slug)) || current.reader_url;
+    await env.DB.prepare(
+      `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, reader_url = ?, updated_at = ? WHERE id = ?`
+    )
+      .bind(title, subtitle, description, status, JSON.stringify(extra), seriesKey, episodeN, readerUrl, nowIso(), id)
+      .run();
+    return json(await loadToon(env, request, id), 200, cors);
   }
 
   const coverMatch = path.match(/^\/toons\/([^/]+)\/cover$/);
-  if (coverMatch && method === "POST") {
+  if (isMethod(method, "POST") && coverMatch) {
     const id = coverMatch[1];
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
@@ -1462,7 +1456,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const audioGenerateMatch = path.match(/^\/toons\/([^/]+)\/audio\/generate$/);
-  if (audioGenerateMatch && method === "POST") {
+  if (isMethod(method, "POST") && audioGenerateMatch) {
     const id = audioGenerateMatch[1];
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
@@ -1492,7 +1486,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const audioMatch = path.match(/^\/toons\/([^/]+)\/audio$/);
-  if (audioMatch && method === "POST") {
+  if (isMethod(method, "POST") && audioMatch) {
     const id = audioMatch[1];
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
@@ -1503,7 +1497,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const pagesGenerateMatch = path.match(/^\/toons\/([^/]+)\/pages\/generate$/);
-  if (pagesGenerateMatch && method === "POST") {
+  if (isMethod(method, "POST") && pagesGenerateMatch) {
     const id = pagesGenerateMatch[1];
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
@@ -1550,7 +1544,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const pagesMatch = path.match(/^\/toons\/([^/]+)\/pages$/);
-  if (pagesMatch && method === "POST") {
+  if (isMethod(method, "POST") && pagesMatch) {
     const id = pagesMatch[1];
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
@@ -1580,7 +1574,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const replacePageMatch = path.match(/^\/pages\/([^/]+)\/file$/);
-  if (replacePageMatch && method === "POST") {
+  if (isMethod(method, "POST") && replacePageMatch) {
     const page = await getPageOrNull(env, replacePageMatch[1]);
     if (!page) return json({ error: "not found" }, 404, cors);
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first<ToonRow>();
@@ -1598,14 +1592,14 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const exportMatch = path.match(/^\/toons\/([^/]+)\/export$/);
-  if (exportMatch && method === "GET") {
+  if (isMethod(method, "GET") && exportMatch) {
     const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(exportMatch[1]).first<ToonRow>();
     if (!toon) return json({ error: "not found" }, 404, cors);
     return json(await readerConfigFromToon(env, toon, request), 200, cors);
   }
 
   const pageMatch = path.match(/^\/pages\/([^/]+)$/);
-  if (pageMatch && method === "DELETE") {
+  if (isMethod(method, "DELETE") && pageMatch) {
     const page = await getPageOrNull(env, pageMatch[1]);
     if (!page) return json({ error: "not found" }, 404, cors);
     await env.DB.prepare("DELETE FROM bubbles WHERE page_id = ?").bind(page.id).run();
@@ -1618,7 +1612,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const addBubbleMatch = path.match(/^\/pages\/([^/]+)\/bubbles$/);
-  if (addBubbleMatch && method === "POST") {
+  if (isMethod(method, "POST") && addBubbleMatch) {
     const page = await getPageOrNull(env, addBubbleMatch[1]);
     if (!page) return json({ error: "not found" }, 404, cors);
     const parsed = await readJson(request);
@@ -1658,10 +1652,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const bubbleMatch = path.match(/^\/bubbles\/([^/]+)$/);
-  if (bubbleMatch) {
+  if ((isMethod(method, "DELETE") || isMethod(method, "PATCH")) && bubbleMatch) {
     const row = await env.DB.prepare("SELECT * FROM bubbles WHERE id = ?").bind(bubbleMatch[1]).first<BubbleRow>();
     if (!row) return json({ error: "not found" }, 404, cors);
-    if (method === "DELETE") {
+    if (isMethod(method, "DELETE")) {
       await env.DB.prepare("DELETE FROM bubbles WHERE id = ?").bind(row.id).run();
       const page = await getPageOrNull(env, row.page_id);
       if (page) {
@@ -1669,7 +1663,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       }
       return json({ ok: true }, 200, cors);
     }
-    if (method === "PATCH") {
+    if (isMethod(method, "PATCH")) {
       const parsed = await readJson(request);
       if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
       const body = parsed.body;
@@ -1720,14 +1714,14 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   return json({ error: "not found" }, 404, cors);
 }
 
-export { deriveReaderUrl, publicWord, readerConfigFromToon };
+export { deriveReaderUrl, isPublicRoute, publicWord, readerConfigFromToon };
 
 const worker: ExportedHandler<Env> = {
   async fetch(request, env) {
     const cors = corsHeaders(request, env);
 
-    const method = httpMethod(request.method);
-    if (method === "OPTIONS") {
+    const method = request.method;
+    if (isMethod(method, "OPTIONS")) {
       return new Response(null, { status: 204, headers: cors });
     }
 

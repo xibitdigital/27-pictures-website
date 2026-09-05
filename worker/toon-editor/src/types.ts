@@ -44,6 +44,9 @@ export interface Env {
 
 export type JsonRecord = Record<string, unknown>;
 
+export const HTTP_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"] as const;
+export type HttpMethod = (typeof HTTP_METHODS)[number];
+
 export interface RequestLike {
   url: string;
   headers?: { get(name: string): string | null };

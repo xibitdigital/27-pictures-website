@@ -6,6 +6,7 @@
  *   POST /likes { toon }     -> { toon, likes, counted }
  */
 
+import { isMethod } from "./httpMethod";
 import type { CorsHeaders, Env, JsonRecord, JsonResponse } from "./types";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -55,7 +56,7 @@ export async function handleLikes(
   const path = url.pathname.replace(/\/$/, "") || "/";
   if (path !== "/likes") return null;
 
-  if (request.method === "GET") {
+  if (isMethod(request.method, "GET")) {
     const toon = url.searchParams.get("toon") || "";
     if (!toon) {
       const rows = (await env.DB.prepare("SELECT toon, count FROM toon_likes").all<{ toon: string; count: number }>())
@@ -68,7 +69,7 @@ export async function handleLikes(
     return json({ toon, likes: await readCount(env, toon) }, 200, cors);
   }
 
-  if (request.method !== "POST") return json({ error: "method not allowed" }, 405, cors);
+  if (!isMethod(request.method, "POST")) return json({ error: "method not allowed" }, 405, cors);
   if (!isWriteOrigin(request, env)) return json({ error: "forbidden origin" }, 403, cors);
 
   let payload: JsonRecord = {};
