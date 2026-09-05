@@ -81,4 +81,19 @@ describe("worker fetch auth gate", () => {
     expect(res.status).not.toBe(401);
     expect(res.status).toBe(404);
   });
+
+  it("does not 401 GET /likes or GET /auth/status", async () => {
+    const likes = await call("GET", "/likes");
+    expect(likes.status).toBe(200);
+    await expect(likes.json()).resolves.toEqual({ likes: {} });
+
+    const status = await call("GET", "/auth/status");
+    expect(status.status).toBe(200);
+    await expect(status.json()).resolves.toEqual({ hasUsers: false });
+  });
+
+  it("401s PATCH /bubbles without a token", async () => {
+    const res = await call("PATCH", "/bubbles/b1");
+    expect(res.status).toBe(401);
+  });
 });
