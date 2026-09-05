@@ -52,4 +52,21 @@ describe("ToonCard", () => {
     expect(badge.attributes("data-visibility")).toBe("draft");
     expect(badge.classes()).toContain("editor-visibility-badge");
   });
+
+  it("copies the public link from the share control", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { ...navigator, clipboard: { writeText } });
+    const wrapper = mount(ToonCard, {
+      props: { title: "Jax", shareHref: "/toons/jax/the-chip/" },
+    });
+    await wrapper.get('button[name="share-toon"]').trigger("click");
+    expect(writeText).toHaveBeenCalledWith(expect.stringContaining("/toons/jax/the-chip/"));
+  });
+
+  it("does not show a share control on add cards", () => {
+    const wrapper = mount(ToonCard, {
+      props: { add: true, to: "/new", title: "Add episode", shareHref: "/toons/erin/" },
+    });
+    expect(wrapper.find('button[name="share-toon"]').exists()).toBe(false);
+  });
 });

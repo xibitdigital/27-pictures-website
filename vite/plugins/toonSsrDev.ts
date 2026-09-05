@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import type { Plugin } from "vite";
 import { matchToonRoute, parseCatalog, type CatalogPayload } from "../../src/site/catalogRender";
 import { applyHubHtml, applyReaderHtml } from "../../src/site/toonPages";
-import { injectToonHtml } from "../../functions/toonSsr";
+import { injectToonHtml, resolveStagingReader } from "../../functions/toonSsr";
 import { DEFAULT_ASSET_BASE, renderCatalogSitemap, renderLlmsTxt } from "../../src/site/crawlerDocs";
 import { splitLocale } from "../../src/site/i18n";
 
@@ -106,19 +106,29 @@ export function toonSsrDevPlugin(): Plugin {
         if (sitePath === "/toons/") return next();
         try {
           const payload = await loadCatalog(site());
-          if (!payload) return next();
-          const route = matchToonRoute(url, payload);
-          if (!route || (route.kind !== "hub" && route.kind !== "reader")) return next();
-          const tplRel = route.kind === "hub" ? "toons/_hub/index.html" : "toons/_reader/index.html";
+          const route = payload ? matchToonRoute(url, payload) : null;
+          const editorApi = process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787";
+          const unlisted =
+            !route || (route.kind !== "hub" && route.kind !== "reader")
+              ? await resolveStagingReader(url, fetch, editorApi)
+              : null;
+          if (route?.kind !== "hub" && route?.kind !== "reader" && !unlisted) return next();
+          const tplRel = route?.kind === "hub" ? "toons/_hub/index.html" : "toons/_reader/index.html";
           const file = path.join(srcDir, tplRel);
           if (!fs.existsSync(file)) return next();
           const raw = fs.readFileSync(file, "utf8");
           const transformed = await server.transformIndexHtml(`/${tplRel}`, raw);
           const requestUrl = `${site()}${url.endsWith("/") ? url : `${url}/`}`;
           const html =
-            route.kind === "hub"
+            route?.kind === "hub"
               ? applyHubHtml(transformed, route.series, requestUrl)
-              : applyReaderHtml(transformed, route.episode, route.series, requestUrl);
+              : applyReaderHtml(
+                  transformed,
+                  route?.kind === "reader" ? route.episode : unlisted!.episode,
+                  route?.kind === "reader" ? route.series : unlisted!.series || undefined,
+                  requestUrl,
+                  unlisted && route?.kind !== "reader" ? { noindex: true } : undefined
+                );
           res.statusCode = 200;
           res.setHeader("Content-Type", "text/html; charset=utf-8");
           res.end(html);

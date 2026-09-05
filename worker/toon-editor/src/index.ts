@@ -2,7 +2,8 @@
  * Toon editor API — D1 drafts + R2 plates/covers.
  *
  * Public: CORS preflight, GET /media/editor/…, GET /auth/status,
- * GET /catalog, GET /sitemap.xml, GET /config/:slug (published; staging hosts also see status=staging), GET/POST /likes,
+ * GET /catalog, GET /sitemap.xml, GET /config/:slug (Public + Staging; Draft never),
+ * GET /resolve-reader (Staging-only path lookup for unlisted production URLs), GET/POST /likes,
  * POST /auth/login, POST /auth/register (first account only).
  * Everything else needs a JWT: Authorization: Bearer <login token>.
  */
@@ -28,6 +29,7 @@ import { sendInviteEmail } from "./inviteEmail";
 import { verifyTurnstile } from "./turnstile";
 import { handleLikes } from "./likes";
 import { canManageSeries, canManageToon, isAdmin, publishError } from "./roles";
+import { isReaderLookupPath, readerStatuses, toonMatchesReaderPath } from "./readerLookup";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
 
@@ -278,9 +280,32 @@ function mapToonListItem(row: ToonRow | Record<string, unknown>, request: Reques
     coverUrl: objectUrl(request, env, row.cover_key, row.asset_page_dir),
     pageCount: Number(row.page_count) || 0,
     status: row.status || "draft",
+    readerUrl: row.reader_url || null,
     seriesKey: row.series_key || null,
     episodeN: row.episode_n != null ? Number(row.episode_n) : null,
     ownerId: row.owner_id || null,
+  };
+}
+
+function mapCatalogEpisode(row: ToonRow | Record<string, unknown>, request: RequestLike, env: Env) {
+  const t = row as ToonRow & { page_count?: number };
+  const descriptions = descriptionMap(t);
+  const titles = titleMap(t);
+  return {
+    id: t.slug,
+    slug: t.slug,
+    title: titles.en || t.title,
+    titles,
+    subtitle: t.subtitle,
+    description: descriptions.en,
+    descriptions,
+    coverUrl: objectUrl(request, env, t.cover_key, t.asset_page_dir),
+    pageCount: Number(t.page_count) || 0,
+    readerUrl: t.reader_url || null,
+    n: t.episode_n,
+    assetPageDir: t.asset_page_dir || `/toons/${t.slug}/`,
+    designWidth: t.design_width,
+    designHeight: t.design_height,
   };
 }
 
@@ -816,7 +841,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   if (publicConfigMatch && method === "GET") {
     const slug = publicConfigMatch[1];
     if (!SLUG_RE.test(slug)) return json({ error: "not found" }, 404, cors);
-    const statuses = publicStatusesForRequest(request);
+    const statuses = readerStatuses();
     const toon = await env.DB.prepare(
       `SELECT * FROM toons WHERE slug = ? AND status IN (${statuses.map(() => "?").join(",")})`
     )
@@ -824,6 +849,46 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .first<ToonRow>();
     if (!toon) return json({ error: "not found" }, 404, cors);
     return json(await readerConfigFromToon(env, toon, request), 200, cors);
+  }
+
+  if (method === "GET" && path === "/resolve-reader") {
+    let rawPath = "";
+    try {
+      rawPath = new URL(request.url).searchParams.get("path") || "";
+    } catch {
+      rawPath = "";
+    }
+    if (!isReaderLookupPath(rawPath)) return json({ error: "not found" }, 404, cors);
+    const rows = (
+      await env.DB.prepare(
+        `SELECT toons.*,
+                (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
+         FROM toons WHERE status = 'staging'`
+      ).all<ToonRow & { page_count?: number }>()
+    ).results;
+    const hit = rows.find((row) => toonMatchesReaderPath(row, rawPath));
+    if (!hit) return json({ error: "not found" }, 404, cors);
+    const episode = mapCatalogEpisode(hit, request, env);
+    let series = null;
+    if (hit.series_key) {
+      const seriesRow = await env.DB.prepare("SELECT * FROM series WHERE key = ?")
+        .bind(hit.series_key)
+        .first<SeriesRow>();
+      if (seriesRow) {
+        const descriptions = descriptionMap(seriesRow);
+        series = {
+          key: seriesRow.key,
+          title: seriesRow.title,
+          tagline: seriesRow.tagline,
+          description: descriptions.en || seriesRow.description,
+          descriptions,
+          coverUrl: objectUrl(request, env, seriesRow.cover_key, null),
+          hubUrl: seriesRow.hub_url || null,
+          episodes: [episode],
+        };
+      }
+    }
+    return json({ episode, series }, 200, cors);
   }
 
   if (method === "GET" && path === "/series") {
@@ -1104,29 +1169,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         .bind(...statuses)
         .all()
     ).results;
-    const asEpisode = (row: ToonRow | Record<string, unknown>) => {
-      const t = row as ToonRow;
-      const descriptions = descriptionMap(t);
-      const titles = titleMap(t);
-      return {
-        id: t.slug,
-        slug: t.slug,
-        title: titles.en || t.title,
-        titles,
-        subtitle: t.subtitle,
-        description: descriptions.en,
-        descriptions,
-        coverUrl: objectUrl(request, env, t.cover_key, t.asset_page_dir),
-        pageCount: Number(t.page_count) || 0,
-        readerUrl: t.reader_url || null,
-        n: t.episode_n,
-        assetPageDir: t.asset_page_dir || `/toons/${t.slug}/`,
-        designWidth: t.design_width,
-        designHeight: t.design_height,
-      };
-    };
     const episodesOf = (key: string) =>
-      toonRows.filter((row) => (row as unknown as ToonRow).series_key === key).map(asEpisode);
+      toonRows
+        .filter((row) => (row as unknown as ToonRow).series_key === key)
+        .map((row) => mapCatalogEpisode(row, request, env));
     const series = seriesRows
       .map((row) => {
         const descriptions = descriptionMap(row);
@@ -1149,7 +1195,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         const t = row as unknown as ToonRow;
         return !t.series_key || !grouped.has(t.slug);
       })
-      .map(asEpisode);
+      .map((row) => mapCatalogEpisode(row, request, env));
     return json({ series, ungrouped }, 200, cors);
   }
 

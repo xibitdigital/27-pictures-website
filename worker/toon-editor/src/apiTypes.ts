@@ -172,6 +172,7 @@ export interface ToonListItem {
   coverUrl: string | null;
   pageCount?: number;
   status?: string;
+  readerUrl?: string | null;
   seriesKey?: string | null;
   episodeN?: number | null;
   ownerId?: string | null;

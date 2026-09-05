@@ -487,6 +487,7 @@ async function onSubmit(ev: Event): Promise<void> {
               :cover-url="toon.coverUrl"
               :badge="visibilityLabel(toon.status)"
               :visibility="visibilityFromStatus(toon.status)"
+              :share-href="toon.readerUrl || `/toons/${toon.slug}/`"
             />
           </li>
           <li>

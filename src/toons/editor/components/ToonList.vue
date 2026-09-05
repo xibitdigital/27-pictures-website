@@ -129,6 +129,7 @@ const filteredCount = computed(
                 :cover-url="toon.coverUrl"
                 :badge="visibilityLabel(toon.status)"
                 :visibility="visibilityFromStatus(toon.status)"
+                :share-href="toon.readerUrl || `/toons/${toon.slug}/`"
               />
             </li>
           </ul>
@@ -145,6 +146,7 @@ const filteredCount = computed(
                 :cover-url="toon.coverUrl"
                 :badge="visibilityLabel(toon.status)"
                 :visibility="visibilityFromStatus(toon.status)"
+                :share-href="toon.readerUrl || `/toons/${toon.slug}/`"
               />
             </li>
           </ul>

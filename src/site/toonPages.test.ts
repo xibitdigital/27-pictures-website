@@ -99,4 +99,14 @@ describe("applyHubHtml / applyReaderHtml", () => {
     expect(out).toContain('"name": "Toons"');
     expect(out).not.toContain("Interactive Toons");
   });
+
+  it("keeps a staging reader out of the index", () => {
+    const html = readFileSync(resolve("src/toons/_reader/index.html"), "utf8");
+    const ep = payload.series[0].episodes[0];
+    const out = applyReaderHtml(html, ep, payload.series[0], "https://twentyseven.pictures/toons/redsmile/static/", {
+      noindex: true,
+    });
+    expect(out).toContain("noindex, nofollow");
+    expect(out).not.toContain("index, follow");
+  });
 });

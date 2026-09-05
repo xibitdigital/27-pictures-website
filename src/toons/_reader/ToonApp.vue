@@ -3,7 +3,7 @@ import { Music } from "@lucide/vue";
 import { computed, onMounted, ref } from "vue";
 import { resolveAssetUrl } from "../bookReader/assetUrl";
 import LangSwitcher from "../bookReader/LangSwitcher.vue";
-import { LikeButton } from "../bookReader/chrome";
+import { LikeButton, ShareButton } from "../bookReader/chrome";
 import ToonReaderShell from "../bookReader/ToonReaderShell.vue";
 import type { ToonShellBookOptions } from "../bookReader/types";
 import { readerConfigUrl } from "../configUrls";
@@ -121,6 +121,7 @@ const configUrl = slug ? readerConfigUrl(slug) : "";
     <template #top-controls-start>
       <LangSwitcher />
       <LikeButton :toon-id="slug" />
+      <ShareButton />
     </template>
     <template v-if="isJax" #top-controls-mid>
       <button

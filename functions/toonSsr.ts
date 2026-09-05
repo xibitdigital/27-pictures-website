@@ -14,15 +14,29 @@ import {
   parseCatalog,
   seriesForRequest,
   seriesJsonLd,
+  type CatalogEpisode,
   type CatalogPayload,
+  type CatalogSeries,
 } from "../src/site/catalogRender";
+function isReaderLookupPath(pathname: string): boolean {
+  let p = (pathname || "/").split("?")[0].toLowerCase();
+  p = p.replace(/^\/(de|it|fr)(?=\/)/, "");
+  if (!p.startsWith("/")) p = `/${p}`;
+  if (!p.endsWith("/")) p += "/";
+  if (!p.startsWith("/toons/")) return false;
+  if (p === "/toons/" || p.startsWith("/toons/editor") || p.startsWith("/toons/_")) return false;
+  return p.slice("/toons/".length).replace(/\/$/, "").includes("/");
+}
 import { splitLocale, UI } from "../src/site/i18n";
 import { applyHubHtml, applyReaderHtml, HUB_TEMPLATE_PATH, READER_TEMPLATE_PATH } from "../src/site/toonPages";
 
 export const EDITOR_API = "https://toon-editor.sangalli-marco.workers.dev";
 
 const catalogCache = new Map<string, { at: number; payload: CatalogPayload }>();
+const resolveCache = new Map<string, { at: number; body: UnlistedReader | null }>();
 const CACHE_MS = 60_000;
+
+export type UnlistedReader = { episode: CatalogEpisode; series: CatalogSeries | null };
 
 export async function loadCatalogForOrigin(
   origin: string,
@@ -37,6 +51,35 @@ export async function loadCatalogForOrigin(
     const payload = parseCatalog(await res.json());
     if (payload) catalogCache.set(origin, { at: Date.now(), payload });
     return payload;
+  } catch {
+    return null;
+  }
+}
+
+export async function resolveStagingReader(
+  pathname: string,
+  fetcher: typeof fetch = fetch,
+  apiBase = EDITOR_API
+): Promise<UnlistedReader | null> {
+  if (!isReaderLookupPath(pathname)) return null;
+  const cacheKey = `${apiBase}|${pathname}`;
+  const hit = resolveCache.get(cacheKey);
+  if (hit && Date.now() - hit.at < CACHE_MS) return hit.body;
+  const url = `${apiBase}/resolve-reader?path=${encodeURIComponent(pathname)}`;
+  try {
+    const res = await fetcher(url, { headers: { Accept: "application/json" } });
+    if (!res.ok) {
+      resolveCache.set(cacheKey, { at: Date.now(), body: null });
+      return null;
+    }
+    const json = (await res.json()) as UnlistedReader;
+    if (!json?.episode?.slug) {
+      resolveCache.set(cacheKey, { at: Date.now(), body: null });
+      return null;
+    }
+    const body = { episode: json.episode, series: json.series || null };
+    resolveCache.set(cacheKey, { at: Date.now(), body });
+    return body;
   } catch {
     return null;
   }
@@ -151,18 +194,28 @@ export async function withToonSsr(
     return replay(injectToonHtml(html, payload, request.url));
   }
 
-  if (!payload) return response;
-  const route = matchToonRoute(pathname, payload);
-  if (!route) return response;
+  const route = payload ? matchToonRoute(pathname, payload) : null;
 
-  if (route.kind === "hub") {
+  if (route?.kind === "hub") {
     const tpl = await loadTemplate(request, HUB_TEMPLATE_PATH, assets, fetcher);
     if (!tpl) return response;
     return replay(applyHubHtml(tpl, route.series, request.url));
   }
 
-  if (route.kind !== "reader") return response;
+  if (route?.kind === "reader") {
+    const tpl = await loadTemplate(request, READER_TEMPLATE_PATH, assets, fetcher);
+    if (!tpl) return response;
+    return replay(applyReaderHtml(tpl, route.episode, route.series, request.url));
+  }
+
+  const unlisted = await resolveStagingReader(pathname, fetcher);
+  if (!unlisted) return response;
   const tpl = await loadTemplate(request, READER_TEMPLATE_PATH, assets, fetcher);
   if (!tpl) return response;
-  return replay(applyReaderHtml(tpl, route.episode, route.series, request.url));
+  const out = replay(
+    applyReaderHtml(tpl, unlisted.episode, unlisted.series || undefined, request.url, { noindex: true })
+  );
+  out.headers.set("X-Robots-Tag", "noindex, nofollow");
+  out.headers.set("Cache-Control", "private, no-store");
+  return out;
 }

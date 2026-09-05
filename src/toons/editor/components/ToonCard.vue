@@ -3,11 +3,12 @@
  * Same .series-card the /toons/ landing uses (styles.css). Preview and the
  * editor list share this — density is a property of the container, not a second card.
  */
-import { ImageOff } from "@lucide/vue";
+import { ImageOff, Share } from "@lucide/vue";
 import { RouterLink } from "vue-router";
+import { pushToast } from "../toast";
 import type { ToonVisibility } from "../types";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     title: string;
     meta?: string;
@@ -17,10 +18,34 @@ withDefaults(
     to?: string;
     badge?: string;
     visibility?: ToonVisibility | "";
+    shareHref?: string;
     add?: boolean;
   }>(),
-  { meta: "", cue: "", description: "", coverUrl: null, to: "", badge: "", visibility: "", add: false }
+  {
+    meta: "",
+    cue: "",
+    description: "",
+    coverUrl: null,
+    to: "",
+    badge: "",
+    visibility: "",
+    shareHref: "",
+    add: false,
+  }
 );
+
+async function onShare(ev: Event): Promise<void> {
+  ev.preventDefault();
+  ev.stopPropagation();
+  if (!props.shareHref) return;
+  const href = new URL(props.shareHref, window.location.origin).href;
+  try {
+    await navigator.clipboard.writeText(href);
+    pushToast("Link copied", "success");
+  } catch {
+    pushToast("Could not copy link");
+  }
+}
 </script>
 
 <template>
@@ -39,6 +64,18 @@ withDefaults(
           <ImageOff :size="32" :stroke-width="1.4" />
         </span>
         <span v-if="badge" class="editor-visibility-badge" :data-visibility="visibility || undefined">{{ badge }}</span>
+        <button
+          v-if="shareHref && !add"
+          class="editor-share-btn"
+          type="button"
+          name="share-toon"
+          aria-label="Copy public link"
+          title="Copy public link"
+          @click="onShare"
+          @pointerdown.stop
+        >
+          <Share :size="14" :stroke-width="2" aria-hidden="true" />
+        </button>
       </span>
       <span v-if="meta" class="series-card-meta">{{ meta }}</span>
       <h3 class="series-card-title">{{ title }}</h3>

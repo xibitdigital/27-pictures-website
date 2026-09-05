@@ -38,6 +38,10 @@ describe("staging host visibility", () => {
     expect(publicStatuses(false)).toEqual(["published"]);
   });
 
+  it("does not put Staging on the production catalog", () => {
+    expect(publicStatusesForRequest(req({ origin: "https://twentyseven.pictures" }))).toEqual(["published"]);
+  });
+
   it("reads the page host from Origin, then ?site=, then Referer", () => {
     expect(callerHostname(req({ origin: "https://staging.twentyseven.pictures" }))).toBe(
       "staging.twentyseven.pictures"

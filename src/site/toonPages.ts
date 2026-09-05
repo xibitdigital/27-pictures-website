@@ -240,7 +240,8 @@ export function applyReaderHtml(
   html: string,
   ep: CatalogEpisode,
   series: CatalogSeries | undefined,
-  requestUrl: string
+  requestUrl: string,
+  opts?: { noindex?: boolean }
 ): string {
   const pageUrl = `${APEX}${catalogPath(new URL(requestUrl).pathname)}`;
   const name = series ? `${series.title}: ${cardTitle(ep, "en")}` : cardTitle(ep, "en");
@@ -259,7 +260,12 @@ export function applyReaderHtml(
   out = setTitle(out, title);
   out = setCanonical(out, pageUrl);
   out = setMeta(out, "name", "description", desc);
-  out = setMeta(out, "name", "robots", "index, follow, max-image-preview:large, max-snippet:-1");
+  out = setMeta(
+    out,
+    "name",
+    "robots",
+    opts?.noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1"
+  );
   out = setMeta(out, "property", "og:url", pageUrl);
   out = setMeta(out, "property", "og:title", title);
   out = setMeta(out, "property", "og:description", desc);
