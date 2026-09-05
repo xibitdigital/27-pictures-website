@@ -13,6 +13,7 @@ describe("readerLookup", () => {
 
   it("only treats nested /toons/series/ep/ as a reader lookup", () => {
     expect(isReaderLookupPath("/toons/redsmile/static/")).toBe(true);
+    expect(isReaderLookupPath("/toons/red-smile-origins/the-doll/")).toBe(true);
     expect(isReaderLookupPath("/toons/redsmile/")).toBe(false);
     expect(isReaderLookupPath("/toons/")).toBe(false);
     expect(isReaderLookupPath("/toons/editor/#/")).toBe(false);

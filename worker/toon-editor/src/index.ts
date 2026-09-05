@@ -160,6 +160,7 @@ function isPublicRoute(method: string, path: string): boolean {
   if (method === "GET" && path === "/auth/status") return true;
   if (method === "GET" && path === "/catalog") return true;
   if (method === "GET" && path === "/sitemap.xml") return true;
+  if (method === "GET" && path === "/resolve-reader") return true;
   if (method === "GET" && isPublicConfigPath(path)) return true;
   if (path === "/likes" && (method === "GET" || method === "POST")) return true;
   if (method === "POST" && (path === "/auth/login" || path === "/auth/register")) return true;
