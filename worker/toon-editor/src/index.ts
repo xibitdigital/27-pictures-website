@@ -22,6 +22,7 @@ import {
 import { mergeGenerate, parseComfyApiGraph, parseGenerateConfig, slugAlias } from "./comfyFlow";
 import { insertCreditEvent, loadUserCredits } from "./creditUsage";
 import { pollPageJob, recordImageCredit, startPageGenerate, type GenerationJob } from "./generatePage";
+import { comfyPhaseMessage } from "./comfyClient";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { toWebp } from "./imageOptimize";
@@ -764,7 +765,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!job) return json({ error: "not found" }, 404, cors);
     const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(job.toon_id).first<ToonRow>();
     if (!toon) return json({ error: "not found" }, 404, cors);
-    const polled = job.status === "running" ? await pollPageJob(env, job, toon) : { ok: true as const, job };
+    const polled =
+      job.status === "running"
+        ? await pollPageJob(env, job, toon)
+        : { ok: true as const, job, phase: job.status === "done" ? ("done" as const) : null };
     if (!polled.ok) return json({ error: polled.error }, polled.status, cors);
     if (polled.job.status === "done" && job.status !== "done" && session) {
       try {
@@ -779,6 +783,8 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       status: polled.job.status,
       error: polled.job.error,
       resultPageId: polled.job.result_page_id,
+      comfyStatus: polled.phase,
+      message: comfyPhaseMessage(polled.phase),
     };
     if (polled.job.status === "done") {
       body.toon = await loadToon(env, request, toon.id);

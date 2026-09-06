@@ -135,9 +135,22 @@ async function onGenerateSubmit(payload: {
   if (!toon.value) return;
   generateBusy.value = true;
   generateError.value = "";
-  generateStatus.value = "Queuing…";
+  const started = Date.now();
+  const clock = (): string => {
+    const s = Math.floor((Date.now() - started) / 1000);
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  };
+  const setStatus = (label: string): void => {
+    generateStatus.value = `${label} · ${clock()}`;
+  };
+  setStatus("Queuing on Comfy…");
+  const tick = window.setInterval(() => {
+    const current = generateStatus.value.replace(/ · \d+:\d+$/, "");
+    setStatus(current || "Generating the plate…");
+  }, 1000);
   try {
     const queued = await generatePage(toon.value.id, { ...payload, pageId: null });
+    setStatus("Waiting in the Comfy queue…");
     const deadline = Date.now() + 10 * 60 * 1000;
     while (Date.now() < deadline) {
       const snap = await getJob(queued.id);
@@ -152,13 +165,14 @@ async function onGenerateSubmit(payload: {
         generateError.value = snap.error || "Generate failed";
         return;
       }
-      generateStatus.value = "Generating page…";
-      await new Promise((resolve) => window.setTimeout(resolve, 3000));
+      setStatus(snap.message || "Generating the plate…");
+      await new Promise((resolve) => window.setTimeout(resolve, 1500));
     }
     generateError.value = "Timed out waiting for ComfyUI";
   } catch (err) {
     generateError.value = err instanceof Error ? err.message : "Generate failed";
   } finally {
+    window.clearInterval(tick);
     generateBusy.value = false;
   }
 }

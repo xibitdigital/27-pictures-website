@@ -228,6 +228,8 @@ export function getJob(id: string): Promise<{
   error?: string | null;
   resultPageId?: string | null;
   toon?: ToonRecord;
+  comfyStatus?: "queued" | "running" | "done" | "error" | null;
+  message?: string;
 }> {
   return api(`/jobs/${id}`);
 }

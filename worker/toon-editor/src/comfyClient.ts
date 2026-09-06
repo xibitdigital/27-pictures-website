@@ -65,10 +65,58 @@ export async function comfySubmitPrompt(
 
 export type ComfyHistoryImage = { filename: string; subfolder?: string; type?: string };
 
+export type ComfyPhase = "queued" | "running" | "done" | "error";
+
+function statusString(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && "status_str" in value) {
+    return String((value as { status_str?: string }).status_str || "");
+  }
+  return "";
+}
+
+export function comfyPhase(raw: string): ComfyPhase | null {
+  const s = raw.toLowerCase();
+  if (!s) return null;
+  if (
+    s === "error" ||
+    s === "failed" ||
+    s === "non_retryable_error" ||
+    s === "lost" ||
+    s === "cancelled" ||
+    s === "canceled"
+  ) {
+    return "error";
+  }
+  if (s === "completed" || s === "success") return "done";
+  if (s === "waiting_to_dispatch" || s === "pending" || s === "queued" || s === "queued_waiting" || s === "submitted") {
+    return "queued";
+  }
+  return "running";
+}
+
+export function comfyPhaseMessage(phase: ComfyPhase | null): string {
+  if (phase === "queued") return "Waiting in the Comfy queue…";
+  if (phase === "running") return "Generating the plate…";
+  if (phase === "done") return "Saving the plate…";
+  return "Generating the plate…";
+}
+
+function readStatus(body: Record<string, unknown>, promptId: string): string {
+  const keyed = body[promptId];
+  if (keyed && typeof keyed === "object") {
+    const fromKeyed = statusString((keyed as { status?: unknown }).status);
+    if (fromKeyed) return fromKeyed;
+  }
+  return statusString(body.status);
+}
+
 export async function comfyHistory(
   env: Env,
   promptId: string
-): Promise<{ ok: true; images: ComfyHistoryImage[]; pending: boolean } | { ok: false; error: string }> {
+): Promise<
+  { ok: true; images: ComfyHistoryImage[]; pending: boolean; phase: ComfyPhase | null } | { ok: false; error: string }
+> {
   const base = comfyBase(env);
   if (!base) return { ok: false, error: "ComfyUI is not configured" };
   const headers = comfyHeaders(env);
@@ -97,17 +145,20 @@ export async function comfyHistory(
   };
   const keyed = body[promptId] as HistoryEntry | undefined;
   const entry: HistoryEntry | undefined = keyed || (body.outputs ? (body as HistoryEntry) : undefined);
-  if (!entry) return { ok: true, images: [], pending: true };
+  const statusStr = readStatus(body, promptId);
+  const phase = comfyPhase(statusStr);
+  if (phase === "error") return { ok: false, error: "Comfy job failed" };
+  if (!entry) return { ok: true, images: [], pending: true, phase: phase || "queued" };
   const images: ComfyHistoryImage[] = [];
   for (const out of Object.values(entry.outputs || {})) {
     if (Array.isArray(out.images)) images.push(...out.images);
   }
-  const statusStr = typeof entry.status === "string" ? entry.status : entry.status?.status_str;
-  const completed = typeof entry.status === "string" ? entry.status === "completed" : entry.status?.completed;
-  const failed = String(statusStr || "").toLowerCase() === "error";
-  if (failed) return { ok: false, error: "Comfy job failed" };
-  const pending = images.length === 0 && completed !== true;
-  return { ok: true, images, pending };
+  const completed =
+    typeof entry.status === "string"
+      ? entry.status === "completed" || entry.status === "success"
+      : entry.status?.completed;
+  const pending = images.length === 0 && completed !== true && phase !== "done";
+  return { ok: true, images, pending, phase: phase || (pending ? "running" : "done") };
 }
 
 export async function comfyView(

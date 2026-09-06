@@ -1,4 +1,12 @@
-import { comfyBase, comfyHistory, comfySubmitPrompt, comfyUploadImage, comfyView } from "./comfyClient";
+import {
+  comfyBase,
+  comfyHistory,
+  comfyPhaseMessage,
+  comfySubmitPrompt,
+  comfyUploadImage,
+  comfyView,
+  type ComfyPhase,
+} from "./comfyClient";
 import { applyLoadImages, applyPagePrompt, applyPlateSize, parseGenerateConfig, type ComfyGraph } from "./comfyFlow";
 import { insertCreditEvent } from "./creditUsage";
 import { toWebp } from "./imageOptimize";
@@ -152,16 +160,18 @@ export async function pollPageJob(
   env: Env,
   job: GenerationJob,
   toon: ToonRow
-): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
-  if (job.status !== "running" || !job.comfy_prompt_id) return { ok: true, job };
+): Promise<{ ok: true; job: GenerationJob; phase: ComfyPhase | null } | { ok: false; error: string; status: number }> {
+  if (job.status !== "running" || !job.comfy_prompt_id) {
+    return { ok: true, job, phase: job.status === "done" ? "done" : null };
+  }
   const hist = await comfyHistory(env, job.comfy_prompt_id);
   if (!hist.ok) {
     await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
       .bind(hist.error, nowIso(), job.id)
       .run();
-    return { ok: true, job: { ...job, status: "error", error: hist.error, updated_at: nowIso() } };
+    return { ok: true, job: { ...job, status: "error", error: hist.error, updated_at: nowIso() }, phase: "error" };
   }
-  if (hist.pending || !hist.images.length) return { ok: true, job };
+  if (hist.pending || !hist.images.length) return { ok: true, job, phase: hist.phase };
 
   const fresh = await env.DB.prepare("SELECT status FROM generation_jobs WHERE id = ?")
     .bind(job.id)
@@ -170,7 +180,7 @@ export async function pollPageJob(
     const latest = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?")
       .bind(job.id)
       .first<GenerationJob>();
-    return { ok: true, job: latest || job };
+    return { ok: true, job: latest || job, phase: latest?.status === "done" ? "done" : hist.phase };
   }
 
   const image = hist.images.find((img) => (img.type || "output") === "output") || hist.images[0];
@@ -179,7 +189,7 @@ export async function pollPageJob(
     await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
       .bind(viewed.error, nowIso(), job.id)
       .run();
-    return { ok: true, job: { ...job, status: "error", error: viewed.error } };
+    return { ok: true, job: { ...job, status: "error", error: viewed.error }, phase: "error" };
   }
   const optimized = await toWebp({ bytes: viewed.bytes, ...sniffImage(viewed.bytes) });
   const hash = await sha256Hex(optimized.bytes);
@@ -233,6 +243,7 @@ export async function pollPageJob(
   return {
     ok: true,
     job: { ...job, status: "done", result_page_id: resultPageId, error: null, updated_at: nowIso() },
+    phase: "done",
   };
 }
 

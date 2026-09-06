@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { comfyHistory, comfySubmitPrompt } from "./comfyClient";
+import { comfyHistory, comfyPhase, comfyPhaseMessage, comfySubmitPrompt } from "./comfyClient";
 import type { Env } from "./types";
 
 function env(partial: Partial<Env>): Env {
@@ -52,7 +52,7 @@ describe("comfyHistory", () => {
     vi.stubGlobal("fetch", fetchMock);
     const out = await comfyHistory(env({ COMFY_URL: "https://comfy.example" }), "p1");
     expect(String(fetchMock.mock.calls[0][0])).toBe("https://comfy.example/jobs/p1");
-    expect(out).toEqual({ ok: true, images: [{ filename: "a.png" }], pending: false });
+    expect(out).toEqual({ ok: true, images: [{ filename: "a.png" }], pending: false, phase: "done" });
   });
 
   it("falls back to /history then /history_v2 when /jobs 404s", async () => {
@@ -75,7 +75,7 @@ describe("comfyHistory", () => {
       "https://comfy.example/history/p1",
       "https://comfy.example/history_v2/p1",
     ]);
-    expect(out).toEqual({ ok: true, images: [{ filename: "b.png" }], pending: false });
+    expect(out).toEqual({ ok: true, images: [{ filename: "b.png" }], pending: false, phase: "done" });
   });
 
   it("reports a job failure from a plain status string", async () => {
@@ -85,5 +85,28 @@ describe("comfyHistory", () => {
     vi.stubGlobal("fetch", fetchMock);
     const out = await comfyHistory(env({ COMFY_URL: "https://comfy.example" }), "p1");
     expect(out).toEqual({ ok: false, error: "Comfy job failed" });
+  });
+
+  it("reports a queued cloud job with no outputs yet", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ id: "p1", status: "waiting_to_dispatch" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await comfyHistory(env({ COMFY_URL: "https://comfy.example" }), "p1");
+    expect(out).toEqual({ ok: true, images: [], pending: true, phase: "queued" });
+  });
+});
+
+describe("comfyPhase", () => {
+  it("maps cloud statuses onto queued / running / done / error", () => {
+    expect(comfyPhase("waiting_to_dispatch")).toBe("queued");
+    expect(comfyPhase("queued_waiting")).toBe("queued");
+    expect(comfyPhase("in_progress")).toBe("running");
+    expect(comfyPhase("executing")).toBe("running");
+    expect(comfyPhase("completed")).toBe("done");
+    expect(comfyPhase("success")).toBe("done");
+    expect(comfyPhase("error")).toBe("error");
+    expect(comfyPhaseMessage("queued")).toBe("Waiting in the Comfy queue…");
+    expect(comfyPhaseMessage("running")).toBe("Generating the plate…");
   });
 });
