@@ -41,8 +41,9 @@ watch(
   () => props.open,
   (open) => {
     if (!open) return;
-    includePrevious.value = false;
-    previousPageId.value = "";
+    if (previousPageId.value && !props.pages.some((p) => p.id === previousPageId.value)) {
+      previousPageId.value = "";
+    }
     previousFile.value = null;
     if (previousFileInput.value) previousFileInput.value.value = "";
   }

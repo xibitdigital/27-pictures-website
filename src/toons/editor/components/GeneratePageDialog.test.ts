@@ -123,6 +123,34 @@ describe("GeneratePageDialog previous-plate override", () => {
     wrapper.unmount();
   });
 
+  it("remembers the last plate pick when the dialog is reopened", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: {
+        open: false,
+        generate: generateWithPrevious,
+        pages: [
+          { id: "p1", position: 0, fileUrl: "/p1.webp" },
+          { id: "p2", position: 1, fileUrl: "/p2.webp" },
+        ],
+        busy: false,
+        status: "",
+        error: "",
+      },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    (document.querySelector('[name="include-previous"]') as HTMLElement).click();
+    await flushPromises();
+    await pickOption("previous-page", "Page 2");
+    await wrapper.setProps({ open: false });
+    await flushPromises();
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    expect(document.querySelector('button[name="previous-page"]')?.textContent).toContain("Page 2");
+    wrapper.unmount();
+  });
+
   it("lets a first-page generation proceed once a previous-plate file is attached", async () => {
     const wrapper = mount(GeneratePageDialog, {
       props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
