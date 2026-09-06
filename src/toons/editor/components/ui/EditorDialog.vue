@@ -41,6 +41,7 @@ const emit = defineEmits<{
         :role="alertdialog ? 'alertdialog' : undefined"
         :aria-describedby="undefined"
         @open-auto-focus="emit('openAutoFocus', $event)"
+        @focus-outside="(event: Event) => event.preventDefault()"
       >
         <div class="editor-dialog" :data-preview="preview ? '' : undefined">
           <div class="editor-dialog-body">

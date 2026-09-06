@@ -151,6 +151,22 @@ describe("GeneratePageDialog previous-plate override", () => {
     wrapper.unmount();
   });
 
+  it("offers a file-pick button when the toon has no plates yet", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    (document.querySelector('[name="include-previous"]') as HTMLElement).click();
+    await flushPromises();
+    expect(document.querySelector('button[name="previous-page"]')).toBeNull();
+    expect(document.querySelector('button[name="previous-file-pick"]')?.textContent).toContain(
+      "Attach a previous plate"
+    );
+    wrapper.unmount();
+  });
+
   it("lets a first-page generation proceed once a previous-plate file is attached", async () => {
     const wrapper = mount(GeneratePageDialog, {
       props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },

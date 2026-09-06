@@ -48,8 +48,6 @@ watch(
     if (previousPageId.value && !props.pages.some((p) => p.id === previousPageId.value)) {
       previousPageId.value = "";
     }
-    previousFile.value = null;
-    if (previousFileInput.value) previousFileInput.value.value = "";
   }
 );
 
@@ -61,6 +59,11 @@ function onCancel(): void {
 function onPreviousFile(ev: Event): void {
   const input = ev.target as HTMLInputElement;
   previousFile.value = input.files?.[0] || null;
+  if (previousFile.value) previousPageId.value = "";
+}
+
+function pickPreviousFile(): void {
+  previousFileInput.value?.click();
 }
 
 const missingSheets = computed(() =>
@@ -123,12 +126,12 @@ function onSubmit(): void {
         </EditorCheckbox>
         <template v-if="includePrevious">
           <div class="editor-pair-row">
-            <label>
+            <label v-if="pages.length">
               Plate from this toon
               <EditorSelect
                 name="previous-page"
                 :model-value="previousPageId"
-                :disabled="busy || !pages.length"
+                :disabled="busy"
                 placeholder="Choose a page"
                 @update:model-value="(v) => (previousPageId = v)"
               >
@@ -156,17 +159,24 @@ function onSubmit(): void {
             :src="selectedPreviousPage.fileUrl"
             alt=""
           />
-          <label>
-            Or attach a file
-            <input
-              ref="previousFileInput"
-              type="file"
-              name="previous-file"
-              accept="image/webp,image/jpeg,image/png"
-              :disabled="busy"
-              @change="onPreviousFile"
-            />
-          </label>
+          <input
+            ref="previousFileInput"
+            type="file"
+            name="previous-file"
+            accept="image/webp,image/jpeg,image/png"
+            hidden
+            :disabled="busy"
+            @change="onPreviousFile"
+          />
+          <button
+            class="editor-btn editor-btn--ghost"
+            type="button"
+            name="previous-file-pick"
+            :disabled="busy"
+            @click="pickPreviousFile"
+          >
+            {{ pages.length ? "Or attach a file" : "Attach a previous plate" }}
+          </button>
           <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
         </template>
       </template>
