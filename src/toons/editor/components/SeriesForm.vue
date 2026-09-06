@@ -27,6 +27,7 @@ import {
   type ToonListItem,
 } from "../types";
 import EditorBar from "./EditorBar.vue";
+import EditorDialog from "./ui/EditorDialog.vue";
 import ToonCard from "./ToonCard.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
 import EditorUserPills from "./ui/EditorUserPills.vue";
@@ -76,6 +77,7 @@ const plateWidth = ref("1152");
 const plateHeight = ref("1728");
 const model = ref("seedream 5.0 pro");
 const slots = ref<SeriesFlowSlot[]>([]);
+const previewSlot = ref<SeriesFlowSlot | null>(null);
 const flowLabel = ref("");
 const uploadingFlow = ref(false);
 const promptCandidates = ref<PromptCandidate[]>([]);
@@ -426,7 +428,16 @@ async function onSubmit(ev: Event): Promise<void> {
                   @change="onSlotFile(index, $event)"
                 />
                 <span v-else class="editor-muted">Filled from the last plate</span>
-                <img v-if="slot.fileUrl" :src="slot.fileUrl" alt="" class="editor-slot-thumb" />
+                <button
+                  v-if="slot.fileUrl"
+                  class="editor-slot-thumb"
+                  type="button"
+                  :name="`slot-preview-${index}`"
+                  :aria-label="`View ${slot.label || `Image ${index + 1}`}`"
+                  @click="previewSlot = slot"
+                >
+                  <img :src="slot.fileUrl" alt="" />
+                </button>
                 <button
                   class="editor-icon-btn"
                   type="button"
@@ -496,5 +507,13 @@ async function onSubmit(ev: Event): Promise<void> {
         </ul>
       </div>
     </div>
+    <EditorDialog
+      :open="Boolean(previewSlot?.fileUrl)"
+      :title="previewSlot?.label || 'Reference'"
+      preview
+      @update:open="(open) => !open && (previewSlot = null)"
+    >
+      <img v-if="previewSlot?.fileUrl" data-slot-preview :src="previewSlot.fileUrl" alt="" />
+    </EditorDialog>
   </div>
 </template>

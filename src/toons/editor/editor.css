@@ -1069,11 +1069,21 @@ body {
 }
 
 .editor-slot-thumb {
+  box-sizing: border-box;
   width: 2.35rem;
   height: 2.35rem;
-  object-fit: cover;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
   background: var(--bg-dark);
   border: 1px solid var(--border-light);
+}
+
+.editor-slot-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 @media (max-width: 900px) {
@@ -1238,6 +1248,18 @@ body {
   color: var(--text);
   border: 1px solid var(--border-light);
   box-shadow: 0 12px 28px var(--bg-dark);
+}
+
+.editor-dialog[data-preview] {
+  width: min(28rem, calc(100vw - 2rem));
+}
+
+.editor-dialog[data-preview] [data-slot-preview] {
+  display: block;
+  width: 100%;
+  max-height: calc(90dvh - 5.5rem);
+  object-fit: contain;
+  background: var(--bg-dark);
 }
 
 .editor-dialog-body {

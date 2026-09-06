@@ -1,0 +1,25 @@
+# model: bytedance/seedream-5.0-pro
+# mode: image-to-image
+# style: horror manga / bande dessinee B&W character sheet
+# refs: Image 1 = RED SMILE: static plates of Elena (identity — face and body)
+#       Image 2 = RED SMILE: static page 1 (ink style only)
+
+FORMAT: Black and white horror manga CHARACTER SHEET, vertical 1008x1792. One open sheet on a neutral seamless light grey ground - no panels, no gutters, no borders, no background scene, no furniture, no television, no flat. Confident black linework, cross-hatching for form, sparse screentone grain, rich blacks in hair and clothing. Even legible lighting on the face throughout. No color, no speech balloons, no captions, no SFX lettering, no logos, no watermarks, no text, no labels, no arrows and no height rules anywhere in the art.
+
+PIN from Image 1: keep Elena's exact face, hair, slight build and domestic clothes as drawn in the published plates. Same young woman, same age, same proportions. Do not redesign, do not beautify, do not change hairstyle or outfit.
+
+PIN from Image 2: keep the ink language only - hand-inked black and white gekiga linework, crushed blacks in fabric, fine white rim light on edges. Do not copy the living room, the television, the sigil or any pose from it.
+
+SUBJECT LOCK: ELENA - a young woman, early 20s, slight build, average height, quiet bearing. Fine even face, large dark eyes, white sclera, dark irises, a clear catchlight in each, no makeup. Dark hair long enough to wear up, usually in a loose knot at the back of the head with strands escaping at the nape and temples. Costume: at home - a plain dark long-sleeve top, dark trousers, barefoot. No jewellery, no glasses, no coat.
+
+NO OCCULT MARK: no tattoo, no hexagram, no star, no sigil anywhere on her body or clothing. Eyes stay ordinary human eyes on this sheet - white sclera, dark iris. Do not black the sclera. Do not put the sigil in the iris. That is a later state, not her identity.
+
+TOP BAND (~45%): full-body front view and full-body three-quarter view, side by side, identical height, feet on one shared baseline, neutral relaxed stand, arms clear of the torso, both hands open and visible, knot of hair readable from the front and the three-quarter.
+
+MIDDLE BAND (~25%): full-body back view at the same height showing the knot and escaping strands at the nape, plus one full-body silhouette of the same figure filled solid black, bare feet included.
+
+BOTTOM BAND (~30%): head sheet - three head-and-shoulders portraits at the same scale, expressions quiet and attentive / wary, listening / a wide startled stare, still human. Beside them two small detail insets on the same open ground: one bare foot shown flat and unforeshortened, and a close study of one eye showing white sclera and a dark iris, no mark inside it.
+
+ANATOMY: exactly two arms and two legs, five fingers per hand, feet fully visible and uncropped in every full-body view. Consistent height across all full-body views.
+
+CHANGE: only the viewing angle and the expression between views. Identity, age, costume, hair and ink style stay exactly as locked.

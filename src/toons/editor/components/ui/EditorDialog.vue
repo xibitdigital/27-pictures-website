@@ -20,8 +20,10 @@ withDefaults(
     title: string;
     /** ConfirmDialog wants the stronger "alertdialog" role; everything else is a plain dialog. */
     alertdialog?: boolean;
+    /** Tall image preview — wider box, image fills the remaining height. */
+    preview?: boolean;
   }>(),
-  { alertdialog: false }
+  { alertdialog: false, preview: false }
 );
 
 const emit = defineEmits<{
@@ -40,7 +42,7 @@ const emit = defineEmits<{
         :aria-describedby="undefined"
         @open-auto-focus="emit('openAutoFocus', $event)"
       >
-        <div class="editor-dialog">
+        <div class="editor-dialog" :data-preview="preview ? '' : undefined">
           <div class="editor-dialog-body">
             <DialogTitle as="h2">{{ title }}</DialogTitle>
             <slot />

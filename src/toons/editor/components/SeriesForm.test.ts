@@ -65,6 +65,46 @@ describe("SeriesForm", () => {
     expect(push).toHaveBeenCalledWith("/series/red-smile");
   });
 
+  it("opens a large preview when a slot thumbnail is clicked", async () => {
+    vi.spyOn(api, "getSeries").mockResolvedValue({
+      series: {
+        key: "red-smile",
+        title: "RED SMILE",
+        generate: {
+          width: 800,
+          height: 1424,
+          model: "seedream 5.0 pro",
+          flowKey: "editor/_series/red-smile/flow/a.json",
+          flowUrl: "https://toon-editor.example/media/flow.json",
+          slots: [
+            {
+              alias: "marcus",
+              label: "Image 1 — Marcus sheet",
+              kind: "sheet",
+              fileUrl: "https://cdn.example/marcus.png",
+            },
+          ],
+          promptCandidates: [],
+          promptTarget: null,
+        },
+      },
+      toons: [],
+    });
+    useRoute.mockReturnValue({ name: "series-edit", params: { key: "red-smile" } });
+    const wrapper = mount(SeriesForm, {
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true } },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    expect(document.querySelector("[data-slot-preview]")).toBeNull();
+    await wrapper.get('button[name="slot-preview-0"]').trigger("click");
+    await flushPromises();
+    const preview = document.querySelector("[data-slot-preview]") as HTMLImageElement | null;
+    expect(preview?.src).toBe("https://cdn.example/marcus.png");
+    expect(document.querySelector(".editor-dialog h2")?.textContent).toBe("Image 1 — Marcus sheet");
+    wrapper.unmount();
+  });
+
   it("lets the user pick a prompt target and saves it", async () => {
     vi.spyOn(api, "getSeries").mockResolvedValue({
       series: {
