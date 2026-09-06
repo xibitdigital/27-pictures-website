@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookPlus, Images, Save } from "@lucide/vue";
+import { BookPlus, Images, Layers, Save } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { createToon, getToon, listSeries, patchToon, readImageSize, uploadCover } from "../api";
@@ -178,6 +178,15 @@ async function onSubmit(ev: Event): Promise<void> {
   <div class="editor-page">
     <EditorBar :title="isCreate ? 'New toon' : 'Toon'" :badge="previewCue" :visibility="visibility">
       <template #actions>
+        <RouterLink
+          v-if="seriesKey"
+          class="editor-btn editor-btn--ghost"
+          name="open-series"
+          :to="`/series/${seriesKey}`"
+        >
+          <Layers :size="16" :stroke-width="1.4" aria-hidden="true" />
+          Series
+        </RouterLink>
         <RouterLink v-if="existing" class="editor-btn editor-btn--ghost" :to="`/${existing.id}/pages`">
           <Images :size="16" :stroke-width="1.4" aria-hidden="true" />
           Pages

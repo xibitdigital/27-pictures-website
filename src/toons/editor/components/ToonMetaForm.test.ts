@@ -27,8 +27,17 @@ const ADMIN_PROVIDE = {
 vi.mock("vue-router", () => ({
   useRoute: () => route,
   useRouter: () => ({ push }),
-  RouterLink: { template: "<a><slot /></a>" },
+  RouterLink: {
+    props: ["to"],
+    template: `<a :href="typeof to === 'string' ? to : ''"><slot /></a>`,
+  },
 }));
+
+const BAR_SLOTS = {
+  EditorBar: { template: "<header><slot name='actions' /><slot name='primary' /></header>" },
+  ToonCard: true,
+  EditorSession: true,
+};
 
 describe("ToonMetaForm visibility", () => {
   afterEach(() => {
@@ -252,5 +261,56 @@ describe("ToonMetaForm visibility", () => {
     });
     await vi.waitFor(() => expect(wrapper.get('button[name="series"]').text()).toBe("Erin & the Goblins"));
     expect((wrapper.get('input[name="episode-n"]').element as HTMLInputElement).value).toBe("3");
+  });
+
+  it("puts a Series button on the top bar when a series is connected", async () => {
+    route.name = "meta";
+    route.params = { id: "t1" };
+    vi.spyOn(api, "getToon").mockResolvedValue({
+      id: "t1",
+      slug: "the-doll",
+      title: "The Doll",
+      subtitle: "",
+      description: "",
+      coverKey: null,
+      coverUrl: null,
+      designWidth: 800,
+      designHeight: 1424,
+      status: "staging",
+      seriesKey: "red-smile-origins",
+      pages: [],
+    });
+    const wrapper = mount(ToonMetaForm, {
+      global: { stubs: BAR_SLOTS, provide: ADMIN_PROVIDE },
+    });
+    await vi.waitFor(() =>
+      expect(wrapper.get('a[name="open-series"]').attributes("href")).toBe("/series/red-smile-origins")
+    );
+    expect(wrapper.get('a[name="open-series"]').text()).toContain("Series");
+    wrapper.unmount();
+  });
+
+  it("hides the Series bar button when the toon is standalone", async () => {
+    route.name = "meta";
+    route.params = { id: "t1" };
+    vi.spyOn(api, "getToon").mockResolvedValue({
+      id: "t1",
+      slug: "demo",
+      title: "Demo",
+      subtitle: "",
+      description: "",
+      coverKey: null,
+      coverUrl: null,
+      designWidth: 800,
+      designHeight: 1424,
+      status: "draft",
+      pages: [],
+    });
+    const wrapper = mount(ToonMetaForm, {
+      global: { stubs: BAR_SLOTS, provide: ADMIN_PROVIDE },
+    });
+    await vi.waitFor(() => expect(wrapper.get('input[name="title"]').element).toHaveProperty("value", "Demo"));
+    expect(wrapper.find('a[name="open-series"]').exists()).toBe(false);
+    wrapper.unmount();
   });
 });
