@@ -80,6 +80,50 @@ describe("EditorCaptionLayer", () => {
     wrapper.unmount();
   });
 
+  it("drags the second bubble by its own id, not the first", async () => {
+    const wrapper = mount(EditorCaptionLayer, {
+      props: {
+        pageNum: 1,
+        bubbles: [
+          bubble({ id: "b1", sort: 0, x: 0.3, y: 0.2, textEn: "FIRST" }),
+          bubble({ id: "b2", sort: 1, x: 0.7, y: 0.6, textEn: "SECOND" }),
+        ],
+        imageEl: makeImage(),
+      },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const hosts = wrapper.findAll(".editor-caption-host");
+    expect(hosts).toHaveLength(2);
+    expect(hosts[0].attributes("data-bubble-id")).toBe("b1");
+    expect(hosts[0].text()).toContain("FIRST");
+    expect(hosts[1].attributes("data-bubble-id")).toBe("b2");
+    expect(hosts[1].text()).toContain("SECOND");
+
+    const layer = wrapper.find(".editor-word-layer").element as HTMLElement;
+    vi.spyOn(layer, "getBoundingClientRect").mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      right: 400,
+      bottom: 712,
+      width: 400,
+      height: 712,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    hosts[1].element.dispatchEvent(pointer("pointerdown", 280, 427));
+    window.dispatchEvent(pointer("pointermove", 300, 450));
+    window.dispatchEvent(pointer("pointerup", 300, 450));
+    await nextTick();
+
+    expect(wrapper.emitted("select")?.[0]).toEqual(["b2"]);
+    expect(wrapper.emitted("move")?.[0][0]).toBe("b2");
+    expect(wrapper.emitted("persist")?.[0][0]).toBe("b2");
+    wrapper.unmount();
+  });
+
   it("emits persist with clamped plate fractions on drag end", async () => {
     const wrapper = mount(EditorCaptionLayer, {
       props: { pageNum: 1, bubbles: [bubble()], imageEl: makeImage() },

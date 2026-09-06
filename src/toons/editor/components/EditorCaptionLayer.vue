@@ -16,7 +16,7 @@ import {
 } from "@lucide/vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Component, type CSSProperties } from "vue";
 import WordCaption from "../../bookReader/captions/WordCaption.vue";
-import { buildCaptions, imageContentBox, type CaptionModel } from "../../bookReader/captions/captionModel";
+import { buildCaption, imageContentBox, type CaptionModel } from "../../bookReader/captions/captionModel";
 import { clientToPlateFraction, grabOffset, type ContentBox } from "../plateCoords";
 import { bubbleToWordEntry, bubblesInPlayOrder, type BubbleTail } from "../mapConfig";
 import type { BubbleRecord } from "../types";
@@ -65,26 +65,50 @@ const box = ref<ContentBox | null>(null);
 
 const designScale = computed(() => (box.value ? box.value.width / props.designWidth : 0));
 
-const orderedBubbles = computed(() => bubblesInPlayOrder(props.bubbles));
+type EditorCaption = CaptionModel & { bubbleId: string; playIndex: number };
 
-const captions = computed<CaptionModel[]>(() => {
+/** Keep DOM order still while dragging so Vue does not reuse the wrong host. */
+const frozenOrder = ref<string[] | null>(null);
+
+const orderedBubbles = computed(() => {
+  const ordered = bubblesInPlayOrder(props.bubbles);
+  const freeze = frozenOrder.value;
+  if (!freeze) return ordered;
+  const byId = new Map(props.bubbles.map((b) => [b.id, b]));
+  const pinned: BubbleRecord[] = [];
+  const seen = new Set<string>();
+  for (const id of freeze) {
+    const bubble = byId.get(id);
+    if (!bubble) continue;
+    pinned.push(bubble);
+    seen.add(id);
+  }
+  for (const bubble of ordered) {
+    if (!seen.has(bubble.id)) pinned.push(bubble);
+  }
+  return pinned;
+});
+
+const captions = computed<EditorCaption[]>(() => {
   if (!box.value || !designScale.value) return [];
   const list = orderedBubbles.value;
-  const words = list.map(bubbleToWordEntry);
-  const models = buildCaptions(words, {
+  const ctx = {
     lang: props.lang,
     pageNum: props.pageNum,
     designWidth: props.designWidth,
     designHeight: props.designHeight,
     designScale: designScale.value,
     fontFamily: '"Bangers", cursive',
-  });
-  return models.map((model, i) => {
-    const id = list[i]?.id;
+  };
+  const out: EditorCaption[] = [];
+  list.forEach((bubble, i) => {
+    const model = buildCaption(bubbleToWordEntry(bubble), i, ctx);
+    if (!model) return;
     const classes = [...model.classes];
-    if (id && id === props.selectedId) classes.push("is-editor-selected");
-    return { ...model, key: id || model.key, classes };
+    if (bubble.id === props.selectedId) classes.push("is-editor-selected");
+    out.push({ ...model, key: bubble.id, bubbleId: bubble.id, playIndex: i + 1, classes });
   });
+  return out;
 });
 
 const layerStyle = computed<CSSProperties>(() => ({
@@ -124,7 +148,7 @@ let drag: {
 
 const dragging = ref(false);
 
-function hostedCaption(caption: CaptionModel): CaptionModel {
+function hostedCaption(caption: EditorCaption): CaptionModel {
   return {
     ...caption,
     style: {
@@ -137,13 +161,13 @@ function hostedCaption(caption: CaptionModel): CaptionModel {
   };
 }
 
-function hostStyle(caption: CaptionModel): CSSProperties {
+function hostStyle(caption: EditorCaption): CSSProperties {
   return {
     position: "absolute",
     left: caption.style.left,
     top: caption.style.top,
     transform: caption.style["--jax-transform"] || "translate(-50%, -50%)",
-    zIndex: 36,
+    zIndex: caption.bubbleId === props.selectedId ? 37 : 36,
   };
 }
 
@@ -189,6 +213,7 @@ function unbindDrag(): void {
   const pointerId = drag?.pointerId;
   drag = null;
   dragging.value = false;
+  frozenOrder.value = null;
   window.removeEventListener("pointermove", onWindowMove);
   window.removeEventListener("pointerup", onWindowUp);
   window.removeEventListener("pointercancel", onWindowCancel);
@@ -231,6 +256,7 @@ function onPointerDown(ev: PointerEvent): void {
   emit("select", id);
   ev.preventDefault();
   const off = grabOffset(ev.clientX, ev.clientY, plate, bubble.x, bubble.y);
+  frozenOrder.value = orderedBubbles.value.map((item) => item.id);
   drag = { id, pointerId: ev.pointerId, offsetX: off.offsetX, offsetY: off.offsetY, x: bubble.x, y: bubble.y };
   dragging.value = true;
   // Capture on the layer, not the caption: Vue re-renders the bubble on
@@ -290,39 +316,38 @@ watch(
     :style="layerStyle"
     @pointerdown="onPointerDown"
   >
-    <template v-for="(caption, i) in captions" :key="orderedBubbles[i]?.id || caption.key">
+    <div
+      v-for="caption in captions"
+      :key="caption.bubbleId"
+      class="editor-caption-host"
+      :data-bubble-id="caption.bubbleId"
+      :style="hostStyle(caption)"
+    >
+      <span data-play-order aria-hidden="true">{{ caption.playIndex }}</span>
+      <WordCaption :caption="hostedCaption(caption)" :data-bubble-id="caption.bubbleId" />
       <div
-        v-if="orderedBubbles[i]?.id"
-        class="editor-caption-host"
-        :data-bubble-id="orderedBubbles[i]?.id"
-        :style="hostStyle(caption)"
+        v-if="caption.bubbleId === selectedId && !dragging"
+        class="editor-tail-ring"
+        role="radiogroup"
+        aria-label="Tail"
+        data-tail-ring
+        @pointerdown.stop
       >
-        <span data-play-order aria-hidden="true">{{ i + 1 }}</span>
-        <WordCaption :caption="hostedCaption(caption)" :data-bubble-id="orderedBubbles[i]?.id" />
-        <div
-          v-if="orderedBubbles[i]?.id === selectedId && !dragging"
-          class="editor-tail-ring"
-          role="radiogroup"
-          aria-label="Tail"
-          data-tail-ring
+        <button
+          v-for="cell in TAIL_PAD"
+          :key="cell.tail"
+          class="editor-icon-btn"
+          type="button"
+          :data-tail="cell.tail"
+          :aria-label="cell.label"
+          :aria-pressed="currentTail(caption.bubbleId) === cell.tail"
+          :title="cell.label"
+          @click="onTailClick($event, caption.bubbleId, cell.tail)"
           @pointerdown.stop
         >
-          <button
-            v-for="cell in TAIL_PAD"
-            :key="cell.tail"
-            class="editor-icon-btn"
-            type="button"
-            :data-tail="cell.tail"
-            :aria-label="cell.label"
-            :aria-pressed="currentTail(orderedBubbles[i]!.id) === cell.tail"
-            :title="cell.label"
-            @click="onTailClick($event, orderedBubbles[i]!.id, cell.tail)"
-            @pointerdown.stop
-          >
-            <component :is="cell.icon" :size="14" :stroke-width="1.8" aria-hidden="true" />
-          </button>
-        </div>
+          <component :is="cell.icon" :size="14" :stroke-width="1.8" aria-hidden="true" />
+        </button>
       </div>
-    </template>
+    </div>
   </div>
 </template>
