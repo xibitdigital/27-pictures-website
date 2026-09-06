@@ -114,15 +114,23 @@ describe("findPromptCandidates", () => {
     "36": { class_type: "PrimitiveBoolean", inputs: { value: false }, _meta: { title: "Single Page" } },
   };
 
-  it("picks up literal prompt-length strings, skips links and short/blocklisted fields", () => {
-    const candidates = findPromptCandidates(graph);
-    expect(candidates.map((c) => `${c.nodeId}:${c.inputKey}`)).toEqual(["12:string_b", "25:value"]);
+  it("lists PrimitiveStringMultiline nodes even when the placeholder is short", () => {
+    const candidates = findPromptCandidates({
+      ...graph,
+      "35": {
+        class_type: "PrimitiveStringMultiline",
+        inputs: { value: "PROMPT HERE" },
+        _meta: { title: "Prompt" },
+      },
+    });
+    expect(candidates.map((c) => `${c.nodeId}:${c.inputKey}`)).toEqual(["25:value", "35:value"]);
+    expect(candidates[1]).toMatchObject({ label: "#35 Prompt", preview: "PROMPT HERE" });
   });
 
-  it("labels each candidate with its node id, title and input key", () => {
-    const [first] = findPromptCandidates(graph);
-    expect(first.label).toBe("#12 Concatenate Text · string_b");
-    expect(first.preview).toBe("SUBJECT LOCK: Erin. Venus composed, faintly luminous.");
+  it("does not list Concatenate or Seedream nodes", () => {
+    const candidates = findPromptCandidates(graph);
+    expect(candidates.map((c) => `${c.nodeId}:${c.inputKey}`)).toEqual(["25:value"]);
+    expect(candidates[0].label).toBe("#25 Text (Multiline)");
   });
 });
 

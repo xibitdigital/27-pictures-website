@@ -2,10 +2,7 @@ import type { PromptCandidate, PromptTarget, SeriesFlowSlot, SeriesGenerateConfi
 
 const SEEDREAM = new Set(["ByteDanceSeedreamNodeV3", "ByteDanceSeedreamNode"]);
 const MAX_REFS = 10;
-/** Filters out short config strings (model names, delimiters, presets) so
- *  the picker only lists things that read like actual prompt text. */
-const MIN_PROMPT_CANDIDATE_LEN = 20;
-const PROMPT_CANDIDATE_KEY_BLOCKLIST = new Set(["delimiter", "filename_prefix", "model", "image"]);
+const TEXT_NODES = new Set(["PrimitiveStringMultiline", "PrimitiveString"]);
 
 export type ComfyGraphNode = {
   class_type?: unknown;
@@ -64,25 +61,22 @@ export function applyPagePrompt(graph: ComfyGraph, text: string, target?: Prompt
   return next;
 }
 
-/** Every node input in the flow that's a literal, prompt-length string — candidates for the picker. */
+/** Simple text nodes the studio can write the per-page prompt into. */
 export function findPromptCandidates(graph: ComfyGraph): PromptCandidate[] {
   const ids = Object.keys(graph).sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
   const out: PromptCandidate[] = [];
   for (const nodeId of ids) {
     const node = graph[nodeId];
-    for (const [inputKey, value] of Object.entries(node?.inputs || {})) {
-      if (typeof value !== "string") continue;
-      if (PROMPT_CANDIDATE_KEY_BLOCKLIST.has(inputKey)) continue;
-      const trimmed = value.trim();
-      if (trimmed.length < MIN_PROMPT_CANDIDATE_LEN) continue;
-      const title = titleOf(node) || String(node.class_type || "node");
-      out.push({
-        nodeId,
-        inputKey,
-        label: `#${nodeId} ${title} · ${inputKey}`,
-        preview: trimmed.length > 60 ? `${trimmed.slice(0, 60)}…` : trimmed,
-      });
-    }
+    if (!TEXT_NODES.has(String(node?.class_type || ""))) continue;
+    const value = node?.inputs?.value;
+    const trimmed = typeof value === "string" ? value.trim() : "";
+    const title = titleOf(node) || String(node.class_type || "node");
+    out.push({
+      nodeId,
+      inputKey: "value",
+      label: `#${nodeId} ${title}`,
+      preview: trimmed ? (trimmed.length > 60 ? `${trimmed.slice(0, 60)}…` : trimmed) : "(empty)",
+    });
   }
   return out;
 }

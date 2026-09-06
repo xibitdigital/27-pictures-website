@@ -380,9 +380,9 @@ async function onSubmit(ev: Event): Promise<void> {
             <template v-if="promptCandidates.length">
               <p class="editor-generate-label">Prompt goes into</p>
               <p class="editor-muted">
-                Where the typed page prompt is written on generate. Auto writes onto every Seedream node's own
-                <code>prompt</code> — pick a specific node if the flow builds the prompt upstream instead (e.g. a
-                <code>Text (Multiline)</code> or <code>Concatenate Text</code> node feeding into it).
+                Where the typed page prompt is written on generate. Pick the flow’s Prompt / Text node (the concatenate
+                PREFIX stays as FORMAT + PIN). Auto writes onto every Seedream node’s own
+                <code>prompt</code>.
               </p>
               <EditorSelect v-model="promptTargetKey" name="prompt-target" aria-label="Prompt target">
                 <EditorSelectItem value="">Auto (every Seedream node's prompt)</EditorSelectItem>
