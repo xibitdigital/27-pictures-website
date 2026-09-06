@@ -630,6 +630,22 @@ body {
   resize: vertical;
 }
 
+.editor-translate-field {
+  position: relative;
+}
+
+.editor-translate-field textarea {
+  padding-right: 2.35rem;
+}
+
+.editor-translate-btn {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 1;
+  background: var(--bg-input);
+}
+
 .editor-form input::placeholder,
 .editor-form textarea::placeholder,
 .editor-inspector input::placeholder,

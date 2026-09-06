@@ -203,6 +203,12 @@ export function uploadCover(id: string, file: File, size?: { width: number; heig
   return api<ToonRecord>(`/toons/${id}/cover`, { method: "POST", body });
 }
 
+export type CaptionTranslations = { it: string; de: string; fr: string };
+
+export function translateFromEnglish(text: string): Promise<CaptionTranslations> {
+  return api<CaptionTranslations>("/translate", { method: "POST", body: JSON.stringify({ text }) });
+}
+
 export function generatePage(
   id: string,
   payload: {

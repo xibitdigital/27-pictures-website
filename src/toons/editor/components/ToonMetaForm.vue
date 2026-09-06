@@ -2,7 +2,15 @@
 import { BookPlus, Images, Layers, Save } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
-import { createToon, getToon, listSeries, patchToon, readImageSize, uploadCover } from "../api";
+import {
+  createToon,
+  getToon,
+  listSeries,
+  patchToon,
+  readImageSize,
+  uploadCover,
+  type CaptionTranslations,
+} from "../api";
 import { CAPTION_LANGS } from "../mapConfig";
 import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
@@ -20,6 +28,7 @@ import {
 } from "../types";
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
+import TranslateField from "./TranslateField.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -111,6 +120,12 @@ onMounted(async () => {
   }
   applyCreateQuery();
 });
+
+function applyTranslations(map: CaptionTranslations): void {
+  descriptions.it = map.it;
+  descriptions.de = map.de;
+  descriptions.fr = map.fr;
+}
 
 function episodePayload(): number | null {
   if (!seriesKey.value.trim()) return null;
@@ -244,7 +259,16 @@ async function onSubmit(ev: Event): Promise<void> {
         </div>
         <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
           Description ({{ lang.label }})
-          <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />
+          <TranslateField v-if="lang.code === 'en'" :source="descriptions.en" @translated="applyTranslations">
+            <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />
+          </TranslateField>
+          <textarea
+            v-else
+            v-model="descriptions[lang.code]"
+            :name="`description-${lang.code}`"
+            :lang="lang.code"
+            rows="4"
+          />
         </label>
         <label>
           Visibility

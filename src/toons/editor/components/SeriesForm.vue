@@ -10,6 +10,7 @@ import {
   uploadSeriesCover,
   uploadSeriesFlow,
   uploadSeriesRef,
+  type CaptionTranslations,
 } from "../api";
 import { CAPTION_LANGS } from "../mapConfig";
 import { EDITOR_USER_KEY } from "../session";
@@ -27,6 +28,7 @@ import {
   type ToonListItem,
 } from "../types";
 import EditorBar from "./EditorBar.vue";
+import TranslateField from "./TranslateField.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 import ToonCard from "./ToonCard.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
@@ -63,6 +65,12 @@ const members = ref<ToonListItem[]>([]);
 const roster = ref<EditorUser[]>([]);
 const editorRoster = computed(() => roster.value.filter((u) => u.role === "editor"));
 const selectedEditorIds = ref<string[]>([]);
+
+function applyTranslations(map: CaptionTranslations): void {
+  descriptions.it = map.it;
+  descriptions.de = map.de;
+  descriptions.fr = map.fr;
+}
 
 onMounted(async () => {
   if (!isAdmin.value) return;
@@ -467,7 +475,21 @@ async function onSubmit(ev: Event): Promise<void> {
           </div>
           <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
             Description ({{ lang.label }})
-            <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />
+            <TranslateField v-if="lang.code === 'en'" :source="descriptions.en" @translated="applyTranslations">
+              <textarea
+                v-model="descriptions[lang.code]"
+                :name="`description-${lang.code}`"
+                :lang="lang.code"
+                rows="4"
+              />
+            </TranslateField>
+            <textarea
+              v-else
+              v-model="descriptions[lang.code]"
+              :name="`description-${lang.code}`"
+              :lang="lang.code"
+              rows="4"
+            />
           </label>
         </div>
         <aside class="editor-form-preview">

@@ -2,7 +2,7 @@
 import { ChevronDown, ChevronUp, LoaderCircle, Upload, WandSparkles } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
-import { editorApiBase, generateAudio, uploadAudio } from "../api";
+import { editorApiBase, generateAudio, uploadAudio, type CaptionTranslations } from "../api";
 import { pushToast } from "../toast";
 import {
   BUBBLE_VARIANTS,
@@ -23,6 +23,7 @@ import {
 import { resolveAssetUrl } from "../../bookReader/assetUrl";
 import type { LangCode } from "../../bookReader/types";
 import type { BubbleRecord } from "../types";
+import TranslateField from "./TranslateField.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -229,6 +230,12 @@ function onLangInput(lang: LangCode, ev: Event): void {
   const value = (ev.target as HTMLTextAreaElement).value;
   emit("preview", lang);
   emit("change", textPatch(props.bubble, lang, value));
+}
+
+function onTranslated(map: CaptionTranslations): void {
+  if (!props.bubble) return;
+  const next = { ...bubbleTextMap(props.bubble), ...map };
+  emit("change", { textEn: next.en ?? "", textJson: JSON.stringify(next) });
 }
 
 function parseSize(raw: string): number | null {
@@ -443,7 +450,21 @@ async function onGenerateAudio(): Promise<void> {
       </label>
       <label v-for="lang in CAPTION_LANGS" :key="lang.code">
         {{ lang.label }}
+        <TranslateField
+          v-if="lang.code === 'en'"
+          :source="textMap.en || bubble.textEn || ''"
+          @translated="onTranslated"
+        >
+          <textarea
+            :value="textMap[lang.code] || ''"
+            rows="3"
+            :lang="lang.code"
+            @focus="emit('preview', lang.code)"
+            @input="onLangInput(lang.code, $event)"
+          />
+        </TranslateField>
         <textarea
+          v-else
           :value="textMap[lang.code] || ''"
           rows="3"
           :lang="lang.code"

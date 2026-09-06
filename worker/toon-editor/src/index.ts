@@ -37,6 +37,7 @@ import { verifyTurnstile } from "./turnstile";
 import { handleLikes } from "./likes";
 import { canManageSeries, canManageToon, isAdmin, publishError } from "./roles";
 import { isMethod } from "./httpMethod";
+import { translateFromEnglish } from "./translate";
 import { isReaderLookupPath, readerStatuses, toonMatchesReaderPath } from "./readerLookup";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
@@ -761,6 +762,15 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   if (isMethod(method, "GET") && path === "/credits") {
     if (!session) return json({ error: "unauthorized" }, 401, cors);
     return json(await loadUserCredits(env, session.id), 200, cors);
+  }
+
+  if (isMethod(method, "POST") && path === "/translate") {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const translated = await translateFromEnglish(env, String(parsed.body.text || ""));
+    if (!translated.ok) return json({ error: translated.error }, translated.status, cors);
+    return json(translated.translations, 200, cors);
   }
 
   const jobMatch = path.match(/^\/jobs\/([^/]+)$/);

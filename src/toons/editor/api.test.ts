@@ -13,6 +13,7 @@ import {
   fetchCredits,
   generateAudio,
   generatePage,
+  translateFromEnglish,
   uploadAudio,
   withSiteQuery,
 } from "./api";
@@ -289,6 +290,19 @@ describe("editor api", () => {
     expect(body.get("includePrevious")).toBe("1");
     expect(body.get("previousPageId")).toBe("p1");
     expect(body.get("count")).toBeNull();
+  });
+
+  it("POSTs English text to /translate", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ it: "Ciao", de: "Hallo", fr: "Salut" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await translateFromEnglish("Hi");
+    expect(out).toEqual({ it: "Ciao", de: "Hallo", fr: "Salut" });
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/translate");
+    expect(JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body))).toEqual({ text: "Hi" });
   });
 
   it("sends count when generating more than one plate", async () => {

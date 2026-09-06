@@ -7,7 +7,7 @@ import { pickOption } from "../testSelect";
 
 vi.mock("../api", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../api")>();
-  return { ...actual, uploadAudio: vi.fn(), generateAudio: vi.fn() };
+  return { ...actual, uploadAudio: vi.fn(), generateAudio: vi.fn(), translateFromEnglish: vi.fn() };
 });
 
 const bubble: BubbleRecord = {
@@ -27,6 +27,7 @@ describe("CaptionInspector", () => {
   afterEach(() => {
     vi.mocked(api.uploadAudio).mockReset();
     vi.mocked(api.generateAudio).mockReset();
+    vi.mocked(api.translateFromEnglish).mockReset();
   });
 
   it("moves play order earlier and later", async () => {
@@ -52,6 +53,18 @@ describe("CaptionInspector", () => {
     expect(wrapper.get('button[name="variant"]').exists()).toBe(true);
     expect(wrapper.find('button[name="tail"]').exists()).toBe(false);
     expect(wrapper.get("label").text()).toContain("Variant");
+  });
+
+  it("translates English into empty Italian, German and French fields", async () => {
+    vi.mocked(api.translateFromEnglish).mockResolvedValue({ it: "Ciao", de: "Hallo", fr: "Salut" });
+    const wrapper = mount(CaptionInspector, {
+      props: { bubble: { ...bubble, textJson: JSON.stringify({ en: "Hi" }) } },
+    });
+    await wrapper.get('button[name="translate-langs"]').trigger("click");
+    await flushPromises();
+    const patch = wrapper.emitted("change")?.[0][0] as Partial<BubbleRecord>;
+    expect(api.translateFromEnglish).toHaveBeenCalledWith("Hi");
+    expect(JSON.parse(patch.textJson as string)).toEqual({ en: "Hi", it: "Ciao", de: "Hallo", fr: "Salut" });
   });
 
   it("shows one field per language and patches Italian without dropping English", async () => {

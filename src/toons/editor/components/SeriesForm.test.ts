@@ -65,6 +65,20 @@ describe("SeriesForm", () => {
     expect(push).toHaveBeenCalledWith("/series/red-smile");
   });
 
+  it("fills it/de/fr descriptions from English", async () => {
+    vi.spyOn(api, "translateFromEnglish").mockResolvedValue({ it: "Ciao", de: "Hallo", fr: "Salut" });
+    const wrapper = mount(SeriesForm, {
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true } },
+    });
+    await wrapper.get('textarea[name="description-en"]').setValue("Hello");
+    await wrapper.get('button[name="translate-langs"]').trigger("click");
+    await flushPromises();
+    expect((wrapper.get('textarea[name="description-it"]').element as HTMLTextAreaElement).value).toBe("Ciao");
+    expect((wrapper.get('textarea[name="description-de"]').element as HTMLTextAreaElement).value).toBe("Hallo");
+    expect((wrapper.get('textarea[name="description-fr"]').element as HTMLTextAreaElement).value).toBe("Salut");
+    wrapper.unmount();
+  });
+
   it("opens a large preview when a slot thumbnail is clicked", async () => {
     vi.spyOn(api, "getSeries").mockResolvedValue({
       series: {

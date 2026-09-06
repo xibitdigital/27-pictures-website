@@ -31,3 +31,7 @@ migrations_dir = "migrations"
 [[r2_buckets]]
 binding = "ASSETS"
 bucket_name = "twentyseven-assets"
+
+# Caption / description translate (en → it, de, fr).
+[ai]
+binding = "AI"

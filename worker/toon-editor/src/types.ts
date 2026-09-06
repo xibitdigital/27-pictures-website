@@ -26,9 +26,17 @@ export type {
 } from "./apiTypes";
 export { DESC_LANGS, emptyDescriptionMap, parseDescriptionMap, pickDescription } from "./apiTypes";
 
+export interface AiBinding {
+  run(
+    model: string,
+    input: { text: string; source_lang: string; target_lang: string }
+  ): Promise<{ translated_text?: string }>;
+}
+
 export interface Env {
   DB: D1Database;
   ASSETS: R2Bucket;
+  AI?: AiBinding;
   ALLOWED_ORIGINS?: string;
   ASSET_BASE?: string;
   ALLOWED_TOONS?: string;

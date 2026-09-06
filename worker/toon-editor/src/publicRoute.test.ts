@@ -55,6 +55,7 @@ describe("isPublicRoute", () => {
     expect(isPublicRoute("POST", "/catalog")).toBe(false);
     expect(isPublicRoute("GET", "/config")).toBe(false);
     expect(isPublicRoute("GET", "/config/The-Doll")).toBe(false);
+    expect(isPublicRoute("POST", "/translate")).toBe(false);
   });
 });
 
