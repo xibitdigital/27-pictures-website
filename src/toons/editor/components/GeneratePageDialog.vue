@@ -112,18 +112,6 @@ function onSubmit(): void {
           placeholder="What happens on this page (no balloons, no SFX lettering)"
         />
       </label>
-      <label>
-        Images
-        <EditorSelect
-          name="generate-count"
-          :model-value="count"
-          :disabled="busy"
-          @update:model-value="(v) => (count = v)"
-        >
-          <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
-        </EditorSelect>
-      </label>
-      <p class="editor-muted">Each image is its own Seedream run (different seed). Appended as new pages.</p>
       <template v-if="hasPreviousSlot">
         <EditorCheckbox
           :checked="includePrevious"
@@ -134,21 +122,34 @@ function onSubmit(): void {
           Include previous page
         </EditorCheckbox>
         <template v-if="includePrevious">
-          <label>
-            Plate from this toon
-            <EditorSelect
-              name="previous-page"
-              :model-value="previousPageId"
-              :disabled="busy || !pages.length"
-              placeholder="Choose a page"
-              @update:model-value="(v) => (previousPageId = v)"
-            >
-              <EditorSelectItem value="">Choose a page</EditorSelectItem>
-              <EditorSelectItem v-for="page in pages" :key="page.id" :value="page.id">
-                Page {{ page.position + 1 }}
-              </EditorSelectItem>
-            </EditorSelect>
-          </label>
+          <div class="editor-pair-row">
+            <label>
+              Plate from this toon
+              <EditorSelect
+                name="previous-page"
+                :model-value="previousPageId"
+                :disabled="busy || !pages.length"
+                placeholder="Choose a page"
+                @update:model-value="(v) => (previousPageId = v)"
+              >
+                <EditorSelectItem value="">Choose a page</EditorSelectItem>
+                <EditorSelectItem v-for="page in pages" :key="page.id" :value="page.id">
+                  Page {{ page.position + 1 }}
+                </EditorSelectItem>
+              </EditorSelect>
+            </label>
+            <label>
+              Images
+              <EditorSelect
+                name="generate-count"
+                :model-value="count"
+                :disabled="busy"
+                @update:model-value="(v) => (count = v)"
+              >
+                <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
+              </EditorSelect>
+            </label>
+          </div>
           <img
             v-if="selectedPreviousPage?.fileUrl"
             class="editor-slot-thumb"
@@ -169,6 +170,17 @@ function onSubmit(): void {
           <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
         </template>
       </template>
+      <label v-if="!hasPreviousSlot || !includePrevious">
+        Images
+        <EditorSelect
+          name="generate-count"
+          :model-value="count"
+          :disabled="busy"
+          @update:model-value="(v) => (count = v)"
+        >
+          <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
+        </EditorSelect>
+      </label>
       <ul v-if="generate?.slots.length" class="editor-dialog-slots">
         <li v-for="slot in generate.slots" :key="slot.alias">
           <span>{{ slot.label || slot.alias }}</span>
