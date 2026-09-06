@@ -259,6 +259,7 @@ describe("editor api", () => {
     const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
     expect(body.get("prompt")).toBe("Erin walks in.");
     expect(body.get("includePrevious")).toBe("1");
+    expect(body.get("previousPageId")).toBeNull();
     expect(body.get("previousFile")).toBeNull();
   });
 
@@ -274,6 +275,19 @@ describe("editor api", () => {
     const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
     expect(body.get("includePrevious")).toBe("0");
     expect(body.get("previousFile")).toBe(file);
+  });
+
+  it("sends previousPageId when a plate from the toon is picked", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ id: "job-1", status: "running" }), { status: 202 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await generatePage("t1", { prompt: "Erin walks in.", includePrevious: true, previousPageId: "p1" });
+    const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
+    expect(body.get("includePrevious")).toBe("1");
+    expect(body.get("previousPageId")).toBe("p1");
   });
 
   it("POSTs a replacement plate as FormData onto the existing page", async () => {

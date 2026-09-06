@@ -129,6 +129,7 @@ watch(toonId, load);
 async function onGenerateSubmit(payload: {
   prompt: string;
   includePrevious: boolean;
+  previousPageId: string | null;
   previousFile: File | null;
 }): Promise<void> {
   if (!toon.value) return;
@@ -436,7 +437,7 @@ async function onRemove(): Promise<void> {
       <GeneratePageDialog
         :open="generateOpen"
         :generate="seriesGenerate"
-        :has-previous="toon.pages.length > 0"
+        :pages="toon.pages"
         :busy="generateBusy"
         :status="generateStatus"
         :error="generateError"

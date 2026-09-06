@@ -205,12 +205,19 @@ export function uploadCover(id: string, file: File, size?: { width: number; heig
 
 export function generatePage(
   id: string,
-  payload: { prompt: string; includePrevious: boolean; pageId?: string | null; previousFile?: File | null }
+  payload: {
+    prompt: string;
+    includePrevious: boolean;
+    pageId?: string | null;
+    previousPageId?: string | null;
+    previousFile?: File | null;
+  }
 ): Promise<{ id: string; status: string; comfyPromptId?: string | null }> {
   const body = new FormData();
   body.set("prompt", payload.prompt);
   body.set("includePrevious", payload.includePrevious ? "1" : "0");
   if (payload.pageId) body.set("pageId", payload.pageId);
+  if (payload.previousPageId) body.set("previousPageId", payload.previousPageId);
   if (payload.previousFile) body.set("previousFile", payload.previousFile);
   return api(`/toons/${id}/pages/generate`, { method: "POST", body });
 }

@@ -1509,8 +1509,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const form = await request.formData();
     const prompt = String(form.get("prompt") || "").trim();
     if (!prompt) return json({ error: "prompt is required" }, 400, cors);
-    const includePrevious = form.get("includePrevious") !== "0";
+    const includePrevious = form.get("includePrevious") === "1";
     const pageId = form.get("pageId") ? String(form.get("pageId")) : null;
+    const previousPageId = form.get("previousPageId") ? String(form.get("previousPageId")) : null;
     const previousFile = form.get("previousFile");
     let previousOverride: { bytes: ArrayBuffer; type: string } | null = null;
     if (previousFile && typeof previousFile !== "string") {
@@ -1527,8 +1528,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       toon: current,
       series,
       prompt,
-      includePrevious,
+      includePrevious: includePrevious || Boolean(previousPageId),
       pageId,
+      previousPageId,
       previousOverride,
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);

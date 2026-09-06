@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import GeneratePageDialog from "./GeneratePageDialog.vue";
+import { pickOption } from "../testSelect";
 
 const generate = {
   width: 1152,
@@ -17,7 +18,7 @@ describe("GeneratePageDialog", () => {
       props: {
         open: true,
         generate,
-        hasPrevious: false,
+        pages: [],
         busy: false,
         status: "",
         error: "",
@@ -37,7 +38,7 @@ describe("GeneratePageDialog", () => {
       props: {
         open: true,
         generate,
-        hasPrevious: false,
+        pages: [],
         busy: false,
         status: "",
         error: "",
@@ -66,16 +67,14 @@ describe("GeneratePageDialog previous-plate override", () => {
     ],
   };
 
-  it("submits with previousFile: null when nothing is attached", async () => {
-    // Mount closed then open it, same as real usage — the dialog syncs
-    // includePrevious to hasPrevious in a watcher that only fires on that
-    // false->true transition, not on an already-open initial mount.
+  it("leaves include-previous off by default and submits with no previous plate", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: false, generate: generateWithPrevious, hasPrevious: false, busy: false, status: "", error: "" },
+      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
       attachTo: document.body,
     });
     await wrapper.setProps({ open: true });
     await flushPromises();
+    expect(document.querySelector('button[name="previous-page"]')).toBeNull();
     const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
     textarea.value = "Erin walks in.";
     textarea.dispatchEvent(new Event("input"));
@@ -85,17 +84,53 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: false, previousFile: null }],
+      [{ prompt: "Erin walks in.", includePrevious: false, previousPageId: null, previousFile: null }],
+    ]);
+    wrapper.unmount();
+  });
+
+  it("lets the operator pick any existing plate as the previous reference", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: {
+        open: false,
+        generate: generateWithPrevious,
+        pages: [
+          { id: "p1", position: 0, fileUrl: "/p1.webp" },
+          { id: "p2", position: 1, fileUrl: "/p2.webp" },
+        ],
+        busy: false,
+        status: "",
+        error: "",
+      },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    (document.querySelector('[name="include-previous"]') as HTMLElement).click();
+    await flushPromises();
+    await pickOption("previous-page", "Page 1");
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "Erin walks in.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    (document.querySelector("form") as HTMLFormElement).dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true })
+    );
+    await flushPromises();
+    expect(wrapper.emitted("submit")).toEqual([
+      [{ prompt: "Erin walks in.", includePrevious: true, previousPageId: "p1", previousFile: null }],
     ]);
     wrapper.unmount();
   });
 
   it("lets a first-page generation proceed once a previous-plate file is attached", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: false, generate: generateWithPrevious, hasPrevious: false, busy: false, status: "", error: "" },
+      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
       attachTo: document.body,
     });
     await wrapper.setProps({ open: true });
+    await flushPromises();
+    (document.querySelector('[name="include-previous"]') as HTMLElement).click();
     await flushPromises();
     const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
     textarea.value = "Erin walks in.";
@@ -112,7 +147,7 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: false, previousFile: file }],
+      [{ prompt: "Erin walks in.", includePrevious: true, previousPageId: null, previousFile: file }],
     ]);
     wrapper.unmount();
   });
@@ -133,7 +168,7 @@ describe("GeneratePageDialog optional sheet slots", () => {
 
   it("does not block submit on a missing optional sheet, and shows it as skipped", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: true, generate: generateWithOptional, hasPrevious: false, busy: false, status: "", error: "" },
+      props: { open: true, generate: generateWithOptional, pages: [], busy: false, status: "", error: "" },
       attachTo: document.body,
     });
     await flushPromises();

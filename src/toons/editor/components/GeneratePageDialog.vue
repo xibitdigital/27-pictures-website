@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { LoaderCircle } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
-import type { SeriesGenerateConfig } from "../types";
+import type { PageRecord, SeriesGenerateConfig } from "../types";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
+import EditorSelect from "./ui/EditorSelect.vue";
+import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
 const props = defineProps<{
   open: boolean;
   generate: SeriesGenerateConfig | null;
-  hasPrevious: boolean;
+  pages: Pick<PageRecord, "id" | "position" | "fileUrl">[];
   busy: boolean;
   status: string;
   error: string;
@@ -16,21 +18,31 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: [];
-  submit: [payload: { prompt: string; includePrevious: boolean; previousFile: File | null }];
+  submit: [
+    payload: {
+      prompt: string;
+      includePrevious: boolean;
+      previousPageId: string | null;
+      previousFile: File | null;
+    },
+  ];
 }>();
 
 const prompt = ref("");
-const includePrevious = ref(true);
+const includePrevious = ref(false);
+const previousPageId = ref("");
 const previousFile = ref<File | null>(null);
 const previousFileInput = ref<HTMLInputElement | null>(null);
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
+const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
 
 watch(
   () => props.open,
   (open) => {
     if (!open) return;
-    includePrevious.value = props.hasPrevious;
+    includePrevious.value = false;
+    previousPageId.value = "";
     previousFile.value = null;
     if (previousFileInput.value) previousFileInput.value.value = "";
   }
@@ -51,7 +63,7 @@ const missingSheets = computed(() =>
 );
 
 const missingPrevious = computed(
-  () => includePrevious.value && hasPreviousSlot.value && !props.hasPrevious && !previousFile.value
+  () => includePrevious.value && hasPreviousSlot.value && !previousPageId.value && !previousFile.value
 );
 
 const canSubmit = computed(
@@ -67,7 +79,8 @@ function onSubmit(): void {
   if (!canSubmit.value) return;
   emit("submit", {
     prompt: prompt.value.trim(),
-    includePrevious: includePrevious.value && props.hasPrevious,
+    includePrevious: includePrevious.value && Boolean(previousPageId.value || previousFile.value),
+    previousPageId: previousPageId.value || null,
     previousFile: previousFile.value,
   });
 }
@@ -97,29 +110,56 @@ function onSubmit(): void {
         <EditorCheckbox
           :checked="includePrevious"
           name="include-previous"
-          :disabled="busy || !hasPrevious"
+          :disabled="busy"
           @update:checked="(v) => (includePrevious = v)"
         >
           Include previous page
         </EditorCheckbox>
-        <label>
-          Or attach a specific image for the previous-plate slot
-          <input
-            ref="previousFileInput"
-            type="file"
-            name="previous-file"
-            accept="image/webp,image/jpeg,image/png"
-            :disabled="busy"
-            @change="onPreviousFile"
+        <template v-if="includePrevious">
+          <label>
+            Plate from this toon
+            <EditorSelect
+              name="previous-page"
+              :model-value="previousPageId"
+              :disabled="busy || !pages.length"
+              placeholder="Choose a page"
+              @update:model-value="(v) => (previousPageId = v)"
+            >
+              <EditorSelectItem value="">Choose a page</EditorSelectItem>
+              <EditorSelectItem v-for="page in pages" :key="page.id" :value="page.id">
+                Page {{ page.position + 1 }}
+              </EditorSelectItem>
+            </EditorSelect>
+          </label>
+          <img
+            v-if="selectedPreviousPage?.fileUrl"
+            class="editor-slot-thumb"
+            :src="selectedPreviousPage.fileUrl"
+            alt=""
           />
-        </label>
-        <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of the last plate.</p>
+          <label>
+            Or attach a file
+            <input
+              ref="previousFileInput"
+              type="file"
+              name="previous-file"
+              accept="image/webp,image/jpeg,image/png"
+              :disabled="busy"
+              @change="onPreviousFile"
+            />
+          </label>
+          <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
+        </template>
       </template>
       <ul v-if="generate?.slots.length" class="editor-dialog-slots">
         <li v-for="slot in generate.slots" :key="slot.alias">
           <span>{{ slot.label || slot.alias }}</span>
           <span v-if="slot.kind === 'previous'" class="editor-muted">{{
-            previousFile ? "custom file" : hasPrevious && includePrevious ? "last plate" : "skipped"
+            previousFile
+              ? "custom file"
+              : selectedPreviousPage
+                ? `page ${selectedPreviousPage.position + 1}`
+                : "skipped"
           }}</span>
           <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
           <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>

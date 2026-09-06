@@ -50,9 +50,9 @@ export async function startPageGenerate(
     prompt: string;
     includePrevious: boolean;
     pageId: string | null;
-    /** Operator-attached image for the "previous" slot, e.g. a toon's first
-     *  page (no previous plate exists yet) or swapping in a different
-     *  reference for one generation. Always wins over the real last plate. */
+    /** Existing plate in this toon to use as the previous-slot reference. */
+    previousPageId?: string | null;
+    /** Operator-attached image for the "previous" slot. Always wins over a picked plate. */
     previousOverride?: { bytes: ArrayBuffer; type: string } | null;
   }
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
@@ -81,12 +81,8 @@ export async function startPageGenerate(
     }>()
   ).results;
   let previousKey: string | null = null;
-  if (input.includePrevious) {
-    if (input.pageId) {
-      previousKey = pages.find((p) => p.id === input.pageId)?.file_key || null;
-    } else {
-      previousKey = pages.length ? pages[pages.length - 1].file_key : null;
-    }
+  if (input.previousPageId) {
+    previousKey = pages.find((p) => p.id === input.previousPageId)?.file_key || null;
   }
 
   const names: (string | null)[] = [];
@@ -94,6 +90,9 @@ export async function startPageGenerate(
     let bytes: ArrayBuffer | null;
     if (slot.kind === "previous" && input.previousOverride) {
       bytes = input.previousOverride.bytes;
+    } else if (slot.kind === "previous" && !previousKey) {
+      names.push(null);
+      continue;
     } else {
       const key = slot.kind === "previous" ? previousKey : slot.fileKey;
       if (!key) {
@@ -134,6 +133,7 @@ export async function startPageGenerate(
       input.prompt,
       JSON.stringify({
         includePrevious: input.includePrevious,
+        previousPageId: input.previousPageId || null,
         names,
         width: generate.width,
         height: generate.height,
