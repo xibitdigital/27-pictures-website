@@ -582,7 +582,10 @@ async function readerConfigFromToon(env: Pick<Env, "DB">, toon: ToonRow, request
     designWidth: toon.design_width,
     designHeight: toon.design_height,
     defaultLang: String(extra.defaultLang || "en"),
-    languages: extra.languages || [{ code: "en", label: "EN" }],
+    languages:
+      Array.isArray(extra.languages) && extra.languages.length > 1
+        ? extra.languages
+        : DESC_LANGS.map((code) => ({ code, label: code.toUpperCase() })),
     pages,
   };
   if (extra.reverb) cfg.reverb = extra.reverb;

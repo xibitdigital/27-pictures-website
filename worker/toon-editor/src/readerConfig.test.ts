@@ -81,6 +81,12 @@ describe("readerConfigFromToon", () => {
     expect(cfg.pages[0].file).toBe("assets/plate.webp");
     expect(cfg.pages[0].words[0].text).toEqual({ en: "Hi" });
     expect(cfg.pages[0].words[0].audio).toBe("https://toon-editor.example/media/editor/erin-the-revenge/assets/hi.mp3");
+    expect(cfg.languages).toEqual([
+      { code: "en", label: "EN" },
+      { code: "it", label: "IT" },
+      { code: "de", label: "DE" },
+      { code: "fr", label: "FR" },
+    ]);
   });
 
   it("does not throw when a page has captions (request must be in scope)", async () => {

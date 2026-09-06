@@ -269,7 +269,7 @@ export function exportToonConfig(
     designWidth: toon.designWidth,
     designHeight: toon.designHeight,
     defaultLang: "en",
-    languages: [{ code: "en", label: "EN" }],
+    languages: CAPTION_LANGS.map((lang) => ({ code: lang.code, label: lang.code.toUpperCase() })),
     pages: ordered.map((page) => ({
       file: page.fileKey,
       words: page.bubbles
