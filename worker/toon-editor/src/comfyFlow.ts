@@ -81,6 +81,28 @@ export function findPromptCandidates(graph: ComfyGraph): PromptCandidate[] {
   return out;
 }
 
+export const MAX_GENERATE_COUNT = 4;
+
+export function parseGenerateCount(raw: unknown): number {
+  const n = Math.round(Number(raw));
+  if (!Number.isFinite(n) || n < 1) return 1;
+  return Math.min(MAX_GENERATE_COUNT, n);
+}
+
+/** Give each parallel Seedream run a distinct seed so the plates actually differ. */
+export function applySeed(graph: ComfyGraph, seed: number): ComfyGraph {
+  const next: ComfyGraph = JSON.parse(JSON.stringify(graph)) as ComfyGraph;
+  for (const node of Object.values(next)) {
+    const cls = String(node.class_type || "");
+    if (!SEEDREAM.has(cls)) continue;
+    const inputs = { ...(node.inputs || {}) };
+    if ("seed" in inputs) inputs.seed = seed;
+    if ("model.seed" in inputs || cls === "ByteDanceSeedreamNodeV3") inputs["model.seed"] = seed;
+    node.inputs = inputs;
+  }
+  return next;
+}
+
 export function applyPlateSize(graph: ComfyGraph, width: number | null, height: number | null): ComfyGraph {
   if (!width || !height) return graph;
   const next: ComfyGraph = JSON.parse(JSON.stringify(graph)) as ComfyGraph;

@@ -24,15 +24,19 @@ const emit = defineEmits<{
       includePrevious: boolean;
       previousPageId: string | null;
       previousFile: File | null;
+      count: number;
     },
   ];
 }>();
+
+const COUNT_OPTIONS = [1, 2, 3, 4] as const;
 
 const prompt = ref("");
 const includePrevious = ref(false);
 const previousPageId = ref("");
 const previousFile = ref<File | null>(null);
 const previousFileInput = ref<HTMLInputElement | null>(null);
+const count = ref("1");
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
@@ -83,6 +87,7 @@ function onSubmit(): void {
     includePrevious: includePrevious.value && Boolean(previousPageId.value || previousFile.value),
     previousPageId: previousPageId.value || null,
     previousFile: previousFile.value,
+    count: Number(count.value) || 1,
   });
 }
 </script>
@@ -107,6 +112,18 @@ function onSubmit(): void {
           placeholder="What happens on this page (no balloons, no SFX lettering)"
         />
       </label>
+      <label>
+        Images
+        <EditorSelect
+          name="generate-count"
+          :model-value="count"
+          :disabled="busy"
+          @update:model-value="(v) => (count = v)"
+        >
+          <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
+        </EditorSelect>
+      </label>
+      <p class="editor-muted">Each image is its own Seedream run (different seed). Appended as new pages.</p>
       <template v-if="hasPreviousSlot">
         <EditorCheckbox
           :checked="includePrevious"
@@ -172,7 +189,7 @@ function onSubmit(): void {
         <button class="editor-btn editor-btn--ghost" type="button" :disabled="busy" @click="onCancel">Cancel</button>
         <button class="editor-btn" type="submit" :class="{ 'is-busy': busy }" :disabled="!canSubmit">
           <LoaderCircle v-if="busy" class="editor-spin" :size="16" aria-hidden="true" />
-          {{ busy ? "Generating…" : "Generate" }}
+          {{ busy ? "Generating…" : Number(count) > 1 ? `Generate ${count}` : "Generate" }}
         </button>
       </div>
     </form>

@@ -84,7 +84,7 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: false, previousPageId: null, previousFile: null }],
+      [{ prompt: "Erin walks in.", includePrevious: false, previousPageId: null, previousFile: null, count: 1 }],
     ]);
     wrapper.unmount();
   });
@@ -118,7 +118,7 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: true, previousPageId: "p1", previousFile: null }],
+      [{ prompt: "Erin walks in.", includePrevious: true, previousPageId: "p1", previousFile: null, count: 1 }],
     ]);
     wrapper.unmount();
   });
@@ -175,7 +175,29 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: true, previousPageId: null, previousFile: file }],
+      [{ prompt: "Erin walks in.", includePrevious: true, previousPageId: null, previousFile: file, count: 1 }],
+    ]);
+    wrapper.unmount();
+  });
+
+  it("lets the operator pick how many plates to generate", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    await pickOption("generate-count", "3");
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "Erin walks in.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    (document.querySelector("form") as HTMLFormElement).dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true })
+    );
+    await flushPromises();
+    expect(wrapper.emitted("submit")).toEqual([
+      [{ prompt: "Erin walks in.", includePrevious: false, previousPageId: null, previousFile: null, count: 3 }],
     ]);
     wrapper.unmount();
   });

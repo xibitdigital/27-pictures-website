@@ -211,6 +211,7 @@ export function generatePage(
     pageId?: string | null;
     previousPageId?: string | null;
     previousFile?: File | null;
+    count?: number;
   }
 ): Promise<{ id: string; status: string; comfyPromptId?: string | null }> {
   const body = new FormData();
@@ -219,6 +220,7 @@ export function generatePage(
   if (payload.pageId) body.set("pageId", payload.pageId);
   if (payload.previousPageId) body.set("previousPageId", payload.previousPageId);
   if (payload.previousFile) body.set("previousFile", payload.previousFile);
+  if (payload.count && payload.count > 1) body.set("count", String(payload.count));
   return api(`/toons/${id}/pages/generate`, { method: "POST", body });
 }
 

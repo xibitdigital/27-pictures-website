@@ -21,7 +21,13 @@ import {
 } from "./auth";
 import { mergeGenerate, parseComfyApiGraph, parseGenerateConfig, slugAlias } from "./comfyFlow";
 import { insertCreditEvent, loadUserCredits } from "./creditUsage";
-import { pollPageJob, recordImageCredit, startPageGenerate, type GenerationJob } from "./generatePage";
+import {
+  generateCountFromJob,
+  pollPageJob,
+  recordImageCredit,
+  startPageGenerate,
+  type GenerationJob,
+} from "./generatePage";
 import { comfyPhaseMessage } from "./comfyClient";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
@@ -772,11 +778,15 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!polled.ok) return json({ error: polled.error }, polled.status, cors);
     if (polled.job.status === "done" && job.status !== "done" && session) {
       try {
-        await recordImageCredit(env, session.id);
+        await recordImageCredit(env, session.id, generateCountFromJob(polled.job));
       } catch {
         /* credit row is secondary */
       }
     }
+    const count = generateCountFromJob(polled.job);
+    let message = comfyPhaseMessage(polled.phase);
+    if (count > 1 && polled.phase === "queued") message = `Waiting in the Comfy queue (${count} plates)…`;
+    if (count > 1 && polled.phase === "running") message = `Generating ${count} plates…`;
     const body: JsonRecord = {
       ...polled.job,
       id: polled.job.id,
@@ -784,7 +794,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       error: polled.job.error,
       resultPageId: polled.job.result_page_id,
       comfyStatus: polled.phase,
-      message: comfyPhaseMessage(polled.phase),
+      message,
     };
     if (polled.job.status === "done") {
       body.toon = await loadToon(env, request, toon.id);
@@ -1538,6 +1548,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       pageId,
       previousPageId,
       previousOverride,
+      count: Number(form.get("count") || 1),
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
     return json(

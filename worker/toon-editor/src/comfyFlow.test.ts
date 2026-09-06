@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   applyLoadImages,
   applyPagePrompt,
+  applySeed,
   findPromptCandidates,
   mergeGenerate,
   parseComfyApiGraph,
+  parseGenerateCount,
   slotFromLoadTitle,
 } from "./comfyFlow";
 
@@ -59,6 +61,28 @@ describe("slotFromLoadTitle", () => {
       fileKey: null,
       fileUrl: null,
     });
+  });
+});
+
+describe("parseGenerateCount", () => {
+  it("clamps to 1–4", () => {
+    expect(parseGenerateCount(undefined)).toBe(1);
+    expect(parseGenerateCount("3")).toBe(3);
+    expect(parseGenerateCount(9)).toBe(4);
+    expect(parseGenerateCount(0)).toBe(1);
+  });
+});
+
+describe("applySeed", () => {
+  it("writes model.seed on Seedream V3 and seed on the legacy node", () => {
+    const v3 = applySeed(
+      { "9": { class_type: "ByteDanceSeedreamNodeV3", inputs: { prompt: "x", "model.seed": 1 } } },
+      42
+    );
+    expect(v3["9"].inputs?.["model.seed"]).toBe(42);
+    const lite = applySeed({ "6": { class_type: "ByteDanceSeedreamNode", inputs: { seed: 0, max_images: 1 } } }, 7);
+    expect(lite["6"].inputs?.seed).toBe(7);
+    expect(lite["6"].inputs?.max_images).toBe(1);
   });
 });
 

@@ -1,13 +1,21 @@
 import {
   comfyBase,
   comfyHistory,
-  comfyPhaseMessage,
   comfySubmitPrompt,
   comfyUploadImage,
   comfyView,
+  type ComfyHistoryImage,
   type ComfyPhase,
 } from "./comfyClient";
-import { applyLoadImages, applyPagePrompt, applyPlateSize, parseGenerateConfig, type ComfyGraph } from "./comfyFlow";
+import {
+  applyLoadImages,
+  applyPagePrompt,
+  applyPlateSize,
+  applySeed,
+  parseGenerateConfig,
+  parseGenerateCount,
+  type ComfyGraph,
+} from "./comfyFlow";
 import { insertCreditEvent } from "./creditUsage";
 import { toWebp } from "./imageOptimize";
 import type { Env, SeriesRow, ToonRow } from "./types";
@@ -62,6 +70,8 @@ export async function startPageGenerate(
     previousPageId?: string | null;
     /** Operator-attached image for the "previous" slot. Always wins over a picked plate. */
     previousOverride?: { bytes: ArrayBuffer; type: string } | null;
+    /** How many plates to run. Capped at 4; forced to 1 when replacing a page. */
+    count?: number;
   }
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
   if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
@@ -125,8 +135,14 @@ export async function startPageGenerate(
   let next = applyPagePrompt(withImages.graph, input.prompt, generate.promptTarget);
   next = applyPlateSize(next, generate.width, generate.height);
 
-  const submitted = await comfySubmitPrompt(env, next);
-  if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
+  const count = input.pageId ? 1 : parseGenerateCount(input.count);
+  const baseSeed = crypto.getRandomValues(new Uint32Array(1))[0] % 2_147_483_647;
+  const promptIds: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const submitted = await comfySubmitPrompt(env, applySeed(next, (baseSeed + i) % 2_147_483_647));
+    if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
+    promptIds.push(submitted.promptId);
+  }
 
   const id = crypto.randomUUID();
   const ts = nowIso();
@@ -145,8 +161,10 @@ export async function startPageGenerate(
         names,
         width: generate.width,
         height: generate.height,
+        count,
+        promptIds,
       }),
-      submitted.promptId,
+      promptIds[0],
       ts,
       ts
     )
@@ -156,22 +174,86 @@ export async function startPageGenerate(
   return { ok: true, job };
 }
 
+function promptIdsFromJob(job: GenerationJob): string[] {
+  try {
+    const payload = JSON.parse(job.payload_json) as { promptIds?: unknown };
+    if (Array.isArray(payload.promptIds)) {
+      const ids = payload.promptIds.filter((id): id is string => typeof id === "string" && Boolean(id));
+      if (ids.length) return ids;
+    }
+  } catch {
+    /* fall through */
+  }
+  return job.comfy_prompt_id ? [job.comfy_prompt_id] : [];
+}
+
+export function generateCountFromJob(job: GenerationJob): number {
+  try {
+    return parseGenerateCount((JSON.parse(job.payload_json) as { count?: unknown }).count);
+  } catch {
+    return 1;
+  }
+}
+
+function pickOutputImage(images: ComfyHistoryImage[]): ComfyHistoryImage {
+  return images.find((img) => (img.type || "output") === "output") || images[0];
+}
+
+function plateSizeFromJob(job: GenerationJob): { width: number | null; height: number | null } {
+  try {
+    const payload = JSON.parse(job.payload_json) as { width?: unknown; height?: unknown };
+    const w = Number(payload.width);
+    const h = Number(payload.height);
+    return {
+      width: Number.isFinite(w) && w > 0 ? Math.round(w) : null,
+      height: Number.isFinite(h) && h > 0 ? Math.round(h) : null,
+    };
+  } catch {
+    return { width: null, height: null };
+  }
+}
+
+async function putPlate(
+  env: Env,
+  toon: ToonRow,
+  bytes: ArrayBuffer
+): Promise<{ fileKey: string; ext: string; type: string }> {
+  const optimized = await toWebp({ bytes, ...sniffImage(bytes) });
+  const hash = await sha256Hex(optimized.bytes);
+  const fileKey = `editor/${toon.slug}/assets/${hash}.${optimized.ext}`;
+  await env.ASSETS.put(fileKey, optimized.bytes, {
+    httpMetadata: { contentType: optimized.type, cacheControl: "public, max-age=31536000, immutable" },
+  });
+  return { fileKey, ext: optimized.ext, type: optimized.type };
+}
+
 export async function pollPageJob(
   env: Env,
   job: GenerationJob,
   toon: ToonRow
 ): Promise<{ ok: true; job: GenerationJob; phase: ComfyPhase | null } | { ok: false; error: string; status: number }> {
-  if (job.status !== "running" || !job.comfy_prompt_id) {
+  const promptIds = promptIdsFromJob(job);
+  if (job.status !== "running" || !promptIds.length) {
     return { ok: true, job, phase: job.status === "done" ? "done" : null };
   }
-  const hist = await comfyHistory(env, job.comfy_prompt_id);
-  if (!hist.ok) {
-    await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
-      .bind(hist.error, nowIso(), job.id)
-      .run();
-    return { ok: true, job: { ...job, status: "error", error: hist.error, updated_at: nowIso() }, phase: "error" };
+
+  const outputs: ComfyHistoryImage[] = [];
+  let phase: ComfyPhase | null = null;
+  for (const promptId of promptIds) {
+    const hist = await comfyHistory(env, promptId);
+    if (!hist.ok) {
+      await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
+        .bind(hist.error, nowIso(), job.id)
+        .run();
+      return { ok: true, job: { ...job, status: "error", error: hist.error, updated_at: nowIso() }, phase: "error" };
+    }
+    if (hist.pending || !hist.images.length) {
+      const waiting = hist.phase === "queued" || phase === "queued" ? "queued" : hist.phase;
+      return { ok: true, job, phase: waiting };
+    }
+    outputs.push(pickOutputImage(hist.images));
+    phase = hist.phase;
   }
-  if (hist.pending || !hist.images.length) return { ok: true, job, phase: hist.phase };
 
   const fresh = await env.DB.prepare("SELECT status FROM generation_jobs WHERE id = ?")
     .bind(job.id)
@@ -180,53 +262,45 @@ export async function pollPageJob(
     const latest = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?")
       .bind(job.id)
       .first<GenerationJob>();
-    return { ok: true, job: latest || job, phase: latest?.status === "done" ? "done" : hist.phase };
+    return { ok: true, job: latest || job, phase: latest?.status === "done" ? "done" : phase };
   }
 
-  const image = hist.images.find((img) => (img.type || "output") === "output") || hist.images[0];
-  const viewed = await comfyView(env, image);
-  if (!viewed.ok) {
-    await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
-      .bind(viewed.error, nowIso(), job.id)
-      .run();
-    return { ok: true, job: { ...job, status: "error", error: viewed.error }, phase: "error" };
+  const plates: string[] = [];
+  for (const image of outputs) {
+    const viewed = await comfyView(env, image);
+    if (!viewed.ok) {
+      await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
+        .bind(viewed.error, nowIso(), job.id)
+        .run();
+      return { ok: true, job: { ...job, status: "error", error: viewed.error }, phase: "error" };
+    }
+    const stored = await putPlate(env, toon, viewed.bytes);
+    plates.push(stored.fileKey);
   }
-  const optimized = await toWebp({ bytes: viewed.bytes, ...sniffImage(viewed.bytes) });
-  const hash = await sha256Hex(optimized.bytes);
-  const fileKey = `editor/${toon.slug}/assets/${hash}.${optimized.ext}`;
-  await env.ASSETS.put(fileKey, optimized.bytes, {
-    httpMetadata: { contentType: optimized.type, cacheControl: "public, max-age=31536000, immutable" },
-  });
 
+  const { width, height } = plateSizeFromJob(job);
   let resultPageId = job.page_id;
-  let width: number | null = null;
-  let height: number | null = null;
-  try {
-    const payload = JSON.parse(job.payload_json) as { width?: unknown; height?: unknown };
-    const w = Number(payload.width);
-    const h = Number(payload.height);
-    width = Number.isFinite(w) && w > 0 ? Math.round(w) : null;
-    height = Number.isFinite(h) && h > 0 ? Math.round(h) : null;
-  } catch {
-    /* keep null */
-  }
-  if (job.page_id) {
-    await env.DB.prepare(
-      `UPDATE pages SET file_key = ?, width = COALESCE(?, width), height = COALESCE(?, height) WHERE id = ?`
-    )
-      .bind(fileKey, width, height, job.page_id)
-      .run();
-  } else {
+  for (let i = 0; i < plates.length; i++) {
+    const fileKey = plates[i];
+    if (i === 0 && job.page_id) {
+      await env.DB.prepare(
+        `UPDATE pages SET file_key = ?, width = COALESCE(?, width), height = COALESCE(?, height) WHERE id = ?`
+      )
+        .bind(fileKey, width, height, job.page_id)
+        .run();
+      continue;
+    }
     const posRow = await env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?")
       .bind(toon.id)
       .first<{ max_pos: number }>();
     const position = (posRow && Number(posRow.max_pos) > -1 ? Number(posRow.max_pos) : -1) + 1;
-    resultPageId = crypto.randomUUID();
+    const pageId = crypto.randomUUID();
     await env.DB.prepare(
       `INSERT INTO pages (id, toon_id, position, file_key, width, height, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
     )
-      .bind(resultPageId, toon.id, position, fileKey, width, height, nowIso())
+      .bind(pageId, toon.id, position, fileKey, width, height, nowIso())
       .run();
+    resultPageId = pageId;
     const stillDefault = toon.design_width === 800 && toon.design_height === 1424;
     if (stillDefault && width && height && position === 0) {
       await env.DB.prepare(`UPDATE toons SET design_width = ?, design_height = ?, updated_at = ? WHERE id = ?`)
@@ -247,6 +321,11 @@ export async function pollPageJob(
   };
 }
 
-export async function recordImageCredit(env: Env, userId: string): Promise<void> {
-  await insertCreditEvent(env, { userId, kind: "image", tokens: 1, source: "comfy-generate" });
+export async function recordImageCredit(env: Env, userId: string, tokens = 1): Promise<void> {
+  await insertCreditEvent(env, {
+    userId,
+    kind: "image",
+    tokens: Math.max(1, Math.round(tokens)),
+    source: "comfy-generate",
+  });
 }

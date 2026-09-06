@@ -288,6 +288,19 @@ describe("editor api", () => {
     const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
     expect(body.get("includePrevious")).toBe("1");
     expect(body.get("previousPageId")).toBe("p1");
+    expect(body.get("count")).toBeNull();
+  });
+
+  it("sends count when generating more than one plate", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ id: "job-1", status: "running" }), { status: 202 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await generatePage("t1", { prompt: "Erin walks in.", includePrevious: false, count: 3 });
+    const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
+    expect(body.get("count")).toBe("3");
   });
 
   it("POSTs a replacement plate as FormData onto the existing page", async () => {
