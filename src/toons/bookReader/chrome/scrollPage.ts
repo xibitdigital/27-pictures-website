@@ -91,13 +91,48 @@ export function scrollBehavior(win: Window = window): ScrollBehavior {
   return "smooth";
 }
 
+/**
+ * The `?page=` deep-link retries `scrollTo(0, target)` for a few hundred ms.
+ * A page-down tap has to cancel that first, or iOS shows a tiny move then
+ * yanks back — the next tap is the one that actually sticks.
+ */
+export const USER_SCROLL_EVENT = "flipframe-user-scroll";
+
+export function applyWindowScroll(win: Window, top: number, behavior: ScrollBehavior): void {
+  if (behavior === "smooth") {
+    win.scrollTo({ top, behavior: "smooth" });
+    return;
+  }
+  // Two-arg form: same call the deep-link yank uses, and the one iOS honours
+  // from a tap. The `{ behavior: "auto" }` object form is what was getting lost.
+  win.scrollTo(0, top);
+  const doc = win.document;
+  if (doc?.documentElement) doc.documentElement.scrollTop = top;
+  if (doc?.body) doc.body.scrollTop = top;
+}
+
+function scheduleScrollHold(win: Window, top: number): void {
+  const hold = () => applyWindowScroll(win, top, "auto");
+  if (typeof win.requestAnimationFrame === "function") win.requestAnimationFrame(hold);
+  const vv = win.visualViewport;
+  if (vv && typeof vv.addEventListener === "function") {
+    vv.addEventListener("resize", hold, { once: true });
+  }
+  if (typeof win.setTimeout === "function") win.setTimeout(hold, 120);
+}
+
 export function scrollPageDown(
   win: Window = window,
   opts?: { pages?: PageBox[]; chromeOffset?: number; doc?: Document }
 ): void {
+  if (typeof win.dispatchEvent === "function") {
+    win.dispatchEvent(new Event(USER_SCROLL_EVENT));
+  }
   const scrollY = win.scrollY || win.pageYOffset || 0;
   const pages = opts?.pages ?? [];
   const chrome = opts?.chromeOffset ?? chromeOffsetPx(opts?.doc ?? document);
   const top = scrollTargetY(scrollY, viewHeight(win), nextPageAlignY(pages, scrollY, chrome));
-  win.scrollTo({ top, behavior: scrollBehavior(win) });
+  const behavior = scrollBehavior(win);
+  applyWindowScroll(win, top, behavior);
+  if (behavior === "auto") scheduleScrollHold(win, top);
 }

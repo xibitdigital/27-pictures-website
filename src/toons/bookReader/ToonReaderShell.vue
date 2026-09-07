@@ -9,6 +9,7 @@ import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import CoverGuideDialog from "./CoverGuideDialog.vue";
 import { AutoReadBand, ReaderTopBar, ReadingProgress, ScrollDownButton } from "./chrome";
+import { USER_SCROLL_EVENT } from "./chrome/scrollPage";
 import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
 import { deepLinkReleased, parsePageQuery, visiblePageNum, writePageQuery, type SlotBox } from "./pageQuery";
@@ -526,6 +527,7 @@ onMounted(() => {
   }
 
   window.addEventListener("scroll", onWindowScroll, { passive: true });
+  window.addEventListener(USER_SCROLL_EVENT, abandonDeepLink);
 
   // Auto-show story/guide once per session on mobile (or vertical scroll).
   void nextTick(() => {
@@ -553,6 +555,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("scroll", onWindowScroll);
+  window.removeEventListener(USER_SCROLL_EVENT, abandonDeepLink);
   onWindowScroll.cancel();
   clearDeepLinkTimers();
   unlockBodyForDialog();

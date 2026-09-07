@@ -9,6 +9,7 @@ import {
   SCROLL_PAGE_FRACTION,
   scrollPageDown,
   scrollTargetY,
+  USER_SCROLL_EVENT,
 } from "./scrollPage";
 
 function box(top: number): { getBoundingClientRect: () => { top: number } } {
@@ -90,7 +91,7 @@ describe("scrollPage", () => {
     } as unknown as Window;
     scrollTo.mockClear();
     scrollPageDown(reduce, { pages: [] });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 900, behavior: "auto" });
+    expect(scrollTo).toHaveBeenCalledWith(0, 900);
 
     const coarse = {
       innerHeight: 1000,
@@ -100,7 +101,22 @@ describe("scrollPage", () => {
     } as unknown as Window;
     scrollTo.mockClear();
     scrollPageDown(coarse, { pages: [] });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 900, behavior: "auto" });
+    expect(scrollTo).toHaveBeenCalledWith(0, 900);
+  });
+
+  it("signals a user scroll so the deep-link retry cannot yank back", () => {
+    const scrollTo = vi.fn();
+    const dispatchEvent = vi.fn();
+    const win = {
+      innerHeight: 1000,
+      scrollY: 0,
+      matchMedia: () => ({ matches: false }),
+      scrollTo,
+      dispatchEvent,
+    } as unknown as Window;
+    scrollPageDown(win, { pages: [] });
+    expect(dispatchEvent).toHaveBeenCalledWith(expect.any(Event));
+    expect((dispatchEvent.mock.calls[0][0] as Event).type).toBe(USER_SCROLL_EVENT);
   });
 
   it("snaps to the next plate on the last press of a page", () => {
