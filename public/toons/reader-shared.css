@@ -2234,18 +2234,10 @@ body.single-page .flip-page.flipping.from-left {
     width: 48px;
     height: 48px;
     opacity: 0.9;
-    /* Clear the 4px progress bar on the bottom edge. */
-    bottom: calc(0.4rem + 4px + env(safe-area-inset-bottom, 0px));
-  }
-}
-
-/* iOS Safari: position:fixed bottom is the *large* viewport, under the
-   toolbar. Lift by the chrome height when svh is smaller than lvh. */
-@supports (height: 100svh) {
-  @media (pointer: coarse) {
-    .scroll-down-btn {
-      bottom: calc(0.4rem + 4px + env(safe-area-inset-bottom, 0px) + (100lvh - 100svh));
-    }
+    /* Sit in the last tenth of the viewport, under the auto-read marks
+       (those are at 90dvh). Do not add (100lvh - 100svh): on iOS that
+       lands the disc on the marks. */
+    bottom: calc(0.2rem + 4px + env(safe-area-inset-bottom, 0px));
   }
 }
 
