@@ -1407,6 +1407,25 @@ a.sound-prompt__btn {
   padding: 0;
 }
 
+/* Scroll mode: plates flush to the screen edges. Book mode keeps the
+   side gutter so the page-turn discs are not clipped.
+   `align-self: stretch` + 100vw: a `width: 100%` strip inside body's
+   `align-items: center` column can resolve to 0 on iOS (cyclic %). */
+body.view-vertical {
+  --strip-width: 100vw;
+}
+
+body.view-vertical .reader {
+  padding-left: 0;
+  padding-right: 0;
+  align-self: stretch;
+}
+
+body.view-vertical .vertical-strip {
+  width: 100vw;
+  max-width: 100vw;
+}
+
 /* Scroll mode is the default on desktop too, so the fallback cap has to suit a
    wide viewport: 720px on a 1440px screen reads as an accident rather than a
    column. Toons that declare --strip-width keep it — including the ones that
@@ -1905,21 +1924,6 @@ body.single-page .flip-page.flipping.from-left {
     /* >= the 20px mobile arrow radius, same reason as desktop. */
     padding: 2rem 1.25rem 0.75rem;
     gap: 0.7rem;
-  }
-
-  /* Scroll mode: plates flush to the screen edges. Book mode keeps the
-     side gutter so the page-turn discs are not clipped.
-     `align-self: stretch` + 100vw: a `width: 100%` strip inside body's
-     `align-items: center` column can resolve to 0 on iOS (cyclic %). */
-  body.view-vertical .reader {
-    padding-left: 0;
-    padding-right: 0;
-    align-self: stretch;
-  }
-
-  body.view-vertical .vertical-strip {
-    width: 100vw;
-    max-width: 100vw;
   }
 
   /* Bottom edge on phones; padding-bottom keeps the fill above the home bar. */
