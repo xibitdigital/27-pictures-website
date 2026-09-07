@@ -1,5 +1,5 @@
 /** Fraction of the viewport to advance on each press of the scroll-down control. */
-export const SCROLL_PAGE_FRACTION = 0.8;
+export const SCROLL_PAGE_FRACTION = 0.9;
 
 /** Remaining pixels below which the control hides — already at the end. */
 export const SCROLL_END_PX = 8;
@@ -72,26 +72,32 @@ export function nextPageAlignY(pages: PageBox[], scrollY: number, chromeOffset: 
 }
 
 /**
- * Page-down 80% while the next plate is more than a screen away.
+ * Page-down 90% while the next plate is more than a screen away.
  * If it already starts on this screen (or would be a leftover nudge after
- * 80%), snap it under the chrome so that press is not wasted.
+ * 90%), snap it under the chrome so that press is not wasted.
  */
 export function scrollTargetY(scrollY: number, viewH: number, nextAlignY: number | null): number {
   const jumpTo = scrollY + viewH * SCROLL_PAGE_FRACTION;
   // Include PAGE_NUDGE so a plate that starts just past one screen (Nero
-  // mobile: 858 vs 844) snaps now, instead of an 80% jump plus a leftover tap.
+  // mobile: 858 vs 844) snaps now, instead of a 90% jump plus a leftover tap.
   if (nextAlignY != null && nextAlignY <= scrollY + viewH + PAGE_NUDGE_PX) return nextAlignY;
   return jumpTo;
+}
+
+/** Instant on phones: iOS Safari often cancels `behavior: smooth` from a tap. */
+export function scrollBehavior(win: Window = window): ScrollBehavior {
+  if (win.matchMedia("(prefers-reduced-motion: reduce)").matches) return "auto";
+  if (win.matchMedia("(pointer: coarse)").matches) return "auto";
+  return "smooth";
 }
 
 export function scrollPageDown(
   win: Window = window,
   opts?: { pages?: PageBox[]; chromeOffset?: number; doc?: Document }
 ): void {
-  const reduce = win.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const scrollY = win.scrollY || win.pageYOffset || 0;
   const pages = opts?.pages ?? [];
   const chrome = opts?.chromeOffset ?? chromeOffsetPx(opts?.doc ?? document);
   const top = scrollTargetY(scrollY, viewHeight(win), nextPageAlignY(pages, scrollY, chrome));
-  win.scrollTo({ top, behavior: reduce ? "auto" : "smooth" });
+  win.scrollTo({ top, behavior: scrollBehavior(win) });
 }

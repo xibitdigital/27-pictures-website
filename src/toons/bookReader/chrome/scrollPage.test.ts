@@ -16,8 +16,8 @@ function box(top: number): { getBoundingClientRect: () => { top: number } } {
 }
 
 describe("scrollPage", () => {
-  it("advances 80% of the viewport", () => {
-    expect(SCROLL_PAGE_FRACTION).toBe(0.8);
+  it("advances 90% of the viewport", () => {
+    expect(SCROLL_PAGE_FRACTION).toBe(0.9);
   });
 
   it("hides once the remaining strip is a few pixels", () => {
@@ -29,16 +29,15 @@ describe("scrollPage", () => {
   });
 
   it("aligns the next plate just under the chrome when that is within the jump", () => {
-    // Viewport 1000 → jump 800. Next plate starts at 500 in the viewport.
     const align = nextPageAlignY([box(0), box(500)], 0, 40);
     expect(align).toBe(460);
     expect(scrollTargetY(0, 1000, align)).toBe(460);
   });
 
-  it("keeps the 80% jump when the next plate is further away", () => {
+  it("keeps the 90% jump when the next plate is further away", () => {
     const align = nextPageAlignY([box(0), box(2000)], 0, 40);
     expect(align).toBe(1960);
-    expect(scrollTargetY(0, 1000, align)).toBe(800);
+    expect(scrollTargetY(0, 1000, align)).toBe(900);
   });
 
   it("skips a plate already sitting under the chrome", () => {
@@ -50,12 +49,11 @@ describe("scrollPage", () => {
     // Load / reader padding: plate 1 a few px below the bar. Old logic snapped ~40px.
     expect(nextPageAlignY([box(12), box(1500)], 0, 50)).toBe(1450);
     expect(nextPageAlignY([box(80), box(1500)], 0, 50)).toBe(1450);
-    expect(scrollTargetY(0, 1000, 1450)).toBe(800);
+    expect(scrollTargetY(0, 1000, 1450)).toBe(900);
   });
 
-  it("snaps when the next plate is on this screen, even if past the 80% jump", () => {
-    // 80% of 1000 is 800; next plate at 900 would have been a leftover ~100px click.
-    expect(scrollTargetY(0, 1000, 900)).toBe(900);
+  it("snaps when the next plate is on this screen, even if past the 90% jump", () => {
+    expect(scrollTargetY(0, 1000, 950)).toBe(950);
     // Nero-sized plate on a phone: 858 vs 844 — one pixel past the viewport.
     expect(scrollTargetY(0, 844, 858)).toBe(858);
   });
@@ -70,10 +68,10 @@ describe("scrollPage", () => {
       scrollTo,
     } as unknown as Window;
     scrollPageDown(win, { pages: [] });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 560, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 630, behavior: "smooth" });
   });
 
-  it("scrolls by 80% of innerHeight, smooth unless reduced-motion", () => {
+  it("scrolls by 90% of innerHeight, smooth unless reduced-motion or a coarse pointer", () => {
     const scrollTo = vi.fn();
     const win = {
       innerHeight: 1000,
@@ -82,7 +80,7 @@ describe("scrollPage", () => {
       scrollTo,
     } as unknown as Window;
     scrollPageDown(win, { pages: [] });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 800, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 900, behavior: "smooth" });
 
     const reduce = {
       innerHeight: 1000,
@@ -92,7 +90,17 @@ describe("scrollPage", () => {
     } as unknown as Window;
     scrollTo.mockClear();
     scrollPageDown(reduce, { pages: [] });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 800, behavior: "auto" });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 900, behavior: "auto" });
+
+    const coarse = {
+      innerHeight: 1000,
+      scrollY: 0,
+      matchMedia: (q: string) => ({ matches: q.includes("pointer: coarse") }),
+      scrollTo,
+    } as unknown as Window;
+    scrollTo.mockClear();
+    scrollPageDown(coarse, { pages: [] });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 900, behavior: "auto" });
   });
 
   it("snaps to the next plate on the last press of a page", () => {

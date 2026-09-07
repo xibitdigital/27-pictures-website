@@ -23,10 +23,10 @@ describe("ScrollDownButton", () => {
     expect(btn.attributes("type")).toBe("button");
   });
 
-  it("scrolls 80% of the viewport on press when the next plate is further away", async () => {
+  it("scrolls 90% of the viewport on press when the next plate is further away", async () => {
     const w = mount(ScrollDownButton);
     await w.get("[data-scroll-down]").trigger("click");
-    expect(scrollTo).toHaveBeenCalledWith({ top: 640, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 720, behavior: "smooth" });
   });
 
   it("snaps the next plate just under the chrome on the last press", async () => {
@@ -45,7 +45,7 @@ describe("ScrollDownButton", () => {
       }) as DOMRect;
     const w = mount(ScrollDownButton, { props: { pages: [next] } });
     await w.get("[data-scroll-down]").trigger("click");
-    // Default chrome 4 + 4px gap → align at 400 - 8 = 392, within the 640 jump.
+    // Default chrome 4 + 4px gap → align at 400 - 8 = 392, within the 720 jump.
     expect(scrollTo).toHaveBeenCalledWith({ top: 392, behavior: "smooth" });
   });
 });
