@@ -580,6 +580,7 @@ defineExpose<ToonReaderShellExpose>({
   <a
     :href="toonsHubHref"
     class="toons-back"
+    data-reader-chrome
     title="27 Pictures — Experiments"
     aria-label="27 Pictures - Back to Experiments"
   >
@@ -642,7 +643,7 @@ defineExpose<ToonReaderShellExpose>({
        the whole viewport, so there is no line to draw. -->
   <AutoReadBand v-if="viewMode.isVertical.value && autoRead.unlocked.value" :band-end="FOCUS_BAND_END" />
 
-  <ScrollDownButton v-if="viewMode.isVertical.value && !dialogOpen && !scrollHowToOpen" />
+  <ScrollDownButton v-if="viewMode.isVertical.value && !dialogOpen && !scrollHowToOpen" :pages="stripSlots" />
 
   <main class="reader" id="main-content" ref="readerEl" role="main">
     <BookSurface

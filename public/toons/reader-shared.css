@@ -369,8 +369,13 @@ body.toons-reader > .page-breadcrumb li {
   line-height: inherit;
 }
 
+/* Chrome: Home › series › episode. Keep Toons in the HTML/JSON-LD trail. */
+body.toons-reader > .page-breadcrumb li:nth-child(2) {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  /* Toons › series, on the logo row — drop Home and the episode. */
+  /* Series on the logo row — drop Home, Toons, and the episode. */
   body.toons-reader > .page-breadcrumb {
     left: calc(1rem + 2.5rem + 0.75rem);
     right: 10.75rem;
@@ -391,18 +396,27 @@ body.toons-reader > .page-breadcrumb li {
     display: none;
   }
 
-  body.toons-reader > .page-breadcrumb li:first-child + li::before {
+  body.toons-reader > .page-breadcrumb li:nth-child(3)::before {
     content: none;
   }
 
-  body.toons-reader > .page-breadcrumb li:nth-last-child(2) {
+  /* Ungrouped (Home › Toons › episode): Toons is gone, so keep the title. */
+  body.toons-reader > .page-breadcrumb ol:not(:has(li:nth-child(4))) li:last-child {
+    display: flex;
+  }
+
+  body.toons-reader > .page-breadcrumb ol:not(:has(li:nth-child(4))) li:last-child::before {
+    content: none;
+  }
+
+  body.toons-reader > .page-breadcrumb li:nth-child(3) {
     min-width: 0;
     flex-shrink: 1;
     max-width: 100%;
     overflow: hidden;
   }
 
-  body.toons-reader > .page-breadcrumb li:nth-last-child(2) a {
+  body.toons-reader > .page-breadcrumb li:nth-child(3) a {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;

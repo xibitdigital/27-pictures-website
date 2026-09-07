@@ -26,7 +26,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="toon-top-controls" :class="{ 'is-highlight-pulse': highlightPulse }">
+  <div class="toon-top-controls" data-reader-chrome :class="{ 'is-highlight-pulse': highlightPulse }">
     <slot name="start" />
     <ViewModeToggle v-if="!hideViewToggle" :is-vertical="isVertical" @toggle="emit('toggle-view')" />
     <slot name="mid" />

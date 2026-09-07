@@ -3,11 +3,11 @@ import { mount } from "@vue/test-utils";
 import ScrollDownButton from "./ScrollDownButton.vue";
 
 describe("ScrollDownButton", () => {
-  const scrollBy = vi.fn();
+  const scrollTo = vi.fn();
 
   beforeEach(() => {
-    scrollBy.mockReset();
-    Object.defineProperty(window, "scrollBy", { configurable: true, value: scrollBy });
+    scrollTo.mockReset();
+    Object.defineProperty(window, "scrollTo", { configurable: true, value: scrollTo });
     Object.defineProperty(window, "innerHeight", { configurable: true, value: 800 });
     Object.defineProperty(window, "scrollY", { configurable: true, value: 0 });
   });
@@ -23,9 +23,29 @@ describe("ScrollDownButton", () => {
     expect(btn.attributes("type")).toBe("button");
   });
 
-  it("scrolls 80% of the viewport on press", async () => {
+  it("scrolls 80% of the viewport on press when the next plate is further away", async () => {
     const w = mount(ScrollDownButton);
     await w.get("[data-scroll-down]").trigger("click");
-    expect(scrollBy).toHaveBeenCalledWith({ top: 640, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 640, behavior: "smooth" });
+  });
+
+  it("snaps the next plate just under the chrome on the last press", async () => {
+    const next = document.createElement("div");
+    next.getBoundingClientRect = () =>
+      ({
+        top: 400,
+        bottom: 1400,
+        height: 1000,
+        left: 0,
+        right: 0,
+        width: 0,
+        x: 0,
+        y: 400,
+        toJSON: () => {},
+      }) as DOMRect;
+    const w = mount(ScrollDownButton, { props: { pages: [next] } });
+    await w.get("[data-scroll-down]").trigger("click");
+    // Default chrome 4 + 4px gap → align at 400 - 8 = 392, within the 640 jump.
+    expect(scrollTo).toHaveBeenCalledWith({ top: 392, behavior: "smooth" });
   });
 });

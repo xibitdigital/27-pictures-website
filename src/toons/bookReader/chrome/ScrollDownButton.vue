@@ -8,6 +8,11 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { useFlipframeCopy } from "../flipframeCopy";
 import { canScrollPageDown, docScrollHeight, scrollPageDown, viewHeight } from "./scrollPage";
 
+const props = defineProps<{
+  /** Vertical-strip page slots, document order. Used to snap the next plate. */
+  pages?: HTMLElement[];
+}>();
+
 const t = useFlipframeCopy();
 const atEnd = ref(false);
 
@@ -46,7 +51,7 @@ onUnmounted(() => {
     data-scroll-down
     :title="t.scrollDown"
     :aria-label="t.scrollDown"
-    @click="scrollPageDown()"
+    @click="scrollPageDown(window, { pages: props.pages ?? [] })"
   >
     <ChevronDown aria-hidden="true" />
   </button>
