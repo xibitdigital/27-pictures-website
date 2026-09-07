@@ -425,7 +425,7 @@ async function onSubmit(ev: Event): Promise<void> {
                 />
                 <EditorSelect v-model="slot.kind" :name="`slot-kind-${index}`" :aria-label="`Slot ${index + 1} kind`">
                   <EditorSelectItem value="sheet">Sheet</EditorSelectItem>
-                  <EditorSelectItem value="previous">Previous page</EditorSelectItem>
+                  <EditorSelectItem value="previous">Previous</EditorSelectItem>
                 </EditorSelect>
                 <EditorCheckbox
                   v-if="slot.kind === 'sheet'"
