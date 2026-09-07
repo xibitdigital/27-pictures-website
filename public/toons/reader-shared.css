@@ -1907,6 +1907,21 @@ body.single-page .flip-page.flipping.from-left {
     gap: 0.7rem;
   }
 
+  /* Scroll mode: plates flush to the screen edges. Book mode keeps the
+     side gutter so the page-turn discs are not clipped.
+     `align-self: stretch` + 100vw: a `width: 100%` strip inside body's
+     `align-items: center` column can resolve to 0 on iOS (cyclic %). */
+  body.view-vertical .reader {
+    padding-left: 0;
+    padding-right: 0;
+    align-self: stretch;
+  }
+
+  body.view-vertical .vertical-strip {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
   /* Bottom edge on phones; padding-bottom keeps the fill above the home bar. */
   .toon-progress {
     top: auto;
