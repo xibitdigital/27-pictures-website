@@ -72,7 +72,7 @@ describe("scrollPage", () => {
     expect(scrollTo).toHaveBeenCalledWith({ top: 630, behavior: "smooth" });
   });
 
-  it("scrolls by 90% of innerHeight, smooth unless reduced-motion or a coarse pointer", () => {
+  it("scrolls by 90% of innerHeight, smooth unless reduced-motion", () => {
     const scrollTo = vi.fn();
     const win = {
       innerHeight: 1000,
@@ -101,7 +101,7 @@ describe("scrollPage", () => {
     } as unknown as Window;
     scrollTo.mockClear();
     scrollPageDown(coarse, { pages: [] });
-    expect(scrollTo).toHaveBeenCalledWith(0, 900);
+    expect(scrollTo).toHaveBeenCalledWith({ top: 900, behavior: "smooth" });
   });
 
   it("signals a user scroll so the deep-link retry cannot yank back", () => {

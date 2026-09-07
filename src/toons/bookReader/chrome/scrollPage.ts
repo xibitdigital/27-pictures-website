@@ -84,10 +84,8 @@ export function scrollTargetY(scrollY: number, viewH: number, nextAlignY: number
   return jumpTo;
 }
 
-/** Instant on phones: iOS Safari often cancels `behavior: smooth` from a tap. */
 export function scrollBehavior(win: Window = window): ScrollBehavior {
   if (win.matchMedia("(prefers-reduced-motion: reduce)").matches) return "auto";
-  if (win.matchMedia("(pointer: coarse)").matches) return "auto";
   return "smooth";
 }
 
