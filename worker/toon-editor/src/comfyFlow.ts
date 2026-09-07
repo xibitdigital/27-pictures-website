@@ -55,12 +55,53 @@ export function loadImageIds(graph: ComfyGraph): string[] {
   return ordered;
 }
 
+function pinIndex(pin: string): string | null {
+  const match = pin.match(/(\d+)$/);
+  return match ? match[1] : null;
+}
+
+/**
+ * Pair each Seedream LoadImage node with the series slot that should fill it.
+ * Prefer loadNodeId / rendererInput; then "Image N" in the slot label (so an
+ * older D1 row that listed K before Ivy still lands on image_1 if titled Ivy).
+ */
+export function matchSlotsToLoadNodes(
+  graph: ComfyGraph,
+  slots: SeriesFlowSlot[]
+): { nodeId: string; slot: SeriesFlowSlot }[] {
+  const ids = loadImageIds(graph);
+  const seedreamId = Object.keys(graph).find((id) => SEEDREAM.has(String(graph[id]?.class_type || "")));
+  const pins = seedreamId ? seedreamImagePins(graph[seedreamId]?.inputs || {}) : [];
+  const pinByNode = new Map(pins.map((p) => [p.nodeId, p.pin]));
+  const used = new Set<number>();
+  const out: { nodeId: string; slot: SeriesFlowSlot }[] = [];
+  for (const nodeId of ids) {
+    const pin = pinByNode.get(nodeId);
+    const n = pin ? pinIndex(pin) : null;
+    const title = titleOf(graph[nodeId]);
+    let idx = slots.findIndex((slot, i) => !used.has(i) && slot.loadNodeId === nodeId);
+    if (idx < 0 && pin) idx = slots.findIndex((slot, i) => !used.has(i) && slot.rendererInput === pin);
+    if (idx < 0 && n) {
+      const re = new RegExp(`\\bimage[\\s_-]*0*${n}\\b`, "i");
+      idx = slots.findIndex((slot, i) => !used.has(i) && re.test(`${slot.label} ${slot.alias}`));
+    }
+    if (idx < 0 && title) idx = slots.findIndex((slot, i) => !used.has(i) && slot.label.trim() === title);
+    if (idx < 0) idx = slots.findIndex((_, i) => !used.has(i));
+    if (idx < 0) continue;
+    used.add(idx);
+    out.push({ nodeId, slot: slots[idx] });
+  }
+  return out;
+}
+
 export function applyLoadImages(
   graph: ComfyGraph,
   /** `null` skips that LoadImage node entirely — for a missing optional sheet slot, whatever file is already saved on that node stays. */
-  names: (string | null)[]
+  names: (string | null)[],
+  /** When set, `names[i]` writes to this LoadImage id (matched slot), not pin order. */
+  nodeIds?: string[]
 ): { ok: true; graph: ComfyGraph } | { ok: false; error: string } {
-  const ids = loadImageIds(graph);
+  const ids = nodeIds ?? loadImageIds(graph);
   if (names.length !== ids.length) {
     return { ok: false, error: `flow expects ${ids.length} images, got ${names.length}` };
   }
@@ -68,6 +109,7 @@ export function applyLoadImages(
   ids.forEach((id, i) => {
     const name = names[i];
     if (name == null) return;
+    if (!next[id] || String(next[id].class_type || "") !== "LoadImage") return;
     next[id] = { ...next[id], inputs: { ...(next[id].inputs || {}), image: name } };
   });
   return { ok: true, graph: next };
@@ -220,6 +262,7 @@ export function parseComfyApiGraph(
   const slots = loadIds.map((id, i) => ({
     ...slotFromLoadTitle(titleOf(graph[id]), i + 1),
     rendererInput: pinByNode.get(id) || null,
+    loadNodeId: id,
   }));
   const model = String(graph[seedreamId]?.inputs?.model || "").trim();
   return { ok: true, slots, model, promptCandidates: findPromptCandidates(graph) };
@@ -254,6 +297,7 @@ export function parseGenerateConfig(raw: unknown): SeriesGenerateConfig {
           fileUrl: null,
           rendererInput:
             typeof slot.rendererInput === "string" && slot.rendererInput.trim() ? slot.rendererInput.trim() : null,
+          loadNodeId: typeof slot.loadNodeId === "string" && slot.loadNodeId.trim() ? slot.loadNodeId.trim() : null,
         } as SeriesFlowSlot;
       })
       .filter((slot): slot is SeriesFlowSlot => Boolean(slot));
@@ -289,8 +333,22 @@ export function mergeGenerate(current: SeriesGenerateConfig, incoming: unknown):
   const slots = next.slots.map((slot) => {
     const prev = byAlias.get(slot.alias);
     const label = slot.label || prev?.label || `Image — ${slot.alias}`;
-    if (slot.kind === "previous") return { ...slot, label, fileKey: null };
-    return { ...slot, label, fileKey: slot.fileKey || prev?.fileKey || null };
+    if (slot.kind === "previous") {
+      return {
+        ...slot,
+        label,
+        fileKey: null,
+        loadNodeId: slot.loadNodeId || prev?.loadNodeId || null,
+        rendererInput: slot.rendererInput || prev?.rendererInput || null,
+      };
+    }
+    return {
+      ...slot,
+      label,
+      fileKey: slot.fileKey || prev?.fileKey || null,
+      loadNodeId: slot.loadNodeId || prev?.loadNodeId || null,
+      rendererInput: slot.rendererInput || prev?.rendererInput || null,
+    };
   });
   return {
     width: next.width,

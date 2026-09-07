@@ -180,6 +180,7 @@ function generatePayload() {
       kind: slot.kind,
       optional: slot.kind === "sheet" ? Boolean(slot.optional) : false,
       rendererInput: slot.rendererInput || null,
+      loadNodeId: slot.loadNodeId || null,
     })),
     promptTarget: nodeId && inputKey ? { nodeId, inputKey } : null,
   };

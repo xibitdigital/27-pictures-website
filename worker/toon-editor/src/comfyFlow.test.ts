@@ -4,6 +4,7 @@ import {
   applyPagePrompt,
   applySeed,
   findPromptCandidates,
+  matchSlotsToLoadNodes,
   mergeGenerate,
   parseComfyApiGraph,
   parseGenerateCount,
@@ -39,6 +40,7 @@ describe("parseComfyApiGraph", () => {
           fileKey: null,
           fileUrl: null,
           rendererInput: null,
+          loadNodeId: "1",
         },
         {
           alias: "previous",
@@ -47,6 +49,7 @@ describe("parseComfyApiGraph", () => {
           fileKey: null,
           fileUrl: null,
           rendererInput: null,
+          loadNodeId: "2",
         },
       ],
       promptCandidates: [],
@@ -81,6 +84,7 @@ describe("parseComfyApiGraph", () => {
       "Image 4 — previous page",
     ]);
     expect(parsed.slots.map((s) => s.rendererInput)).toEqual(["image_1", "image_2", "image_3", "image_4"]);
+    expect(parsed.slots.map((s) => s.loadNodeId)).toEqual(["2", "1", "10", "11"]);
     expect(parsed.slots[3].kind).toBe("previous");
   });
 
@@ -115,6 +119,42 @@ describe("parseGenerateCount", () => {
     expect(parseGenerateCount("3")).toBe(3);
     expect(parseGenerateCount(9)).toBe(4);
     expect(parseGenerateCount(0)).toBe(1);
+  });
+});
+
+describe("matchSlotsToLoadNodes", () => {
+  const ivyGraph = {
+    "1": { class_type: "LoadImage", _meta: { title: "Image 2 - K" } },
+    "2": { class_type: "LoadImage", _meta: { title: "Image 1 - Ivy" } },
+    "6": {
+      class_type: "ByteDanceSeedreamNodeV3",
+      inputs: {
+        "model.images.image_1": ["2", 0],
+        "model.images.image_2": ["1", 0],
+      },
+    },
+  };
+
+  it("pairs an id-order D1 row (K then Ivy) to Seedream cables via Image N labels", () => {
+    const paired = matchSlotsToLoadNodes(ivyGraph, [
+      { alias: "image-2-k", label: "Image 2 - K", kind: "sheet" },
+      { alias: "image-1-ivy", label: "Image 1 - Ivy", kind: "sheet" },
+    ]);
+    expect(paired.map((p) => [p.nodeId, p.slot.alias])).toEqual([
+      ["2", "image-1-ivy"],
+      ["1", "image-2-k"],
+    ]);
+  });
+
+  it("prefers stored loadNodeId over slot array order", () => {
+    const paired = matchSlotsToLoadNodes(ivyGraph, [
+      { alias: "k", label: "K", kind: "sheet", loadNodeId: "1" },
+      { alias: "ivy", label: "Ivy", kind: "sheet", loadNodeId: "2" },
+    ]);
+    expect(paired.map((p) => [p.nodeId, p.slot.alias])).toEqual([
+      ["2", "ivy"],
+      ["1", "k"],
+    ]);
   });
 });
 
@@ -163,6 +203,25 @@ describe("applyLoadImages", () => {
     if (!out.ok) return;
     expect(out.graph["2"].inputs?.image).toBe("ivy.png");
     expect(out.graph["1"].inputs?.image).toBe("k.png");
+  });
+
+  it("writes names onto explicit node ids even when that disagrees with pin order", () => {
+    const graph = {
+      "1": { class_type: "LoadImage", inputs: { image: "old-k.png" } },
+      "2": { class_type: "LoadImage", inputs: { image: "old-ivy.png" } },
+      "6": {
+        class_type: "ByteDanceSeedreamNodeV3",
+        inputs: {
+          "model.images.image_1": ["2", 0],
+          "model.images.image_2": ["1", 0],
+        },
+      },
+    };
+    const out = applyLoadImages(graph, ["k.png", "ivy.png"], ["1", "2"]);
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.graph["1"].inputs?.image).toBe("k.png");
+    expect(out.graph["2"].inputs?.image).toBe("ivy.png");
   });
 
   it("leaves a LoadImage node untouched when its name is null (missing optional sheet)", () => {

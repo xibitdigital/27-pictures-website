@@ -109,6 +109,8 @@ export interface SeriesFlowSlot {
   fileUrl?: string | null;
   /** Seedream pin this LoadImage is wired to, e.g. `image_1`. */
   rendererInput?: string | null;
+  /** Comfy LoadImage node id this slot writes to. */
+  loadNodeId?: string | null;
 }
 
 /** One node input in the uploaded flow that could receive the page prompt. */

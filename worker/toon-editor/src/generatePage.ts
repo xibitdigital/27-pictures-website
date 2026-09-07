@@ -12,6 +12,7 @@ import {
   applyPagePrompt,
   applyPlateSize,
   applySeed,
+  matchSlotsToLoadNodes,
   parseGenerateConfig,
   parseGenerateCount,
   type ComfyGraph,
@@ -104,12 +105,14 @@ export async function startPageGenerate(
   }
 
   const names: (string | null)[] = [];
-  for (const slot of generate.slots) {
+  const nodeIds: string[] = [];
+  for (const { nodeId, slot } of matchSlotsToLoadNodes(graph, generate.slots)) {
     let bytes: ArrayBuffer | null;
     if (slot.kind === "previous" && input.previousOverride) {
       bytes = input.previousOverride.bytes;
     } else if (slot.kind === "previous" && !previousKey) {
       names.push(null);
+      nodeIds.push(nodeId);
       continue;
     } else {
       const key = slot.kind === "previous" ? previousKey : slot.fileKey;
@@ -117,6 +120,7 @@ export async function startPageGenerate(
         if (slot.kind === "sheet" && slot.optional) {
           // No file and nothing required — leave this LoadImage node as-is in the graph.
           names.push(null);
+          nodeIds.push(nodeId);
           continue;
         }
         return { ok: false, error: `missing reference: ${slot.label || slot.alias}`, status: 400 };
@@ -128,9 +132,10 @@ export async function startPageGenerate(
     const uploaded = await comfyUploadImage(env, bytes, `${slot.alias}.${kind.ext}`);
     if (!uploaded.ok) return { ok: false, error: uploaded.error, status: 502 };
     names.push(uploaded.name);
+    nodeIds.push(nodeId);
   }
 
-  const withImages = applyLoadImages(graph, names);
+  const withImages = applyLoadImages(graph, names, nodeIds);
   if (!withImages.ok) return { ok: false, error: withImages.error, status: 400 };
   let next = applyPagePrompt(withImages.graph, input.prompt, generate.promptTarget);
   next = applyPlateSize(next, generate.width, generate.height);
@@ -159,6 +164,7 @@ export async function startPageGenerate(
         includePrevious: input.includePrevious,
         previousPageId: input.previousPageId || null,
         names,
+        nodeIds,
         width: generate.width,
         height: generate.height,
         count,
