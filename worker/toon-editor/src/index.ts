@@ -655,9 +655,10 @@ async function putImage(env: Env, key: string, bytes: ArrayBuffer, contentType: 
 }
 
 async function putPageAsset(env: Env, slug: string, upload: ImageUpload) {
-  const hash = await sha256Hex(upload.bytes);
-  const key = `editor/${slug}/assets/${hash}.${upload.ext}`;
-  await putImage(env, key, upload.bytes, upload.type);
+  const optimized = await toWebp(upload);
+  const hash = await sha256Hex(optimized.bytes);
+  const key = `editor/${slug}/assets/${hash}.${optimized.ext}`;
+  await putImage(env, key, optimized.bytes, optimized.type);
   return key;
 }
 

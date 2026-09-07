@@ -2,7 +2,8 @@
 /**
  * One-shot: image -> watermark -> WebP -> R2 -> config.json.
  *
- * Takes a source plate, bakes the site watermark, converts to WebP,
+ * Takes a source plate, bakes the site watermark, converts to WebP
+ * (skipped when the file is already WebP — no second lossy encode),
  * content-hashes it, uploads straight to R2 (public/ is never touched —
  * it's dev-serving / add-image staging, not a CDN detour), then either
  * replaces an existing page's `file` (keeping its captions) or appends a
@@ -84,14 +85,14 @@ function printHelp() {
                   N <= count replaces. There is no insert — PAGE=4 on a 17-page
                   book overwrites page 4. Mid-list insert: Claude.md
                   → “Adding a new toon page image”.
-  --quality N     WebP quality, default 90
+  --quality N     WebP quality, default 90. Ignored when the source is already WebP.
   --no-watermark  Skip baking the site watermark (use on already-stamped files)
   --text TEXT     Watermark text, default "twentyseven.pictures"
   --publish       Also publish config.json to R2 (default: prints the command)
   --dry-run       Report what would happen, write and upload nothing
 
 Pipeline: flatten the source yourself, then this script watermarks, converts
-to WebP, content-hashes, uploads to R2, and rewrites config.json.
+to WebP (PNG/JPEG only), content-hashes, uploads to R2, and rewrites config.json.
 Replacing a page keeps its existing captions — check panel gutters still match
 or captions drift (see content/toons/<toon>/README.md).
 `);
@@ -136,6 +137,7 @@ function main() {
   }
   const willAppend = targetPage === pageCount + 1;
   const oldFile = willAppend ? null : config.pages[targetPage - 1].file;
+  const alreadyWebp = path.extname(src).toLowerCase() === ".webp";
 
   console.log(`${opts.toon} page ${targetPage}${willAppend ? " (new)" : ` (replacing ${oldFile})`}`);
   console.log(`  source: ${path.relative(process.cwd(), src)}`);
@@ -148,7 +150,7 @@ function main() {
 
   if (opts.dryRun) {
     console.log(`  watermark: ${opts.watermark ? `"${opts.text}"` : "skipped"}`);
-    console.log(`  convert:   webp q${opts.quality}`);
+    console.log(`  convert:   ${alreadyWebp ? "skipped (already webp)" : `webp q${opts.quality}`}`);
     console.log(`  upload:    toons/${opts.toon}/assets/<md5>.webp`);
     console.log(
       `  config:    ${willAppend ? "append page" : `replace pages[${targetPage - 1}].file`}, words[] untouched`
@@ -172,19 +174,28 @@ function main() {
       console.log("  watermarked");
     }
 
-    const webpPath = path.join(tmp, "plate.webp");
-    magick([staged, "-quality", String(opts.quality), "-define", "webp:method=6", webpPath]);
-    const bytes = fs.readFileSync(webpPath);
+    const hashedPath = path.join(tmp, "out.webp");
+    let bytes;
+    if (path.extname(staged).toLowerCase() === ".webp") {
+      bytes = fs.readFileSync(staged);
+      fs.copyFileSync(staged, hashedPath);
+      console.log(`  webp: ${Math.round(bytes.length / 1024)}KB (already webp, not recompressed)`);
+    } else {
+      magick([staged, "-quality", String(opts.quality), "-define", "webp:method=6", hashedPath]);
+      bytes = fs.readFileSync(hashedPath);
+      console.log(
+        `  webp: ${Math.round(fs.statSync(src).size / 1024)}KB -> ${Math.round(bytes.length / 1024)}KB (q${
+          opts.quality
+        })`
+      );
+    }
     const hash = crypto.createHash("md5").update(bytes).digest("hex");
     const hashedName = `${hash}.webp`;
-    const hashedPath = path.join(tmp, hashedName);
-    fs.renameSync(webpPath, hashedPath);
-    console.log(
-      `  webp: ${Math.round(fs.statSync(src).size / 1024)}KB -> ${Math.round(bytes.length / 1024)}KB (q${opts.quality})`
-    );
+    const hashedFile = path.join(tmp, hashedName);
+    fs.renameSync(hashedPath, hashedFile);
 
     const key = `toons/${opts.toon}/assets/${hashedName}`;
-    if (!putObject(hashedPath, { key })) {
+    if (!putObject(hashedFile, { key })) {
       throw new Error(`upload failed for ${key}`);
     }
 

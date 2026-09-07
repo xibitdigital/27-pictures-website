@@ -26,12 +26,24 @@ import { toWebp } from "./imageOptimize";
 
 describe("toWebp", () => {
   afterEach(() => {
+    vi.mocked(encodeWebp).mockClear();
     vi.mocked(encodeWebp).mockResolvedValue(new ArrayBuffer(8));
   });
 
   it("passes webp through unchanged", async () => {
     const image = { bytes: new ArrayBuffer(4), ext: "webp", type: "image/webp" };
     expect(await toWebp(image)).toBe(image);
+    expect(encodeWebp).not.toHaveBeenCalled();
+  });
+
+  it("does not recompress webp even when the declared type is wrong", async () => {
+    const header = new Uint8Array([0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50]);
+    const image = { bytes: header.buffer, ext: "png", type: "image/png" };
+    const out = await toWebp(image);
+    expect(out.bytes).toBe(image.bytes);
+    expect(out.ext).toBe("webp");
+    expect(out.type).toBe("image/webp");
+    expect(encodeWebp).not.toHaveBeenCalled();
   });
 
   it("re-encodes png to webp", async () => {

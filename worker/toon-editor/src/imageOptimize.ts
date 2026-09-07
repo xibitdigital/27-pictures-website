@@ -22,13 +22,22 @@ let webpReady: Promise<unknown> | null = null;
 
 export type ImageBytes = { bytes: ArrayBuffer; ext: string; type: string };
 
+function isWebpBytes(bytes: ArrayBuffer): boolean {
+  const u = new Uint8Array(bytes.slice(0, 12));
+  return u[0] === 0x52 && u[1] === 0x49 && u[2] === 0x46 && u[3] === 0x46 && u[8] === 0x57 && u[9] === 0x45;
+}
+
 /**
  * Returns the plate re-encoded as WebP, or the original bytes unchanged if
  * it's already WebP, an unrecognised format, or encoding fails for any
  * reason — a heavier plate beats a broken generation.
  */
 export async function toWebp(image: ImageBytes): Promise<ImageBytes> {
-  if (image.ext === "webp") return image;
+  if (image.ext === "webp" || image.type === "image/webp" || isWebpBytes(image.bytes)) {
+    return image.ext === "webp" && image.type === "image/webp"
+      ? image
+      : { bytes: image.bytes, ext: "webp", type: "image/webp" };
+  }
   if (image.ext !== "png" && image.ext !== "jpg" && image.ext !== "jpeg") return image;
   try {
     let imageData;
