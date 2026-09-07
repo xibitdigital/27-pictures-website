@@ -7,6 +7,9 @@ export const SCROLL_END_PX = 8;
 /** Treat a plate as already aligned if its snap Y is this close to the current scroll. */
 export const PAGE_ALIGN_EPS_PX = 8;
 
+/** Smaller than this is a leftover nudge — skip it and page-down instead. */
+export const PAGE_NUDGE_PX = 80;
+
 /** Fallback clearance when no `[data-reader-chrome]` is on screen (progress hairline). */
 export const DEFAULT_CHROME_OFFSET_PX = 4;
 
@@ -53,22 +56,31 @@ export function pageAlignY(pageTop: number, chromeOffset: number): number {
 }
 
 /**
- * First plate below the current scroll that is not already aligned under the
- * chrome. `pages` is document order (strip slots).
+ * First plate whose top is still below the chrome — the next one, not the
+ * current plate sitting a few pixels under the bar (that used to eat a press
+ * as a ~40px nudge before the real page-down).
  */
 export function nextPageAlignY(pages: PageBox[], scrollY: number, chromeOffset: number): number | null {
   for (const page of pages) {
-    const top = page.getBoundingClientRect().top + scrollY;
-    const align = pageAlignY(top, chromeOffset);
-    if (align > scrollY + PAGE_ALIGN_EPS_PX) return align;
+    const viewportTop = page.getBoundingClientRect().top;
+    if (viewportTop <= chromeOffset + PAGE_ALIGN_EPS_PX) continue;
+    const align = pageAlignY(viewportTop + scrollY, chromeOffset);
+    if (align - scrollY < PAGE_NUDGE_PX) continue;
+    return align;
   }
   return null;
 }
 
-/** Snap to the next plate when this jump would reach or pass it; otherwise page-down. */
+/**
+ * Page-down 80% while the next plate is more than a screen away.
+ * If it already starts on this screen (or would be a leftover nudge after
+ * 80%), snap it under the chrome so that press is not wasted.
+ */
 export function scrollTargetY(scrollY: number, viewH: number, nextAlignY: number | null): number {
   const jumpTo = scrollY + viewH * SCROLL_PAGE_FRACTION;
-  if (nextAlignY != null && nextAlignY <= jumpTo) return nextAlignY;
+  // Include PAGE_NUDGE so a plate that starts just past one screen (Nero
+  // mobile: 858 vs 844) snaps now, instead of an 80% jump plus a leftover tap.
+  if (nextAlignY != null && nextAlignY <= scrollY + viewH + PAGE_NUDGE_PX) return nextAlignY;
   return jumpTo;
 }
 

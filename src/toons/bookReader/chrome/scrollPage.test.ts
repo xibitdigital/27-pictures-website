@@ -42,9 +42,22 @@ describe("scrollPage", () => {
   });
 
   it("skips a plate already sitting under the chrome", () => {
-    // Current scroll 100; first plate's align is 100 - within eps.
     const align = nextPageAlignY([box(40), box(900)], 100, 40);
     expect(align).toBe(960);
+  });
+
+  it("does not spend a press micro-snapping the current plate up to the chrome", () => {
+    // Load / reader padding: plate 1 a few px below the bar. Old logic snapped ~40px.
+    expect(nextPageAlignY([box(12), box(1500)], 0, 50)).toBe(1450);
+    expect(nextPageAlignY([box(80), box(1500)], 0, 50)).toBe(1450);
+    expect(scrollTargetY(0, 1000, 1450)).toBe(800);
+  });
+
+  it("snaps when the next plate is on this screen, even if past the 80% jump", () => {
+    // 80% of 1000 is 800; next plate at 900 would have been a leftover ~100px click.
+    expect(scrollTargetY(0, 1000, 900)).toBe(900);
+    // Nero-sized plate on a phone: 858 vs 844 — one pixel past the viewport.
+    expect(scrollTargetY(0, 844, 858)).toBe(858);
   });
 
   it("prefers visualViewport height when the browser reports one", () => {
