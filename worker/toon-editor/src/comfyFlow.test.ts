@@ -32,11 +32,56 @@ describe("parseComfyApiGraph", () => {
       ok: true,
       model: "seedream 5.0 pro",
       slots: [
-        { alias: "erin-sheet", label: "Image 1 — Erin sheet", kind: "sheet", fileKey: null, fileUrl: null },
-        { alias: "previous", label: "Image 2 — previous page", kind: "previous", fileKey: null, fileUrl: null },
+        {
+          alias: "erin-sheet",
+          label: "Image 1 — Erin sheet",
+          kind: "sheet",
+          fileKey: null,
+          fileUrl: null,
+          rendererInput: null,
+        },
+        {
+          alias: "previous",
+          label: "Image 2 — previous page",
+          kind: "previous",
+          fileKey: null,
+          fileUrl: null,
+          rendererInput: null,
+        },
       ],
       promptCandidates: [],
     });
+  });
+
+  it("orders slots by Seedream image_N cables, not LoadImage node ids", () => {
+    // Same pin map as ~/Downloads/ivy-bloom (8).json: node 1 is titled K,
+    // node 2 is Ivy, but image_1 is wired to node 2.
+    const parsed = parseComfyApiGraph({
+      "1": { class_type: "LoadImage", _meta: { title: "Image 2 - K" } },
+      "2": { class_type: "LoadImage", _meta: { title: "Image 1 - Ivy" } },
+      "10": { class_type: "LoadImage", _meta: { title: "Image 3 - Ink" } },
+      "11": { class_type: "LoadImage", _meta: { title: "Image 4 — previous page" } },
+      "6": {
+        class_type: "ByteDanceSeedreamNodeV3",
+        inputs: {
+          model: "seedream 5.0 pro",
+          "model.images.image_1": ["2", 0],
+          "model.images.image_2": ["1", 0],
+          "model.images.image_3": ["10", 0],
+          "model.images.image_4": ["11", 0],
+        },
+      },
+    });
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.slots.map((s) => s.label)).toEqual([
+      "Image 1 - Ivy",
+      "Image 2 - K",
+      "Image 3 - Ink",
+      "Image 4 — previous page",
+    ]);
+    expect(parsed.slots.map((s) => s.rendererInput)).toEqual(["image_1", "image_2", "image_3", "image_4"]);
+    expect(parsed.slots[3].kind).toBe("previous");
   });
 
   it("accepts the legacy Seedream node", () => {
@@ -99,6 +144,25 @@ describe("applyLoadImages", () => {
     expect(out.graph["1"].inputs?.image).toBe("erin.png");
     expect(out.graph["2"].inputs?.image).toBe("prev.png");
     expect(applyPagePrompt(out.graph, "Erin walks in.")["9"].inputs?.prompt).toBe("Erin walks in.");
+  });
+
+  it("writes files onto LoadImage nodes in Seedream pin order when node ids disagree", () => {
+    const graph = {
+      "1": { class_type: "LoadImage", inputs: { image: "old-k.png" } },
+      "2": { class_type: "LoadImage", inputs: { image: "old-ivy.png" } },
+      "6": {
+        class_type: "ByteDanceSeedreamNodeV3",
+        inputs: {
+          "model.images.image_1": ["2", 0],
+          "model.images.image_2": ["1", 0],
+        },
+      },
+    };
+    const out = applyLoadImages(graph, ["ivy.png", "k.png"]);
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.graph["2"].inputs?.image).toBe("ivy.png");
+    expect(out.graph["1"].inputs?.image).toBe("k.png");
   });
 
   it("leaves a LoadImage node untouched when its name is null (missing optional sheet)", () => {

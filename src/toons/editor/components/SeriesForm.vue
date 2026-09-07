@@ -179,6 +179,7 @@ function generatePayload() {
       label: (slot.label || slot.alias).trim(),
       kind: slot.kind,
       optional: slot.kind === "sheet" ? Boolean(slot.optional) : false,
+      rendererInput: slot.rendererInput || null,
     })),
     promptTarget: nodeId && inputKey ? { nodeId, inputKey } : null,
   };
@@ -227,6 +228,11 @@ async function onFlow(ev: Event): Promise<void> {
   } finally {
     uploadingFlow.value = false;
   }
+}
+
+function pickSlotFile(index: number): void {
+  const input = document.querySelector(`input[name="slot-file-${index}"]`);
+  if (input instanceof HTMLInputElement) input.click();
 }
 
 async function onSlotFile(index: number, ev: Event): Promise<void> {
@@ -405,8 +411,12 @@ async function onSubmit(ev: Event): Promise<void> {
             </template>
 
             <p class="editor-generate-label">Reference slots</p>
+            <p class="editor-muted">Order is Seedream’s image_1…N cables, not Comfy node ids.</p>
             <ol class="editor-slot-list">
               <li v-for="(slot, index) in slots" :key="`${index}-${slot.alias}`" class="editor-slot-row">
+                <span class="editor-muted" :data-renderer-input="slot.rendererInput || undefined">{{
+                  slot.rendererInput || `slot ${index + 1}`
+                }}</span>
                 <input
                   v-model="slot.label"
                   :name="`slot-label-${index}`"
@@ -427,15 +437,27 @@ async function onSubmit(ev: Event): Promise<void> {
                   Optional
                 </EditorCheckbox>
                 <span v-else></span>
-                <input
-                  v-if="slot.kind === 'sheet'"
-                  type="file"
-                  accept="image/webp,image/jpeg,image/png"
-                  :name="`slot-file-${index}`"
-                  :aria-label="`Slot ${index + 1} image`"
-                  @change="onSlotFile(index, $event)"
-                />
-                <span v-else class="editor-muted">Filled from the last plate</span>
+                <span>
+                  <input
+                    v-if="slot.kind === 'sheet'"
+                    type="file"
+                    accept="image/webp,image/jpeg,image/png"
+                    :name="`slot-file-${index}`"
+                    :aria-label="`Slot ${index + 1} image`"
+                    hidden
+                    @change="onSlotFile(index, $event)"
+                  />
+                  <button
+                    v-if="slot.kind === 'sheet'"
+                    class="editor-btn editor-btn--ghost"
+                    type="button"
+                    :name="`slot-file-pick-${index}`"
+                    @click="pickSlotFile(index)"
+                  >
+                    Attach
+                  </button>
+                  <span v-else class="editor-muted">Last plate</span>
+                </span>
                 <button
                   v-if="slot.fileUrl"
                   class="editor-slot-thumb"
@@ -446,27 +468,35 @@ async function onSubmit(ev: Event): Promise<void> {
                 >
                   <img :src="slot.fileUrl" alt="" />
                 </button>
-                <button
-                  class="editor-icon-btn"
-                  type="button"
-                  :name="`slot-up-${index}`"
-                  :disabled="index === 0"
-                  @click="moveSlot(index, -1)"
-                >
-                  ↑
-                </button>
-                <button
-                  class="editor-icon-btn"
-                  type="button"
-                  :name="`slot-down-${index}`"
-                  :disabled="index === slots.length - 1"
-                  @click="moveSlot(index, 1)"
-                >
-                  ↓
-                </button>
-                <button class="editor-icon-btn" type="button" :name="`slot-remove-${index}`" @click="removeSlot(index)">
-                  ×
-                </button>
+                <span v-else class="editor-slot-thumb" aria-hidden="true"></span>
+                <span class="editor-slot-actions">
+                  <button
+                    class="editor-icon-btn"
+                    type="button"
+                    :name="`slot-up-${index}`"
+                    :disabled="index === 0"
+                    @click="moveSlot(index, -1)"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    class="editor-icon-btn"
+                    type="button"
+                    :name="`slot-down-${index}`"
+                    :disabled="index === slots.length - 1"
+                    @click="moveSlot(index, 1)"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    class="editor-icon-btn"
+                    type="button"
+                    :name="`slot-remove-${index}`"
+                    @click="removeSlot(index)"
+                  >
+                    ×
+                  </button>
+                </span>
               </li>
             </ol>
             <button class="editor-btn editor-btn--ghost" type="button" name="add-slot" @click="addSlot">

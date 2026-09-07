@@ -193,7 +193,9 @@ function onSubmit(): void {
       </label>
       <ul v-if="generate?.slots.length" class="editor-dialog-slots">
         <li v-for="slot in generate.slots" :key="slot.alias">
-          <span>{{ slot.label || slot.alias }}</span>
+          <span>{{
+            slot.rendererInput ? `${slot.rendererInput} — ${slot.label || slot.alias}` : slot.label || slot.alias
+          }}</span>
           <span v-if="slot.kind === 'previous'" class="editor-muted">{{
             previousFile
               ? "custom file"

@@ -119,6 +119,37 @@ describe("SeriesForm", () => {
     wrapper.unmount();
   });
 
+  it("shows which Seedream pin each slot is wired to", async () => {
+    vi.spyOn(api, "getSeries").mockResolvedValue({
+      series: {
+        key: "ivy",
+        title: "Ivy",
+        generate: {
+          width: 1152,
+          height: 1728,
+          model: "seedream 5.0 pro",
+          flowKey: "flow.json",
+          flowUrl: "/flow.json",
+          slots: [
+            { alias: "ivy", label: "Ivy", kind: "sheet", rendererInput: "image_1" },
+            { alias: "k", label: "K", kind: "sheet", rendererInput: "image_2" },
+          ],
+          promptCandidates: [],
+          promptTarget: null,
+        },
+      },
+      toons: [],
+    });
+    useRoute.mockReturnValue({ name: "series-edit", params: { key: "ivy" } });
+    const wrapper = mount(SeriesForm, {
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true } },
+    });
+    await flushPromises();
+    expect(wrapper.get("[data-renderer-input='image_1']").text()).toBe("image_1");
+    expect(wrapper.get("[data-renderer-input='image_2']").text()).toBe("image_2");
+    wrapper.unmount();
+  });
+
   it("lets the user pick a prompt target and saves it", async () => {
     vi.spyOn(api, "getSeries").mockResolvedValue({
       series: {

@@ -11,10 +11,48 @@ export type ComfyGraphNode = {
 };
 export type ComfyGraph = Record<string, ComfyGraphNode>;
 
+function linkNodeId(value: unknown): string | null {
+  if (Array.isArray(value) && typeof value[0] === "string" && value[0]) return value[0];
+  return null;
+}
+
+/** Seedream `model.images.image_1` (V3) or `image_1` / `image1` (legacy). */
+function seedreamImagePins(inputs: Record<string, unknown>): { pin: string; nodeId: string }[] {
+  const found: { n: number; pin: string; nodeId: string }[] = [];
+  for (const [key, value] of Object.entries(inputs)) {
+    const nodeId = linkNodeId(value);
+    if (!nodeId) continue;
+    const match = key.match(/(?:^|\.)image[_]?(\d+)$/i);
+    if (!match) continue;
+    found.push({ n: Number(match[1]), pin: `image_${match[1]}`, nodeId });
+  }
+  found.sort((a, b) => a.n - b.n);
+  return found.map(({ pin, nodeId }) => ({ pin, nodeId }));
+}
+
+/**
+ * LoadImage node ids in the order Seedream actually consumes them (image_1,
+ * image_2, …). Comfy Save-API keeps creation-order ids, which can disagree
+ * with titles and with the renderer cables — Ivy on node 2 wired to image_1.
+ */
 export function loadImageIds(graph: ComfyGraph): string[] {
-  return Object.keys(graph)
+  const all = Object.keys(graph)
     .filter((id) => String(graph[id]?.class_type || "") === "LoadImage")
     .sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
+  const seedreamId = Object.keys(graph).find((id) => SEEDREAM.has(String(graph[id]?.class_type || "")));
+  if (!seedreamId) return all;
+  const pins = seedreamImagePins(graph[seedreamId]?.inputs || {});
+  const ordered: string[] = [];
+  const seen = new Set<string>();
+  for (const { nodeId } of pins) {
+    if (String(graph[nodeId]?.class_type || "") !== "LoadImage" || seen.has(nodeId)) continue;
+    ordered.push(nodeId);
+    seen.add(nodeId);
+  }
+  for (const id of all) {
+    if (!seen.has(id)) ordered.push(id);
+  }
+  return ordered;
 }
 
 export function applyLoadImages(
@@ -172,15 +210,17 @@ export function parseComfyApiGraph(
     return { ok: false, error: "flow needs a ByteDanceSeedreamNodeV3 (or ByteDanceSeedreamNode) node" };
   }
 
-  const loadIds = ids
-    .filter((id) => String(graph[id]?.class_type || "") === "LoadImage")
-    .sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
+  const loadIds = loadImageIds(graph);
   if (!loadIds.length) return { ok: false, error: "flow needs at least one LoadImage (Image 1…N)" };
   if (loadIds.length > MAX_REFS) {
     return { ok: false, error: `flow has ${loadIds.length} LoadImage nodes; Seedream takes at most ${MAX_REFS}` };
   }
 
-  const slots = loadIds.map((id, i) => slotFromLoadTitle(titleOf(graph[id]), i + 1));
+  const pinByNode = new Map(seedreamImagePins(graph[seedreamId]?.inputs || {}).map((p) => [p.nodeId, p.pin]));
+  const slots = loadIds.map((id, i) => ({
+    ...slotFromLoadTitle(titleOf(graph[id]), i + 1),
+    rendererInput: pinByNode.get(id) || null,
+  }));
   const model = String(graph[seedreamId]?.inputs?.model || "").trim();
   return { ok: true, slots, model, promptCandidates: findPromptCandidates(graph) };
 }
@@ -212,6 +252,8 @@ export function parseGenerateConfig(raw: unknown): SeriesGenerateConfig {
           optional: kind === "sheet" ? Boolean(slot.optional) : false,
           fileKey,
           fileUrl: null,
+          rendererInput:
+            typeof slot.rendererInput === "string" && slot.rendererInput.trim() ? slot.rendererInput.trim() : null,
         } as SeriesFlowSlot;
       })
       .filter((slot): slot is SeriesFlowSlot => Boolean(slot));
