@@ -238,6 +238,21 @@ describe("ToonReaderShell", () => {
 
     expect(wrapper.find(".cover-guide-toolbar-btn").exists()).toBe(false);
     expect(wrapper.find('[data-testid="cover-guide"]').exists()).toBe(false);
+    expect(wrapper.find("[data-scroll-down]").exists()).toBe(false);
+  });
+
+  it("shows the scroll-down control in vertical mode once dialogs are gone", async () => {
+    prefersSinglePageMock.mockReturnValue(false);
+    isVertical.value = true;
+    sessionStorage.setItem("flipframe-cover-guide:Test", "1");
+    localStorage.setItem(SCROLL_HOWTO_KEY, "1");
+    const wrapper = mountShell();
+    await flushPromises();
+    await nextTick();
+    await clickPrompt("later");
+    await nextTick();
+
+    expect(wrapper.find("[data-scroll-down]").exists()).toBe(true);
   });
 
   it("shows Story button in vertical scroll mode and reopens after close", async () => {

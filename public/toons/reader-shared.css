@@ -2178,6 +2178,68 @@ body.single-page .flip-page.flipping.from-left {
   outline-offset: 1px;
 }
 
+/* Page-down disc: bottom centre of the strip. Semi-transparent so the plate
+   still reads through it; tap advances 80% of the viewport. Above the word
+   overlay (35) so a caption at the fold does not swallow the tap, below the
+   how-to toast (55) and the progress bar (60). */
+.scroll-down-btn {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--text) 32%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--bg-dark) 38%, transparent);
+  color: var(--text);
+  opacity: 0.5;
+  cursor: pointer;
+  transform: translateX(-50%);
+  backdrop-filter: blur(8px);
+  touch-action: manipulation;
+  transition:
+    opacity 0.18s var(--transition),
+    background 0.18s var(--transition),
+    border-color 0.18s var(--transition),
+    color 0.18s var(--transition);
+}
+
+.scroll-down-btn:hover,
+.scroll-down-btn:focus-visible {
+  opacity: 1;
+  border-color: var(--red-smile);
+  color: var(--red-smile);
+  background: color-mix(in srgb, var(--bg-dark) 62%, transparent);
+}
+
+.scroll-down-btn:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 2px;
+}
+
+.scroll-down-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+@media (max-width: 768px) {
+  .scroll-down-btn {
+    /* Clear the 4px progress bar that sits on the bottom edge on phones. */
+    bottom: calc(1.1rem + 4px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-down-btn {
+    transition: none;
+  }
+}
+
 /* No width gate on the toast. There used to be a `@media (min-width: 769px) {
    display: none }` here, mirroring a JS check that also hid it above 768px.
    Scroll is the default view at every width now, so the toast is scoped by

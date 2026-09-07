@@ -8,7 +8,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref, toRef, watch } from "v
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import CoverGuideDialog from "./CoverGuideDialog.vue";
-import { AutoReadBand, ReaderTopBar, ReadingProgress } from "./chrome";
+import { AutoReadBand, ReaderTopBar, ReadingProgress, ScrollDownButton } from "./chrome";
 import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
 import { deepLinkReleased, parsePageQuery, visiblePageNum, writePageQuery, type SlotBox } from "./pageQuery";
@@ -641,6 +641,8 @@ defineExpose<ToonReaderShellExpose>({
   <!-- Where a caption starts speaking. Scroll mode only: book mode's band is
        the whole viewport, so there is no line to draw. -->
   <AutoReadBand v-if="viewMode.isVertical.value && autoRead.unlocked.value" :band-end="FOCUS_BAND_END" />
+
+  <ScrollDownButton v-if="viewMode.isVertical.value && !dialogOpen && !scrollHowToOpen" />
 
   <main class="reader" id="main-content" ref="readerEl" role="main">
     <BookSurface

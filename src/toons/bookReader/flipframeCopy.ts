@@ -33,7 +33,8 @@ export type FlipframeKey =
   | "autoReadBody"
   | "autoReadOk"
   | "autoReadLater"
-  | "fallbackStory";
+  | "fallbackStory"
+  | "scrollDown";
 
 export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
   en: {
@@ -64,6 +65,7 @@ export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
     autoReadLater: "Not now",
     fallbackStory:
       "An interactive FlipFrame experiment from twentyseven.pictures — turn the pages, tap the captions, follow the case.",
+    scrollDown: "Scroll down",
   },
   it: {
     howtoBook: "Usa le frecce della tastiera, o clicca sulla pagina, per sfogliare",
@@ -94,6 +96,7 @@ export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
     autoReadLater: "Non ora",
     fallbackStory:
       "Un esperimento FlipFrame interattivo di twentyseven.pictures — sfoglia le pagine, tocca le didascalie, segui il caso.",
+    scrollDown: "Scorri in basso",
   },
   de: {
     howtoBook: "Mit den Pfeiltasten oder einem Klick auf die Seite umblättern",
@@ -124,6 +127,7 @@ export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
     autoReadLater: "Nicht jetzt",
     fallbackStory:
       "Ein interaktives FlipFrame-Experiment von twentyseven.pictures — Seiten umblättern, Sprechblasen antippen, dem Fall folgen.",
+    scrollDown: "Nach unten scrollen",
   },
   fr: {
     howtoBook: "Utilisez les flèches du clavier, ou cliquez sur une page, pour tourner",
@@ -154,6 +158,7 @@ export const FLIPFRAME: Record<Locale, Record<FlipframeKey, string>> = {
     autoReadLater: "Pas maintenant",
     fallbackStory:
       "Une expérience FlipFrame interactive de twentyseven.pictures — tournez les pages, touchez les bulles, suivez l'affaire.",
+    scrollDown: "Faire défiler vers le bas",
   },
 };
 
