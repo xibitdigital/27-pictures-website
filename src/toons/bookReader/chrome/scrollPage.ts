@@ -12,10 +12,20 @@ export function canScrollPageDown(scrollY: number, viewHeight: number, scrollHei
   return remainingScroll(scrollY, viewHeight, scrollHeight) > SCROLL_END_PX;
 }
 
+export function viewHeight(win: Window = window): number {
+  return win.visualViewport?.height || win.innerHeight;
+}
+
+export function docScrollHeight(doc: Document = document): number {
+  const el = doc.documentElement;
+  const body = doc.body;
+  return Math.max(el.scrollHeight, body?.scrollHeight ?? 0);
+}
+
 export function scrollPageDown(win: Window = window): void {
   const reduce = win.matchMedia("(prefers-reduced-motion: reduce)").matches;
   win.scrollBy({
-    top: win.innerHeight * SCROLL_PAGE_FRACTION,
+    top: viewHeight(win) * SCROLL_PAGE_FRACTION,
     behavior: reduce ? "auto" : "smooth",
   });
 }

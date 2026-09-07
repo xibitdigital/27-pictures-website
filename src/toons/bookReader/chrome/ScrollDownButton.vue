@@ -6,28 +6,35 @@
 import { ChevronDown } from "@lucide/vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { useFlipframeCopy } from "../flipframeCopy";
-import { canScrollPageDown, scrollPageDown } from "./scrollPage";
+import { canScrollPageDown, docScrollHeight, scrollPageDown, viewHeight } from "./scrollPage";
 
 const t = useFlipframeCopy();
 const atEnd = ref(false);
 
 function measure(): void {
-  atEnd.value = !canScrollPageDown(
-    window.scrollY || window.pageYOffset || 0,
-    window.innerHeight,
-    document.documentElement.scrollHeight
-  );
+  atEnd.value = !canScrollPageDown(window.scrollY || window.pageYOffset || 0, viewHeight(), docScrollHeight());
 }
+
+let ro: ResizeObserver | null = null;
 
 onMounted(() => {
   measure();
   window.addEventListener("scroll", measure, { passive: true });
   window.addEventListener("resize", measure);
+  window.visualViewport?.addEventListener("resize", measure);
+  window.visualViewport?.addEventListener("scroll", measure);
+  if (typeof ResizeObserver === "function") {
+    ro = new ResizeObserver(measure);
+    ro.observe(document.documentElement);
+  }
 });
 
 onUnmounted(() => {
   window.removeEventListener("scroll", measure);
   window.removeEventListener("resize", measure);
+  window.visualViewport?.removeEventListener("resize", measure);
+  window.visualViewport?.removeEventListener("scroll", measure);
+  ro?.disconnect();
 });
 </script>
 

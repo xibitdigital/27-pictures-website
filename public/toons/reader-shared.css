@@ -2178,10 +2178,10 @@ body.single-page .flip-page.flipping.from-left {
   outline-offset: 1px;
 }
 
-/* Page-down disc: bottom centre of the strip. Semi-transparent so the plate
-   still reads through it; tap advances 80% of the viewport. Above the word
-   overlay (35) so a caption at the fold does not swallow the tap, below the
-   how-to toast (55) and the progress bar (60). */
+/* Page-down disc: bottom centre of the strip. Semi-transparent, but the red
+   ring has to read on a dark plate without hover — phones never get one.
+   Above the word overlay (35) so a caption at the fold does not swallow the
+   tap, below the how-to toast (55) and the progress bar (60). */
 .scroll-down-btn {
   position: fixed;
   left: 50%;
@@ -2193,15 +2193,17 @@ body.single-page .flip-page.flipping.from-left {
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid color-mix(in srgb, var(--text) 32%, transparent);
+  border: 1.5px solid var(--red-smile);
   border-radius: 50%;
-  background: color-mix(in srgb, var(--bg-dark) 38%, transparent);
-  color: var(--text);
-  opacity: 0.5;
+  background: color-mix(in srgb, var(--bg-dark) 55%, transparent);
+  color: var(--red-smile);
+  opacity: 0.82;
   cursor: pointer;
   transform: translateX(-50%);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     opacity 0.18s var(--transition),
     background 0.18s var(--transition),
@@ -2212,9 +2214,9 @@ body.single-page .flip-page.flipping.from-left {
 .scroll-down-btn:hover,
 .scroll-down-btn:focus-visible {
   opacity: 1;
-  border-color: var(--red-smile);
-  color: var(--red-smile);
-  background: color-mix(in srgb, var(--bg-dark) 62%, transparent);
+  border-color: var(--text);
+  color: var(--text);
+  background: var(--red-smile);
 }
 
 .scroll-down-btn:focus-visible {
@@ -2229,8 +2231,21 @@ body.single-page .flip-page.flipping.from-left {
 
 @media (max-width: 768px) {
   .scroll-down-btn {
-    /* Clear the 4px progress bar that sits on the bottom edge on phones. */
-    bottom: calc(1.1rem + 4px + env(safe-area-inset-bottom, 0px));
+    width: 48px;
+    height: 48px;
+    opacity: 0.9;
+    /* Clear the 4px progress bar on the bottom edge. */
+    bottom: calc(1.25rem + 4px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* iOS Safari: position:fixed bottom is the *large* viewport, under the
+   toolbar. Lift by the chrome height when svh is smaller than lvh. */
+@supports (height: 100svh) {
+  @media (pointer: coarse) {
+    .scroll-down-btn {
+      bottom: calc(1.25rem + 4px + env(safe-area-inset-bottom, 0px) + (100lvh - 100svh));
+    }
   }
 }
 

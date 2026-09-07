@@ -14,6 +14,18 @@ describe("scrollPage", () => {
     expect(canScrollPageDown(1200, 800, 2000)).toBe(false);
   });
 
+  it("prefers visualViewport height when the browser reports one", () => {
+    const scrollBy = vi.fn();
+    const win = {
+      innerHeight: 1000,
+      visualViewport: { height: 700 },
+      matchMedia: () => ({ matches: false }),
+      scrollBy,
+    } as unknown as Window;
+    scrollPageDown(win);
+    expect(scrollBy).toHaveBeenCalledWith({ top: 560, behavior: "smooth" });
+  });
+
   it("scrolls by 80% of innerHeight, smooth unless reduced-motion", () => {
     const scrollBy = vi.fn();
     const win = {
