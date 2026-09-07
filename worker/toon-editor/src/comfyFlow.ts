@@ -11,29 +11,74 @@ export type ComfyGraphNode = {
 };
 export type ComfyGraph = Record<string, ComfyGraphNode>;
 
-function linkNodeId(value: unknown): string | null {
-  if (Array.isArray(value) && typeof value[0] === "string" && value[0]) return value[0];
-  return null;
-}
+type SeedreamImagePin = { n: number; pin: string; key: string; nodeId: string; output: number };
 
 /** Seedream `model.images.image_1` (V3) or `image_1` / `image1` (legacy). */
-function seedreamImagePins(inputs: Record<string, unknown>): { pin: string; nodeId: string }[] {
-  const found: { n: number; pin: string; nodeId: string }[] = [];
+function seedreamImagePinEntries(inputs: Record<string, unknown>): SeedreamImagePin[] {
+  const found: SeedreamImagePin[] = [];
   for (const [key, value] of Object.entries(inputs)) {
-    const nodeId = linkNodeId(value);
-    if (!nodeId) continue;
+    if (!Array.isArray(value) || typeof value[0] !== "string" || !value[0]) continue;
     const match = key.match(/(?:^|\.)image[_]?(\d+)$/i);
     if (!match) continue;
-    found.push({ n: Number(match[1]), pin: `image_${match[1]}`, nodeId });
+    found.push({
+      n: Number(match[1]),
+      pin: `image_${match[1]}`,
+      key,
+      nodeId: value[0],
+      output: typeof value[1] === "number" ? value[1] : 0,
+    });
   }
   found.sort((a, b) => a.n - b.n);
-  return found.map(({ pin, nodeId }) => ({ pin, nodeId }));
+  return found;
+}
+
+function seedreamImagePins(inputs: Record<string, unknown>): { pin: string; nodeId: string }[] {
+  return seedreamImagePinEntries(inputs).map(({ pin, nodeId }) => ({ pin, nodeId }));
+}
+
+function cloneGraph(graph: ComfyGraph): ComfyGraph {
+  return JSON.parse(JSON.stringify(graph)) as ComfyGraph;
+}
+
+/**
+ * Comfy Save-API keeps creation-order LoadImage ids. Ivy Bloom titles node 2
+ * "Image 1 - Ivy" and wires Seedream `image_1` there, while node 1 is K on
+ * `image_2`. The V3 node (and Gemini sitting on the prompt) still treat the
+ * first LoadImage as Image 1 — so Ivy and K swap unless the graph is uncrossed.
+ *
+ * Move each pin's LoadImage payload onto the Nth LoadImage id and retarget
+ * `image_N` there. ImageBatch-wired flows (pins don't land on LoadImage) are
+ * left alone.
+ */
+export function normalizeSeedreamLoadOrder(graph: ComfyGraph): ComfyGraph {
+  const next = cloneGraph(graph);
+  const seedreamId = Object.keys(next).find((id) => SEEDREAM.has(String(next[id]?.class_type || "")));
+  if (!seedreamId) return next;
+  const inputs = { ...(next[seedreamId].inputs || {}) };
+  const loadPins = seedreamImagePinEntries(inputs).filter(
+    (pin) => String(next[pin.nodeId]?.class_type || "") === "LoadImage"
+  );
+  if (loadPins.length < 2) return next;
+  const ids = Object.keys(next)
+    .filter((id) => String(next[id]?.class_type || "") === "LoadImage")
+    .sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
+  if (loadPins.every((pin, i) => pin.nodeId === ids[i])) return next;
+  const snapshot: ComfyGraph = {};
+  for (const id of ids) snapshot[id] = cloneGraph({ [id]: next[id] })[id];
+  for (let i = 0; i < loadPins.length && i < ids.length; i++) {
+    const dest = ids[i];
+    const src = loadPins[i].nodeId;
+    next[dest] = snapshot[src];
+    inputs[loadPins[i].key] = [dest, loadPins[i].output];
+  }
+  next[seedreamId] = { ...next[seedreamId], inputs };
+  return next;
 }
 
 /**
  * LoadImage node ids in the order Seedream actually consumes them (image_1,
- * image_2, …). Comfy Save-API keeps creation-order ids, which can disagree
- * with titles and with the renderer cables — Ivy on node 2 wired to image_1.
+ * image_2, …). Call `normalizeSeedreamLoadOrder` first so this matches numeric
+ * node ids on a crossed Save-API graph.
  */
 export function loadImageIds(graph: ComfyGraph): string[] {
   const all = Object.keys(graph)
@@ -60,10 +105,17 @@ function pinIndex(pin: string): string | null {
   return match ? match[1] : null;
 }
 
+function slotImageNumber(slot: SeriesFlowSlot): string | null {
+  const fromPin = pinIndex(slot.rendererInput || "");
+  if (fromPin) return fromPin;
+  const match = `${slot.label} ${slot.alias}`.match(/\bimage[\s_-]*0*(\d+)\b/i);
+  return match ? match[1] : null;
+}
+
 /**
  * Pair each Seedream LoadImage node with the series slot that should fill it.
- * Prefer loadNodeId / rendererInput; then "Image N" in the slot label (so an
- * older D1 row that listed K before Ivy still lands on image_1 if titled Ivy).
+ * Image N in the label/alias wins — a stale loadNodeId from before the graph
+ * was uncrossed still has Ivy on node 2 while Image 1 is now node 1.
  */
 export function matchSlotsToLoadNodes(
   graph: ComfyGraph,
@@ -79,19 +131,51 @@ export function matchSlotsToLoadNodes(
     const pin = pinByNode.get(nodeId);
     const n = pin ? pinIndex(pin) : null;
     const title = titleOf(graph[nodeId]);
-    let idx = slots.findIndex((slot, i) => !used.has(i) && slot.loadNodeId === nodeId);
-    if (idx < 0 && pin) idx = slots.findIndex((slot, i) => !used.has(i) && slot.rendererInput === pin);
-    if (idx < 0 && n) {
-      const re = new RegExp(`\\bimage[\\s_-]*0*${n}\\b`, "i");
-      idx = slots.findIndex((slot, i) => !used.has(i) && re.test(`${slot.label} ${slot.alias}`));
+    let idx = -1;
+    if (n) {
+      idx = slots.findIndex((slot, i) => !used.has(i) && slotImageNumber(slot) === n);
     }
     if (idx < 0 && title) idx = slots.findIndex((slot, i) => !used.has(i) && slot.label.trim() === title);
+    if (idx < 0 && pin) idx = slots.findIndex((slot, i) => !used.has(i) && slot.rendererInput === pin);
+    if (idx < 0) idx = slots.findIndex((slot, i) => !used.has(i) && slot.loadNodeId === nodeId);
     if (idx < 0) idx = slots.findIndex((_, i) => !used.has(i));
     if (idx < 0) continue;
     used.add(idx);
     out.push({ nodeId, slot: slots[idx] });
   }
   return out;
+}
+
+function imagePinLegend(slots: SeriesFlowSlot[]): string {
+  return slots
+    .map((slot, i) => `Image ${slotImageNumber(slot) || String(i + 1)} = ${slot.label || slot.alias}`)
+    .join("; ");
+}
+
+/** Stamp Image 1…N identities onto the typed prompt so Gemini/Seedream cannot reassign them. */
+export function promptWithImagePins(prompt: string, slots: SeriesFlowSlot[]): string {
+  const trimmed = prompt.trim();
+  if (!trimmed || !slots.length) return trimmed;
+  return `REFERENCE IMAGES (do not swap): ${imagePinLegend(slots)}.\n\n${trimmed}`;
+}
+
+const GEMINI = "GeminiNode";
+
+/** Tell an upstream Gemini rewriter which sheet is Image 1 / Image 2. */
+export function applyGeminiImagePins(graph: ComfyGraph, slots: SeriesFlowSlot[]): ComfyGraph {
+  if (!slots.length) return graph;
+  const note = `\nBound reference images: ${imagePinLegend(
+    slots
+  )}. Never swap these identities or Image numbers. Only expand the scene.`;
+  const next = cloneGraph(graph);
+  for (const node of Object.values(next)) {
+    if (String(node.class_type || "") !== GEMINI) continue;
+    const inputs = { ...(node.inputs || {}) };
+    const sys = typeof inputs.system_prompt === "string" ? inputs.system_prompt.trim() : "";
+    inputs.system_prompt = `${sys}${note}`;
+    node.inputs = inputs;
+  }
+  return next;
 }
 
 export function applyLoadImages(
@@ -243,7 +327,7 @@ export function parseComfyApiGraph(
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     return { ok: false, error: "flow must be a Comfy API graph object (Save API format)" };
   }
-  const graph = raw as ComfyGraph;
+  const graph = normalizeSeedreamLoadOrder(raw as ComfyGraph);
   const ids = Object.keys(graph);
   if (!ids.length) return { ok: false, error: "flow graph is empty" };
 

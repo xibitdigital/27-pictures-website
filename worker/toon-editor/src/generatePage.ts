@@ -8,13 +8,16 @@ import {
   type ComfyPhase,
 } from "./comfyClient";
 import {
+  applyGeminiImagePins,
   applyLoadImages,
   applyPagePrompt,
   applyPlateSize,
   applySeed,
   matchSlotsToLoadNodes,
+  normalizeSeedreamLoadOrder,
   parseGenerateConfig,
   parseGenerateCount,
+  promptWithImagePins,
   type ComfyGraph,
 } from "./comfyFlow";
 import { insertCreditEvent } from "./creditUsage";
@@ -88,7 +91,7 @@ export async function startPageGenerate(
   if (!flowBytes) return { ok: false, error: "series flow file is missing", status: 400 };
   let graph: ComfyGraph;
   try {
-    graph = JSON.parse(new TextDecoder().decode(flowBytes)) as ComfyGraph;
+    graph = normalizeSeedreamLoadOrder(JSON.parse(new TextDecoder().decode(flowBytes)) as ComfyGraph);
   } catch {
     return { ok: false, error: "series flow is not valid JSON", status: 400 };
   }
@@ -137,7 +140,12 @@ export async function startPageGenerate(
 
   const withImages = applyLoadImages(graph, names, nodeIds);
   if (!withImages.ok) return { ok: false, error: withImages.error, status: 400 };
-  let next = applyPagePrompt(withImages.graph, input.prompt, generate.promptTarget);
+  let next = applyPagePrompt(
+    withImages.graph,
+    promptWithImagePins(input.prompt, generate.slots),
+    generate.promptTarget
+  );
+  next = applyGeminiImagePins(next, generate.slots);
   next = applyPlateSize(next, generate.width, generate.height);
 
   const count = input.pageId ? 1 : parseGenerateCount(input.count);

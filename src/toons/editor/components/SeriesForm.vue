@@ -376,8 +376,8 @@ async function onSubmit(ev: Event): Promise<void> {
           <div class="editor-form-span editor-generate">
             <p class="editor-generate-label">ComfyUI flow</p>
             <p class="editor-muted">
-              One API-format graph for every page in this series (Save API / .api.json). Image 1…N order is the PIN
-              order; previous plate last.
+              One API-format graph for every page in this series (Save API / .api.json). Image 1…N follows the PIN
+              titles, not Comfy node ids — re-upload after changing wires. Previous plate last.
             </p>
             <label>
               Flow (.api.json)
@@ -412,7 +412,7 @@ async function onSubmit(ev: Event): Promise<void> {
             </template>
 
             <p class="editor-generate-label">Reference slots</p>
-            <p class="editor-muted">Order is Seedream’s image_1…N cables, not Comfy node ids.</p>
+            <p class="editor-muted">Order is Image 1…N from the flow titles (uncrossed onto Seedream’s pins).</p>
             <ol class="editor-slot-list">
               <li v-for="(slot, index) in slots" :key="`${index}-${slot.alias}`" class="editor-slot-row">
                 <span class="editor-muted" :data-renderer-input="slot.rendererInput || undefined">{{

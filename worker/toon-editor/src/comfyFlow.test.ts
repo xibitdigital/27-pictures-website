@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyGeminiImagePins,
   applyLoadImages,
   applyPagePrompt,
   applySeed,
   findPromptCandidates,
   matchSlotsToLoadNodes,
   mergeGenerate,
+  normalizeSeedreamLoadOrder,
   parseComfyApiGraph,
   parseGenerateCount,
+  promptWithImagePins,
   slotFromLoadTitle,
 } from "./comfyFlow";
 
@@ -56,8 +59,8 @@ describe("parseComfyApiGraph", () => {
     });
   });
 
-  it("orders slots by Seedream image_N cables, not LoadImage node ids", () => {
-    // Same pin map as ~/Downloads/ivy-bloom (8).json: node 1 is titled K,
+  it("uncrosses Ivy Bloom pins so Image 1 lands on LoadImage node 1", () => {
+    // Same pin map as ~/Downloads/ivy-bloom (9).json: node 1 is titled K,
     // node 2 is Ivy, but image_1 is wired to node 2.
     const parsed = parseComfyApiGraph({
       "1": { class_type: "LoadImage", _meta: { title: "Image 2 - K" } },
@@ -84,7 +87,7 @@ describe("parseComfyApiGraph", () => {
       "Image 4 — previous page",
     ]);
     expect(parsed.slots.map((s) => s.rendererInput)).toEqual(["image_1", "image_2", "image_3", "image_4"]);
-    expect(parsed.slots.map((s) => s.loadNodeId)).toEqual(["2", "1", "10", "11"]);
+    expect(parsed.slots.map((s) => s.loadNodeId)).toEqual(["1", "2", "10", "11"]);
     expect(parsed.slots[3].kind).toBe("previous");
   });
 
@@ -122,6 +125,70 @@ describe("parseGenerateCount", () => {
   });
 });
 
+describe("normalizeSeedreamLoadOrder", () => {
+  const ivyBloom = {
+    "1": {
+      class_type: "LoadImage",
+      inputs: { image: "k.png" },
+      _meta: { title: "Image 2 - K" },
+    },
+    "2": {
+      class_type: "LoadImage",
+      inputs: { image: "ivy.png" },
+      _meta: { title: "Image 1 - Ivy" },
+    },
+    "10": {
+      class_type: "LoadImage",
+      inputs: { image: "ink.png" },
+      _meta: { title: "Image 3 - Ink" },
+    },
+    "11": {
+      class_type: "LoadImage",
+      inputs: { image: "prev.png" },
+      _meta: { title: "Image 4 — previous page" },
+    },
+    "6": {
+      class_type: "ByteDanceSeedreamNodeV3",
+      inputs: {
+        "model.images.image_1": ["2", 0],
+        "model.images.image_2": ["1", 0],
+        "model.images.image_3": ["10", 0],
+        "model.images.image_4": ["11", 0],
+      },
+    },
+  };
+
+  it("moves Ivy onto node 1 and retargets image_1 there", () => {
+    const out = normalizeSeedreamLoadOrder(ivyBloom);
+    expect(out["1"]._meta?.title).toBe("Image 1 - Ivy");
+    expect(out["1"].inputs?.image).toBe("ivy.png");
+    expect(out["2"]._meta?.title).toBe("Image 2 - K");
+    expect(out["2"].inputs?.image).toBe("k.png");
+    expect(out["6"].inputs?.["model.images.image_1"]).toEqual(["1", 0]);
+    expect(out["6"].inputs?.["model.images.image_2"]).toEqual(["2", 0]);
+    expect(out["6"].inputs?.["model.images.image_3"]).toEqual(["10", 0]);
+  });
+
+  it("is a no-op when pins already follow LoadImage ids", () => {
+    const aligned = normalizeSeedreamLoadOrder(ivyBloom);
+    const again = normalizeSeedreamLoadOrder(aligned);
+    expect(again["1"]._meta?.title).toBe("Image 1 - Ivy");
+    expect(again["6"].inputs?.["model.images.image_1"]).toEqual(["1", 0]);
+  });
+
+  it("leaves ImageBatch-wired graphs alone", () => {
+    const graph = {
+      "1": { class_type: "LoadImage", _meta: { title: "Nero" } },
+      "2": { class_type: "LoadImage", _meta: { title: "Eve" } },
+      "3": { class_type: "ImageBatch", inputs: { image1: ["1", 0], image2: ["2", 0] } },
+      "9": { class_type: "ByteDanceSeedreamNodeV3", inputs: { image: ["3", 0] } },
+    };
+    const out = normalizeSeedreamLoadOrder(graph);
+    expect(out["1"]._meta?.title).toBe("Nero");
+    expect(out["9"].inputs?.image).toEqual(["3", 0]);
+  });
+});
+
 describe("matchSlotsToLoadNodes", () => {
   const ivyGraph = {
     "1": { class_type: "LoadImage", _meta: { title: "Image 2 - K" } },
@@ -146,7 +213,19 @@ describe("matchSlotsToLoadNodes", () => {
     ]);
   });
 
-  it("prefers stored loadNodeId over slot array order", () => {
+  it("follows Image N even when a stale loadNodeId still points at K's node", () => {
+    const aligned = normalizeSeedreamLoadOrder(ivyGraph);
+    const paired = matchSlotsToLoadNodes(aligned, [
+      { alias: "image-1-ivy", label: "Image 1 - Ivy", kind: "sheet", loadNodeId: "2" },
+      { alias: "image-2-k", label: "Image 2 - K", kind: "sheet", loadNodeId: "1" },
+    ]);
+    expect(paired.map((p) => [p.nodeId, p.slot.alias])).toEqual([
+      ["1", "image-1-ivy"],
+      ["2", "image-2-k"],
+    ]);
+  });
+
+  it("falls back to stored loadNodeId when labels have no Image N", () => {
     const paired = matchSlotsToLoadNodes(ivyGraph, [
       { alias: "k", label: "K", kind: "sheet", loadNodeId: "1" },
       { alias: "ivy", label: "Ivy", kind: "sheet", loadNodeId: "2" },
@@ -155,6 +234,33 @@ describe("matchSlotsToLoadNodes", () => {
       ["2", "ivy"],
       ["1", "k"],
     ]);
+  });
+});
+
+describe("prompt identity lock", () => {
+  it("prefixes the typed prompt with Image N = slot labels", () => {
+    expect(
+      promptWithImagePins("Ivy sits on K's shoulders.", [
+        { alias: "image-1-ivy", label: "Image 1 - Ivy", kind: "sheet", rendererInput: "image_1" },
+        { alias: "image-2-k", label: "Image 2 - K", kind: "sheet", rendererInput: "image_2" },
+      ])
+    ).toBe(
+      "REFERENCE IMAGES (do not swap): Image 1 = Image 1 - Ivy; Image 2 = Image 2 - K.\n\nIvy sits on K's shoulders."
+    );
+  });
+
+  it("appends the same lock onto a Gemini system prompt", () => {
+    const out = applyGeminiImagePins(
+      {
+        "16:13": {
+          class_type: "GeminiNode",
+          inputs: { system_prompt: "Rewrite the user's input.", prompt: ["4", 0] },
+        },
+      },
+      [{ alias: "image-1-ivy", label: "Image 1 - Ivy", kind: "sheet", rendererInput: "image_1" }]
+    );
+    expect(String(out["16:13"].inputs?.system_prompt)).toContain("Image 1 = Image 1 - Ivy");
+    expect(String(out["16:13"].inputs?.system_prompt)).toContain("Never swap");
   });
 });
 

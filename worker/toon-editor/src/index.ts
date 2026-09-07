@@ -19,7 +19,14 @@ import {
   validateEmail,
   verifyPassword,
 } from "./auth";
-import { mergeGenerate, parseComfyApiGraph, parseGenerateConfig, slugAlias } from "./comfyFlow";
+import {
+  mergeGenerate,
+  normalizeSeedreamLoadOrder,
+  parseComfyApiGraph,
+  parseGenerateConfig,
+  slugAlias,
+  type ComfyGraph,
+} from "./comfyFlow";
 import { insertCreditEvent, loadUserCredits } from "./creditUsage";
 import {
   generateCountFromJob,
@@ -985,11 +992,14 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     } catch {
       return json({ error: "flow is not valid JSON" }, 400, cors);
     }
-    const graph = parseComfyApiGraph(parsedJson);
+    const normalized = normalizeSeedreamLoadOrder(parsedJson as ComfyGraph);
+    const graph = parseComfyApiGraph(normalized);
     if (!graph.ok) return json({ error: graph.error }, 400, cors);
-    const hash = await sha256Hex(bytes);
+    const stored = new TextEncoder().encode(JSON.stringify(normalized));
+    const storedBytes = stored.slice();
+    const hash = await sha256Hex(storedBytes.buffer);
     const objectKey = `editor/_series/${key}/flow/${hash}.json`;
-    await putImage(env, objectKey, bytes, "application/json");
+    await putImage(env, objectKey, storedBytes.buffer, "application/json");
     const extra = parseToonExtra(current);
     const currentGenerate = parseGenerateConfig(extra.generate);
     // Keep the chosen target only if the new graph still has that exact node
