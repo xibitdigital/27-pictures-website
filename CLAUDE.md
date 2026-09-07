@@ -783,6 +783,16 @@ slot files to Comfy `/upload/image`, writes LoadImage names, then writes the
 typed prompt onto the flow before `POST {COMFY_URL}/prompt`, then the studio
 polls `GET /jobs/:id`. Upload a plate still works without Comfy.
 
+**Do not add functions that rewrite the imported Comfy Save-API graph.** The
+`.json` the series form uploads is the origin: pin cables, LoadImage titles,
+Gemini (or any rewriter), concatenate PREFIX / SUBJECT LOCK, Image 1…N. Store
+that object and submit it. The Worker may only (1) put uploaded sheet filenames
+onto the matching LoadImage nodes and (2) write the typed page prompt into the
+chosen `promptTarget`. No helpers that swap LoadImage payloads, retarget
+`image_N` cables, bypass Gemini, or edit PIN/SUBJECT strings in code. If Image 1
+and Image 2 are wrong, fix the graph in Comfy and re-upload — that rule is for
+every series, not one book.
+
 `POST /toons/:id/pages/generate` is multipart, not JSON — a `previous` slot
 can take an operator-attached image (`previousFile` field) instead of the
 real last plate: the toon's first page has no previous plate to auto-fill,

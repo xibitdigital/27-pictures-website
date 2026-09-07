@@ -188,6 +188,13 @@ Create the account key once (shown only at creation). Plate Generate also
 needs a series flow + sheet files in the series form. Missing `COMFY_URL` →
 503 `ComfyUI is not configured`.
 
+**Do not add code that rewrites the imported Save-API graph.** Store it as
+exported. Generate may fill LoadImage filenames from series slots and write
+the typed prompt into `promptTarget` only. No rewiring `image_N` cables,
+swapping LoadImage payloads, bypassing Gemini, or editing PIN/SUBJECT
+strings. If Image 1/2 identities are wrong, fix the graph in Comfy and
+re-upload (every series, not one book).
+
 Typecheck: `npx tsc -p worker/toon-editor --noEmit` (also part of
 `npm run typecheck`). Tests: `npx vitest run worker/toon-editor`.
 
