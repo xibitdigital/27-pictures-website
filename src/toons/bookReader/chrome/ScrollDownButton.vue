@@ -20,6 +20,10 @@ function measure(): void {
   atEnd.value = !canScrollPageDown(window.scrollY || window.pageYOffset || 0, viewHeight(), docScrollHeight());
 }
 
+function onScrollDown(): void {
+  scrollPageDown(window, { pages: props.pages ?? [] });
+}
+
 let ro: ResizeObserver | null = null;
 
 onMounted(() => {
@@ -51,7 +55,7 @@ onUnmounted(() => {
     data-scroll-down
     :title="t.scrollDown"
     :aria-label="t.scrollDown"
-    @click="scrollPageDown(window, { pages: props.pages ?? [] })"
+    @click="onScrollDown"
   >
     <ChevronDown aria-hidden="true" />
   </button>
