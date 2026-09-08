@@ -2,7 +2,9 @@
 import { X } from "@lucide/vue";
 import { computed, ref } from "vue";
 import EditorCaptionLayer from "./EditorCaptionLayer.vue";
-import type { BubbleRecord } from "../types";
+import GeometryLayer, { type LayoutTool } from "./GeometryLayer.vue";
+import LayoutToolbar from "./LayoutToolbar.vue";
+import type { BubbleRecord, PageKind, RegionGeometry, RegionRecord } from "../types";
 import type { BubbleTail } from "../mapConfig";
 
 const HINT_KEY = "editor-plate-click-hint";
@@ -26,15 +28,21 @@ function dismissHint(): void {
   }
 }
 
-const props = defineProps<{
-  src: string;
-  pageNum: number;
-  bubbles: BubbleRecord[];
-  selectedId: string | null;
-  lang?: string;
-  designWidth: number;
-  designHeight: number;
-}>();
+const props = withDefaults(
+  defineProps<{
+    src: string;
+    pageNum: number;
+    bubbles: BubbleRecord[];
+    selectedId: string | null;
+    lang?: string;
+    designWidth: number;
+    designHeight: number;
+    kind?: PageKind;
+    regions?: RegionRecord[];
+    layoutTool?: LayoutTool;
+  }>(),
+  { kind: "plate", regions: () => [], layoutTool: "select" }
+);
 
 const emit = defineEmits<{
   select: [id: string];
@@ -42,6 +50,13 @@ const emit = defineEmits<{
   persist: [id: string, x: number, y: number];
   add: [pos: { x: number; y: number }];
   tail: [id: string, tail: BubbleTail];
+  "create-region": [geometry: RegionGeometry];
+  "update-region-geometry": [id: string, geometry: RegionGeometry];
+  "persist-region-geometry": [id: string, geometry: RegionGeometry];
+  "move-region-image": [id: string, offsetX: number, offsetY: number];
+  "persist-region-image": [id: string, offsetX: number, offsetY: number];
+  "request-region-assign": [id: string];
+  "update-layout-tool": [tool: LayoutTool];
 }>();
 
 const imgEl = ref<HTMLImageElement | null>(null);
@@ -52,7 +67,7 @@ const plateStyle = computed(() => ({
 
 <template>
   <div class="editor-canvas">
-    <p v-if="showHint" class="editor-plate-hint" data-plate-hint role="status">
+    <p v-if="showHint && kind !== 'layout'" class="editor-plate-hint" data-plate-hint role="status">
       Click the page to add a bubble.
       <button
         class="editor-plate-hint-dismiss"
@@ -64,10 +79,11 @@ const plateStyle = computed(() => ({
         <X :size="18" :stroke-width="2.2" aria-hidden="true" />
       </button>
     </p>
+    <LayoutToolbar v-if="kind === 'layout'" :tool="layoutTool" @update:tool="emit('update-layout-tool', $event)" />
     <div class="editor-plate" :style="plateStyle">
       <img ref="imgEl" :src="src" alt="" />
       <EditorCaptionLayer
-        v-if="imgEl"
+        v-if="imgEl && kind !== 'layout'"
         :page-num="pageNum"
         :bubbles="bubbles"
         :selected-id="selectedId"
@@ -80,6 +96,22 @@ const plateStyle = computed(() => ({
         @persist="(id, x, y) => emit('persist', id, x, y)"
         @add="emit('add', $event)"
         @tail="(id, tail) => emit('tail', id, tail)"
+      />
+      <GeometryLayer
+        v-if="imgEl && kind === 'layout'"
+        :regions="regions"
+        :selected-id="selectedId"
+        :design-width="designWidth"
+        :design-height="designHeight"
+        :image-el="imgEl"
+        :tool="layoutTool"
+        @select="emit('select', $event)"
+        @create="emit('create-region', $event)"
+        @update-geometry="(id, g) => emit('update-region-geometry', id, g)"
+        @persist-geometry="(id, g) => emit('persist-region-geometry', id, g)"
+        @move-image="(id, x, y) => emit('move-region-image', id, x, y)"
+        @persist-image="(id, x, y) => emit('persist-region-image', id, x, y)"
+        @request-assign="emit('request-region-assign', $event)"
       />
     </div>
   </div>

@@ -4,26 +4,36 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import {
   addBubble,
+  addRegion,
   deleteBubble,
   deletePage,
+  deleteRegion,
   generatePage,
+  generateRegionImage,
   getJob,
   getSeries,
   getToon,
   patchBubble,
+  patchRegion,
   readImageSize,
   replacePage,
+  setPageKind,
   uploadPage,
+  uploadRegionImage,
 } from "../api";
 import type { LangCode } from "../../bookReader/types";
 import {
   visibilityFromStatus,
   visibilityLabel,
   type BubbleRecord,
+  type PageRecord,
+  type RegionGeometry,
+  type RegionRecord,
   type SeriesGenerateConfig,
   type ToonRecord,
 } from "../types";
 import { mergeReplacedPage } from "../pageFile";
+import { coverImageRect, regionBoundingBox, regionPoints } from "../regionFit";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, bubblesInPlayOrder, CAPTION_LANGS, moveBubbleInPlayOrder } from "../mapConfig";
 import { pushToast } from "../toast";
@@ -31,8 +41,11 @@ import CaptionInspector from "./CaptionInspector.vue";
 import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorBar from "./EditorBar.vue";
 import GeneratePageDialog from "./GeneratePageDialog.vue";
+import type { LayoutTool } from "./GeometryLayer.vue";
+import LayoutInspector from "./LayoutInspector.vue";
 import PageFilmstrip from "./PageFilmstrip.vue";
 import PlateCanvas from "./PlateCanvas.vue";
+import RegionAssignDialog from "./RegionAssignDialog.vue";
 
 const switchLangs = CAPTION_LANGS.map((l) => ({ code: l.code, label: l.code.toUpperCase() }));
 
@@ -52,6 +65,13 @@ const generateBusy = ref(false);
 const generateStatus = ref("");
 const generateError = ref("");
 const confirmingRemove = ref(false);
+const layoutTool = ref<LayoutTool>("select");
+const assignRegionId = ref<string | null>(null);
+const generateTargetRegionId = ref<string | null>(null);
+const confirmingRegionRemove = ref(false);
+const flattenDirty = ref(false);
+const flattening = ref(false);
+let flattenTimer: number | null = null;
 
 const toonId = computed(() => String(route.params.id || ""));
 const pageId = computed(() => (route.params.pageId ? String(route.params.pageId) : null));
@@ -65,6 +85,11 @@ const activePage = computed(() => {
 const selectedBubble = computed(() => {
   if (!activePage.value || !selectedId.value) return null;
   return activePage.value.bubbles.find((b) => b.id === selectedId.value) || null;
+});
+
+const selectedRegion = computed(() => {
+  if (!activePage.value || !selectedId.value) return null;
+  return activePage.value.regions.find((r) => r.id === selectedId.value) || null;
 });
 
 const playOrder = computed(() => {
@@ -126,12 +151,69 @@ async function load(): Promise<void> {
 onMounted(load);
 watch(toonId, load);
 
-async function onGenerateSubmit(payload: {
+type GeneratePayload = {
   prompt: string;
   includePrevious: boolean;
   previousPageId: string | null;
   previousFile: File | null;
-}): Promise<void> {
+};
+
+function closeGenerateDialog(): void {
+  if (generateBusy.value) return;
+  generateOpen.value = false;
+  generateTargetRegionId.value = null;
+}
+
+async function onRegionGenerateSubmit(regionId: string, payload: GeneratePayload): Promise<void> {
+  generateBusy.value = true;
+  generateError.value = "";
+  const started = Date.now();
+  const clock = (): string => {
+    const s = Math.floor((Date.now() - started) / 1000);
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  };
+  const setStatus = (label: string): void => {
+    generateStatus.value = `${label} · ${clock()}`;
+  };
+  setStatus("Queuing on Comfy…");
+  const tick = window.setInterval(() => {
+    const current = generateStatus.value.replace(/ · \d+:\d+$/, "");
+    setStatus(current || "Generating the image…");
+  }, 1000);
+  try {
+    const queued = await generateRegionImage(regionId, payload);
+    setStatus("Waiting in the Comfy queue…");
+    const deadline = Date.now() + 10 * 60 * 1000;
+    while (Date.now() < deadline) {
+      const snap = await getJob(queued.id);
+      if (snap.status === "done" && snap.toon) {
+        toon.value = snap.toon;
+        generateOpen.value = false;
+        generateTargetRegionId.value = null;
+        scheduleFlatten();
+        return;
+      }
+      if (snap.status === "error") {
+        generateError.value = snap.error || "Generate failed";
+        return;
+      }
+      setStatus(snap.message || "Generating the image…");
+      await new Promise((resolve) => window.setTimeout(resolve, 1500));
+    }
+    generateError.value = "Timed out waiting for ComfyUI";
+  } catch (err) {
+    generateError.value = err instanceof Error ? err.message : "Generate failed";
+  } finally {
+    window.clearInterval(tick);
+    generateBusy.value = false;
+  }
+}
+
+async function onGenerateSubmit(payload: GeneratePayload): Promise<void> {
+  if (generateTargetRegionId.value) {
+    await onRegionGenerateSubmit(generateTargetRegionId.value, payload);
+    return;
+  }
   if (!toon.value) return;
   generateBusy.value = true;
   generateError.value = "";
@@ -228,6 +310,29 @@ async function onReplaceThumb(pageId: string, file: File): Promise<void> {
   }
 }
 
+/** Blank transparent canvas, uploaded through the existing page-upload endpoint, then flipped to "layout" — the only code path that ever sets a page's kind. */
+async function onAddLayoutPage(): Promise<void> {
+  if (!toon.value) return;
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = toon.value.designWidth;
+    canvas.height = toon.value.designHeight;
+    const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("Could not create a blank page");
+    const file = new File([blob], "layout.png", { type: "image/png" });
+    const created = await uploadPage(toon.value.id, file, { width: canvas.width, height: canvas.height });
+    const last = created.pages[created.pages.length - 1];
+    if (!last) throw new Error("Could not create page");
+    toon.value = await setPageKind(last.id, "layout");
+    dirtyIds.value = new Set();
+    layoutTool.value = "select";
+    selectedId.value = null;
+    await router.push(`/${toon.value.id}/pages/${last.id}`);
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not create layout page");
+  }
+}
+
 function findBubble(id: string): BubbleRecord | null {
   if (!toon.value) return null;
   for (const page of toon.value.pages) {
@@ -315,6 +420,205 @@ async function onAdd(pos: { x: number; y: number }): Promise<void> {
   }
 }
 
+function applyRegionLocal(id: string, patch: Partial<RegionRecord>): void {
+  if (!toon.value) return;
+  for (const page of toon.value.pages) {
+    const i = page.regions.findIndex((r) => r.id === id);
+    if (i < 0) continue;
+    page.regions[i] = { ...page.regions[i], ...patch };
+    return;
+  }
+}
+
+function loadImageEl(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("Could not load a region image"));
+    img.src = src;
+  });
+}
+
+/** Composites every filled region onto one plate at design resolution, then swaps it in through the existing replace-page endpoint — the reader only ever sees this flattened image, never the regions. */
+async function flattenNow(pageOverride?: PageRecord | null): Promise<void> {
+  const page = pageOverride ?? activePage.value;
+  if (!page || page.kind !== "layout" || !toon.value) return;
+  flattening.value = true;
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = toon.value.designWidth;
+    canvas.height = toon.value.designHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas is not supported");
+    const ordered = [...page.regions].sort((a, b) => a.sort - b.sort);
+    for (const region of ordered) {
+      if (!region.fileUrl || !region.fileWidth || !region.fileHeight) continue;
+      const bbox = regionBoundingBox(region.geometry);
+      const boxLeft = bbox.x * canvas.width;
+      const boxTop = bbox.y * canvas.height;
+      const boxWidth = bbox.w * canvas.width;
+      const boxHeight = bbox.h * canvas.height;
+      const img = await loadImageEl(region.fileUrl);
+      const rect = coverImageRect(
+        { width: boxWidth, height: boxHeight },
+        { width: region.fileWidth, height: region.fileHeight },
+        region.imageScale,
+        region.imageOffsetX,
+        region.imageOffsetY
+      );
+      ctx.save();
+      ctx.beginPath();
+      const pts = regionPoints(region.geometry);
+      pts.forEach((p, i) => {
+        const x = p.x * canvas.width;
+        const y = p.y * canvas.height;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(img, boxLeft + rect.x, boxTop + rect.y, rect.width, rect.height);
+      ctx.restore();
+    }
+    const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("Could not render the layout");
+    const file = new File([blob], "layout.png", { type: "image/png" });
+    const next = await replacePage(page.id, file, { width: canvas.width, height: canvas.height });
+    toon.value = toon.value ? mergeReplacedPage(toon.value, next, page.id) : next;
+    flattenDirty.value = false;
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not update the flattened plate");
+  } finally {
+    flattening.value = false;
+  }
+}
+
+function scheduleFlatten(): void {
+  flattenDirty.value = true;
+  if (flattenTimer) window.clearTimeout(flattenTimer);
+  flattenTimer = window.setTimeout(() => {
+    flattenTimer = null;
+    void flattenNow();
+  }, 600);
+}
+
+function flushFlatten(pageOverride?: PageRecord | null): void {
+  if (!flattenTimer) return;
+  window.clearTimeout(flattenTimer);
+  flattenTimer = null;
+  void flattenNow(pageOverride);
+}
+
+async function onCreateRegion(geometry: RegionGeometry): Promise<void> {
+  const page = activePage.value;
+  if (!page) return;
+  try {
+    const created = await addRegion(page.id, { shapeType: geometry.kind, geometry });
+    page.regions.push(created);
+    selectedId.value = created.id;
+    layoutTool.value = "select";
+    scheduleFlatten();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not add shape");
+  }
+}
+
+function onUpdateRegionGeometry(id: string, geometry: RegionGeometry): void {
+  applyRegionLocal(id, { geometry });
+}
+
+async function onPersistRegionGeometry(id: string, geometry: RegionGeometry): Promise<void> {
+  applyRegionLocal(id, { geometry });
+  try {
+    const saved = await patchRegion(id, { geometry });
+    applyRegionLocal(id, saved);
+    scheduleFlatten();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not update shape");
+  }
+}
+
+function onMoveRegionImage(id: string, offsetX: number, offsetY: number): void {
+  applyRegionLocal(id, { imageOffsetX: offsetX, imageOffsetY: offsetY });
+}
+
+async function onPersistRegionImage(id: string, offsetX: number, offsetY: number): Promise<void> {
+  applyRegionLocal(id, { imageOffsetX: offsetX, imageOffsetY: offsetY });
+  try {
+    const saved = await patchRegion(id, { imageOffsetX: offsetX, imageOffsetY: offsetY });
+    applyRegionLocal(id, saved);
+    scheduleFlatten();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not move image");
+  }
+}
+
+function onRegionScalePreview(value: number): void {
+  if (selectedId.value) applyRegionLocal(selectedId.value, { imageScale: value });
+}
+
+async function onRegionScalePersist(value: number): Promise<void> {
+  const id = selectedId.value;
+  if (!id) return;
+  try {
+    const saved = await patchRegion(id, { imageScale: value });
+    applyRegionLocal(id, saved);
+    scheduleFlatten();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not update zoom");
+  }
+}
+
+function onRequestRegionAssign(id: string): void {
+  assignRegionId.value = id;
+}
+
+function onLayoutInspectorReassign(): void {
+  if (selectedId.value) assignRegionId.value = selectedId.value;
+}
+
+async function onAssignUpload(file: File): Promise<void> {
+  const id = assignRegionId.value;
+  assignRegionId.value = null;
+  if (!id) return;
+  try {
+    const size = await readImageSize(file);
+    const saved = await uploadRegionImage(id, file, size);
+    applyRegionLocal(id, saved);
+    scheduleFlatten();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Upload failed");
+  }
+}
+
+function onAssignGenerate(): void {
+  const id = assignRegionId.value;
+  assignRegionId.value = null;
+  if (!id) return;
+  generateTargetRegionId.value = id;
+  generateOpen.value = true;
+}
+
+function requestRegionRemove(): void {
+  if (!selectedId.value || confirmingRegionRemove.value) return;
+  confirmingRegionRemove.value = true;
+}
+
+async function onRegionRemove(): Promise<void> {
+  const id = selectedId.value;
+  confirmingRegionRemove.value = false;
+  if (!id || !activePage.value) return;
+  try {
+    await deleteRegion(id);
+    activePage.value.regions = activePage.value.regions.filter((r) => r.id !== id);
+    selectedId.value = null;
+    scheduleFlatten();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Delete failed");
+  }
+}
+
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   const tag = target.tagName;
@@ -331,14 +635,27 @@ function onRemoveKey(ev: KeyboardEvent): void {
   if (ev.key !== "Delete" && ev.key !== "Backspace") return;
   if (ev.defaultPrevented || ev.repeat) return;
   if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
-  if (!selectedId.value || confirmingRemove.value || generateOpen.value) return;
+  if (!selectedId.value || confirmingRemove.value || confirmingRegionRemove.value || generateOpen.value) return;
   if (isTypingTarget(ev.target)) return;
   ev.preventDefault();
-  requestRemove();
+  if (activePage.value?.kind === "layout") requestRegionRemove();
+  else requestRemove();
 }
 
 onMounted(() => window.addEventListener("keydown", onRemoveKey));
-onBeforeUnmount(() => window.removeEventListener("keydown", onRemoveKey));
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", onRemoveKey);
+  flushFlatten();
+});
+
+// Navigating to a different page within the same toon doesn't unmount this
+// component — flush a pending flatten for the page being left, not the one
+// just switched to.
+watch(pageId, (_next, prev) => {
+  if (!prev) return;
+  const prevPage = toon.value?.pages.find((p) => p.id === prev) || null;
+  flushFlatten(prevPage);
+});
 
 async function onRemove(): Promise<void> {
   if (!selectedId.value || !activePage.value) return;
@@ -393,6 +710,7 @@ async function onRemove(): Promise<void> {
           :replacing-id="replacingId"
           @upload="onUpload"
           @generate="generateOpen = true"
+          @layout="onAddLayoutPage"
           @remove="onRemovePage"
           @replace="onReplaceThumb"
         />
@@ -406,11 +724,21 @@ async function onRemove(): Promise<void> {
           :lang="previewLang"
           :design-width="toon.designWidth"
           :design-height="toon.designHeight"
+          :kind="activePage.kind"
+          :regions="activePage.regions"
+          :layout-tool="layoutTool"
           @select="selectedId = $event"
           @move="onMove"
           @persist="onPersist"
           @add="onAdd"
           @tail="onTail"
+          @update-layout-tool="layoutTool = $event"
+          @create-region="onCreateRegion"
+          @update-region-geometry="onUpdateRegionGeometry"
+          @persist-region-geometry="onPersistRegionGeometry"
+          @move-region-image="onMoveRegionImage"
+          @persist-region-image="onPersistRegionImage"
+          @request-region-assign="onRequestRegionAssign"
         />
         <div v-else class="editor-canvas editor-canvas--empty">
           <p class="editor-muted">Upload a page to start placing bubbles.</p>
@@ -428,6 +756,7 @@ async function onRemove(): Promise<void> {
           </label>
         </div>
         <CaptionInspector
+          v-if="activePage?.kind !== 'layout'"
           :bubble="selectedBubble"
           :toon-id="toon.id"
           :asset-page-dir="toon.assetPageDir"
@@ -437,6 +766,17 @@ async function onRemove(): Promise<void> {
           @preview="previewLang = $event"
           @remove="requestRemove"
           @reorder="onReorder"
+        />
+        <LayoutInspector
+          v-else
+          :region="selectedRegion"
+          :dirty="flattenDirty"
+          :saving="flattening"
+          @reassign="onLayoutInspectorReassign"
+          @scale="onRegionScalePreview"
+          @persist-scale="onRegionScalePersist"
+          @remove="requestRegionRemove"
+          @save="flushFlatten()"
         />
       </div>
       <ConfirmDialog
@@ -448,6 +788,15 @@ async function onRemove(): Promise<void> {
         @confirm="onRemove"
         @cancel="confirmingRemove = false"
       />
+      <ConfirmDialog
+        :open="confirmingRegionRemove"
+        title="Delete shape"
+        message="Delete this shape and its image?"
+        confirm-label="OK"
+        focus-confirm
+        @confirm="onRegionRemove"
+        @cancel="confirmingRegionRemove = false"
+      />
       <GeneratePageDialog
         :open="generateOpen"
         :generate="seriesGenerate"
@@ -455,8 +804,15 @@ async function onRemove(): Promise<void> {
         :busy="generateBusy"
         :status="generateStatus"
         :error="generateError"
-        @close="!generateBusy && (generateOpen = false)"
+        @close="closeGenerateDialog"
         @submit="onGenerateSubmit"
+      />
+      <RegionAssignDialog
+        :open="Boolean(assignRegionId)"
+        :can-generate="canGenerate"
+        @close="assignRegionId = null"
+        @upload="onAssignUpload"
+        @generate="onAssignGenerate"
       />
     </template>
   </div>

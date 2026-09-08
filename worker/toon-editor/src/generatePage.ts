@@ -29,6 +29,7 @@ export type GenerationJob = {
   kind: string;
   toon_id: string;
   page_id: string | null;
+  region_id: string | null;
   status: string;
   prompt: string;
   payload_json: string;
@@ -76,6 +77,8 @@ export async function startPageGenerate(
     previousOverride?: { bytes: ArrayBuffer; type: string } | null;
     /** How many plates to run. Capped at 4; forced to 1 when replacing a page. */
     count?: number;
+    /** Set when this job fills one Layout-page region instead of a whole page — pollPageJob writes the result to page_regions instead of pages. `pageId` must still be the region's owning page (forces count to 1, same as a page replace). */
+    regionId?: string | null;
   }
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
   if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
@@ -159,14 +162,17 @@ export async function startPageGenerate(
 
   const id = crypto.randomUUID();
   const ts = nowIso();
+  const regionId = input.regionId || null;
   await env.DB.prepare(
-    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_at, updated_at)
-     VALUES (?, 'page', ?, ?, 'running', ?, ?, NULL, NULL, ?, ?, ?)`
+    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 'running', ?, ?, NULL, NULL, ?, ?, ?)`
   )
     .bind(
       id,
+      regionId ? "region" : "page",
       input.toon.id,
       input.pageId,
+      regionId,
       input.prompt,
       JSON.stringify({
         includePrevious: input.includePrevious,
@@ -296,6 +302,18 @@ export async function pollPageJob(
   let resultPageId = job.page_id;
   for (let i = 0; i < plates.length; i++) {
     const fileKey = plates[i];
+    if (i === 0 && job.region_id) {
+      // Fills one Layout-page region, never the page's own plate — the
+      // editor flattens regions onto the page separately. Skips the
+      // "first plate sets toon design size" backfill below entirely, since
+      // that heuristic is only meaningful for a toon's very first whole page.
+      await env.DB.prepare(
+        `UPDATE page_regions SET file_key = ?, file_width = COALESCE(?, file_width), file_height = COALESCE(?, file_height), image_offset_x = 0.5, image_offset_y = 0.5, image_scale = 1, updated_at = ? WHERE id = ?`
+      )
+        .bind(fileKey, width, height, nowIso(), job.region_id)
+        .run();
+      continue;
+    }
     if (i === 0 && job.page_id) {
       await env.DB.prepare(
         `UPDATE pages SET file_key = ?, width = COALESCE(?, width), height = COALESCE(?, height) WHERE id = ?`

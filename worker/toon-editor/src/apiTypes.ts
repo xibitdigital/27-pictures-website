@@ -67,6 +67,33 @@ export interface BubbleRecord {
   sort: number;
 }
 
+export type RegionShapeType = "rect" | "polygon";
+
+/** Plate-fraction coordinates (0-1). A rect is a constrained 4-point shape;
+ * a polygon's vertices move independently. Both render through one
+ * `clip-path: polygon(...)` code path client-side. */
+export type RegionGeometry =
+  | { kind: "rect"; x: number; y: number; w: number; h: number }
+  | { kind: "polygon"; points: { x: number; y: number }[] };
+
+/** One drawn mask on a `kind: "layout"` page. `fileKey`/`fileUrl` are null
+ * until an image has been uploaded or generated for this shape. */
+export interface RegionRecord {
+  id: string;
+  shapeType: RegionShapeType;
+  geometry: RegionGeometry;
+  fileKey: string | null;
+  fileUrl: string | null;
+  fileWidth: number | null;
+  fileHeight: number | null;
+  imageOffsetX: number;
+  imageOffsetY: number;
+  imageScale: number;
+  sort: number;
+}
+
+export type PageKind = "plate" | "layout";
+
 export interface PageRecord {
   id: string;
   position: number;
@@ -74,7 +101,11 @@ export interface PageRecord {
   fileUrl: string;
   width: number | null;
   height: number | null;
+  /** "layout" pages compose `regions` into this same `fileKey` on every edit
+   * (flattened client-side) — the reader only ever sees one plate per page. */
+  kind: PageKind;
   bubbles: BubbleRecord[];
+  regions: RegionRecord[];
 }
 
 export interface ToonRecord {

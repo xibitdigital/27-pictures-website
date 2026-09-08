@@ -1677,6 +1677,116 @@ body {
   flex-wrap: wrap;
 }
 
+.editor-geometry-layer {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.editor-region-frame {
+  position: absolute;
+}
+
+.editor-region-frame.is-selected .editor-region {
+  outline: 2px solid var(--red-smile);
+  outline-offset: 2px;
+}
+
+.editor-region {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.editor-region img {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.editor-region.is-empty {
+  cursor: pointer;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-light);
+}
+
+.editor-region-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: 0.35rem;
+  color: var(--silver);
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.editor-region-handles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.editor-region-handle {
+  position: absolute;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--text);
+  border: 2px solid var(--red-smile);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.editor-region-draft-rect {
+  position: absolute;
+  border: 2px dashed var(--red-smile);
+  background: color-mix(in srgb, var(--red-smile) 15%, transparent);
+  pointer-events: none;
+}
+
+.editor-region-draft-polygon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.editor-region-draft-polygon polyline {
+  fill: color-mix(in srgb, var(--red-smile) 15%, transparent);
+  stroke: var(--red-smile);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.editor-region-draft-polygon circle {
+  fill: var(--red-smile);
+}
+
+.editor-layout-toolbar {
+  position: absolute;
+  z-index: 40;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 12px 28px var(--bg-dark);
+}
+
+.editor-layout-toolbar .editor-icon-btn[aria-pressed="true"] {
+  color: var(--text);
+  border-color: var(--red-smile);
+}
+
 @media (pointer: coarse) {
   .editor-studio-body {
     grid-template-columns: 1fr;

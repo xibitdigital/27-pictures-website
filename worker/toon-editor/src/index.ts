@@ -62,6 +62,10 @@ import {
   type PageRecord,
   type PageRow,
   type ReaderConfig,
+  type RegionGeometry,
+  type RegionRecord,
+  type RegionRow,
+  type RegionShapeType,
   type RequestLike,
   type SeriesMeta,
   type SeriesOption,
@@ -240,12 +244,110 @@ function mapBubble(row: BubbleRow | Record<string, unknown>): BubbleRecord {
   };
 }
 
+const MIN_REGION_SIZE = 0.03;
+
+function defaultRegionGeometry(shapeType: string): RegionGeometry {
+  return shapeType === "polygon"
+    ? {
+        kind: "polygon",
+        points: [
+          { x: 0.1, y: 0.1 },
+          { x: 0.9, y: 0.1 },
+          { x: 0.9, y: 0.9 },
+          { x: 0.1, y: 0.9 },
+        ],
+      }
+    : { kind: "rect", x: 0.1, y: 0.1, w: 0.8, h: 0.8 };
+}
+
+/** Never throws — a corrupt row falls back to a harmless default shape rather than breaking the whole page load. */
+function parseRegionGeometry(json: string, shapeType: string): RegionGeometry {
+  try {
+    const parsed = JSON.parse(json) as Record<string, unknown>;
+    if (parsed && parsed.kind === "polygon" && Array.isArray(parsed.points)) {
+      const points = (parsed.points as unknown[])
+        .map((p) =>
+          p && typeof p === "object" ? { x: clamp01((p as JsonRecord).x), y: clamp01((p as JsonRecord).y) } : null
+        )
+        .filter((p): p is { x: number; y: number } => p !== null);
+      if (points.length >= 3) return { kind: "polygon", points };
+    }
+    if (parsed && parsed.kind === "rect") {
+      return {
+        kind: "rect",
+        x: clamp01(parsed.x),
+        y: clamp01(parsed.y),
+        w: clamp01(parsed.w),
+        h: clamp01(parsed.h),
+      };
+    }
+  } catch {
+    /* fall through to default */
+  }
+  return defaultRegionGeometry(shapeType);
+}
+
+/** Validates a client-submitted geometry payload before it's persisted. */
+function validateRegionGeometry(
+  input: unknown
+): { ok: true; value: RegionGeometry; shapeType: RegionShapeType } | { ok: false; error: string } {
+  if (!input || typeof input !== "object") return { ok: false, error: "geometry is required" };
+  const g = input as JsonRecord;
+  if (g.kind === "rect") {
+    const x = clamp01(g.x);
+    const y = clamp01(g.y);
+    const w = clamp01(g.w);
+    const h = clamp01(g.h);
+    if (w < MIN_REGION_SIZE || h < MIN_REGION_SIZE) return { ok: false, error: "region is too small" };
+    return { ok: true, value: { kind: "rect", x, y, w, h }, shapeType: "rect" };
+  }
+  if (g.kind === "polygon") {
+    const rawPoints = Array.isArray(g.points) ? (g.points as unknown[]) : [];
+    const points = rawPoints
+      .map((p) =>
+        p && typeof p === "object" ? { x: clamp01((p as JsonRecord).x), y: clamp01((p as JsonRecord).y) } : null
+      )
+      .filter((p): p is { x: number; y: number } => p !== null);
+    if (points.length < 3) return { ok: false, error: "polygon needs at least 3 points" };
+    const xs = points.map((p) => p.x);
+    const ys = points.map((p) => p.y);
+    const w = Math.max(...xs) - Math.min(...xs);
+    const h = Math.max(...ys) - Math.min(...ys);
+    if (w < MIN_REGION_SIZE || h < MIN_REGION_SIZE) return { ok: false, error: "region is too small" };
+    return { ok: true, value: { kind: "polygon", points }, shapeType: "polygon" };
+  }
+  return { ok: false, error: "shape must be rect or polygon" };
+}
+
+function mapRegion(
+  row: RegionRow | Record<string, unknown>,
+  request: RequestLike,
+  env: Env,
+  pageDir: string | null | undefined
+): RegionRecord {
+  const r = row as RegionRow;
+  return {
+    id: r.id,
+    shapeType: r.shape_type === "polygon" ? "polygon" : "rect",
+    geometry: parseRegionGeometry(r.geometry_json, r.shape_type),
+    fileKey: r.file_key || null,
+    fileUrl: r.file_key ? objectUrl(request, env, r.file_key, pageDir) : null,
+    fileWidth: r.file_width,
+    fileHeight: r.file_height,
+    imageOffsetX: r.image_offset_x,
+    imageOffsetY: r.image_offset_y,
+    imageScale: r.image_scale,
+    sort: r.sort,
+  };
+}
+
 function mapPage(
   row: PageRow | Record<string, unknown>,
   request: RequestLike,
   env: Env,
   pageDir: string | null | undefined,
-  bubbles: BubbleRecord[]
+  bubbles: BubbleRecord[],
+  regions: RegionRecord[]
 ): PageRecord {
   row = row as PageRow;
   return {
@@ -255,7 +357,9 @@ function mapPage(
     fileUrl: objectUrl(request, env, row.file_key, pageDir) || "",
     width: row.width,
     height: row.height,
+    kind: row.kind === "layout" ? "layout" : "plate",
     bubbles: bubbles || [],
+    regions: regions || [],
   };
 }
 
@@ -574,6 +678,27 @@ async function bubblesByPageId(env: Pick<Env, "DB">, toonId: string): Promise<Ma
   return map;
 }
 
+/** One round-trip for every region on a toon — mirrors bubblesByPageId. */
+async function regionsByPageId(env: Pick<Env, "DB">, toonId: string): Promise<Map<string, RegionRow[]>> {
+  const rows = (
+    await env.DB.prepare(
+      `SELECT page_regions.* FROM page_regions
+       INNER JOIN pages ON pages.id = page_regions.page_id
+       WHERE pages.toon_id = ?
+       ORDER BY pages.position ASC, page_regions.sort ASC, page_regions.created_at ASC`
+    )
+      .bind(toonId)
+      .all<RegionRow>()
+  ).results;
+  const map = new Map<string, RegionRow[]>();
+  for (const row of rows) {
+    const list = map.get(row.page_id);
+    if (list) list.push(row);
+    else map.set(row.page_id, [row]);
+  }
+  return map;
+}
+
 async function readerConfigFromToon(env: Pick<Env, "DB">, toon: ToonRow, request: RequestLike): Promise<ReaderConfig> {
   const extra = parseToonExtra(toon);
   const pageRows = (
@@ -635,14 +760,34 @@ async function loadToon(env: Env, request: Request, id: string) {
     await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(id).all<PageRow>()
   ).results;
   const bubbles = await bubblesByPageId(env, id);
+  const regions = await regionsByPageId(env, id);
   const pages = pageRows.map((page) =>
-    mapPage(page, request, env, toon.asset_page_dir, (bubbles.get(page.id) ?? []).map(mapBubble))
+    mapPage(
+      page,
+      request,
+      env,
+      toon.asset_page_dir,
+      (bubbles.get(page.id) ?? []).map(mapBubble),
+      (regions.get(page.id) ?? []).map((r) => mapRegion(r, request, env, toon.asset_page_dir))
+    )
   );
   return mapToon(toon, request, env, pages);
 }
 
 async function getPageOrNull(env: Env, pageId: string) {
   return env.DB.prepare("SELECT * FROM pages WHERE id = ?").bind(pageId).first<PageRow>();
+}
+
+async function getRegionOrNull(env: Env, regionId: string) {
+  return env.DB.prepare("SELECT * FROM page_regions WHERE id = ?").bind(regionId).first<RegionRow>();
+}
+
+/** Regions need the owning toon's asset dir to build a fileUrl the same way pages do. */
+async function toonAssetDirForPage(env: Env, page: PageRow): Promise<string | null> {
+  const toon = await env.DB.prepare("SELECT asset_page_dir FROM toons WHERE id = ?")
+    .bind(page.toon_id)
+    .first<{ asset_page_dir: string | null }>();
+  return toon?.asset_page_dir || null;
 }
 
 async function putImage(env: Env, key: string, bytes: ArrayBuffer, contentType: string) {
@@ -1642,16 +1787,170 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const pageMatch = path.match(/^\/pages\/([^/]+)$/);
-  if (isMethod(method, "DELETE") && pageMatch) {
+  if ((isMethod(method, "DELETE") || isMethod(method, "PATCH")) && pageMatch) {
     const page = await getPageOrNull(env, pageMatch[1]);
     if (!page) return json({ error: "not found" }, 404, cors);
-    await env.DB.prepare("DELETE FROM bubbles WHERE page_id = ?").bind(page.id).run();
-    await env.DB.prepare("DELETE FROM pages WHERE id = ?").bind(page.id).run();
-    await env.DB.prepare("UPDATE pages SET position = position - 1 WHERE toon_id = ? AND position > ?")
-      .bind(page.toon_id, page.position)
-      .run();
+    if (isMethod(method, "DELETE")) {
+      await env.DB.prepare("DELETE FROM bubbles WHERE page_id = ?").bind(page.id).run();
+      await env.DB.prepare("DELETE FROM page_regions WHERE page_id = ?").bind(page.id).run();
+      await env.DB.prepare("DELETE FROM pages WHERE id = ?").bind(page.id).run();
+      await env.DB.prepare("UPDATE pages SET position = position - 1 WHERE toon_id = ? AND position > ?")
+        .bind(page.toon_id, page.position)
+        .run();
+      await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(nowIso(), page.toon_id).run();
+      return json({ ok: true }, 200, cors);
+    }
+    // PATCH — today the only field is `kind`, and this is the only place that
+    // ever sets it to "layout". No existing upload/generate/replace action
+    // calls this route, so no page can flip modes by accident.
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const kind = String(parsed.body.kind || "");
+    if (kind !== "plate" && kind !== "layout") return json({ error: "kind must be plate or layout" }, 400, cors);
+    await env.DB.prepare("UPDATE pages SET kind = ? WHERE id = ?").bind(kind, page.id).run();
     await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(nowIso(), page.toon_id).run();
-    return json({ ok: true }, 200, cors);
+    return json(await loadToon(env, request, page.toon_id), 200, cors);
+  }
+
+  const pageRegionsMatch = path.match(/^\/pages\/([^/]+)\/regions$/);
+  if (isMethod(method, "POST") && pageRegionsMatch) {
+    const page = await getPageOrNull(env, pageRegionsMatch[1]);
+    if (!page) return json({ error: "not found" }, 404, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const validated = validateRegionGeometry(parsed.body.geometry);
+    if (!validated.ok) return json({ error: validated.error }, 400, cors);
+    const sortRow = await env.DB.prepare(
+      "SELECT COALESCE(MAX(sort), -1) AS max_sort FROM page_regions WHERE page_id = ?"
+    )
+      .bind(page.id)
+      .first<{ max_sort: number }>();
+    const sort = (sortRow && Number(sortRow.max_sort) > -1 ? Number(sortRow.max_sort) : -1) + 1;
+    const id = crypto.randomUUID();
+    const ts = nowIso();
+    await env.DB.prepare(
+      `INSERT INTO page_regions (id, page_id, shape_type, geometry_json, file_key, file_width, file_height, image_offset_x, image_offset_y, image_scale, sort, created_at, updated_at)
+       VALUES (?, ?, ?, ?, NULL, NULL, NULL, 0.5, 0.5, 1, ?, ?, ?)`
+    )
+      .bind(id, page.id, validated.shapeType, JSON.stringify(validated.value), sort, ts, ts)
+      .run();
+    await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(ts, page.toon_id).run();
+    const row = await getRegionOrNull(env, id);
+    if (!row) return json({ error: "not found" }, 404, cors);
+    return json(mapRegion(row, request, env, await toonAssetDirForPage(env, page)), 201, cors);
+  }
+
+  const regionFileMatch = path.match(/^\/regions\/([^/]+)\/file$/);
+  if (isMethod(method, "POST") && regionFileMatch) {
+    const row = await getRegionOrNull(env, regionFileMatch[1]);
+    if (!row) return json({ error: "not found" }, 404, cors);
+    const page = await getPageOrNull(env, row.page_id);
+    if (!page) return json({ error: "not found" }, 404, cors);
+    const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first<ToonRow>();
+    if (!toon) return json({ error: "not found" }, 404, cors);
+    const upload = await readUpload(request);
+    if ("error" in upload) return json({ error: upload.error }, 400, cors);
+    const key = await putPageAsset(env, toon.slug, upload);
+    const ts = nowIso();
+    await env.DB.prepare(
+      `UPDATE page_regions SET file_key = ?, file_width = ?, file_height = ?, image_offset_x = 0.5, image_offset_y = 0.5, image_scale = 1, updated_at = ?
+       WHERE id = ?`
+    )
+      .bind(key, upload.width, upload.height, ts, row.id)
+      .run();
+    await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(ts, page.toon_id).run();
+    const next = await getRegionOrNull(env, row.id);
+    if (!next) return json({ error: "not found" }, 404, cors);
+    return json(mapRegion(next, request, env, toon.asset_page_dir), 200, cors);
+  }
+
+  const regionGenerateMatch = path.match(/^\/regions\/([^/]+)\/generate$/);
+  if (isMethod(method, "POST") && regionGenerateMatch) {
+    const row = await getRegionOrNull(env, regionGenerateMatch[1]);
+    if (!row) return json({ error: "not found" }, 404, cors);
+    const page = await getPageOrNull(env, row.page_id);
+    if (!page) return json({ error: "not found" }, 404, cors);
+    const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first<ToonRow>();
+    if (!toon) return json({ error: "not found" }, 404, cors);
+    if (!toon.series_key) return json({ error: "toon is not in a series" }, 400, cors);
+    const series = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(toon.series_key).first<SeriesRow>();
+    if (!series) return json({ error: "series not found" }, 404, cors);
+    const form = await request.formData();
+    const prompt = String(form.get("prompt") || "").trim();
+    if (!prompt) return json({ error: "prompt is required" }, 400, cors);
+    const includePrevious = form.get("includePrevious") === "1";
+    const previousPageId = form.get("previousPageId") ? String(form.get("previousPageId")) : null;
+    const previousFile = form.get("previousFile");
+    let previousOverride: { bytes: ArrayBuffer; type: string } | null = null;
+    if (previousFile && typeof previousFile !== "string") {
+      const blob = previousFile as File;
+      const bytes = await blob.arrayBuffer();
+      const resolved = resolveImageType(blob.type || "", bytes);
+      if (!resolved) return json({ error: "previous-plate image must be webp, jpeg, or png" }, 400, cors);
+      if (bytes.byteLength > MAX_UPLOAD_BYTES) {
+        return json({ error: "previous-plate image too large (20MB max)" }, 400, cors);
+      }
+      previousOverride = { bytes, type: resolved.type };
+    }
+    const started = await startPageGenerate(env, {
+      toon,
+      series,
+      prompt,
+      includePrevious: includePrevious || Boolean(previousPageId),
+      pageId: page.id,
+      previousPageId,
+      previousOverride,
+      count: 1,
+      regionId: row.id,
+    });
+    if (!started.ok) return json({ error: started.error }, started.status, cors);
+    return json(
+      { id: started.job.id, status: started.job.status, comfyPromptId: started.job.comfy_prompt_id },
+      202,
+      cors
+    );
+  }
+
+  const regionMatch = path.match(/^\/regions\/([^/]+)$/);
+  if ((isMethod(method, "PATCH") || isMethod(method, "DELETE")) && regionMatch) {
+    const row = await getRegionOrNull(env, regionMatch[1]);
+    if (!row) return json({ error: "not found" }, 404, cors);
+    const page = await getPageOrNull(env, row.page_id);
+    if (isMethod(method, "DELETE")) {
+      await env.DB.prepare("DELETE FROM page_regions WHERE id = ?").bind(row.id).run();
+      if (page) await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(nowIso(), page.toon_id).run();
+      return json({ ok: true }, 200, cors);
+    }
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const body = parsed.body;
+    let shapeType = row.shape_type;
+    let geometryJson = row.geometry_json;
+    if (body.geometry !== undefined) {
+      const validated = validateRegionGeometry(body.geometry);
+      if (!validated.ok) return json({ error: validated.error }, 400, cors);
+      shapeType = validated.shapeType;
+      geometryJson = JSON.stringify(validated.value);
+    }
+    const imageOffsetX = body.imageOffsetX != null ? clamp01(body.imageOffsetX) : row.image_offset_x;
+    const imageOffsetY = body.imageOffsetY != null ? clamp01(body.imageOffsetY) : row.image_offset_y;
+    const imageScale =
+      body.imageScale != null && Number.isFinite(Number(body.imageScale))
+        ? Math.max(1, Math.min(4, Number(body.imageScale)))
+        : row.image_scale;
+    const sort = body.sort != null && Number.isFinite(Number(body.sort)) ? Math.round(Number(body.sort)) : row.sort;
+    const ts = nowIso();
+    await env.DB.prepare(
+      `UPDATE page_regions SET shape_type = ?, geometry_json = ?, image_offset_x = ?, image_offset_y = ?, image_scale = ?, sort = ?, updated_at = ?
+       WHERE id = ?`
+    )
+      .bind(shapeType, geometryJson, imageOffsetX, imageOffsetY, imageScale, sort, ts, row.id)
+      .run();
+    if (page) await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(ts, page.toon_id).run();
+    const next = await getRegionOrNull(env, row.id);
+    if (!next) return json({ error: "not found" }, 404, cors);
+    const pageDir = page ? await toonAssetDirForPage(env, page) : null;
+    return json(mapRegion(next, request, env, pageDir), 200, cors);
   }
 
   const addBubbleMatch = path.match(/^\/pages\/([^/]+)\/bubbles$/);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
-import { LoaderCircle, Plus, Upload, WandSparkles, X } from "@lucide/vue";
+import { LayoutGrid, LoaderCircle, Plus, Upload, WandSparkles, X } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
@@ -17,6 +17,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   upload: [file: File];
   generate: [];
+  layout: [];
   remove: [pageId: string];
   replace: [pageId: string, file: File];
 }>();
@@ -41,6 +42,11 @@ async function onUploadPick(): Promise<void> {
 function onGeneratePick(): void {
   addOpen.value = false;
   emit("generate");
+}
+
+function onLayoutPick(): void {
+  addOpen.value = false;
+  emit("layout");
 }
 
 function onReplaceFile(ev: Event, page: PageRecord): void {
@@ -145,6 +151,16 @@ function onRemoveConfirm(): void {
       >
         <WandSparkles :size="22" :stroke-width="1.8" aria-hidden="true" />
         Generate
+      </button>
+      <button
+        class="editor-add-page-choice"
+        type="button"
+        name="add-page-layout"
+        title="Draw shapes on a blank page, then fill each with an image"
+        @click="onLayoutPick"
+      >
+        <LayoutGrid :size="22" :stroke-width="1.8" aria-hidden="true" />
+        Layout
       </button>
     </div>
   </EditorDialog>

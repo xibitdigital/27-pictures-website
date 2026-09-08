@@ -15,6 +15,9 @@ export type {
   InviteUserInput,
   InviteUserResult,
   PageRecord,
+  RegionGeometry,
+  RegionRecord,
+  RegionShapeType,
   SeriesGenerateConfig,
   SeriesInput,
   SeriesOption,
@@ -96,7 +99,24 @@ export interface PageRow {
   file_key: string;
   width: number | null;
   height: number | null;
+  kind?: string;
   created_at?: string;
+}
+
+export interface RegionRow {
+  id: string;
+  page_id: string;
+  shape_type: string;
+  geometry_json: string;
+  file_key: string | null;
+  file_width: number | null;
+  file_height: number | null;
+  image_offset_x: number;
+  image_offset_y: number;
+  image_scale: number;
+  sort: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface BubbleRow {

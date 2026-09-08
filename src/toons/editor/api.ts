@@ -4,6 +4,10 @@ import type {
   EditorUser,
   InviteUserInput,
   InviteUserResult,
+  PageKind,
+  RegionGeometry,
+  RegionRecord,
+  RegionShapeType,
   SeriesInput,
   SeriesOption,
   ToonListItem,
@@ -299,6 +303,66 @@ export function patchBubble(id: string, payload: Partial<BubbleRecord>): Promise
 
 export function deleteBubble(id: string): Promise<{ ok: boolean }> {
   return api<{ ok: boolean }>(`/bubbles/${id}`, { method: "DELETE" });
+}
+
+/** The only call that ever flips a page into Layout mode. */
+export function setPageKind(pageId: string, kind: PageKind): Promise<ToonRecord> {
+  return api<ToonRecord>(`/pages/${pageId}`, { method: "PATCH", body: JSON.stringify({ kind }) });
+}
+
+export function addRegion(
+  pageId: string,
+  payload: { shapeType: RegionShapeType; geometry: RegionGeometry }
+): Promise<RegionRecord> {
+  return api<RegionRecord>(`/pages/${pageId}/regions`, { method: "POST", body: JSON.stringify(payload) });
+}
+
+export function patchRegion(
+  id: string,
+  payload: Partial<{
+    geometry: RegionGeometry;
+    imageOffsetX: number;
+    imageOffsetY: number;
+    imageScale: number;
+    sort: number;
+  }>
+): Promise<RegionRecord> {
+  return api<RegionRecord>(`/regions/${id}`, { method: "PATCH", body: JSON.stringify(payload) });
+}
+
+export function deleteRegion(id: string): Promise<{ ok: boolean }> {
+  return api<{ ok: boolean }>(`/regions/${id}`, { method: "DELETE" });
+}
+
+export function uploadRegionImage(
+  id: string,
+  file: File,
+  size?: { width: number; height: number }
+): Promise<RegionRecord> {
+  const body = new FormData();
+  body.set("file", file);
+  if (size) {
+    body.set("width", String(size.width));
+    body.set("height", String(size.height));
+  }
+  return api<RegionRecord>(`/regions/${id}/file`, { method: "POST", body });
+}
+
+export function generateRegionImage(
+  id: string,
+  payload: {
+    prompt: string;
+    includePrevious: boolean;
+    previousPageId?: string | null;
+    previousFile?: File | null;
+  }
+): Promise<{ id: string; status: string; comfyPromptId?: string | null }> {
+  const body = new FormData();
+  body.set("prompt", payload.prompt);
+  body.set("includePrevious", payload.includePrevious ? "1" : "0");
+  if (payload.previousPageId) body.set("previousPageId", payload.previousPageId);
+  if (payload.previousFile) body.set("previousFile", payload.previousFile);
+  return api(`/regions/${id}/generate`, { method: "POST", body });
 }
 
 export function readImageSize(file: File): Promise<{ width: number; height: number }> {
