@@ -1677,8 +1677,9 @@ body {
   flex-wrap: wrap;
 }
 
-.editor-inspector .editor-form-actions--split {
-  justify-content: space-between;
+.editor-inspector-subtitle {
+  color: var(--silver);
+  margin: 0 0 0.75rem;
 }
 
 .editor-geometry-layer {

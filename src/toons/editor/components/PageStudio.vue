@@ -709,6 +709,18 @@ async function onRemove(): Promise<void> {
       </template>
       <template #primary>
         <button
+          v-if="!showBubbleLayer"
+          class="editor-btn"
+          type="button"
+          name="save-layout"
+          :disabled="!flattenDirty || flattening"
+          @click="flattenNow()"
+        >
+          <Save :size="16" :stroke-width="1.4" aria-hidden="true" />
+          {{ flattening ? "Saving…" : flattenDirty ? "Save layout" : "Layout saved" }}
+        </button>
+        <button
+          v-else
           class="editor-btn"
           type="button"
           name="save-bubbles"
@@ -795,14 +807,11 @@ async function onRemove(): Promise<void> {
           :region="selectedRegion"
           :layer-index="regionStackOrder.index"
           :layer-count="regionStackOrder.count"
-          :dirty="flattenDirty"
-          :saving="flattening"
           @reassign="onLayoutInspectorReassign"
           @scale="onRegionScalePreview"
           @persist-scale="onRegionScalePersist"
           @reorder="onRegionReorder"
           @remove="requestRegionRemove"
-          @save="flattenNow()"
         />
       </div>
       <ConfirmDialog

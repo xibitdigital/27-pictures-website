@@ -9,8 +9,6 @@ const props = defineProps<{
   region: RegionRecord | null;
   layerIndex?: number;
   layerCount?: number;
-  dirty?: boolean;
-  saving?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -19,7 +17,6 @@ const emit = defineEmits<{
   "persist-scale": [value: number];
   reorder: [direction: "forward" | "backward"];
   remove: [];
-  save: [];
 }>();
 
 const layerIndex = computed(() => props.layerIndex ?? 0);
@@ -58,7 +55,7 @@ function onScaleChange(ev: Event): void {
       Select a shape, or use the toolbar over the plate to draw a rectangle or polygon.
     </p>
     <template v-else>
-      <p class="editor-muted">{{ shapeLabel }}{{ region.fileUrl ? "" : " — no image yet" }}</p>
+      <p class="editor-inspector-subtitle">{{ shapeLabel }}{{ region.fileUrl ? "" : " — no image yet" }}</p>
 
       <div class="editor-audio-field">
         <span class="editor-prompt-head">
@@ -116,12 +113,9 @@ function onScaleChange(ev: Event): void {
         </span>
       </label>
 
-      <div class="editor-form-actions editor-form-actions--split">
+      <div class="editor-form-actions">
         <button class="editor-btn editor-btn--ghost" type="button" name="region-delete" @click="emit('remove')">
           Delete shape
-        </button>
-        <button class="editor-btn" type="button" name="save-layout" :disabled="!dirty || saving" @click="emit('save')">
-          {{ saving ? "Saving…" : dirty ? "Save layout" : "Saved" }}
         </button>
       </div>
     </template>
