@@ -1603,6 +1603,21 @@ body.view-vertical.is-fullscreen .reader {
   object-fit: contain;
 }
 
+/* Scroll: let the file's own ratio size the plate. `object-fit: contain` in a
+   D1 slot that does not match the files (Tokiro 1024×1824 vs 1152×1728)
+   letterboxed the art. Captions already follow the image content box. */
+body.view-vertical .vertical-page.page-slot {
+  aspect-ratio: auto;
+}
+
+body.view-vertical .vertical-page.page-slot > img {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: auto !important;
+  object-fit: unset;
+}
+
 #viewModeBtn.is-active {
   border-color: var(--red-smile);
   color: var(--red-smile);
