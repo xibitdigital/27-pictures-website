@@ -8,14 +8,14 @@ import { computed, nextTick, onMounted, onUnmounted, ref, toRef, watch } from "v
 import { useToonBook } from "./useToonBook";
 import BookSurface from "./BookSurface.vue";
 import CoverGuideDialog from "./CoverGuideDialog.vue";
-import { AutoReadBand, ReaderTopBar, ReadingProgress, ScrollDownButton } from "./chrome";
+import { ReaderTopBar, ReadingProgress, ScrollDownButton } from "./chrome";
 import { USER_SCROLL_EVENT } from "./chrome/scrollPage";
 import { useViewMode } from "./useViewMode";
 import { createConfigLoader, resolveConfigUrl } from "./loadConfig";
 import { deepLinkReleased, parsePageQuery, visiblePageNum, writePageQuery, type SlotBox } from "./pageQuery";
 import VerticalStrip from "./VerticalStrip.vue";
 import AutoReadPrompt from "./captions/AutoReadPrompt.vue";
-import { FOCUS_BAND_END, provideAutoRead } from "./captions/useAutoRead";
+import { provideAutoRead } from "./captions/useAutoRead";
 import { writeProgress } from "./readingProgress";
 import { provideToonCaptions } from "./captions/useToonCaptions";
 import type { ToonReaderShellExpose, ToonShellBookOptions } from "./types";
@@ -641,10 +641,6 @@ defineExpose<ToonReaderShellExpose>({
   />
 
   <ScrollHowToHint :open="scrollHowToOpen" @dismiss="dismissScrollHowTo" />
-
-  <!-- Where a caption starts speaking. Scroll mode only: book mode's band is
-       the whole viewport, so there is no line to draw. -->
-  <AutoReadBand v-if="viewMode.isVertical.value && autoRead.unlocked.value" :band-end="FOCUS_BAND_END" />
 
   <ScrollDownButton v-if="viewMode.isVertical.value && !dialogOpen && !scrollHowToOpen" :pages="stripSlots" />
 

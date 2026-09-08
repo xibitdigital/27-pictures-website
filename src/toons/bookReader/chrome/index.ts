@@ -4,5 +4,4 @@ export { default as ShareButton } from "./ShareButton.vue";
 export { default as ViewModeToggle } from "./ViewModeToggle.vue";
 export { default as ReaderTopBar } from "./ReaderTopBar.vue";
 export { default as ReadingProgress } from "./ReadingProgress.vue";
-export { default as AutoReadBand } from "./AutoReadBand.vue";
 export { default as ScrollDownButton } from "./ScrollDownButton.vue";

@@ -850,7 +850,7 @@ describe("WordLayer", () => {
       }
       return Promise.resolve();
     });
-    // Viewport 400 → band [0, 240).
+    // Viewport 400 → band [0, 396).
     vi.stubGlobal("innerHeight", 400);
     Object.defineProperty(window, "visualViewport", { configurable: true, value: { height: 400 } });
 
@@ -895,10 +895,9 @@ describe("WordLayer", () => {
     document.body.classList.remove("view-vertical");
   });
 
-  it("mobile: plate that fits the viewport still only plays captions inside the band", async () => {
-    // Emulator/phone case: portrait plate height < viewport (fits), so the old
-    // plate-height heuristic expanded to full-page and required “page align”.
-    // Vertical mode must stay caption-position based.
+  it("mobile: only plays captions inside the 99% band even on a tall plate", async () => {
+    // Vertical mode stays caption-position based — a balloon near the bottom
+    // of a plate taller than the viewport waits until scroll brings it up.
     document.body.classList.add("view-vertical");
     const played: string[] = [];
     vi.spyOn(window.HTMLAudioElement.prototype, "play").mockImplementation(function (this: HTMLAudioElement) {
@@ -912,15 +911,15 @@ describe("WordLayer", () => {
     vi.stubGlobal("innerHeight", 720);
     Object.defineProperty(window, "visualViewport", { configurable: true, value: { height: 720 } });
 
-    // Plate height 700 < 720 — fits. Band [0, 648).
-    // y=0.2 → 140 in; y=0.95 → 665 out.
+    // Plate taller than the viewport. Band [0, 712.8).
+    // y=0.2 → 180 in; y=0.95 → 855 out.
     const plate = {
       top: 0,
       left: 0,
       right: 300,
-      bottom: 700,
+      bottom: 900,
       width: 300,
-      height: 700,
+      height: 900,
       x: 0,
       y: 0,
       toJSON: () => ({}),

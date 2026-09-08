@@ -2,8 +2,8 @@
  * Pure viewport visibility for auto-read.
  *
  * Auto-read selects by **caption anchor position**, never by “is this page
- * aligned / fully on screen”. Vertical / scroll mode passes bandEnd = 0.9 so
- * only balloons in the top 90% of the viewport speak; book mode passes 1 so
+ * aligned / fully on screen”. Vertical / scroll mode passes bandEnd = 0.99 so
+ * only balloons in the top 99% of the viewport speak; book mode passes 1 so
  * every on-screen balloon on a spread can speak. Controller owns “who speaks”;
  * layers only supply getRect().
  */
@@ -18,14 +18,13 @@ export const VISIBLE_RATIO = 0.2;
 
 /**
  * Focus band end as a fraction of viewport height (0 → bandEnd).
- * Top 90% of the screen: bubbles below this line wait until scroll brings them
+ * Top 99% of the screen: bubbles below this line wait until scroll brings them
  * up. Book mode uses 1 (full viewport) instead.
  *
- * Was 0.8 while scroll was mobile-only. Scroll is now the default at every
- * width, and on a desktop viewport a 20% dead strip is tall enough to hold a
- * whole caption — a balloon could sit fully on screen and stay silent.
+ * Was 0.8 while scroll was mobile-only, then 0.9. A 10% dead strip on a
+ * desktop viewport still hid a caption that was fully on screen.
  */
-export const FOCUS_BAND_END = 0.9;
+export const FOCUS_BAND_END = 0.99;
 
 export interface VisibilityInput {
   id: string;

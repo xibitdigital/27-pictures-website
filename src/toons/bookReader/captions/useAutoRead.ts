@@ -2,7 +2,7 @@
  * Auto-read: play captions by **anchor position**, not page alignment.
  *
  * - Vertical / mobile strip (`body.view-vertical`): only balloons whose screen
- *   Y sits in the top 80% of the viewport (FOCUS_BAND_END). Scroll to bring
+ *   Y sits in the top 99% of the viewport (FOCUS_BAND_END). Scroll to bring
  *   lower balloons into the band — the plate does not need to snap/align.
  * - Book mode: full viewport band so every on-screen balloon on a spread can
  *   speak (no vertical scroll of the plate).
@@ -51,7 +51,7 @@ export interface AutoReadOptions {
   requireGesture?: boolean;
   /**
    * End of the focus band as a fraction of viewport height for **vertical /
-   * mobile scroll mode** (default 0.8 = top 80%). Clips below the band wait
+   * mobile scroll mode** (default 0.99 = top 99%). Clips below the band wait
    * until scroll brings them up. Book mode always uses the full viewport (1).
    */
   focusBandEnd?: number;

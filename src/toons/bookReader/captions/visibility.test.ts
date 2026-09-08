@@ -61,11 +61,11 @@ describe("visibility", () => {
     ).toEqual(["1", "2"]);
   });
 
-  it("focus band is the top 90% of the viewport by default", () => {
-    expect(FOCUS_BAND_END).toBe(0.9);
-    expect(isInFocusBand(100, 800)).toBe(true); // y=100 < 720
-    expect(isInFocusBand(719, 800)).toBe(true);
-    expect(isInFocusBand(720, 800)).toBe(false);
+  it("focus band is the top 99% of the viewport by default", () => {
+    expect(FOCUS_BAND_END).toBe(0.99);
+    expect(isInFocusBand(100, 800)).toBe(true); // y=100 < 792
+    expect(isInFocusBand(791, 800)).toBe(true);
+    expect(isInFocusBand(792, 800)).toBe(false);
     expect(isInFocusBand(-1, 800)).toBe(false);
   });
 
@@ -74,7 +74,7 @@ describe("visibility", () => {
     expect(captionScreenPoint(plate, 0.5, 0.25)).toEqual({ x: 150, y: 200 });
   });
 
-  it("collects only captions whose anchors sit in the top 90% — even on a misaligned plate", () => {
+  it("collects only captions whose anchors sit in the top 99% — even on a misaligned plate", () => {
     // Plate partially scrolled: top at -200, height 800, viewport 400.
     // Default band = [0, 360). Anchors: y=0.3 → screen 40 (in); y=0.85 → screen 480 (out).
     // Page height / alignment is irrelevant — only caption screen Y matters.
@@ -111,18 +111,17 @@ describe("visibility", () => {
     expect(clips.map((c) => c.caption.audio)).toEqual(["b.mp3"]);
   });
 
-  it("still applies the band when the plate fits the viewport (mobile emulator case)", () => {
-    // Mobile plates often fit in the viewport height; band must stay caption-based.
-    // Viewport 720 → band [0, 648). Plate height 700 at top=0 — it fits.
-    // y=0.2 → 140 (in); y=0.95 → 665 (out of the top 90%).
-    const plate = rect({ top: 0, left: 0, width: 300, height: 700 });
+  it("still applies the band when the plate is taller than the viewport", () => {
+    // Viewport 720 → band [0, 712.8). Plate 900 tall at top=0 overflows.
+    // y=0.2 → 180 (in); y=0.95 → 855 (out of the top 99%).
+    const plate = rect({ top: 0, left: 0, width: 300, height: 900 });
     const layers = [
       {
         id: "1",
         getRect: () => plate,
         captions: [
-          { index: 0, audio: "a.mp3", volume: 1, x: 0.5, y: 0.2 }, // 140 → in
-          { index: 1, audio: "b.mp3", volume: 1, x: 0.5, y: 0.95 }, // 665 → out of 80%
+          { index: 0, audio: "a.mp3", volume: 1, x: 0.5, y: 0.2 }, // 180 → in
+          { index: 1, audio: "b.mp3", volume: 1, x: 0.5, y: 0.95 }, // 855 → out
         ],
       },
     ];
