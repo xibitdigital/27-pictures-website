@@ -1775,11 +1775,21 @@ body {
   top: 1rem;
   right: 1rem;
   display: flex;
-  gap: 0.35rem;
+  gap: 0.6rem;
   padding: 0.35rem;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   box-shadow: 0 12px 28px var(--bg-dark);
+}
+
+.editor-toolbar-group {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.editor-toolbar-group + .editor-toolbar-group {
+  padding-left: 0.6rem;
+  border-left: 1px solid var(--border-light);
 }
 
 .editor-layout-toolbar .editor-icon-btn[aria-pressed="true"] {

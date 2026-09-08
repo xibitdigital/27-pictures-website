@@ -42,6 +42,7 @@ import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorBar from "./EditorBar.vue";
 import GeneratePageDialog from "./GeneratePageDialog.vue";
 import type { LayoutTool } from "./GeometryLayer.vue";
+import type { StudioMode } from "./LayoutToolbar.vue";
 import LayoutInspector from "./LayoutInspector.vue";
 import PageFilmstrip from "./PageFilmstrip.vue";
 import PlateCanvas from "./PlateCanvas.vue";
@@ -66,6 +67,7 @@ const generateStatus = ref("");
 const generateError = ref("");
 const confirmingRemove = ref(false);
 const layoutTool = ref<LayoutTool>("select");
+const studioMode = ref<StudioMode>("layout");
 const assignRegionId = ref<string | null>(null);
 const generateTargetRegionId = ref<string | null>(null);
 const confirmingRegionRemove = ref(false);
@@ -101,6 +103,8 @@ const playOrder = computed(() => {
 });
 
 const dirtyCount = computed(() => dirtyIds.value.size);
+
+const showBubbleLayer = computed(() => activePage.value?.kind !== "layout" || studioMode.value === "bubbles");
 
 const canGenerate = computed(() => {
   const generate = seriesGenerate.value;
@@ -638,8 +642,8 @@ function onRemoveKey(ev: KeyboardEvent): void {
   if (!selectedId.value || confirmingRemove.value || confirmingRegionRemove.value || generateOpen.value) return;
   if (isTypingTarget(ev.target)) return;
   ev.preventDefault();
-  if (activePage.value?.kind === "layout") requestRegionRemove();
-  else requestRemove();
+  if (showBubbleLayer.value) requestRemove();
+  else requestRegionRemove();
 }
 
 onMounted(() => window.addEventListener("keydown", onRemoveKey));
@@ -652,10 +656,16 @@ onBeforeUnmount(() => {
 // component — flush a pending flatten for the page being left, not the one
 // just switched to.
 watch(pageId, (_next, prev) => {
+  studioMode.value = "layout";
   if (!prev) return;
   const prevPage = toon.value?.pages.find((p) => p.id === prev) || null;
   flushFlatten(prevPage);
 });
+
+function onUpdateStudioMode(mode: StudioMode): void {
+  studioMode.value = mode;
+  selectedId.value = null;
+}
 
 async function onRemove(): Promise<void> {
   if (!selectedId.value || !activePage.value) return;
@@ -727,12 +737,14 @@ async function onRemove(): Promise<void> {
           :kind="activePage.kind"
           :regions="activePage.regions"
           :layout-tool="layoutTool"
+          :studio-mode="studioMode"
           @select="selectedId = $event"
           @move="onMove"
           @persist="onPersist"
           @add="onAdd"
           @tail="onTail"
           @update-layout-tool="layoutTool = $event"
+          @update-studio-mode="onUpdateStudioMode"
           @create-region="onCreateRegion"
           @update-region-geometry="onUpdateRegionGeometry"
           @persist-region-geometry="onPersistRegionGeometry"
@@ -756,7 +768,7 @@ async function onRemove(): Promise<void> {
           </label>
         </div>
         <CaptionInspector
-          v-if="activePage?.kind !== 'layout'"
+          v-if="showBubbleLayer"
           :bubble="selectedBubble"
           :toon-id="toon.id"
           :asset-page-dir="toon.assetPageDir"

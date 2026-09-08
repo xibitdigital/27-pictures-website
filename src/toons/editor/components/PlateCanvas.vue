@@ -3,7 +3,7 @@ import { X } from "@lucide/vue";
 import { computed, ref } from "vue";
 import EditorCaptionLayer from "./EditorCaptionLayer.vue";
 import GeometryLayer, { type LayoutTool } from "./GeometryLayer.vue";
-import LayoutToolbar from "./LayoutToolbar.vue";
+import LayoutToolbar, { type StudioMode } from "./LayoutToolbar.vue";
 import type { BubbleRecord, PageKind, RegionGeometry, RegionRecord } from "../types";
 import type { BubbleTail } from "../mapConfig";
 
@@ -40,8 +40,9 @@ const props = withDefaults(
     kind?: PageKind;
     regions?: RegionRecord[];
     layoutTool?: LayoutTool;
+    studioMode?: StudioMode;
   }>(),
-  { kind: "plate", regions: () => [], layoutTool: "select" }
+  { kind: "plate", regions: () => [], layoutTool: "select", studioMode: "bubbles" }
 );
 
 const emit = defineEmits<{
@@ -57,17 +58,19 @@ const emit = defineEmits<{
   "persist-region-image": [id: string, offsetX: number, offsetY: number];
   "request-region-assign": [id: string];
   "update-layout-tool": [tool: LayoutTool];
+  "update-studio-mode": [mode: StudioMode];
 }>();
 
 const imgEl = ref<HTMLImageElement | null>(null);
 const plateStyle = computed(() => ({
   "--plate-aspect": `${props.designWidth} / ${props.designHeight}`,
 }));
+const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMode === "bubbles");
 </script>
 
 <template>
   <div class="editor-canvas">
-    <p v-if="showHint && kind !== 'layout'" class="editor-plate-hint" data-plate-hint role="status">
+    <p v-if="showHint && showBubbleLayer" class="editor-plate-hint" data-plate-hint role="status">
       Click the page to add a bubble.
       <button
         class="editor-plate-hint-dismiss"
@@ -79,11 +82,17 @@ const plateStyle = computed(() => ({
         <X :size="18" :stroke-width="2.2" aria-hidden="true" />
       </button>
     </p>
-    <LayoutToolbar v-if="kind === 'layout'" :tool="layoutTool" @update:tool="emit('update-layout-tool', $event)" />
+    <LayoutToolbar
+      v-if="kind === 'layout'"
+      :tool="layoutTool"
+      :mode="studioMode"
+      @update:tool="emit('update-layout-tool', $event)"
+      @update:mode="emit('update-studio-mode', $event)"
+    />
     <div class="editor-plate" :style="plateStyle">
       <img ref="imgEl" :src="src" alt="" />
       <EditorCaptionLayer
-        v-if="imgEl && kind !== 'layout'"
+        v-if="imgEl && showBubbleLayer"
         :page-num="pageNum"
         :bubbles="bubbles"
         :selected-id="selectedId"
@@ -98,7 +107,7 @@ const plateStyle = computed(() => ({
         @tail="(id, tail) => emit('tail', id, tail)"
       />
       <GeometryLayer
-        v-if="imgEl && kind === 'layout'"
+        v-if="imgEl && kind === 'layout' && !showBubbleLayer"
         :regions="regions"
         :selected-id="selectedId"
         :design-width="designWidth"
