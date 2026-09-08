@@ -200,7 +200,7 @@ async function onRegionGenerateSubmit(regionId: string, payload: GeneratePayload
         toon.value = snap.toon;
         generateOpen.value = false;
         generateTargetRegionId.value = null;
-        markFlattenDirty();
+        await flattenNow();
         return;
       }
       if (snap.status === "error") {
@@ -450,7 +450,14 @@ function loadImageEl(src: string): Promise<HTMLImageElement> {
   });
 }
 
-/** Composites every filled region onto one plate at design resolution, then swaps it in through the existing replace-page endpoint — the reader only ever sees this flattened image, never the regions. Only runs from the explicit Save button: each call re-encodes the whole plate through the Worker's image pipeline, and doing that on every drag/zoom blew its CPU budget. */
+/**
+ * Composites every filled region onto one plate at design resolution, then
+ * swaps it in through the existing replace-page endpoint — the reader only
+ * ever sees this flattened image, never the regions. Runs once after every
+ * completed edit (a drag/zoom's persist, not its live per-pixel preview) so
+ * the plate never shows a stale/"ghost" picture from before the edit. The
+ * Save button in the top bar is a manual retry for when this failed.
+ */
 async function flattenNow(): Promise<void> {
   const page = activePage.value;
   if (!page || page.kind !== "layout" || !toon.value) return;
@@ -499,14 +506,10 @@ async function flattenNow(): Promise<void> {
     flattenDirty.value = false;
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not update the flattened plate");
+    flattenDirty.value = true;
   } finally {
     flattening.value = false;
   }
-}
-
-/** Layout edits (drag, zoom, assign) never auto-flatten — each re-encode costs real Worker CPU, so only the explicit Save button in LayoutInspector calls flattenNow. */
-function markFlattenDirty(): void {
-  flattenDirty.value = true;
 }
 
 async function onCreateRegion(geometry: RegionGeometry): Promise<void> {
@@ -517,7 +520,7 @@ async function onCreateRegion(geometry: RegionGeometry): Promise<void> {
     page.regions.push(created);
     selectedId.value = created.id;
     layoutTool.value = "select";
-    markFlattenDirty();
+    await flattenNow();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not add shape");
   }
@@ -532,7 +535,7 @@ async function onPersistRegionGeometry(id: string, geometry: RegionGeometry): Pr
   try {
     const saved = await patchRegion(id, { geometry });
     applyRegionLocal(id, saved);
-    markFlattenDirty();
+    await flattenNow();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not update shape");
   }
@@ -547,7 +550,7 @@ async function onPersistRegionImage(id: string, offsetX: number, offsetY: number
   try {
     const saved = await patchRegion(id, { imageOffsetX: offsetX, imageOffsetY: offsetY });
     applyRegionLocal(id, saved);
-    markFlattenDirty();
+    await flattenNow();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not move image");
   }
@@ -563,7 +566,7 @@ async function onRegionScalePersist(value: number): Promise<void> {
   try {
     const saved = await patchRegion(id, { imageScale: value });
     applyRegionLocal(id, saved);
-    markFlattenDirty();
+    await flattenNow();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not update zoom");
   }
@@ -585,7 +588,7 @@ async function onAssignUpload(file: File): Promise<void> {
     const size = await readImageSize(file);
     const saved = await uploadRegionImage(id, file, size);
     applyRegionLocal(id, saved);
-    markFlattenDirty();
+    await flattenNow();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Upload failed");
   }
@@ -618,7 +621,7 @@ async function onRegionReorder(direction: "forward" | "backward"): Promise<void>
       const saved = await patchRegion(region.id, { sort: region.sort });
       applyRegionLocal(region.id, saved);
     }
-    markFlattenDirty();
+    await flattenNow();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not reorder");
   }
@@ -632,9 +635,6 @@ async function onRegionRemove(): Promise<void> {
     await deleteRegion(id);
     activePage.value.regions = activePage.value.regions.filter((r) => r.id !== id);
     selectedId.value = null;
-    // Unlike drag/zoom, a delete leaves the old picture baked into the last
-    // saved plate with nothing drawn over it — a visible "ghost" until saved.
-    // Worth an immediate flatten since deletes are rare, not per-pixel.
     await flattenNow();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Delete failed");
