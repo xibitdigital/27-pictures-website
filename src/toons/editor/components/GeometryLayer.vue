@@ -475,6 +475,7 @@ watch(
       class="editor-region-frame"
       :class="{ 'is-selected': layout.region.id === selectedId }"
       :style="layout.frameStyle"
+      :data-region-id="layout.region.id"
     >
       <RegionShape :region="layout.region" :clip-path="layout.clipPath" :img-style="layout.imgStyle" />
       <div v-if="layout.region.id === selectedId" class="editor-region-handles">
