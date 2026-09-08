@@ -82,13 +82,14 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
         <X :size="18" :stroke-width="2.2" aria-hidden="true" />
       </button>
     </p>
-    <LayoutToolbar
-      v-if="kind === 'layout'"
-      :tool="layoutTool"
-      :mode="studioMode"
-      @update:tool="emit('update-layout-tool', $event)"
-      @update:mode="emit('update-studio-mode', $event)"
-    />
+    <div v-if="kind === 'layout'" class="editor-toolbar-sticky">
+      <LayoutToolbar
+        :tool="layoutTool"
+        :mode="studioMode"
+        @update:tool="emit('update-layout-tool', $event)"
+        @update:mode="emit('update-studio-mode', $event)"
+      />
+    </div>
     <div class="editor-plate" :style="plateStyle">
       <img ref="imgEl" :src="src" alt="" />
       <EditorCaptionLayer

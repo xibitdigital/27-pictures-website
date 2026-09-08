@@ -1783,9 +1783,16 @@ body {
   fill: var(--red-smile);
 }
 
+.editor-toolbar-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 0;
+  overflow: visible;
+}
+
 .editor-layout-toolbar {
   position: absolute;
-  z-index: 40;
   top: 1rem;
   right: 1rem;
   display: flex;
