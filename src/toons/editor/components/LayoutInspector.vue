@@ -88,36 +88,40 @@ function onScaleChange(ev: Event): void {
         <p class="editor-muted">{{ layerIndex + 1 }} of {{ layerCount || 1 }} — later layers paint on top</p>
       </div>
 
-      <div class="editor-form-actions">
-        <button class="editor-btn editor-btn--ghost" type="button" name="region-reassign" @click="emit('reassign')">
-          {{ region.fileUrl ? "Replace image" : "Add image" }}
-        </button>
-      </div>
+      <button
+        class="editor-btn editor-btn--ghost editor-field-btn"
+        type="button"
+        name="region-reassign"
+        @click="emit('reassign')"
+      >
+        {{ region.fileUrl ? "Replace image" : "Add image" }}
+      </button>
 
       <label v-if="region.fileUrl">
         Zoom
-        <span class="editor-slider-row">
-          <input
-            type="range"
-            name="region-scale"
-            :min="MIN_IMAGE_SCALE"
-            :max="MAX_IMAGE_SCALE"
-            step="0.05"
-            :value="scaleDraft"
-            :aria-valuemin="MIN_IMAGE_SCALE"
-            :aria-valuemax="MAX_IMAGE_SCALE"
-            :aria-valuenow="scaleDraft"
-            @input="onScaleInput"
-            @change="onScaleChange"
-          />
-        </span>
+        <input
+          type="range"
+          name="region-scale"
+          :min="MIN_IMAGE_SCALE"
+          :max="MAX_IMAGE_SCALE"
+          step="0.05"
+          :value="scaleDraft"
+          :aria-valuemin="MIN_IMAGE_SCALE"
+          :aria-valuemax="MAX_IMAGE_SCALE"
+          :aria-valuenow="scaleDraft"
+          @input="onScaleInput"
+          @change="onScaleChange"
+        />
       </label>
 
-      <div class="editor-form-actions">
-        <button class="editor-btn editor-btn--ghost" type="button" name="region-delete" @click="emit('remove')">
-          Delete shape
-        </button>
-      </div>
+      <button
+        class="editor-btn editor-btn--ghost editor-field-btn"
+        type="button"
+        name="region-delete"
+        @click="emit('remove')"
+      >
+        Delete shape
+      </button>
     </template>
   </aside>
 </template>

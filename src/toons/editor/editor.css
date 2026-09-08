@@ -1682,6 +1682,15 @@ body {
   margin: 0 0 0.75rem;
 }
 
+.editor-inspector .editor-field-btn {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  min-height: 2.35rem;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 1rem;
+}
+
 .editor-geometry-layer {
   touch-action: none;
   user-select: none;
