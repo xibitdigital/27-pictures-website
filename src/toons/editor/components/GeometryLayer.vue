@@ -489,7 +489,7 @@ watch(
     </div>
     <div v-if="draftRectStyle" class="editor-region-draft-rect" :style="draftRectStyle" />
     <svg v-if="draftPolygonPoints" class="editor-region-draft-polygon">
-      <polyline :points="draftPolygonPoints" />
+      <polygon :points="draftPolygonPoints" />
       <circle
         v-for="(p, i) in draftPoints"
         :key="i"

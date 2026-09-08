@@ -7,7 +7,7 @@
  * a rect is stored as 4 corner points too, so both shape types share one
  * bounding-box/clip-path code path.
  */
-import type { RegionGeometry } from "./types";
+import type { RegionGeometry, RegionRecord } from "./types";
 
 export const MIN_IMAGE_SCALE = 1;
 export const MAX_IMAGE_SCALE = 4;
@@ -98,6 +98,28 @@ export function coverImageRect(
     width,
     height,
   };
+}
+
+/** Regions bottom-to-top, matching flatten paint order — same `sort` convention as `bubblesInPlayOrder`. */
+export function regionsInStackOrder(regions: RegionRecord[]): RegionRecord[] {
+  return regions.slice().sort((a, b) => a.sort - b.sort || a.id.localeCompare(b.id));
+}
+
+/** Swaps a region with its neighbor one layer forward/backward, renumbering `sort` densely. Null if already at that end. */
+export function moveRegionInStack(
+  regions: RegionRecord[],
+  id: string,
+  direction: "forward" | "backward"
+): RegionRecord[] | null {
+  const ordered = regionsInStackOrder(regions);
+  const i = ordered.findIndex((r) => r.id === id);
+  const j = direction === "forward" ? i + 1 : i - 1;
+  if (i < 0 || j < 0 || j >= ordered.length) return null;
+  const next = ordered.slice();
+  const swap = next[i];
+  next[i] = next[j];
+  next[j] = swap;
+  return next.map((r, n) => (r.sort === n ? r : { ...r, sort: n }));
 }
 
 /** Converts a pointer-drag delta (bbox-local px) into a new offset pair, clamped to [0,1]. Dragging the image right/down should reveal more of its left/top, hence the sign flip. */

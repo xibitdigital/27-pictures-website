@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { clipPathPolygon, coverImageRect, offsetFromDrag, regionBoundingBox, regionPoints } from "./regionFit";
-import type { RegionGeometry } from "./types";
+import {
+  clipPathPolygon,
+  coverImageRect,
+  moveRegionInStack,
+  offsetFromDrag,
+  regionBoundingBox,
+  regionPoints,
+  regionsInStackOrder,
+} from "./regionFit";
+import type { RegionGeometry, RegionRecord } from "./types";
 
 const rect: RegionGeometry = { kind: "rect", x: 0.2, y: 0.1, w: 0.4, h: 0.3 };
 const polygon: RegionGeometry = {
@@ -93,5 +101,52 @@ describe("offsetFromDrag", () => {
     const image = { width: 100, height: 100 };
     const next = offsetFromDrag({ offsetX: 0.5, offsetY: 0.5 }, { x: 40, y: 40 }, bbox, image, 1);
     expect(next).toEqual({ offsetX: 0.5, offsetY: 0.5 });
+  });
+});
+
+function region(id: string, sort: number): RegionRecord {
+  return {
+    id,
+    shapeType: "rect",
+    geometry: rect,
+    fileKey: null,
+    fileUrl: null,
+    fileWidth: null,
+    fileHeight: null,
+    imageOffsetX: 0.5,
+    imageOffsetY: 0.5,
+    imageScale: 1,
+    sort,
+  };
+}
+
+describe("regionsInStackOrder / moveRegionInStack", () => {
+  const regions = [region("a", 0), region("b", 1), region("c", 2)];
+
+  it("orders by sort", () => {
+    expect(regionsInStackOrder([region("b", 1), region("a", 0)]).map((r) => r.id)).toEqual(["a", "b"]);
+  });
+
+  it("moves a region forward, swapping with its neighbor", () => {
+    const next = moveRegionInStack(regions, "a", "forward");
+    expect(next?.map((r) => ({ id: r.id, sort: r.sort }))).toEqual([
+      { id: "b", sort: 0 },
+      { id: "a", sort: 1 },
+      { id: "c", sort: 2 },
+    ]);
+  });
+
+  it("moves a region backward, swapping with its neighbor", () => {
+    const next = moveRegionInStack(regions, "c", "backward");
+    expect(next?.map((r) => ({ id: r.id, sort: r.sort }))).toEqual([
+      { id: "a", sort: 0 },
+      { id: "c", sort: 1 },
+      { id: "b", sort: 2 },
+    ]);
+  });
+
+  it("returns null at either end of the stack", () => {
+    expect(moveRegionInStack(regions, "a", "backward")).toBeNull();
+    expect(moveRegionInStack(regions, "c", "forward")).toBeNull();
   });
 });

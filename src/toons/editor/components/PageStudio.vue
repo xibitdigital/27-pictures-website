@@ -26,14 +26,13 @@ import {
   visibilityFromStatus,
   visibilityLabel,
   type BubbleRecord,
-  type PageRecord,
   type RegionGeometry,
   type RegionRecord,
   type SeriesGenerateConfig,
   type ToonRecord,
 } from "../types";
 import { mergeReplacedPage } from "../pageFile";
-import { coverImageRect, regionBoundingBox, regionPoints } from "../regionFit";
+import { coverImageRect, moveRegionInStack, regionBoundingBox, regionPoints, regionsInStackOrder } from "../regionFit";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, bubblesInPlayOrder, CAPTION_LANGS, moveBubbleInPlayOrder } from "../mapConfig";
 import { pushToast } from "../toast";
@@ -73,7 +72,6 @@ const generateTargetRegionId = ref<string | null>(null);
 const confirmingRegionRemove = ref(false);
 const flattenDirty = ref(false);
 const flattening = ref(false);
-let flattenTimer: number | null = null;
 
 const toonId = computed(() => String(route.params.id || ""));
 const pageId = computed(() => (route.params.pageId ? String(route.params.pageId) : null));
@@ -105,6 +103,14 @@ const playOrder = computed(() => {
 const dirtyCount = computed(() => dirtyIds.value.size);
 
 const showBubbleLayer = computed(() => activePage.value?.kind !== "layout" || studioMode.value === "bubbles");
+
+const regionStackOrder = computed(() => {
+  const page = activePage.value;
+  if (!page) return { index: 0, count: 0 };
+  const ordered = regionsInStackOrder(page.regions);
+  const index = selectedId.value ? ordered.findIndex((r) => r.id === selectedId.value) : -1;
+  return { index: Math.max(0, index), count: ordered.length };
+});
 
 const canGenerate = computed(() => {
   const generate = seriesGenerate.value;
@@ -194,7 +200,7 @@ async function onRegionGenerateSubmit(regionId: string, payload: GeneratePayload
         toon.value = snap.toon;
         generateOpen.value = false;
         generateTargetRegionId.value = null;
-        scheduleFlatten();
+        markFlattenDirty();
         return;
       }
       if (snap.status === "error") {
@@ -444,9 +450,9 @@ function loadImageEl(src: string): Promise<HTMLImageElement> {
   });
 }
 
-/** Composites every filled region onto one plate at design resolution, then swaps it in through the existing replace-page endpoint — the reader only ever sees this flattened image, never the regions. */
-async function flattenNow(pageOverride?: PageRecord | null): Promise<void> {
-  const page = pageOverride ?? activePage.value;
+/** Composites every filled region onto one plate at design resolution, then swaps it in through the existing replace-page endpoint — the reader only ever sees this flattened image, never the regions. Only runs from the explicit Save button: each call re-encodes the whole plate through the Worker's image pipeline, and doing that on every drag/zoom blew its CPU budget. */
+async function flattenNow(): Promise<void> {
+  const page = activePage.value;
   if (!page || page.kind !== "layout" || !toon.value) return;
   flattening.value = true;
   try {
@@ -498,20 +504,9 @@ async function flattenNow(pageOverride?: PageRecord | null): Promise<void> {
   }
 }
 
-function scheduleFlatten(): void {
+/** Layout edits (drag, zoom, assign) never auto-flatten — each re-encode costs real Worker CPU, so only the explicit Save button in LayoutInspector calls flattenNow. */
+function markFlattenDirty(): void {
   flattenDirty.value = true;
-  if (flattenTimer) window.clearTimeout(flattenTimer);
-  flattenTimer = window.setTimeout(() => {
-    flattenTimer = null;
-    void flattenNow();
-  }, 600);
-}
-
-function flushFlatten(pageOverride?: PageRecord | null): void {
-  if (!flattenTimer) return;
-  window.clearTimeout(flattenTimer);
-  flattenTimer = null;
-  void flattenNow(pageOverride);
 }
 
 async function onCreateRegion(geometry: RegionGeometry): Promise<void> {
@@ -522,7 +517,7 @@ async function onCreateRegion(geometry: RegionGeometry): Promise<void> {
     page.regions.push(created);
     selectedId.value = created.id;
     layoutTool.value = "select";
-    scheduleFlatten();
+    markFlattenDirty();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not add shape");
   }
@@ -537,7 +532,7 @@ async function onPersistRegionGeometry(id: string, geometry: RegionGeometry): Pr
   try {
     const saved = await patchRegion(id, { geometry });
     applyRegionLocal(id, saved);
-    scheduleFlatten();
+    markFlattenDirty();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not update shape");
   }
@@ -552,7 +547,7 @@ async function onPersistRegionImage(id: string, offsetX: number, offsetY: number
   try {
     const saved = await patchRegion(id, { imageOffsetX: offsetX, imageOffsetY: offsetY });
     applyRegionLocal(id, saved);
-    scheduleFlatten();
+    markFlattenDirty();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not move image");
   }
@@ -568,7 +563,7 @@ async function onRegionScalePersist(value: number): Promise<void> {
   try {
     const saved = await patchRegion(id, { imageScale: value });
     applyRegionLocal(id, saved);
-    scheduleFlatten();
+    markFlattenDirty();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not update zoom");
   }
@@ -590,7 +585,7 @@ async function onAssignUpload(file: File): Promise<void> {
     const size = await readImageSize(file);
     const saved = await uploadRegionImage(id, file, size);
     applyRegionLocal(id, saved);
-    scheduleFlatten();
+    markFlattenDirty();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Upload failed");
   }
@@ -609,6 +604,26 @@ function requestRegionRemove(): void {
   confirmingRegionRemove.value = true;
 }
 
+async function onRegionReorder(direction: "forward" | "backward"): Promise<void> {
+  const page = activePage.value;
+  const id = selectedId.value;
+  if (!page || !id) return;
+  const next = moveRegionInStack(page.regions, id, direction);
+  if (!next) return;
+  const prevSort = new Map(page.regions.map((r) => [r.id, r.sort]));
+  page.regions = next;
+  const changed = next.filter((r) => prevSort.get(r.id) !== r.sort);
+  try {
+    for (const region of changed) {
+      const saved = await patchRegion(region.id, { sort: region.sort });
+      applyRegionLocal(region.id, saved);
+    }
+    markFlattenDirty();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not reorder");
+  }
+}
+
 async function onRegionRemove(): Promise<void> {
   const id = selectedId.value;
   confirmingRegionRemove.value = false;
@@ -617,7 +632,7 @@ async function onRegionRemove(): Promise<void> {
     await deleteRegion(id);
     activePage.value.regions = activePage.value.regions.filter((r) => r.id !== id);
     selectedId.value = null;
-    scheduleFlatten();
+    markFlattenDirty();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Delete failed");
   }
@@ -649,17 +664,13 @@ function onRemoveKey(ev: KeyboardEvent): void {
 onMounted(() => window.addEventListener("keydown", onRemoveKey));
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", onRemoveKey);
-  flushFlatten();
+  if (flattenDirty.value) pushToast("Layout changes on that page were not saved");
 });
 
-// Navigating to a different page within the same toon doesn't unmount this
-// component — flush a pending flatten for the page being left, not the one
-// just switched to.
 watch(pageId, (_next, prev) => {
   studioMode.value = "layout";
-  if (!prev) return;
-  const prevPage = toon.value?.pages.find((p) => p.id === prev) || null;
-  flushFlatten(prevPage);
+  if (prev && flattenDirty.value) pushToast("Layout changes on the previous page were not saved");
+  flattenDirty.value = false;
 });
 
 function onUpdateStudioMode(mode: StudioMode): void {
@@ -782,13 +793,16 @@ async function onRemove(): Promise<void> {
         <LayoutInspector
           v-else
           :region="selectedRegion"
+          :layer-index="regionStackOrder.index"
+          :layer-count="regionStackOrder.count"
           :dirty="flattenDirty"
           :saving="flattening"
           @reassign="onLayoutInspectorReassign"
           @scale="onRegionScalePreview"
           @persist-scale="onRegionScalePersist"
+          @reorder="onRegionReorder"
           @remove="requestRegionRemove"
-          @save="flushFlatten()"
+          @save="flattenNow()"
         />
       </div>
       <ConfirmDialog

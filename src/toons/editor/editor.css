@@ -1677,6 +1677,10 @@ body {
   flex-wrap: wrap;
 }
 
+.editor-inspector .editor-form-actions--split {
+  justify-content: space-between;
+}
+
 .editor-geometry-layer {
   touch-action: none;
   user-select: none;
@@ -1758,7 +1762,7 @@ body {
   overflow: visible;
 }
 
-.editor-region-draft-polygon polyline {
+.editor-region-draft-polygon polygon {
   fill: color-mix(in srgb, var(--red-smile) 15%, transparent);
   stroke: var(--red-smile);
   stroke-width: 2;

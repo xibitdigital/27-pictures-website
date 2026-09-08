@@ -1,11 +1,14 @@
 <script setup lang="ts">
 /** Right-panel counterpart to CaptionInspector.vue for a selected Layout-mode region. */
+import { ChevronDown, ChevronUp } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { MAX_IMAGE_SCALE, MIN_IMAGE_SCALE } from "../regionFit";
 import type { RegionRecord } from "../types";
 
 const props = defineProps<{
   region: RegionRecord | null;
+  layerIndex?: number;
+  layerCount?: number;
   dirty?: boolean;
   saving?: boolean;
 }>();
@@ -14,9 +17,15 @@ const emit = defineEmits<{
   reassign: [];
   scale: [value: number];
   "persist-scale": [value: number];
+  reorder: [direction: "forward" | "backward"];
   remove: [];
   save: [];
 }>();
+
+const layerIndex = computed(() => props.layerIndex ?? 0);
+const layerCount = computed(() => props.layerCount ?? 0);
+const canMoveForward = computed(() => layerCount.value > 1 && layerIndex.value < layerCount.value - 1);
+const canMoveBackward = computed(() => layerCount.value > 1 && layerIndex.value > 0);
 
 const scaleDraft = ref(1);
 
@@ -50,11 +59,44 @@ function onScaleChange(ev: Event): void {
     </p>
     <template v-else>
       <p class="editor-muted">{{ shapeLabel }}{{ region.fileUrl ? "" : " — no image yet" }}</p>
+
+      <div class="editor-audio-field">
+        <span class="editor-prompt-head">
+          Layer
+          <span class="editor-prompt-actions">
+            <button
+              class="editor-icon-btn"
+              type="button"
+              name="layer-backward"
+              :disabled="!canMoveBackward"
+              aria-label="Send backward"
+              title="Send backward"
+              @click="emit('reorder', 'backward')"
+            >
+              <ChevronDown :size="14" :stroke-width="1.4" aria-hidden="true" />
+            </button>
+            <button
+              class="editor-icon-btn"
+              type="button"
+              name="layer-forward"
+              :disabled="!canMoveForward"
+              aria-label="Bring forward"
+              title="Bring forward"
+              @click="emit('reorder', 'forward')"
+            >
+              <ChevronUp :size="14" :stroke-width="1.4" aria-hidden="true" />
+            </button>
+          </span>
+        </span>
+        <p class="editor-muted">{{ layerIndex + 1 }} of {{ layerCount || 1 }} — later layers paint on top</p>
+      </div>
+
       <div class="editor-form-actions">
         <button class="editor-btn editor-btn--ghost" type="button" name="region-reassign" @click="emit('reassign')">
           {{ region.fileUrl ? "Replace image" : "Add image" }}
         </button>
       </div>
+
       <label v-if="region.fileUrl">
         Zoom
         <span class="editor-slider-row">
@@ -73,14 +115,13 @@ function onScaleChange(ev: Event): void {
           />
         </span>
       </label>
-      <div class="editor-form-actions">
+
+      <div class="editor-form-actions editor-form-actions--split">
         <button class="editor-btn editor-btn--ghost" type="button" name="region-delete" @click="emit('remove')">
           Delete shape
         </button>
-      </div>
-      <div class="editor-form-actions">
         <button class="editor-btn" type="button" name="save-layout" :disabled="!dirty || saving" @click="emit('save')">
-          {{ saving ? "Saving…" : dirty ? "Retry flatten" : "Layout saved" }}
+          {{ saving ? "Saving…" : dirty ? "Save layout" : "Saved" }}
         </button>
       </div>
     </template>
