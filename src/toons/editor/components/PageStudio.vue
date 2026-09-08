@@ -632,7 +632,10 @@ async function onRegionRemove(): Promise<void> {
     await deleteRegion(id);
     activePage.value.regions = activePage.value.regions.filter((r) => r.id !== id);
     selectedId.value = null;
-    markFlattenDirty();
+    // Unlike drag/zoom, a delete leaves the old picture baked into the last
+    // saved plate with nothing drawn over it — a visible "ghost" until saved.
+    // Worth an immediate flatten since deletes are rare, not per-pixel.
+    await flattenNow();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Delete failed");
   }
