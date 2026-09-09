@@ -483,14 +483,22 @@ async function flattenNow(): Promise<void> {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     const ordered = [...page.regions].sort((a, b) => a.sort - b.sort);
+    const fillable = ordered.filter((r) => r.fileUrl && r.fileWidth && r.fileHeight);
+    // Load every region's image in parallel first — the draw loop below then
+    // runs with zero awaits between region 1's fetch finishing and region N's
+    // starting, instead of one network round-trip at a time in series (the
+    // real cost on a many-region page: N regions used to mean N round-trips
+    // back to back rather than the slowest single one).
+    const images = await Promise.all(fillable.map((r) => loadImageEl(r.fileUrl as string)));
+    const imageByRegionId = new Map(fillable.map((r, i) => [r.id, images[i]]));
     for (const region of ordered) {
-      if (!region.fileUrl || !region.fileWidth || !region.fileHeight) continue;
+      const img = imageByRegionId.get(region.id);
+      if (!img || !region.fileWidth || !region.fileHeight) continue;
       const bbox = regionBoundingBox(region.geometry);
       const boxLeft = bbox.x * canvas.width;
       const boxTop = bbox.y * canvas.height;
       const boxWidth = bbox.w * canvas.width;
       const boxHeight = bbox.h * canvas.height;
-      const img = await loadImageEl(region.fileUrl);
       const rect = coverImageRect(
         { width: boxWidth, height: boxHeight },
         { width: region.fileWidth, height: region.fileHeight },
@@ -528,9 +536,17 @@ async function flattenNow(): Promise<void> {
       }
       ctx.restore();
     }
-    const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    // Export WebP directly: the Worker's own upload pipeline re-encodes
+    // anything that isn't already WebP (toWebp() in imageOptimize.ts), so a
+    // PNG upload here meant a second full decode+encode pass server-side on
+    // top of this one. Falls back to PNG only if the browser doesn't support
+    // canvas WebP export at all (canvas.toBlob silently returns PNG bytes
+    // when the requested type is unsupported) — the server still handles
+    // that correctly, just without the skip.
+    const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, "image/webp", 0.92));
     if (!blob) throw new Error("Could not render the layout");
-    const file = new File([blob], "layout.png", { type: "image/png" });
+    const isWebp = blob.type === "image/webp";
+    const file = new File([blob], isWebp ? "layout.webp" : "layout.png", { type: blob.type || "image/png" });
     const next = await replacePage(page.id, file, { width: canvas.width, height: canvas.height });
     toon.value = toon.value ? mergeReplacedPage(toon.value, next, page.id) : next;
     flattenDirty.value = false;
