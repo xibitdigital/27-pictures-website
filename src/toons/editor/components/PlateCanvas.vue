@@ -115,14 +115,15 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
         @tail="(id, tail) => emit('tail', id, tail)"
       />
       <GeometryLayer
-        v-if="imgEl && kind === 'layout' && !showBubbleLayer"
+        v-if="imgEl && kind === 'layout'"
         :regions="regions"
         :selected-id="selectedId"
         :design-width="designWidth"
         :design-height="designHeight"
         :image-el="imgEl"
         :tool="layoutTool"
-        :grid="showGrid"
+        :grid="showGrid && !showBubbleLayer"
+        :interactive="!showBubbleLayer"
         @select="emit('select', $event)"
         @create="emit('create-region', $event)"
         @update-geometry="(id, g) => emit('update-region-geometry', id, g)"

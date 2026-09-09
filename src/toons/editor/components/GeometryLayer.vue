@@ -38,8 +38,24 @@ const props = withDefaults(
     tool?: LayoutTool;
     /** Snap draw/resize/reshape to a grid — draw-start included, panning an image inside its mask never snaps. */
     grid?: boolean;
+    /**
+     * False in Bubbles mode: still paints every region's real image (Bubbles
+     * mode has no other way to show them — the flattened plate is now a
+     * capped-resolution thumbnail, not real content, see flattenNow()'s doc
+     * comment), but takes no pointer input and never draws handles, so
+     * captions underneath keep working exactly as before.
+     */
+    interactive?: boolean;
   }>(),
-  { selectedId: null, designWidth: 800, designHeight: 1424, imageEl: null, tool: "select", grid: false }
+  {
+    selectedId: null,
+    designWidth: 800,
+    designHeight: 1424,
+    imageEl: null,
+    tool: "select",
+    grid: false,
+    interactive: true,
+  }
 );
 
 function snapped(point: Point): Point {
@@ -74,7 +90,10 @@ interface RegionLayout {
 const regionLayouts = computed<RegionLayout[]>(() => {
   if (!box.value) return [];
   const b = box.value;
-  return props.regions.map((region) => {
+  // Non-interactive (Bubbles mode): an unfilled region has nothing to show
+  // and no "click to add image" affordance to offer, so skip it entirely.
+  const visible = props.interactive ? props.regions : props.regions.filter((r) => r.fileUrl);
+  return visible.map((region) => {
     const bbox = regionBoundingBox(region.geometry);
     const left = bbox.x * b.width;
     const top = bbox.y * b.height;
@@ -146,9 +165,13 @@ const layerStyle = computed<CSSProperties>(() => ({
   top: `${box.value?.top ?? 0}px`,
   width: `${box.value?.width ?? 0}px`,
   height: `${box.value?.height ?? 0}px`,
-  pointerEvents: "auto",
+  pointerEvents: props.interactive ? "auto" : "none",
   overflow: "visible",
-  zIndex: 35,
+  // Layout mode: this layer IS the thing being edited, above everything.
+  // Bubbles mode: it's a non-interactive backdrop for captions, which use
+  // this same 35 for their own layer — regions must sit below them (matches
+  // the reader's RegionLayer.vue, z-index 20, same reasoning).
+  zIndex: props.interactive ? 35 : 20,
   cursor: props.tool === "select" ? undefined : "crosshair",
 }));
 
@@ -502,7 +525,7 @@ watch(
       :data-region-id="layout.region.id"
     >
       <RegionShape :region="layout.region" :clip-path="layout.clipPath" :img-style="layout.imgStyle" />
-      <div v-if="layout.region.id === selectedId" class="editor-region-handles">
+      <div v-if="interactive && layout.region.id === selectedId" class="editor-region-handles">
         <div
           v-for="h in layout.handles"
           :key="h.key"
