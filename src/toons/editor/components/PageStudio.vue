@@ -452,24 +452,39 @@ function loadImageEl(src: string): Promise<HTMLImageElement> {
   });
 }
 
+/** Longest edge of the flattened plate, in px. See flattenNow()'s doc comment for why this isn't design resolution. */
+const FLATTEN_MAX_DIM = 640;
+
 /**
- * Composites every filled region onto one plate at design resolution, then
- * swaps it in through the existing replace-page endpoint — the reader only
- * ever sees this flattened image, never the regions. Only runs from the
- * explicit Save button in the top bar: auto-flattening after every persisted
- * edit re-triggers the Worker's image pipeline (and its CPU budget) far more
- * than the user asked for, and reads as the page "won't stop saving" during
- * a drag session. A completed edit leaves a stale/"ghost" picture in the
- * flattened plate until Save is clicked — an accepted tradeoff.
+ * The reader renders every Layout-page region live (RegionLayer.vue) — this
+ * flattened plate is no longer what anyone actually reads. It only still
+ * exists as (a) the filmstrip's thumbnail source and (b) the backdrop `<img>`
+ * that RegionLayer/WordLayer measure their content-box against in any gap
+ * between regions (which the page's own background color, not art, is meant
+ * to fill — see the page-background-color field above). Neither needs design
+ * resolution: a thumbnail-sized composite is enough for a "page N" thumbnail,
+ * and content-box measurement only reads the image's aspect ratio. Capping
+ * the canvas here means a much smaller encode and a much smaller upload than
+ * flattening at full design resolution ever needed to be.
+ *
+ * Swaps the result in through the existing replace-page endpoint. Only runs
+ * from the explicit Save button in the top bar: auto-flattening after every
+ * persisted edit re-triggers the Worker's image pipeline (and its CPU budget)
+ * far more than the user asked for, and reads as the page "won't stop saving"
+ * during a drag session. A completed edit leaves a stale/"ghost" thumbnail
+ * until Save is clicked — an accepted tradeoff.
  */
 async function flattenNow(): Promise<void> {
   const page = activePage.value;
   if (!page || page.kind !== "layout" || !toon.value) return;
   flattening.value = true;
   try {
+    const designWidth = toon.value.designWidth;
+    const designHeight = toon.value.designHeight;
+    const scale = Math.min(1, FLATTEN_MAX_DIM / Math.max(designWidth, designHeight));
     const canvas = document.createElement("canvas");
-    canvas.width = toon.value.designWidth;
-    canvas.height = toon.value.designHeight;
+    canvas.width = Math.max(1, Math.round(designWidth * scale));
+    canvas.height = Math.max(1, Math.round(designHeight * scale));
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("Canvas is not supported");
     // Browsers default drawImage resampling to "low" — soft/blocky on any
@@ -519,17 +534,20 @@ async function flattenNow(): Promise<void> {
       ctx.clip();
       ctx.drawImage(img, boxLeft + rect.x, boxTop + rect.y, rect.width, rect.height);
       if (region.borderWidth > 0) {
+        // borderWidth is stored in design-resolution px — scale it down with
+        // everything else drawn on this (possibly smaller) canvas.
+        const borderWidth = region.borderWidth * scale;
         // Double the line width and stroke the same clipped path: the outward
         // half gets cut off by the clip, so only the inward half survives —
         // the canvas equivalent of the editor/reader's inset border technique.
-        ctx.lineWidth = region.borderWidth * 2;
+        ctx.lineWidth = borderWidth * 2;
         ctx.strokeStyle = region.borderColor || "#ffffff";
         ctx.lineCap = region.borderStyle === "dotted" ? "round" : "butt";
         ctx.setLineDash(
           region.borderStyle === "dashed"
-            ? [region.borderWidth * 3, region.borderWidth * 2]
+            ? [borderWidth * 3, borderWidth * 2]
             : region.borderStyle === "dotted"
-              ? [0.01, region.borderWidth * 2]
+              ? [0.01, borderWidth * 2]
               : []
         );
         ctx.stroke();
