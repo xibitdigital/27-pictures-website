@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { inject, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { inviteUser, listUsers, resendPassword } from "../api";
+import { inviteUser, listUsers, removeUser, resendPassword } from "../api";
 import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
 import type { EditorUser, UserRole } from "../types";
+import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorBar from "./EditorBar.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
@@ -49,6 +50,29 @@ async function onResendPassword(user: EditorUser): Promise<void> {
     pushToast(err instanceof Error ? err.message : "Could not resend password");
   } finally {
     resendingId.value = null;
+  }
+}
+
+const removingId = ref<string | null>(null);
+const confirmRemoveUser = ref<EditorUser | null>(null);
+
+function requestRemoveUser(user: EditorUser): void {
+  confirmRemoveUser.value = user;
+}
+
+async function onConfirmRemoveUser(): Promise<void> {
+  const user = confirmRemoveUser.value;
+  confirmRemoveUser.value = null;
+  if (!user) return;
+  removingId.value = user.id;
+  try {
+    await removeUser(user.id);
+    users.value = users.value.filter((u) => u.id !== user.id);
+    pushToast(`Removed ${user.username}`, "success");
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not remove user");
+  } finally {
+    removingId.value = null;
   }
 }
 
@@ -161,32 +185,43 @@ onUnmounted(() => {
         </button>
       </template>
     </EditorBar>
-    <div class="editor-page-body editor-list-body">
-      <section class="editor-list-section">
-        <h2 class="editor-list-heading">Users</h2>
-        <p v-if="loadingUsers" class="editor-muted">Loading…</p>
-        <p v-else-if="!users.length" class="editor-muted">No accounts yet.</p>
-        <ul v-else class="editor-user-roster">
-          <li v-for="user in users" :key="user.id" class="editor-user-row">
-            <span class="editor-user-row-info">
-              <strong>{{ user.username }}</strong>
-              <span class="editor-muted">{{ user.email }} · {{ user.role }}</span>
-            </span>
-            <button
-              class="editor-btn editor-btn--ghost"
-              type="button"
-              :disabled="resendingId === user.id"
-              @click="onResendPassword(user)"
-            >
-              {{ resendingId === user.id ? "Sending…" : "Resend password" }}
-            </button>
-          </li>
-        </ul>
-      </section>
-      <section class="editor-list-section">
-        <h2 class="editor-list-heading">Invite a new user</h2>
-        <form id="invite-user" class="editor-form" novalidate @submit="onSubmit">
-          <div class="editor-form-main">
+    <div class="editor-page-body">
+      <div class="editor-form">
+        <section>
+          <h2 class="editor-list-heading">Users</h2>
+          <p v-if="loadingUsers" class="editor-muted">Loading…</p>
+          <p v-else-if="!users.length" class="editor-muted">No accounts yet.</p>
+          <ul v-else class="editor-user-roster">
+            <li v-for="user in users" :key="user.id" class="editor-user-row">
+              <span class="editor-user-row-info">
+                <strong>{{ user.username }}</strong>
+                <span class="editor-muted">{{ user.email }} · {{ user.role }}</span>
+              </span>
+              <span class="editor-user-row-actions">
+                <button
+                  class="editor-btn editor-btn--ghost"
+                  type="button"
+                  :disabled="resendingId === user.id"
+                  @click="onResendPassword(user)"
+                >
+                  {{ resendingId === user.id ? "Sending…" : "Resend password" }}
+                </button>
+                <button
+                  v-if="user.id !== userRef?.id"
+                  class="editor-btn editor-btn--ghost"
+                  type="button"
+                  :disabled="removingId === user.id"
+                  @click="requestRemoveUser(user)"
+                >
+                  {{ removingId === user.id ? "Removing…" : "Remove" }}
+                </button>
+              </span>
+            </li>
+          </ul>
+        </section>
+        <aside class="editor-form-preview">
+          <h2 class="editor-list-heading">Invite a new user</h2>
+          <form id="invite-user" novalidate @submit="onSubmit">
             <label>
               Username
               <input v-model="username" name="username" required autocomplete="off" />
@@ -207,10 +242,19 @@ onUnmounted(() => {
             <p class="editor-muted">
               A password is generated automatically and emailed to the invited address — it is never shown here.
             </p>
-            <div ref="turnstileEl" class="cf-turnstile editor-form-span" />
-          </div>
-        </form>
-      </section>
+            <div ref="turnstileEl" class="cf-turnstile" />
+          </form>
+        </aside>
+      </div>
     </div>
+    <ConfirmDialog
+      :open="!!confirmRemoveUser"
+      title="Remove user"
+      :message="`Remove ${confirmRemoveUser?.username}? They immediately lose access — this can't be undone.`"
+      confirm-label="Remove"
+      focus-confirm
+      @confirm="onConfirmRemoveUser"
+      @cancel="confirmRemoveUser = null"
+    />
   </div>
 </template>

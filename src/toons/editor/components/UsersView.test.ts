@@ -142,4 +142,69 @@ describe("UsersView", () => {
     await flushPromises();
     expect(toasts.some((t) => t.kind === "error" && t.message.includes("failed to send"))).toBe(true);
   });
+
+  const confirmDialogStub = {
+    props: ["open", "title", "message", "confirmLabel", "cancelLabel", "focusConfirm"],
+    emits: ["confirm", "cancel"],
+    template: `<div v-if="open" data-confirm-dialog>
+      <p>{{ message }}</p>
+      <button data-confirm-yes @click="$emit('confirm')">{{ confirmLabel }}</button>
+      <button data-confirm-no @click="$emit('cancel')">{{ cancelLabel }}</button>
+    </div>`,
+  };
+
+  it("does not offer to remove the caller's own account", async () => {
+    const wrapper = mount(UsersView, {
+      global: { stubs: { EditorBar: true, ConfirmDialog: confirmDialogStub }, provide: provideUser("admin") },
+    });
+    await flushPromises();
+    const rows = wrapper.findAll(".editor-user-row");
+    // u1 is the logged-in admin (provideUser("admin") uses id "u1").
+    expect(rows[0].findAll("button")).toHaveLength(1);
+    expect(rows[0].text()).not.toContain("Remove");
+    expect(rows[1].findAll("button").map((b) => b.text())).toEqual(["Resend password", "Remove"]);
+  });
+
+  it("removes a user after confirming, and drops them from the list", async () => {
+    const remove = vi.spyOn(api, "removeUser").mockResolvedValue({ ok: true });
+    const wrapper = mount(UsersView, {
+      global: { stubs: { EditorBar: true, ConfirmDialog: confirmDialogStub }, provide: provideUser("admin") },
+    });
+    await flushPromises();
+    const rows = wrapper.findAll(".editor-user-row");
+    await rows[1].findAll("button")[1].trigger("click");
+    expect(wrapper.find("[data-confirm-dialog]").text()).toContain("u2");
+    await wrapper.get("[data-confirm-yes]").trigger("click");
+    expect(remove).toHaveBeenCalledWith("u2");
+    await flushPromises();
+    expect(wrapper.findAll(".editor-user-row")).toHaveLength(1);
+    expect(toasts.some((t) => t.kind === "success" && t.message.includes("u2"))).toBe(true);
+  });
+
+  it("cancels without removing anyone", async () => {
+    const remove = vi.spyOn(api, "removeUser").mockResolvedValue({ ok: true });
+    const wrapper = mount(UsersView, {
+      global: { stubs: { EditorBar: true, ConfirmDialog: confirmDialogStub }, provide: provideUser("admin") },
+    });
+    await flushPromises();
+    const rows = wrapper.findAll(".editor-user-row");
+    await rows[1].findAll("button")[1].trigger("click");
+    await wrapper.get("[data-confirm-no]").trigger("click");
+    expect(remove).not.toHaveBeenCalled();
+    expect(wrapper.findAll(".editor-user-row")).toHaveLength(2);
+  });
+
+  it("reports an error if removal fails", async () => {
+    vi.spyOn(api, "removeUser").mockRejectedValue(new Error("cannot remove your own account"));
+    const wrapper = mount(UsersView, {
+      global: { stubs: { EditorBar: true, ConfirmDialog: confirmDialogStub }, provide: provideUser("admin") },
+    });
+    await flushPromises();
+    const rows = wrapper.findAll(".editor-user-row");
+    await rows[1].findAll("button")[1].trigger("click");
+    await wrapper.get("[data-confirm-yes]").trigger("click");
+    await flushPromises();
+    expect(toasts.some((t) => t.kind === "error" && t.message === "cannot remove your own account")).toBe(true);
+    expect(wrapper.findAll(".editor-user-row")).toHaveLength(2);
+  });
 });

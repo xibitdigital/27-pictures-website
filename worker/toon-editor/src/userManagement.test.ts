@@ -16,6 +16,7 @@ const editor: UserRow = { id: "u1", email: "editor@example.com", username: "edit
 
 interface FakeState {
   users: UserRow[];
+  seriesEditors?: { series_key: string; user_id: string }[];
 }
 
 function makeEnv(state: FakeState): Env {
@@ -43,6 +44,14 @@ function makeEnv(state: FakeState): Env {
               const [, id] = stmt.args as [string, string];
               const user = state.users.find((u) => u.id === id);
               if (user) user.password_hash = String(stmt.args[0]);
+            }
+            if (/DELETE FROM series_editors WHERE user_id = \?/.test(sql)) {
+              const [id] = stmt.args as [string];
+              state.seriesEditors = (state.seriesEditors || []).filter((e) => e.user_id !== id);
+            }
+            if (/DELETE FROM users WHERE id = \?/.test(sql)) {
+              const [id] = stmt.args as [string];
+              state.users = state.users.filter((u) => u.id !== id);
             }
             return {};
           },
@@ -109,6 +118,67 @@ describe("POST /users/:id/resend-password", () => {
       new Request("https://toon-editor.example/users/u1/resend-password", { method: "POST" }),
       env
     );
+    expect(res.status).toBe(401);
+  });
+});
+
+describe("DELETE /users/:id", () => {
+  it("removes the account and its series-editor memberships", async () => {
+    const state: FakeState = {
+      users: [admin, editor],
+      seriesEditors: [
+        { series_key: "erin", user_id: "u1" },
+        { series_key: "jax", user_id: "admin1" },
+      ],
+    };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/u1", admin.id, { method: "DELETE" }),
+      env
+    );
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toEqual({ ok: true });
+    expect(state.users.map((u) => u.id)).toEqual(["admin1"]);
+    expect(state.seriesEditors).toEqual([{ series_key: "jax", user_id: "admin1" }]);
+  });
+
+  it("refuses to let an admin remove their own account", async () => {
+    const state: FakeState = { users: [admin, editor] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/admin1", admin.id, { method: "DELETE" }),
+      env
+    );
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toMatchObject({ error: "cannot remove your own account" });
+    expect(state.users).toHaveLength(2);
+  });
+
+  it("403s for a non-admin caller", async () => {
+    const state: FakeState = { users: [admin, editor] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/admin1", editor.id, { method: "DELETE" }),
+      env
+    );
+    expect(res.status).toBe(403);
+    expect(state.users).toHaveLength(2);
+  });
+
+  it("404s for a user that does not exist", async () => {
+    const state: FakeState = { users: [admin] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/missing", admin.id, { method: "DELETE" }),
+      env
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it("401s with no session at all", async () => {
+    const state: FakeState = { users: [admin, editor] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(new Request("https://toon-editor.example/users/u1", { method: "DELETE" }), env);
     expect(res.status).toBe(401);
   });
 });

@@ -1120,6 +1120,19 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json({ user: publicUser(row), emailSent }, 200, cors);
   }
 
+  const userMatch = path.match(/^\/users\/([^/]+)$/);
+  if (isMethod(method, "DELETE") && userMatch) {
+    if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
+    if (userMatch[1] === session.id) return json({ error: "cannot remove your own account" }, 400, cors);
+    const row = await env.DB.prepare("SELECT id, email, username, role FROM users WHERE id = ?")
+      .bind(userMatch[1])
+      .first<UserRow>();
+    if (!row) return json({ error: "not found" }, 404, cors);
+    await env.DB.prepare("DELETE FROM series_editors WHERE user_id = ?").bind(row.id).run();
+    await env.DB.prepare("DELETE FROM users WHERE id = ?").bind(row.id).run();
+    return json({ ok: true }, 200, cors);
+  }
+
   const mediaMatch = path.match(/^\/media\/(.+)$/);
   if (isMethod(method, "GET") && mediaMatch) {
     const key = mediaMatch[1];

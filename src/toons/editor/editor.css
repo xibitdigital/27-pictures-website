@@ -165,6 +165,12 @@ body {
   gap: 0.15rem;
 }
 
+.editor-user-row-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 .editor-gate {
   max-width: 40rem;
   margin: 0 auto;

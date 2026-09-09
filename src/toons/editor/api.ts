@@ -134,6 +134,11 @@ export function resendPassword(userId: string): Promise<InviteUserResult> {
   return api<InviteUserResult>(`/users/${userId}/resend-password`, { method: "POST" });
 }
 
+/** Admin-only: removes an account (and its series-editor memberships). The Worker refuses to remove the caller's own account. */
+export function removeUser(userId: string): Promise<{ ok: boolean }> {
+  return api<{ ok: boolean }>(`/users/${userId}`, { method: "DELETE" });
+}
+
 export function fetchCredits(): Promise<CreditsSnapshot> {
   return api<CreditsSnapshot>("/credits");
 }
