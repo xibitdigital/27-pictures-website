@@ -20,7 +20,11 @@ describe("fluxSubmit", () => {
   });
 
   it("sends the x-key header, prompt, webp output, and numbered reference images", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: "job-1" }), { status: 200 }));
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ id: "job-1", polling_url: "https://api.us1.bfl.ai/v1/get_result?id=job-1" }), {
+        status: 200,
+      })
+    );
     vi.stubGlobal("fetch", fetchMock);
     const out = await fluxSubmit(env({ BFL_API_KEY: "bfl_secret" }), {
       prompt: "Erin walks in.",
@@ -29,7 +33,7 @@ describe("fluxSubmit", () => {
       height: 1728,
       seed: 42,
     });
-    expect(out).toEqual({ ok: true, id: "job-1" });
+    expect(out).toEqual({ ok: true, id: "job-1", pollingUrl: "https://api.us1.bfl.ai/v1/get_result?id=job-1" });
     expect(String(fetchMock.mock.calls[0][0])).toBe("https://api.bfl.ai/v1/flux-2-pro");
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     expect(new Headers(init.headers).get("x-key")).toBe("bfl_secret");
@@ -59,6 +63,13 @@ describe("fluxSubmit", () => {
     const out = await fluxSubmit(env({ BFL_API_KEY: "k" }), { prompt: "p", images: [] });
     expect(out).toEqual({ ok: false, error: "Flux request failed (400) bad request" });
   });
+
+  it("errors if the response has no polling_url — the id alone 404s on a different regional host", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: "job-1" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await fluxSubmit(env({ BFL_API_KEY: "k" }), { prompt: "p", images: [] });
+    expect(out).toEqual({ ok: false, error: "Flux request returned no polling_url" });
+  });
 });
 
 describe("fluxResult", () => {
@@ -66,12 +77,14 @@ describe("fluxResult", () => {
     vi.unstubAllGlobals();
   });
 
-  it("reports queued/running for a Pending job", async () => {
+  const pollingUrl = "https://api.us1.bfl.ai/v1/get_result?id=job-1";
+
+  it("fetches the exact pollingUrl it was given, not a reconstructed one", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "Pending" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
-    const out = await fluxResult(env({ BFL_API_KEY: "k" }), "job-1");
+    const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
     expect(out).toEqual({ ok: true, phase: "running" });
-    expect(String(fetchMock.mock.calls[0][0])).toBe("https://api.bfl.ai/v1/get_result?id=job-1");
+    expect(String(fetchMock.mock.calls[0][0])).toBe(pollingUrl);
   });
 
   it("returns the signed sample URL when Ready", async () => {
@@ -81,14 +94,14 @@ describe("fluxResult", () => {
         new Response(JSON.stringify({ status: "Ready", result: { sample: "https://signed/a.webp" } }), { status: 200 })
       );
     vi.stubGlobal("fetch", fetchMock);
-    const out = await fluxResult(env({ BFL_API_KEY: "k" }), "job-1");
+    const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
     expect(out).toEqual({ ok: true, phase: "done", imageUrl: "https://signed/a.webp" });
   });
 
   it("reports an error phase for a failed/moderated job", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "Error" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
-    const out = await fluxResult(env({ BFL_API_KEY: "k" }), "job-1");
+    const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
     expect(out).toEqual({ ok: false, error: "Flux job Error" });
   });
 
@@ -97,8 +110,20 @@ describe("fluxResult", () => {
       .fn()
       .mockResolvedValue(new Response(JSON.stringify({ status: "Ready", result: {} }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
-    const out = await fluxResult(env({ BFL_API_KEY: "k" }), "job-1");
+    const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
     expect(out).toEqual({ ok: false, error: "Flux result had no image" });
+  });
+
+  it("surfaces a 404 (task not found on this host) as an error rather than treating it as pending", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ id: "job-1", status: "Task not found" }), { status: 404 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
+    expect(out).toEqual({
+      ok: false,
+      error: 'Flux result failed (404) {"id":"job-1","status":"Task not found"}',
+    });
   });
 });
 

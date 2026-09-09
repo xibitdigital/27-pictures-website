@@ -270,7 +270,8 @@ async function startFluxGenerate(
       seed: (baseSeed + i) % 2_147_483_647,
     });
     if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
-    promptIds.push(submitted.id);
+    // Stored (and later polled) as the full pollingUrl, not the bare id — see fluxResult's comment.
+    promptIds.push(submitted.pollingUrl);
   }
 
   const id = crypto.randomUUID();
@@ -373,6 +374,7 @@ export async function pollPageJob(
   let phase: ComfyPhase | null = null;
   for (const promptId of promptIds) {
     if (isFlux) {
+      // For Flux, promptId is actually the full pollingUrl stored at submit time.
       const result = await fluxResult(env, promptId);
       if (!result.ok) {
         await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)

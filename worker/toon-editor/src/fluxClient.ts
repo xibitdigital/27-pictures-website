@@ -15,7 +15,7 @@ function fluxHeaders(env: Env, extra?: HeadersInit): Headers {
 export async function fluxSubmit(
   env: Env,
   input: { prompt: string; images: string[]; width?: number | null; height?: number | null; seed?: number }
-): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+): Promise<{ ok: true; id: string; pollingUrl: string } | { ok: false; error: string }> {
   if (!env.BFL_API_KEY?.trim()) return { ok: false, error: "Flux is not configured (BFL_API_KEY missing)" };
   const refs = input.images.slice(0, MAX_REFS);
   if (input.images.length > MAX_REFS) {
@@ -38,14 +38,17 @@ export async function fluxSubmit(
   });
   const text = await res.text();
   if (!res.ok) return { ok: false, error: `Flux request failed (${res.status}) ${text.slice(0, 300)}` };
-  let parsed: { id?: string } = {};
+  let parsed: { id?: string; polling_url?: string } = {};
   try {
-    parsed = JSON.parse(text) as { id?: string };
+    parsed = JSON.parse(text) as { id?: string; polling_url?: string };
   } catch {
     return { ok: false, error: "Flux request returned non-JSON" };
   }
   if (!parsed.id) return { ok: false, error: "Flux request returned no id" };
-  return { ok: true, id: parsed.id };
+  // BFL load-balances across regional hosts — the id alone doesn't reliably resolve
+  // at api.bfl.ai; only the polling_url this specific task was created on does.
+  if (!parsed.polling_url) return { ok: false, error: "Flux request returned no polling_url" };
+  return { ok: true, id: parsed.id, pollingUrl: parsed.polling_url };
 }
 
 function fluxPhase(status: string): ComfyPhase | null {
@@ -57,11 +60,12 @@ function fluxPhase(status: string): ComfyPhase | null {
   return "running";
 }
 
+/** `pollingUrl` must be the exact URL fluxSubmit returned — not reconstructed from the id, see the comment there. */
 export async function fluxResult(
   env: Env,
-  id: string
+  pollingUrl: string
 ): Promise<{ ok: true; phase: ComfyPhase | null; imageUrl?: string } | { ok: false; error: string }> {
-  const res = await fetch(`${FLUX_BASE}/v1/get_result?id=${encodeURIComponent(id)}`, {
+  const res = await fetch(pollingUrl, {
     headers: fluxHeaders(env, { accept: "application/json" }),
   });
   if (!res.ok) {
