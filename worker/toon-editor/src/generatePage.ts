@@ -23,7 +23,7 @@ import {
 import type { SeriesGenerateConfig } from "./apiTypes";
 import { insertCreditEvent } from "./creditUsage";
 import { fluxDownload, fluxResult, fluxSubmit } from "./fluxClient";
-import { toWebp } from "./imageOptimize";
+import { toWebp, webpDimensions } from "./imageOptimize";
 import type { Env, SeriesRow, ToonRow } from "./types";
 
 export type GenerationJob = {
@@ -367,14 +367,21 @@ async function putPlate(
   env: Env,
   toon: ToonRow,
   bytes: ArrayBuffer
-): Promise<{ fileKey: string; ext: string; type: string }> {
+): Promise<{ fileKey: string; ext: string; type: string; width: number | null; height: number | null }> {
   const optimized = await toWebp({ bytes, ...sniffImage(bytes) });
   const hash = await sha256Hex(optimized.bytes);
   const fileKey = `editor/${toon.slug}/assets/${hash}.${optimized.ext}`;
   await env.ASSETS.put(fileKey, optimized.bytes, {
     httpMetadata: { contentType: optimized.type, cacheControl: "public, max-age=31536000, immutable" },
   });
-  return { fileKey, ext: optimized.ext, type: optimized.type };
+  const dims = optimized.ext === "webp" ? webpDimensions(optimized.bytes) : null;
+  return {
+    fileKey,
+    ext: optimized.ext,
+    type: optimized.type,
+    width: dims?.width ?? null,
+    height: dims?.height ?? null,
+  };
 }
 
 export async function pollPageJob(
@@ -434,7 +441,12 @@ export async function pollPageJob(
     return { ok: true, job: latest || job, phase: latest?.status === "done" ? "done" : phase };
   }
 
-  const plates: string[] = [];
+  // Never trust the requested size from the job payload for what gets stored — an image
+  // provider (seen with Flux) can silently return a different size than it was asked for.
+  // Each plate's real dimensions come from its own downloaded bytes, sniffed via
+  // webpDimensions(), and only fall back to the requested size if that sniff fails.
+  const requested = plateSizeFromJob(job);
+  const plates: { fileKey: string; width: number | null; height: number | null }[] = [];
   for (const image of outputs) {
     if (isFlux) {
       const downloaded = await fluxDownload(image as string);
@@ -450,7 +462,8 @@ export async function pollPageJob(
       await env.ASSETS.put(fileKey, downloaded.bytes, {
         httpMetadata: { contentType: "image/webp", cacheControl: "public, max-age=31536000, immutable" },
       });
-      plates.push(fileKey);
+      const dims = webpDimensions(downloaded.bytes);
+      plates.push({ fileKey, width: dims?.width ?? requested.width, height: dims?.height ?? requested.height });
       continue;
     }
     const viewed = await comfyView(env, image as ComfyHistoryImage);
@@ -461,13 +474,16 @@ export async function pollPageJob(
       return { ok: true, job: { ...job, status: "error", error: viewed.error }, phase: "error" };
     }
     const stored = await putPlate(env, toon, viewed.bytes);
-    plates.push(stored.fileKey);
+    plates.push({
+      fileKey: stored.fileKey,
+      width: stored.width ?? requested.width,
+      height: stored.height ?? requested.height,
+    });
   }
 
-  const { width, height } = plateSizeFromJob(job);
   let resultPageId = job.page_id;
   for (let i = 0; i < plates.length; i++) {
-    const fileKey = plates[i];
+    const { fileKey, width, height } = plates[i];
     if (i === 0 && job.region_id) {
       // Fills one Layout-page region, never the page's own plate — the
       // editor flattens regions onto the page separately. Skips the

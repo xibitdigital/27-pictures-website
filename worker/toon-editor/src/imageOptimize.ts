@@ -59,3 +59,42 @@ export async function toWebp(image: ImageBytes): Promise<ImageBytes> {
     return image;
   }
 }
+
+/**
+ * Reads width/height straight from a WebP file's own header — no decode.
+ * Every plate is WebP by the time it's about to be stored (either already,
+ * or just re-encoded above), so this is the one check that catches an image
+ * provider silently not honoring a requested size (seen with Flux: asked
+ * for 385x443, got 1152x1728 back) before that wrong size gets written to
+ * D1 and corrupts every region-composite math that trusts it. Returns null
+ * for anything that isn't a well-formed WebP rather than throwing — a
+ * missing dimension check should never be why a generation fails outright.
+ */
+export function webpDimensions(bytes: ArrayBuffer): { width: number; height: number } | null {
+  const u = new Uint8Array(bytes);
+  if (u.length < 30 || !isWebpBytes(bytes)) return null;
+  const fourCC = String.fromCharCode(u[12], u[13], u[14], u[15]);
+  if (fourCC === "VP8X") {
+    const width = 1 + (u[24] | (u[25] << 8) | (u[26] << 16));
+    const height = 1 + (u[27] | (u[28] << 8) | (u[29] << 16));
+    return { width, height };
+  }
+  if (fourCC === "VP8L") {
+    if (u[20] !== 0x2f) return null;
+    const b0 = u[21];
+    const b1 = u[22];
+    const b2 = u[23];
+    const b3 = u[24];
+    const width = 1 + (((b1 & 0x3f) << 8) | b0);
+    const height = 1 + (((b3 & 0xf) << 10) | (b2 << 2) | ((b1 & 0xc0) >> 6));
+    return { width, height };
+  }
+  if (fourCC === "VP8 ") {
+    // Bitstream sync code 0x9D 0x01 0x2A marks the start of the frame header.
+    if (u[23] !== 0x9d || u[24] !== 0x01 || u[25] !== 0x2a) return null;
+    const width = (u[26] | (u[27] << 8)) & 0x3fff;
+    const height = (u[28] | (u[29] << 8)) & 0x3fff;
+    return { width, height };
+  }
+  return null;
+}
