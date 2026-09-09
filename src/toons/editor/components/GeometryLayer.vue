@@ -13,9 +13,11 @@ import { clientToPlateFraction, type ContentBox } from "../plateCoords";
 import {
   clipPathPolygon,
   coverImageRect,
+  DEFAULT_GRID_SIZE,
   offsetFromDrag,
   percentPoints,
   regionBoundingBox,
+  snapPointToGrid,
   type Point,
 } from "../regionFit";
 import type { RegionGeometry, RegionRecord } from "../types";
@@ -34,9 +36,15 @@ const props = withDefaults(
     designHeight?: number;
     imageEl?: HTMLImageElement | null;
     tool?: LayoutTool;
+    /** Snap draw/resize/reshape to a grid — draw-start included, panning an image inside its mask never snaps. */
+    grid?: boolean;
   }>(),
-  { selectedId: null, designWidth: 800, designHeight: 1424, imageEl: null, tool: "select" }
+  { selectedId: null, designWidth: 800, designHeight: 1424, imageEl: null, tool: "select", grid: false }
 );
+
+function snapped(point: Point): Point {
+  return props.grid ? snapPointToGrid(point) : point;
+}
 
 const emit = defineEmits<{
   select: [id: string];
@@ -144,6 +152,21 @@ const layerStyle = computed<CSSProperties>(() => ({
   cursor: props.tool === "select" ? undefined : "crosshair",
 }));
 
+/** A faint reference grid at the same spacing draw/resize/reshape snaps to — purely visual, never intercepts pointer events. */
+const gridStyle = computed<CSSProperties | null>(() => {
+  if (!props.grid || !box.value) return null;
+  const stepX = box.value.width * DEFAULT_GRID_SIZE;
+  const stepY = box.value.height * DEFAULT_GRID_SIZE;
+  return {
+    position: "absolute",
+    inset: 0,
+    pointerEvents: "none",
+    backgroundImage:
+      "linear-gradient(to right, rgba(255,255,255,0.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.16) 1px, transparent 1px)",
+    backgroundSize: `${stepX}px ${stepY}px`,
+  };
+});
+
 function measure(): void {
   const img = props.imageEl;
   if (!img || (!img.naturalWidth && !img.clientWidth)) {
@@ -230,19 +253,19 @@ function onWindowMove(ev: PointerEvent): void {
   const plate = overlayBox();
   if (!plate) return;
   if (drag.mode === "draw-rect") {
-    const pos = clientToPlateFraction(ev.clientX, ev.clientY, plate);
+    const pos = snapped(clientToPlateFraction(ev.clientX, ev.clientY, plate));
     if (draftRect.value) draftRect.value = { ...draftRect.value, x1: pos.x, y1: pos.y };
     return;
   }
   if (drag.mode === "resize") {
-    const pos = clientToPlateFraction(ev.clientX, ev.clientY, plate);
+    const pos = snapped(clientToPlateFraction(ev.clientX, ev.clientY, plate));
     const next = resizeRectCorner(drag.geometry, drag.corner, pos);
     drag.geometry = next;
     emit("update-geometry", drag.regionId, next);
     return;
   }
   if (drag.mode === "vertex") {
-    const pos = clientToPlateFraction(ev.clientX, ev.clientY, plate);
+    const pos = snapped(clientToPlateFraction(ev.clientX, ev.clientY, plate));
     const geometry = drag.geometry;
     const vertexIndex = drag.index;
     if (geometry.kind !== "polygon") return;
@@ -328,7 +351,7 @@ function onPointerDown(ev: PointerEvent): void {
 
   if (props.tool === "rect") {
     ev.preventDefault();
-    const pos = clientToPlateFraction(ev.clientX, ev.clientY, plate);
+    const pos = snapped(clientToPlateFraction(ev.clientX, ev.clientY, plate));
     draftRect.value = { x0: pos.x, y0: pos.y, x1: pos.x, y1: pos.y };
     drag = { mode: "draw-rect", pointerId: ev.pointerId };
     capturePointer(ev.pointerId);
@@ -337,7 +360,7 @@ function onPointerDown(ev: PointerEvent): void {
 
   if (props.tool === "polygon") {
     ev.preventDefault();
-    const pos = clientToPlateFraction(ev.clientX, ev.clientY, plate);
+    const pos = snapped(clientToPlateFraction(ev.clientX, ev.clientY, plate));
     draftPoints.value = [...draftPoints.value, pos];
     return;
   }
@@ -398,7 +421,7 @@ function onPointerMoveHover(ev: PointerEvent): void {
   if (props.tool !== "polygon" || !draftPoints.value.length) return;
   const plate = overlayBox();
   if (!plate) return;
-  draftCursor.value = clientToPlateFraction(ev.clientX, ev.clientY, plate);
+  draftCursor.value = snapped(clientToPlateFraction(ev.clientX, ev.clientY, plate));
 }
 
 function onDblClick(): void {
@@ -469,6 +492,7 @@ watch(
     @pointermove="onPointerMoveHover"
     @dblclick="onDblClick"
   >
+    <div v-if="gridStyle" class="editor-region-grid" :style="gridStyle" />
     <div
       v-for="layout in regionLayouts"
       :key="layout.region.id"

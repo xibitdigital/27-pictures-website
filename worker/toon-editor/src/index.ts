@@ -328,6 +328,15 @@ function regionCorners(rect: { x: number; y: number; w: number; h: number }): { 
   ];
 }
 
+/** `null`/empty clears the color back to the default background; anything else must be a real hex color. */
+function validateHexColor(input: unknown): { ok: true; value: string | null } | { ok: false; error: string } {
+  if (input === null || input === undefined || input === "") return { ok: true, value: null };
+  if (typeof input !== "string" || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(input)) {
+    return { ok: false, error: "color must be a hex string like #rrggbb, or null" };
+  }
+  return { ok: true, value: input.toLowerCase() };
+}
+
 /** Validates a client-submitted geometry payload before it's persisted. */
 function validateRegionGeometry(
   input: unknown
@@ -378,6 +387,9 @@ function mapRegion(
     imageOffsetX: r.image_offset_x,
     imageOffsetY: r.image_offset_y,
     imageScale: r.image_scale,
+    borderColor: r.border_color || null,
+    borderWidth: r.border_width || 0,
+    borderStyle: r.border_style === "dashed" || r.border_style === "dotted" ? r.border_style : "solid",
     sort: r.sort,
   };
 }
@@ -399,6 +411,7 @@ function mapPage(
     width: row.width,
     height: row.height,
     kind: row.kind === "layout" ? "layout" : "plate",
+    bgColor: row.bg_color || null,
     bubbles: bubbles || [],
     regions: regions || [],
   };
@@ -745,17 +758,22 @@ function readerRegionsForPage(rows: RegionRow[] | undefined, request: RequestLik
   if (!rows || !rows.length) return undefined;
   const regions = rows
     .filter((row): row is RegionRow & { file_key: string } => Boolean(row.file_key))
-    .map((row) => ({
-      shapeType: row.shape_type === "polygon" ? ("polygon" as const) : ("rect" as const),
-      geometry: parseRegionGeometry(row.geometry_json, row.shape_type),
-      file: publicPageFile(request, row.file_key),
-      fileWidth: row.file_width,
-      fileHeight: row.file_height,
-      imageOffsetX: row.image_offset_x,
-      imageOffsetY: row.image_offset_y,
-      imageScale: row.image_scale,
-      sort: row.sort,
-    }));
+    .map(
+      (row): ReaderRegion => ({
+        shapeType: row.shape_type === "polygon" ? "polygon" : "rect",
+        geometry: parseRegionGeometry(row.geometry_json, row.shape_type),
+        file: publicPageFile(request, row.file_key),
+        fileWidth: row.file_width,
+        fileHeight: row.file_height,
+        imageOffsetX: row.image_offset_x,
+        imageOffsetY: row.image_offset_y,
+        imageScale: row.image_scale,
+        borderColor: row.border_color || null,
+        borderWidth: row.border_width || 0,
+        borderStyle: row.border_style === "dashed" || row.border_style === "dotted" ? row.border_style : "solid",
+        sort: row.sort,
+      })
+    );
   return regions.length ? regions : undefined;
 }
 
@@ -1874,14 +1892,23 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(nowIso(), page.toon_id).run();
       return json({ ok: true }, 200, cors);
     }
-    // PATCH — today the only field is `kind`, and this is the only place that
-    // ever sets it to "layout". No existing upload/generate/replace action
-    // calls this route, so no page can flip modes by accident.
+    // PATCH — `kind` (this is the only place that ever sets it to "layout"; no
+    // existing upload/generate/replace action calls this route, so no page can
+    // flip modes by accident) and, independently, `bgColor`.
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
-    const kind = String(parsed.body.kind || "");
-    if (kind !== "plate" && kind !== "layout") return json({ error: "kind must be plate or layout" }, 400, cors);
-    await env.DB.prepare("UPDATE pages SET kind = ? WHERE id = ?").bind(kind, page.id).run();
+    let kind = page.kind === "layout" ? "layout" : "plate";
+    if (parsed.body.kind !== undefined) {
+      kind = String(parsed.body.kind || "");
+      if (kind !== "plate" && kind !== "layout") return json({ error: "kind must be plate or layout" }, 400, cors);
+    }
+    let bgColor = page.bg_color ?? null;
+    if (parsed.body.bgColor !== undefined) {
+      const validated = validateHexColor(parsed.body.bgColor);
+      if (!validated.ok) return json({ error: validated.error }, 400, cors);
+      bgColor = validated.value;
+    }
+    await env.DB.prepare("UPDATE pages SET kind = ?, bg_color = ? WHERE id = ?").bind(kind, bgColor, page.id).run();
     await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(nowIso(), page.toon_id).run();
     return json(await loadToon(env, request, page.toon_id), 200, cors);
   }
@@ -2020,12 +2047,38 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         ? Math.max(1, Math.min(4, Number(body.imageScale)))
         : row.image_scale;
     const sort = body.sort != null && Number.isFinite(Number(body.sort)) ? Math.round(Number(body.sort)) : row.sort;
+    let borderColor = row.border_color;
+    if (body.borderColor !== undefined) {
+      const validated = validateHexColor(body.borderColor);
+      if (!validated.ok) return json({ error: validated.error }, 400, cors);
+      borderColor = validated.value;
+    }
+    const borderWidth =
+      body.borderWidth != null && Number.isFinite(Number(body.borderWidth))
+        ? Math.max(0, Math.min(20, Number(body.borderWidth)))
+        : row.border_width;
+    const borderStyle =
+      body.borderStyle === "dashed" || body.borderStyle === "dotted" || body.borderStyle === "solid"
+        ? body.borderStyle
+        : row.border_style;
     const ts = nowIso();
     await env.DB.prepare(
-      `UPDATE page_regions SET shape_type = ?, geometry_json = ?, image_offset_x = ?, image_offset_y = ?, image_scale = ?, sort = ?, updated_at = ?
+      `UPDATE page_regions SET shape_type = ?, geometry_json = ?, image_offset_x = ?, image_offset_y = ?, image_scale = ?, border_color = ?, border_width = ?, border_style = ?, sort = ?, updated_at = ?
        WHERE id = ?`
     )
-      .bind(shapeType, geometryJson, imageOffsetX, imageOffsetY, imageScale, sort, ts, row.id)
+      .bind(
+        shapeType,
+        geometryJson,
+        imageOffsetX,
+        imageOffsetY,
+        imageScale,
+        borderColor,
+        borderWidth,
+        borderStyle,
+        sort,
+        ts,
+        row.id
+      )
       .run();
     if (page) await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(ts, page.toon_id).run();
     const next = await getRegionOrNull(env, row.id);

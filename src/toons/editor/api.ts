@@ -5,6 +5,7 @@ import type {
   InviteUserInput,
   InviteUserResult,
   PageKind,
+  RegionBorderStyle,
   RegionGeometry,
   RegionRecord,
   RegionShapeType,
@@ -323,6 +324,11 @@ export function setPageKind(pageId: string, kind: PageKind): Promise<ToonRecord>
   return api<ToonRecord>(`/pages/${pageId}`, { method: "PATCH", body: JSON.stringify({ kind }) });
 }
 
+/** Editor-set backdrop color, shown through any gap between regions. Pass null to clear back to the default. */
+export function patchPageBgColor(pageId: string, bgColor: string | null): Promise<ToonRecord> {
+  return api<ToonRecord>(`/pages/${pageId}`, { method: "PATCH", body: JSON.stringify({ bgColor }) });
+}
+
 export function addRegion(
   pageId: string,
   payload: { shapeType: RegionShapeType; geometry: RegionGeometry }
@@ -337,6 +343,9 @@ export function patchRegion(
     imageOffsetX: number;
     imageOffsetY: number;
     imageScale: number;
+    borderColor: string | null;
+    borderWidth: number;
+    borderStyle: RegionBorderStyle;
     sort: number;
   }>
 ): Promise<RegionRecord> {

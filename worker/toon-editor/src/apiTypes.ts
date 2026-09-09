@@ -69,6 +69,8 @@ export interface BubbleRecord {
 
 export type RegionShapeType = "rect" | "polygon";
 
+export type RegionBorderStyle = "solid" | "dashed" | "dotted";
+
 /** Plate-fraction coordinates (0-1). A rect is a constrained 4-point shape;
  * a polygon's vertices move independently. Both render through one
  * `clip-path: polygon(...)` code path client-side. */
@@ -77,7 +79,8 @@ export type RegionGeometry =
   | { kind: "polygon"; points: { x: number; y: number }[] };
 
 /** One drawn mask on a `kind: "layout"` page. `fileKey`/`fileUrl` are null
- * until an image has been uploaded or generated for this shape. */
+ * until an image has been uploaded or generated for this shape.
+ * `borderWidth: 0` (the default) means no border regardless of color/style. */
 export interface RegionRecord {
   id: string;
   shapeType: RegionShapeType;
@@ -89,6 +92,9 @@ export interface RegionRecord {
   imageOffsetX: number;
   imageOffsetY: number;
   imageScale: number;
+  borderColor: string | null;
+  borderWidth: number;
+  borderStyle: RegionBorderStyle;
   sort: number;
 }
 
@@ -104,6 +110,8 @@ export interface PageRecord {
   /** "layout" pages compose `regions` into this same `fileKey` on every edit
    * (flattened client-side) — the reader only ever sees one plate per page. */
   kind: PageKind;
+  /** Editor-set backdrop color, shown through any gap between regions. Null = default background. */
+  bgColor: string | null;
   bubbles: BubbleRecord[];
   regions: RegionRecord[];
 }

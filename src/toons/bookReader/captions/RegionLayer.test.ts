@@ -26,6 +26,9 @@ const rectRegion: ReaderRegion = {
   imageOffsetX: 0.5,
   imageOffsetY: 0.5,
   imageScale: 1,
+  borderColor: null,
+  borderWidth: 0,
+  borderStyle: "solid",
   sort: 0,
 };
 
@@ -45,6 +48,9 @@ const polygonRegion: ReaderRegion = {
   imageOffsetX: 0.2,
   imageOffsetY: 0.8,
   imageScale: 1.2,
+  borderColor: null,
+  borderWidth: 0,
+  borderStyle: "solid",
   sort: 1,
 };
 
@@ -182,5 +188,31 @@ describe("RegionLayer", () => {
     await nextTick();
     const srcs = wrapper.findAll("img").map((el) => el.attributes("src"));
     expect(srcs).toEqual([rectRegion.file, polygonRegion.file]);
+  });
+
+  it("renders a rect region's border as a real border, a polygon's as an inset box-shadow", async () => {
+    const borderedRect: ReaderRegion = { ...rectRegion, borderColor: "#ff0000", borderWidth: 3, borderStyle: "dashed" };
+    const borderedPolygon: ReaderRegion = { ...polygonRegion, borderColor: "#00ff00", borderWidth: 2 };
+    const wrapper = mount(RegionLayer, {
+      props: { pageNum: 1, regions: [borderedRect, borderedPolygon], imageEl: makeImage() },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const frames = wrapper.findAll("[style*='clip-path']");
+    const rectStyle = frames[0].attributes("style") || "";
+    expect(rectStyle).toContain("border: 3px dashed #ff0000");
+    const polygonStyle = frames[1].attributes("style") || "";
+    expect(polygonStyle).toContain("box-shadow: inset 0 0 0 2px #00ff00");
+  });
+
+  it("has no border styling when borderWidth is 0 (the default)", async () => {
+    const wrapper = mount(RegionLayer, {
+      props: { pageNum: 1, regions: [rectRegion], imageEl: makeImage() },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const style = wrapper.find("[style*='clip-path']").attributes("style") || "";
+    expect(style).not.toContain("border:");
+    expect(style).not.toContain("box-shadow");
   });
 });

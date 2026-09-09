@@ -137,6 +137,9 @@ describe("readerConfigFromToon", () => {
           image_offset_x: 0.3,
           image_offset_y: 0.7,
           image_scale: 1.5,
+          border_color: "#ff0000",
+          border_width: 2,
+          border_style: "dashed",
           sort: 0,
         },
         {
@@ -176,11 +179,17 @@ describe("readerConfigFromToon", () => {
       imageOffsetX: 0.3,
       imageOffsetY: 0.7,
       imageScale: 1.5,
+      borderColor: "#ff0000",
+      borderWidth: 2,
+      borderStyle: "dashed",
       sort: 0,
     });
     expect(cfg.pages[0].regions[1]).toMatchObject({
       shapeType: "polygon",
       file: "https://toon-editor.example/media/editor/erin-the-revenge/assets/region1.webp",
+      borderColor: null,
+      borderWidth: 0,
+      borderStyle: "solid",
       sort: 1,
     });
   });

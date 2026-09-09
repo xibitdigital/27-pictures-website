@@ -1,12 +1,16 @@
 <script setup lang="ts">
 /** Floating tool switch over the Layout-mode canvas — draw tools are explicit so idle clicks never start a shape. */
-import { LayoutGrid, MessageSquare, MousePointer2, Pentagon, Square } from "@lucide/vue";
+import { LayoutGrid, Magnet, MessageSquare, MousePointer2, Pentagon, Square } from "@lucide/vue";
 import type { LayoutTool } from "./GeometryLayer.vue";
 
 export type StudioMode = "layout" | "bubbles";
 
-defineProps<{ tool: LayoutTool; mode: StudioMode }>();
-const emit = defineEmits<{ "update:tool": [tool: LayoutTool]; "update:mode": [mode: StudioMode] }>();
+defineProps<{ tool: LayoutTool; mode: StudioMode; grid?: boolean }>();
+const emit = defineEmits<{
+  "update:tool": [tool: LayoutTool];
+  "update:mode": [mode: StudioMode];
+  "update:grid": [grid: boolean];
+}>();
 </script>
 
 <template>
@@ -63,6 +67,16 @@ const emit = defineEmits<{ "update:tool": [tool: LayoutTool]; "update:mode": [mo
         @click="emit('update:tool', 'polygon')"
       >
         <Pentagon :size="16" :stroke-width="1.6" aria-hidden="true" />
+      </button>
+      <button
+        class="editor-icon-btn"
+        type="button"
+        name="tool-grid-snap"
+        :aria-pressed="!!grid"
+        title="Snap to grid"
+        @click="emit('update:grid', !grid)"
+      >
+        <Magnet :size="16" :stroke-width="1.6" aria-hidden="true" />
       </button>
     </div>
   </div>

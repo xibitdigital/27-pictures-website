@@ -17,6 +17,7 @@ export type {
   PageRecord,
   PromptCandidate,
   PromptTarget,
+  RegionBorderStyle,
   RegionGeometry,
   RegionRecord,
   RegionShapeType,

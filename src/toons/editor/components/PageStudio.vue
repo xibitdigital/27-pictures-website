@@ -14,6 +14,7 @@ import {
   getSeries,
   getToon,
   patchBubble,
+  patchPageBgColor,
   patchRegion,
   readImageSize,
   replacePage,
@@ -477,6 +478,10 @@ async function flattenNow(): Promise<void> {
     // that needs to ask for it explicitly.
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
+    if (page.bgColor) {
+      ctx.fillStyle = page.bgColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
     const ordered = [...page.regions].sort((a, b) => a.sort - b.sort);
     for (const region of ordered) {
       if (!region.fileUrl || !region.fileWidth || !region.fileHeight) continue;
@@ -505,6 +510,22 @@ async function flattenNow(): Promise<void> {
       ctx.closePath();
       ctx.clip();
       ctx.drawImage(img, boxLeft + rect.x, boxTop + rect.y, rect.width, rect.height);
+      if (region.borderWidth > 0) {
+        // Double the line width and stroke the same clipped path: the outward
+        // half gets cut off by the clip, so only the inward half survives —
+        // the canvas equivalent of the editor/reader's inset border technique.
+        ctx.lineWidth = region.borderWidth * 2;
+        ctx.strokeStyle = region.borderColor || "#ffffff";
+        ctx.lineCap = region.borderStyle === "dotted" ? "round" : "butt";
+        ctx.setLineDash(
+          region.borderStyle === "dashed"
+            ? [region.borderWidth * 3, region.borderWidth * 2]
+            : region.borderStyle === "dotted"
+              ? [0.01, region.borderWidth * 2]
+              : []
+        );
+        ctx.stroke();
+      }
       ctx.restore();
     }
     const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
@@ -583,6 +604,41 @@ async function onRegionScalePersist(value: number): Promise<void> {
     markFlattenDirty();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not update zoom");
+  }
+}
+
+type BorderPatch = Partial<Pick<RegionRecord, "borderColor" | "borderWidth" | "borderStyle">>;
+
+function onRegionBorderPreview(patch: BorderPatch): void {
+  if (selectedId.value) applyRegionLocal(selectedId.value, patch);
+}
+
+async function onRegionBorderPersist(patch: BorderPatch): Promise<void> {
+  const id = selectedId.value;
+  if (!id) return;
+  applyRegionLocal(id, patch);
+  try {
+    const saved = await patchRegion(id, patch);
+    applyRegionLocal(id, saved);
+    markFlattenDirty();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not update border");
+  }
+}
+
+function onPageBgColorPreview(value: string | null): void {
+  if (activePage.value) activePage.value.bgColor = value;
+}
+
+async function onPageBgColorPersist(value: string | null): Promise<void> {
+  const page = activePage.value;
+  if (!page) return;
+  page.bgColor = value;
+  try {
+    toon.value = await patchPageBgColor(page.id, value);
+    markFlattenDirty();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not update background color");
   }
 }
 
@@ -778,6 +834,7 @@ async function onRemove(): Promise<void> {
           :regions="activePage.regions"
           :layout-tool="layoutTool"
           :studio-mode="studioMode"
+          :bg-color="activePage.bgColor"
           @select="selectedId = $event"
           @move="onMove"
           @persist="onPersist"
@@ -824,11 +881,16 @@ async function onRemove(): Promise<void> {
           :region="selectedRegion"
           :layer-index="regionStackOrder.index"
           :layer-count="regionStackOrder.count"
+          :page-bg-color="activePage?.bgColor ?? null"
           @reassign="onLayoutInspectorReassign"
           @scale="onRegionScalePreview"
           @persist-scale="onRegionScalePersist"
+          @border="onRegionBorderPreview"
+          @persist-border="onRegionBorderPersist"
           @reorder="onRegionReorder"
           @remove="requestRegionRemove"
+          @page-bg-color="onPageBgColorPreview"
+          @persist-page-bg-color="onPageBgColorPersist"
         />
       </div>
       <ConfirmDialog

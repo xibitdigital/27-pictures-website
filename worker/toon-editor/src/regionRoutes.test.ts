@@ -41,6 +41,7 @@ function samplePage(overrides: Partial<PageRow> = {}): PageRow {
     width: 800,
     height: 1424,
     kind: "layout",
+    bg_color: null,
     ...overrides,
   };
 }
@@ -57,6 +58,9 @@ function sampleRegion(overrides: Partial<RegionRow> = {}): RegionRow {
     image_offset_x: 0.5,
     image_offset_y: 0.5,
     image_scale: 1,
+    border_color: null,
+    border_width: 0,
+    border_style: "solid",
     sort: 0,
     ...overrides,
   };
@@ -146,17 +150,35 @@ function makeEnv(state: FakeState): Env {
                 image_offset_x: 0.5,
                 image_offset_y: 0.5,
                 image_scale: 1,
+                border_color: null,
+                border_width: 0,
+                border_style: "solid",
                 sort,
                 created_at: createdAt,
                 updated_at: updatedAt,
               });
             } else if (/UPDATE page_regions SET shape_type/.test(sql)) {
-              const [shapeType, geometryJson, offsetX, offsetY, scale, sort, updatedAt, id] = stmt.args as [
+              const [
+                shapeType,
+                geometryJson,
+                offsetX,
+                offsetY,
+                scale,
+                borderColor,
+                borderWidth,
+                borderStyle,
+                sort,
+                updatedAt,
+                id,
+              ] = stmt.args as [
                 string,
                 string,
                 number,
                 number,
                 number,
+                string | null,
+                number,
+                string,
                 number,
                 string,
                 string,
@@ -168,6 +190,9 @@ function makeEnv(state: FakeState): Env {
                 region.image_offset_x = offsetX;
                 region.image_offset_y = offsetY;
                 region.image_scale = scale;
+                region.border_color = borderColor;
+                region.border_width = borderWidth;
+                region.border_style = borderStyle;
                 region.sort = sort;
                 region.updated_at = updatedAt;
               }
@@ -175,9 +200,12 @@ function makeEnv(state: FakeState): Env {
               const id = stmt.args[0];
               state.regions = state.regions.filter((r) => r.id !== id);
             } else if (/UPDATE pages SET kind/.test(sql)) {
-              const [kind, id] = stmt.args as [string, string];
+              const [kind, bgColor, id] = stmt.args as [string, string | null, string];
               const page = state.pages.find((p) => p.id === id);
-              if (page) page.kind = kind;
+              if (page) {
+                page.kind = kind;
+                page.bg_color = bgColor;
+              }
             }
             return {};
           },
@@ -408,6 +436,72 @@ describe("PATCH /regions/:id", () => {
     );
     expect(res.status).toBe(404);
   });
+
+  it("sets a border color, width, and style", async () => {
+    const env = makeEnv(makeState({ regions: [sampleRegion()] }));
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/regions/r1", {
+        method: "PATCH",
+        body: JSON.stringify({ borderColor: "#FF0000", borderWidth: 3, borderStyle: "dashed" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toMatchObject({
+      borderColor: "#ff0000",
+      borderWidth: 3,
+      borderStyle: "dashed",
+    });
+  });
+
+  it("clamps borderWidth to [0, 20]", async () => {
+    const env = makeEnv(makeState({ regions: [sampleRegion()] }));
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/regions/r1", {
+        method: "PATCH",
+        body: JSON.stringify({ borderWidth: 999 }),
+      }),
+      env
+    );
+    await expect(res.json()).resolves.toMatchObject({ borderWidth: 20 });
+  });
+
+  it("rejects an invalid border color", async () => {
+    const env = makeEnv(makeState({ regions: [sampleRegion()] }));
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/regions/r1", {
+        method: "PATCH",
+        body: JSON.stringify({ borderColor: "red" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toMatchObject({ error: "color must be a hex string like #rrggbb, or null" });
+  });
+
+  it("ignores an unrecognized borderStyle and keeps the stored one", async () => {
+    const env = makeEnv(makeState({ regions: [sampleRegion({ border_style: "dotted" })] }));
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/regions/r1", {
+        method: "PATCH",
+        body: JSON.stringify({ borderStyle: "wavy" }),
+      }),
+      env
+    );
+    await expect(res.json()).resolves.toMatchObject({ borderStyle: "dotted" });
+  });
+
+  it("clears borderColor with null", async () => {
+    const env = makeEnv(makeState({ regions: [sampleRegion({ border_color: "#ff0000" })] }));
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/regions/r1", {
+        method: "PATCH",
+        body: JSON.stringify({ borderColor: null }),
+      }),
+      env
+    );
+    await expect(res.json()).resolves.toMatchObject({ borderColor: null });
+  });
 });
 
 describe("DELETE /regions/:id", () => {
@@ -461,5 +555,47 @@ describe("PATCH /pages/:id kind", () => {
     );
     expect(res.status).toBe(400);
     await expect(res.json()).resolves.toMatchObject({ error: "kind must be plate or layout" });
+  });
+
+  it("sets a page background color without touching kind", async () => {
+    const state = makeState({ pages: [samplePage({ kind: "layout" })] });
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/p1", {
+        method: "PATCH",
+        body: JSON.stringify({ bgColor: "#112233" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(200);
+    expect(state.pages[0].kind).toBe("layout");
+    expect(state.pages[0].bg_color).toBe("#112233");
+  });
+
+  it("rejects an invalid page background color", async () => {
+    const env = makeEnv(makeState());
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/p1", {
+        method: "PATCH",
+        body: JSON.stringify({ bgColor: "not-a-color" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toMatchObject({ error: "color must be a hex string like #rrggbb, or null" });
+  });
+
+  it("clears bgColor with null", async () => {
+    const state = makeState({ pages: [samplePage({ bg_color: "#112233" })] });
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/p1", {
+        method: "PATCH",
+        body: JSON.stringify({ bgColor: null }),
+      }),
+      env
+    );
+    expect(res.status).toBe(200);
+    expect(state.pages[0].bg_color).toBeNull();
   });
 });

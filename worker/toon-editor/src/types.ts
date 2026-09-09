@@ -3,7 +3,7 @@
  * The JSON contract lives in `apiTypes.ts` and is imported by the Vue studio.
  */
 
-import type { DescriptionMap, RegionGeometry, SeriesGenerateConfig, UserRole } from "./apiTypes";
+import type { DescriptionMap, RegionBorderStyle, RegionGeometry, SeriesGenerateConfig, UserRole } from "./apiTypes";
 
 export type {
   BubbleRecord,
@@ -15,6 +15,7 @@ export type {
   InviteUserInput,
   InviteUserResult,
   PageRecord,
+  RegionBorderStyle,
   RegionGeometry,
   RegionRecord,
   RegionShapeType,
@@ -101,6 +102,7 @@ export interface PageRow {
   width: number | null;
   height: number | null;
   kind?: string;
+  bg_color?: string | null;
   created_at?: string;
 }
 
@@ -115,6 +117,9 @@ export interface RegionRow {
   image_offset_x: number;
   image_offset_y: number;
   image_scale: number;
+  border_color: string | null;
+  border_width: number;
+  border_style: string;
   sort: number;
   created_at?: string;
   updated_at?: string;
@@ -229,6 +234,9 @@ export interface ReaderRegion {
   imageOffsetX: number;
   imageOffsetY: number;
   imageScale: number;
+  borderColor: string | null;
+  borderWidth: number;
+  borderStyle: RegionBorderStyle;
   sort: number;
 }
 

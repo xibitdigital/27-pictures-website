@@ -111,6 +111,9 @@ export interface ReaderRegion {
   imageOffsetX: number;
   imageOffsetY: number;
   imageScale: number;
+  borderColor: string | null;
+  borderWidth: number;
+  borderStyle: "solid" | "dashed" | "dotted";
   sort: number;
 }
 

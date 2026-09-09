@@ -18,6 +18,8 @@ function readHintDismissed(): boolean {
 }
 
 const showHint = ref(!readHintDismissed());
+/** Pure view/interaction preference, not persisted per-region — resets when the studio remounts. */
+const showGrid = ref(false);
 
 function dismissHint(): void {
   showHint.value = false;
@@ -41,8 +43,10 @@ const props = withDefaults(
     regions?: RegionRecord[];
     layoutTool?: LayoutTool;
     studioMode?: StudioMode;
+    /** Live preview of the page's editor-set backdrop color, shown through any transparent gap. */
+    bgColor?: string | null;
   }>(),
-  { kind: "plate", regions: () => [], layoutTool: "select", studioMode: "bubbles" }
+  { kind: "plate", regions: () => [], layoutTool: "select", studioMode: "bubbles", bgColor: null }
 );
 
 const emit = defineEmits<{
@@ -64,6 +68,7 @@ const emit = defineEmits<{
 const imgEl = ref<HTMLImageElement | null>(null);
 const plateStyle = computed(() => ({
   "--plate-aspect": `${props.designWidth} / ${props.designHeight}`,
+  ...(props.bgColor ? { backgroundColor: props.bgColor } : {}),
 }));
 const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMode === "bubbles");
 </script>
@@ -86,8 +91,10 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
       <LayoutToolbar
         :tool="layoutTool"
         :mode="studioMode"
+        :grid="showGrid"
         @update:tool="emit('update-layout-tool', $event)"
         @update:mode="emit('update-studio-mode', $event)"
+        @update:grid="showGrid = $event"
       />
     </div>
     <div class="editor-plate" :style="plateStyle">
@@ -115,6 +122,7 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
         :design-height="designHeight"
         :image-el="imgEl"
         :tool="layoutTool"
+        :grid="showGrid"
         @select="emit('select', $event)"
         @create="emit('create-region', $event)"
         @update-geometry="(id, g) => emit('update-region-geometry', id, g)"

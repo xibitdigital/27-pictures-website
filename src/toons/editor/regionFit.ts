@@ -12,6 +12,20 @@ import type { RegionGeometry, RegionRecord } from "./types";
 export const MIN_IMAGE_SCALE = 1;
 export const MAX_IMAGE_SCALE = 4;
 
+/** Default snap-to-grid spacing: 24 divisions of the plate, a fine enough grid to align panel gutters without fighting freehand drawing. */
+export const DEFAULT_GRID_SIZE = 1 / 24;
+
+/** Snaps a plate-fraction coordinate to the nearest grid line, clamped to [0,1]. */
+export function snapToGrid(value: number, gridSize: number = DEFAULT_GRID_SIZE): number {
+  if (!gridSize) return value;
+  return Math.max(0, Math.min(1, Math.round(value / gridSize) * gridSize));
+}
+
+/** Snaps both axes of a plate-fraction point. */
+export function snapPointToGrid(point: Point, gridSize: number = DEFAULT_GRID_SIZE): Point {
+  return { x: snapToGrid(point.x, gridSize), y: snapToGrid(point.y, gridSize) };
+}
+
 export interface Point {
   x: number;
   y: number;

@@ -2,11 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   clipPathPolygon,
   coverImageRect,
+  DEFAULT_GRID_SIZE,
   moveRegionInStack,
   offsetFromDrag,
   regionBoundingBox,
   regionPoints,
   regionsInStackOrder,
+  snapPointToGrid,
+  snapToGrid,
 } from "./regionFit";
 import type { RegionGeometry, RegionRecord } from "./types";
 
@@ -101,6 +104,38 @@ describe("offsetFromDrag", () => {
     const image = { width: 100, height: 100 };
     const next = offsetFromDrag({ offsetX: 0.5, offsetY: 0.5 }, { x: 40, y: 40 }, bbox, image, 1);
     expect(next).toEqual({ offsetX: 0.5, offsetY: 0.5 });
+  });
+});
+
+describe("snapToGrid / snapPointToGrid", () => {
+  it("rounds to the nearest grid line at the default spacing", () => {
+    expect(snapToGrid(0.1)).toBeCloseTo(1 / 12); // nearest multiple of 1/24 to 0.1 is 2/24
+    expect(snapToGrid(0.5)).toBeCloseTo(0.5); // already on a grid line
+    expect(snapToGrid(0.02)).toBeCloseTo(0); // rounds down to the first line
+  });
+
+  it("honors a custom grid size", () => {
+    expect(snapToGrid(0.23, 0.1)).toBeCloseTo(0.2);
+    expect(snapToGrid(0.27, 0.1)).toBeCloseTo(0.3);
+  });
+
+  it("clamps to [0,1] even past the last grid line", () => {
+    expect(snapToGrid(0.99, 0.1)).toBeCloseTo(1);
+    expect(snapToGrid(-0.05, 0.1)).toBe(0);
+  });
+
+  it("passes the value through unchanged when gridSize is 0", () => {
+    expect(snapToGrid(0.137, 0)).toBe(0.137);
+  });
+
+  it("snaps both axes of a point", () => {
+    const snapped = snapPointToGrid({ x: 0.1, y: 0.27 }, 0.1);
+    expect(snapped.x).toBeCloseTo(0.1);
+    expect(snapped.y).toBeCloseTo(0.3);
+  });
+
+  it("DEFAULT_GRID_SIZE is 1/24 of the plate", () => {
+    expect(DEFAULT_GRID_SIZE).toBeCloseTo(1 / 24);
   });
 });
 

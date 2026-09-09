@@ -48,6 +48,21 @@ interface RegionLayout {
   imgStyle: CSSProperties | null;
 }
 
+/**
+ * Same technique the editor's RegionShape.vue uses: `border` for a rect (a
+ * real border painted around a clip-path box only looks right when the box
+ * itself is the shape), an inset `box-shadow` for a polygon (hugs the
+ * clipped edge exactly, solid-only — box-shadow has no dash pattern).
+ */
+function borderStyle(region: ReaderRegion): CSSProperties {
+  if (!region.borderWidth) return {};
+  const color = region.borderColor || "#ffffff";
+  if (region.shapeType === "rect") {
+    return { border: `${region.borderWidth}px ${region.borderStyle} ${color}` };
+  }
+  return { boxShadow: `inset 0 0 0 ${region.borderWidth}px ${color}` };
+}
+
 const layouts = computed<RegionLayout[]>(() => {
   if (!box.value) return [];
   const b = box.value;
@@ -89,6 +104,7 @@ const layouts = computed<RegionLayout[]>(() => {
         height: `${height}px`,
         overflow: "hidden",
         clipPath: clipPathPolygon(region.geometry, bbox),
+        ...borderStyle(region),
       },
       imgStyle,
     };
