@@ -4,6 +4,7 @@ import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import {
   getSeries,
+  isStagingSite,
   listUsers,
   readImageSize,
   saveSeries,
@@ -22,6 +23,7 @@ import {
   visibilityLabel,
   type DescriptionMap,
   type EditorUser,
+  type GenerateProvider,
   type PromptCandidate,
   type SeriesFlowSlot,
   type SeriesOption,
@@ -84,6 +86,8 @@ const saving = ref(false);
 const plateWidth = ref("1152");
 const plateHeight = ref("1728");
 const model = ref("seedream 5.0 pro");
+const provider = ref<GenerateProvider>("comfy");
+const isStaging = isStagingSite();
 const slots = ref<SeriesFlowSlot[]>([]);
 const previewSlot = ref<SeriesFlowSlot | null>(null);
 const flowLabel = ref("");
@@ -160,6 +164,7 @@ function applyGenerate(series: SeriesOption): void {
   plateWidth.value = generate?.width != null ? String(generate.width) : plateWidth.value;
   plateHeight.value = generate?.height != null ? String(generate.height) : plateHeight.value;
   model.value = generate?.model || model.value;
+  provider.value = generate?.provider === "flux" ? "flux" : "comfy";
   slots.value = (generate?.slots || []).map((slot) => ({ ...slot }));
   const key = generate?.flowKey || "";
   flowLabel.value = key ? key.split("/").pop() || "uploaded" : "";
@@ -174,6 +179,7 @@ function generatePayload() {
     width: Number(plateWidth.value) || null,
     height: Number(plateHeight.value) || null,
     model: model.value.trim(),
+    provider: provider.value,
     slots: slots.value.map((slot) => ({
       alias: slot.alias.trim(),
       label: (slot.label || slot.alias).trim(),
@@ -373,6 +379,17 @@ async function onSubmit(ev: Event): Promise<void> {
             Model
             <input v-model="model" name="generate-model" placeholder="seedream 5.0 pro" />
           </label>
+          <label v-if="isStaging" class="editor-form-span">
+            Generation provider
+            <EditorSelect v-model="provider" name="generate-provider" aria-label="Generation provider">
+              <EditorSelectItem value="comfy">ComfyUI</EditorSelectItem>
+              <EditorSelectItem value="flux">Flux (flux-2-pro, staging only)</EditorSelectItem>
+            </EditorSelect>
+          </label>
+          <p v-if="isStaging && provider === 'flux'" class="editor-muted editor-form-span">
+            Flux ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight
+            to flux-2-pro. Only ever runs from staging — production always falls back to ComfyUI.
+          </p>
           <div class="editor-form-span editor-generate">
             <p class="editor-generate-label">ComfyUI flow</p>
             <p class="editor-muted">

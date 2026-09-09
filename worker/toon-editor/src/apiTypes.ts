@@ -157,10 +157,14 @@ export interface PromptTarget {
   inputKey: string;
 }
 
+/** 'flux' only ever runs from a staging caller — index.ts forces 'comfy' otherwise, regardless of what a series stores. */
+export type GenerateProvider = "comfy" | "flux";
+
 export interface SeriesGenerateConfig {
   width: number | null;
   height: number | null;
   model: string;
+  provider: GenerateProvider;
   flowKey: string | null;
   flowUrl: string | null;
   slots: SeriesFlowSlot[];

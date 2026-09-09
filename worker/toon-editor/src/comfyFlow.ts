@@ -282,6 +282,7 @@ export function emptyGenerate(): SeriesGenerateConfig {
     width: null,
     height: null,
     model: "",
+    provider: "comfy",
     flowKey: null,
     flowUrl: null,
     slots: [],
@@ -361,6 +362,7 @@ export function parseGenerateConfig(raw: unknown): SeriesGenerateConfig {
   out.width = Number.isFinite(width) && width > 0 ? Math.round(width) : null;
   out.height = Number.isFinite(height) && height > 0 ? Math.round(height) : null;
   out.model = typeof rec.model === "string" ? rec.model.trim() : "";
+  out.provider = rec.provider === "flux" ? "flux" : "comfy";
   out.flowKey = typeof rec.flowKey === "string" && rec.flowKey.trim() ? rec.flowKey.trim() : null;
   if (Array.isArray(rec.slots)) {
     out.slots = rec.slots
@@ -438,6 +440,7 @@ export function mergeGenerate(current: SeriesGenerateConfig, incoming: unknown):
     width: next.width,
     height: next.height,
     model: next.model,
+    provider: next.provider,
     flowKey: next.flowKey || current.flowKey,
     flowUrl: null,
     slots,

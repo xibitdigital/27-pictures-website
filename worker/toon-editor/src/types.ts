@@ -47,6 +47,7 @@ export interface Env {
   ELEVENLABS_API_KEY?: string;
   COMFY_URL?: string;
   COMFY_API_KEY?: string;
+  BFL_API_KEY?: string;
   RESEND_API_KEY?: string;
   FROM_EMAIL?: string;
   FROM_NAME?: string;

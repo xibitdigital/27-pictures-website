@@ -4,11 +4,13 @@ import {
   applyLoadImages,
   applyPagePrompt,
   applySeed,
+  emptyGenerate,
   findPromptCandidates,
   matchSlotsToLoadNodes,
   mergeGenerate,
   normalizeSeedreamLoadOrder,
   parseComfyApiGraph,
+  parseGenerateConfig,
   parseGenerateCount,
   promptWithImagePins,
   slotFromLoadTitle,
@@ -409,17 +411,45 @@ describe("applyPagePrompt with a target", () => {
   });
 });
 
+describe("emptyGenerate / parseGenerateConfig provider", () => {
+  it("defaults to comfy", () => {
+    expect(emptyGenerate().provider).toBe("comfy");
+    expect(parseGenerateConfig({}).provider).toBe("comfy");
+  });
+
+  it("parses an explicit flux provider", () => {
+    expect(parseGenerateConfig({ provider: "flux" }).provider).toBe("flux");
+  });
+
+  it("falls back to comfy for anything else", () => {
+    expect(parseGenerateConfig({ provider: "midjourney" }).provider).toBe("comfy");
+    expect(parseGenerateConfig({ provider: 3 }).provider).toBe("comfy");
+  });
+});
+
 describe("mergeGenerate", () => {
   const baseCurrent = {
     width: 800,
     height: 1424,
     model: "seedream 5.0 pro",
+    provider: "comfy" as const,
     flowKey: "editor/_series/x/flow/a.json",
     flowUrl: null,
     slots: [{ alias: "erin", kind: "sheet", fileKey: "editor/_series/x/refs/a.png", fileUrl: null }],
     promptCandidates: [{ nodeId: "12", inputKey: "string_b", label: "#12 Concatenate Text · string_b", preview: "…" }],
     promptTarget: { nodeId: "12", inputKey: "string_b" },
   };
+
+  it("carries the provider through from the incoming save", () => {
+    const merged = mergeGenerate(baseCurrent, {
+      width: 1152,
+      height: 1728,
+      model: "seedream 5.0 pro",
+      provider: "flux",
+      slots: [],
+    });
+    expect(merged.provider).toBe("flux");
+  });
 
   it("keeps sheet files when the alias is unchanged", () => {
     const merged = mergeGenerate(baseCurrent, {

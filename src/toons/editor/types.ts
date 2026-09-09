@@ -10,6 +10,7 @@ export type {
   CreditsSnapshot,
   DescriptionMap,
   EditorUser,
+  GenerateProvider,
   InviteUserInput,
   InviteUserResult,
   PageKind,

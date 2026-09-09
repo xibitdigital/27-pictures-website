@@ -20,7 +20,9 @@ import {
   promptWithImagePins,
   type ComfyGraph,
 } from "./comfyFlow";
+import type { SeriesGenerateConfig } from "./apiTypes";
 import { insertCreditEvent } from "./creditUsage";
+import { fluxDownload, fluxResult, fluxSubmit } from "./fluxClient";
 import { toWebp } from "./imageOptimize";
 import type { Env, SeriesRow, ToonRow } from "./types";
 
@@ -30,6 +32,7 @@ export type GenerationJob = {
   toon_id: string;
   page_id: string | null;
   region_id: string | null;
+  provider: string;
   status: string;
   prompt: string;
   payload_json: string;
@@ -79,9 +82,12 @@ export async function startPageGenerate(
     count?: number;
     /** Set when this job fills one Layout-page region instead of a whole page — pollPageJob writes the result to page_regions instead of pages. `pageId` must still be the region's owning page (forces count to 1, same as a page replace). */
     regionId?: string | null;
+    /** Origin the caller is reachable from, e.g. `https://toon-editor.sangalli-marco.workers.dev`. Only used by the Flux path — BFL fetches reference images from a public URL rather than an in-Worker upload. */
+    workerOrigin?: string;
+    /** A series can be set to Flux, but the route decides whether this specific caller is allowed to use it — staging only. False silently falls back to Comfy (and fails with "series has no Comfy flow" if that isn't configured either), never to an error naming Flux. */
+    allowFlux?: boolean;
   }
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
-  if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
   let extra: { generate?: unknown } = {};
   try {
     extra = JSON.parse(input.series.extra_json || "{}") as { generate?: unknown };
@@ -89,6 +95,8 @@ export async function startPageGenerate(
     extra = {};
   }
   const generate = parseGenerateConfig(extra.generate);
+  if (generate.provider === "flux" && input.allowFlux) return startFluxGenerate(env, input, generate);
+  if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
   if (!generate.flowKey) return { ok: false, error: "series has no Comfy flow", status: 400 };
   const flowBytes = await getObject(env, generate.flowKey);
   if (!flowBytes) return { ok: false, error: "series flow file is missing", status: 400 };
@@ -164,8 +172,8 @@ export async function startPageGenerate(
   const ts = nowIso();
   const regionId = input.regionId || null;
   await env.DB.prepare(
-    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, 'running', ?, ?, NULL, NULL, ?, ?, ?)`
+    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, provider, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 'comfy', 'running', ?, ?, NULL, NULL, ?, ?, ?)`
   )
     .bind(
       id,
@@ -179,6 +187,109 @@ export async function startPageGenerate(
         previousPageId: input.previousPageId || null,
         names,
         nodeIds,
+        width: generate.width,
+        height: generate.height,
+        count,
+        promptIds,
+      }),
+      promptIds[0],
+      ts,
+      ts
+    )
+    .run();
+  const job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?").bind(id).first<GenerationJob>();
+  if (!job) return { ok: false, error: "could not create job", status: 500 };
+  return { ok: true, job };
+}
+
+/** Reference image bytes need a public URL for BFL to fetch — same content-addressed key scheme as putPlate, just skipping the WebP re-encode since this is an input, not a stored plate. */
+async function putRefAsset(env: Env, slug: string, bytes: ArrayBuffer, type: string): Promise<string> {
+  const kind = sniffImage(bytes);
+  const ext = type === "image/webp" ? "webp" : kind.ext;
+  const hash = await sha256Hex(bytes);
+  const key = `editor/${slug}/assets/${hash}.${ext}`;
+  await env.ASSETS.put(key, bytes, { httpMetadata: { contentType: type || kind.type } });
+  return key;
+}
+
+/**
+ * Flux.2 [pro] takes a prompt plus up to 8 reference images by public URL —
+ * no graph, no LoadImage nodes, no per-node upload. Reuses the series's
+ * existing `generate.slots` purely as an ordered reference list (sheets +
+ * previous plate), and reuses the same generation_jobs bookkeeping so
+ * pollPageJob's page/region-write logic doesn't need to know which provider
+ * ran. Staging-only is enforced by the caller (index.ts), not here.
+ */
+async function startFluxGenerate(
+  env: Env,
+  input: Parameters<typeof startPageGenerate>[1],
+  generate: SeriesGenerateConfig
+): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
+  const origin = (input.workerOrigin || "").replace(/\/$/, "");
+  if (!origin) return { ok: false, error: "missing worker origin for Flux reference URLs", status: 500 };
+
+  const pages = (
+    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(input.toon.id).all<{
+      id: string;
+      file_key: string;
+    }>()
+  ).results;
+  let previousKey: string | null = null;
+  if (input.previousPageId) {
+    previousKey = pages.find((p) => p.id === input.previousPageId)?.file_key || null;
+  }
+
+  const images: string[] = [];
+  for (const slot of generate.slots) {
+    let key: string | null;
+    if (slot.kind === "previous" && input.previousOverride) {
+      key = await putRefAsset(env, input.toon.slug, input.previousOverride.bytes, input.previousOverride.type);
+    } else if (slot.kind === "previous") {
+      key = previousKey;
+      if (!key) continue;
+    } else {
+      key = slot.fileKey || null;
+      if (!key) {
+        if (slot.optional) continue;
+        return { ok: false, error: `missing reference: ${slot.label || slot.alias}`, status: 400 };
+      }
+    }
+    images.push(`${origin}/media/${key}`);
+  }
+  if (images.length > 8) images.length = 8; // flux-2-pro's own cap; extra sheets are dropped, not an error
+
+  const count = input.pageId ? 1 : parseGenerateCount(input.count);
+  const baseSeed = crypto.getRandomValues(new Uint32Array(1))[0] % 2_147_483_647;
+  const promptIds: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const submitted = await fluxSubmit(env, {
+      prompt: input.prompt,
+      images,
+      width: generate.width,
+      height: generate.height,
+      seed: (baseSeed + i) % 2_147_483_647,
+    });
+    if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
+    promptIds.push(submitted.id);
+  }
+
+  const id = crypto.randomUUID();
+  const ts = nowIso();
+  const regionId = input.regionId || null;
+  await env.DB.prepare(
+    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, provider, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 'flux', 'running', ?, ?, NULL, NULL, ?, ?, ?)`
+  )
+    .bind(
+      id,
+      regionId ? "region" : "page",
+      input.toon.id,
+      input.pageId,
+      regionId,
+      input.prompt,
+      JSON.stringify({
+        includePrevious: input.includePrevious,
+        previousPageId: input.previousPageId || null,
         width: generate.width,
         height: generate.height,
         count,
@@ -257,9 +368,27 @@ export async function pollPageJob(
     return { ok: true, job, phase: job.status === "done" ? "done" : null };
   }
 
-  const outputs: ComfyHistoryImage[] = [];
+  const isFlux = job.provider === "flux";
+  const outputs: (ComfyHistoryImage | string)[] = []; // string = Flux's signed sample URL
   let phase: ComfyPhase | null = null;
   for (const promptId of promptIds) {
+    if (isFlux) {
+      const result = await fluxResult(env, promptId);
+      if (!result.ok) {
+        await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
+          .bind(result.error, nowIso(), job.id)
+          .run();
+        return {
+          ok: true,
+          job: { ...job, status: "error", error: result.error, updated_at: nowIso() },
+          phase: "error",
+        };
+      }
+      if (!result.imageUrl) return { ok: true, job, phase: result.phase };
+      outputs.push(result.imageUrl);
+      phase = result.phase;
+      continue;
+    }
     const hist = await comfyHistory(env, promptId);
     if (!hist.ok) {
       await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
@@ -287,7 +416,24 @@ export async function pollPageJob(
 
   const plates: string[] = [];
   for (const image of outputs) {
-    const viewed = await comfyView(env, image);
+    if (isFlux) {
+      const downloaded = await fluxDownload(image as string);
+      if (!downloaded.ok) {
+        await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
+          .bind(downloaded.error, nowIso(), job.id)
+          .run();
+        return { ok: true, job: { ...job, status: "error", error: downloaded.error }, phase: "error" };
+      }
+      // Flux was asked for output_format: "webp" — store as-is, skip toWebp's decode/encode entirely.
+      const hash = await sha256Hex(downloaded.bytes);
+      const fileKey = `editor/${toon.slug}/assets/${hash}.webp`;
+      await env.ASSETS.put(fileKey, downloaded.bytes, {
+        httpMetadata: { contentType: "image/webp", cacheControl: "public, max-age=31536000, immutable" },
+      });
+      plates.push(fileKey);
+      continue;
+    }
+    const viewed = await comfyView(env, image as ComfyHistoryImage);
     if (!viewed.ok) {
       await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
         .bind(viewed.error, nowIso(), job.id)
