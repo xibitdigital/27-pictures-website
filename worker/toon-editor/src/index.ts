@@ -200,6 +200,18 @@ async function readJson(request: Request): Promise<{ ok: true; body: JsonRecord 
   }
 }
 
+/** Flux-only per-call reference exclusion — a JSON array of slot aliases sent as a form field. Malformed input just means "exclude nothing" rather than a 400. */
+function parseExcludeAliases(form: FormData): string[] {
+  const raw = form.get("excludeAliases");
+  if (typeof raw !== "string" || !raw) return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
 function nowIso(): string {
   return new Date().toISOString();
 }
@@ -1720,6 +1732,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       count: Number(form.get("count") || 1),
       workerOrigin: new URL(request.url).origin,
       allowFlux: isStagingHostname(callerHostname(request)),
+      excludeAliases: parseExcludeAliases(form),
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
     return json(
@@ -1906,6 +1919,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       regionId: row.id,
       workerOrigin: new URL(request.url).origin,
       allowFlux: isStagingHostname(callerHostname(request)),
+      excludeAliases: parseExcludeAliases(form),
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
     return json(

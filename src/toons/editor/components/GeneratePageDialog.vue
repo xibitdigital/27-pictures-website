@@ -25,6 +25,7 @@ const emit = defineEmits<{
       previousPageId: string | null;
       previousFile: File | null;
       count: number;
+      excludeAliases: string[];
     },
   ];
 }>();
@@ -40,21 +41,64 @@ const count = ref("1");
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
+const isFlux = computed(() => props.generate?.provider === "flux");
+
+/** Flux only — sheets unchecked here are left out of the API call entirely (not just asked to be ignored), the reliable fix when two references (e.g. a doll and a character) are similar enough to bleed into each other. */
+const excludedAliases = ref<Set<string>>(new Set());
+function isIncluded(alias: string): boolean {
+  return !excludedAliases.value.has(alias);
+}
+function setIncluded(alias: string, included: boolean): void {
+  const next = new Set(excludedAliases.value);
+  if (included) next.delete(alias);
+  else next.add(alias);
+  excludedAliases.value = next;
+}
+
+const fluxSheets = computed(() => (props.generate?.slots || []).filter((s) => s.kind === "sheet" && s.fileUrl));
+
+/**
+ * The Comfy graph bakes a fixed FORMAT line into every generation, so every
+ * plate reads as the same series regardless of which page or who wrote the
+ * prompt. Flux gets no such prefix — each call only has whatever this box
+ * contains — so without an equally fixed line here, style drifts request to
+ * request even on identical prompts. Keep in sync with the FORMAT line in
+ * .claude/skills/horror-toon-page/SKILL.md (trimmed of the page-layout
+ * specifics — panel count/dimensions don't apply to every shot, e.g. a
+ * single close-up panel).
+ */
+const FLUX_STYLE_ANCHOR =
+  "Black and white horror manga ink style — sharp decisive linework, heavy dark ink washes, strong solid blacks, high-contrast shadows, grey midtones. No color, no speech/thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text in the art.";
 
 /**
  * Flux gets no fixed FORMAT/PIN prefix the way the Comfy graph does — every
  * generation has to spell out "Image N = what" itself or reference adherence
  * drifts (see docs.bfl.ml/guides/prompting_editing_overview's own example).
- * Mechanically built from the series' ready sheets, in the same order the
- * Worker actually sends them, so "Image N" here always matches reality.
+ * The reference mapping is mechanically built from the series' ready,
+ * included sheets, in the same order the Worker actually sends them, so
+ * "Image N" here always matches reality.
  */
 const fluxRefsPrefill = computed(() => {
-  if (props.generate?.provider !== "flux") return "";
-  const sheets = (props.generate?.slots || []).filter((s) => s.kind === "sheet" && s.fileUrl);
-  if (!sheets.length) return "";
+  if (!isFlux.value) return "";
+  const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
+  if (!sheets.length) return `${FLUX_STYLE_ANCHOR}\n\n`;
   const parts = sheets.map((s, i) => `Image ${i + 1} for ${s.label || s.alias}`);
   const previous = hasPreviousSlot.value ? ", and the previous page for continuity of set and style" : "";
-  return `Using ${parts.join(", ")}${previous} — do not alter identity.\n\n`;
+  return `${FLUX_STYLE_ANCHOR}\n\nUsing ${parts.join(", ")}${previous} — do not alter identity.\n\n`;
+});
+
+/** Tracks the last value we auto-wrote, so toggling a reference after open can refresh the preamble without clobbering scene text the user already typed below it. */
+const lastAutoPrefill = ref("");
+
+function applyPrefill(): void {
+  if (!fluxRefsPrefill.value) return;
+  if (prompt.value.trim() && prompt.value !== lastAutoPrefill.value) return;
+  prompt.value = fluxRefsPrefill.value;
+  lastAutoPrefill.value = fluxRefsPrefill.value;
+}
+
+watch(fluxRefsPrefill, () => {
+  if (props.open) applyPrefill();
 });
 
 watch(
@@ -64,9 +108,8 @@ watch(
     if (previousPageId.value && !props.pages.some((p) => p.id === previousPageId.value)) {
       previousPageId.value = "";
     }
-    if (!prompt.value.trim() && fluxRefsPrefill.value) {
-      prompt.value = fluxRefsPrefill.value;
-    }
+    excludedAliases.value = new Set();
+    applyPrefill();
   }
 );
 
@@ -110,6 +153,7 @@ function onSubmit(): void {
     previousPageId: previousPageId.value || null,
     previousFile: previousFile.value,
     count: Number(count.value) || 1,
+    excludeAliases: isFlux.value ? [...excludedAliases.value] : [],
   });
 }
 </script>
@@ -222,6 +266,15 @@ function onSubmit(): void {
                 ? `page ${selectedPreviousPage.position + 1}`
                 : "skipped"
           }}</span>
+          <EditorCheckbox
+            v-else-if="isFlux && slot.fileUrl"
+            :checked="isIncluded(slot.alias)"
+            :name="`include-${slot.alias}`"
+            :disabled="busy"
+            @update:checked="(v) => setIncluded(slot.alias, v)"
+          >
+            {{ isIncluded(slot.alias) ? "included" : "not sent this time" }}
+          </EditorCheckbox>
           <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
           <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>
           <span v-else class="editor-error">missing sheet</span>

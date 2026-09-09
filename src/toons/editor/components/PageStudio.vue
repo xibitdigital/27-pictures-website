@@ -166,6 +166,7 @@ type GeneratePayload = {
   includePrevious: boolean;
   previousPageId: string | null;
   previousFile: File | null;
+  excludeAliases: string[];
 };
 
 function closeGenerateDialog(): void {
@@ -470,6 +471,12 @@ async function flattenNow(): Promise<void> {
     canvas.height = toon.value.designHeight;
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("Canvas is not supported");
+    // Browsers default drawImage resampling to "low" — soft/blocky on any
+    // region whose image isn't drawn at its exact native size. This is the
+    // only place that scales a region's source image, so it's the one place
+    // that needs to ask for it explicitly.
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
     const ordered = [...page.regions].sort((a, b) => a.sort - b.sort);
     for (const region of ordered) {
       if (!region.fileUrl || !region.fileWidth || !region.fileHeight) continue;

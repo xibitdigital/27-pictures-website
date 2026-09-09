@@ -86,6 +86,8 @@ export async function startPageGenerate(
     workerOrigin?: string;
     /** A series can be set to Flux, but the route decides whether this specific caller is allowed to use it — staging only. False silently falls back to Comfy (and fails with "series has no Comfy flow" if that isn't configured either), never to an error naming Flux. */
     allowFlux?: boolean;
+    /** Flux only — sheet aliases to leave out of this one call. Ignored by the Comfy path, whose LoadImage nodes are fixed to the graph. */
+    excludeAliases?: string[];
   }
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
   let extra: { generate?: unknown } = {};
@@ -239,8 +241,10 @@ async function startFluxGenerate(
     previousKey = pages.find((p) => p.id === input.previousPageId)?.file_key || null;
   }
 
+  const excluded = new Set(input.excludeAliases || []);
   const images: string[] = [];
   for (const slot of generate.slots) {
+    if (excluded.has(slot.alias)) continue; // wins over "required" — this is a per-call opt-out, not a series config change
     let key: string | null;
     if (slot.kind === "previous" && input.previousOverride) {
       key = await putRefAsset(env, input.toon.slug, input.previousOverride.bytes, input.previousOverride.type);

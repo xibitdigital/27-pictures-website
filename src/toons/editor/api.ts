@@ -232,6 +232,8 @@ export function generatePage(
     previousPageId?: string | null;
     previousFile?: File | null;
     count?: number;
+    /** Flux only — sheet aliases to leave out of this one call (e.g. a doll ref that isn't in this shot). Ignored by the Comfy path, whose graph nodes are fixed. */
+    excludeAliases?: string[];
   }
 ): Promise<{ id: string; status: string; comfyPromptId?: string | null }> {
   const body = new FormData();
@@ -241,6 +243,7 @@ export function generatePage(
   if (payload.previousPageId) body.set("previousPageId", payload.previousPageId);
   if (payload.previousFile) body.set("previousFile", payload.previousFile);
   if (payload.count && payload.count > 1) body.set("count", String(payload.count));
+  if (payload.excludeAliases?.length) body.set("excludeAliases", JSON.stringify(payload.excludeAliases));
   return api(`/toons/${id}/pages/generate`, { method: "POST", body });
 }
 
@@ -365,6 +368,8 @@ export function generateRegionImage(
     includePrevious: boolean;
     previousPageId?: string | null;
     previousFile?: File | null;
+    /** Flux only — sheet aliases to leave out of this one call (e.g. a doll ref that isn't in this shot). Ignored by the Comfy path, whose graph nodes are fixed. */
+    excludeAliases?: string[];
   }
 ): Promise<{ id: string; status: string; comfyPromptId?: string | null }> {
   const body = new FormData();
@@ -372,6 +377,7 @@ export function generateRegionImage(
   body.set("includePrevious", payload.includePrevious ? "1" : "0");
   if (payload.previousPageId) body.set("previousPageId", payload.previousPageId);
   if (payload.previousFile) body.set("previousFile", payload.previousFile);
+  if (payload.excludeAliases?.length) body.set("excludeAliases", JSON.stringify(payload.excludeAliases));
   return api(`/regions/${id}/generate`, { method: "POST", body });
 }
 

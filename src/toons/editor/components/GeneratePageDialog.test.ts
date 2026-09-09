@@ -84,7 +84,16 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: false, previousPageId: null, previousFile: null, count: 1 }],
+      [
+        {
+          prompt: "Erin walks in.",
+          includePrevious: false,
+          previousPageId: null,
+          previousFile: null,
+          count: 1,
+          excludeAliases: [],
+        },
+      ],
     ]);
     wrapper.unmount();
   });
@@ -118,7 +127,16 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: true, previousPageId: "p1", previousFile: null, count: 1 }],
+      [
+        {
+          prompt: "Erin walks in.",
+          includePrevious: true,
+          previousPageId: "p1",
+          previousFile: null,
+          count: 1,
+          excludeAliases: [],
+        },
+      ],
     ]);
     wrapper.unmount();
   });
@@ -191,7 +209,16 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: true, previousPageId: null, previousFile: file, count: 1 }],
+      [
+        {
+          prompt: "Erin walks in.",
+          includePrevious: true,
+          previousPageId: null,
+          previousFile: file,
+          count: 1,
+          excludeAliases: [],
+        },
+      ],
     ]);
     wrapper.unmount();
   });
@@ -213,7 +240,16 @@ describe("GeneratePageDialog previous-plate override", () => {
     );
     await flushPromises();
     expect(wrapper.emitted("submit")).toEqual([
-      [{ prompt: "Erin walks in.", includePrevious: false, previousPageId: null, previousFile: null, count: 3 }],
+      [
+        {
+          prompt: "Erin walks in.",
+          includePrevious: false,
+          previousPageId: null,
+          previousFile: null,
+          count: 3,
+          excludeAliases: [],
+        },
+      ],
     ]);
     wrapper.unmount();
   });
