@@ -41,12 +41,31 @@ const count = ref("1");
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
 
+/**
+ * Flux gets no fixed FORMAT/PIN prefix the way the Comfy graph does — every
+ * generation has to spell out "Image N = what" itself or reference adherence
+ * drifts (see docs.bfl.ml/guides/prompting_editing_overview's own example).
+ * Mechanically built from the series' ready sheets, in the same order the
+ * Worker actually sends them, so "Image N" here always matches reality.
+ */
+const fluxRefsPrefill = computed(() => {
+  if (props.generate?.provider !== "flux") return "";
+  const sheets = (props.generate?.slots || []).filter((s) => s.kind === "sheet" && s.fileUrl);
+  if (!sheets.length) return "";
+  const parts = sheets.map((s, i) => `Image ${i + 1} for ${s.label || s.alias}`);
+  const previous = hasPreviousSlot.value ? ", and the previous page for continuity of set and style" : "";
+  return `Using ${parts.join(", ")}${previous} — do not alter identity.\n\n`;
+});
+
 watch(
   () => props.open,
   (open) => {
     if (!open) return;
     if (previousPageId.value && !props.pages.some((p) => p.id === previousPageId.value)) {
       previousPageId.value = "";
+    }
+    if (!prompt.value.trim() && fluxRefsPrefill.value) {
+      prompt.value = fluxRefsPrefill.value;
     }
   }
 );
