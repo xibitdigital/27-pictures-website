@@ -24,6 +24,10 @@ export async function fluxSubmit(
   const body: Record<string, unknown> = {
     prompt: input.prompt,
     output_format: "webp",
+    // Dark-fantasy/horror plates trip BFL's default (2) moderation on the
+    // reference images even with an innocuous prompt — 5 is flux-2-pro's
+    // most permissive setting, not a guarantee every request clears it.
+    safety_tolerance: 5,
   };
   refs.forEach((url, i) => {
     body[i === 0 ? "input_image" : `input_image_${i + 1}`] = url;
@@ -72,9 +76,12 @@ export async function fluxResult(
     const text = await res.text();
     return { ok: false, error: `Flux result failed (${res.status}) ${text.slice(0, 200)}` };
   }
-  const body = (await res.json()) as { status?: string; result?: { sample?: string } };
+  const body = (await res.json()) as { status?: string; result?: { sample?: string }; details?: unknown };
   const phase = fluxPhase(String(body.status || ""));
-  if (phase === "error") return { ok: false, error: `Flux job ${body.status || "failed"}` };
+  if (phase === "error") {
+    const details = body.details ? ` — ${JSON.stringify(body.details).slice(0, 200)}` : "";
+    return { ok: false, error: `Flux job ${body.status || "failed"}${details}` };
+  }
   if (phase !== "done") return { ok: true, phase: phase || "running" };
   const sample = body.result?.sample;
   if (!sample) return { ok: false, error: "Flux result had no image" };

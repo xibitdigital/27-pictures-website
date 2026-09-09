@@ -40,6 +40,7 @@ describe("fluxSubmit", () => {
     expect(JSON.parse(String(init.body))).toEqual({
       prompt: "Erin walks in.",
       output_format: "webp",
+      safety_tolerance: 5,
       input_image: "https://x/a.png",
       input_image_2: "https://x/b.png",
       width: 1152,
@@ -103,6 +104,20 @@ describe("fluxResult", () => {
     vi.stubGlobal("fetch", fetchMock);
     const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
     expect(out).toEqual({ ok: false, error: "Flux job Error" });
+  });
+
+  it("includes details on a moderated job so the reason isn't just guessed", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ status: "Request Moderated", details: { "Moderation Reasons": ["Image 2"] } }), {
+        status: 200,
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
+    expect(out).toEqual({
+      ok: false,
+      error: 'Flux job Request Moderated — {"Moderation Reasons":["Image 2"]}',
+    });
   });
 
   it("errors if Ready but the response has no sample", async () => {
