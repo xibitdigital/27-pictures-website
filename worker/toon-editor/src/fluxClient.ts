@@ -55,6 +55,30 @@ export async function fluxSubmit(
   return { ok: true, id: parsed.id, pollingUrl: parsed.polling_url };
 }
 
+/**
+ * BFL's `details` on a moderated/failed job is usually `{"Moderation Reasons":
+ * ["Protected Content"]}` — surface that as plain text ("Protected Content")
+ * instead of the raw `{"Moderation Reasons":[...]}` blob the operator would
+ * otherwise see verbatim in the job error / toast.
+ */
+function formatFluxDetails(details: unknown): string | null {
+  if (!details || typeof details !== "object") return null;
+  const rec = details as Record<string, unknown>;
+  const reasons = rec["Moderation Reasons"] ?? rec["moderation_reasons"];
+  if (Array.isArray(reasons) && reasons.every((r) => typeof r === "string") && reasons.length) {
+    return reasons.join(", ");
+  }
+  return JSON.stringify(details).slice(0, 200);
+}
+
+/** "Request Moderated" / "Content Moderated" / "Error" / "Failed" → a short, consistent label. */
+function fluxStatusLabel(status: string): string {
+  const s = status.toLowerCase();
+  if (s.includes("moderat")) return "moderated";
+  if (s === "error" || s === "failed" || !s) return "failed";
+  return status;
+}
+
 function fluxPhase(status: string): ComfyPhase | null {
   const s = status.toLowerCase();
   if (!s) return null;
@@ -79,8 +103,9 @@ export async function fluxResult(
   const body = (await res.json()) as { status?: string; result?: { sample?: string }; details?: unknown };
   const phase = fluxPhase(String(body.status || ""));
   if (phase === "error") {
-    const details = body.details ? ` — ${JSON.stringify(body.details).slice(0, 200)}` : "";
-    return { ok: false, error: `Flux job ${body.status || "failed"}${details}` };
+    const label = fluxStatusLabel(String(body.status || ""));
+    const details = formatFluxDetails(body.details);
+    return { ok: false, error: details ? `Flux job ${label}: ${details}` : `Flux job ${label}` };
   }
   if (phase !== "done") return { ok: true, phase: phase || "running" };
   const sample = body.result?.sample;

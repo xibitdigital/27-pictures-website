@@ -103,10 +103,10 @@ describe("fluxResult", () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "Error" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
-    expect(out).toEqual({ ok: false, error: "Flux job Error" });
+    expect(out).toEqual({ ok: false, error: "Flux job failed" });
   });
 
-  it("includes details on a moderated job so the reason isn't just guessed", async () => {
+  it("formats moderation reasons as plain text instead of a raw JSON blob", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ status: "Request Moderated", details: { "Moderation Reasons": ["Image 2"] } }), {
         status: 200,
@@ -114,10 +114,33 @@ describe("fluxResult", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
     const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
-    expect(out).toEqual({
-      ok: false,
-      error: 'Flux job Request Moderated — {"Moderation Reasons":["Image 2"]}',
-    });
+    expect(out).toEqual({ ok: false, error: "Flux job moderated: Image 2" });
+  });
+
+  it("joins multiple moderation reasons with a comma", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          status: "Content Moderated",
+          details: { "Moderation Reasons": ["Protected Content", "Image 2"] },
+        }),
+        { status: 200 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
+    expect(out).toEqual({ ok: false, error: "Flux job moderated: Protected Content, Image 2" });
+  });
+
+  it("falls back to a JSON snippet for a details shape it doesn't recognize", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ status: "Error", details: { code: "internal_error" } }), {
+        status: 200,
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await fluxResult(env({ BFL_API_KEY: "k" }), pollingUrl);
+    expect(out).toEqual({ ok: false, error: 'Flux job failed: {"code":"internal_error"}' });
   });
 
   it("errors if Ready but the response has no sample", async () => {
