@@ -80,11 +80,17 @@ const FLUX_STYLE_ANCHOR =
  */
 const fluxRefsPrefill = computed(() => {
   if (!isFlux.value) return "";
+  const header = ["# model: flux-2-pro (BFL)", "# mode: image-to-image (multi-reference)"];
   const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
-  if (!sheets.length) return `${FLUX_STYLE_ANCHOR}\n\n`;
+  if (!sheets.length) return `${header.join("\n")}\n\n${FLUX_STYLE_ANCHOR}\n\n`;
+  const refs = sheets.map((s, i) => `Image ${i + 1} = ${s.label || s.alias}`);
+  if (hasPreviousSlot.value) refs.push(`Image ${sheets.length + 1} = previous page`);
+  header.push(`# refs: ${refs.join("; ")}`);
   const parts = sheets.map((s, i) => `Image ${i + 1} for ${s.label || s.alias}`);
   const previous = hasPreviousSlot.value ? ", and the previous page for continuity of set and style" : "";
-  return `${FLUX_STYLE_ANCHOR}\n\nUsing ${parts.join(", ")}${previous} — do not alter identity.\n\n`;
+  return `${header.join("\n")}\n\n${FLUX_STYLE_ANCHOR}\n\nUsing ${parts.join(
+    ", "
+  )}${previous} — do not alter identity.\n\n`;
 });
 
 /** Tracks the last value we auto-wrote, so toggling a reference after open can refresh the preamble without clobbering scene text the user already typed below it. */
