@@ -161,7 +161,7 @@ onUnmounted(() => {
         </button>
       </template>
     </EditorBar>
-    <div class="editor-page-body">
+    <div class="editor-page-body editor-list-body">
       <section class="editor-list-section">
         <h2 class="editor-list-heading">Users</h2>
         <p v-if="loadingUsers" class="editor-muted">Loading…</p>
