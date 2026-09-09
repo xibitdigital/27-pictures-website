@@ -258,6 +258,11 @@ function mapBubble(row: BubbleRow | Record<string, unknown>): BubbleRecord {
 }
 
 const MIN_REGION_SIZE = 0.03;
+// Mirrors MIN_IMAGE_SCALE/MAX_IMAGE_SCALE in src/toons/editor/regionFit.ts — keep both in sync.
+// Below 1 the region's image is drawn smaller than its box (centered, background showing
+// through the gap) instead of cropped to cover it.
+const MIN_IMAGE_SCALE = 0.25;
+const MAX_IMAGE_SCALE = 4;
 
 function defaultRegionGeometry(shapeType: string): RegionGeometry {
   return shapeType === "polygon"
@@ -2042,7 +2047,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const imageOffsetY = body.imageOffsetY != null ? clamp01(body.imageOffsetY) : row.image_offset_y;
     const imageScale =
       body.imageScale != null && Number.isFinite(Number(body.imageScale))
-        ? Math.max(1, Math.min(4, Number(body.imageScale)))
+        ? Math.max(MIN_IMAGE_SCALE, Math.min(MAX_IMAGE_SCALE, Number(body.imageScale)))
         : row.image_scale;
     const sort = body.sort != null && Number.isFinite(Number(body.sort)) ? Math.round(Number(body.sort)) : row.sort;
     let borderColor = row.border_color;

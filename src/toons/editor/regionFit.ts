@@ -9,7 +9,14 @@
  */
 import type { RegionGeometry, RegionRecord } from "./types";
 
-export const MIN_IMAGE_SCALE = 1;
+/**
+ * Multiplier on top of the minimum "cover" scale (the size at which the
+ * image just fully fills its shape's bbox with no gaps). 1 = cover exactly,
+ * >1 = zoom in past cover, <1 = zoom OUT past cover — the image ends up
+ * smaller than the box, so it's centered inside it (see coverImageRect)
+ * instead of panned, with the shape's own background showing through the gap.
+ */
+export const MIN_IMAGE_SCALE = 0.25;
 export const MAX_IMAGE_SCALE = 4;
 
 /** Default snap-to-grid spacing: 24 divisions of the plate, a fine enough grid to align panel gutters without fighting freehand drawing. */
@@ -82,12 +89,20 @@ export function clipPathPolygon(geometry: RegionGeometry, bbox: FractionBox = re
   return `polygon(${pct})`;
 }
 
+/** Clamps a raw imageScale to [MIN_IMAGE_SCALE, MAX_IMAGE_SCALE], defaulting to 1 (cover, no zoom) for anything falsy. */
+function clampImageScale(imageScale: number): number {
+  return Math.max(MIN_IMAGE_SCALE, Math.min(MAX_IMAGE_SCALE, imageScale || 1));
+}
+
 /**
  * Where the assigned image renders inside its shape's bbox, in bbox-local
- * px — negative x/y and a size larger than the bbox are expected: the image
- * is drawn oversized (like `object-fit: cover`) then panned/clipped.
- * `imageScale` (>=1) zooms in past the minimum "cover" size; `offsetX/Y`
- * (0-1) pan across the resulting overflow, 0.5 = centered.
+ * px. `imageScale` is a multiplier on the minimum "cover" size (1 = cover
+ * exactly, no gaps): above 1 the image is drawn oversized and panned via
+ * `offsetX/Y` (0-1, 0.5 = centered) across the resulting overflow, same as
+ * `object-fit: cover`. Below 1 the image ends up smaller than the box —
+ * there's no overflow left to pan, so it's centered instead, and the gap
+ * around it shows whatever's behind the shape (the page's own background
+ * color, typically).
  */
 export function coverImageRect(
   bboxPx: { width: number; height: number },
@@ -101,17 +116,37 @@ export function coverImageRect(
   const iw = imageNatural.width || 1;
   const ih = imageNatural.height || 1;
   const coverScale = Math.max(bw / iw, bh / ih);
-  const scale = coverScale * Math.max(MIN_IMAGE_SCALE, imageScale || 1);
+  const scale = coverScale * clampImageScale(imageScale);
   const width = iw * scale;
   const height = ih * scale;
-  const overflowX = Math.max(0, width - bw);
-  const overflowY = Math.max(0, height - bh);
+  const overflowX = width - bw;
+  const overflowY = height - bh;
   return {
-    x: -offsetX * overflowX,
-    y: -offsetY * overflowY,
+    x: overflowX >= 0 ? -offsetX * overflowX : (bw - width) / 2,
+    y: overflowY >= 0 ? -offsetY * overflowY : (bh - height) / 2,
     width,
     height,
   };
+}
+
+/**
+ * A zoom slider's 0-100 track position, mapped to/from imageScale so that
+ * scale 1 (no zoom, exact cover) always sits at position 50 — the visual
+ * center of the control — no matter how asymmetric MIN/MAX_IMAGE_SCALE are
+ * (0.25-4 is not symmetric around 1 in linear scale terms). Left half of the
+ * track linearly covers [MIN_IMAGE_SCALE, 1], right half covers [1, MAX_IMAGE_SCALE].
+ */
+export function scaleFromSliderPosition(position: number): number {
+  const t = Math.max(0, Math.min(100, position)) / 100;
+  if (t <= 0.5) return MIN_IMAGE_SCALE + (1 - MIN_IMAGE_SCALE) * (t / 0.5);
+  return 1 + (MAX_IMAGE_SCALE - 1) * ((t - 0.5) / 0.5);
+}
+
+/** Inverse of scaleFromSliderPosition — where a given imageScale sits on the 0-100 track. */
+export function sliderPositionFromScale(scale: number): number {
+  const s = clampImageScale(scale);
+  if (s <= 1) return ((s - MIN_IMAGE_SCALE) / (1 - MIN_IMAGE_SCALE)) * 50;
+  return 50 + ((s - 1) / (MAX_IMAGE_SCALE - 1)) * 50;
 }
 
 /** Regions bottom-to-top, matching flatten paint order — same `sort` convention as `bubblesInPlayOrder`. */
@@ -149,7 +184,7 @@ export function offsetFromDrag(
   const iw = imageNatural.width || 1;
   const ih = imageNatural.height || 1;
   const coverScale = Math.max(bw / iw, bh / ih);
-  const scale = coverScale * Math.max(MIN_IMAGE_SCALE, imageScale || 1);
+  const scale = coverScale * clampImageScale(imageScale);
   const overflowX = Math.max(0, iw * scale - bw);
   const overflowY = Math.max(0, ih * scale - bh);
   const dOffsetX = overflowX > 0 ? -deltaPx.x / overflowX : 0;

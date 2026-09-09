@@ -3,11 +3,15 @@ import {
   clipPathPolygon,
   coverImageRect,
   DEFAULT_GRID_SIZE,
+  MAX_IMAGE_SCALE,
+  MIN_IMAGE_SCALE,
   moveRegionInStack,
   offsetFromDrag,
   regionBoundingBox,
   regionPoints,
   regionsInStackOrder,
+  scaleFromSliderPosition,
+  sliderPositionFromScale,
   snapPointToGrid,
   snapToGrid,
 } from "./regionFit";
@@ -78,6 +82,56 @@ describe("coverImageRect", () => {
     const zoomed = coverImageRect({ width: 100, height: 100 }, { width: 100, height: 100 }, 2, 0.5, 0.5);
     expect(zoomed.width).toBe(200);
     expect(zoomed.height).toBe(200);
+  });
+
+  it("centers the image instead of panning it when imageScale < 1 shrinks it below the bbox", () => {
+    // bbox 100x100, image 100x100, cover scale 1 -> at imageScale 0.5 the image is 50x50,
+    // smaller than the box on both axes: no overflow to pan, so it's centered regardless of offset.
+    const shrunk = coverImageRect({ width: 100, height: 100 }, { width: 100, height: 100 }, 0.5, 0, 0);
+    expect(shrunk.width).toBe(50);
+    expect(shrunk.height).toBe(50);
+    expect(shrunk.x).toBeCloseTo(25); // (100-50)/2
+    expect(shrunk.y).toBeCloseTo(25);
+
+    // offset is ignored once there's nothing to pan
+    const shrunkOtherOffset = coverImageRect({ width: 100, height: 100 }, { width: 100, height: 100 }, 0.5, 1, 1);
+    expect(shrunkOtherOffset.x).toBeCloseTo(25);
+    expect(shrunkOtherOffset.y).toBeCloseTo(25);
+  });
+
+  it("clamps a below-minimum or above-maximum imageScale instead of trusting it blindly", () => {
+    const tooLow = coverImageRect({ width: 100, height: 100 }, { width: 100, height: 100 }, 0.001, 0.5, 0.5);
+    expect(tooLow.width).toBeCloseTo(100 * MIN_IMAGE_SCALE);
+    const tooHigh = coverImageRect({ width: 100, height: 100 }, { width: 100, height: 100 }, 999, 0.5, 0.5);
+    expect(tooHigh.width).toBeCloseTo(100 * MAX_IMAGE_SCALE);
+  });
+});
+
+describe("scaleFromSliderPosition / sliderPositionFromScale", () => {
+  it("puts scale 1 (no zoom) exactly at the center of the track", () => {
+    expect(scaleFromSliderPosition(50)).toBeCloseTo(1);
+    expect(sliderPositionFromScale(1)).toBeCloseTo(50);
+  });
+
+  it("puts the track ends at MIN_IMAGE_SCALE and MAX_IMAGE_SCALE", () => {
+    expect(scaleFromSliderPosition(0)).toBeCloseTo(MIN_IMAGE_SCALE);
+    expect(scaleFromSliderPosition(100)).toBeCloseTo(MAX_IMAGE_SCALE);
+    expect(sliderPositionFromScale(MIN_IMAGE_SCALE)).toBeCloseTo(0);
+    expect(sliderPositionFromScale(MAX_IMAGE_SCALE)).toBeCloseTo(100);
+  });
+
+  it("round-trips a handful of positions", () => {
+    for (const position of [0, 10, 25, 50, 60, 75, 90, 100]) {
+      const scale = scaleFromSliderPosition(position);
+      expect(sliderPositionFromScale(scale)).toBeCloseTo(position, 5);
+    }
+  });
+
+  it("clamps out-of-range positions/scales instead of extrapolating", () => {
+    expect(scaleFromSliderPosition(-20)).toBeCloseTo(MIN_IMAGE_SCALE);
+    expect(scaleFromSliderPosition(150)).toBeCloseTo(MAX_IMAGE_SCALE);
+    expect(sliderPositionFromScale(0.001)).toBeCloseTo(0);
+    expect(sliderPositionFromScale(999)).toBeCloseTo(100);
   });
 });
 

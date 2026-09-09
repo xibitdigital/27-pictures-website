@@ -3,7 +3,7 @@
 import { ChevronDown, ChevronUp } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { parseHexColor } from "../mapConfig";
-import { MAX_IMAGE_SCALE, MIN_IMAGE_SCALE } from "../regionFit";
+import { scaleFromSliderPosition, sliderPositionFromScale } from "../regionFit";
 import type { RegionBorderStyle, RegionRecord } from "../types";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
@@ -39,27 +39,30 @@ const layerCount = computed(() => props.layerCount ?? 0);
 const canMoveForward = computed(() => layerCount.value > 1 && layerIndex.value < layerCount.value - 1);
 const canMoveBackward = computed(() => layerCount.value > 1 && layerIndex.value > 0);
 
-const scaleDraft = ref(1);
+/** 0-100 track position, not the raw imageScale — position 50 is always "no zoom" (scale 1), see scaleFromSliderPosition. */
+const scaleSliderDraft = ref(50);
 
 watch(
   () => [props.region?.id, props.region?.imageScale] as const,
   () => {
-    scaleDraft.value = props.region?.imageScale ?? 1;
+    scaleSliderDraft.value = sliderPositionFromScale(props.region?.imageScale ?? 1);
   },
   { immediate: true }
 );
 
 const shapeLabel = computed(() => (props.region?.shapeType === "polygon" ? "Polygon" : "Rectangle"));
 
+const scaleValue = computed(() => scaleFromSliderPosition(scaleSliderDraft.value));
+
 function onScaleInput(ev: Event): void {
-  const n = Number((ev.target as HTMLInputElement).value);
-  scaleDraft.value = n;
-  emit("scale", n);
+  const position = Number((ev.target as HTMLInputElement).value);
+  scaleSliderDraft.value = position;
+  emit("scale", scaleFromSliderPosition(position));
 }
 
 function onScaleChange(ev: Event): void {
-  const n = Number((ev.target as HTMLInputElement).value);
-  emit("persist-scale", n);
+  const position = Number((ev.target as HTMLInputElement).value);
+  emit("persist-scale", scaleFromSliderPosition(position));
 }
 
 // --- Page background color — always visible, independent of region selection ---
@@ -242,16 +245,17 @@ function onBorderWidthChange(ev: Event): void {
 
       <label v-if="region.fileUrl">
         Zoom
+        <span class="editor-muted">{{ scaleValue.toFixed(2) }}×</span>
         <input
           type="range"
           name="region-scale"
-          :min="MIN_IMAGE_SCALE"
-          :max="MAX_IMAGE_SCALE"
-          step="0.05"
-          :value="scaleDraft"
-          :aria-valuemin="MIN_IMAGE_SCALE"
-          :aria-valuemax="MAX_IMAGE_SCALE"
-          :aria-valuenow="scaleDraft"
+          min="0"
+          max="100"
+          step="0.5"
+          :value="scaleSliderDraft"
+          aria-valuemin="0.25"
+          aria-valuemax="4"
+          :aria-valuenow="scaleValue"
           @input="onScaleInput"
           @change="onScaleChange"
         />

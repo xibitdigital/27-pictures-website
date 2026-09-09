@@ -362,7 +362,7 @@ describe("PATCH /regions/:id", () => {
     await expect(res.json()).resolves.toMatchObject({ geometry: { kind: "rect", x: 0.2, y: 0.2, w: 0.5, h: 0.5 } });
   });
 
-  it("clamps imageScale to [1, 4]", async () => {
+  it("clamps imageScale to [0.25, 4]", async () => {
     const tooHigh = makeEnv(makeState({ regions: [sampleRegion()] }));
     const highRes = await worker.fetch(
       await authedRequest("https://toon-editor.example/regions/r1", {
@@ -377,11 +377,22 @@ describe("PATCH /regions/:id", () => {
     const lowRes = await worker.fetch(
       await authedRequest("https://toon-editor.example/regions/r1", {
         method: "PATCH",
-        body: JSON.stringify({ imageScale: 0.2 }),
+        body: JSON.stringify({ imageScale: 0.01 }),
       }),
       tooLow
     );
-    await expect(lowRes.json()).resolves.toMatchObject({ imageScale: 1 });
+    await expect(lowRes.json()).resolves.toMatchObject({ imageScale: 0.25 });
+
+    // Below 1 (zoom OUT past cover) is a valid value now, not clamped away.
+    const belowOne = makeEnv(makeState({ regions: [sampleRegion()] }));
+    const belowOneRes = await worker.fetch(
+      await authedRequest("https://toon-editor.example/regions/r1", {
+        method: "PATCH",
+        body: JSON.stringify({ imageScale: 0.5 }),
+      }),
+      belowOne
+    );
+    await expect(belowOneRes.json()).resolves.toMatchObject({ imageScale: 0.5 });
   });
 
   it("clamps image offsets to [0, 1]", async () => {
