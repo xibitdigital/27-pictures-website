@@ -84,8 +84,6 @@ export async function startPageGenerate(
     regionId?: string | null;
     /** Origin the caller is reachable from, e.g. `https://toon-editor.sangalli-marco.workers.dev`. Only used by the Flux path — BFL fetches reference images from a public URL rather than an in-Worker upload. */
     workerOrigin?: string;
-    /** A series can be set to Flux, but the route decides whether this specific caller is allowed to use it — staging only. False silently falls back to Comfy (and fails with "series has no Comfy flow" if that isn't configured either), never to an error naming Flux. */
-    allowFlux?: boolean;
     /** Flux only — sheet aliases to leave out of this one call. Ignored by the Comfy path, whose LoadImage nodes are fixed to the graph. */
     excludeAliases?: string[];
     /**
@@ -109,7 +107,7 @@ export async function startPageGenerate(
   const generate = parseGenerateConfig(extra.generate);
   const targetWidth = input.targetWidth ?? generate.width;
   const targetHeight = input.targetHeight ?? generate.height;
-  if (generate.provider === "flux" && input.allowFlux) return startFluxGenerate(env, input, generate);
+  if (generate.provider === "flux") return startFluxGenerate(env, input, generate);
   if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
   if (!generate.flowKey) return { ok: false, error: "series has no Comfy flow", status: 400 };
   const flowBytes = await getObject(env, generate.flowKey);
@@ -232,7 +230,7 @@ async function putRefAsset(env: Env, slug: string, bytes: ArrayBuffer, type: str
  * existing `generate.slots` purely as an ordered reference list (sheets +
  * previous plate), and reuses the same generation_jobs bookkeeping so
  * pollPageJob's page/region-write logic doesn't need to know which provider
- * ran. Staging-only is enforced by the caller (index.ts), not here.
+ * ran.
  */
 async function startFluxGenerate(
   env: Env,

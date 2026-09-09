@@ -46,7 +46,7 @@ import { canManageSeries, canManageToon, isAdmin, publishError } from "./roles";
 import { isMethod } from "./httpMethod";
 import { translateFromEnglish } from "./translate";
 import { isReaderLookupPath, readerStatuses, toonMatchesReaderPath } from "./readerLookup";
-import { callerHostname, isStagingHostname, parseStatus, publicStatusesForRequest } from "./visibility";
+import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
 
 import {
@@ -1808,7 +1808,6 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       previousOverride,
       count: Number(form.get("count") || 1),
       workerOrigin: new URL(request.url).origin,
-      allowFlux: isStagingHostname(callerHostname(request)),
       excludeAliases: parseExcludeAliases(form),
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
@@ -2008,7 +2007,6 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       count: 1,
       regionId: row.id,
       workerOrigin: new URL(request.url).origin,
-      allowFlux: isStagingHostname(callerHostname(request)),
       excludeAliases: parseExcludeAliases(form),
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);

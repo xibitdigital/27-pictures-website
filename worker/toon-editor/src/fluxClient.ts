@@ -1,7 +1,7 @@
 import type { ComfyPhase } from "./comfyClient";
 import type { Env } from "./types";
 
-/** BFL (Black Forest Labs) Flux.2 [pro] API — https://docs.bfl.ai. Staging-only per series.generate.provider; index.ts enforces that, not this module. */
+/** BFL (Black Forest Labs) Flux.2 [pro] API — https://docs.bfl.ai. Used whenever a series' `generate.provider` is set to "flux". */
 const FLUX_BASE = "https://api.bfl.ai";
 const MAX_REFS = 8;
 

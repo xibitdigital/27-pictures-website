@@ -53,16 +53,6 @@ export function withSiteQuery(url: string, origin?: string): string {
   return `${url}${sep}site=${encodeURIComponent(site)}`;
 }
 
-/** Mirrors `isStagingHostname` in worker/toon-editor/src/visibility.ts — keep both in sync. Gates staging-only UI (e.g. the Flux generation provider) the same way the Worker gates staging-only behavior. */
-export function isStagingSite(hostname?: string): boolean {
-  const h = (hostname ?? (typeof window !== "undefined" ? window.location.hostname : "")).toLowerCase();
-  if (h === "localhost" || h === "127.0.0.1") return true;
-  if (h === "staging.twentyseven.pictures") return true;
-  if (h === "local.twentyseven.test") return true;
-  if (h.endsWith(".twentyseven-pictures-staging.pages.dev")) return true;
-  return false;
-}
-
 export function getToken(): string {
   if (typeof sessionStorage === "undefined") return "";
   return sessionStorage.getItem(TOKEN_KEY) || "";
