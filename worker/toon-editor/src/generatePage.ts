@@ -88,6 +88,16 @@ export async function startPageGenerate(
     allowFlux?: boolean;
     /** Flux only — sheet aliases to leave out of this one call. Ignored by the Comfy path, whose LoadImage nodes are fixed to the graph. */
     excludeAliases?: string[];
+    /**
+     * A region fill's own pixel size on the page, not the whole plate's
+     * design size. Generating at full-plate resolution and downscaling to
+     * fit a small panel is how a fill ends up visibly softer than the plate
+     * it's dropped into — generating at (near) the panel's own size instead
+     * needs little to no resampling on composite. Falls back to the series'
+     * design width/height for a whole-page generation (no regionId).
+     */
+    targetWidth?: number;
+    targetHeight?: number;
   }
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
   let extra: { generate?: unknown } = {};
@@ -97,6 +107,8 @@ export async function startPageGenerate(
     extra = {};
   }
   const generate = parseGenerateConfig(extra.generate);
+  const targetWidth = input.targetWidth ?? generate.width;
+  const targetHeight = input.targetHeight ?? generate.height;
   if (generate.provider === "flux" && input.allowFlux) return startFluxGenerate(env, input, generate);
   if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
   if (!generate.flowKey) return { ok: false, error: "series has no Comfy flow", status: 400 };
@@ -159,7 +171,7 @@ export async function startPageGenerate(
     generate.promptTarget
   );
   next = applyGeminiImagePins(next, generate.slots);
-  next = applyPlateSize(next, generate.width, generate.height);
+  next = applyPlateSize(next, targetWidth, targetHeight);
 
   const count = input.pageId ? 1 : parseGenerateCount(input.count);
   const baseSeed = crypto.getRandomValues(new Uint32Array(1))[0] % 2_147_483_647;
@@ -189,8 +201,8 @@ export async function startPageGenerate(
         previousPageId: input.previousPageId || null,
         names,
         nodeIds,
-        width: generate.width,
-        height: generate.height,
+        width: targetWidth,
+        height: targetHeight,
         count,
         promptIds,
       }),
@@ -229,6 +241,8 @@ async function startFluxGenerate(
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
   const origin = (input.workerOrigin || "").replace(/\/$/, "");
   if (!origin) return { ok: false, error: "missing worker origin for Flux reference URLs", status: 500 };
+  const targetWidth = input.targetWidth ?? generate.width;
+  const targetHeight = input.targetHeight ?? generate.height;
 
   const pages = (
     await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(input.toon.id).all<{
@@ -269,8 +283,8 @@ async function startFluxGenerate(
     const submitted = await fluxSubmit(env, {
       prompt: input.prompt,
       images,
-      width: generate.width,
-      height: generate.height,
+      width: targetWidth,
+      height: targetHeight,
       seed: (baseSeed + i) % 2_147_483_647,
     });
     if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
@@ -295,8 +309,8 @@ async function startFluxGenerate(
       JSON.stringify({
         includePrevious: input.includePrevious,
         previousPageId: input.previousPageId || null,
-        width: generate.width,
-        height: generate.height,
+        width: targetWidth,
+        height: targetHeight,
         count,
         promptIds,
       }),

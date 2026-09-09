@@ -299,6 +299,34 @@ function parseRegionGeometry(json: string, shapeType: string): RegionGeometry {
   return defaultRegionGeometry(shapeType);
 }
 
+/**
+ * A region's own pixel size on the page, not the page's full design size.
+ * Generating a fill at the whole plate's resolution and then downscaling it
+ * to fit a small panel throws away most of that resolution for nothing —
+ * generating at (near) the panel's own size keeps the fill crisp instead.
+ */
+function regionPixelSize(
+  geometry: RegionGeometry,
+  designWidth: number,
+  designHeight: number
+): { width: number; height: number } {
+  const points = geometry.kind === "polygon" ? geometry.points : regionCorners(geometry);
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
+  const w = Math.max(...xs) - Math.min(...xs);
+  const h = Math.max(...ys) - Math.min(...ys);
+  return { width: Math.max(1, Math.round(w * designWidth)), height: Math.max(1, Math.round(h * designHeight)) };
+}
+
+function regionCorners(rect: { x: number; y: number; w: number; h: number }): { x: number; y: number }[] {
+  return [
+    { x: rect.x, y: rect.y },
+    { x: rect.x + rect.w, y: rect.y },
+    { x: rect.x + rect.w, y: rect.y + rect.h },
+    { x: rect.x, y: rect.y + rect.h },
+  ];
+}
+
 /** Validates a client-submitted geometry payload before it's persisted. */
 function validateRegionGeometry(
   input: unknown
@@ -1907,12 +1935,16 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       }
       previousOverride = { bytes, type: resolved.type };
     }
+    const regionGeometry = parseRegionGeometry(row.geometry_json, row.shape_type);
+    const regionSize = regionPixelSize(regionGeometry, toon.design_width, toon.design_height);
     const started = await startPageGenerate(env, {
       toon,
       series,
       prompt,
       includePrevious: includePrevious || Boolean(previousPageId),
       pageId: page.id,
+      targetWidth: regionSize.width,
+      targetHeight: regionSize.height,
       previousPageId,
       previousOverride,
       count: 1,
@@ -2075,7 +2107,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   return json({ error: "not found" }, 404, cors);
 }
 
-export { deriveReaderUrl, isPublicRoute, publicWord, readerConfigFromToon };
+export { deriveReaderUrl, isPublicRoute, publicWord, readerConfigFromToon, regionPixelSize };
 
 const worker: ExportedHandler<Env> = {
   async fetch(request, env) {
