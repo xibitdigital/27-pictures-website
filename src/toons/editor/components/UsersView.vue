@@ -154,18 +154,27 @@ function renderTurnstile(): void {
   });
 }
 
+let turnstilePollId: number | null = null;
+let turnstilePollTimeoutId: number | null = null;
+
 onMounted(() => {
   renderTurnstile();
-  const poll = window.setInterval(() => {
+  turnstilePollId = window.setInterval(() => {
     if (window.turnstile) {
       renderTurnstile();
-      window.clearInterval(poll);
+      if (turnstilePollId != null) window.clearInterval(turnstilePollId);
+      turnstilePollId = null;
     }
   }, 200);
-  window.setTimeout(() => window.clearInterval(poll), 8000);
+  turnstilePollTimeoutId = window.setTimeout(() => {
+    if (turnstilePollId != null) window.clearInterval(turnstilePollId);
+    turnstilePollId = null;
+  }, 8000);
 });
 
 onUnmounted(() => {
+  if (turnstilePollId != null) window.clearInterval(turnstilePollId);
+  if (turnstilePollTimeoutId != null) window.clearTimeout(turnstilePollTimeoutId);
   if (turnstileWidgetId && window.turnstile) {
     try {
       window.turnstile.remove(turnstileWidgetId);
