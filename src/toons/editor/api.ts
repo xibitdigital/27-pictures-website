@@ -129,6 +129,11 @@ export async function listUsers(): Promise<EditorUser[]> {
   return Array.isArray(body.users) ? body.users : [];
 }
 
+/** Admin-only: regenerates this user's password and emails it to them. Same response shape as an invite. */
+export function resendPassword(userId: string): Promise<InviteUserResult> {
+  return api<InviteUserResult>(`/users/${userId}/resend-password`, { method: "POST" });
+}
+
 export function fetchCredits(): Promise<CreditsSnapshot> {
   return api<CreditsSnapshot>("/credits");
 }

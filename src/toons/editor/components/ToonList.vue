@@ -87,7 +87,7 @@ const filteredCount = computed(
       <template #actions>
         <RouterLink v-if="isAdmin" class="editor-btn editor-btn--ghost" to="/users">
           <UserPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
-          Invite user
+          Manage users
         </RouterLink>
         <RouterLink class="editor-btn editor-btn--ghost" to="/series/new">
           <FolderPlus :size="16" :stroke-width="1.4" aria-hidden="true" />

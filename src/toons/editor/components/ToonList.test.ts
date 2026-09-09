@@ -56,7 +56,7 @@ describe("ToonList", () => {
     expect(wrapper.text()).toContain("Draft");
     expect(wrapper.text()).toContain("No episodes yet");
     expect(wrapper.get(".editor-cover-placeholder").exists()).toBe(true);
-    expect(wrapper.text()).not.toContain("Invite user");
+    expect(wrapper.text()).not.toContain("Manage users");
     expect(wrapper.get('button[name="visibility-filter-all"]').attributes("aria-pressed")).toBe("true");
     expect(wrapper.get("[data-toon-count]").text()).toBe("2");
   });
@@ -118,7 +118,7 @@ describe("ToonList", () => {
     expect(wrapper.get('button[name="visibility-filter-public"]').attributes("aria-pressed")).toBe("true");
   });
 
-  it("shows Invite user only for an admin session", async () => {
+  it("shows Manage users only for an admin session", async () => {
     vi.spyOn(api, "listSeries").mockResolvedValue([]);
     vi.spyOn(api, "listToons").mockResolvedValue([]);
     const wrapper = mount(ToonList, {
@@ -132,6 +132,6 @@ describe("ToonList", () => {
         },
       },
     });
-    await vi.waitFor(() => expect(wrapper.text()).toContain("Invite user"));
+    await vi.waitFor(() => expect(wrapper.text()).toContain("Manage users"));
   });
 });

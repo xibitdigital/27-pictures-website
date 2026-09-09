@@ -39,7 +39,7 @@ import { comfyPhaseMessage } from "./comfyClient";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { toWebp } from "./imageOptimize";
-import { sendInviteEmail } from "./inviteEmail";
+import { sendInviteEmail, sendPasswordResetEmail } from "./inviteEmail";
 import { verifyTurnstile } from "./turnstile";
 import { handleLikes } from "./likes";
 import { canManageSeries, canManageToon, isAdmin, publishError } from "./roles";
@@ -1101,6 +1101,23 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const rows = (await env.DB.prepare("SELECT id, email, username, role FROM users ORDER BY username").all<UserRow>())
       .results;
     return json({ users: rows.map((row) => publicUser(row)) }, 200, cors);
+  }
+
+  const resendPasswordMatch = path.match(/^\/users\/([^/]+)\/resend-password$/);
+  if (isMethod(method, "POST") && resendPasswordMatch) {
+    if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
+    const row = await env.DB.prepare("SELECT id, email, username, role FROM users WHERE id = ?")
+      .bind(resendPasswordMatch[1])
+      .first<UserRow>();
+    if (!row) return json({ error: "not found" }, 404, cors);
+    const password = generatePassword();
+    await env.DB.prepare("UPDATE users SET password_hash = ? WHERE id = ?")
+      .bind(await hashPassword(password), row.id)
+      .run();
+    const origin = request.headers.get("Origin") || siteOriginFromRequest(request);
+    const loginUrl = `${origin}/toons/editor/`;
+    const emailSent = await sendPasswordResetEmail(env, { to: row.email, username: row.username, password, loginUrl });
+    return json({ user: publicUser(row), emailSent }, 200, cors);
   }
 
   const mediaMatch = path.match(/^\/media\/(.+)$/);

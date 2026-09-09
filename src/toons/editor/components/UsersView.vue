@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { inject, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { inviteUser } from "../api";
+import { inviteUser, listUsers, resendPassword } from "../api";
 import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
-import type { UserRole } from "../types";
+import type { EditorUser, UserRole } from "../types";
 import EditorBar from "./EditorBar.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
@@ -19,6 +19,38 @@ const userRef = inject(EDITOR_USER_KEY);
 onMounted(() => {
   if (userRef?.value && userRef.value.role !== "admin") router.replace("/");
 });
+
+const users = ref<EditorUser[]>([]);
+const loadingUsers = ref(true);
+const resendingId = ref<string | null>(null);
+
+onMounted(async () => {
+  try {
+    users.value = await listUsers();
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Failed to load users");
+  } finally {
+    loadingUsers.value = false;
+  }
+});
+
+async function onResendPassword(user: EditorUser): Promise<void> {
+  if (resendingId.value) return;
+  resendingId.value = user.id;
+  try {
+    const result = await resendPassword(user.id);
+    pushToast(
+      result.emailSent
+        ? `New password emailed to ${user.email}`
+        : `Password reset, but the email failed to send — ask an admin to relay it another way.`,
+      result.emailSent ? "success" : "error"
+    );
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not resend password");
+  } finally {
+    resendingId.value = null;
+  }
+}
 
 const username = ref("");
 const email = ref("");
@@ -45,6 +77,7 @@ async function sendInvite(): Promise<void> {
         "error"
       );
     }
+    users.value = [...users.value, result.user].sort((a, b) => a.username.localeCompare(b.username));
     username.value = "";
     email.value = "";
     role.value = "editor";
@@ -121,37 +154,63 @@ onUnmounted(() => {
 
 <template>
   <div class="editor-page">
-    <EditorBar title="Invite user">
+    <EditorBar title="Manage users">
       <template #primary>
         <button class="editor-btn" type="submit" form="invite-user" :disabled="saving">
           {{ saving ? "Sending…" : "Send invite" }}
         </button>
       </template>
     </EditorBar>
-    <form id="invite-user" class="editor-form" novalidate @submit="onSubmit">
-      <div class="editor-form-main">
-        <label>
-          Username
-          <input v-model="username" name="username" required autocomplete="off" />
-        </label>
-        <label>
-          Email
-          <input v-model="email" type="email" name="email" required autocomplete="off" />
-        </label>
-        <label>
-          Role
-          <EditorSelect v-model="role" name="role">
-            <EditorSelectItem value="editor"
-              >Editor — can create series/toons, capped at draft or staging</EditorSelectItem
+    <div class="editor-page-body">
+      <section class="editor-list-section">
+        <h2 class="editor-list-heading">Users</h2>
+        <p v-if="loadingUsers" class="editor-muted">Loading…</p>
+        <p v-else-if="!users.length" class="editor-muted">No accounts yet.</p>
+        <ul v-else class="editor-user-roster">
+          <li v-for="user in users" :key="user.id" class="editor-user-row">
+            <span class="editor-user-row-info">
+              <strong>{{ user.username }}</strong>
+              <span class="editor-muted">{{ user.email }} · {{ user.role }}</span>
+            </span>
+            <button
+              class="editor-btn editor-btn--ghost"
+              type="button"
+              :disabled="resendingId === user.id"
+              @click="onResendPassword(user)"
             >
-            <EditorSelectItem value="admin">Admin — full access, can publish</EditorSelectItem>
-          </EditorSelect>
-        </label>
-        <p class="editor-muted">
-          A password is generated automatically and emailed to the invited address — it is never shown here.
-        </p>
-        <div ref="turnstileEl" class="cf-turnstile editor-form-span" />
-      </div>
-    </form>
+              {{ resendingId === user.id ? "Sending…" : "Resend password" }}
+            </button>
+          </li>
+        </ul>
+      </section>
+      <section class="editor-list-section">
+        <h2 class="editor-list-heading">Invite a new user</h2>
+        <form id="invite-user" class="editor-form" novalidate @submit="onSubmit">
+          <div class="editor-form-main">
+            <label>
+              Username
+              <input v-model="username" name="username" required autocomplete="off" />
+            </label>
+            <label>
+              Email
+              <input v-model="email" type="email" name="email" required autocomplete="off" />
+            </label>
+            <label>
+              Role
+              <EditorSelect v-model="role" name="role">
+                <EditorSelectItem value="editor"
+                  >Editor — can create series/toons, capped at draft or staging</EditorSelectItem
+                >
+                <EditorSelectItem value="admin">Admin — full access, can publish</EditorSelectItem>
+              </EditorSelect>
+            </label>
+            <p class="editor-muted">
+              A password is generated automatically and emailed to the invited address — it is never shown here.
+            </p>
+            <div ref="turnstileEl" class="cf-turnstile editor-form-span" />
+          </div>
+        </form>
+      </section>
+    </div>
   </div>
 </template>
