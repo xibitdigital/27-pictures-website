@@ -58,39 +58,26 @@ function setIncluded(alias: string, included: boolean): void {
 const fluxSheets = computed(() => (props.generate?.slots || []).filter((s) => s.kind === "sheet" && s.fileUrl));
 
 /**
- * The Comfy graph bakes a fixed FORMAT line into every generation, so every
- * plate reads as the same series regardless of which page or who wrote the
- * prompt. Flux gets no such prefix — each call only has whatever this box
- * contains — so without an equally fixed line here, style drifts request to
- * request even on identical prompts. Keep in sync with the FORMAT line in
- * .claude/skills/horror-toon-page/SKILL.md (trimmed of the page-layout
- * specifics — panel count/dimensions don't apply to every shot, e.g. a
- * single close-up panel).
- */
-const FLUX_STYLE_ANCHOR =
-  "Black and white horror manga ink style — sharp decisive linework, heavy dark ink washes, strong solid blacks, high-contrast shadows, grey midtones. No color, no speech/thought balloons, no dialogue, no captions, no SFX lettering, no logos, no watermarks, no text in the art.";
-
-/**
  * Flux gets no fixed FORMAT/PIN prefix the way the Comfy graph does — every
  * generation has to spell out "Image N = what" itself or reference adherence
  * drifts (see docs.bfl.ml/guides/prompting_editing_overview's own example).
  * The reference mapping is mechanically built from the series' ready,
  * included sheets, in the same order the Worker actually sends them, so
- * "Image N" here always matches reality.
+ * "Image N" here always matches reality. No fixed style line is injected —
+ * only this reference-mapping scaffold; the scene/style description is
+ * entirely up to whatever the operator types below it.
  */
 const fluxRefsPrefill = computed(() => {
   if (!isFlux.value) return "";
   const header = ["# model: flux-2-pro (BFL)", "# mode: image-to-image (multi-reference)"];
   const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
-  if (!sheets.length) return `${header.join("\n")}\n\n${FLUX_STYLE_ANCHOR}\n\n`;
+  if (!sheets.length) return `${header.join("\n")}\n\n`;
   const refs = sheets.map((s, i) => `Image ${i + 1} = ${s.label || s.alias}`);
   if (hasPreviousSlot.value) refs.push(`Image ${sheets.length + 1} = previous page`);
   header.push(`# refs: ${refs.join("; ")}`);
   const parts = sheets.map((s, i) => `Image ${i + 1} for ${s.label || s.alias}`);
   const previous = hasPreviousSlot.value ? ", and the previous page for continuity of set and style" : "";
-  return `${header.join("\n")}\n\n${FLUX_STYLE_ANCHOR}\n\nUsing ${parts.join(
-    ", "
-  )}${previous} — do not alter identity.\n\n`;
+  return `${header.join("\n")}\n\nUsing ${parts.join(", ")}${previous} — do not alter identity.\n\n`;
 });
 
 /** Tracks the last value we auto-wrote, so toggling a reference after open can refresh the preamble without clobbering scene text the user already typed below it. */

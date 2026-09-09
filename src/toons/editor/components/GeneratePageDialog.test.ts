@@ -316,6 +316,22 @@ describe("GeneratePageDialog Flux provider", () => {
     wrapper.unmount();
   });
 
+  it("prefills the reference mapping but never a fixed style description", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: fluxGenerate, pages: [], busy: false, status: "", error: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    expect(textarea.value).toContain("# model: flux-2-pro (BFL)");
+    expect(textarea.value).toContain("# refs: Image 1 = Erin character sheet");
+    expect(textarea.value).toContain("Using Image 1 for Erin character sheet");
+    expect(textarea.value).not.toContain("horror manga");
+    expect(textarea.value).not.toContain("Black and white");
+    wrapper.unmount();
+  });
+
   it("still shows the Comfy-flow warning for a Comfy series with no flow uploaded", async () => {
     const wrapper = mount(GeneratePageDialog, {
       props: {
