@@ -285,3 +285,53 @@ describe("GeneratePageDialog optional sheet slots", () => {
     wrapper.unmount();
   });
 });
+
+describe("GeneratePageDialog Flux provider", () => {
+  const fluxGenerate = {
+    width: 1152,
+    height: 1728,
+    model: "flux-2-pro",
+    provider: "flux",
+    // Flux never reads the Comfy Save-API graph — no flowKey/flowUrl at all.
+    flowKey: null,
+    flowUrl: null,
+    slots: [
+      { alias: "erin", label: "Erin character sheet", kind: "sheet", fileKey: "erin.webp", fileUrl: "/erin.webp" },
+    ],
+  };
+
+  it("does not require a Comfy flow to submit when the series is set to Flux", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: true, generate: fluxGenerate, pages: [], busy: false, status: "", error: "" },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    expect(document.body.textContent).not.toContain("Upload a Comfy Save-API graph");
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "A close-up.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(submitBtn.disabled).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("still shows the Comfy-flow warning for a Comfy series with no flow uploaded", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: {
+        open: true,
+        generate: { ...fluxGenerate, provider: "comfy" },
+        pages: [],
+        busy: false,
+        status: "",
+        error: "",
+      },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    expect(document.body.textContent).toContain("Upload a Comfy Save-API graph");
+    const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(submitBtn.disabled).toBe(true);
+    wrapper.unmount();
+  });
+});

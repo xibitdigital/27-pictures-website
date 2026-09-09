@@ -136,9 +136,12 @@ const missingPrevious = computed(
   () => includePrevious.value && hasPreviousSlot.value && !previousPageId.value && !previousFile.value
 );
 
+/** Comfy needs its uploaded Save-API graph; Flux never reads that graph at all. */
+const missingComfyFlow = computed(() => !isFlux.value && !props.generate?.flowKey);
+
 const canSubmit = computed(
   () =>
-    Boolean(props.generate?.flowKey) &&
+    !missingComfyFlow.value &&
     Boolean(prompt.value.trim()) &&
     !props.busy &&
     !missingSheets.value.length &&
@@ -161,8 +164,14 @@ function onSubmit(): void {
 <template>
   <EditorDialog :open="open" title="Generate page" @update:open="(next) => !next && onCancel()">
     <form class="editor-dialog-form" @submit.prevent="onSubmit">
-      <p class="editor-muted">Uses this series’ Comfy graph and reference sheets.</p>
-      <p v-if="!generate?.flowKey" class="editor-error" role="alert">
+      <p class="editor-muted">
+        {{
+          isFlux
+            ? "Uses this series’ reference sheets via Flux."
+            : "Uses this series’ Comfy graph and reference sheets."
+        }}
+      </p>
+      <p v-if="missingComfyFlow" class="editor-error" role="alert">
         Upload a Comfy Save-API graph and reference sheets on the series first.
       </p>
       <p v-if="error" class="editor-error" role="alert">{{ error }}</p>
