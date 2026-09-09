@@ -3,7 +3,7 @@
  * The JSON contract lives in `apiTypes.ts` and is imported by the Vue studio.
  */
 
-import type { DescriptionMap, SeriesGenerateConfig, UserRole } from "./apiTypes";
+import type { DescriptionMap, RegionGeometry, SeriesGenerateConfig, UserRole } from "./apiTypes";
 
 export type {
   BubbleRecord,
@@ -217,13 +217,28 @@ export interface ImportMeta {
   designHeight?: string | number;
 }
 
+/** Public shape of one filled region on a `kind: "layout"` page — mirrors
+ * `RegionRecord` (apiTypes.ts) minus id/timestamps. Only regions with an
+ * assigned image are ever included (see readerConfigFromToon). */
+export interface ReaderRegion {
+  shapeType: "rect" | "polygon";
+  geometry: RegionGeometry;
+  file: string;
+  fileWidth: number | null;
+  fileHeight: number | null;
+  imageOffsetX: number;
+  imageOffsetY: number;
+  imageScale: number;
+  sort: number;
+}
+
 export interface ReaderConfig {
   title: string;
   designWidth: number;
   designHeight: number;
   defaultLang: string;
   languages: unknown;
-  pages: { file: string; words: CaptionWord[] }[];
+  pages: { file: string; words: CaptionWord[]; kind?: "layout"; regions?: ReaderRegion[] }[];
   reverb?: unknown;
 }
 

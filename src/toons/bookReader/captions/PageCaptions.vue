@@ -5,6 +5,7 @@
  * Renders nothing for toons without captions (e.g. Erin).
  */
 import { computed, onBeforeUnmount, watchEffect } from "vue";
+import RegionLayer from "./RegionLayer.vue";
 import WordLayer from "./WordLayer.vue";
 import { useToonCaptions } from "./useToonCaptions";
 
@@ -20,6 +21,7 @@ const emit = defineEmits<{
 const captions = useToonCaptions();
 
 const words = computed(() => captions?.wordsForPage(props.pageNum) ?? []);
+const regions = computed(() => captions?.regionsForPage(props.pageNum) ?? []);
 
 /**
  * Warm this page's clips only as its plate nears the viewport. The gate
@@ -65,6 +67,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <RegionLayer v-if="regions.length" :page-num="pageNum" :regions="regions" :image-el="imageEl ?? null" />
   <WordLayer
     v-if="captions && words.length"
     :page-num="pageNum"

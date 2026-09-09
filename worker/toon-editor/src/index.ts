@@ -62,6 +62,7 @@ import {
   type PageRecord,
   type PageRow,
   type ReaderConfig,
+  type ReaderRegion,
   type RegionGeometry,
   type RegionRecord,
   type RegionRow,
@@ -739,16 +740,46 @@ async function regionsByPageId(env: Pick<Env, "DB">, toonId: string): Promise<Ma
   return map;
 }
 
+/** Regions with no assigned image can't be rendered — never send them to the public reader. */
+function readerRegionsForPage(rows: RegionRow[] | undefined, request: RequestLike): ReaderRegion[] | undefined {
+  if (!rows || !rows.length) return undefined;
+  const regions = rows
+    .filter((row): row is RegionRow & { file_key: string } => Boolean(row.file_key))
+    .map((row) => ({
+      shapeType: row.shape_type === "polygon" ? ("polygon" as const) : ("rect" as const),
+      geometry: parseRegionGeometry(row.geometry_json, row.shape_type),
+      file: publicPageFile(request, row.file_key),
+      fileWidth: row.file_width,
+      fileHeight: row.file_height,
+      imageOffsetX: row.image_offset_x,
+      imageOffsetY: row.image_offset_y,
+      imageScale: row.image_scale,
+      sort: row.sort,
+    }));
+  return regions.length ? regions : undefined;
+}
+
 async function readerConfigFromToon(env: Pick<Env, "DB">, toon: ToonRow, request: RequestLike): Promise<ReaderConfig> {
   const extra = parseToonExtra(toon);
   const pageRows = (
     await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(toon.id).all<PageRow>()
   ).results;
   const bubbles = await bubblesByPageId(env, toon.id);
-  const pages: ReaderConfig["pages"] = pageRows.map((page) => ({
-    file: publicPageFile(request, page.file_key),
-    words: (bubbles.get(page.id) ?? []).map((row) => publicWord(request, wordFromBubble(row))),
-  }));
+  const regions = pageRows.some((page) => page.kind === "layout") ? await regionsByPageId(env, toon.id) : null;
+  const pages: ReaderConfig["pages"] = pageRows.map((page) => {
+    const entry: ReaderConfig["pages"][number] = {
+      file: publicPageFile(request, page.file_key),
+      words: (bubbles.get(page.id) ?? []).map((row) => publicWord(request, wordFromBubble(row))),
+    };
+    if (page.kind === "layout") {
+      const pageRegions = readerRegionsForPage(regions?.get(page.id), request);
+      if (pageRegions) {
+        entry.kind = "layout";
+        entry.regions = pageRegions;
+      }
+    }
+    return entry;
+  });
   const cfg: ReaderConfig = {
     title: toon.title,
     designWidth: toon.design_width,

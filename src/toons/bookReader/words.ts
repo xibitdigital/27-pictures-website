@@ -25,7 +25,10 @@ export function resolveWordsAssets(config: WordsConfig, pageDir?: string): Words
           return { ...w, audio: resolveAssetUrl(w.audio.trim(), pageDir) };
         })
       : page?.words;
-    return { ...page, file, words };
+    const regions = Array.isArray(page?.regions)
+      ? page.regions.map((r) => (r?.file ? { ...r, file: resolveAssetUrl(r.file.trim(), pageDir) } : r))
+      : page?.regions;
+    return { ...page, file, words, regions };
   });
   return { ...config, pages };
 }

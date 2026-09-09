@@ -5,20 +5,26 @@ function requestAt(url) {
   return { url };
 }
 
-function dbWith(pages, bubblesByPage) {
+function dbWith(pages, bubblesByPage, regionsByPage = {}) {
   return {
     prepare(sql) {
       return {
         bind(...args) {
           return {
             async all() {
-              if (/FROM pages/.test(sql) && !/bubbles/.test(sql)) return { results: pages };
-              if (/FROM bubbles/.test(sql) || /INNER JOIN pages/.test(sql)) {
+              if (/FROM page_regions/.test(sql)) {
+                const results = Object.entries(regionsByPage).flatMap(([pageId, rows]) =>
+                  (rows as { page_id?: string }[]).map((row) => ({ page_id: pageId, ...row }))
+                );
+                return { results };
+              }
+              if (/FROM bubbles/.test(sql)) {
                 const results = Object.entries(bubblesByPage).flatMap(([pageId, rows]) =>
                   (rows as { page_id?: string }[]).map((row) => ({ page_id: pageId, ...row }))
                 );
                 return { results };
               }
+              if (/FROM pages/.test(sql) && !/INNER JOIN pages/.test(sql)) return { results: pages };
               return { results: [] };
             },
           };
@@ -103,5 +109,106 @@ describe("readerConfigFromToon", () => {
       requestAt("https://toon-editor.example/config/graph-test")
     );
     expect(cfg.pages[0].file).toBe("https://toon-editor.example/media/editor/graph-test/assets/plate.png");
+  });
+
+  it("a plate-kind page's entry has no kind/regions keys at all", async () => {
+    const cfg = await readerConfigFromToon(
+      { DB: dbWith(pages, bubbles) },
+      toon,
+      requestAt("https://toon-editor.example/config/erin-the-revenge")
+    );
+    expect(cfg.pages[0]).not.toHaveProperty("kind");
+    expect(cfg.pages[0]).not.toHaveProperty("regions");
+  });
+
+  it("emits regions for a layout page, sorted, with geometry parsed and file resolved", async () => {
+    const layoutPages = [{ id: "page-1", position: 0, file_key: "assets/backdrop.webp", kind: "layout" }];
+    // Fixture order mirrors regionsByPageId's own SQL sort (page_regions.sort ASC) since
+    // the test's dbWith mock, unlike the real D1 query, doesn't re-sort results itself.
+    const regions = {
+      "page-1": [
+        {
+          id: "r-rect",
+          shape_type: "rect",
+          geometry_json: JSON.stringify({ kind: "rect", x: 0.1, y: 0.1, w: 0.4, h: 0.4 }),
+          file_key: "assets/region0.webp",
+          file_width: 300,
+          file_height: 300,
+          image_offset_x: 0.3,
+          image_offset_y: 0.7,
+          image_scale: 1.5,
+          sort: 0,
+        },
+        {
+          id: "r-poly",
+          shape_type: "polygon",
+          geometry_json: JSON.stringify({
+            kind: "polygon",
+            points: [
+              { x: 0.1, y: 0.1 },
+              { x: 0.5, y: 0.1 },
+              { x: 0.3, y: 0.6 },
+            ],
+          }),
+          file_key: "editor/erin-the-revenge/assets/region1.webp",
+          file_width: 400,
+          file_height: 600,
+          image_offset_x: 0.5,
+          image_offset_y: 0.5,
+          image_scale: 1,
+          sort: 1,
+        },
+      ],
+    };
+    const cfg = await readerConfigFromToon(
+      { DB: dbWith(layoutPages, {}, regions) },
+      toon,
+      requestAt("https://toon-editor.example/config/erin-the-revenge")
+    );
+    expect(cfg.pages[0].kind).toBe("layout");
+    expect(cfg.pages[0].regions).toHaveLength(2);
+    expect(cfg.pages[0].regions[0]).toMatchObject({
+      shapeType: "rect",
+      geometry: { kind: "rect", x: 0.1, y: 0.1, w: 0.4, h: 0.4 },
+      file: "assets/region0.webp",
+      fileWidth: 300,
+      fileHeight: 300,
+      imageOffsetX: 0.3,
+      imageOffsetY: 0.7,
+      imageScale: 1.5,
+      sort: 0,
+    });
+    expect(cfg.pages[0].regions[1]).toMatchObject({
+      shapeType: "polygon",
+      file: "https://toon-editor.example/media/editor/erin-the-revenge/assets/region1.webp",
+      sort: 1,
+    });
+  });
+
+  it("filters out a region with no assigned image", async () => {
+    const layoutPages = [{ id: "page-1", position: 0, file_key: "assets/backdrop.webp", kind: "layout" }];
+    const regions = {
+      "page-1": [
+        {
+          id: "r-empty",
+          shape_type: "rect",
+          geometry_json: JSON.stringify({ kind: "rect", x: 0.1, y: 0.1, w: 0.4, h: 0.4 }),
+          file_key: null,
+          file_width: null,
+          file_height: null,
+          image_offset_x: 0.5,
+          image_offset_y: 0.5,
+          image_scale: 1,
+          sort: 0,
+        },
+      ],
+    };
+    const cfg = await readerConfigFromToon(
+      { DB: dbWith(layoutPages, {}, regions) },
+      toon,
+      requestAt("https://toon-editor.example/config/erin-the-revenge")
+    );
+    expect(cfg.pages[0]).not.toHaveProperty("kind");
+    expect(cfg.pages[0]).not.toHaveProperty("regions");
   });
 });

@@ -92,6 +92,28 @@ export interface ToonBookApi {
   destroy: () => void;
 }
 
+/**
+ * Plate-fraction coordinates (0-1), mirrors the editor's `RegionGeometry`
+ * (worker `apiTypes.ts`) — declared independently here since the public
+ * reader bundle doesn't import worker or editor types.
+ */
+export type RegionGeometry =
+  | { kind: "rect"; x: number; y: number; w: number; h: number }
+  | { kind: "polygon"; points: { x: number; y: number }[] };
+
+/** One filled region on a `kind: "layout"` page — mirrors the worker's `ReaderRegion`. */
+export interface ReaderRegion {
+  shapeType: "rect" | "polygon";
+  geometry: RegionGeometry;
+  file: string;
+  fileWidth: number | null;
+  fileHeight: number | null;
+  imageOffsetX: number;
+  imageOffsetY: number;
+  imageScale: number;
+  sort: number;
+}
+
 /** One page in config.json — image + optional caption overlays. */
 export interface ToonPage {
   /** Relative image path (e.g. `assets/<hash>.jpg`). */
@@ -103,6 +125,10 @@ export interface ToonPage {
   reverb?: string;
   /** Caption / SFX entries for this page. */
   words?: WordEntry[];
+  /** Set only for a Layout page with filled regions — see `regions`. */
+  kind?: "layout";
+  /** Live-rendered region images to composite over `file` (see RegionLayer.vue). */
+  regions?: ReaderRegion[];
 }
 
 /**

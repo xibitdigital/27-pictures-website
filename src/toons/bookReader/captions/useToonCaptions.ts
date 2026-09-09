@@ -6,7 +6,7 @@
 import { computed, inject, provide, ref, type ComputedRef, type InjectionKey, type Ref } from "vue";
 import { collectWordAudioUrls, preloadAudioUrls } from "../audio/preloadAudio";
 import { loadWords } from "../words";
-import type { LangCode, LangOption, ToonConfig, WordEntry } from "../types";
+import type { LangCode, LangOption, ReaderRegion, ToonConfig, WordEntry } from "../types";
 
 /** Written by the toons landing page (`rememberDocumentLocale`). Same strings. */
 const SITE_LOCALE_KEY = "27p-locale";
@@ -31,6 +31,10 @@ export interface ToonCaptionsStore {
   designHeight: ComputedRef<number>;
   fontFamily: ComputedRef<string>;
   wordsForPage: (pageNum: number) => WordEntry[];
+  /** Live-render regions for a Layout page — empty for a plain plate page. */
+  regionsForPage: (pageNum: number) => ReaderRegion[];
+  /** "layout" only when the page has at least one filled region to live-render. */
+  pageKind: (pageNum: number) => "plate" | "layout";
   /** Warm the browser cache for one page's caption audio (idempotent). */
   warmPageAudio: (pageNum: number) => void;
   setLang: (code: LangCode) => void;
@@ -122,6 +126,17 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
     return Array.isArray(page?.words) ? (page.words as WordEntry[]) : [];
   }
 
+  function regionsForPage(pageNum: number): ReaderRegion[] {
+    const pages = config.value?.pages;
+    if (!Array.isArray(pages)) return [];
+    const page = pages[pageNum - 1];
+    return Array.isArray(page?.regions) ? (page.regions as ReaderRegion[]) : [];
+  }
+
+  function pageKind(pageNum: number): "plate" | "layout" {
+    return config.value?.pages?.[pageNum - 1]?.kind === "layout" ? "layout" : "plate";
+  }
+
   /** Pages whose caption audio has been handed to the preloader. */
   const warmedAudioPages = new Set<number>();
 
@@ -177,7 +192,20 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
     return pending;
   }
 
-  return { ready, lang, languages, designWidth, designHeight, fontFamily, wordsForPage, warmPageAudio, setLang, load };
+  return {
+    ready,
+    lang,
+    languages,
+    designWidth,
+    designHeight,
+    fontFamily,
+    wordsForPage,
+    regionsForPage,
+    pageKind,
+    warmPageAudio,
+    setLang,
+    load,
+  };
 }
 
 export const TOON_CAPTIONS_KEY: InjectionKey<ToonCaptionsStore> = Symbol("flipframe-captions");
