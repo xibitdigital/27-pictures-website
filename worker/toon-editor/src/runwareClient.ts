@@ -64,13 +64,18 @@ function nearestFixedPair(pairs: readonly (readonly [number, number])[], width: 
 function fitDimensions(dims: RunwareDimensions, width: number, height: number): { width: number; height: number } {
   if (dims.kind === "fixed") return nearestFixedPair(dims.pairs, width, height);
   const total = width * height;
-  const scale =
-    total < dims.minPixels
-      ? Math.sqrt(dims.minPixels / total)
-      : total > dims.maxPixels
-        ? Math.sqrt(dims.maxPixels / total)
-        : 1;
-  const clampSide = (n: number) => Math.round(Math.min(dims.maxSide, Math.max(dims.minSide, n)));
+  const scalingUp = total < dims.minPixels;
+  const scale = scalingUp
+    ? Math.sqrt(dims.minPixels / total)
+    : total > dims.maxPixels
+      ? Math.sqrt(dims.maxPixels / total)
+      : 1;
+  // Rounding each side independently can land the product just under minPixels even though the
+  // scale was computed to hit it exactly (reported as Runware's invalidPixels 400) — ceil() on
+  // the way up and floor() on the way down keeps each side's rounding error on the safe side of
+  // the target area (ceil(a)*ceil(b) >= a*b >= floor(a)*floor(b) for positive a, b).
+  const round = scalingUp ? Math.ceil : scale < 1 ? Math.floor : Math.round;
+  const clampSide = (n: number) => Math.min(dims.maxSide, Math.max(dims.minSide, round(n)));
   return { width: clampSide(width * scale), height: clampSide(height * scale) };
 }
 

@@ -171,6 +171,38 @@ describe("runwareSubmit", () => {
     expect(width / height).toBeCloseTo(400 / 600, 2); // aspect preserved
   });
 
+  it("never lands under Seedream's pixel floor across a spread of small sizes (independent rounding of each side can undershoot the target area)", async () => {
+    const sizes: [number, number][] = [
+      [400, 600],
+      [301, 787],
+      [513, 999],
+      [640, 640],
+      [199, 1013],
+      [850, 850],
+      [321, 321],
+      [900, 400],
+    ];
+    for (const [w, h] of sizes) {
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValue(new Response(JSON.stringify({ data: [{ taskUUID: "t" }], errors: [] }), { status: 200 }));
+      vi.stubGlobal("fetch", fetchMock);
+      // eslint-disable-next-line no-await-in-loop
+      await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
+        prompt: "p",
+        images: [],
+        model: "bytedance:seedream@5.0-pro",
+        width: w,
+        height: h,
+      });
+      const body = JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body)) as [
+        { width: number; height: number },
+      ];
+      expect(body[0].width * body[0].height).toBeGreaterThanOrEqual(921600);
+      vi.unstubAllGlobals();
+    }
+  });
+
   it("caps refs at Seedream 5.0 Pro's own limit (10)", async () => {
     const fetchMock = vi
       .fn()

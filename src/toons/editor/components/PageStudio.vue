@@ -64,7 +64,6 @@ const seriesGenerate = ref<SeriesGenerateConfig | null>(null);
 const generateOpen = ref(false);
 const generateBusy = ref(false);
 const generateStatus = ref("");
-const generateError = ref("");
 const confirmingRemove = ref(false);
 const layoutTool = ref<LayoutTool>("select");
 const studioMode = ref<StudioMode>("layout");
@@ -176,15 +175,13 @@ function closeGenerateDialog(): void {
   generateTargetRegionId.value = null;
 }
 
-/** Generation errors can be long (a provider's raw rejection message) — surface them in a toast too, so they're copiable, not just the dialog's inline text. */
+/** Generation errors can be a long, raw provider rejection message — a toast (copiable) instead of the dialog's inline text. */
 function setGenerateError(message: string): void {
-  generateError.value = message;
   pushToast(message);
 }
 
 async function onRegionGenerateSubmit(regionId: string, payload: GeneratePayload): Promise<void> {
   generateBusy.value = true;
-  generateError.value = "";
   const started = Date.now();
   const clock = (): string => {
     const s = Math.floor((Date.now() - started) / 1000);
@@ -234,7 +231,6 @@ async function onGenerateSubmit(payload: GeneratePayload): Promise<void> {
   }
   if (!toon.value) return;
   generateBusy.value = true;
-  generateError.value = "";
   const started = Date.now();
   const clock = (): string => {
     const s = Math.floor((Date.now() - started) / 1000);
@@ -957,7 +953,6 @@ async function onRemove(): Promise<void> {
         :pages="toon.pages"
         :busy="generateBusy"
         :status="generateStatus"
-        :error="generateError"
         @close="closeGenerateDialog"
         @submit="onGenerateSubmit"
       />

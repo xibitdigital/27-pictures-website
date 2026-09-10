@@ -13,7 +13,6 @@ const props = defineProps<{
   pages: Pick<PageRecord, "id" | "position" | "fileUrl">[];
   busy: boolean;
   status: string;
-  error: string;
 }>();
 
 const emit = defineEmits<{
@@ -188,7 +187,6 @@ function onSubmit(): void {
       <p v-if="missingComfyFlow" class="editor-error" role="alert">
         Upload a Comfy Save-API graph and reference sheets on the series first.
       </p>
-      <p v-if="error" class="editor-error" role="alert">{{ error }}</p>
       <label>
         Prompt
         <textarea

@@ -21,7 +21,6 @@ describe("GeneratePageDialog", () => {
         pages: [],
         busy: false,
         status: "",
-        error: "",
       },
       attachTo: document.body,
     });
@@ -41,7 +40,6 @@ describe("GeneratePageDialog", () => {
         pages: [],
         busy: false,
         status: "",
-        error: "",
       },
       attachTo: document.body,
     });
@@ -69,7 +67,7 @@ describe("GeneratePageDialog previous-plate override", () => {
 
   it("leaves include-previous off by default and submits with no previous plate", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
+      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "" },
       attachTo: document.body,
     });
     await wrapper.setProps({ open: true });
@@ -109,7 +107,6 @@ describe("GeneratePageDialog previous-plate override", () => {
         ],
         busy: false,
         status: "",
-        error: "",
       },
       attachTo: document.body,
     });
@@ -152,7 +149,6 @@ describe("GeneratePageDialog previous-plate override", () => {
         ],
         busy: false,
         status: "",
-        error: "",
       },
       attachTo: document.body,
     });
@@ -171,7 +167,7 @@ describe("GeneratePageDialog previous-plate override", () => {
 
   it("offers a file-pick button when the toon has no plates yet", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
+      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "" },
       attachTo: document.body,
     });
     await wrapper.setProps({ open: true });
@@ -187,7 +183,7 @@ describe("GeneratePageDialog previous-plate override", () => {
 
   it("lets a first-page generation proceed once a previous-plate file is attached", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
+      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "" },
       attachTo: document.body,
     });
     await wrapper.setProps({ open: true });
@@ -225,7 +221,7 @@ describe("GeneratePageDialog previous-plate override", () => {
 
   it("lets the operator pick how many plates to generate", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "", error: "" },
+      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "" },
       attachTo: document.body,
     });
     await wrapper.setProps({ open: true });
@@ -270,7 +266,7 @@ describe("GeneratePageDialog optional sheet slots", () => {
 
   it("does not block submit on a missing optional sheet, and shows it as skipped", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: true, generate: generateWithOptional, pages: [], busy: false, status: "", error: "" },
+      props: { open: true, generate: generateWithOptional, pages: [], busy: false, status: "" },
       attachTo: document.body,
     });
     await flushPromises();
@@ -302,7 +298,7 @@ describe("GeneratePageDialog Flux provider", () => {
 
   it("does not require a Comfy flow to submit when the series is set to Flux", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: true, generate: fluxGenerate, pages: [], busy: false, status: "", error: "" },
+      props: { open: true, generate: fluxGenerate, pages: [], busy: false, status: "" },
       attachTo: document.body,
     });
     await flushPromises();
@@ -318,7 +314,7 @@ describe("GeneratePageDialog Flux provider", () => {
 
   it("prefills the reference mapping but never a fixed style description", async () => {
     const wrapper = mount(GeneratePageDialog, {
-      props: { open: false, generate: fluxGenerate, pages: [], busy: false, status: "", error: "" },
+      props: { open: false, generate: fluxGenerate, pages: [], busy: false, status: "" },
       attachTo: document.body,
     });
     await wrapper.setProps({ open: true });
@@ -340,7 +336,6 @@ describe("GeneratePageDialog Flux provider", () => {
         pages: [],
         busy: false,
         status: "",
-        error: "",
       },
       attachTo: document.body,
     });
