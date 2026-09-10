@@ -77,10 +77,11 @@ const providerLabel: Record<string, string> = {
 
 const fluxRefsPrefill = computed(() => {
   if (!isDirectProvider.value) return "";
-  const header = [
-    `# model: ${providerLabel[props.generate?.provider || ""] || "flux-2-pro (BFL)"}`,
-    "# mode: image-to-image (multi-reference)",
-  ];
+  const modelName =
+    props.generate?.provider === "runware"
+      ? `Runware — ${props.generate.model || "no model configured"}`
+      : providerLabel[props.generate?.provider || ""] || "flux-2-pro (BFL)";
+  const header = [`# model: ${modelName}`, "# mode: image-to-image (multi-reference)"];
   const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
   if (!sheets.length) return `${header.join("\n")}\n\n`;
   const refs = sheets.map((s, i) => `Image ${i + 1} = ${s.label || s.alias}`);
