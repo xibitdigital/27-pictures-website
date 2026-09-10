@@ -132,7 +132,7 @@ type SubmitData = { taskUUID?: string; imageURL?: string; status?: string };
 export async function runwareSubmit(
   env: Env,
   input: { prompt: string; images: string[]; model: string; width?: number | null; height?: number | null }
-): Promise<{ ok: true; id: string; pollingUrl: string } | { ok: false; error: string }> {
+): Promise<{ ok: true; id: string; pollingUrl: string; imageUrl?: string } | { ok: false; error: string }> {
   if (!runwareToken(env)) return { ok: false, error: "Runware is not configured (RUNWARE_API_KEY missing)" };
   if (!input.model.trim()) return { ok: false, error: "series has no Runware model configured" };
   if (!input.width || !input.height) return { ok: false, error: "Runware needs a plate width and height" };
@@ -166,7 +166,11 @@ export async function runwareSubmit(
   if (error) return { ok: false, error: `Runware rejected the request: ${error.message || error.code}` };
   const data = parsed.data && parsed.data[0];
   if (!data?.taskUUID) return { ok: false, error: "Runware request returned no task" };
-  return { ok: true, id: data.taskUUID, pollingUrl: data.taskUUID };
+  // We never set deliveryMethod: "async", so Runware answers this POST synchronously — the
+  // image, when ready, is already in this response. `getResponse` (runwareResult) is documented
+  // for async delivery only and does not reliably track a sync-delivered task, so a job that
+  // relied on it here would poll "processing" forever even after Runware had already finished.
+  return { ok: true, id: data.taskUUID, pollingUrl: data.taskUUID, imageUrl: data.imageURL };
 }
 
 function runwarePhase(status: string | undefined): ComfyPhase | null {

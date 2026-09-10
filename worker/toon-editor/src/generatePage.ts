@@ -500,6 +500,10 @@ async function startRunwareGenerate(
 
   const count = input.pageId ? 1 : parseGenerateCount(input.count);
   const promptIds: string[] = [];
+  // Runware answers the submit call synchronously (no deliveryMethod: "async" is set) — the image
+  // is already in that response when ready. Stash it so pollPageJob can use it directly instead of
+  // polling getResponse, which doesn't reliably track a sync-delivered task (see runwareClient.ts).
+  const resolvedImages: (string | null)[] = [];
   for (let i = 0; i < count; i++) {
     const submitted = await runwareSubmit(env, {
       prompt: promptWithReferenceLegend(input.prompt, imageLabels),
@@ -511,6 +515,7 @@ async function startRunwareGenerate(
     if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
     // Stored (and later polled) as the taskUUID — Runware has no per-job "get" URL.
     promptIds.push(submitted.pollingUrl);
+    resolvedImages.push(submitted.imageUrl || null);
   }
 
   const id = crypto.randomUUID();
@@ -534,6 +539,7 @@ async function startRunwareGenerate(
         height: targetHeight,
         count,
         promptIds,
+        resolvedImages,
       }),
       promptIds[0],
       input.createdBy || null,
@@ -544,6 +550,18 @@ async function startRunwareGenerate(
   const job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?").bind(id).first<GenerationJob>();
   if (!job) return { ok: false, error: "could not create job", status: 500 };
   return { ok: true, job };
+}
+
+function resolvedImagesFromJob(job: GenerationJob): (string | null)[] {
+  try {
+    const payload = JSON.parse(job.payload_json) as { resolvedImages?: unknown };
+    if (Array.isArray(payload.resolvedImages)) {
+      return payload.resolvedImages.map((v) => (typeof v === "string" && v ? v : null));
+    }
+  } catch {
+    /* fall through */
+  }
+  return [];
 }
 
 function promptIdsFromJob(job: GenerationJob): string[] {
@@ -619,16 +637,23 @@ export async function pollPageJob(
   const isFlux = job.provider === "flux";
   const isReplicate = job.provider === "replicate-flux" || job.provider === "replicate-seedream";
   const isRunware = job.provider === "runware";
+  const resolvedImages = isRunware ? resolvedImagesFromJob(job) : [];
   const outputs: (ComfyHistoryImage | string)[] = []; // string = Flux/Replicate/Runware's signed output URL
   let phase: ComfyPhase | null = null;
-  for (const promptId of promptIds) {
+  for (let i = 0; i < promptIds.length; i++) {
+    const promptId = promptIds[i];
     if (isFlux || isReplicate || isRunware) {
-      // For Flux/Replicate, promptId is the full polling URL; for Runware it's the taskUUID — both stored at submit time.
+      // For Flux/Replicate, promptId is the full polling URL; for Runware it's the taskUUID.
+      // Runware answers the submit call synchronously, so the image is normally already known
+      // (resolvedImages, stashed at submit time) — runwareResult's getResponse poll is only a
+      // fallback for the rare case the submit response didn't carry it.
       const result = isFlux
         ? await fluxResult(env, promptId)
         : isReplicate
           ? await replicateResult(env, promptId)
-          : await runwareResult(env, promptId);
+          : resolvedImages[i]
+            ? ({ ok: true, phase: "done", imageUrl: resolvedImages[i]! } as const)
+            : await runwareResult(env, promptId);
       if (!result.ok) {
         await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
           .bind(result.error, nowIso(), job.id)

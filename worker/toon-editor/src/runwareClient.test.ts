@@ -306,6 +306,31 @@ describe("runwareSubmit", () => {
     });
     expect(out).toEqual({ ok: false, error: "Runware request returned no task" });
   });
+
+  it("surfaces the image URL when the submit response already carries it (no deliveryMethod: async was requested, so Runware answers synchronously)", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({ data: [{ taskUUID: "task-8", imageURL: "https://im.runware.ai/a.jpg" }], errors: [] }),
+          { status: 200 }
+        )
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
+      prompt: "p",
+      images: [],
+      model: "bfl:3@1",
+      width: 800,
+      height: 1424,
+    });
+    expect(out).toEqual({
+      ok: true,
+      id: "task-8",
+      pollingUrl: "task-8",
+      imageUrl: "https://im.runware.ai/a.jpg",
+    });
+  });
 });
 
 describe("runwareResult", () => {
