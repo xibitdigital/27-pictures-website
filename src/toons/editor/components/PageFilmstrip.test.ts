@@ -120,4 +120,48 @@ describe("PageFilmstrip", () => {
     await input.trigger("change");
     expect(wrapper.emitted("replace")).toEqual([["p1", file]]);
   });
+
+  const threePages = [
+    { id: "p1", position: 0, fileUrl: "/p1.webp", fileKey: "p1", width: 800, height: 1424, bubbles: [] },
+    { id: "p2", position: 1, fileUrl: "/p2.webp", fileKey: "p2", width: 800, height: 1424, bubbles: [] },
+    { id: "p3", position: 2, fileUrl: "/p3.webp", fileKey: "p3", width: 800, height: 1424, bubbles: [] },
+  ];
+
+  it("drags a thumb onto another and emits the whole reordered id list", async () => {
+    const wrapper = mount(PageFilmstrip, {
+      props: { toonId: "t1", pages: threePages, activeId: "p1" },
+      attachTo: document.body,
+    });
+    const thumbs = wrapper.findAll(".editor-thumb");
+    await thumbs[0].trigger("dragstart"); // drag page 1 (p1)
+    await thumbs[2].trigger("dragover"); // over page 3 (p3)
+    await thumbs[2].trigger("drop"); // drop onto page 3
+    expect(wrapper.emitted("reorderPages")).toEqual([[["p2", "p3", "p1"]]]);
+    wrapper.unmount();
+  });
+
+  it("clears drag state on dragend without emitting", async () => {
+    const wrapper = mount(PageFilmstrip, {
+      props: { toonId: "t1", pages: threePages, activeId: "p1" },
+      attachTo: document.body,
+    });
+    const thumbs = wrapper.findAll(".editor-thumb");
+    await thumbs[0].trigger("dragstart");
+    await thumbs[0].trigger("dragend");
+    expect(thumbs[0].classes()).not.toContain("is-dragging");
+    expect(wrapper.emitted("reorderPages")).toBeUndefined();
+    wrapper.unmount();
+  });
+
+  it("does not reorder when dropping a thumb onto itself", async () => {
+    const wrapper = mount(PageFilmstrip, {
+      props: { toonId: "t1", pages: threePages, activeId: "p1" },
+      attachTo: document.body,
+    });
+    const thumbs = wrapper.findAll(".editor-thumb");
+    await thumbs[0].trigger("dragstart");
+    await thumbs[0].trigger("drop");
+    expect(wrapper.emitted("reorderPages")).toBeUndefined();
+    wrapper.unmount();
+  });
 });

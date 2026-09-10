@@ -18,6 +18,7 @@ import {
   patchRegion,
   readImageSize,
   replacePage,
+  reorderPages,
   setPageKind,
   uploadPage,
   uploadRegionImage,
@@ -321,6 +322,25 @@ async function onReplaceThumb(pageId: string, file: File): Promise<void> {
     pushToast(err instanceof Error ? err.message : "Replace failed");
   } finally {
     replacingId.value = null;
+  }
+}
+
+/** Drag-and-drop reorder from the filmstrip. Applies the new order locally right away (instant feedback), then persists it — reverting on failure. */
+async function onReorderPages(order: string[]): Promise<void> {
+  if (!toon.value) return;
+  const previous = toon.value;
+  const byId = new Map(previous.pages.map((p) => [p.id, p]));
+  const reordered = order.map((id, index) => {
+    const page = byId.get(id);
+    return page ? { ...page, position: index } : null;
+  });
+  if (reordered.some((p) => !p)) return; // stale order (a page changed underneath the drag) — ignore rather than corrupt positions
+  toon.value = { ...previous, pages: reordered as typeof previous.pages };
+  try {
+    toon.value = await reorderPages(previous.id, order);
+  } catch (err) {
+    toon.value = previous;
+    pushToast(err instanceof Error ? err.message : "Could not reorder pages");
   }
 }
 
@@ -855,6 +875,7 @@ async function onRemove(): Promise<void> {
           @layout="onAddLayoutPage"
           @remove="onRemovePage"
           @replace="onReplaceThumb"
+          @reorder-pages="onReorderPages"
         />
         <PlateCanvas
           v-if="activePage"

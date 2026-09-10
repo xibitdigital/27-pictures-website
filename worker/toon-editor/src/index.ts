@@ -1892,6 +1892,40 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     );
   }
 
+  const pagesReorderMatch = path.match(/^\/toons\/([^/]+)\/pages\/reorder$/);
+  if (isMethod(method, "PATCH") && pagesReorderMatch) {
+    const id = pagesReorderMatch[1];
+    const toon = await env.DB.prepare("SELECT id FROM toons WHERE id = ?").bind(id).first<{ id: string }>();
+    if (!toon) return json({ error: "not found" }, 404, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const order = parsed.body.order;
+    if (!Array.isArray(order) || !order.every((v): v is string => typeof v === "string")) {
+      return json({ error: "order must be an array of page ids" }, 400, cors);
+    }
+    const existing = (
+      await env.DB.prepare("SELECT id FROM pages WHERE toon_id = ?").bind(id).all<{ id: string }>()
+    ).results.map((p) => p.id);
+    const sameSet = order.length === existing.length && existing.every((pid) => order.includes(pid));
+    if (!sameSet) return json({ error: "order must list every page exactly once" }, 400, cors);
+    // pages has UNIQUE(toon_id, position) — writing final positions directly can collide mid-batch
+    // (e.g. swapping two pages: one target position is still held by the other page). Stage every
+    // row through a distinct negative position first so no intermediate statement ever collides,
+    // then land on the real 0..n-1 positions in a second pass.
+    await env.DB.batch(
+      order.map((pageId, index) =>
+        env.DB.prepare("UPDATE pages SET position = ? WHERE id = ? AND toon_id = ?").bind(-(index + 1), pageId, id)
+      )
+    );
+    await env.DB.batch(
+      order.map((pageId, index) =>
+        env.DB.prepare("UPDATE pages SET position = ? WHERE id = ? AND toon_id = ?").bind(index, pageId, id)
+      )
+    );
+    await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(nowIso(), id).run();
+    return json(await loadToon(env, request, id), 200, cors);
+  }
+
   const pagesMatch = path.match(/^\/toons\/([^/]+)\/pages$/);
   if (isMethod(method, "POST") && pagesMatch) {
     const id = pagesMatch[1];

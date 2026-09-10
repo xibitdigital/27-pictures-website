@@ -315,6 +315,11 @@ export function deletePage(pageId: string): Promise<{ ok: boolean }> {
   return api<{ ok: boolean }>(`/pages/${pageId}`, { method: "DELETE" });
 }
 
+/** `order` must list every page in the toon exactly once, by id, in the desired position order. */
+export function reorderPages(toonId: string, order: string[]): Promise<ToonRecord> {
+  return api<ToonRecord>(`/toons/${toonId}/pages/reorder`, { method: "PATCH", body: JSON.stringify({ order }) });
+}
+
 export function addBubble(
   pageId: string,
   payload: { x: number; y: number; variant?: string; tail?: string; textEn?: string; size?: number }

@@ -20,11 +20,54 @@ const emit = defineEmits<{
   layout: [];
   remove: [pageId: string];
   replace: [pageId: string, file: File];
+  /** Every page id, in the new desired order — the whole list, not just the moved one. */
+  reorderPages: [order: string[]];
 }>();
 
 const pendingRemove = ref<PageRecord | null>(null);
 const addOpen = ref(false);
 const pageFile = ref<HTMLInputElement | null>(null);
+
+const draggedId = ref<string | null>(null);
+const dragOverId = ref<string | null>(null);
+
+function onDragStart(ev: DragEvent, page: PageRecord): void {
+  draggedId.value = page.id;
+  if (ev.dataTransfer) {
+    ev.dataTransfer.effectAllowed = "move";
+    ev.dataTransfer.setData("text/plain", page.id);
+  }
+}
+
+function onDragOver(ev: DragEvent, page: PageRecord): void {
+  if (!draggedId.value || draggedId.value === page.id) return;
+  ev.preventDefault(); // required to allow a drop
+  if (ev.dataTransfer) ev.dataTransfer.dropEffect = "move";
+  dragOverId.value = page.id;
+}
+
+function onDragLeave(page: PageRecord): void {
+  if (dragOverId.value === page.id) dragOverId.value = null;
+}
+
+function onDrop(ev: DragEvent, page: PageRecord): void {
+  ev.preventDefault();
+  const sourceId = draggedId.value || ev.dataTransfer?.getData("text/plain") || null;
+  dragOverId.value = null;
+  draggedId.value = null;
+  if (!sourceId || sourceId === page.id) return;
+  const ids = props.pages.map((p) => p.id);
+  const from = ids.indexOf(sourceId);
+  const to = ids.indexOf(page.id);
+  if (from === -1 || to === -1) return;
+  ids.splice(to, 0, ...ids.splice(from, 1));
+  emit("reorderPages", ids);
+}
+
+function onDragEnd(): void {
+  draggedId.value = null;
+  dragOverId.value = null;
+}
 
 function onFile(ev: Event): void {
   const input = ev.target as HTMLInputElement;
@@ -75,10 +118,20 @@ function onRemoveConfirm(): void {
       v-for="page in pages"
       :key="page.id"
       class="editor-thumb"
-      :class="{ 'is-active': page.id === activeId }"
+      :class="{
+        'is-active': page.id === activeId,
+        'is-dragging': draggedId === page.id,
+        'is-drag-over': dragOverId === page.id,
+      }"
       :to="`/${toonId}/pages/${page.id}`"
+      draggable="true"
+      @dragstart="onDragStart($event, page)"
+      @dragover="onDragOver($event, page)"
+      @dragleave="onDragLeave(page)"
+      @drop="onDrop($event, page)"
+      @dragend="onDragEnd"
     >
-      <img :src="page.fileUrl" :alt="`Page ${page.position + 1}`" />
+      <img :src="page.fileUrl" :alt="`Page ${page.position + 1}`" draggable="false" />
       <span>{{ page.position + 1 }}</span>
       <label
         class="editor-thumb-replace"
