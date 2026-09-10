@@ -163,9 +163,9 @@ describe("offsetFromDrag", () => {
 
 describe("snapToGrid / snapPointToGrid", () => {
   it("rounds to the nearest grid line at the default spacing", () => {
-    expect(snapToGrid(0.1)).toBeCloseTo(1 / 12); // nearest multiple of 1/24 to 0.1 is 2/24
+    expect(snapToGrid(0.1)).toBeCloseTo(5 / 48); // nearest multiple of 1/48 to 0.1 is 5/48
     expect(snapToGrid(0.5)).toBeCloseTo(0.5); // already on a grid line
-    expect(snapToGrid(0.02)).toBeCloseTo(0); // rounds down to the first line
+    expect(snapToGrid(0.005)).toBeCloseTo(0); // rounds down to the first line
   });
 
   it("honors a custom grid size", () => {
@@ -188,8 +188,8 @@ describe("snapToGrid / snapPointToGrid", () => {
     expect(snapped.y).toBeCloseTo(0.3);
   });
 
-  it("DEFAULT_GRID_SIZE is 1/24 of the plate", () => {
-    expect(DEFAULT_GRID_SIZE).toBeCloseTo(1 / 24);
+  it("DEFAULT_GRID_SIZE is 1/48 of the plate", () => {
+    expect(DEFAULT_GRID_SIZE).toBeCloseTo(1 / 48);
   });
 });
 

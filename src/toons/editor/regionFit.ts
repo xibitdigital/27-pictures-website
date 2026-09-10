@@ -19,8 +19,8 @@ import type { RegionGeometry, RegionRecord } from "./types";
 export const MIN_IMAGE_SCALE = 0.25;
 export const MAX_IMAGE_SCALE = 4;
 
-/** Default snap-to-grid spacing: 24 divisions of the plate, a fine enough grid to align panel gutters without fighting freehand drawing. */
-export const DEFAULT_GRID_SIZE = 1 / 24;
+/** Default snap-to-grid spacing: 48 divisions of the plate (double the rows/columns of the original 24), for finer panel-gutter alignment without fighting freehand drawing. */
+export const DEFAULT_GRID_SIZE = 1 / 48;
 
 /** Snaps a plate-fraction coordinate to the nearest grid line, clamped to [0,1]. */
 export function snapToGrid(value: number, gridSize: number = DEFAULT_GRID_SIZE): number {
