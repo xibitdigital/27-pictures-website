@@ -76,6 +76,7 @@ describe("GET /auth/keys", () => {
       replicateApiToken: false,
       comfyApiKey: false,
       elevenlabsApiKey: false,
+      runwareApiToken: false,
     });
   });
 
@@ -107,6 +108,7 @@ describe("PUT /auth/keys", () => {
       replicateApiToken: true,
       comfyApiKey: false,
       elevenlabsApiKey: false,
+      runwareApiToken: false,
     });
     const stored = state.keys[editor.id].replicate_api_token_enc;
     expect(stored).toBeTruthy();
@@ -167,6 +169,28 @@ describe("PUT /auth/keys", () => {
     );
     expect(res.status).toBe(400);
     expect(state.keys[editor.id]?.replicate_api_token_enc).toBeUndefined();
+  });
+
+  it("rejects a Runware key Runware itself 401s", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ data: [], errors: [{ code: "invalidApiKey", message: "Invalid API key" }] }), {
+          status: 401,
+        })
+      )
+    );
+    const state: FakeState = { users: [editor], keys: {} };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/auth/keys", editor.id, {
+        method: "PUT",
+        body: JSON.stringify({ name: "runwareApiToken", value: "rw_nope" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(400);
+    expect(state.keys[editor.id]?.runware_api_token_enc).toBeUndefined();
   });
 
   it("401s with no session", async () => {

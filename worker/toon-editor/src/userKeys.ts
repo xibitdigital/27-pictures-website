@@ -13,12 +13,13 @@ import type { Env } from "./types";
 export type { UserKeyName } from "./apiTypes";
 export { USER_KEY_NAMES } from "./apiTypes";
 
-type EnvSecretKey = "REPLICATE_API_TOKEN" | "COMFY_API_KEY" | "ELEVENLABS_API_KEY";
+type EnvSecretKey = "REPLICATE_API_TOKEN" | "COMFY_API_KEY" | "ELEVENLABS_API_KEY" | "RUNWARE_API_KEY";
 
 const USER_KEY_FIELDS: Record<UserKeyName, { column: string; envKey: EnvSecretKey }> = {
   replicateApiToken: { column: "replicate_api_token_enc", envKey: "REPLICATE_API_TOKEN" },
   comfyApiKey: { column: "comfy_api_key_enc", envKey: "COMFY_API_KEY" },
   elevenlabsApiKey: { column: "elevenlabs_api_key_enc", envKey: "ELEVENLABS_API_KEY" },
+  runwareApiToken: { column: "runware_api_token_enc", envKey: "RUNWARE_API_KEY" },
 };
 
 export function isUserKeyName(name: unknown): name is UserKeyName {

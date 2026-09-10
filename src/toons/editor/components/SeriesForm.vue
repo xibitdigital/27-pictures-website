@@ -385,6 +385,7 @@ async function onSubmit(ev: Event): Promise<void> {
               <EditorSelectItem value="flux">Flux (flux-2-pro, direct via BFL)</EditorSelectItem>
               <EditorSelectItem value="replicate-flux">Flux Kontext (via Replicate, max 2 refs)</EditorSelectItem>
               <EditorSelectItem value="replicate-seedream">Seedream (via Replicate)</EditorSelectItem>
+              <EditorSelectItem value="runware">Runware (model set above)</EditorSelectItem>
             </EditorSelect>
           </label>
           <p v-if="provider !== 'comfy'" class="editor-muted editor-form-span">
@@ -393,7 +394,9 @@ async function onSubmit(ev: Event): Promise<void> {
                 ? "Flux ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to flux-2-pro."
                 : provider === "replicate-flux"
                   ? "Flux Kontext ignores the ComfyUI flow below. It only accepts 2 reference images — the first 2 included sheets/previous plate are sent, the rest are dropped."
-                  : "Seedream (Replicate) ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to Replicate."
+                  : provider === "replicate-seedream"
+                    ? "Seedream (Replicate) ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to Replicate."
+                    : "Runware ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate to whichever Runware model id is set in the Model field above (e.g. bfl:flux-1-kontext@pro)."
             }}
           </p>
           <div class="editor-form-span editor-generate">

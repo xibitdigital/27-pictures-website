@@ -171,14 +171,19 @@ export interface PromptTarget {
  * different host/API shape (see replicateClient.ts). 'replicate-flux' (Flux
  * Kontext's multi-image variant) only accepts 2 reference images, not the
  * full sheet set — startReplicateGenerate picks the first 2 included refs.
+ * 'runware' calls Runware's single `imageInference` endpoint (runwareClient.ts)
+ * for whichever model the series' `generate.model` names — Runware hosts many
+ * models behind one API shape, so the model id is series config, not a kind
+ * this type enumerates.
  */
-export type GenerateProvider = "comfy" | "flux" | "replicate-flux" | "replicate-seedream";
+export type GenerateProvider = "comfy" | "flux" | "replicate-flux" | "replicate-seedream" | "runware";
 
 export const GENERATE_PROVIDERS: readonly GenerateProvider[] = [
   "comfy",
   "flux",
   "replicate-flux",
   "replicate-seedream",
+  "runware",
 ];
 
 /** Any provider that skips the Comfy graph entirely and calls a hosted model directly with the prompt + reference sheets. */
@@ -273,14 +278,20 @@ export interface InviteUserResult {
  * has no per-user proxying and is being dropped from this editor soon
  * regardless, so it's not offered here.
  */
-export type UserKeyName = "replicateApiToken" | "comfyApiKey" | "elevenlabsApiKey";
+export type UserKeyName = "replicateApiToken" | "comfyApiKey" | "elevenlabsApiKey" | "runwareApiToken";
 
-export const USER_KEY_NAMES: readonly UserKeyName[] = ["replicateApiToken", "comfyApiKey", "elevenlabsApiKey"];
+export const USER_KEY_NAMES: readonly UserKeyName[] = [
+  "replicateApiToken",
+  "comfyApiKey",
+  "elevenlabsApiKey",
+  "runwareApiToken",
+];
 
 export const USER_KEY_LABELS: Record<UserKeyName, string> = {
   replicateApiToken: "Replicate API token",
   comfyApiKey: "Comfy API key",
   elevenlabsApiKey: "ElevenLabs API key",
+  runwareApiToken: "Runware API key",
 };
 
 /** `GET /auth/keys` response — whether each key is set, values never included. */

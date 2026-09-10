@@ -133,10 +133,16 @@ describe("getUserKeyStatus", () => {
       comfy_api_key_enc: "iv:cipher",
       replicate_api_token_enc: null,
       elevenlabs_api_key_enc: "iv:cipher2",
+      runware_api_token_enc: "iv:cipher3",
     });
     const e = env({ DB: db as never });
     const status = await getUserKeyStatus(e, "user-1");
-    expect(status).toEqual({ comfyApiKey: true, replicateApiToken: false, elevenlabsApiKey: true });
+    expect(status).toEqual({
+      comfyApiKey: true,
+      replicateApiToken: false,
+      elevenlabsApiKey: true,
+      runwareApiToken: true,
+    });
   });
 });
 

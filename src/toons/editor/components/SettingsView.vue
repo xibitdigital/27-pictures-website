@@ -11,6 +11,7 @@ const draft = reactive<Record<UserKeyName, string>>({
   replicateApiToken: "",
   comfyApiKey: "",
   elevenlabsApiKey: "",
+  runwareApiToken: "",
 });
 const savingKey = ref<UserKeyName | null>(null);
 
@@ -65,7 +66,8 @@ async function onClear(name: UserKeyName): Promise<void> {
             Optional — set your own key for a provider to use it instead of the shared one for your own generations.
             Leave a key unset and generation keeps working off the shared key. Keys are encrypted and never shown again
             once saved. For Replicate, paste the full <code>r8_</code> token shown once at creation — not the masked
-            list value, and not <code>Bearer …</code>. “Set” only means a value is stored.
+            list value, and not <code>Bearer …</code>. For Runware, paste the key from <code>runware.ai/api-keys</code>.
+            “Set” only means a value is stored.
           </p>
           <p v-if="loading" class="editor-muted">Loading…</p>
           <ul v-else class="editor-user-roster">
