@@ -65,12 +65,24 @@ function assertUniquePositions(pages: PageRow[]): void {
 
 function makeEnv(state: FakeState): Env {
   function exec(sql: string, args: unknown[]): void {
-    const setPosition = sql.match(/UPDATE pages SET position = \? WHERE id = \? AND toon_id = \?/);
-    if (setPosition) {
+    const setPositionWithToon = sql.match(/UPDATE pages SET position = \? WHERE id = \? AND toon_id = \?/);
+    if (setPositionWithToon) {
       const [position, pageId, toonId] = args as [number, string, string];
       const page = state.pages.find((p) => p.id === pageId && p.toon_id === toonId);
       if (page) page.position = position;
       assertUniquePositions(state.pages); // mirrors SQLite's immediate (non-deferred) UNIQUE check
+      return;
+    }
+    if (/^UPDATE pages SET position = \? WHERE id = \?$/.test(sql)) {
+      const [position, pageId] = args as [number, string];
+      const page = state.pages.find((p) => p.id === pageId);
+      if (page) page.position = position;
+      assertUniquePositions(state.pages);
+      return;
+    }
+    if (/^DELETE FROM pages WHERE id = \?$/.test(sql)) {
+      const [pageId] = args as [string];
+      state.pages = state.pages.filter((p) => p.id !== pageId);
       return;
     }
     if (/UPDATE toons SET updated_at/.test(sql)) return;
@@ -96,11 +108,22 @@ function makeEnv(state: FakeState): Env {
             if (/FROM toons WHERE id = \?/.test(sql)) {
               return (state.toons.find((t) => t.id === stmt.args[0]) || null) as unknown as T;
             }
+            if (/SELECT \* FROM pages WHERE id = \?/.test(sql)) {
+              return (state.pages.find((p) => p.id === stmt.args[0]) || null) as unknown as T;
+            }
             return null;
           },
           async all<T>() {
             if (/FROM bubbles/.test(sql)) return { results: [] as T[] };
             if (/FROM page_regions/.test(sql)) return { results: [] as T[] };
+            if (/SELECT id, position FROM pages WHERE toon_id = \? AND position > \?/.test(sql)) {
+              const [toonId, afterPos] = stmt.args as [string, number];
+              return {
+                results: state.pages
+                  .filter((p) => p.toon_id === toonId && p.position > afterPos)
+                  .map((p) => ({ id: p.id, position: p.position })) as T[],
+              };
+            }
             if (/SELECT id FROM pages WHERE toon_id = \?/.test(sql)) {
               return {
                 results: state.pages.filter((p) => p.toon_id === stmt.args[0]).map((p) => ({ id: p.id })) as T[],
@@ -208,6 +231,77 @@ describe("PATCH /toons/:id/pages/reorder", () => {
         method: "PATCH",
         body: JSON.stringify({ order: [] }),
       }),
+      env
+    );
+    expect(res.status).toBe(404);
+  });
+});
+
+describe("DELETE /pages/:id (position shift after that page's slot)", () => {
+  it("does not trip UNIQUE(toon_id, position) once drag-and-drop has decoupled row order from position order", async () => {
+    // p1/p2/p3 created in that order (their array order here stands in for row-visit/rowid order
+    // in real SQLite), then reordered via drag so positions no longer match that order — p3 is
+    // first (0), p1 last (2). This is exactly the shape the old single-statement
+    // "position = position - 1 WHERE position > ?" broke on: a naive engine visiting rows in
+    // creation order hits p1 (pos 2 -> 1) before p3 has vacated position 1... except p3 sits at
+    // position 0, so deleting p2 (position 1) and shifting position > 1 only touches p1 (2 -> 1),
+    // which is safe on its own — the real regression needs a longer chain, covered below.
+    const state: FakeState = {
+      toons: [sampleToon()],
+      pages: [
+        samplePage({ id: "p1", position: 2 }),
+        samplePage({ id: "p2", position: 1 }),
+        samplePage({ id: "p3", position: 0 }),
+      ],
+    };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/p2", "u1", { method: "DELETE" }),
+      env
+    );
+    expect(res.status).toBe(200);
+    expect(
+      state.pages.map((p) => ({ id: p.id, position: p.position })).sort((a, b) => a.position - b.position)
+    ).toEqual([
+      { id: "p3", position: 0 },
+      { id: "p1", position: 1 },
+    ]);
+  });
+
+  it("shifts a longer chain (4 pages, out-of-order rows) without a transient collision", async () => {
+    // Row/creation order p1..p4, positions after drag: p4=0, p1=1, p3=2, p2=3. Deleting the page
+    // at position 1 (p1) must shift p3 (2->1) and p2 (3->2). In creation-order row visitation
+    // (p1 already deleted, then p2, p3, p4 in that array order) a single bulk UPDATE would hit p2
+    // (3->2) before p3 has vacated 2 — the exact collision this test guards against.
+    const state: FakeState = {
+      toons: [sampleToon()],
+      pages: [
+        samplePage({ id: "p1", position: 1 }),
+        samplePage({ id: "p2", position: 3 }),
+        samplePage({ id: "p3", position: 2 }),
+        samplePage({ id: "p4", position: 0 }),
+      ],
+    };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/p1", "u1", { method: "DELETE" }),
+      env
+    );
+    expect(res.status).toBe(200);
+    const remaining = state.pages
+      .map((p) => ({ id: p.id, position: p.position }))
+      .sort((a, b) => a.position - b.position);
+    expect(remaining).toEqual([
+      { id: "p4", position: 0 },
+      { id: "p3", position: 1 },
+      { id: "p2", position: 2 },
+    ]);
+  });
+
+  it("404s for a page that does not exist", async () => {
+    const env = makeEnv({ toons: [sampleToon()], pages: [] });
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/missing", "u1", { method: "DELETE" }),
       env
     );
     expect(res.status).toBe(404);

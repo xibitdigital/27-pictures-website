@@ -1989,9 +1989,24 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       await env.DB.prepare("DELETE FROM bubbles WHERE page_id = ?").bind(page.id).run();
       await env.DB.prepare("DELETE FROM page_regions WHERE page_id = ?").bind(page.id).run();
       await env.DB.prepare("DELETE FROM pages WHERE id = ?").bind(page.id).run();
-      await env.DB.prepare("UPDATE pages SET position = position - 1 WHERE toon_id = ? AND position > ?")
-        .bind(page.toon_id, page.position)
-        .run();
+      // pages has UNIQUE(toon_id, position). A single bulk "position = position - 1" only stays
+      // collision-free if the engine happens to visit rows in ascending position order — true by
+      // coincidence back when position always matched insertion order, but not once drag-and-drop
+      // reordering (pages/reorder route above) can leave them diverged. Stage through a distinct
+      // negative position first, same technique as that route, so row-visit order can't matter.
+      const after = (
+        await env.DB.prepare("SELECT id, position FROM pages WHERE toon_id = ? AND position > ?")
+          .bind(page.toon_id, page.position)
+          .all<{ id: string; position: number }>()
+      ).results;
+      if (after.length) {
+        await env.DB.batch(
+          after.map((p) => env.DB.prepare("UPDATE pages SET position = ? WHERE id = ?").bind(-p.position, p.id))
+        );
+        await env.DB.batch(
+          after.map((p) => env.DB.prepare("UPDATE pages SET position = ? WHERE id = ?").bind(p.position - 1, p.id))
+        );
+      }
       await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(nowIso(), page.toon_id).run();
       return json({ ok: true }, 200, cors);
     }
