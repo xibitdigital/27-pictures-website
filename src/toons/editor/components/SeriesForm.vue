@@ -19,6 +19,7 @@ import {
   emptyDescriptionMap,
   GENERATE_PROVIDERS,
   parseDescriptionMap,
+  RUNWARE_MODELS,
   visibilityFromStatus,
   visibilityLabel,
   type DescriptionMap,
@@ -87,6 +88,11 @@ const plateWidth = ref("1152");
 const plateHeight = ref("1728");
 const model = ref("seedream 5.0 pro");
 const provider = ref<GenerateProvider>("comfy");
+watch(provider, (next, prev) => {
+  if (next === "runware" && prev !== "runware" && !RUNWARE_MODELS.some((m) => m.id === model.value)) {
+    model.value = RUNWARE_MODELS[0].id;
+  }
+});
 const slots = ref<SeriesFlowSlot[]>([]);
 const previewSlot = ref<SeriesFlowSlot | null>(null);
 const flowLabel = ref("");
@@ -374,7 +380,13 @@ async function onSubmit(ev: Event): Promise<void> {
             Plate height
             <input v-model="plateHeight" type="number" name="plate-height" min="1" step="1" />
           </label>
-          <label class="editor-form-span">
+          <label v-if="provider === 'runware'" class="editor-form-span">
+            Runware model
+            <EditorSelect v-model="model" name="generate-model" aria-label="Runware model">
+              <EditorSelectItem v-for="m in RUNWARE_MODELS" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
+            </EditorSelect>
+          </label>
+          <label v-else class="editor-form-span">
             Model
             <input v-model="model" name="generate-model" placeholder="seedream 5.0 pro" />
           </label>
@@ -385,7 +397,7 @@ async function onSubmit(ev: Event): Promise<void> {
               <EditorSelectItem value="flux">Flux (flux-2-pro, direct via BFL)</EditorSelectItem>
               <EditorSelectItem value="replicate-flux">Flux Kontext (via Replicate, max 2 refs)</EditorSelectItem>
               <EditorSelectItem value="replicate-seedream">Seedream (via Replicate)</EditorSelectItem>
-              <EditorSelectItem value="runware">Runware (model set above)</EditorSelectItem>
+              <EditorSelectItem value="runware">Runware (pick model above)</EditorSelectItem>
             </EditorSelect>
           </label>
           <p v-if="provider !== 'comfy'" class="editor-muted editor-form-span">
@@ -396,7 +408,7 @@ async function onSubmit(ev: Event): Promise<void> {
                   ? "Flux Kontext ignores the ComfyUI flow below. It only accepts 2 reference images — the first 2 included sheets/previous plate are sent, the rest are dropped."
                   : provider === "replicate-seedream"
                     ? "Seedream (Replicate) ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to Replicate."
-                    : "Runware ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate to whichever Runware model id is set in the Model field above (e.g. bfl:flux-1-kontext@pro)."
+                    : "Runware ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate to the Runware model picked above."
             }}
           </p>
           <div class="editor-form-span editor-generate">

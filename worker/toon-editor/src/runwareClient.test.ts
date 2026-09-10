@@ -23,7 +23,7 @@ describe("runwareSubmit", () => {
     const out = await runwareSubmit(env({}), {
       prompt: "Erin walks in.",
       images: [],
-      model: "bfl:flux-1-kontext@pro",
+      model: "bfl:3@1",
       width: 800,
       height: 1424,
     });
@@ -51,24 +51,24 @@ describe("runwareSubmit", () => {
     const out = await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
       prompt: "p",
       images: [],
-      model: "bfl:flux-1-kontext@pro",
+      model: "bfl:3@1",
     });
     expect(out).toEqual({ ok: false, error: "Runware needs a plate width and height" });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("posts an imageInference task array with a Bearer key and up to 8 reference images", async () => {
+  it("posts an imageInference task array with a Bearer key and caps refs at Flux Kontext's own limit (2)", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ data: [{ taskUUID: "task-1", status: "processing" }], errors: [] }), {
         status: 200,
       })
     );
     vi.stubGlobal("fetch", fetchMock);
-    const images = Array.from({ length: 9 }, (_, i) => `https://x/${i}.png`);
+    const images = Array.from({ length: 3 }, (_, i) => `https://x/${i}.png`);
     const out = await runwareSubmit(env({ RUNWARE_API_KEY: "rw_secret" }), {
       prompt: "Erin walks in.",
       images,
-      model: "bfl:flux-1-kontext@pro",
+      model: "bfl:3@1",
       width: 800,
       height: 1424,
     });
@@ -88,12 +88,33 @@ describe("runwareSubmit", () => {
     ];
     expect(body).toHaveLength(1);
     expect(body[0].taskType).toBe("imageInference");
-    expect(body[0].model).toBe("bfl:flux-1-kontext@pro");
+    expect(body[0].model).toBe("bfl:3@1");
     expect(body[0].positivePrompt).toBe("Erin walks in.");
     expect(body[0].width).toBe(800);
     expect(body[0].height).toBe(1424);
-    expect(body[0].referenceImages).toHaveLength(8);
-    expect(body[0].referenceImages).toEqual(images.slice(0, 8));
+    expect(body[0].referenceImages).toHaveLength(2);
+    expect(body[0].referenceImages).toEqual(images.slice(0, 2));
+  });
+
+  it("caps refs at Seedream 5.0 Pro's own limit (10)", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ data: [{ taskUUID: "task-1b" }], errors: [] }), { status: 200 })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const images = Array.from({ length: 11 }, (_, i) => `https://x/${i}.png`);
+    await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
+      prompt: "p",
+      images,
+      model: "bytedance:seedream@5.0-pro",
+      width: 800,
+      height: 1424,
+    });
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(String(init.body)) as [{ referenceImages: string[] }];
+    expect(body[0].referenceImages).toHaveLength(10);
+    expect(body[0].referenceImages).toEqual(images.slice(0, 10));
   });
 
   it("omits referenceImages entirely with no reference images", async () => {
@@ -123,7 +144,7 @@ describe("runwareSubmit", () => {
     const out = await runwareSubmit(env({ RUNWARE_API_KEY: "nope" }), {
       prompt: "p",
       images: [],
-      model: "bfl:flux-1-kontext@pro",
+      model: "bfl:3@1",
       width: 800,
       height: 1424,
     });
@@ -155,7 +176,7 @@ describe("runwareSubmit", () => {
     await runwareSubmit(env({ RUNWARE_API_KEY: "Bearer rw_secret" }), {
       prompt: "p",
       images: [],
-      model: "bfl:flux-1-kontext@pro",
+      model: "bfl:3@1",
       width: 800,
       height: 1424,
     });
@@ -172,7 +193,7 @@ describe("runwareSubmit", () => {
     const out = await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
       prompt: "p",
       images: [],
-      model: "bfl:flux-1-kontext@pro",
+      model: "bfl:3@1",
       width: 800,
       height: 1424,
     });

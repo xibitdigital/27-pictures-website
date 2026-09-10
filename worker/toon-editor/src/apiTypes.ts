@@ -186,6 +186,26 @@ export const GENERATE_PROVIDERS: readonly GenerateProvider[] = [
   "runware",
 ];
 
+/**
+ * Curated subset of Runware's model directory — the ones that take
+ * `referenceImages` for this reference-sheets pipeline. Runware's full
+ * catalog is huge and changes independently of this codebase; picking from
+ * this list (series form) keeps `generate.model` a verified AIR id instead
+ * of a free-text field someone can mistype. `maxReferenceImages` is each
+ * model's own documented cap — `runwareSubmit` truncates to it.
+ */
+export interface RunwareModel {
+  id: string;
+  label: string;
+  maxReferenceImages: number;
+}
+
+export const RUNWARE_MODELS: readonly RunwareModel[] = [
+  { id: "bfl:3@1", label: "Flux Kontext [pro] (via Runware, max 2 refs)", maxReferenceImages: 2 },
+  { id: "bfl:4@1", label: "Flux Kontext [max] (via Runware, max 2 refs)", maxReferenceImages: 2 },
+  { id: "bytedance:seedream@5.0-pro", label: "Seedream 5.0 Pro (via Runware, max 10 refs)", maxReferenceImages: 10 },
+];
+
 /** Any provider that skips the Comfy graph entirely and calls a hosted model directly with the prompt + reference sheets. */
 export function isDirectProvider(provider: GenerateProvider | string | null | undefined): boolean {
   return provider != null && provider !== "comfy";

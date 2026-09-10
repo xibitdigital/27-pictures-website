@@ -21,6 +21,7 @@ export type {
   RegionGeometry,
   RegionRecord,
   RegionShapeType,
+  RunwareModel,
   SeriesFlowSlot,
   SeriesGenerateConfig,
   SeriesInput,
@@ -41,6 +42,7 @@ export {
   isDirectProvider,
   parseDescriptionMap,
   pickDescription,
+  RUNWARE_MODELS,
   USER_KEY_LABELS,
   USER_KEY_NAMES,
 } from "../../../worker/toon-editor/src/apiTypes";

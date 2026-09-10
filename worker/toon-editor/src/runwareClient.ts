@@ -1,4 +1,5 @@
 import type { ComfyPhase } from "./comfyClient";
+import { RUNWARE_MODELS } from "./apiTypes";
 import type { Env } from "./types";
 import { normaliseUserSecret } from "./userKeys";
 
@@ -6,17 +7,21 @@ import { normaliseUserSecret } from "./userKeys";
  * Runware — https://runware.ai. One REST endpoint for every model on the
  * platform (`generate.provider === "runware"`): the request is a JSON array
  * of tasks, auth is a Bearer token, and the model to hit is the series'
- * free-text `generate.model` (e.g. "bfl:flux-1-kontext@pro") rather than a
- * kind this client hardcodes — Runware's model directory is large and
- * changes independently of this codebase, so pin it in the series form, not
- * here. Submitting and polling both hit the same base URL with a different
- * `taskType`; unlike Replicate there's no per-job "get" URL to remember, so
- * `runwareResult` takes the `taskUUID` submit returned instead of a full URL.
+ * `generate.model`, picked in the series form from `RUNWARE_MODELS`
+ * (apiTypes.ts) — Runware's model directory is large and changes
+ * independently of this codebase, so only the curated, verified subset is
+ * offered rather than free text. Submitting and polling both hit the same
+ * base URL with a different `taskType`; unlike Replicate there's no per-job
+ * "get" URL to remember, so `runwareResult` takes the `taskUUID` submit
+ * returned instead of a full URL.
  */
 const RUNWARE_BASE = "https://api.runware.ai/v1";
 
-/** referenceImages is documented as accepting at least one image with no stated ceiling; cap conservatively in line with the other providers' reference-sheet pipelines. */
-const MAX_REFS = 8;
+const DEFAULT_MAX_REFS = 2; // conservative fallback if generate.model isn't one of RUNWARE_MODELS
+
+function maxReferenceImages(model: string): number {
+  return RUNWARE_MODELS.find((m) => m.id === model)?.maxReferenceImages ?? DEFAULT_MAX_REFS;
+}
 
 export const RUNWARE_TOKEN_REJECTED =
   "Runware rejected the API key. Settings showing Set only means a value is stored — Clear it, paste a fresh key from runware.ai/api-keys, and Save.";
@@ -77,7 +82,7 @@ export async function runwareSubmit(
   if (!input.width || !input.height) return { ok: false, error: "Runware needs a plate width and height" };
 
   const taskUUID = crypto.randomUUID();
-  const refs = input.images.slice(0, MAX_REFS);
+  const refs = input.images.slice(0, maxReferenceImages(input.model.trim()));
   const task: Record<string, unknown> = {
     taskType: "imageInference",
     taskUUID,
