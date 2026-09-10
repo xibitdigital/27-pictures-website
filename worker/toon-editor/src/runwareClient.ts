@@ -23,6 +23,40 @@ function maxReferenceImages(model: string): number {
   return RUNWARE_MODELS.find((m) => m.id === model)?.maxReferenceImages ?? DEFAULT_MAX_REFS;
 }
 
+/**
+ * Runware rejects width×height outside [921600, 4624220] total pixels
+ * (`invalidPixels`) and requires both dimensions be multiples of 64 — a
+ * region fill (often well under 960×960) or a wide plate design otherwise
+ * 400s at submit. Scale to the nearest in-budget size on the requested
+ * aspect ratio, then round to the required step; the actual stored plate
+ * size still comes from the downloaded bytes (pollPageJob), not this.
+ */
+const MIN_PIXELS = 921600;
+const MAX_PIXELS = 4624220;
+const DIM_STEP = 64;
+
+function roundToStep(n: number): number {
+  return Math.max(DIM_STEP, Math.round(n / DIM_STEP) * DIM_STEP);
+}
+
+function clampToPixelBudget(width: number, height: number): { width: number; height: number } {
+  const total = width * height;
+  const scale =
+    total < MIN_PIXELS ? Math.sqrt(MIN_PIXELS / total) : total > MAX_PIXELS ? Math.sqrt(MAX_PIXELS / total) : 1;
+  let w = roundToStep(width * scale);
+  let h = roundToStep(height * scale);
+  // Rounding to the 64px step can tip a near-boundary size back out of budget — nudge back in.
+  for (let i = 0; i < 64 && w * h < MIN_PIXELS; i++) {
+    w += DIM_STEP;
+    h += DIM_STEP;
+  }
+  for (let i = 0; i < 64 && w * h > MAX_PIXELS && w > DIM_STEP && h > DIM_STEP; i++) {
+    w -= DIM_STEP;
+    h -= DIM_STEP;
+  }
+  return { width: w, height: h };
+}
+
 export const RUNWARE_TOKEN_REJECTED =
   "Runware rejected the API key. Settings showing Set only means a value is stored — Clear it, paste a fresh key from runware.ai/api-keys, and Save.";
 
@@ -83,13 +117,14 @@ export async function runwareSubmit(
 
   const taskUUID = crypto.randomUUID();
   const refs = input.images.slice(0, maxReferenceImages(input.model.trim()));
+  const { width, height } = clampToPixelBudget(input.width, input.height);
   const task: Record<string, unknown> = {
     taskType: "imageInference",
     taskUUID,
     model: input.model.trim(),
     positivePrompt: input.prompt,
-    width: input.width,
-    height: input.height,
+    width,
+    height,
     numberResults: 1,
   };
   if (refs.length) task.referenceImages = refs;

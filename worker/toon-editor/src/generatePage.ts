@@ -434,6 +434,21 @@ async function startReplicateGenerate(
 }
 
 /**
+ * Same "Image N = label" header the Comfy path stamps via
+ * promptWithImagePins (comfyFlow.ts), rebuilt positionally instead of from
+ * each slot's graph pin number — Runware (like Flux/Replicate) has no fixed
+ * LoadImage graph, and `excludeAliases` can drop a sheet per call, so the
+ * numbering here must match `referenceImages`' actual send order, not the
+ * series' configured slot order.
+ */
+function promptWithReferenceLegend(prompt: string, labels: string[]): string {
+  const trimmed = prompt.trim();
+  if (!trimmed || !labels.length) return trimmed;
+  const legend = labels.map((label, i) => `Image ${i + 1} = ${label}`).join("; ");
+  return `REFERENCE IMAGES (do not swap): ${legend}.\n\n${trimmed}`;
+}
+
+/**
  * Same reference-sheets pipeline as startFluxGenerate/startReplicateGenerate,
  * routed through Runware's single `imageInference` endpoint. Unlike the
  * Replicate providers there's no fixed kind/model per call — the series'
@@ -463,6 +478,7 @@ async function startRunwareGenerate(
 
   const excluded = new Set(input.excludeAliases || []);
   const images: string[] = [];
+  const imageLabels: string[] = [];
   for (const slot of generate.slots) {
     if (excluded.has(slot.alias)) continue;
     let key: string | null;
@@ -479,13 +495,14 @@ async function startRunwareGenerate(
       }
     }
     images.push(`${origin}/media/${key}`);
+    imageLabels.push(slot.label || slot.alias);
   }
 
   const count = input.pageId ? 1 : parseGenerateCount(input.count);
   const promptIds: string[] = [];
   for (let i = 0; i < count; i++) {
     const submitted = await runwareSubmit(env, {
-      prompt: input.prompt,
+      prompt: promptWithReferenceLegend(input.prompt, imageLabels),
       images,
       model: generate.model,
       width: targetWidth,

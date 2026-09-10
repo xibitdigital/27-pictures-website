@@ -176,6 +176,12 @@ function closeGenerateDialog(): void {
   generateTargetRegionId.value = null;
 }
 
+/** Generation errors can be long (a provider's raw rejection message) — surface them in a toast too, so they're copiable, not just the dialog's inline text. */
+function setGenerateError(message: string): void {
+  generateError.value = message;
+  pushToast(message);
+}
+
 async function onRegionGenerateSubmit(regionId: string, payload: GeneratePayload): Promise<void> {
   generateBusy.value = true;
   generateError.value = "";
@@ -206,15 +212,15 @@ async function onRegionGenerateSubmit(regionId: string, payload: GeneratePayload
         return;
       }
       if (snap.status === "error") {
-        generateError.value = snap.error || "Generate failed";
+        setGenerateError(snap.error || "Generate failed");
         return;
       }
       setStatus(snap.message || "Generating the image…");
       await new Promise((resolve) => window.setTimeout(resolve, 1500));
     }
-    generateError.value = "Timed out waiting for ComfyUI";
+    setGenerateError("Timed out waiting for ComfyUI");
   } catch (err) {
-    generateError.value = err instanceof Error ? err.message : "Generate failed";
+    setGenerateError(err instanceof Error ? err.message : "Generate failed");
   } finally {
     window.clearInterval(tick);
     generateBusy.value = false;
@@ -256,15 +262,15 @@ async function onGenerateSubmit(payload: GeneratePayload): Promise<void> {
         return;
       }
       if (snap.status === "error") {
-        generateError.value = snap.error || "Generate failed";
+        setGenerateError(snap.error || "Generate failed");
         return;
       }
       setStatus(snap.message || "Generating the plate…");
       await new Promise((resolve) => window.setTimeout(resolve, 1500));
     }
-    generateError.value = "Timed out waiting for ComfyUI";
+    setGenerateError("Timed out waiting for ComfyUI");
   } catch (err) {
-    generateError.value = err instanceof Error ? err.message : "Generate failed";
+    setGenerateError(err instanceof Error ? err.message : "Generate failed");
   } finally {
     window.clearInterval(tick);
     generateBusy.value = false;
