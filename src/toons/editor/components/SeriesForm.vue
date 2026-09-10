@@ -17,6 +17,7 @@ import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
 import {
   emptyDescriptionMap,
+  GENERATE_PROVIDERS,
   parseDescriptionMap,
   visibilityFromStatus,
   visibilityLabel,
