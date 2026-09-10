@@ -41,9 +41,16 @@ const count = ref("1");
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
-const isFlux = computed(() => props.generate?.provider === "flux");
+/** Any provider that skips the Comfy graph entirely and sends the prompt + reference sheets straight to a hosted model (BFL Flux, or either Replicate model). */
+const isDirectProvider = computed(
+  () =>
+    props.generate?.provider === "flux" ||
+    props.generate?.provider === "replicate-flux" ||
+    props.generate?.provider === "replicate-seedream"
+);
+const isFluxKontext = computed(() => props.generate?.provider === "replicate-flux");
 
-/** Flux only — sheets unchecked here are left out of the API call entirely (not just asked to be ignored), the reliable fix when two references (e.g. a doll and a character) are similar enough to bleed into each other. */
+/** Direct-provider only — sheets unchecked here are left out of the API call entirely (not just asked to be ignored), the reliable fix when two references (e.g. a doll and a character) are similar enough to bleed into each other. Flux Kontext (replicate-flux) only ever sends the first 2 included, so this is also how an operator picks which 2. */
 const excludedAliases = ref<Set<string>>(new Set());
 function isIncluded(alias: string): boolean {
   return !excludedAliases.value.has(alias);
@@ -56,6 +63,7 @@ function setIncluded(alias: string, included: boolean): void {
 }
 
 const fluxSheets = computed(() => (props.generate?.slots || []).filter((s) => s.kind === "sheet" && s.fileUrl));
+const includedRefCount = computed(() => fluxSheets.value.filter((s) => isIncluded(s.alias)).length);
 
 /**
  * Flux gets no fixed FORMAT/PIN prefix the way the Comfy graph does — every
@@ -67,9 +75,18 @@ const fluxSheets = computed(() => (props.generate?.slots || []).filter((s) => s.
  * only this reference-mapping scaffold; the scene/style description is
  * entirely up to whatever the operator types below it.
  */
+const providerLabel: Record<string, string> = {
+  flux: "flux-2-pro (BFL)",
+  "replicate-flux": "flux-kontext-apps/multi-image-kontext-pro (Replicate)",
+  "replicate-seedream": "bytedance/seedream-4 (Replicate)",
+};
+
 const fluxRefsPrefill = computed(() => {
-  if (!isFlux.value) return "";
-  const header = ["# model: flux-2-pro (BFL)", "# mode: image-to-image (multi-reference)"];
+  if (!isDirectProvider.value) return "";
+  const header = [
+    `# model: ${providerLabel[props.generate?.provider || ""] || "flux-2-pro (BFL)"}`,
+    "# mode: image-to-image (multi-reference)",
+  ];
   const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
   if (!sheets.length) return `${header.join("\n")}\n\n`;
   const refs = sheets.map((s, i) => `Image ${i + 1} = ${s.label || s.alias}`);
@@ -130,7 +147,7 @@ const missingPrevious = computed(
 );
 
 /** Comfy needs its uploaded Save-API graph; Flux never reads that graph at all. */
-const missingComfyFlow = computed(() => !isFlux.value && !props.generate?.flowKey);
+const missingComfyFlow = computed(() => !isDirectProvider.value && !props.generate?.flowKey);
 
 const canSubmit = computed(
   () =>
@@ -149,7 +166,7 @@ function onSubmit(): void {
     previousPageId: previousPageId.value || null,
     previousFile: previousFile.value,
     count: Number(count.value) || 1,
-    excludeAliases: isFlux.value ? [...excludedAliases.value] : [],
+    excludeAliases: isDirectProvider.value ? [...excludedAliases.value] : [],
   });
 }
 </script>
@@ -159,9 +176,13 @@ function onSubmit(): void {
     <form class="editor-dialog-form" @submit.prevent="onSubmit">
       <p class="editor-muted">
         {{
-          isFlux
+          generate?.provider === "flux"
             ? "Uses this series’ reference sheets via Flux."
-            : "Uses this series’ Comfy graph and reference sheets."
+            : generate?.provider === "replicate-flux"
+              ? "Uses up to 2 of this series’ reference sheets via Flux Kontext (Replicate)."
+              : generate?.provider === "replicate-seedream"
+                ? "Uses this series’ reference sheets via Seedream (Replicate)."
+                : "Uses this series’ Comfy graph and reference sheets."
         }}
       </p>
       <p v-if="missingComfyFlow" class="editor-error" role="alert">
@@ -256,6 +277,11 @@ function onSubmit(): void {
           <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
         </EditorSelect>
       </label>
+      <p v-if="isFluxKontext" class="editor-muted" role="status">
+        Flux Kontext sends at most 2 references — {{ includedRefCount }} included{{
+          includedRefCount > 2 ? " (only the first 2 will actually be sent)" : ""
+        }}.
+      </p>
       <ul v-if="generate?.slots.length" class="editor-dialog-slots">
         <li v-for="slot in generate.slots" :key="slot.alias">
           <span>{{
@@ -269,7 +295,7 @@ function onSubmit(): void {
                 : "skipped"
           }}</span>
           <EditorCheckbox
-            v-else-if="isFlux && slot.fileUrl"
+            v-else-if="isDirectProvider && slot.fileUrl"
             :checked="isIncluded(slot.alias)"
             :name="`include-${slot.alias}`"
             :disabled="busy"

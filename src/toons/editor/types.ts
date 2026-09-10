@@ -30,13 +30,19 @@ export type {
   ToonMetaInput,
   ToonRecord,
   ToonStatus,
+  UserKeyName,
+  UserKeyStatus,
   UserRole,
 } from "../../../worker/toon-editor/src/apiTypes";
 export {
   DESC_LANGS,
   emptyDescriptionMap,
+  GENERATE_PROVIDERS,
+  isDirectProvider,
   parseDescriptionMap,
   pickDescription,
+  USER_KEY_LABELS,
+  USER_KEY_NAMES,
 } from "../../../worker/toon-editor/src/apiTypes";
 
 import type { ToonStatus } from "../../../worker/toon-editor/src/apiTypes";

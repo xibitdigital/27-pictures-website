@@ -421,6 +421,11 @@ describe("emptyGenerate / parseGenerateConfig provider", () => {
     expect(parseGenerateConfig({ provider: "flux" }).provider).toBe("flux");
   });
 
+  it("parses the Replicate provider variants", () => {
+    expect(parseGenerateConfig({ provider: "replicate-flux" }).provider).toBe("replicate-flux");
+    expect(parseGenerateConfig({ provider: "replicate-seedream" }).provider).toBe("replicate-seedream");
+  });
+
   it("falls back to comfy for anything else", () => {
     expect(parseGenerateConfig({ provider: "midjourney" }).provider).toBe("comfy");
     expect(parseGenerateConfig({ provider: 3 }).provider).toBe("comfy");

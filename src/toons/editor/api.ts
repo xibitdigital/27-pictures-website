@@ -14,6 +14,8 @@ import type {
   ToonListItem,
   ToonMetaInput,
   ToonRecord,
+  UserKeyName,
+  UserKeyStatus,
 } from "./types";
 
 const TOKEN_KEY = "toon-editor-token";
@@ -141,6 +143,15 @@ export function removeUser(userId: string): Promise<{ ok: boolean }> {
 
 export function fetchCredits(): Promise<CreditsSnapshot> {
   return api<CreditsSnapshot>("/credits");
+}
+
+export function getUserKeys(): Promise<UserKeyStatus> {
+  return api<UserKeyStatus>("/auth/keys");
+}
+
+/** `value` empty/null clears the key back to the shared Worker secret. */
+export function saveUserKey(name: UserKeyName, value: string | null): Promise<UserKeyStatus> {
+  return api<UserKeyStatus>("/auth/keys", { method: "PUT", body: JSON.stringify({ name, value }) });
 }
 
 export async function logout(): Promise<void> {

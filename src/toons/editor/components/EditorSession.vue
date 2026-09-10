@@ -7,6 +7,7 @@ import {
   DropdownMenuRoot,
   DropdownMenuTrigger,
 } from "reka-ui";
+import { useRouter } from "vue-router";
 import { fetchCredits } from "../api";
 import { EDITOR_LOGOUT_KEY, EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
@@ -14,6 +15,7 @@ import type { CreditsSnapshot } from "../types";
 
 const userRef = inject(EDITOR_USER_KEY);
 const signOut = inject(EDITOR_LOGOUT_KEY);
+const router = useRouter();
 const email = computed(() => userRef?.value?.email ?? "");
 const initial = computed(() => (email.value ? email.value.slice(0, 1).toUpperCase() : "?"));
 const loading = ref(false);
@@ -76,6 +78,15 @@ async function onOpenChange(open: boolean): Promise<void> {
             <dd>{{ imageLine }}</dd>
           </div>
         </dl>
+        <DropdownMenuItem
+          as="button"
+          class="editor-btn editor-btn--ghost"
+          type="button"
+          name="settings"
+          @select="router.push('/settings')"
+        >
+          Settings
+        </DropdownMenuItem>
         <DropdownMenuItem
           v-if="signOut"
           as="button"

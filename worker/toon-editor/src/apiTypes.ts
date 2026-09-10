@@ -165,8 +165,26 @@ export interface PromptTarget {
   inputKey: string;
 }
 
-/** 'flux' only ever runs from a staging caller — index.ts forces 'comfy' otherwise, regardless of what a series stores. */
-export type GenerateProvider = "comfy" | "flux";
+/**
+ * 'flux' calls BFL directly (flux-2-pro). 'replicate-flux'/'replicate-seedream'
+ * call the same models via Replicate instead — same reference-sheets pipeline,
+ * different host/API shape (see replicateClient.ts). 'replicate-flux' (Flux
+ * Kontext's multi-image variant) only accepts 2 reference images, not the
+ * full sheet set — startReplicateGenerate picks the first 2 included refs.
+ */
+export type GenerateProvider = "comfy" | "flux" | "replicate-flux" | "replicate-seedream";
+
+export const GENERATE_PROVIDERS: readonly GenerateProvider[] = [
+  "comfy",
+  "flux",
+  "replicate-flux",
+  "replicate-seedream",
+];
+
+/** Any provider that skips the Comfy graph entirely and calls a hosted model directly with the prompt + reference sheets. */
+export function isDirectProvider(provider: GenerateProvider | string | null | undefined): boolean {
+  return provider != null && provider !== "comfy";
+}
 
 export interface SeriesGenerateConfig {
   width: number | null;
@@ -247,3 +265,23 @@ export interface InviteUserResult {
   user: EditorUser;
   emailSent: boolean;
 }
+
+/**
+ * Per-user API keys a signed-in user can set for themselves (Settings page,
+ * `GET`/`PUT /auth/keys`), overriding the shared Worker secret for their own
+ * generations — see `worker/toon-editor/src/userKeys.ts`. BFL (Flux direct)
+ * has no per-user proxying and is being dropped from this editor soon
+ * regardless, so it's not offered here.
+ */
+export type UserKeyName = "replicateApiToken" | "comfyApiKey" | "elevenlabsApiKey";
+
+export const USER_KEY_NAMES: readonly UserKeyName[] = ["replicateApiToken", "comfyApiKey", "elevenlabsApiKey"];
+
+export const USER_KEY_LABELS: Record<UserKeyName, string> = {
+  replicateApiToken: "Replicate API token",
+  comfyApiKey: "Comfy API key",
+  elevenlabsApiKey: "ElevenLabs API key",
+};
+
+/** `GET /auth/keys` response — whether each key is set, values never included. */
+export type UserKeyStatus = Record<UserKeyName, boolean>;

@@ -171,6 +171,10 @@ body {
   flex-shrink: 0;
 }
 
+.editor-key-input {
+  width: 14rem;
+}
+
 .editor-gate {
   max-width: 40rem;
   margin: 0 auto;

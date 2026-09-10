@@ -1,4 +1,10 @@
-import type { PromptCandidate, PromptTarget, SeriesFlowSlot, SeriesGenerateConfig } from "./apiTypes";
+import {
+  GENERATE_PROVIDERS,
+  type PromptCandidate,
+  type PromptTarget,
+  type SeriesFlowSlot,
+  type SeriesGenerateConfig,
+} from "./apiTypes";
 
 const SEEDREAM = new Set(["ByteDanceSeedreamNodeV3", "ByteDanceSeedreamNode"]);
 const MAX_REFS = 10;
@@ -362,7 +368,10 @@ export function parseGenerateConfig(raw: unknown): SeriesGenerateConfig {
   out.width = Number.isFinite(width) && width > 0 ? Math.round(width) : null;
   out.height = Number.isFinite(height) && height > 0 ? Math.round(height) : null;
   out.model = typeof rec.model === "string" ? rec.model.trim() : "";
-  out.provider = rec.provider === "flux" ? "flux" : "comfy";
+  out.provider =
+    typeof rec.provider === "string" && (GENERATE_PROVIDERS as readonly string[]).includes(rec.provider)
+      ? (rec.provider as SeriesGenerateConfig["provider"])
+      : "comfy";
   out.flowKey = typeof rec.flowKey === "string" && rec.flowKey.trim() ? rec.flowKey.trim() : null;
   if (Array.isArray(rec.slots)) {
     out.slots = rec.slots

@@ -49,6 +49,9 @@ export interface Env {
   COMFY_URL?: string;
   COMFY_API_KEY?: string;
   BFL_API_KEY?: string;
+  REPLICATE_API_TOKEN?: string;
+  /** AES-256-GCM key (base64, 32 raw bytes) for per-user API key encryption — see userKeys.ts. */
+  KEYS_ENCRYPTION_KEY?: string;
   RESEND_API_KEY?: string;
   FROM_EMAIL?: string;
   FROM_NAME?: string;

@@ -162,7 +162,7 @@ function applyGenerate(series: SeriesOption): void {
   plateWidth.value = generate?.width != null ? String(generate.width) : plateWidth.value;
   plateHeight.value = generate?.height != null ? String(generate.height) : plateHeight.value;
   model.value = generate?.model || model.value;
-  provider.value = generate?.provider === "flux" ? "flux" : "comfy";
+  provider.value = generate?.provider && GENERATE_PROVIDERS.includes(generate.provider) ? generate.provider : "comfy";
   slots.value = (generate?.slots || []).map((slot) => ({ ...slot }));
   const key = generate?.flowKey || "";
   flowLabel.value = key ? key.split("/").pop() || "uploaded" : "";
@@ -381,12 +381,19 @@ async function onSubmit(ev: Event): Promise<void> {
             Generation provider
             <EditorSelect v-model="provider" name="generate-provider" aria-label="Generation provider">
               <EditorSelectItem value="comfy">ComfyUI</EditorSelectItem>
-              <EditorSelectItem value="flux">Flux (flux-2-pro)</EditorSelectItem>
+              <EditorSelectItem value="flux">Flux (flux-2-pro, direct via BFL)</EditorSelectItem>
+              <EditorSelectItem value="replicate-flux">Flux Kontext (via Replicate, max 2 refs)</EditorSelectItem>
+              <EditorSelectItem value="replicate-seedream">Seedream (via Replicate)</EditorSelectItem>
             </EditorSelect>
           </label>
-          <p v-if="provider === 'flux'" class="editor-muted editor-form-span">
-            Flux ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight
-            to flux-2-pro.
+          <p v-if="provider !== 'comfy'" class="editor-muted editor-form-span">
+            {{
+              provider === "flux"
+                ? "Flux ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to flux-2-pro."
+                : provider === "replicate-flux"
+                  ? "Flux Kontext ignores the ComfyUI flow below. It only accepts 2 reference images — the first 2 included sheets/previous plate are sent, the rest are dropped."
+                  : "Seedream (Replicate) ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to Replicate."
+            }}
           </p>
           <div class="editor-form-span editor-generate">
             <p class="editor-generate-label">ComfyUI flow</p>

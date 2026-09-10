@@ -37,6 +37,7 @@ import {
 } from "./generatePage";
 import { comfyPhaseMessage } from "./comfyClient";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
+import { effectiveEnv, getUserKeyStatus, isUserKeyName, saveUserKey } from "./userKeys";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { toWebp } from "./imageOptimize";
 import { sendInviteEmail, sendPasswordResetEmail } from "./inviteEmail";
@@ -1014,6 +1015,28 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json(await loadUserCredits(env, session.id), 200, cors);
   }
 
+  if (isMethod(method, "GET") && path === "/auth/keys") {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
+    return json(await getUserKeyStatus(env, session.id), 200, cors);
+  }
+
+  if (isMethod(method, "PUT") && path === "/auth/keys") {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const name = parsed.body.name;
+    if (!isUserKeyName(name)) return json({ error: "unknown key name" }, 400, cors);
+    const value = parsed.body.value;
+    if (value != null && typeof value !== "string") return json({ error: "value must be a string" }, 400, cors);
+    if (typeof value === "string" && value.length > 500) return json({ error: "value too long" }, 400, cors);
+    try {
+      await saveUserKey(env, session.id, name, value ?? null);
+    } catch (err) {
+      return json({ error: err instanceof Error ? err.message : "could not save key" }, 500, cors);
+    }
+    return json(await getUserKeyStatus(env, session.id), 200, cors);
+  }
+
   if (isMethod(method, "POST") && path === "/translate") {
     if (!session) return json({ error: "unauthorized" }, 401, cors);
     const parsed = await readJson(request);
@@ -1033,7 +1056,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!toon) return json({ error: "not found" }, 404, cors);
     const polled =
       job.status === "running"
-        ? await pollPageJob(env, job, toon)
+        ? await pollPageJob(await effectiveEnv(env, job.created_by), job, toon)
         : { ok: true as const, job, phase: job.status === "done" ? ("done" as const) : null };
     if (!polled.ok) return json({ error: polled.error }, polled.status, cors);
     if (polled.job.status === "done" && job.status !== "done" && session) {
@@ -1769,7 +1792,8 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const id = audioGenerateMatch[1];
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
-    const apiKey = env.ELEVENLABS_API_KEY?.trim();
+    const audioEnv = await effectiveEnv(env, session?.id);
+    const apiKey = audioEnv.ELEVENLABS_API_KEY?.trim();
     if (!apiKey) return json({ error: "ElevenLabs is not configured" }, 503, cors);
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
@@ -1833,7 +1857,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       }
       previousOverride = { bytes, type: resolved.type };
     }
-    const started = await startPageGenerate(env, {
+    const started = await startPageGenerate(await effectiveEnv(env, session?.id), {
       toon: current,
       series,
       prompt,
@@ -1844,6 +1868,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       count: Number(form.get("count") || 1),
       workerOrigin: new URL(request.url).origin,
       excludeAliases: parseExcludeAliases(form),
+      createdBy: session?.id || null,
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
     return json(
@@ -2029,7 +2054,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     }
     const regionGeometry = parseRegionGeometry(row.geometry_json, row.shape_type);
     const regionSize = regionPixelSize(regionGeometry, toon.design_width, toon.design_height);
-    const started = await startPageGenerate(env, {
+    const started = await startPageGenerate(await effectiveEnv(env, session?.id), {
       toon,
       series,
       prompt,
@@ -2043,6 +2068,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       regionId: row.id,
       workerOrigin: new URL(request.url).origin,
       excludeAliases: parseExcludeAliases(form),
+      createdBy: session?.id || null,
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
     return json(

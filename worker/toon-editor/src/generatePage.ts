@@ -24,6 +24,7 @@ import type { SeriesGenerateConfig } from "./apiTypes";
 import { insertCreditEvent } from "./creditUsage";
 import { fluxDownload, fluxResult, fluxSubmit } from "./fluxClient";
 import { toWebp, webpDimensions } from "./imageOptimize";
+import { replicateDownload, replicateResult, replicateSubmit, type ReplicateKind } from "./replicateClient";
 import type { Env, SeriesRow, ToonRow } from "./types";
 
 export type GenerationJob = {
@@ -39,6 +40,8 @@ export type GenerationJob = {
   error: string | null;
   result_page_id: string | null;
   comfy_prompt_id: string | null;
+  /** Who started this job — pollPageJob resolves this user's saved API keys (userKeys.ts) so a later poll (possibly by someone else viewing the same toon) still uses the key the job was actually submitted with. */
+  created_by: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -96,6 +99,8 @@ export async function startPageGenerate(
      */
     targetWidth?: number;
     targetHeight?: number;
+    /** The user who started this job — stored on the row so a later poll resolves the same saved API keys (see GenerationJob.created_by). */
+    createdBy?: string | null;
   }
 ): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
   let extra: { generate?: unknown } = {};
@@ -108,6 +113,9 @@ export async function startPageGenerate(
   const targetWidth = input.targetWidth ?? generate.width;
   const targetHeight = input.targetHeight ?? generate.height;
   if (generate.provider === "flux") return startFluxGenerate(env, input, generate);
+  if (generate.provider === "replicate-flux" || generate.provider === "replicate-seedream") {
+    return startReplicateGenerate(env, input, generate, generate.provider);
+  }
   if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
   if (!generate.flowKey) return { ok: false, error: "series has no Comfy flow", status: 400 };
   const flowBytes = await getObject(env, generate.flowKey);
@@ -184,8 +192,8 @@ export async function startPageGenerate(
   const ts = nowIso();
   const regionId = input.regionId || null;
   await env.DB.prepare(
-    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, provider, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, 'comfy', 'running', ?, ?, NULL, NULL, ?, ?, ?)`
+    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, provider, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_by, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 'comfy', 'running', ?, ?, NULL, NULL, ?, ?, ?, ?)`
   )
     .bind(
       id,
@@ -205,6 +213,7 @@ export async function startPageGenerate(
         promptIds,
       }),
       promptIds[0],
+      input.createdBy || null,
       ts,
       ts
     )
@@ -294,8 +303,8 @@ async function startFluxGenerate(
   const ts = nowIso();
   const regionId = input.regionId || null;
   await env.DB.prepare(
-    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, provider, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, 'flux', 'running', ?, ?, NULL, NULL, ?, ?, ?)`
+    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, provider, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_by, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 'flux', 'running', ?, ?, NULL, NULL, ?, ?, ?, ?)`
   )
     .bind(
       id,
@@ -313,6 +322,106 @@ async function startFluxGenerate(
         promptIds,
       }),
       promptIds[0],
+      input.createdBy || null,
+      ts,
+      ts
+    )
+    .run();
+  const job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?").bind(id).first<GenerationJob>();
+  if (!job) return { ok: false, error: "could not create job", status: 500 };
+  return { ok: true, job };
+}
+
+/**
+ * Same reference-sheets pipeline as startFluxGenerate, routed through
+ * Replicate instead of BFL directly. "replicate-flux" (Flux Kontext's
+ * multi-image variant) only accepts 2 reference images — replicateSubmit
+ * itself caps the list, so the truncation always picks the first 2
+ * non-excluded slots in series-config order (typically identity + previous
+ * page); "replicate-seedream" keeps the same 8-image cap the other
+ * providers use.
+ */
+async function startReplicateGenerate(
+  env: Env,
+  input: Parameters<typeof startPageGenerate>[1],
+  generate: SeriesGenerateConfig,
+  kind: ReplicateKind
+): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
+  const origin = (input.workerOrigin || "").replace(/\/$/, "");
+  if (!origin) return { ok: false, error: "missing worker origin for Replicate reference URLs", status: 500 };
+  const targetWidth = input.targetWidth ?? generate.width;
+  const targetHeight = input.targetHeight ?? generate.height;
+
+  const pages = (
+    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(input.toon.id).all<{
+      id: string;
+      file_key: string;
+    }>()
+  ).results;
+  let previousKey: string | null = null;
+  if (input.previousPageId) {
+    previousKey = pages.find((p) => p.id === input.previousPageId)?.file_key || null;
+  }
+
+  const excluded = new Set(input.excludeAliases || []);
+  const images: string[] = [];
+  for (const slot of generate.slots) {
+    if (excluded.has(slot.alias)) continue;
+    let key: string | null;
+    if (slot.kind === "previous" && input.previousOverride) {
+      key = await putRefAsset(env, input.toon.slug, input.previousOverride.bytes, input.previousOverride.type);
+    } else if (slot.kind === "previous") {
+      key = previousKey;
+      if (!key) continue;
+    } else {
+      key = slot.fileKey || null;
+      if (!key) {
+        if (slot.optional) continue;
+        return { ok: false, error: `missing reference: ${slot.label || slot.alias}`, status: 400 };
+      }
+    }
+    images.push(`${origin}/media/${key}`);
+  }
+
+  const count = input.pageId ? 1 : parseGenerateCount(input.count);
+  const promptIds: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const submitted = await replicateSubmit(env, kind, {
+      prompt: input.prompt,
+      images,
+      width: targetWidth,
+      height: targetHeight,
+    });
+    if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
+    // Stored (and later polled) as the full polling URL (urls.get), not the bare id.
+    promptIds.push(submitted.pollingUrl);
+  }
+
+  const id = crypto.randomUUID();
+  const ts = nowIso();
+  const regionId = input.regionId || null;
+  await env.DB.prepare(
+    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, provider, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_by, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, 'running', ?, ?, NULL, NULL, ?, ?, ?, ?)`
+  )
+    .bind(
+      id,
+      regionId ? "region" : "page",
+      input.toon.id,
+      input.pageId,
+      regionId,
+      kind,
+      input.prompt,
+      JSON.stringify({
+        includePrevious: input.includePrevious,
+        previousPageId: input.previousPageId || null,
+        width: targetWidth,
+        height: targetHeight,
+        count,
+        promptIds,
+      }),
+      promptIds[0],
+      input.createdBy || null,
       ts,
       ts
     )
@@ -393,12 +502,13 @@ export async function pollPageJob(
   }
 
   const isFlux = job.provider === "flux";
-  const outputs: (ComfyHistoryImage | string)[] = []; // string = Flux's signed sample URL
+  const isReplicate = job.provider === "replicate-flux" || job.provider === "replicate-seedream";
+  const outputs: (ComfyHistoryImage | string)[] = []; // string = Flux/Replicate's signed output URL
   let phase: ComfyPhase | null = null;
   for (const promptId of promptIds) {
-    if (isFlux) {
-      // For Flux, promptId is actually the full pollingUrl stored at submit time.
-      const result = await fluxResult(env, promptId);
+    if (isFlux || isReplicate) {
+      // For Flux/Replicate, promptId is actually the full polling URL stored at submit time.
+      const result = isFlux ? await fluxResult(env, promptId) : await replicateResult(env, promptId);
       if (!result.ok) {
         await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
           .bind(result.error, nowIso(), job.id)
@@ -462,6 +572,25 @@ export async function pollPageJob(
       });
       const dims = webpDimensions(downloaded.bytes);
       plates.push({ fileKey, width: dims?.width ?? requested.width, height: dims?.height ?? requested.height });
+      continue;
+    }
+    if (isReplicate) {
+      const downloaded = await replicateDownload(image as string);
+      if (!downloaded.ok) {
+        await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
+          .bind(downloaded.error, nowIso(), job.id)
+          .run();
+        return { ok: true, job: { ...job, status: "error", error: downloaded.error }, phase: "error" };
+      }
+      // Unlike Flux (always webp), Replicate's own output format isn't pinned here —
+      // route through putPlate() same as the Comfy path, which sniffs the real bytes
+      // and re-encodes to webp only if they aren't already.
+      const stored = await putPlate(env, toon, downloaded.bytes);
+      plates.push({
+        fileKey: stored.fileKey,
+        width: stored.width ?? requested.width,
+        height: stored.height ?? requested.height,
+      });
       continue;
     }
     const viewed = await comfyView(env, image as ComfyHistoryImage);
