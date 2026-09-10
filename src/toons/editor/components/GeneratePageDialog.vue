@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { LoaderCircle } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
-import type { PageRecord, SeriesGenerateConfig } from "../types";
+import { isDirectProvider as isDirectProviderName, type PageRecord, type SeriesGenerateConfig } from "../types";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
@@ -40,13 +40,8 @@ const count = ref("1");
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
-/** Any provider that skips the Comfy graph entirely and sends the prompt + reference sheets straight to a hosted model (BFL Flux, or either Replicate model). */
-const isDirectProvider = computed(
-  () =>
-    props.generate?.provider === "flux" ||
-    props.generate?.provider === "replicate-flux" ||
-    props.generate?.provider === "replicate-seedream"
-);
+/** Any provider that skips the Comfy graph entirely and sends the prompt + reference sheets straight to a hosted model (BFL Flux, Replicate, or Runware). Shared with the Worker contract (apiTypes.ts) so a new provider can't silently fall through to the Comfy-only copy/warning below. */
+const isDirectProvider = computed(() => isDirectProviderName(props.generate?.provider));
 const isFluxKontext = computed(() => props.generate?.provider === "replicate-flux");
 
 /** Direct-provider only — sheets unchecked here are left out of the API call entirely (not just asked to be ignored), the reliable fix when two references (e.g. a doll and a character) are similar enough to bleed into each other. Flux Kontext (replicate-flux) only ever sends the first 2 included, so this is also how an operator picks which 2. */
@@ -181,7 +176,9 @@ function onSubmit(): void {
               ? "Uses up to 2 of this series’ reference sheets via Flux Kontext (Replicate)."
               : generate?.provider === "replicate-seedream"
                 ? "Uses this series’ reference sheets via Seedream (Replicate)."
-                : "Uses this series’ Comfy graph and reference sheets."
+                : generate?.provider === "runware"
+                  ? "Uses this series’ reference sheets via Runware."
+                  : "Uses this series’ Comfy graph and reference sheets."
         }}
       </p>
       <p v-if="missingComfyFlow" class="editor-error" role="alert">

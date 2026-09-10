@@ -346,3 +346,36 @@ describe("GeneratePageDialog Flux provider", () => {
     wrapper.unmount();
   });
 });
+
+describe("GeneratePageDialog Runware provider", () => {
+  const runwareGenerate = {
+    width: 1152,
+    height: 1728,
+    model: "bytedance:seedream@5.0-pro",
+    provider: "runware",
+    // Runware never reads the Comfy Save-API graph — no flowKey/flowUrl at all.
+    flowKey: null,
+    flowUrl: null,
+    slots: [
+      { alias: "erin", label: "Erin character sheet", kind: "sheet", fileKey: "erin.webp", fileUrl: "/erin.webp" },
+    ],
+  };
+
+  it("does not require a Comfy flow to submit, and never shows the Comfy copy, when the series is set to Runware", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: true, generate: runwareGenerate, pages: [], busy: false, status: "" },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    expect(document.body.textContent).not.toContain("Upload a Comfy Save-API graph");
+    expect(document.body.textContent).not.toContain("Comfy graph");
+    expect(document.body.textContent).toContain("via Runware");
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "A close-up.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(submitBtn.disabled).toBe(false);
+    wrapper.unmount();
+  });
+});
