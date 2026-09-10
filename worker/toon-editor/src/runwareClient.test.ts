@@ -57,7 +57,7 @@ describe("runwareSubmit", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("posts an imageInference task array with a Bearer key and caps refs at Flux Kontext's own limit (2)", async () => {
+  it("posts an imageInference task array with a Bearer key, snapping Flux Kontext to its nearest fixed pair", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ data: [{ taskUUID: "task-1", status: "processing" }], errors: [] }), {
         status: 200,
@@ -90,14 +90,14 @@ describe("runwareSubmit", () => {
     expect(body[0].taskType).toBe("imageInference");
     expect(body[0].model).toBe("bfl:3@1");
     expect(body[0].positivePrompt).toBe("Erin walks in.");
-    // 800x1424 isn't a multiple of 64 — rounded to the nearest step.
-    expect(body[0].width).toBe(832);
-    expect(body[0].height).toBe(1408);
+    // Flux Kontext (via Runware) only accepts 9 fixed pairs — 800x1424 isn't one, nearest by aspect is 752x1392.
+    expect(body[0].width).toBe(752);
+    expect(body[0].height).toBe(1392);
     expect(body[0].referenceImages).toHaveLength(2);
     expect(body[0].referenceImages).toEqual(images.slice(0, 2));
   });
 
-  it("scales a too-small size (e.g. a region fill) up into Runware's pixel budget, in steps of 64", async () => {
+  it("snaps Flux Kontext to an exact fixed-pair match when the requested aspect ratio hits one", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue(new Response(JSON.stringify({ data: [{ taskUUID: "task-4" }], errors: [] }), { status: 200 }));
@@ -106,21 +106,16 @@ describe("runwareSubmit", () => {
       prompt: "p",
       images: [],
       model: "bfl:3@1",
-      width: 400,
+      width: 400, // 2:3, same ratio as the 832x1248 fixed pair
       height: 600,
     });
     const body = JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body)) as [
       { width: number; height: number },
     ];
-    const { width, height } = body[0];
-    expect(width % 64).toBe(0);
-    expect(height % 64).toBe(0);
-    expect(width * height).toBeGreaterThanOrEqual(921600);
-    expect(width * height).toBeLessThanOrEqual(4624220);
-    expect(width / height).toBeCloseTo(400 / 600, 1); // aspect preserved
+    expect(body[0]).toMatchObject({ width: 832, height: 1248 });
   });
 
-  it("scales a too-large size down into Runware's pixel budget", async () => {
+  it("snaps Flux Kontext to the square pair for a square request", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue(new Response(JSON.stringify({ data: [{ taskUUID: "task-5" }], errors: [] }), { status: 200 }));
@@ -135,13 +130,10 @@ describe("runwareSubmit", () => {
     const body = JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body)) as [
       { width: number; height: number },
     ];
-    const { width, height } = body[0];
-    expect(width % 64).toBe(0);
-    expect(height % 64).toBe(0);
-    expect(width * height).toBeLessThanOrEqual(4624220);
+    expect(body[0]).toMatchObject({ width: 1024, height: 1024 });
   });
 
-  it("leaves an in-budget size effectively unchanged (rounded to the 64px step)", async () => {
+  it("leaves an in-budget Seedream size unchanged — no fixed pairs, no forced step", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue(new Response(JSON.stringify({ data: [{ taskUUID: "task-6" }], errors: [] }), { status: 200 }));
@@ -149,15 +141,34 @@ describe("runwareSubmit", () => {
     await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
       prompt: "p",
       images: [],
-      model: "bfl:3@1",
-      width: 1152,
-      height: 1728,
+      model: "bytedance:seedream@5.0-pro",
+      width: 800,
+      height: 1424,
     });
     const body = JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body)) as [
       { width: number; height: number },
     ];
-    expect(body[0].width).toBe(1152);
-    expect(body[0].height).toBe(1728);
+    expect(body[0]).toMatchObject({ width: 800, height: 1424 });
+  });
+
+  it("scales a too-small Seedream size (e.g. a region fill) up into its documented pixel budget", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ data: [{ taskUUID: "task-7" }], errors: [] }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
+      prompt: "p",
+      images: [],
+      model: "bytedance:seedream@5.0-pro",
+      width: 400,
+      height: 600,
+    });
+    const body = JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body)) as [
+      { width: number; height: number },
+    ];
+    const { width, height } = body[0];
+    expect(width * height).toBeGreaterThanOrEqual(921600);
+    expect(width / height).toBeCloseTo(400 / 600, 2); // aspect preserved
   });
 
   it("caps refs at Seedream 5.0 Pro's own limit (10)", async () => {

@@ -187,23 +187,69 @@ export const GENERATE_PROVIDERS: readonly GenerateProvider[] = [
 ];
 
 /**
+ * Each Runware model's own documented width/height contract — verified
+ * against its docs page, not assumed generic across the platform. The Flux
+ * Kontext models (runware.ai/docs/models/bfl-flux-1-kontext-{pro,max}) only
+ * accept one of a fixed set of 9 pairs, not arbitrary width/height — sending
+ * anything else 400s. Seedream 5.0 Pro
+ * (runware.ai/docs/models/bytedance-seedream-5-0-pro) instead documents a
+ * continuous area/side range ("any combination accepted within these
+ * bounds") with no divisibility requirement.
+ */
+export type RunwareDimensions =
+  | { kind: "fixed"; pairs: readonly (readonly [number, number])[] }
+  | { kind: "range"; minPixels: number; maxPixels: number; minSide: number; maxSide: number };
+
+const FLUX_KONTEXT_DIMENSIONS: RunwareDimensions = {
+  kind: "fixed",
+  pairs: [
+    [1568, 672],
+    [1392, 752],
+    [1184, 880],
+    [1248, 832],
+    [1024, 1024],
+    [832, 1248],
+    [880, 1184],
+    [752, 1392],
+    [672, 1568],
+  ],
+};
+
+/**
  * Curated subset of Runware's model directory — the ones that take
  * `referenceImages` for this reference-sheets pipeline. Runware's full
  * catalog is huge and changes independently of this codebase; picking from
  * this list (series form) keeps `generate.model` a verified AIR id instead
- * of a free-text field someone can mistype. `maxReferenceImages` is each
- * model's own documented cap — `runwareSubmit` truncates to it.
+ * of a free-text field someone can mistype. `maxReferenceImages` and
+ * `dimensions` are each model's own documented limits — `runwareSubmit`
+ * truncates/reshapes the request to fit them.
  */
 export interface RunwareModel {
   id: string;
   label: string;
   maxReferenceImages: number;
+  dimensions: RunwareDimensions;
 }
 
 export const RUNWARE_MODELS: readonly RunwareModel[] = [
-  { id: "bfl:3@1", label: "Flux Kontext [pro] (via Runware, max 2 refs)", maxReferenceImages: 2 },
-  { id: "bfl:4@1", label: "Flux Kontext [max] (via Runware, max 2 refs)", maxReferenceImages: 2 },
-  { id: "bytedance:seedream@5.0-pro", label: "Seedream 5.0 Pro (via Runware, max 10 refs)", maxReferenceImages: 10 },
+  {
+    id: "bfl:3@1",
+    label: "Flux Kontext [pro] (via Runware, max 2 refs, fixed sizes)",
+    maxReferenceImages: 2,
+    dimensions: FLUX_KONTEXT_DIMENSIONS,
+  },
+  {
+    id: "bfl:4@1",
+    label: "Flux Kontext [max] (via Runware, max 2 refs, fixed sizes)",
+    maxReferenceImages: 2,
+    dimensions: FLUX_KONTEXT_DIMENSIONS,
+  },
+  {
+    id: "bytedance:seedream@5.0-pro",
+    label: "Seedream 5.0 Pro (via Runware, max 10 refs)",
+    maxReferenceImages: 10,
+    dimensions: { kind: "range", minPixels: 921600, maxPixels: 4624220, minSide: 256, maxSide: 16383 },
+  },
 ];
 
 /** Any provider that skips the Comfy graph entirely and calls a hosted model directly with the prompt + reference sheets. */

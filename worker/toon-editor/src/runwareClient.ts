@@ -1,5 +1,5 @@
 import type { ComfyPhase } from "./comfyClient";
-import { RUNWARE_MODELS } from "./apiTypes";
+import { RUNWARE_MODELS, type RunwareDimensions } from "./apiTypes";
 import type { Env } from "./types";
 import { normaliseUserSecret } from "./userKeys";
 
@@ -18,43 +18,60 @@ import { normaliseUserSecret } from "./userKeys";
 const RUNWARE_BASE = "https://api.runware.ai/v1";
 
 const DEFAULT_MAX_REFS = 2; // conservative fallback if generate.model isn't one of RUNWARE_MODELS
+// Same bounds Seedream 5.0 Pro documents (confirmed against its own `invalidPixels` error) — used
+// only as a fallback for a model id that isn't in RUNWARE_MODELS (stale series config).
+const DEFAULT_DIMENSIONS: RunwareDimensions = {
+  kind: "range",
+  minPixels: 921600,
+  maxPixels: 4624220,
+  minSide: 256,
+  maxSide: 16383,
+};
+
+function modelConfig(model: string) {
+  return RUNWARE_MODELS.find((m) => m.id === model);
+}
 
 function maxReferenceImages(model: string): number {
-  return RUNWARE_MODELS.find((m) => m.id === model)?.maxReferenceImages ?? DEFAULT_MAX_REFS;
+  return modelConfig(model)?.maxReferenceImages ?? DEFAULT_MAX_REFS;
+}
+
+/** Nearest of a fixed pair list by aspect ratio (log scale, same technique as replicateClient's nearestAspectRatio). */
+function nearestFixedPair(pairs: readonly (readonly [number, number])[], width: number, height: number) {
+  const target = Math.log(width / height);
+  let best = pairs[0];
+  let bestDiff = Infinity;
+  for (const pair of pairs) {
+    const diff = Math.abs(Math.log(pair[0] / pair[1]) - target);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      best = pair;
+    }
+  }
+  return { width: best[0], height: best[1] };
 }
 
 /**
- * Runware rejects width×height outside [921600, 4624220] total pixels
- * (`invalidPixels`) and requires both dimensions be multiples of 64 — a
- * region fill (often well under 960×960) or a wide plate design otherwise
- * 400s at submit. Scale to the nearest in-budget size on the requested
- * aspect ratio, then round to the required step; the actual stored plate
- * size still comes from the downloaded bytes (pollPageJob), not this.
+ * Fits the requested size to whichever dimension contract the model
+ * documents (apiTypes.ts's RunwareModel.dimensions): a fixed model (Flux
+ * Kontext) only accepts one of a handful of exact pairs, so pick the
+ * closest by aspect ratio; a ranged model (Seedream) accepts any integer
+ * size within an area/side budget, so scale onto it instead. Sending a size
+ * outside either contract is Runware's `invalidPixels`/`invalidDimensions`
+ * 400 — the actual stored plate size still comes from the downloaded bytes
+ * (pollPageJob), not this.
  */
-const MIN_PIXELS = 921600;
-const MAX_PIXELS = 4624220;
-const DIM_STEP = 64;
-
-function roundToStep(n: number): number {
-  return Math.max(DIM_STEP, Math.round(n / DIM_STEP) * DIM_STEP);
-}
-
-function clampToPixelBudget(width: number, height: number): { width: number; height: number } {
+function fitDimensions(dims: RunwareDimensions, width: number, height: number): { width: number; height: number } {
+  if (dims.kind === "fixed") return nearestFixedPair(dims.pairs, width, height);
   const total = width * height;
   const scale =
-    total < MIN_PIXELS ? Math.sqrt(MIN_PIXELS / total) : total > MAX_PIXELS ? Math.sqrt(MAX_PIXELS / total) : 1;
-  let w = roundToStep(width * scale);
-  let h = roundToStep(height * scale);
-  // Rounding to the 64px step can tip a near-boundary size back out of budget — nudge back in.
-  for (let i = 0; i < 64 && w * h < MIN_PIXELS; i++) {
-    w += DIM_STEP;
-    h += DIM_STEP;
-  }
-  for (let i = 0; i < 64 && w * h > MAX_PIXELS && w > DIM_STEP && h > DIM_STEP; i++) {
-    w -= DIM_STEP;
-    h -= DIM_STEP;
-  }
-  return { width: w, height: h };
+    total < dims.minPixels
+      ? Math.sqrt(dims.minPixels / total)
+      : total > dims.maxPixels
+        ? Math.sqrt(dims.maxPixels / total)
+        : 1;
+  const clampSide = (n: number) => Math.round(Math.min(dims.maxSide, Math.max(dims.minSide, n)));
+  return { width: clampSide(width * scale), height: clampSide(height * scale) };
 }
 
 export const RUNWARE_TOKEN_REJECTED =
@@ -117,7 +134,8 @@ export async function runwareSubmit(
 
   const taskUUID = crypto.randomUUID();
   const refs = input.images.slice(0, maxReferenceImages(input.model.trim()));
-  const { width, height } = clampToPixelBudget(input.width, input.height);
+  const dims = modelConfig(input.model.trim())?.dimensions ?? DEFAULT_DIMENSIONS;
+  const { width, height } = fitDimensions(dims, input.width, input.height);
   const task: Record<string, unknown> = {
     taskType: "imageInference",
     taskUUID,
