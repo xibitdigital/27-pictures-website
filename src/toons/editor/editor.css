@@ -1600,6 +1600,10 @@ body {
   display: block;
 }
 
+.editor-plate img.is-layout-backdrop {
+  visibility: hidden;
+}
+
 .editor-word-layer {
   /* Pan the plate; captions below take none so a drag is not a scroll. */
   touch-action: pan-y;

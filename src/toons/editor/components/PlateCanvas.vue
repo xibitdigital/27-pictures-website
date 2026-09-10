@@ -98,7 +98,17 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
       />
     </div>
     <div class="editor-plate" :style="plateStyle">
-      <img ref="imgEl" :src="src" alt="" />
+      <!--
+        For a Layout page this <img> is the flattened plate — stale the moment any
+        region is drawn/resized (it only refreshes on the explicit "Save layout"
+        click), so its actual pixels are never true mid-edit. It stays mounted
+        purely as the measurement reference GeometryLayer/EditorCaptionLayer size
+        themselves against (imageContentBox reads its rendered box, unaffected by
+        opacity); hiding it is what stops a stale corridor/doll/etc. from bleeding
+        through the moment a resize handle uncovers new plate area — the page's
+        own background-color (or --bg-card default) shows instead.
+      -->
+      <img ref="imgEl" :src="src" alt="" :class="{ 'is-layout-backdrop': kind === 'layout' }" />
       <EditorCaptionLayer
         v-if="imgEl && showBubbleLayer"
         :page-num="pageNum"
