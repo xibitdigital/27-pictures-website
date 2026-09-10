@@ -27,7 +27,10 @@ const emit = defineEmits<{
 let ptrId: number | null = null;
 let startX = 0;
 let startY = 0;
-let lastPlayAt = 0;
+// -Infinity, not 0 — `now` is time since navigation start (or since the test
+// clock started), which can itself be under DEDUPE_MS at the very first tap,
+// wrongly treating it as a dupe of a play that never happened.
+let lastPlayAt = -Infinity;
 
 function emitPlay(ev: Event): void {
   if (!props.caption.audio) return;
