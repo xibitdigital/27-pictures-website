@@ -102,6 +102,12 @@ function applyPrefill(): void {
   lastAutoPrefill.value = fluxRefsPrefill.value;
 }
 
+/** Wipes the prompt — for a direct provider (Flux/Replicate/Runware) the reference legend is required, so it's put right back rather than left blank. */
+function onClearPrompt(): void {
+  prompt.value = "";
+  applyPrefill();
+}
+
 watch(fluxRefsPrefill, () => {
   if (props.open) applyPrefill();
 });
@@ -186,7 +192,12 @@ function onSubmit(): void {
         Upload a Comfy Save-API graph and reference sheets on the series first.
       </p>
       <label>
-        Prompt
+        <span class="editor-label-row">
+          Prompt
+          <button type="button" class="editor-field-link" name="clear-prompt" :disabled="busy" @click="onClearPrompt">
+            Clear
+          </button>
+        </span>
         <textarea
           name="generate-prompt"
           v-model="prompt"

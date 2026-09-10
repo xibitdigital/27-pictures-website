@@ -50,6 +50,22 @@ describe("GeneratePageDialog", () => {
     expect(wrapper.emitted("close")).toBeUndefined();
     wrapper.unmount();
   });
+
+  it("Clear empties the prompt for a Comfy series (no reference legend to put back)", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: true, generate, pages: [], busy: false, status: "" },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "Something happens here.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    (document.querySelector('button[name="clear-prompt"]') as HTMLButtonElement).click();
+    await flushPromises();
+    expect(textarea.value).toBe("");
+    wrapper.unmount();
+  });
 });
 
 describe("GeneratePageDialog previous-plate override", () => {
@@ -325,6 +341,25 @@ describe("GeneratePageDialog Flux provider", () => {
     expect(textarea.value).toContain("Using Image 1 for Erin character sheet");
     expect(textarea.value).not.toContain("horror manga");
     expect(textarea.value).not.toContain("Black and white");
+    wrapper.unmount();
+  });
+
+  it("Clear wipes any typed scene text but immediately puts the reference legend back", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: fluxGenerate, pages: [], busy: false, status: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value += "A close-up on Erin's face.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    (document.querySelector('button[name="clear-prompt"]') as HTMLButtonElement).click();
+    await flushPromises();
+    expect(textarea.value).not.toContain("A close-up on Erin's face.");
+    expect(textarea.value).toContain("# refs: Image 1 = Erin character sheet");
+    expect(textarea.value).toContain("Using Image 1 for Erin character sheet");
     wrapper.unmount();
   });
 
