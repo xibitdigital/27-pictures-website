@@ -25,6 +25,27 @@ export function isUserKeyName(name: unknown): name is UserKeyName {
   return typeof name === "string" && (USER_KEY_NAMES as readonly string[]).includes(name);
 }
 
+/** Trim, unwrap quotes, drop a leading `Bearer`/`Token` — people paste the curl header. */
+export function normaliseUserSecret(value: string): string {
+  let s = value.trim();
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1).trim();
+  }
+  return s.replace(/^(Bearer|Token)\s+/i, "").trim();
+}
+
+function overlaySecrets(env: Env, secrets: Partial<Record<EnvSecretKey, string>>): Env {
+  return new Proxy(env, {
+    get(target, prop) {
+      if (typeof prop === "string" && Object.prototype.hasOwnProperty.call(secrets, prop)) {
+        return secrets[prop as EnvSecretKey];
+      }
+      const value = Reflect.get(target, prop, target);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+  }) as Env;
+}
+
 function b64encode(bytes: Uint8Array): string {
   let bin = "";
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
@@ -93,7 +114,7 @@ export async function getUserKeyStatus(env: Env, userId: string): Promise<Record
 /** `value` null/empty clears the key back to "use the shared secret". */
 export async function saveUserKey(env: Env, userId: string, name: UserKeyName, value: string | null): Promise<void> {
   const { column } = USER_KEY_FIELDS[name];
-  const trimmed = value?.trim() || null;
+  const trimmed = value == null ? null : normaliseUserSecret(value) || null;
   const stored = trimmed ? await encryptUserKey(env, trimmed) : null;
   await env.DB.prepare(`UPDATE users SET ${column} = ? WHERE id = ?`).bind(stored, userId).run();
 }
@@ -110,15 +131,17 @@ export async function effectiveEnv(env: Env, userId: string | null | undefined):
   if (!userId) return env;
   const row = await env.DB.prepare(`SELECT ${SELECT_COLUMNS} FROM users WHERE id = ?`).bind(userId).first<UserKeyRow>();
   if (!row) return env;
-  let next: Env | null = null;
+  const secrets: Partial<Record<EnvSecretKey, string>> = {};
+  let any = false;
   for (const name of USER_KEY_NAMES) {
     const { column, envKey } = USER_KEY_FIELDS[name];
     const stored = row[column];
     if (!stored) continue;
+    any = true;
     const plain = await decryptUserKey(env, stored);
-    if (!plain) continue;
-    if (!next) next = { ...env };
-    next[envKey] = plain;
+    // Fail closed: a stored key that won't decrypt must not silently use the shared Worker secret
+    // (Settings still shows "Set", and a stale shared Replicate token then 401s).
+    secrets[envKey] = plain ? normaliseUserSecret(plain) : "";
   }
-  return next || env;
+  return any ? overlaySecrets(env, secrets) : env;
 }

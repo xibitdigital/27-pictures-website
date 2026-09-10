@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import worker from "./index";
 import { signJwt } from "./jwt";
 import type { Env, UserRow } from "./types";
@@ -87,7 +87,12 @@ describe("GET /auth/keys", () => {
 });
 
 describe("PUT /auth/keys", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("saves a key, encrypted, and reflects it as set", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 200 })));
     const state: FakeState = { users: [editor], keys: {} };
     const env = makeEnv(state);
     const res = await worker.fetch(
@@ -136,6 +141,7 @@ describe("PUT /auth/keys", () => {
   });
 
   it("500s cleanly when KEYS_ENCRYPTION_KEY isn't configured", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 200 })));
     const state: FakeState = { users: [editor], keys: {} };
     const env = makeEnv(state, { KEYS_ENCRYPTION_KEY: undefined });
     const res = await worker.fetch(
@@ -146,6 +152,21 @@ describe("PUT /auth/keys", () => {
       env
     );
     expect(res.status).toBe(500);
+  });
+
+  it("rejects a Replicate token Replicate itself 401s", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 401 })));
+    const state: FakeState = { users: [editor], keys: {} };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/auth/keys", editor.id, {
+        method: "PUT",
+        body: JSON.stringify({ name: "replicateApiToken", value: "r8_nope" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(400);
+    expect(state.keys[editor.id]?.replicate_api_token_enc).toBeUndefined();
   });
 
   it("401s with no session", async () => {

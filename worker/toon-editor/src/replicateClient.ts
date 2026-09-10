@@ -1,5 +1,6 @@
 import type { ComfyPhase } from "./comfyClient";
 import type { Env } from "./types";
+import { normaliseUserSecret } from "./userKeys";
 
 /**
  * Replicate — https://replicate.com. Two models, same host/API shape, used
@@ -62,11 +63,30 @@ function nearestAspectRatio(width?: number | null, height?: number | null): stri
   return best[0];
 }
 
+export const REPLICATE_TOKEN_REJECTED =
+  "Replicate rejected the API token. Settings showing Set only means a value is stored — Clear it, paste a fresh full r8_ token from replicate.com/account/api-tokens (shown only once; no Bearer prefix), and Save.";
+
+function replicateToken(env: Env): string {
+  return env.REPLICATE_API_TOKEN ? normaliseUserSecret(env.REPLICATE_API_TOKEN) : "";
+}
+
 function replicateHeaders(env: Env, extra?: HeadersInit): Headers {
   const headers = new Headers(extra);
-  const token = env.REPLICATE_API_TOKEN?.trim();
+  const token = replicateToken(env);
   if (token) headers.set("Authorization", `Bearer ${token}`);
   return headers;
+}
+
+/** Cheap auth check used when saving a per-user token, so a truncated/masked paste fails at Save instead of at Generate. */
+export async function replicateVerifyToken(token: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  const normalised = normaliseUserSecret(token);
+  if (!normalised) return { ok: false, error: "Replicate API token is empty" };
+  const res = await fetch(`${REPLICATE_BASE}/v1/account`, {
+    headers: { Authorization: `Bearer ${normalised}`, accept: "application/json" },
+  });
+  if (res.status === 401 || res.status === 403) return { ok: false, error: REPLICATE_TOKEN_REJECTED };
+  if (!res.ok) return { ok: false, error: `Could not verify Replicate token (${res.status})` };
+  return { ok: true };
 }
 
 export async function replicateSubmit(
@@ -74,7 +94,7 @@ export async function replicateSubmit(
   kind: ReplicateKind,
   input: { prompt: string; images: string[]; width?: number | null; height?: number | null }
 ): Promise<{ ok: true; id: string; pollingUrl: string } | { ok: false; error: string }> {
-  if (!env.REPLICATE_API_TOKEN?.trim()) {
+  if (!replicateToken(env)) {
     return { ok: false, error: "Replicate is not configured (REPLICATE_API_TOKEN missing)" };
   }
   const maxRefs = MAX_REFS[kind];
@@ -95,7 +115,10 @@ export async function replicateSubmit(
     body: JSON.stringify({ input: modelInput }),
   });
   const text = await res.text();
-  if (!res.ok) return { ok: false, error: `Replicate request failed (${res.status}) ${text.slice(0, 300)}` };
+  if (!res.ok) {
+    if (res.status === 401 || res.status === 403) return { ok: false, error: REPLICATE_TOKEN_REJECTED };
+    return { ok: false, error: `Replicate request failed (${res.status}) ${text.slice(0, 300)}` };
+  }
   let parsed: { id?: string; urls?: { get?: string } } = {};
   try {
     parsed = JSON.parse(text) as { id?: string; urls?: { get?: string } };

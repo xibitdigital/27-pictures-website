@@ -37,6 +37,7 @@ import {
 } from "./generatePage";
 import { comfyPhaseMessage } from "./comfyClient";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
+import { replicateVerifyToken } from "./replicateClient";
 import { effectiveEnv, getUserKeyStatus, isUserKeyName, saveUserKey } from "./userKeys";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
 import { toWebp } from "./imageOptimize";
@@ -1029,6 +1030,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const value = parsed.body.value;
     if (value != null && typeof value !== "string") return json({ error: "value must be a string" }, 400, cors);
     if (typeof value === "string" && value.length > 500) return json({ error: "value too long" }, 400, cors);
+    if (name === "replicateApiToken" && typeof value === "string" && value.trim()) {
+      const verified = await replicateVerifyToken(value);
+      if (!verified.ok) return json({ error: verified.error }, 400, cors);
+    }
     try {
       await saveUserKey(env, session.id, name, value ?? null);
     } catch (err) {

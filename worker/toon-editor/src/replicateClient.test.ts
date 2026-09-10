@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { replicateDownload, replicateResult, replicateSubmit } from "./replicateClient";
+import {
+  REPLICATE_TOKEN_REJECTED,
+  replicateDownload,
+  replicateResult,
+  replicateSubmit,
+  replicateVerifyToken,
+} from "./replicateClient";
 import type { Env } from "./types";
 
 function env(partial: Partial<Env>): Env {
@@ -126,6 +132,39 @@ describe("replicateSubmit", () => {
     expect(out).toEqual({ ok: false, error: "Replicate request failed (400) bad request" });
   });
 
+  it("maps a 401 to the token-rejected hint instead of the raw JSON body", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({ title: "Unauthenticated", detail: "You did not pass a valid authentication token" }),
+        {
+          status: 401,
+        }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await replicateSubmit(env({ REPLICATE_API_TOKEN: "nope" }), "replicate-flux", {
+      prompt: "p",
+      images: [],
+    });
+    expect(out).toEqual({ ok: false, error: REPLICATE_TOKEN_REJECTED });
+  });
+
+  it("sends a normalised token when the stored value still has a Bearer prefix", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ id: "pred-1", urls: { get: "https://api.replicate.com/v1/predictions/pred-1" } }), {
+        status: 201,
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    await replicateSubmit(env({ REPLICATE_API_TOKEN: "Bearer r8_secret" }), "replicate-flux", {
+      prompt: "p",
+      images: [],
+    });
+    expect(new Headers((fetchMock.mock.calls[0][1] as RequestInit).headers).get("Authorization")).toBe(
+      "Bearer r8_secret"
+    );
+  });
+
   it("errors if the response has no urls.get to poll", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: "pred-1" }), { status: 201 }));
     vi.stubGlobal("fetch", fetchMock);
@@ -225,5 +264,26 @@ describe("replicateDownload", () => {
     vi.stubGlobal("fetch", fetchMock);
     const out = await replicateDownload("https://out/a.png");
     expect(out).toEqual({ ok: false, error: "Replicate image download was empty" });
+  });
+});
+
+describe("replicateVerifyToken", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("hits /v1/account with a Bearer token", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(replicateVerifyToken("Bearer r8_secret")).resolves.toEqual({ ok: true });
+    expect(String(fetchMock.mock.calls[0][0])).toBe("https://api.replicate.com/v1/account");
+    expect(new Headers((fetchMock.mock.calls[0][1] as RequestInit).headers).get("Authorization")).toBe(
+      "Bearer r8_secret"
+    );
+  });
+
+  it("maps 401 to the token-rejected hint", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 401 })));
+    await expect(replicateVerifyToken("r8_nope")).resolves.toEqual({ ok: false, error: REPLICATE_TOKEN_REJECTED });
   });
 });

@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { effectiveEnv, encryptUserKey, getUserKeyStatus, isUserKeyName, saveUserKey, USER_KEY_NAMES } from "./userKeys";
+import {
+  effectiveEnv,
+  encryptUserKey,
+  getUserKeyStatus,
+  isUserKeyName,
+  normaliseUserSecret,
+  saveUserKey,
+  USER_KEY_NAMES,
+} from "./userKeys";
 import type { Env } from "./types";
 
 const ENCRYPTION_KEY = "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY="; // 32 raw bytes, base64
@@ -30,6 +38,15 @@ function env(partial: Partial<Env> & { DB: unknown }): Env {
   return partial as unknown as Env;
 }
 
+describe("normaliseUserSecret", () => {
+  it("strips wrapping quotes and a Bearer/Token prefix", () => {
+    expect(normaliseUserSecret("  Bearer r8_secret  ")).toBe("r8_secret");
+    expect(normaliseUserSecret("Token r8_secret")).toBe("r8_secret");
+    expect(normaliseUserSecret('"r8_secret"')).toBe("r8_secret");
+    expect(normaliseUserSecret("'r8_secret'")).toBe("r8_secret");
+  });
+});
+
 describe("isUserKeyName", () => {
   it("accepts every configurable key name", () => {
     for (const name of USER_KEY_NAMES) expect(isUserKeyName(name)).toBe(true);
@@ -59,7 +76,25 @@ describe("encrypt/decrypt round trip via effectiveEnv", () => {
     const e2 = env({ DB: db2 as never, KEYS_ENCRYPTION_KEY: ENCRYPTION_KEY, COMFY_API_KEY: "shared-comfy-key" });
     const resolved = await effectiveEnv(e2, "user-1");
     expect(resolved.COMFY_API_KEY).toBe("user-secret-key");
-    expect(resolved).not.toBe(e2); // shallow copy made, original untouched
+    expect(resolved).not.toBe(e2);
+    expect(e2.COMFY_API_KEY).toBe("shared-comfy-key"); // original untouched
+  });
+
+  it("strips a Bearer prefix when overlaying a saved Replicate token", async () => {
+    const db = fakeDb(null);
+    const e = env({ DB: db as never, KEYS_ENCRYPTION_KEY: ENCRYPTION_KEY });
+    await saveUserKey(e, "user-1", "replicateApiToken", "Bearer r8_secret");
+    const stored = db.updates[0].args[0] as string;
+    const db2 = fakeDb({
+      comfy_api_key_enc: null,
+      replicate_api_token_enc: stored,
+      elevenlabs_api_key_enc: null,
+    });
+    const resolved = await effectiveEnv(
+      env({ DB: db2 as never, KEYS_ENCRYPTION_KEY: ENCRYPTION_KEY, REPLICATE_API_TOKEN: "shared" }),
+      "user-1"
+    );
+    expect(resolved.REPLICATE_API_TOKEN).toBe("r8_secret");
   });
 
   it("falls back to the shared secret when no key is saved", async () => {
@@ -70,16 +105,18 @@ describe("encrypt/decrypt round trip via effectiveEnv", () => {
     expect(resolved.COMFY_API_KEY).toBe("shared-comfy-key");
   });
 
-  it("falls back to the shared secret when the row can't be decrypted (wrong/missing encryption key)", async () => {
+  it("blanks a stored key that can't be decrypted instead of falling back to the shared secret", async () => {
     const stored = await encryptUserKey(
       env({ DB: fakeDb(null) as never, KEYS_ENCRYPTION_KEY: ENCRYPTION_KEY }),
       "user-secret"
     );
     const db = fakeDb({ comfy_api_key_enc: stored, replicate_api_token_enc: null, elevenlabs_api_key_enc: null });
-    // Different (or missing) encryption key at read time — must not throw, must not leak ciphertext.
+    // Different (or missing) encryption key at read time — must not throw, must not leak ciphertext,
+    // and must not silently auth as the shared secret while Settings still shows Set.
     const e = env({ DB: db as never, KEYS_ENCRYPTION_KEY: undefined, COMFY_API_KEY: "shared-comfy-key" });
     const resolved = await effectiveEnv(e, "user-1");
-    expect(resolved.COMFY_API_KEY).toBe("shared-comfy-key");
+    expect(resolved.COMFY_API_KEY).toBe("");
+    expect(e.COMFY_API_KEY).toBe("shared-comfy-key");
   });
 
   it("no userId short-circuits without touching the DB", async () => {
