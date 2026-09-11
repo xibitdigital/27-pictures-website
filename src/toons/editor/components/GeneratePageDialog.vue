@@ -92,7 +92,6 @@ function pickPrevious(candidate: { kind: "page" | "region"; id: string }): void 
   if (candidate.kind === "page") previousPageId.value = candidate.id;
   else previousRegionId.value = candidate.id;
 }
-const styleSlot = computed(() => (props.generate?.slots || []).find((s) => s.kind === "style" && s.fileUrl) || null);
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
 const selectedPreviousRegion = computed(() => {
   if (!previousRegionId.value) return null;
@@ -129,15 +128,40 @@ function cleanSlotLabel(slot: { label: string; alias: string }): string {
   return (slot.label || slot.alias).replace(/^image\s*\d+\s*[—–-]\s*/i, "").trim() || slot.alias;
 }
 
-const fluxSheets = computed(() => (props.generate?.slots || []).filter((s) => s.kind === "sheet" && s.fileUrl));
-const includedRefCount = computed(() => fluxSheets.value.filter((s) => isIncluded(s.alias)).length);
+/**
+ * Every slot the Worker will actually attach for this call, in the exact order
+ * it iterates `generate.slots` (generatePage.ts's `for (const slot of generate.slots)`
+ * loop, shared verbatim by all four direct providers) — a sheet with a file that's
+ * still checked, a style slot with a file, or "previous" when it will actually be
+ * sent. Building the legend from this instead of grouping sheets-then-style-then-
+ * previous is what keeps "Image N" true to reality: a style/previous slot earlier
+ * in the series' own slot order (e.g. slot 1 is "STYLE") is sent as Image 1, not
+ * pushed to the end because of what kind it is.
+ */
+const orderedRefEntries = computed(() => {
+  const slots = props.generate?.slots || [];
+  const out: { kind: "sheet" | "style" | "previous"; label: string }[] = [];
+  for (const slot of slots) {
+    if (slot.kind === "sheet") {
+      if (!slot.fileUrl || !isIncluded(slot.alias)) continue;
+      out.push({ kind: "sheet", label: cleanSlotLabel(slot) });
+    } else if (slot.kind === "style") {
+      if (!slot.fileUrl) continue;
+      out.push({ kind: "style", label: "" });
+    } else if (slot.kind === "previous") {
+      if (!willSendPrevious.value) continue;
+      out.push({ kind: "previous", label: "" });
+    }
+  }
+  return out;
+});
+const includedRefCount = computed(() => orderedRefEntries.value.length);
 
 /**
  * Flux gets no fixed FORMAT/PIN prefix the way the Comfy graph does — every
  * generation has to spell out "Image N = what" itself or reference adherence
  * drifts (see docs.bfl.ml/guides/prompting_editing_overview's own example).
- * The reference mapping is mechanically built from the series' ready,
- * included sheets, in the same order the Worker actually sends them, so
+ * The reference mapping is mechanically built from orderedRefEntries, so
  * "Image N" here always matches reality. No fixed style line is injected —
  * only this reference-mapping scaffold; the scene/style description is
  * entirely up to whatever the operator types below it.
@@ -155,20 +179,26 @@ const fluxRefsPrefill = computed(() => {
       ? `Runware — ${props.generate.model || "no model configured"}`
       : providerLabel[props.generate?.provider || ""] || "flux-2-pro (BFL)";
   const header = [`# model: ${modelName}`, "# mode: image-to-image (multi-reference)"];
-  const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
-  if (!sheets.length && !styleSlot.value && !willSendPrevious.value) return `${header.join("\n")}\n\n`;
-  const refs = sheets.map((s, i) => `Image ${i + 1} = ${cleanSlotLabel(s)}`);
-  let n = sheets.length;
-  // Fixed wording regardless of the slot's own label/alias — "style" here means ink
-  // technique/rendering only, and that has to read unambiguously even when the slot
-  // was renamed or still carries a stale label like "Image 1 — STYLE (...)".
-  if (styleSlot.value) refs.push(`Image ${++n} = style reference (ink technique/rendering only, not a character)`);
-  if (willSendPrevious.value) refs.push(`Image ${++n} = previous page`);
+  const entries = orderedRefEntries.value;
+  if (!entries.length) return `${header.join("\n")}\n\n`;
+  const refs = entries.map((e, i) => {
+    // Fixed wording for style/previous regardless of the slot's own label/alias — "style"
+    // here means ink technique/rendering only, and that has to read unambiguously even when
+    // the slot was renamed or still carries a stale label like "Image 1 — STYLE (...)".
+    const what =
+      e.kind === "style"
+        ? "style reference (ink technique/rendering only, not a character)"
+        : e.kind === "previous"
+          ? "previous page"
+          : e.label;
+    return `Image ${i + 1} = ${what}`;
+  });
   header.push(`# refs: ${refs.join("; ")}`);
-  const parts = sheets.map((s, i) => `Image ${i + 1} for ${cleanSlotLabel(s)}`);
-  if (styleSlot.value) parts.push("the style reference for ink technique and rendering style only — not a character");
-  if (willSendPrevious.value) parts.push("the previous page for continuity of set and style");
-  if (!parts.length) return `${header.join("\n")}\n\n`;
+  const parts = entries.map((e, i) => {
+    if (e.kind === "style") return "the style reference for ink technique and rendering style only — not a character";
+    if (e.kind === "previous") return "the previous page for continuity of set and style";
+    return `Image ${i + 1} for ${e.label}`;
+  });
   return `${header.join("\n")}\n\nUsing ${parts.join(", ")} — do not alter identity.\n\n`;
 });
 

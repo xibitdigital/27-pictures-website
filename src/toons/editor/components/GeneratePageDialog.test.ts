@@ -409,6 +409,39 @@ describe("GeneratePageDialog Flux provider", () => {
     wrapper.unmount();
   });
 
+  it("numbers refs by the slots' own array order, not sheets-then-style-then-previous", async () => {
+    const generateStyleFirst = {
+      width: 1152,
+      height: 1728,
+      model: "seedream 5.0 pro",
+      provider: "runware",
+      flowKey: null,
+      flowUrl: null,
+      slots: [
+        {
+          alias: "style",
+          label: "Image 1 — STYLE (ink technique only)",
+          kind: "style",
+          fileKey: "s.jpg",
+          fileUrl: "/s.jpg",
+        },
+        { alias: "doll", label: "Image 2 - Doll", kind: "sheet", fileKey: "doll.jpg", fileUrl: "/doll.jpg" },
+        { alias: "victim", label: "Image 3 — Victim", kind: "sheet", fileKey: "victim.jpg", fileUrl: "/victim.jpg" },
+      ],
+    };
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: generateStyleFirst, pages: [], busy: false, status: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    expect(textarea.value).toContain(
+      "# refs: Image 1 = style reference (ink technique/rendering only, not a character); Image 2 = Doll; Image 3 = Victim"
+    );
+    wrapper.unmount();
+  });
+
   it("Clear wipes any typed scene text but immediately puts the reference legend back", async () => {
     const wrapper = mount(GeneratePageDialog, {
       props: { open: false, generate: fluxGenerate, pages: [], busy: false, status: "" },
