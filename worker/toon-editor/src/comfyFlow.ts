@@ -381,7 +381,9 @@ export function parseGenerateConfig(raw: unknown): SeriesGenerateConfig {
         const fallback = `image-${i + 1}`;
         const label = typeof slot.label === "string" && slot.label.trim() ? slot.label.trim() : "";
         const alias = slugAlias(String(slot.alias || label || ""), fallback);
-        const kind = String(slot.kind || "") === "previous" || /\bprevious\b/i.test(label) ? "previous" : "sheet";
+        const rawKind = String(slot.kind || "");
+        const kind =
+          rawKind === "previous" || /\bprevious\b/i.test(label) ? "previous" : rawKind === "style" ? "style" : "sheet";
         const fileKey = typeof slot.fileKey === "string" && slot.fileKey.trim() ? slot.fileKey.trim() : null;
         return {
           alias,
