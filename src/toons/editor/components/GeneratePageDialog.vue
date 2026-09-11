@@ -39,6 +39,9 @@ const previousFileInput = ref<HTMLInputElement | null>(null);
 const count = ref("1");
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
+/** Every page in the toon, including "layout" pages — those already carry the flattened composite
+ * (every shape's image merged onto one plate) as their own fileUrl, so no separate region lookup is needed. */
+const sortedPages = computed(() => [...props.pages].sort((a, b) => a.position - b.position));
 const styleSlot = computed(() => (props.generate?.slots || []).find((s) => s.kind === "style" && s.fileUrl) || null);
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
 /** Any provider that skips the Comfy graph entirely and sends the prompt + reference sheets straight to a hosted model (BFL Flux, Replicate, or Runware). Shared with the Worker contract (apiTypes.ts) so a new provider can't silently fall through to the Comfy-only copy/warning below. */
@@ -223,40 +226,39 @@ function onSubmit(): void {
           Include previous page
         </EditorCheckbox>
         <template v-if="includePrevious">
-          <div class="editor-pair-row">
-            <label v-if="pages.length">
-              Plate from this toon
-              <EditorSelect
-                name="previous-page"
-                :model-value="previousPageId"
+          <div v-if="sortedPages.length" class="editor-form-span">
+            <span class="editor-generate-label">Plate from this toon</span>
+            <p class="editor-muted">Includes layout pages — the flattened plate with every shape filled in.</p>
+            <div class="editor-plate-picker" role="listbox" aria-label="Plate from this toon">
+              <button
+                v-for="page in sortedPages"
+                :key="page.id"
+                type="button"
+                class="editor-plate-picker-item"
+                :class="{ 'is-selected': previousPageId === page.id }"
+                role="option"
+                :aria-selected="previousPageId === page.id"
+                :aria-label="`Page ${page.position + 1}`"
                 :disabled="busy"
-                placeholder="Choose a page"
-                @update:model-value="(v) => (previousPageId = v)"
+                @click="previousPageId = previousPageId === page.id ? '' : page.id"
               >
-                <EditorSelectItem value="">Choose a page</EditorSelectItem>
-                <EditorSelectItem v-for="page in pages" :key="page.id" :value="page.id">
-                  Page {{ page.position + 1 }}
-                </EditorSelectItem>
-              </EditorSelect>
-            </label>
-            <label>
-              Images
-              <EditorSelect
-                name="generate-count"
-                :model-value="count"
-                :disabled="busy"
-                @update:model-value="(v) => (count = v)"
-              >
-                <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
-              </EditorSelect>
-            </label>
+                <img v-if="page.fileUrl" :src="page.fileUrl" alt="" />
+                <span v-else class="editor-plate-picker-empty" aria-hidden="true"></span>
+                <span class="editor-plate-picker-num">{{ page.position + 1 }}</span>
+              </button>
+            </div>
           </div>
-          <img
-            v-if="selectedPreviousPage?.fileUrl"
-            class="editor-slot-thumb"
-            :src="selectedPreviousPage.fileUrl"
-            alt=""
-          />
+          <label>
+            Images
+            <EditorSelect
+              name="generate-count"
+              :model-value="count"
+              :disabled="busy"
+              @update:model-value="(v) => (count = v)"
+            >
+              <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
+            </EditorSelect>
+          </label>
           <input
             ref="previousFileInput"
             type="file"

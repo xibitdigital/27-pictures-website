@@ -130,7 +130,8 @@ describe("GeneratePageDialog previous-plate override", () => {
     await flushPromises();
     (document.querySelector('[name="include-previous"]') as HTMLElement).click();
     await flushPromises();
-    await pickOption("previous-page", "Page 1");
+    (document.querySelector('button[aria-label="Page 1"]') as HTMLElement).click();
+    await flushPromises();
     const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
     textarea.value = "Erin walks in.";
     textarea.dispatchEvent(new Event("input"));
@@ -172,12 +173,13 @@ describe("GeneratePageDialog previous-plate override", () => {
     await flushPromises();
     (document.querySelector('[name="include-previous"]') as HTMLElement).click();
     await flushPromises();
-    await pickOption("previous-page", "Page 2");
+    (document.querySelector('button[aria-label="Page 2"]') as HTMLElement).click();
+    await flushPromises();
     await wrapper.setProps({ open: false });
     await flushPromises();
     await wrapper.setProps({ open: true });
     await flushPromises();
-    expect(document.querySelector('button[name="previous-page"]')?.textContent).toContain("Page 2");
+    expect(document.querySelector('button[aria-label="Page 2"]')?.classList).toContain("is-selected");
     wrapper.unmount();
   });
 
