@@ -85,6 +85,9 @@ interface RegionLayout {
   clipPath: string;
   imgStyle: CSSProperties | null;
   handles: { key: string; attr: "data-region-handle" | "data-region-vertex"; value: string; x: number; y: number }[];
+  /** The frame's own pixel size — lets RegionShape draw its polygon border in real pixel coordinates (an SVG viewBox non-uniformly scaled to a skewed parallelogram is a known cross-browser risk with non-scaling-stroke; the pre-existing draft-polygon overlay below avoids it the same way). */
+  frameWidth: number;
+  frameHeight: number;
 }
 
 const regionLayouts = computed<RegionLayout[]>(() => {
@@ -136,6 +139,8 @@ const regionLayouts = computed<RegionLayout[]>(() => {
       clipPath: clipPathPolygon(region.geometry, bbox),
       imgStyle,
       handles,
+      frameWidth: width,
+      frameHeight: height,
     };
   });
 });
@@ -524,7 +529,13 @@ watch(
       :style="layout.frameStyle"
       :data-region-id="layout.region.id"
     >
-      <RegionShape :region="layout.region" :clip-path="layout.clipPath" :img-style="layout.imgStyle" />
+      <RegionShape
+        :region="layout.region"
+        :clip-path="layout.clipPath"
+        :img-style="layout.imgStyle"
+        :frame-width="layout.frameWidth"
+        :frame-height="layout.frameHeight"
+      />
       <div v-if="interactive && layout.region.id === selectedId" class="editor-region-handles">
         <div
           v-for="h in layout.handles"

@@ -9,6 +9,9 @@ const props = defineProps<{
   region: RegionRecord;
   clipPath: string;
   imgStyle: CSSProperties | null;
+  /** This region's own frame size in real pixels — lets the border SVG use plain pixel coordinates (see svgBorder below) instead of a viewBox. */
+  frameWidth: number;
+  frameHeight: number;
 }>();
 
 /**
@@ -35,13 +38,20 @@ const DASH_PATTERN: Record<string, (width: number) => string | undefined> = {
   dotted: (width) => `${width * 0.1} ${width * 1.6}`,
 };
 
-/** SVG-traced border for a polygon — `percentPoints` is already in the same 0-100%-of-bbox space `clipPath` uses, so the outline sits exactly on the clipped edge. */
+/**
+ * SVG-traced border for a polygon, in real pixel coordinates (no viewBox) —
+ * matching GeometryLayer.vue's own draft-polygon overlay, which uses the same
+ * plain-pixel approach rather than a viewBox scaled non-uniformly to fit a
+ * skewed parallelogram. `vector-effect="non-scaling-stroke"` combined with a
+ * non-uniform viewBox scale is inconsistently handled across browsers and
+ * visibly mispositioned the border relative to the region's own vertices.
+ */
 const svgBorder = computed(() => {
   if (props.region.shapeType === "rect" || !props.region.borderWidth) return null;
   const width = props.region.borderWidth;
   return {
     points: percentPoints(props.region.geometry)
-      .map((p) => `${p.x},${p.y}`)
+      .map((p) => `${(p.x / 100) * props.frameWidth},${(p.y / 100) * props.frameHeight}`)
       .join(" "),
     color: props.region.borderColor || "#ffffff",
     width,
@@ -70,20 +80,13 @@ const svgBorder = computed(() => {
       <span>Click to add image</span>
     </div>
   </div>
-  <svg
-    v-if="svgBorder"
-    class="editor-region-border"
-    viewBox="0 0 100 100"
-    preserveAspectRatio="none"
-    aria-hidden="true"
-  >
+  <svg v-if="svgBorder" class="editor-region-border" aria-hidden="true">
     <polygon
       :points="svgBorder.points"
       fill="none"
       :stroke="svgBorder.color"
       :stroke-width="svgBorder.width"
       :stroke-dasharray="svgBorder.dasharray"
-      vector-effect="non-scaling-stroke"
     />
   </svg>
 </template>
