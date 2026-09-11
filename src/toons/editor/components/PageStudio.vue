@@ -783,7 +783,9 @@ async function onGalleryPick(asset: ToonAsset): Promise<void> {
     const blob = await res.blob();
     const ext = asset.fileKey.split(".").pop() || "webp";
     const file = new File([blob], `gallery.${ext}`, { type: blob.type || `image/${ext}` });
-    const size = asset.width && asset.height ? { width: asset.width, height: asset.height } : undefined;
+    // Measured from the actual bytes rather than trusted from the asset row — a backfilled
+    // asset (recorded before this feature existed) has no stored width/height.
+    const size = await readImageSize(file);
     const next = await uploadPage(toon.value.id, file, size);
     toon.value = next;
     dirtyIds.value = new Set();

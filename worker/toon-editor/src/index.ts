@@ -41,7 +41,7 @@ import { replicateVerifyToken } from "./replicateClient";
 import { runwareVerifyToken } from "./runwareClient";
 import { effectiveEnv, getUserKeyStatus, isUserKeyName, saveUserKey } from "./userKeys";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
-import { toWebp } from "./imageOptimize";
+import { toWebp, webpDimensions } from "./imageOptimize";
 import { sendInviteEmail, sendPasswordResetEmail } from "./inviteEmail";
 import { verifyTurnstile } from "./turnstile";
 import { handleLikes } from "./likes";
@@ -896,6 +896,25 @@ async function putImage(env: Env, key: string, bytes: ArrayBuffer, contentType: 
       cacheControl: "public, max-age=31536000, immutable",
     },
   });
+}
+
+/** A backfilled gallery asset (recorded from a pre-existing R2 object, before this row had a
+ * width/height to record — see the backfill script) has no dimensions. Sniffing them from the
+ * stored bytes here, once, and writing them back means only the first pick ever pays that cost. */
+async function resolveAssetDims(
+  env: Env,
+  asset: ToonAssetRow
+): Promise<{ width: number | null; height: number | null }> {
+  if (asset.width && asset.height) return { width: asset.width, height: asset.height };
+  const obj = await env.ASSETS.get(asset.file_key);
+  if (!obj) return { width: null, height: null };
+  const bytes = await obj.arrayBuffer();
+  const dims = webpDimensions(bytes);
+  if (!dims) return { width: null, height: null };
+  await env.DB.prepare("UPDATE toon_assets SET width = ?, height = ? WHERE id = ?")
+    .bind(dims.width, dims.height, asset.id)
+    .run();
+  return dims;
 }
 
 async function putPageAsset(env: Env, toonId: string, slug: string, upload: ImageUpload) {
@@ -1990,6 +2009,37 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     return json(await loadToon(env, request, page.toon_id), 200, cors);
   }
 
+  // One-off/idempotent: backfills toon_assets from what's already sitting in R2 under each toon's
+  // own `editor/<slug>/assets/` prefix — recovers images orphaned before this table existed (a
+  // deleted page/region never deleted its R2 object, there was just nowhere to list them from).
+  // Safe to call again later (INSERT OR IGNORE on the unique (toon_id, file_key) index): a manual
+  // R2 put outside the app would also get picked up.
+  if (isMethod(method, "POST") && path === "/admin/backfill-assets") {
+    if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
+    const toons = (await env.DB.prepare("SELECT id, slug FROM toons").all<{ id: string; slug: string }>()).results;
+    let scanned = 0;
+    let inserted = 0;
+    for (const toon of toons) {
+      const prefix = `editor/${toon.slug}/assets/`;
+      let cursor: string | undefined;
+      for (;;) {
+        const listed = await env.ASSETS.list({ prefix, cursor, limit: 1000 });
+        for (const obj of listed.objects) {
+          scanned++;
+          const res = await env.DB.prepare(
+            `INSERT OR IGNORE INTO toon_assets (id, toon_id, file_key, width, height, created_at) VALUES (?, ?, ?, NULL, NULL, ?)`
+          )
+            .bind(crypto.randomUUID(), toon.id, obj.key, obj.uploaded ? obj.uploaded.toISOString() : nowIso())
+            .run();
+          if (res.meta.changes) inserted++;
+        }
+        if (!listed.truncated) break;
+        cursor = listed.cursor;
+      }
+    }
+    return json({ toons: toons.length, scanned, inserted }, 200, cors);
+  }
+
   const toonAssetsMatch = path.match(/^\/toons\/([^/]+)\/assets$/);
   if (isMethod(method, "GET") && toonAssetsMatch) {
     const toon = await loadToon(env, request, toonAssetsMatch[1]);
@@ -2034,8 +2084,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .bind(page.toon_id, fileKey)
       .first<ToonAssetRow>();
     if (!asset) return json({ error: "not found" }, 404, cors);
+    const dims = await resolveAssetDims(env, asset);
     await env.DB.prepare(`UPDATE pages SET file_key = ?, width = ?, height = ? WHERE id = ?`)
-      .bind(asset.file_key, asset.width, asset.height, page.id)
+      .bind(asset.file_key, dims.width, dims.height, page.id)
       .run();
     await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), page.toon_id).run();
     return json(await loadToon(env, request, page.toon_id), 200, cors);
@@ -2056,12 +2107,13 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .bind(page.toon_id, fileKey)
       .first<ToonAssetRow>();
     if (!asset) return json({ error: "not found" }, 404, cors);
+    const dims = await resolveAssetDims(env, asset);
     const ts = nowIso();
     await env.DB.prepare(
       `UPDATE page_regions SET file_key = ?, file_width = ?, file_height = ?, image_offset_x = 0.5, image_offset_y = 0.5, image_scale = 1, updated_at = ?
        WHERE id = ?`
     )
-      .bind(asset.file_key, asset.width, asset.height, ts, row.id)
+      .bind(asset.file_key, dims.width, dims.height, ts, row.id)
       .run();
     await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(ts, page.toon_id).run();
     const next = await getRegionOrNull(env, row.id);
