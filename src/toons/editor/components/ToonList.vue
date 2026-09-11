@@ -125,7 +125,7 @@ const filteredCount = computed(
     <div class="editor-list-body">
       <p v-if="loading">Loading…</p>
       <template v-else>
-        <section v-if="filteredRecent.length" class="editor-list-section">
+        <section v-if="filteredRecent.length" class="editor-list-section editor-list-section--recent">
           <h2 class="editor-list-heading">Recently changed</h2>
           <ul class="editor-card-list">
             <li v-for="toon in filteredRecent" :key="`recent-${toon.id}`">

@@ -124,6 +124,13 @@ body {
   border-bottom: none;
 }
 
+/* Reads as a distinct strip above the series shelf, not just another section. */
+.editor-list-section--recent {
+  margin-bottom: 2.75rem;
+  padding-bottom: 2.25rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
 .editor-list-heading {
   font-size: 1.15rem;
   margin: 0 0 0.85rem;
