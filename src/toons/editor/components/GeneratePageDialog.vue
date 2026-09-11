@@ -207,8 +207,16 @@ const lastAutoPrefill = ref("");
 
 function applyPrefill(): void {
   if (!fluxRefsPrefill.value) return;
-  if (prompt.value.trim() && prompt.value !== lastAutoPrefill.value) return;
-  prompt.value = fluxRefsPrefill.value;
+  // The operator's own scene text is whatever comes after our last auto-written block — swap just
+  // that leading block for the fresh one so toggling a checkbox mid-typing still updates the header
+  // instead of silently doing nothing once the prompt no longer matches the old block verbatim.
+  if (prompt.value.startsWith(lastAutoPrefill.value)) {
+    prompt.value = fluxRefsPrefill.value + prompt.value.slice(lastAutoPrefill.value.length);
+  } else if (!prompt.value.trim()) {
+    prompt.value = fluxRefsPrefill.value;
+  } else {
+    return;
+  }
   lastAutoPrefill.value = fluxRefsPrefill.value;
 }
 

@@ -442,6 +442,38 @@ describe("GeneratePageDialog Flux provider", () => {
     wrapper.unmount();
   });
 
+  it("keeps the header live after scene text is typed, without losing that text", async () => {
+    const generateTwoSheets = {
+      width: 1152,
+      height: 1728,
+      model: "seedream 5.0 pro",
+      provider: "runware",
+      flowKey: null,
+      flowUrl: null,
+      slots: [
+        { alias: "doll", label: "Doll", kind: "sheet", fileKey: "doll.jpg", fileUrl: "/doll.jpg" },
+        { alias: "victim", label: "Victim", kind: "sheet", fileKey: "victim.jpg", fileUrl: "/victim.jpg" },
+      ],
+    };
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: generateTwoSheets, pages: [], busy: false, status: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    expect(textarea.value).toContain("# refs: Image 1 = Doll; Image 2 = Victim");
+    textarea.value += "A close-up on the doll's face.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    (document.querySelector('[name="include-victim"]') as HTMLElement).click();
+    await flushPromises();
+    expect(textarea.value).toContain("# refs: Image 1 = Doll");
+    expect(textarea.value).not.toContain("Victim");
+    expect(textarea.value).toContain("A close-up on the doll's face.");
+    wrapper.unmount();
+  });
+
   it("Clear wipes any typed scene text but immediately puts the reference legend back", async () => {
     const wrapper = mount(GeneratePageDialog, {
       props: { open: false, generate: fluxGenerate, pages: [], busy: false, status: "" },
