@@ -22,8 +22,10 @@ withDefaults(
     alertdialog?: boolean;
     /** Tall image preview — wider box, image fills the remaining height. */
     preview?: boolean;
+    /** More form fields than the default width comfortably fits (e.g. the plate picker + slot list in Generate page). */
+    wide?: boolean;
   }>(),
-  { alertdialog: false, preview: false }
+  { alertdialog: false, preview: false, wide: false }
 );
 
 const emit = defineEmits<{
@@ -43,7 +45,7 @@ const emit = defineEmits<{
         @open-auto-focus="emit('openAutoFocus', $event)"
         @focus-outside="(event: Event) => event.preventDefault()"
       >
-        <div class="editor-dialog" :data-preview="preview ? '' : undefined">
+        <div class="editor-dialog" :data-preview="preview ? '' : undefined" :data-wide="wide ? '' : undefined">
           <div class="editor-dialog-body">
             <DialogTitle as="h2">{{ title }}</DialogTitle>
             <slot />

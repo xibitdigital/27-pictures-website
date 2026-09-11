@@ -1323,6 +1323,10 @@ body {
   width: min(28rem, calc(100vw - 2rem));
 }
 
+.editor-dialog[data-wide] {
+  width: min(46rem, calc(100vw - 2rem));
+}
+
 .editor-dialog[data-preview] [data-slot-preview] {
   display: block;
   width: 100%;
