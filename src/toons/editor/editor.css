@@ -1435,12 +1435,21 @@ body {
 }
 
 .editor-generate-refs .editor-dialog-slots li {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.editor-generate-refs .editor-dialog-slots li > span:first-child {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .editor-generate-refs .editor-dialog-slots li > :last-child {
-  justify-self: start;
+  flex-shrink: 0;
+  font-size: 0.78rem;
 }
 
 @media (max-width: 700px) {
