@@ -42,6 +42,15 @@ const previousFileInput = ref<HTMLInputElement | null>(null);
 const count = ref("1");
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
+/** Whether a previous plate will actually be sent this call — the legend must match this, not just
+ * whether the series has a "previous" slot at all, or it claims an "Image N = previous page" that
+ * the checkbox above (unticked, or ticked with nothing picked yet) never actually attaches. */
+const willSendPrevious = computed(
+  () =>
+    includePrevious.value &&
+    hasPreviousSlot.value &&
+    Boolean(previousPageId.value || previousRegionId.value || previousFile.value)
+);
 const sortedPages = computed(() => [...props.pages].sort((a, b) => a.position - b.position));
 /** One entry per selectable reference plate: a whole "plate" page, or — for a "layout" page — each of
  * its own shape images individually, never the page's flattened composite (that would just repeat the
@@ -147,18 +156,18 @@ const fluxRefsPrefill = computed(() => {
       : providerLabel[props.generate?.provider || ""] || "flux-2-pro (BFL)";
   const header = [`# model: ${modelName}`, "# mode: image-to-image (multi-reference)"];
   const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
-  if (!sheets.length && !styleSlot.value && !hasPreviousSlot.value) return `${header.join("\n")}\n\n`;
+  if (!sheets.length && !styleSlot.value && !willSendPrevious.value) return `${header.join("\n")}\n\n`;
   const refs = sheets.map((s, i) => `Image ${i + 1} = ${cleanSlotLabel(s)}`);
   let n = sheets.length;
   // Fixed wording regardless of the slot's own label/alias — "style" here means ink
   // technique/rendering only, and that has to read unambiguously even when the slot
   // was renamed or still carries a stale label like "Image 1 — STYLE (...)".
   if (styleSlot.value) refs.push(`Image ${++n} = style reference (ink technique/rendering only, not a character)`);
-  if (hasPreviousSlot.value) refs.push(`Image ${++n} = previous page`);
+  if (willSendPrevious.value) refs.push(`Image ${++n} = previous page`);
   header.push(`# refs: ${refs.join("; ")}`);
   const parts = sheets.map((s, i) => `Image ${i + 1} for ${cleanSlotLabel(s)}`);
   if (styleSlot.value) parts.push("the style reference for ink technique and rendering style only — not a character");
-  if (hasPreviousSlot.value) parts.push("the previous page for continuity of set and style");
+  if (willSendPrevious.value) parts.push("the previous page for continuity of set and style");
   if (!parts.length) return `${header.join("\n")}\n\n`;
   return `${header.join("\n")}\n\nUsing ${parts.join(", ")} — do not alter identity.\n\n`;
 });
