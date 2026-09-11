@@ -1422,7 +1422,7 @@ body {
    reference list doesn't push the actual scene prompt further down the dialog. */
 .editor-generate-columns {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(13rem, 15rem);
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem);
   align-items: start;
   gap: 1.25rem;
 }
