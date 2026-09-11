@@ -270,7 +270,10 @@ async function onSlotFile(index: number, ev: Event): Promise<void> {
   try {
     const series = await uploadSeriesRef(existing.value.key, alias, file);
     existing.value = series;
-    applyGenerate(series);
+    const uploaded = (series.generate?.slots || []).find((s) => s.alias === alias);
+    if (uploaded) {
+      slots.value[index] = { ...slots.value[index], fileKey: uploaded.fileKey, fileUrl: uploaded.fileUrl };
+    }
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Reference upload failed");
   }
