@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoaderCircle } from "@lucide/vue";
+import { Eraser, LoaderCircle } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { isDirectProvider as isDirectProviderName, type PageRecord, type SeriesGenerateConfig } from "../types";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
@@ -317,8 +317,16 @@ function onSubmit(): void {
       <label>
         <span class="editor-label-row">
           Prompt
-          <button type="button" class="editor-field-link" name="clear-prompt" :disabled="busy" @click="onClearPrompt">
-            Clear
+          <button
+            type="button"
+            class="editor-icon-btn"
+            name="clear-prompt"
+            aria-label="Clear prompt"
+            title="Clear prompt"
+            :disabled="busy"
+            @click="onClearPrompt"
+          >
+            <Eraser :size="14" :stroke-width="1.6" aria-hidden="true" />
           </button>
         </span>
         <textarea
