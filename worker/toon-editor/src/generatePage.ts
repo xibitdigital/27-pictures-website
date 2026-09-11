@@ -26,6 +26,7 @@ import { fluxDownload, fluxResult, fluxSubmit } from "./fluxClient";
 import { toWebp, webpDimensions } from "./imageOptimize";
 import { replicateDownload, replicateResult, replicateSubmit, type ReplicateKind } from "./replicateClient";
 import { runwareDownload, runwareResult, runwareSubmit } from "./runwareClient";
+import { recordToonAsset } from "./toonAssets";
 import type { Env, SeriesRow, ToonRow } from "./types";
 
 export type GenerationJob = {
@@ -600,6 +601,7 @@ async function putPlate(
     httpMetadata: { contentType: optimized.type, cacheControl: "public, max-age=31536000, immutable" },
   });
   const dims = optimized.ext === "webp" ? webpDimensions(optimized.bytes) : null;
+  await recordToonAsset(env, toon.id, fileKey, dims?.width ?? null, dims?.height ?? null);
   return {
     fileKey,
     ext: optimized.ext,
@@ -701,6 +703,7 @@ export async function pollPageJob(
         httpMetadata: { contentType: "image/webp", cacheControl: "public, max-age=31536000, immutable" },
       });
       const dims = webpDimensions(downloaded.bytes);
+      await recordToonAsset(env, toon.id, fileKey, dims?.width ?? requested.width, dims?.height ?? requested.height);
       plates.push({ fileKey, width: dims?.width ?? requested.width, height: dims?.height ?? requested.height });
       continue;
     }

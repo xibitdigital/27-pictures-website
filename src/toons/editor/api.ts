@@ -11,6 +11,7 @@ import type {
   RegionShapeType,
   SeriesInput,
   SeriesOption,
+  ToonAsset,
   ToonListItem,
   ToonMetaInput,
   ToonRecord,
@@ -304,6 +305,17 @@ export function replacePage(pageId: string, file: File, size?: { width: number; 
   return api<ToonRecord>(`/pages/${pageId}/file`, { method: "POST", body });
 }
 
+/** Every image ever generated or uploaded for this toon — including ones no page or region uses
+ * any more — newest first. */
+export function listToonAssets(toonId: string): Promise<ToonAsset[]> {
+  return api<ToonAsset[]>(`/toons/${toonId}/assets`);
+}
+
+/** Reuses an existing gallery asset as this page's plate instead of uploading it again. */
+export function setPageFileFromAsset(pageId: string, fileKey: string): Promise<ToonRecord> {
+  return api<ToonRecord>(`/pages/${pageId}/file-from-asset`, { method: "POST", body: JSON.stringify({ fileKey }) });
+}
+
 export interface AudioUpload {
   key: string;
   url: string;
@@ -391,6 +403,14 @@ export function uploadRegionImage(
     body.set("height", String(size.height));
   }
   return api<RegionRecord>(`/regions/${id}/file`, { method: "POST", body });
+}
+
+/** Reuses an existing gallery asset to fill this region instead of uploading it again. */
+export function setRegionFileFromAsset(regionId: string, fileKey: string): Promise<RegionRecord> {
+  return api<RegionRecord>(`/regions/${regionId}/file-from-asset`, {
+    method: "POST",
+    body: JSON.stringify({ fileKey }),
+  });
 }
 
 export function generateRegionImage(

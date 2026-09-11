@@ -51,6 +51,7 @@ import { translateFromEnglish } from "./translate";
 import { isReaderLookupPath, readerStatuses, toonMatchesReaderPath } from "./readerLookup";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
+import { recordToonAsset, type ToonAssetRow } from "./toonAssets";
 
 import {
   DESC_LANGS,
@@ -897,11 +898,12 @@ async function putImage(env: Env, key: string, bytes: ArrayBuffer, contentType: 
   });
 }
 
-async function putPageAsset(env: Env, slug: string, upload: ImageUpload) {
+async function putPageAsset(env: Env, toonId: string, slug: string, upload: ImageUpload) {
   const optimized = await toWebp(upload);
   const hash = await sha256Hex(optimized.bytes);
   const key = `editor/${slug}/assets/${hash}.${optimized.ext}`;
   await putImage(env, key, optimized.bytes, optimized.type);
+  await recordToonAsset(env, toonId, key, upload.width, upload.height);
   return key;
 }
 
@@ -1947,7 +1949,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     // a lot of pages that second reload was the main cost of "add layout page", not the upload itself.
     const rawKind = String(form.get("kind") || "");
     const kind = rawKind === "layout" ? "layout" : "plate";
-    const key = await putPageAsset(env, current.slug, upload);
+    const key = await putPageAsset(env, id, current.slug, upload);
     const posRow = await env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?")
       .bind(id)
       .first();
@@ -1978,7 +1980,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const key = await putPageAsset(env, current.slug, upload);
+    const key = await putPageAsset(env, page.toon_id, current.slug, upload);
     const width = upload.width || page.width || null;
     const height = upload.height || page.height || null;
     await env.DB.prepare(`UPDATE pages SET file_key = ?, width = ?, height = ? WHERE id = ?`)
@@ -1986,6 +1988,85 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .run();
     await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), page.toon_id).run();
     return json(await loadToon(env, request, page.toon_id), 200, cors);
+  }
+
+  const toonAssetsMatch = path.match(/^\/toons\/([^/]+)\/assets$/);
+  if (isMethod(method, "GET") && toonAssetsMatch) {
+    const toon = await loadToon(env, request, toonAssetsMatch[1]);
+    if (!toon) return json({ error: "not found" }, 404, cors);
+    if (!isAdmin(session)) {
+      const isMember = toon.seriesKey ? await isSeriesEditor(env, toon.seriesKey, session ? session.id : "") : false;
+      if (!canManageToon(session, { owner_id: toon.ownerId, series_key: toon.seriesKey }, isMember)) {
+        return json({ error: "not found" }, 404, cors);
+      }
+    }
+    const rows = (
+      await env.DB.prepare("SELECT * FROM toon_assets WHERE toon_id = ? ORDER BY created_at DESC")
+        .bind(toon.id)
+        .all<ToonAssetRow>()
+    ).results;
+    return json(
+      rows.map((row) => ({
+        id: row.id,
+        fileKey: row.file_key,
+        url: objectUrl(request, env, row.file_key, null),
+        width: row.width,
+        height: row.height,
+        createdAt: row.created_at,
+      })),
+      200,
+      cors
+    );
+  }
+
+  // Reuses an existing gallery asset as this page's plate — no re-upload, just repointing
+  // file_key. `fileKey` must be one of this page's own toon's toon_assets rows (never trust a
+  // client-supplied key otherwise — it would let one toon's private R2 object be read into
+  // another's page just by knowing the hash).
+  const pageFileFromAssetMatch = path.match(/^\/pages\/([^/]+)\/file-from-asset$/);
+  if (isMethod(method, "POST") && pageFileFromAssetMatch) {
+    const page = await getPageOrNull(env, pageFileFromAssetMatch[1]);
+    if (!page) return json({ error: "not found" }, 404, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const fileKey = String(parsed.body.fileKey || "");
+    const asset = await env.DB.prepare("SELECT * FROM toon_assets WHERE toon_id = ? AND file_key = ?")
+      .bind(page.toon_id, fileKey)
+      .first<ToonAssetRow>();
+    if (!asset) return json({ error: "not found" }, 404, cors);
+    await env.DB.prepare(`UPDATE pages SET file_key = ?, width = ?, height = ? WHERE id = ?`)
+      .bind(asset.file_key, asset.width, asset.height, page.id)
+      .run();
+    await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), page.toon_id).run();
+    return json(await loadToon(env, request, page.toon_id), 200, cors);
+  }
+
+  const regionFileFromAssetMatch = path.match(/^\/regions\/([^/]+)\/file-from-asset$/);
+  if (isMethod(method, "POST") && regionFileFromAssetMatch) {
+    const row = await getRegionOrNull(env, regionFileFromAssetMatch[1]);
+    if (!row) return json({ error: "not found" }, 404, cors);
+    const page = await getPageOrNull(env, row.page_id);
+    if (!page) return json({ error: "not found" }, 404, cors);
+    const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first<ToonRow>();
+    if (!toon) return json({ error: "not found" }, 404, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const fileKey = String(parsed.body.fileKey || "");
+    const asset = await env.DB.prepare("SELECT * FROM toon_assets WHERE toon_id = ? AND file_key = ?")
+      .bind(page.toon_id, fileKey)
+      .first<ToonAssetRow>();
+    if (!asset) return json({ error: "not found" }, 404, cors);
+    const ts = nowIso();
+    await env.DB.prepare(
+      `UPDATE page_regions SET file_key = ?, file_width = ?, file_height = ?, image_offset_x = 0.5, image_offset_y = 0.5, image_scale = 1, updated_at = ?
+       WHERE id = ?`
+    )
+      .bind(asset.file_key, asset.width, asset.height, ts, row.id)
+      .run();
+    await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(ts, page.toon_id).run();
+    const next = await getRegionOrNull(env, row.id);
+    if (!next) return json({ error: "not found" }, 404, cors);
+    return json(mapRegion(next, request, env, toon.asset_page_dir), 200, cors);
   }
 
   const exportMatch = path.match(/^\/toons\/([^/]+)\/export$/);
@@ -2083,7 +2164,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!toon) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const key = await putPageAsset(env, toon.slug, upload);
+    const key = await putPageAsset(env, toon.id, toon.slug, upload);
     const ts = nowIso();
     await env.DB.prepare(
       `UPDATE page_regions SET file_key = ?, file_width = ?, file_height = ?, image_offset_x = 0.5, image_offset_y = 0.5, image_scale = 1, updated_at = ?

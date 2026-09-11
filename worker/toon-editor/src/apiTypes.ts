@@ -315,6 +315,17 @@ export interface ToonListItem {
   updatedAt?: string | null;
 }
 
+/** One image ever generated or uploaded for a toon, kept in its gallery even after the page or
+ * region that used it is deleted or its file replaced — see toonAssets.ts. */
+export interface ToonAsset {
+  id: string;
+  fileKey: string;
+  url: string | null;
+  width: number | null;
+  height: number | null;
+  createdAt: string;
+}
+
 export interface ToonMetaInput {
   slug?: string;
   title: string;

@@ -13,6 +13,9 @@ import {
   fetchCredits,
   generateAudio,
   generatePage,
+  listToonAssets,
+  setPageFileFromAsset,
+  setRegionFileFromAsset,
   translateFromEnglish,
   uploadAudio,
   uploadPage,
@@ -368,5 +371,48 @@ describe("editor api", () => {
     await uploadPage("t1", file);
     const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
     expect(body.get("kind")).toBeNull();
+  });
+
+  it("GETs a toon's asset gallery", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify([
+            { id: "a1", fileKey: "editor/demo/assets/x.webp", url: "https://x/media/x.webp", width: 800, height: 1424 },
+          ]),
+          { status: 200 }
+        )
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const rows = await listToonAssets("t1");
+    expect(rows).toHaveLength(1);
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/toons/t1/assets");
+  });
+
+  it("POSTs a page's file-from-asset choice as JSON", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: "t1", pages: [] }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await setPageFileFromAsset("p1", "editor/demo/assets/x.webp");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/pages/p1/file-from-asset");
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(init.body).toBe(JSON.stringify({ fileKey: "editor/demo/assets/x.webp" }));
+    const headers = new Headers(init.headers);
+    expect(headers.get("Content-Type")).toBe("application/json");
+  });
+
+  it("POSTs a region's file-from-asset choice as JSON", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: "r1" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await setRegionFileFromAsset("r1", "editor/demo/assets/x.webp");
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/regions/r1/file-from-asset");
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(init.body).toBe(JSON.stringify({ fileKey: "editor/demo/assets/x.webp" }));
   });
 });

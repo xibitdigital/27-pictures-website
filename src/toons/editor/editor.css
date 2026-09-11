@@ -1472,6 +1472,17 @@ body {
   background: rgb(0 0 0 / 70%);
 }
 
+/* Bigger thumbnails and a taller scroll area than the plate picker's default — this is a browsing
+   gallery, not a compact "which page" lookup. */
+.editor-asset-gallery {
+  max-height: 26rem;
+}
+
+.editor-asset-gallery .editor-plate-picker-item {
+  width: 6rem;
+  height: 6rem;
+}
+
 .editor-check {
   display: flex;
   align-items: center;

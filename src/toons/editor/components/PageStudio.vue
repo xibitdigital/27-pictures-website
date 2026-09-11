@@ -19,6 +19,7 @@ import {
   readImageSize,
   replacePage,
   reorderPages,
+  setRegionFileFromAsset,
   uploadPage,
   uploadRegionImage,
 } from "../api";
@@ -30,6 +31,7 @@ import {
   type RegionGeometry,
   type RegionRecord,
   type SeriesGenerateConfig,
+  type ToonAsset,
   type ToonRecord,
 } from "../types";
 import { mergeReplacedPage } from "../pageFile";
@@ -37,6 +39,7 @@ import { coverImageRect, moveRegionInStack, regionBoundingBox, regionPoints, reg
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, bubblesInPlayOrder, CAPTION_LANGS, moveBubbleInPlayOrder } from "../mapConfig";
 import { pushToast } from "../toast";
+import AssetGalleryDialog from "./AssetGalleryDialog.vue";
 import CaptionInspector from "./CaptionInspector.vue";
 import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorBar from "./EditorBar.vue";
@@ -72,6 +75,10 @@ const generateTargetRegionId = ref<string | null>(null);
 const confirmingRegionRemove = ref(false);
 const flattenDirty = ref(false);
 const flattening = ref(false);
+/** Gallery dialog's fill target — a region id when picking to fill a shape, null when picking
+ * to add a brand-new page from an existing image. */
+const galleryOpen = ref(false);
+const galleryRegionId = ref<string | null>(null);
 
 const toonId = computed(() => String(route.params.id || ""));
 const pageId = computed(() => (route.params.pageId ? String(route.params.pageId) : null));
@@ -736,6 +743,57 @@ function onAssignGenerate(): void {
   generateOpen.value = true;
 }
 
+function onAssignGallery(): void {
+  const id = assignRegionId.value;
+  assignRegionId.value = null;
+  if (!id) return;
+  galleryRegionId.value = id;
+  galleryOpen.value = true;
+}
+
+function onAddPageGallery(): void {
+  galleryRegionId.value = null;
+  galleryOpen.value = true;
+}
+
+function closeGallery(): void {
+  galleryOpen.value = false;
+  galleryRegionId.value = null;
+}
+
+/**
+ * A region fill repoints file_key server-side (setRegionFileFromAsset) — no bytes move. A new page
+ * has no id yet to repoint, so it refetches the asset's own bytes and reuses the existing
+ * uploadPage() path; the content hash is unchanged, so this doesn't create a second copy in R2 or
+ * a duplicate toon_assets row.
+ */
+async function onGalleryPick(asset: ToonAsset): Promise<void> {
+  const regionId = galleryRegionId.value;
+  closeGallery();
+  try {
+    if (regionId) {
+      const saved = await setRegionFileFromAsset(regionId, asset.fileKey);
+      applyRegionLocal(regionId, saved);
+      markFlattenDirty();
+      return;
+    }
+    if (!toon.value || !asset.url) return;
+    const res = await fetch(asset.url);
+    if (!res.ok) throw new Error("Could not load that image");
+    const blob = await res.blob();
+    const ext = asset.fileKey.split(".").pop() || "webp";
+    const file = new File([blob], `gallery.${ext}`, { type: blob.type || `image/${ext}` });
+    const size = asset.width && asset.height ? { width: asset.width, height: asset.height } : undefined;
+    const next = await uploadPage(toon.value.id, file, size);
+    toon.value = next;
+    dirtyIds.value = new Set();
+    const last = next.pages[next.pages.length - 1];
+    if (last) await router.push(`/${next.id}/pages/${last.id}`);
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not use that image");
+  }
+}
+
 function requestRegionRemove(): void {
   if (!selectedId.value || confirmingRegionRemove.value) return;
   confirmingRegionRemove.value = true;
@@ -881,6 +939,7 @@ async function onRemove(): Promise<void> {
           @upload="onUpload"
           @generate="generateOpen = true"
           @layout="onAddLayoutPage"
+          @gallery="onAddPageGallery"
           @remove="onRemovePage"
           @replace="onReplaceThumb"
           @reorder-pages="onReorderPages"
@@ -991,7 +1050,9 @@ async function onRemove(): Promise<void> {
         @close="assignRegionId = null"
         @upload="onAssignUpload"
         @generate="onAssignGenerate"
+        @gallery="onAssignGallery"
       />
+      <AssetGalleryDialog :open="galleryOpen" :toon-id="toon.id" @close="closeGallery" @pick="onGalleryPick" />
     </template>
   </div>
 </template>

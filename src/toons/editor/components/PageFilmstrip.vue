@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
-import { LayoutGrid, LoaderCircle, Plus, Upload, WandSparkles, X } from "@lucide/vue";
+import { Images, LayoutGrid, LoaderCircle, Plus, Upload, WandSparkles, X } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
@@ -18,6 +18,7 @@ const emit = defineEmits<{
   upload: [file: File];
   generate: [];
   layout: [];
+  gallery: [];
   remove: [pageId: string];
   replace: [pageId: string, file: File];
   /** Every page id, in the new desired order — the whole list, not just the moved one. */
@@ -90,6 +91,11 @@ function onGeneratePick(): void {
 function onLayoutPick(): void {
   addOpen.value = false;
   emit("layout");
+}
+
+function onGalleryPick(): void {
+  addOpen.value = false;
+  emit("gallery");
 }
 
 function onReplaceFile(ev: Event, page: PageRecord): void {
@@ -214,6 +220,16 @@ function onRemoveConfirm(): void {
       >
         <LayoutGrid :size="22" :stroke-width="1.8" aria-hidden="true" />
         Layout
+      </button>
+      <button
+        class="editor-add-page-choice"
+        type="button"
+        name="add-page-gallery"
+        title="Reuse an image already generated or uploaded for this toon"
+        @click="onGalleryPick"
+      >
+        <Images :size="22" :stroke-width="1.8" aria-hidden="true" />
+        Gallery
       </button>
     </div>
   </EditorDialog>

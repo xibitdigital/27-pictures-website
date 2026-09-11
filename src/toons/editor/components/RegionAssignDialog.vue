@@ -6,7 +6,7 @@
  * region) rather than embedding a second copy of it.
  */
 import { nextTick, ref } from "vue";
-import { Upload, WandSparkles } from "@lucide/vue";
+import { Images, Upload, WandSparkles } from "@lucide/vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 
 defineProps<{ open: boolean; canGenerate?: boolean }>();
@@ -15,6 +15,7 @@ const emit = defineEmits<{
   close: [];
   upload: [file: File];
   generate: [];
+  gallery: [];
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -63,6 +64,16 @@ function onGeneratePick(): void {
       >
         <WandSparkles :size="22" :stroke-width="1.8" aria-hidden="true" />
         Generate
+      </button>
+      <button
+        class="editor-add-page-choice"
+        type="button"
+        name="region-gallery"
+        title="Reuse an image already generated or uploaded for this toon"
+        @click="emit('gallery')"
+      >
+        <Images :size="22" :stroke-width="1.8" aria-hidden="true" />
+        Gallery
       </button>
     </div>
   </EditorDialog>
