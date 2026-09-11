@@ -2,6 +2,7 @@
 /** Purely presentational: the clipped image (or an empty placeholder) for one Layout-mode region. All position/size math lives in GeometryLayer.vue + regionFit.ts. */
 import { ImagePlus } from "@lucide/vue";
 import { computed, type CSSProperties } from "vue";
+import { percentPoints } from "../regionFit";
 import type { RegionRecord } from "../types";
 
 const props = defineProps<{
@@ -13,22 +14,50 @@ const props = defineProps<{
 /**
  * `border` on a `clip-path`-cropped element sits outside the clipped edge for
  * anything but a rect (the clip crops the box, not the border painted around
- * it), so a rect gets a real `border` — dashed/dotted included — and a
- * polygon gets an inset `box-shadow` instead, which hugs the clipped edge
- * exactly but can only ever render solid (box-shadow has no dash pattern).
+ * it), so a rect gets a real CSS `border` — dashed/dotted included. A polygon
+ * used to get an inset `box-shadow` instead, but that only follows the
+ * element's rectangular border box: it draws along the bbox edges the
+ * polygon happens to touch and shows nothing at all along an interior
+ * diagonal edge, which for most polygons is most of the outline — i.e. no
+ * visible stroke. An SVG `<polygon>` overlay (below) traces the actual
+ * points instead, so this only carries the rect case now.
  */
 const borderStyle = computed<CSSProperties>(() => {
-  if (!props.region.borderWidth) return {};
-  const color = props.region.borderColor || "#ffffff";
+  if (!props.region.borderWidth || props.region.shapeType !== "rect") return {};
+  return {
+    border: `${props.region.borderWidth}px ${props.region.borderStyle} ${props.region.borderColor || "#ffffff"}`,
+  };
+});
+
+const DASH_PATTERN: Record<string, (width: number) => string | undefined> = {
+  solid: () => undefined,
+  dashed: (width) => `${width * 2.5} ${width * 1.5}`,
+  dotted: (width) => `${width * 0.1} ${width * 1.6}`,
+};
+
+/** SVG-traced border for a polygon — `percentPoints` is already in the same 0-100%-of-bbox space `clipPath` uses, so the outline sits exactly on the clipped edge. */
+const svgBorder = computed(() => {
+  if (props.region.shapeType === "rect" || !props.region.borderWidth) return null;
   const width = props.region.borderWidth;
-  if (props.region.shapeType === "rect") {
-    return { border: `${width}px ${props.region.borderStyle} ${color}` };
-  }
-  return { boxShadow: `inset 0 0 0 ${width}px ${color}` };
+  return {
+    points: percentPoints(props.region.geometry)
+      .map((p) => `${p.x},${p.y}`)
+      .join(" "),
+    color: props.region.borderColor || "#ffffff",
+    width,
+    dasharray: DASH_PATTERN[props.region.borderStyle]?.(width),
+  };
 });
 </script>
 
 <template>
+  <!--
+    Two siblings, not one: the clip-path lives on `.editor-region`, and clip-path
+    also clips any descendant — an SVG border painted *inside* that div would get
+    half its stroke sliced off along the clipped edge, the same problem the old
+    box-shadow approach had. The border SVG sits next to it instead, unclipped,
+    at the same absolute inset:0 box.
+  -->
   <div
     class="editor-region"
     :class="{ 'is-empty': !region.fileUrl }"
@@ -41,4 +70,20 @@ const borderStyle = computed<CSSProperties>(() => {
       <span>Click to add image</span>
     </div>
   </div>
+  <svg
+    v-if="svgBorder"
+    class="editor-region-border"
+    viewBox="0 0 100 100"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <polygon
+      :points="svgBorder.points"
+      fill="none"
+      :stroke="svgBorder.color"
+      :stroke-width="svgBorder.width"
+      :stroke-dasharray="svgBorder.dasharray"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
 </template>

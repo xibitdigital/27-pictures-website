@@ -1785,6 +1785,13 @@ body {
   padding: 0.5rem;
 }
 
+.editor-region-border {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
 .editor-region-handles {
   position: absolute;
   inset: 0;
