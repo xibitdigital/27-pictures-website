@@ -130,13 +130,17 @@ describe("RegionLayer", () => {
       height: rectRegion.fileHeight as number,
     });
 
-    const frameEl = wrapper.find("[style*='clip-path']");
-    const frameStyle = frameEl.attributes("style") || "";
-    expectStyleCloseTo(frameStyle, "left", frame.left);
-    expectStyleCloseTo(frameStyle, "top", frame.top);
-    expectStyleCloseTo(frameStyle, "width", frame.width);
-    expectStyleCloseTo(frameStyle, "height", frame.height);
-    expect(frameStyle).toContain(frame.clipPath);
+    // Outer, unclipped positioning box.
+    const outerEl = wrapper.find(".jax-region-layer > div");
+    const outerStyle = outerEl.attributes("style") || "";
+    expectStyleCloseTo(outerStyle, "left", frame.left);
+    expectStyleCloseTo(outerStyle, "top", frame.top);
+    expectStyleCloseTo(outerStyle, "width", frame.width);
+    expectStyleCloseTo(outerStyle, "height", frame.height);
+
+    // Inner clipped box carries the clip-path.
+    const clipEl = wrapper.find("[style*='clip-path']");
+    expect(clipEl.attributes("style") || "").toContain(frame.clipPath);
 
     const imgEl = wrapper.find("img");
     expect(imgEl.attributes("src")).toBe(rectRegion.file);
@@ -154,11 +158,11 @@ describe("RegionLayer", () => {
     });
     await nextTick();
     const frame = expectedFrame(polygonRegion);
-    const frameEl = wrapper.find("[style*='clip-path']");
-    const frameStyle = frameEl.attributes("style") || "";
-    expectStyleCloseTo(frameStyle, "width", frame.width);
-    expectStyleCloseTo(frameStyle, "height", frame.height);
-    expect(frameStyle).toContain(frame.clipPath);
+    const outerStyle = wrapper.find(".jax-region-layer > div").attributes("style") || "";
+    expectStyleCloseTo(outerStyle, "width", frame.width);
+    expectStyleCloseTo(outerStyle, "height", frame.height);
+    const clipStyle = wrapper.find("[style*='clip-path']").attributes("style") || "";
+    expect(clipStyle).toContain(frame.clipPath);
   });
 
   it("re-computes cover-fit off the region's own naturalWidth/Height once its image loads, not the stored dims", async () => {
@@ -190,19 +194,34 @@ describe("RegionLayer", () => {
     expect(srcs).toEqual([rectRegion.file, polygonRegion.file]);
   });
 
-  it("renders a rect region's border as a real border, a polygon's as an inset box-shadow", async () => {
+  it("scales a rect region's border by the backdrop's design-px-to-screen-px ratio", async () => {
+    // makeImage() is an exact 0.5 scale (naturalWidth 1008 -> clientWidth 504) — a 3px
+    // design-resolution border must render as 1.5 real screen px, not 3, or it stays the
+    // same thickness however small/large the plate is actually displayed.
     const borderedRect: ReaderRegion = { ...rectRegion, borderColor: "#ff0000", borderWidth: 3, borderStyle: "dashed" };
-    const borderedPolygon: ReaderRegion = { ...polygonRegion, borderColor: "#00ff00", borderWidth: 2 };
     const wrapper = mount(RegionLayer, {
-      props: { pageNum: 1, regions: [borderedRect, borderedPolygon], imageEl: makeImage() },
+      props: { pageNum: 1, regions: [borderedRect], imageEl: makeImage() },
       attachTo: document.body,
     });
     await nextTick();
-    const frames = wrapper.findAll("[style*='clip-path']");
-    const rectStyle = frames[0].attributes("style") || "";
-    expect(rectStyle).toContain("border: 3px dashed #ff0000");
-    const polygonStyle = frames[1].attributes("style") || "";
-    expect(polygonStyle).toContain("box-shadow: inset 0 0 0 2px #00ff00");
+    const clipStyle = wrapper.find("[style*='clip-path']").attributes("style") || "";
+    expect(clipStyle).toContain("border: 1.5px dashed #ff0000");
+  });
+
+  it("traces a polygon region's border with a scaled SVG stroke, not a box-shadow", async () => {
+    const borderedPolygon: ReaderRegion = { ...polygonRegion, borderColor: "#00ff00", borderWidth: 2 };
+    const wrapper = mount(RegionLayer, {
+      props: { pageNum: 1, regions: [borderedPolygon], imageEl: makeImage() },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const clipStyle = wrapper.find("[style*='clip-path']").attributes("style") || "";
+    expect(clipStyle).not.toContain("box-shadow");
+    expect(clipStyle).not.toContain("border:");
+    const polygon = wrapper.get("svg polygon");
+    expect(polygon.attributes("stroke")).toBe("#00ff00");
+    expect(polygon.attributes("stroke-width")).toBe("1"); // 2px design -> 1px at 0.5 scale
+    expect(polygon.attributes("fill")).toBe("none");
   });
 
   it("has no border styling when borderWidth is 0 (the default)", async () => {
