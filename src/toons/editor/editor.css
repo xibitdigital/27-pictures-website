@@ -1331,7 +1331,7 @@ body {
 }
 
 .editor-dialog[data-wide] {
-  width: min(46rem, calc(100vw - 2rem));
+  width: min(58rem, calc(100vw - 2rem));
 }
 
 .editor-dialog[data-preview] [data-slot-preview] {
