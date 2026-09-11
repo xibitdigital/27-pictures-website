@@ -109,6 +109,17 @@ function setIncluded(alias: string, included: boolean): void {
   excludedAliases.value = next;
 }
 
+/**
+ * Slot labels are old free text — many still carry a leading "Image N — " stamped on
+ * when the slot was numbered differently (a different sheet count, a different order,
+ * before it became "style"/"previous"). Left in, the legend can say "Image 1 = Image 3 —
+ * Victim": a number that contradicts the "Image 1" it's actually being sent as. Strip any
+ * such prefix so the legend only ever states the slot's actual position in *this* call.
+ */
+function cleanSlotLabel(slot: { label: string; alias: string }): string {
+  return (slot.label || slot.alias).replace(/^image\s*\d+\s*[—–-]\s*/i, "").trim() || slot.alias;
+}
+
 const fluxSheets = computed(() => (props.generate?.slots || []).filter((s) => s.kind === "sheet" && s.fileUrl));
 const includedRefCount = computed(() => fluxSheets.value.filter((s) => isIncluded(s.alias)).length);
 
@@ -137,7 +148,7 @@ const fluxRefsPrefill = computed(() => {
   const header = [`# model: ${modelName}`, "# mode: image-to-image (multi-reference)"];
   const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
   if (!sheets.length && !styleSlot.value && !hasPreviousSlot.value) return `${header.join("\n")}\n\n`;
-  const refs = sheets.map((s, i) => `Image ${i + 1} = ${s.label || s.alias}`);
+  const refs = sheets.map((s, i) => `Image ${i + 1} = ${cleanSlotLabel(s)}`);
   let n = sheets.length;
   // Fixed wording regardless of the slot's own label/alias — "style" here means ink
   // technique/rendering only, and that has to read unambiguously even when the slot
@@ -145,7 +156,7 @@ const fluxRefsPrefill = computed(() => {
   if (styleSlot.value) refs.push(`Image ${++n} = style reference (ink technique/rendering only, not a character)`);
   if (hasPreviousSlot.value) refs.push(`Image ${++n} = previous page`);
   header.push(`# refs: ${refs.join("; ")}`);
-  const parts = sheets.map((s, i) => `Image ${i + 1} for ${s.label || s.alias}`);
+  const parts = sheets.map((s, i) => `Image ${i + 1} for ${cleanSlotLabel(s)}`);
   if (styleSlot.value) parts.push("the style reference for ink technique and rendering style only — not a character");
   if (hasPreviousSlot.value) parts.push("the previous page for continuity of set and style");
   if (!parts.length) return `${header.join("\n")}\n\n`;
