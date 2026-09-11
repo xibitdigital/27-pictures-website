@@ -70,6 +70,39 @@ async function getObject(env: Env, key: string): Promise<ArrayBuffer | null> {
   return obj.arrayBuffer();
 }
 
+/**
+ * Resolves the "previous" slot's source file — either a whole plate
+ * (`previousPageId`, the page's own flattened composite) or one shape's own
+ * image inside a layout page (`previousRegionId`, that region's file only,
+ * never the page's flattened composite). `previousRegionId` wins when both
+ * are somehow set. Both are scoped to this toon so a stale id from another
+ * toon can't leak its file.
+ */
+async function resolvePreviousKey(
+  env: Env,
+  toonId: string,
+  input: { previousPageId?: string | null; previousRegionId?: string | null }
+): Promise<string | null> {
+  if (input.previousRegionId) {
+    const region = await env.DB.prepare(
+      `SELECT page_regions.file_key AS file_key
+       FROM page_regions
+       INNER JOIN pages ON pages.id = page_regions.page_id
+       WHERE page_regions.id = ? AND pages.toon_id = ?`
+    )
+      .bind(input.previousRegionId, toonId)
+      .first<{ file_key: string | null }>();
+    return region?.file_key || null;
+  }
+  if (input.previousPageId) {
+    const page = await env.DB.prepare("SELECT file_key FROM pages WHERE id = ? AND toon_id = ?")
+      .bind(input.previousPageId, toonId)
+      .first<{ file_key: string | null }>();
+    return page?.file_key || null;
+  }
+  return null;
+}
+
 export async function startPageGenerate(
   env: Env,
   input: {
@@ -78,8 +111,10 @@ export async function startPageGenerate(
     prompt: string;
     includePrevious: boolean;
     pageId: string | null;
-    /** Existing plate in this toon to use as the previous-slot reference. */
+    /** Existing plate in this toon to use as the previous-slot reference. Ignored when `previousRegionId` is set. */
     previousPageId?: string | null;
+    /** One shape's own image inside a layout page in this toon, used as the previous-slot reference instead of a whole plate. */
+    previousRegionId?: string | null;
     /** Operator-attached image for the "previous" slot. Always wins over a picked plate. */
     previousOverride?: { bytes: ArrayBuffer; type: string } | null;
     /** How many plates to run. Capped at 4; forced to 1 when replacing a page. */
@@ -129,16 +164,7 @@ export async function startPageGenerate(
     return { ok: false, error: "series flow is not valid JSON", status: 400 };
   }
 
-  const pages = (
-    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(input.toon.id).all<{
-      id: string;
-      file_key: string;
-    }>()
-  ).results;
-  let previousKey: string | null = null;
-  if (input.previousPageId) {
-    previousKey = pages.find((p) => p.id === input.previousPageId)?.file_key || null;
-  }
+  const previousKey = await resolvePreviousKey(env, input.toon.id, input);
 
   const names: (string | null)[] = [];
   const nodeIds: string[] = [];
@@ -253,16 +279,7 @@ async function startFluxGenerate(
   const targetWidth = input.targetWidth ?? generate.width;
   const targetHeight = input.targetHeight ?? generate.height;
 
-  const pages = (
-    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(input.toon.id).all<{
-      id: string;
-      file_key: string;
-    }>()
-  ).results;
-  let previousKey: string | null = null;
-  if (input.previousPageId) {
-    previousKey = pages.find((p) => p.id === input.previousPageId)?.file_key || null;
-  }
+  const previousKey = await resolvePreviousKey(env, input.toon.id, input);
 
   const excluded = new Set(input.excludeAliases || []);
   const images: string[] = [];
@@ -354,16 +371,7 @@ async function startReplicateGenerate(
   const targetWidth = input.targetWidth ?? generate.width;
   const targetHeight = input.targetHeight ?? generate.height;
 
-  const pages = (
-    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(input.toon.id).all<{
-      id: string;
-      file_key: string;
-    }>()
-  ).results;
-  let previousKey: string | null = null;
-  if (input.previousPageId) {
-    previousKey = pages.find((p) => p.id === input.previousPageId)?.file_key || null;
-  }
+  const previousKey = await resolvePreviousKey(env, input.toon.id, input);
 
   const excluded = new Set(input.excludeAliases || []);
   const images: string[] = [];
@@ -450,16 +458,7 @@ async function startRunwareGenerate(
   const targetWidth = input.targetWidth ?? generate.width;
   const targetHeight = input.targetHeight ?? generate.height;
 
-  const pages = (
-    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(input.toon.id).all<{
-      id: string;
-      file_key: string;
-    }>()
-  ).results;
-  let previousKey: string | null = null;
-  if (input.previousPageId) {
-    previousKey = pages.find((p) => p.id === input.previousPageId)?.file_key || null;
-  }
+  const previousKey = await resolvePreviousKey(env, input.toon.id, input);
 
   const excluded = new Set(input.excludeAliases || []);
   const images: string[] = [];

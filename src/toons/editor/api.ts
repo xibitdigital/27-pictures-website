@@ -242,6 +242,8 @@ export function generatePage(
     includePrevious: boolean;
     pageId?: string | null;
     previousPageId?: string | null;
+    /** One shape's own image inside a layout page, used instead of a whole plate. Wins over `previousPageId` when both are set. */
+    previousRegionId?: string | null;
     previousFile?: File | null;
     count?: number;
     /** Flux only — sheet aliases to leave out of this one call (e.g. a doll ref that isn't in this shot). Ignored by the Comfy path, whose graph nodes are fixed. */
@@ -253,6 +255,7 @@ export function generatePage(
   body.set("includePrevious", payload.includePrevious ? "1" : "0");
   if (payload.pageId) body.set("pageId", payload.pageId);
   if (payload.previousPageId) body.set("previousPageId", payload.previousPageId);
+  if (payload.previousRegionId) body.set("previousRegionId", payload.previousRegionId);
   if (payload.previousFile) body.set("previousFile", payload.previousFile);
   if (payload.count && payload.count > 1) body.set("count", String(payload.count));
   if (payload.excludeAliases?.length) body.set("excludeAliases", JSON.stringify(payload.excludeAliases));
@@ -392,6 +395,8 @@ export function generateRegionImage(
     prompt: string;
     includePrevious: boolean;
     previousPageId?: string | null;
+    /** One shape's own image inside a layout page, used instead of a whole plate. Wins over `previousPageId` when both are set. */
+    previousRegionId?: string | null;
     previousFile?: File | null;
     /** Flux only — sheet aliases to leave out of this one call (e.g. a doll ref that isn't in this shot). Ignored by the Comfy path, whose graph nodes are fixed. */
     excludeAliases?: string[];
@@ -401,6 +406,7 @@ export function generateRegionImage(
   body.set("prompt", payload.prompt);
   body.set("includePrevious", payload.includePrevious ? "1" : "0");
   if (payload.previousPageId) body.set("previousPageId", payload.previousPageId);
+  if (payload.previousRegionId) body.set("previousRegionId", payload.previousRegionId);
   if (payload.previousFile) body.set("previousFile", payload.previousFile);
   if (payload.excludeAliases?.length) body.set("excludeAliases", JSON.stringify(payload.excludeAliases));
   return api(`/regions/${id}/generate`, { method: "POST", body });

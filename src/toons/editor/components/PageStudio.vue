@@ -166,6 +166,7 @@ type GeneratePayload = {
   prompt: string;
   includePrevious: boolean;
   previousPageId: string | null;
+  previousRegionId: string | null;
   previousFile: File | null;
   excludeAliases: string[];
 };

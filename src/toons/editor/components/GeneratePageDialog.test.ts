@@ -103,6 +103,7 @@ describe("GeneratePageDialog previous-plate override", () => {
           prompt: "Erin walks in.",
           includePrevious: false,
           previousPageId: null,
+          previousRegionId: null,
           previousFile: null,
           count: 1,
           excludeAliases: [],
@@ -146,6 +147,7 @@ describe("GeneratePageDialog previous-plate override", () => {
           prompt: "Erin walks in.",
           includePrevious: true,
           previousPageId: "p1",
+          previousRegionId: null,
           previousFile: null,
           count: 1,
           excludeAliases: [],
@@ -180,6 +182,65 @@ describe("GeneratePageDialog previous-plate override", () => {
     await wrapper.setProps({ open: true });
     await flushPromises();
     expect(document.querySelector('button[aria-label="Page 2"]')?.classList).toContain("is-selected");
+    wrapper.unmount();
+  });
+
+  it("lists a layout page's own shape images instead of its flattened composite", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: {
+        open: false,
+        generate: generateWithPrevious,
+        pages: [
+          { id: "p1", position: 0, fileUrl: "/p1.webp" },
+          {
+            id: "p2",
+            position: 1,
+            fileUrl: "/p2-flattened.webp",
+            kind: "layout",
+            regions: [
+              { id: "r1", fileUrl: "/r1.webp" },
+              { id: "r2", fileUrl: "/r2.webp" },
+              { id: "r3", fileUrl: null },
+            ],
+          },
+        ],
+        busy: false,
+        status: "",
+      },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    (document.querySelector('[name="include-previous"]') as HTMLElement).click();
+    await flushPromises();
+    expect(document.querySelector('button[aria-label="Page 2"]')).toBeNull();
+    expect(document.querySelector('img[src="/p2-flattened.webp"]')).toBeNull();
+    expect(document.querySelector('button[aria-label="Page 2 · shape 1"] img')?.getAttribute("src")).toBe("/r1.webp");
+    expect(document.querySelector('button[aria-label="Page 2 · shape 2"] img')?.getAttribute("src")).toBe("/r2.webp");
+    expect(document.querySelector('button[aria-label="Page 2 · shape 3"]')).toBeNull();
+
+    (document.querySelector('button[aria-label="Page 2 · shape 1"]') as HTMLElement).click();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "Erin walks in.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    (document.querySelector("form") as HTMLFormElement).dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true })
+    );
+    await flushPromises();
+    expect(wrapper.emitted("submit")).toEqual([
+      [
+        {
+          prompt: "Erin walks in.",
+          includePrevious: true,
+          previousPageId: null,
+          previousRegionId: "r1",
+          previousFile: null,
+          count: 1,
+          excludeAliases: [],
+        },
+      ],
+    ]);
     wrapper.unmount();
   });
 
@@ -228,6 +289,7 @@ describe("GeneratePageDialog previous-plate override", () => {
           prompt: "Erin walks in.",
           includePrevious: true,
           previousPageId: null,
+          previousRegionId: null,
           previousFile: file,
           count: 1,
           excludeAliases: [],
@@ -259,6 +321,7 @@ describe("GeneratePageDialog previous-plate override", () => {
           prompt: "Erin walks in.",
           includePrevious: false,
           previousPageId: null,
+          previousRegionId: null,
           previousFile: null,
           count: 3,
           excludeAliases: [],

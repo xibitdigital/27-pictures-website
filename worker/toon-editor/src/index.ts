@@ -1855,6 +1855,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const includePrevious = form.get("includePrevious") === "1";
     const pageId = form.get("pageId") ? String(form.get("pageId")) : null;
     const previousPageId = form.get("previousPageId") ? String(form.get("previousPageId")) : null;
+    const previousRegionId = form.get("previousRegionId") ? String(form.get("previousRegionId")) : null;
     const previousFile = form.get("previousFile");
     let previousOverride: { bytes: ArrayBuffer; type: string } | null = null;
     if (previousFile && typeof previousFile !== "string") {
@@ -1871,9 +1872,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       toon: current,
       series,
       prompt,
-      includePrevious: includePrevious || Boolean(previousPageId),
+      includePrevious: includePrevious || Boolean(previousPageId) || Boolean(previousRegionId),
       pageId,
       previousPageId,
+      previousRegionId,
       previousOverride,
       count: Number(form.get("count") || 1),
       workerOrigin: new URL(request.url).origin,
@@ -2099,6 +2101,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!prompt) return json({ error: "prompt is required" }, 400, cors);
     const includePrevious = form.get("includePrevious") === "1";
     const previousPageId = form.get("previousPageId") ? String(form.get("previousPageId")) : null;
+    const previousRegionId = form.get("previousRegionId") ? String(form.get("previousRegionId")) : null;
     const previousFile = form.get("previousFile");
     let previousOverride: { bytes: ArrayBuffer; type: string } | null = null;
     if (previousFile && typeof previousFile !== "string") {
@@ -2117,11 +2120,12 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       toon,
       series,
       prompt,
-      includePrevious: includePrevious || Boolean(previousPageId),
+      includePrevious: includePrevious || Boolean(previousPageId) || Boolean(previousRegionId),
       pageId: page.id,
       targetWidth: regionSize.width,
       targetHeight: regionSize.height,
       previousPageId,
+      previousRegionId,
       previousOverride,
       count: 1,
       regionId: row.id,

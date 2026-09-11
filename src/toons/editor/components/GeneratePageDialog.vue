@@ -10,7 +10,7 @@ import EditorSelectItem from "./ui/EditorSelectItem.vue";
 const props = defineProps<{
   open: boolean;
   generate: SeriesGenerateConfig | null;
-  pages: Pick<PageRecord, "id" | "position" | "fileUrl">[];
+  pages: Pick<PageRecord, "id" | "position" | "fileUrl" | "kind" | "regions">[];
   busy: boolean;
   status: string;
 }>();
@@ -22,6 +22,7 @@ const emit = defineEmits<{
       prompt: string;
       includePrevious: boolean;
       previousPageId: string | null;
+      previousRegionId: string | null;
       previousFile: File | null;
       count: number;
       excludeAliases: string[];
@@ -34,16 +35,64 @@ const COUNT_OPTIONS = [1, 2, 3, 4] as const;
 const prompt = ref("");
 const includePrevious = ref(false);
 const previousPageId = ref("");
+/** One shape's own image inside a layout page — mutually exclusive with previousPageId. */
+const previousRegionId = ref("");
 const previousFile = ref<File | null>(null);
 const previousFileInput = ref<HTMLInputElement | null>(null);
 const count = ref("1");
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
-/** Every page in the toon, including "layout" pages — those already carry the flattened composite
- * (every shape's image merged onto one plate) as their own fileUrl, so no separate region lookup is needed. */
 const sortedPages = computed(() => [...props.pages].sort((a, b) => a.position - b.position));
+/** One entry per selectable reference plate: a whole "plate" page, or — for a "layout" page — each of
+ * its own shape images individually, never the page's flattened composite (that would just repeat the
+ * same character/object already covered by the series' own reference sheets, not a distinct plate). */
+const previousCandidates = computed(() => {
+  const out: { key: string; kind: "page" | "region"; id: string; fileUrl: string; label: string; badge: string }[] = [];
+  for (const page of sortedPages.value) {
+    if (page.kind === "layout") {
+      (page.regions || []).forEach((region, i) => {
+        if (!region.fileUrl) return;
+        out.push({
+          key: `region:${region.id}`,
+          kind: "region",
+          id: region.id,
+          fileUrl: region.fileUrl,
+          label: `Page ${page.position + 1} · shape ${i + 1}`,
+          badge: `${page.position + 1}.${i + 1}`,
+        });
+      });
+    } else if (page.fileUrl) {
+      out.push({
+        key: `page:${page.id}`,
+        kind: "page",
+        id: page.id,
+        fileUrl: page.fileUrl,
+        label: `Page ${page.position + 1}`,
+        badge: String(page.position + 1),
+      });
+    }
+  }
+  return out;
+});
+function pickPrevious(candidate: { kind: "page" | "region"; id: string }): void {
+  const already =
+    candidate.kind === "page" ? previousPageId.value === candidate.id : previousRegionId.value === candidate.id;
+  previousPageId.value = "";
+  previousRegionId.value = "";
+  if (already) return;
+  if (candidate.kind === "page") previousPageId.value = candidate.id;
+  else previousRegionId.value = candidate.id;
+}
 const styleSlot = computed(() => (props.generate?.slots || []).find((s) => s.kind === "style" && s.fileUrl) || null);
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
+const selectedPreviousRegion = computed(() => {
+  if (!previousRegionId.value) return null;
+  for (const page of props.pages) {
+    const region = (page.regions || []).find((r) => r.id === previousRegionId.value);
+    if (region) return region;
+  }
+  return null;
+});
 /** Any provider that skips the Comfy graph entirely and sends the prompt + reference sheets straight to a hosted model (BFL Flux, Replicate, or Runware). Shared with the Worker contract (apiTypes.ts) so a new provider can't silently fall through to the Comfy-only copy/warning below. */
 const isDirectProvider = computed(() => isDirectProviderName(props.generate?.provider));
 const isFluxKontext = computed(() => props.generate?.provider === "replicate-flux");
@@ -90,11 +139,14 @@ const fluxRefsPrefill = computed(() => {
   if (!sheets.length && !styleSlot.value && !hasPreviousSlot.value) return `${header.join("\n")}\n\n`;
   const refs = sheets.map((s, i) => `Image ${i + 1} = ${s.label || s.alias}`);
   let n = sheets.length;
-  if (styleSlot.value) refs.push(`Image ${++n} = ${styleSlot.value.label || "style reference"}`);
+  // Fixed wording regardless of the slot's own label/alias — "style" here means ink
+  // technique/rendering only, and that has to read unambiguously even when the slot
+  // was renamed or still carries a stale label like "Image 1 — STYLE (...)".
+  if (styleSlot.value) refs.push(`Image ${++n} = style reference (ink technique/rendering only, not a character)`);
   if (hasPreviousSlot.value) refs.push(`Image ${++n} = previous page`);
   header.push(`# refs: ${refs.join("; ")}`);
   const parts = sheets.map((s, i) => `Image ${i + 1} for ${s.label || s.alias}`);
-  if (styleSlot.value) parts.push("the style reference for consistent look");
+  if (styleSlot.value) parts.push("the style reference for ink technique and rendering style only — not a character");
   if (hasPreviousSlot.value) parts.push("the previous page for continuity of set and style");
   if (!parts.length) return `${header.join("\n")}\n\n`;
   return `${header.join("\n")}\n\nUsing ${parts.join(", ")} — do not alter identity.\n\n`;
@@ -127,6 +179,9 @@ watch(
     if (previousPageId.value && !props.pages.some((p) => p.id === previousPageId.value)) {
       previousPageId.value = "";
     }
+    if (previousRegionId.value && !selectedPreviousRegion.value) {
+      previousRegionId.value = "";
+    }
     excludedAliases.value = new Set();
     applyPrefill();
   }
@@ -140,7 +195,10 @@ function onCancel(): void {
 function onPreviousFile(ev: Event): void {
   const input = ev.target as HTMLInputElement;
   previousFile.value = input.files?.[0] || null;
-  if (previousFile.value) previousPageId.value = "";
+  if (previousFile.value) {
+    previousPageId.value = "";
+    previousRegionId.value = "";
+  }
 }
 
 function pickPreviousFile(): void {
@@ -152,7 +210,12 @@ const missingSheets = computed(() =>
 );
 
 const missingPrevious = computed(
-  () => includePrevious.value && hasPreviousSlot.value && !previousPageId.value && !previousFile.value
+  () =>
+    includePrevious.value &&
+    hasPreviousSlot.value &&
+    !previousPageId.value &&
+    !previousRegionId.value &&
+    !previousFile.value
 );
 
 /** Comfy needs its uploaded Save-API graph; Flux never reads that graph at all. */
@@ -171,8 +234,10 @@ function onSubmit(): void {
   if (!canSubmit.value) return;
   emit("submit", {
     prompt: prompt.value.trim(),
-    includePrevious: includePrevious.value && Boolean(previousPageId.value || previousFile.value),
+    includePrevious:
+      includePrevious.value && Boolean(previousPageId.value || previousRegionId.value || previousFile.value),
     previousPageId: previousPageId.value || null,
+    previousRegionId: previousRegionId.value || null,
     previousFile: previousFile.value,
     count: Number(count.value) || 1,
     excludeAliases: isDirectProvider.value ? [...excludedAliases.value] : [],
@@ -226,25 +291,32 @@ function onSubmit(): void {
           Include previous page
         </EditorCheckbox>
         <template v-if="includePrevious">
-          <div v-if="sortedPages.length" class="editor-form-span">
+          <div v-if="previousCandidates.length" class="editor-form-span">
             <span class="editor-generate-label">Plate from this toon</span>
-            <p class="editor-muted">Includes layout pages — the flattened plate with every shape filled in.</p>
+            <p class="editor-muted">
+              A layout page lists each of its own shapes here, not the flattened page — pick the one shape that's
+              actually the reference.
+            </p>
             <div class="editor-plate-picker" role="listbox" aria-label="Plate from this toon">
               <button
-                v-for="page in sortedPages"
-                :key="page.id"
+                v-for="candidate in previousCandidates"
+                :key="candidate.key"
                 type="button"
                 class="editor-plate-picker-item"
-                :class="{ 'is-selected': previousPageId === page.id }"
+                :class="{
+                  'is-selected':
+                    candidate.kind === 'page' ? previousPageId === candidate.id : previousRegionId === candidate.id,
+                }"
                 role="option"
-                :aria-selected="previousPageId === page.id"
-                :aria-label="`Page ${page.position + 1}`"
+                :aria-selected="
+                  candidate.kind === 'page' ? previousPageId === candidate.id : previousRegionId === candidate.id
+                "
+                :aria-label="candidate.label"
                 :disabled="busy"
-                @click="previousPageId = previousPageId === page.id ? '' : page.id"
+                @click="pickPrevious(candidate)"
               >
-                <img v-if="page.fileUrl" :src="page.fileUrl" alt="" />
-                <span v-else class="editor-plate-picker-empty" aria-hidden="true"></span>
-                <span class="editor-plate-picker-num">{{ page.position + 1 }}</span>
+                <img :src="candidate.fileUrl" alt="" />
+                <span class="editor-plate-picker-num">{{ candidate.badge }}</span>
               </button>
             </div>
           </div>
@@ -306,7 +378,9 @@ function onSubmit(): void {
               ? "custom file"
               : selectedPreviousPage
                 ? `page ${selectedPreviousPage.position + 1}`
-                : "skipped"
+                : selectedPreviousRegion
+                  ? "shape image"
+                  : "skipped"
           }}</span>
           <EditorCheckbox
             v-else-if="isDirectProvider && slot.kind === 'sheet' && slot.fileUrl"
