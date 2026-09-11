@@ -23,7 +23,7 @@ function baseRegion(overrides: Partial<RegionRecord> = {}): RegionRecord {
   };
 }
 
-const baseProps = { clipPath: "none", imgStyle: null, frameWidth: 200, frameHeight: 100 };
+const baseProps = { clipPath: "none", imgStyle: null, frameWidth: 200, frameHeight: 100, scale: 1 };
 
 describe("RegionShape borders", () => {
   it("gives a rect a real CSS border, no SVG overlay", () => {
@@ -64,6 +64,33 @@ describe("RegionShape borders", () => {
     expect(polygon.attributes("stroke-width")).toBe("3");
     expect(polygon.attributes("fill")).toBe("none");
     expect(polygon.attributes("points")).toBe("0,0 200,0 100,100");
+  });
+
+  it("scales borderWidth by the studio canvas's design-px-to-screen-px ratio, for both a rect and a polygon", () => {
+    const rectWrapper = mount(RegionShape, {
+      props: { ...baseProps, region: baseRegion({ borderWidth: 4 }), scale: 0.5 },
+    });
+    expect(rectWrapper.get(".editor-region").attributes("style")).toContain("border: 2px solid #ff0000");
+
+    const polygonWrapper = mount(RegionShape, {
+      props: {
+        ...baseProps,
+        scale: 0.5,
+        region: baseRegion({
+          shapeType: "polygon",
+          geometry: {
+            kind: "polygon",
+            points: [
+              { x: 0, y: 0 },
+              { x: 1, y: 0 },
+              { x: 0.5, y: 1 },
+            ],
+          },
+          borderWidth: 3,
+        }),
+      },
+    });
+    expect(polygonWrapper.get("svg.editor-region-border polygon").attributes("stroke-width")).toBe("1.5");
   });
 
   it("renders no border SVG when borderWidth is 0", () => {

@@ -88,11 +88,14 @@ interface RegionLayout {
   /** The frame's own pixel size — lets RegionShape draw its polygon border in real pixel coordinates (an SVG viewBox non-uniformly scaled to a skewed parallelogram is a known cross-browser risk with non-scaling-stroke; the pre-existing draft-polygon overlay below avoids it the same way). */
   frameWidth: number;
   frameHeight: number;
+  /** design-px -> on-screen-px ratio (the studio canvas can render the plate smaller/larger than its native resolution) — RegionShape scales borderWidth (stored in design px) by this so it matches the reader's own scaling instead of always drawing the same real screen-pixel thickness. */
+  scale: number;
 }
 
 const regionLayouts = computed<RegionLayout[]>(() => {
   if (!box.value) return [];
   const b = box.value;
+  const scale = props.imageEl?.naturalWidth ? b.width / props.imageEl.naturalWidth : 1;
   // Non-interactive (Bubbles mode): an unfilled region has nothing to show
   // and no "click to add image" affordance to offer, so skip it entirely.
   const visible = props.interactive ? props.regions : props.regions.filter((r) => r.fileUrl);
@@ -141,6 +144,7 @@ const regionLayouts = computed<RegionLayout[]>(() => {
       handles,
       frameWidth: width,
       frameHeight: height,
+      scale,
     };
   });
 });
@@ -535,6 +539,7 @@ watch(
         :img-style="layout.imgStyle"
         :frame-width="layout.frameWidth"
         :frame-height="layout.frameHeight"
+        :scale="layout.scale"
       />
       <div v-if="interactive && layout.region.id === selectedId" class="editor-region-handles">
         <div

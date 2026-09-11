@@ -12,6 +12,8 @@ const props = defineProps<{
   /** This region's own frame size in real pixels — lets the border SVG use plain pixel coordinates (see svgBorder below) instead of a viewBox. */
   frameWidth: number;
   frameHeight: number;
+  /** design-px -> on-screen-px ratio the studio canvas is currently rendered at — borderWidth is stored in design px, so this keeps the editor's border the same real thickness (relative to the plate) as the reader's, instead of a fixed literal px regardless of canvas zoom. */
+  scale: number;
 }>();
 
 /**
@@ -28,7 +30,9 @@ const props = defineProps<{
 const borderStyle = computed<CSSProperties>(() => {
   if (!props.region.borderWidth || props.region.shapeType !== "rect") return {};
   return {
-    border: `${props.region.borderWidth}px ${props.region.borderStyle} ${props.region.borderColor || "#ffffff"}`,
+    border: `${props.region.borderWidth * props.scale}px ${props.region.borderStyle} ${
+      props.region.borderColor || "#ffffff"
+    }`,
   };
 });
 
@@ -48,7 +52,7 @@ const DASH_PATTERN: Record<string, (width: number) => string | undefined> = {
  */
 const svgBorder = computed(() => {
   if (props.region.shapeType === "rect" || !props.region.borderWidth) return null;
-  const width = props.region.borderWidth;
+  const width = props.region.borderWidth * props.scale;
   return {
     points: percentPoints(props.region.geometry)
       .map((p) => `${(p.x / 100) * props.frameWidth},${(p.y / 100) * props.frameHeight}`)
