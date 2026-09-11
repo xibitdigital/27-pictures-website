@@ -18,8 +18,8 @@ function readHintDismissed(): boolean {
 }
 
 const showHint = ref(!readHintDismissed());
-/** Pure view/interaction preference, not persisted per-region — resets when the studio remounts. */
-const showGrid = ref(false);
+/** Pure view/interaction preference, not persisted per-region — resets when the studio remounts. Defaults on so draw/resize/reshape snaps out of the box. */
+const showGrid = ref(true);
 
 function dismissHint(): void {
   showHint.value = false;
