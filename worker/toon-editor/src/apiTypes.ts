@@ -312,6 +312,7 @@ export interface ToonListItem {
   seriesKey?: string | null;
   episodeN?: number | null;
   ownerId?: string | null;
+  updatedAt?: string | null;
 }
 
 export interface ToonMetaInput {

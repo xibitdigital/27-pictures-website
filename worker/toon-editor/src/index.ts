@@ -467,6 +467,7 @@ function mapToonListItem(row: ToonRow | Record<string, unknown>, request: Reques
     seriesKey: row.series_key || null,
     episodeN: row.episode_n != null ? Number(row.episode_n) : null,
     ownerId: row.owner_id || null,
+    updatedAt: row.updated_at || null,
   };
 }
 
@@ -1657,6 +1658,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   if (isMethod(method, "GET") && path === "/toons") {
+    // `limit` powers the list view's "Recently changed" row — same per-user scope as the
+    // full list (an editor only sees their own; an admin sees everything), just capped and
+    // without a second, differently-filtered endpoint to keep in sync with this one.
+    const rawLimit = Number(new URL(request.url).searchParams.get("limit"));
+    const limit = Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(Math.round(rawLimit), 50) : null;
     const toonsListSql = `SELECT toons.*,
                 (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
          FROM toons
@@ -1666,10 +1672,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
              : `WHERE (series_key IN (SELECT series_key FROM series_editors WHERE user_id = ?))
                 OR (series_key IS NULL AND owner_id = ?)`
          }
-         ORDER BY updated_at DESC`;
-    const stmt = isAdmin(session)
-      ? env.DB.prepare(toonsListSql)
-      : env.DB.prepare(toonsListSql).bind(session ? session.id : "", session ? session.id : "");
+         ORDER BY updated_at DESC
+         ${limit ? "LIMIT ?" : ""}`;
+    const binds: (string | number)[] = isAdmin(session) ? [] : [session ? session.id : "", session ? session.id : ""];
+    if (limit) binds.push(limit);
+    const stmt = binds.length ? env.DB.prepare(toonsListSql).bind(...binds) : env.DB.prepare(toonsListSql);
     const rows = (await stmt.all()).results;
     return json(
       rows.map((row) => mapToonListItem(row, request, env)),

@@ -23,24 +23,44 @@ const VISIBILITY_FILTERS: { value: VisibilityFilter; label: string }[] = [
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
 
+const RECENT_LIMIT = 8;
+
 const userRef = inject(EDITOR_USER_KEY);
 const isAdmin = computed(() => userRef?.value?.role === "admin");
 const toons = ref<ToonListItem[]>([]);
 const seriesList = ref<SeriesOption[]>([]);
+const recentToons = ref<ToonListItem[]>([]);
 const loading = ref(true);
 const visibilityFilter = ref<VisibilityFilter>("all");
 
 onMounted(async () => {
   try {
-    const [books, shelves] = await Promise.all([listToons(), listSeries()]);
+    const [books, shelves, recent] = await Promise.all([listToons(), listSeries(), listToons({ limit: RECENT_LIMIT })]);
     toons.value = books;
     seriesList.value = shelves;
+    recentToons.value = recent;
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Failed to load");
   } finally {
     loading.value = false;
   }
 });
+
+/** "3h ago" / "2d ago" — coarse on purpose, this is a recency cue, not a timestamp. */
+function relativeTime(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const ms = Date.now() - new Date(iso).getTime();
+  if (!Number.isFinite(ms) || ms < 0) return "";
+  const minutes = Math.floor(ms / 60_000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  return `${months}mo ago`;
+}
 
 function matchesFilter(toon: ToonListItem): boolean {
   if (visibilityFilter.value === "all") return true;
@@ -59,6 +79,7 @@ const grouped = computed(() => {
 });
 
 const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey && matchesFilter(toon)));
+const filteredRecent = computed(() => recentToons.value.filter(matchesFilter));
 
 const filteredCount = computed(
   () => grouped.value.reduce((n, group) => n + group.toons.length, 0) + ungrouped.value.length
@@ -104,6 +125,23 @@ const filteredCount = computed(
     <div class="editor-list-body">
       <p v-if="loading">Loading…</p>
       <template v-else>
+        <section v-if="filteredRecent.length" class="editor-list-section">
+          <h2 class="editor-list-heading">Recently changed</h2>
+          <ul class="editor-card-list">
+            <li v-for="toon in filteredRecent" :key="`recent-${toon.id}`">
+              <ToonCard
+                :to="`/${toon.id}`"
+                :title="toon.title || toon.slug"
+                :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
+                :cue="relativeTime(toon.updatedAt)"
+                :cover-url="toon.coverUrl"
+                :badge="visibilityLabel(toon.status)"
+                :visibility="visibilityFromStatus(toon.status)"
+                :share-href="toon.readerUrl || `/toons/${toon.slug}/`"
+              />
+            </li>
+          </ul>
+        </section>
         <p v-if="!seriesList.length && !toons.length" class="editor-muted">No series yet.</p>
         <p v-else-if="!grouped.length && !ungrouped.length" class="editor-muted">No toons match this filter.</p>
         <section v-for="group in grouped" :key="group.series.key" class="editor-list-section">

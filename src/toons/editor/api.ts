@@ -163,8 +163,11 @@ export async function logout(): Promise<void> {
   clearToken();
 }
 
-export function listToons(): Promise<ToonListItem[]> {
-  return api<ToonListItem[]>("/toons");
+/** `limit` scopes to the current user exactly like the unlimited call (an editor sees only
+ * their own; an admin sees everything) — it just caps and orders by most-recently-changed,
+ * for the list view's "Recently changed" row. */
+export function listToons(opts?: { limit?: number }): Promise<ToonListItem[]> {
+  return api<ToonListItem[]>(opts?.limit ? `/toons?limit=${opts.limit}` : "/toons");
 }
 
 export async function listSeries(): Promise<SeriesOption[]> {
