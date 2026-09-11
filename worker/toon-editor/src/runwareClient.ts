@@ -129,6 +129,14 @@ export async function runwareVerifyToken(token: string): Promise<{ ok: true } | 
 
 type SubmitData = { taskUUID?: string; imageURL?: string; status?: string };
 
+// Runware's own error for this ("Task processing timeout... Please try again later") is the
+// *synchronous wait* giving up — confirmed against a real job whose image existed on Runware's
+// side even though this call 504'd. So it isn't treated as a failure: the taskUUID we generated
+// is returned same as a normal submit, just with no imageUrl, which sends it down the same
+// getResponse-polling path pollPageJob already uses for a slow/async task (see resolvedImages in
+// generatePage.ts) instead of losing the job (and re-spending the generation) on a fresh retry.
+const TASK_TIMEOUT_CODE = "failedTaskTimeout";
+
 export async function runwareSubmit(
   env: Env,
   input: { prompt: string; images: string[]; model: string; width?: number | null; height?: number | null }
@@ -161,6 +169,7 @@ export async function runwareSubmit(
     return { ok: false, error: "Runware request returned non-JSON" };
   }
   const error = firstError(parsed.errors);
+  if (error?.code === TASK_TIMEOUT_CODE) return { ok: true, id: taskUUID, pollingUrl: taskUUID };
   if (isAuthError(res.status, error)) return { ok: false, error: RUNWARE_TOKEN_REJECTED };
   if (!res.ok) return { ok: false, error: `Runware request failed (${res.status}) ${text.slice(0, 300)}` };
   if (error) return { ok: false, error: `Runware rejected the request: ${error.message || error.code}` };

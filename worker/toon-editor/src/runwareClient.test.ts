@@ -331,6 +331,31 @@ describe("runwareSubmit", () => {
       imageUrl: "https://im.runware.ai/a.jpg",
     });
   });
+
+  it("treats a synchronous-wait timeout as submitted (poll for it) instead of a failure", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: [],
+          errors: [{ code: "failedTaskTimeout", message: "Task processing timeout." }],
+        }),
+        { status: 504 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
+      prompt: "p",
+      images: [],
+      model: "bfl:3@1",
+      width: 800,
+      height: 1424,
+    });
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.id).toBeTruthy();
+    expect(out.pollingUrl).toBe(out.id);
+    expect(out.imageUrl).toBeUndefined();
+  });
 });
 
 describe("runwareResult", () => {
