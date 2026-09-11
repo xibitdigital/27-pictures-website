@@ -67,7 +67,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <RegionLayer v-if="regions.length" :page-num="pageNum" :regions="regions" :image-el="imageEl ?? null" />
+  <RegionLayer
+    v-if="regions.length"
+    :page-num="pageNum"
+    :regions="regions"
+    :image-el="imageEl ?? null"
+    :design-width="captions?.designWidth.value ?? 1008"
+  />
   <WordLayer
     v-if="captions && words.length"
     :page-num="pageNum"

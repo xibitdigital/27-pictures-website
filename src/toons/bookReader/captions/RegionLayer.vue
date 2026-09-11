@@ -22,11 +22,20 @@ const props = withDefaults(
     regions: ReaderRegion[];
     /** The page's backdrop plate — measured for the content box, same anchor WordLayer uses. */
     imageEl?: HTMLImageElement | null;
+    /**
+     * The toon's authored design width (same one WordLayer.vue scales captions
+     * against) — NOT the backdrop `<img>`'s own naturalWidth. The flattened
+     * plate file is a capped-resolution export (can be much smaller than
+     * design resolution), so borderWidth/geometry, authored in design-px,
+     * must scale against designWidth or the border comes out too small/large
+     * by whatever ratio the flatten step happened to cap that plate at.
+     */
+    designWidth?: number;
   }>(),
-  { imageEl: null }
+  { imageEl: null, designWidth: 1008 }
 );
 
-const box = ref<{ left: number; top: number; width: number; height: number; scale: number } | null>(null);
+const box = ref<{ left: number; top: number; width: number; height: number } | null>(null);
 
 // A region's stored fileWidth/fileHeight is a snapshot that can go stale if the
 // slot's file is ever reassigned without updating those columns — used only for
@@ -67,10 +76,12 @@ const DASH_PATTERN: Record<string, (width: number) => string | undefined> = {
 
 /**
  * `borderWidth` is stored in design-resolution px, but the backdrop plate
- * renders at whatever size fits the viewport (`imageContentBox`'s `scale`,
- * design px -> screen px) — applying it unscaled made the border the same
- * real screen-pixel thickness at any zoom/viewport size instead of shrinking
- * and growing with the rest of the plate.
+ * renders at whatever size fits the viewport — applying it unscaled made the
+ * border the same real screen-pixel thickness at any zoom/viewport size
+ * instead of shrinking and growing with the rest of the plate. Scale must be
+ * `renderedWidth / designWidth` (below), not `renderedWidth / naturalWidth` —
+ * the flattened plate file is a capped-resolution export that can be much
+ * smaller than design resolution, so naturalWidth alone gets the ratio wrong.
  *
  * Same technique as the editor's RegionShape.vue: a rect gets a real CSS
  * `border` (dashed/dotted included) on the clip-path'd frame div itself; a
@@ -108,6 +119,9 @@ function polygonSvgBorder(
 const layouts = computed<RegionLayout[]>(() => {
   if (!box.value) return [];
   const b = box.value;
+  // Same designScale WordLayer.vue computes — the plate's own rendered width over the toon's
+  // authored design width, not over the (possibly much smaller, capped) backdrop file's naturalWidth.
+  const scale = b.width / props.designWidth;
   return props.regions.map((region, index) => {
     const bbox = regionBoundingBox(region.geometry);
     const left = bbox.x * b.width;
@@ -150,10 +164,10 @@ const layouts = computed<RegionLayout[]>(() => {
         inset: 0,
         overflow: "hidden",
         clipPath: clipPathPolygon(region.geometry, bbox),
-        ...rectBorderStyle(region, b.scale),
+        ...rectBorderStyle(region, scale),
       },
       imgStyle,
-      svgBorder: polygonSvgBorder(region, b.scale, width, height),
+      svgBorder: polygonSvgBorder(region, scale, width, height),
     };
   });
 });
@@ -179,8 +193,7 @@ function measure(): void {
   const cur = box.value;
   const changed =
     !cur || cur.left !== next.left || cur.top !== next.top || cur.width !== next.width || cur.height !== next.height;
-  if (changed)
-    box.value = { left: next.left, top: next.top, width: next.width, height: next.height, scale: next.scale };
+  if (changed) box.value = { left: next.left, top: next.top, width: next.width, height: next.height };
 }
 
 let resizeObserver: ResizeObserver | null = null;

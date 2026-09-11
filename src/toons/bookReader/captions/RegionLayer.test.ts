@@ -194,10 +194,10 @@ describe("RegionLayer", () => {
     expect(srcs).toEqual([rectRegion.file, polygonRegion.file]);
   });
 
-  it("scales a rect region's border by the backdrop's design-px-to-screen-px ratio", async () => {
-    // makeImage() is an exact 0.5 scale (naturalWidth 1008 -> clientWidth 504) — a 3px
-    // design-resolution border must render as 1.5 real screen px, not 3, or it stays the
-    // same thickness however small/large the plate is actually displayed.
+  it("scales a rect region's border by the plate's render-width-to-designWidth ratio", async () => {
+    // designWidth defaults to 1008, same number as makeImage()'s naturalWidth, so this alone
+    // can't distinguish the fixed formula (renderedWidth/designWidth) from the old broken one
+    // (renderedWidth/naturalWidth) — see the next test for that.
     const borderedRect: ReaderRegion = { ...rectRegion, borderColor: "#ff0000", borderWidth: 3, borderStyle: "dashed" };
     const wrapper = mount(RegionLayer, {
       props: { pageNum: 1, regions: [borderedRect], imageEl: makeImage() },
@@ -206,6 +206,21 @@ describe("RegionLayer", () => {
     await nextTick();
     const clipStyle = wrapper.find("[style*='clip-path']").attributes("style") || "";
     expect(clipStyle).toContain("border: 1.5px dashed #ff0000");
+  });
+
+  it("scales by designWidth, not the backdrop file's naturalWidth — the flattened plate is a capped-resolution export that can be much smaller than design resolution", async () => {
+    // clientWidth 504 stays the same, but naturalWidth (1008) and designWidth (2016) now
+    // differ — a real scenario once the plate has been re-exported at a smaller cap. The old
+    // (broken) renderedWidth/naturalWidth formula would give 0.5 here; the correct
+    // renderedWidth/designWidth ratio is 504/2016 = 0.25.
+    const borderedRect: ReaderRegion = { ...rectRegion, borderColor: "#ff0000", borderWidth: 4, borderStyle: "solid" };
+    const wrapper = mount(RegionLayer, {
+      props: { pageNum: 1, regions: [borderedRect], imageEl: makeImage(), designWidth: 2016 },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const clipStyle = wrapper.find("[style*='clip-path']").attributes("style") || "";
+    expect(clipStyle).toContain("border: 1px solid #ff0000"); // 4px design * (504/2016) = 1px, not 2px
   });
 
   it("traces a polygon region's border with a scaled SVG stroke, not a box-shadow", async () => {

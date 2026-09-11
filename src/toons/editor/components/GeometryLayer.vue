@@ -95,7 +95,10 @@ interface RegionLayout {
 const regionLayouts = computed<RegionLayout[]>(() => {
   if (!box.value) return [];
   const b = box.value;
-  const scale = props.imageEl?.naturalWidth ? b.width / props.imageEl.naturalWidth : 1;
+  // b.width / designWidth, not naturalWidth — the img shown here is the flattened plate, a
+  // capped-resolution export that can be much smaller than design resolution (the space
+  // borderWidth/region geometry are actually authored in). Matches the reader's RegionLayer.vue.
+  const scale = b.width / props.designWidth;
   // Non-interactive (Bubbles mode): an unfilled region has nothing to show
   // and no "click to add image" affordance to offer, so skip it entirely.
   const visible = props.interactive ? props.regions : props.regions.filter((r) => r.fileUrl);
