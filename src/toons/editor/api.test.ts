@@ -15,6 +15,7 @@ import {
   generatePage,
   translateFromEnglish,
   uploadAudio,
+  uploadPage,
   withSiteQuery,
 } from "./api";
 
@@ -340,5 +341,32 @@ describe("editor api", () => {
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer sess-1");
     expect(headers.get("Content-Type")).toBeNull();
+  });
+
+  it("POSTs a new page's kind in the same request so creating a layout page is one round trip", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ id: "t1", pages: [{ id: "p1" }] }), { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const file = new File([new Uint8Array([1, 2, 3])], "layout.png", { type: "image/png" });
+    await uploadPage("t1", file, { width: 1152, height: 1728 }, { kind: "layout" });
+    expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/toons/t1/pages");
+    const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
+    expect(body.get("kind")).toBe("layout");
+  });
+
+  it("omits kind for a plain plate upload", async () => {
+    vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
+    setToken("sess-1");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ id: "t1", pages: [{ id: "p1" }] }), { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const file = new File([new Uint8Array([1, 2, 3])], "plate.jpg", { type: "image/jpeg" });
+    await uploadPage("t1", file);
+    const body = (fetchMock.mock.calls[0][1] as RequestInit).body as FormData;
+    expect(body.get("kind")).toBeNull();
   });
 });

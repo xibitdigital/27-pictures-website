@@ -19,7 +19,6 @@ import {
   readImageSize,
   replacePage,
   reorderPages,
-  setPageKind,
   uploadPage,
   uploadRegionImage,
 } from "../api";
@@ -345,7 +344,10 @@ async function onReorderPages(order: string[]): Promise<void> {
   }
 }
 
-/** Blank transparent canvas, uploaded through the existing page-upload endpoint, then flipped to "layout" — the only code path that ever sets a page's kind. */
+/** Blank transparent canvas, uploaded already flagged `kind: "layout"` in one request — the only
+ * code path that ever creates a layout page. Used to be upload-then-PATCH-kind, two full toon
+ * reloads back to back for a toon that can have a lot of pages/bubbles; the upload endpoint now
+ * takes the kind directly instead. */
 async function onAddLayoutPage(): Promise<void> {
   if (!toon.value) return;
   try {
@@ -355,10 +357,15 @@ async function onAddLayoutPage(): Promise<void> {
     const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!blob) throw new Error("Could not create a blank page");
     const file = new File([blob], "layout.png", { type: "image/png" });
-    const created = await uploadPage(toon.value.id, file, { width: canvas.width, height: canvas.height });
+    const created = await uploadPage(
+      toon.value.id,
+      file,
+      { width: canvas.width, height: canvas.height },
+      { kind: "layout" }
+    );
     const last = created.pages[created.pages.length - 1];
     if (!last) throw new Error("Could not create page");
-    toon.value = await setPageKind(last.id, "layout");
+    toon.value = created;
     dirtyIds.value = new Set();
     layoutTool.value = "select";
     selectedId.value = null;

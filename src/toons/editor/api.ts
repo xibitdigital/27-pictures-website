@@ -277,13 +277,19 @@ export function getJob(id: string): Promise<{
   return api(`/jobs/${id}`);
 }
 
-export function uploadPage(id: string, file: File, size?: { width: number; height: number }): Promise<ToonRecord> {
+export function uploadPage(
+  id: string,
+  file: File,
+  size?: { width: number; height: number },
+  opts?: { kind?: PageKind }
+): Promise<ToonRecord> {
   const body = new FormData();
   body.set("file", file);
   if (size) {
     body.set("width", String(size.width));
     body.set("height", String(size.height));
   }
+  if (opts?.kind) body.set("kind", opts.kind);
   return api<ToonRecord>(`/toons/${id}/pages`, { method: "POST", body });
 }
 
@@ -339,11 +345,6 @@ export function patchBubble(id: string, payload: Partial<BubbleRecord>): Promise
 
 export function deleteBubble(id: string): Promise<{ ok: boolean }> {
   return api<{ ok: boolean }>(`/bubbles/${id}`, { method: "DELETE" });
-}
-
-/** The only call that ever flips a page into Layout mode. */
-export function setPageKind(pageId: string, kind: PageKind): Promise<ToonRecord> {
-  return api<ToonRecord>(`/pages/${pageId}`, { method: "PATCH", body: JSON.stringify({ kind }) });
 }
 
 /** Editor-set backdrop color, shown through any gap between regions. Pass null to clear back to the default. */

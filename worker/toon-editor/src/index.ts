@@ -912,8 +912,7 @@ async function putCaptionAudio(env: Env, slug: string, bytes: ArrayBuffer): Prom
   return key;
 }
 
-async function readUpload(request: Request): Promise<ImageUpload | { error: string }> {
-  const form = await request.formData();
+async function readUpload(form: FormData): Promise<ImageUpload | { error: string }> {
   const file = form.get("file");
   if (!file || typeof file === "string") {
     return { error: "file is required" };
@@ -1253,7 +1252,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
     const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
-    const upload = await readUpload(request);
+    const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const optimized = await toWebp(upload);
     const hash = await sha256Hex(optimized.bytes);
@@ -1794,7 +1793,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const id = coverMatch[1];
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
-    const upload = await readUpload(request);
+    const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const optimized = await toWebp(upload);
     const hash = await sha256Hex(optimized.bytes);
@@ -1940,8 +1939,14 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const id = pagesMatch[1];
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
-    const upload = await readUpload(request);
+    const form = await request.formData();
+    const upload = await readUpload(form);
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
+    // Lets the editor create a layout page in one round trip instead of upload-then-PATCH-kind —
+    // each of those does a full loadToon (every page/bubble/region in the toon), so for a toon with
+    // a lot of pages that second reload was the main cost of "add layout page", not the upload itself.
+    const rawKind = String(form.get("kind") || "");
+    const kind = rawKind === "layout" ? "layout" : "plate";
     const key = await putPageAsset(env, current.slug, upload);
     const posRow = await env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?")
       .bind(id)
@@ -1949,10 +1954,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const position = (posRow && Number(posRow.max_pos) > -1 ? Number(posRow.max_pos) : -1) + 1;
     const pageId = crypto.randomUUID();
     await env.DB.prepare(
-      `INSERT INTO pages (id, toon_id, position, file_key, width, height, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO pages (id, toon_id, position, file_key, width, height, kind, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
     )
-      .bind(pageId, id, position, key, upload.width, upload.height, nowIso())
+      .bind(pageId, id, position, key, upload.width, upload.height, kind, nowIso())
       .run();
     const stillDefault = current.design_width === 800 && current.design_height === 1424;
     if (stillDefault && upload.width && upload.height && position === 0) {
@@ -1971,7 +1976,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!page) return json({ error: "not found" }, 404, cors);
     const current = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first<ToonRow>();
     if (!current) return json({ error: "not found" }, 404, cors);
-    const upload = await readUpload(request);
+    const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const key = await putPageAsset(env, current.slug, upload);
     const width = upload.width || page.width || null;
@@ -2076,7 +2081,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!page) return json({ error: "not found" }, 404, cors);
     const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(page.toon_id).first<ToonRow>();
     if (!toon) return json({ error: "not found" }, 404, cors);
-    const upload = await readUpload(request);
+    const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
     const key = await putPageAsset(env, toon.slug, upload);
     const ts = nowIso();
