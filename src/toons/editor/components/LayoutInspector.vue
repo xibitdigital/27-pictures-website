@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** Right-panel counterpart to CaptionInspector.vue for a selected Layout-mode region. */
-import { ChevronDown, ChevronUp } from "@lucide/vue";
+import { ChevronDown, ChevronUp, ImageUp, Trash2 } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { parseHexColor } from "../mapConfig";
 import { scaleFromSliderPosition, sliderPositionFromScale } from "../regionFit";
@@ -240,6 +240,7 @@ function onBorderWidthChange(ev: Event): void {
         name="region-reassign"
         @click="emit('reassign')"
       >
+        <ImageUp :size="16" :stroke-width="1.4" aria-hidden="true" />
         {{ region.fileUrl ? "Replace image" : "Add image" }}
       </button>
 
@@ -323,6 +324,7 @@ function onBorderWidthChange(ev: Event): void {
         name="region-delete"
         @click="emit('remove')"
       >
+        <Trash2 :size="16" :stroke-width="1.4" aria-hidden="true" />
         Delete shape
       </button>
     </template>
