@@ -26,7 +26,7 @@ import { fluxDownload, fluxResult, fluxSubmit } from "./fluxClient";
 import { toWebp, webpDimensions } from "./imageOptimize";
 import { replicateDownload, replicateResult, replicateSubmit, type ReplicateKind } from "./replicateClient";
 import { runwareDownload, runwareResult, runwareSubmit } from "./runwareClient";
-import { recordToonAsset } from "./toonAssets";
+import { recordToonAsset, type ToonAssetSource } from "./toonAssets";
 import type { Env, SeriesRow, ToonRow } from "./types";
 
 export type GenerationJob = {
@@ -592,7 +592,8 @@ function plateSizeFromJob(job: GenerationJob): { width: number | null; height: n
 async function putPlate(
   env: Env,
   toon: ToonRow,
-  bytes: ArrayBuffer
+  bytes: ArrayBuffer,
+  source: ToonAssetSource
 ): Promise<{ fileKey: string; ext: string; type: string; width: number | null; height: number | null }> {
   const optimized = await toWebp({ bytes, ...sniffImage(bytes) });
   const hash = await sha256Hex(optimized.bytes);
@@ -601,7 +602,7 @@ async function putPlate(
     httpMetadata: { contentType: optimized.type, cacheControl: "public, max-age=31536000, immutable" },
   });
   const dims = optimized.ext === "webp" ? webpDimensions(optimized.bytes) : null;
-  await recordToonAsset(env, toon.id, fileKey, dims?.width ?? null, dims?.height ?? null);
+  await recordToonAsset(env, toon.id, fileKey, dims?.width ?? null, dims?.height ?? null, source);
   return {
     fileKey,
     ext: optimized.ext,
@@ -686,6 +687,7 @@ export async function pollPageJob(
   // Each plate's real dimensions come from its own downloaded bytes, sniffed via
   // webpDimensions(), and only fall back to the requested size if that sniff fails.
   const requested = plateSizeFromJob(job);
+  const assetSource: ToonAssetSource = job.region_id ? "region" : "page";
   const plates: { fileKey: string; width: number | null; height: number | null }[] = [];
   for (const image of outputs) {
     if (isFlux) {
@@ -703,7 +705,14 @@ export async function pollPageJob(
         httpMetadata: { contentType: "image/webp", cacheControl: "public, max-age=31536000, immutable" },
       });
       const dims = webpDimensions(downloaded.bytes);
-      await recordToonAsset(env, toon.id, fileKey, dims?.width ?? requested.width, dims?.height ?? requested.height);
+      await recordToonAsset(
+        env,
+        toon.id,
+        fileKey,
+        dims?.width ?? requested.width,
+        dims?.height ?? requested.height,
+        assetSource
+      );
       plates.push({ fileKey, width: dims?.width ?? requested.width, height: dims?.height ?? requested.height });
       continue;
     }
@@ -718,7 +727,7 @@ export async function pollPageJob(
       // Unlike Flux (always webp), Replicate's own output format isn't pinned here —
       // route through putPlate() same as the Comfy path, which sniffs the real bytes
       // and re-encodes to webp only if they aren't already.
-      const stored = await putPlate(env, toon, downloaded.bytes);
+      const stored = await putPlate(env, toon, downloaded.bytes, assetSource);
       plates.push({
         fileKey: stored.fileKey,
         width: stored.width ?? requested.width,
@@ -734,7 +743,7 @@ export async function pollPageJob(
           .run();
         return { ok: true, job: { ...job, status: "error", error: downloaded.error }, phase: "error" };
       }
-      const stored = await putPlate(env, toon, downloaded.bytes);
+      const stored = await putPlate(env, toon, downloaded.bytes, assetSource);
       plates.push({
         fileKey: stored.fileKey,
         width: stored.width ?? requested.width,
@@ -749,7 +758,7 @@ export async function pollPageJob(
         .run();
       return { ok: true, job: { ...job, status: "error", error: viewed.error }, phase: "error" };
     }
-    const stored = await putPlate(env, toon, viewed.bytes);
+    const stored = await putPlate(env, toon, viewed.bytes, assetSource);
     plates.push({
       fileKey: stored.fileKey,
       width: stored.width ?? requested.width,

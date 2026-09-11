@@ -315,6 +315,11 @@ export interface ToonListItem {
   updatedAt?: string | null;
 }
 
+/** Whether a toon_assets row is a whole plate ("page") or a shape/area fill ("region") — the
+ * gallery filters on this so the region picker and the "Add page" picker each only see their own
+ * kind. Canonical definition; toonAssets.ts (Worker) re-exports it. */
+export type ToonAssetSource = "page" | "region";
+
 /** One image ever generated or uploaded for a toon, kept in its gallery even after the page or
  * region that used it is deleted or its file replaced — see toonAssets.ts. */
 export interface ToonAsset {

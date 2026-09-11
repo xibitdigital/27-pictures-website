@@ -14,11 +14,11 @@ describe("AssetGalleryDialog", () => {
       { id: "a2", fileKey: "editor/demo/assets/b.webp", url: "/b.webp", width: 800, height: 1424, createdAt: "t2" },
     ]);
     const wrapper = mount(AssetGalleryDialog, {
-      props: { open: true, toonId: "t1" },
+      props: { open: true, toonId: "t1", source: "region" },
       attachTo: document.body,
     });
     await flushPromises();
-    expect(listSpy).toHaveBeenCalledWith("t1");
+    expect(listSpy).toHaveBeenCalledWith("t1", "region");
     const buttons = document.querySelectorAll(".editor-asset-gallery .editor-plate-picker-item");
     expect(buttons).toHaveLength(2);
     (buttons[1] as HTMLElement).click();

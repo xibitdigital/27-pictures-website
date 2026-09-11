@@ -125,6 +125,28 @@ The D1 catalog is the worked example of (2): series hubs, readers, cards,
 JSON-LD, sitemap, `llms.txt` and FlipFrame back-cover next/prev all read
 `GET /catalog`. A page that hardcodes an episode list has already forked.
 
+## TypeScript Guidelines
+
+**Avoid `string` for a value that only ever takes a small, known set of
+values.** Declare a literal union (`type Foo = "a" | "b"`) instead, and reuse
+that one type everywhere the value travels — a function parameter, a Vue prop,
+a D1 column read back out. `string` accepts any typo silently; a literal union
+makes the compiler reject one, and an exhaustive `switch`/ternary over it
+gets flagged when a new value is added but a call site wasn't updated.
+
+Define the union **once**, in whichever file is the shared contract for that
+value — for a Worker/client boundary that's `apiTypes.ts`, re-exported through
+`src/toons/editor/types.ts` for client code to import, never redeclared inline
+in a second file. Two independently-typed `"a" | "b"` unions in different
+files can drift out of sync with no error; importing the same declared type
+can't.
+
+Worked example: `ToonAssetSource` (`"page" | "region"`, `apiTypes.ts`) is used
+for a toon_asset row's kind, a query-string filter, and the gallery dialog's
+`source` prop — one declaration, imported everywhere, instead of a
+`string`/inferred boolean at each of those spots that happened to agree only
+by construction.
+
 ## Project Structure
 
 ```

@@ -28,6 +28,7 @@ export type {
   SeriesOption,
   SeriesSlotKind,
   ToonAsset,
+  ToonAssetSource,
   ToonListItem,
   ToonMetaInput,
   ToonRecord,

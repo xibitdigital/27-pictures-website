@@ -12,6 +12,7 @@ import type {
   SeriesInput,
   SeriesOption,
   ToonAsset,
+  ToonAssetSource,
   ToonListItem,
   ToonMetaInput,
   ToonRecord,
@@ -306,9 +307,10 @@ export function replacePage(pageId: string, file: File, size?: { width: number; 
 }
 
 /** Every image ever generated or uploaded for this toon — including ones no page or region uses
- * any more — newest first. */
-export function listToonAssets(toonId: string): Promise<ToonAsset[]> {
-  return api<ToonAsset[]>(`/toons/${toonId}/assets`);
+ * any more — newest first. `source` scopes to area/shape fills ("region") or whole plates
+ * ("page"); omit for everything. */
+export function listToonAssets(toonId: string, source?: ToonAssetSource): Promise<ToonAsset[]> {
+  return api<ToonAsset[]>(`/toons/${toonId}/assets${source ? `?source=${source}` : ""}`);
 }
 
 /** Reuses an existing gallery asset as this page's plate instead of uploading it again. */

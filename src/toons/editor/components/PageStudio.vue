@@ -32,6 +32,7 @@ import {
   type RegionRecord,
   type SeriesGenerateConfig,
   type ToonAsset,
+  type ToonAssetSource,
   type ToonRecord,
 } from "../types";
 import { mergeReplacedPage } from "../pageFile";
@@ -76,9 +77,13 @@ const confirmingRegionRemove = ref(false);
 const flattenDirty = ref(false);
 const flattening = ref(false);
 /** Gallery dialog's fill target — a region id when picking to fill a shape, null when picking
- * to add a brand-new page from an existing image. */
+ * to add a brand-new page from an existing image. `gallerySource` is set explicitly by whichever
+ * handler opens the dialog, not inferred from galleryRegionId being set — a truthy-string check
+ * is not a type, and the two happen to always agree today only because there are exactly two
+ * entry points. */
 const galleryOpen = ref(false);
 const galleryRegionId = ref<string | null>(null);
+const gallerySource = ref<ToonAssetSource>("page");
 
 const toonId = computed(() => String(route.params.id || ""));
 const pageId = computed(() => (route.params.pageId ? String(route.params.pageId) : null));
@@ -748,11 +753,13 @@ function onAssignGallery(): void {
   assignRegionId.value = null;
   if (!id) return;
   galleryRegionId.value = id;
+  gallerySource.value = "region";
   galleryOpen.value = true;
 }
 
 function onAddPageGallery(): void {
   galleryRegionId.value = null;
+  gallerySource.value = "page";
   galleryOpen.value = true;
 }
 
@@ -1054,7 +1061,13 @@ async function onRemove(): Promise<void> {
         @generate="onAssignGenerate"
         @gallery="onAssignGallery"
       />
-      <AssetGalleryDialog :open="galleryOpen" :toon-id="toon.id" @close="closeGallery" @pick="onGalleryPick" />
+      <AssetGalleryDialog
+        :open="galleryOpen"
+        :toon-id="toon.id"
+        :source="gallerySource"
+        @close="closeGallery"
+        @pick="onGalleryPick"
+      />
     </template>
   </div>
 </template>

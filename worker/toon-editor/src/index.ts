@@ -51,7 +51,7 @@ import { translateFromEnglish } from "./translate";
 import { isReaderLookupPath, readerStatuses, toonMatchesReaderPath } from "./readerLookup";
 import { parseStatus, publicStatusesForRequest } from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
-import { recordToonAsset, type ToonAssetRow } from "./toonAssets";
+import { recordToonAsset, type ToonAssetRow, type ToonAssetSource } from "./toonAssets";
 
 import {
   DESC_LANGS,
@@ -898,6 +898,13 @@ async function putImage(env: Env, key: string, bytes: ArrayBuffer, contentType: 
   });
 }
 
+/** Narrows a raw `?source=` query value to the enforced ToonAssetSource union, or null for
+ * "no filter" — anything else (missing, typo'd, some other string) is also null rather than a 400,
+ * since an unrecognized filter degrading to "show everything" is harmless here. */
+function parseAssetSource(raw: string | null): ToonAssetSource | null {
+  return raw === "region" || raw === "page" ? raw : null;
+}
+
 /** A backfilled gallery asset (recorded from a pre-existing R2 object, before this row had a
  * width/height to record — see the backfill script) has no dimensions. Sniffing them from the
  * stored bytes here, once, and writing them back means only the first pick ever pays that cost. */
@@ -917,12 +924,12 @@ async function resolveAssetDims(
   return dims;
 }
 
-async function putPageAsset(env: Env, toonId: string, slug: string, upload: ImageUpload) {
+async function putPageAsset(env: Env, toonId: string, slug: string, upload: ImageUpload, source: ToonAssetSource) {
   const optimized = await toWebp(upload);
   const hash = await sha256Hex(optimized.bytes);
   const key = `editor/${slug}/assets/${hash}.${optimized.ext}`;
   await putImage(env, key, optimized.bytes, optimized.type);
-  await recordToonAsset(env, toonId, key, upload.width, upload.height);
+  await recordToonAsset(env, toonId, key, upload.width, upload.height, source);
   return key;
 }
 
@@ -1968,7 +1975,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     // a lot of pages that second reload was the main cost of "add layout page", not the upload itself.
     const rawKind = String(form.get("kind") || "");
     const kind = rawKind === "layout" ? "layout" : "plate";
-    const key = await putPageAsset(env, id, current.slug, upload);
+    const key = await putPageAsset(env, id, current.slug, upload, "page");
     const posRow = await env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?")
       .bind(id)
       .first();
@@ -1999,7 +2006,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const key = await putPageAsset(env, page.toon_id, current.slug, upload);
+    const key = await putPageAsset(env, page.toon_id, current.slug, upload, "page");
     const width = upload.width || page.width || null;
     const height = upload.height || page.height || null;
     await env.DB.prepare(`UPDATE pages SET file_key = ?, width = ?, height = ? WHERE id = ?`)
@@ -2019,6 +2026,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const toons = (await env.DB.prepare("SELECT id, slug FROM toons").all<{ id: string; slug: string }>()).results;
     let scanned = 0;
     let inserted = 0;
+    let markedRegion = 0;
     for (const toon of toons) {
       const prefix = `editor/${toon.slug}/assets/`;
       let cursor: string | undefined;
@@ -2026,8 +2034,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         const listed = await env.ASSETS.list({ prefix, cursor, limit: 1000 });
         for (const obj of listed.objects) {
           scanned++;
+          // Defaults to 'page' — an R2 listing alone can't tell a shape fill from a whole plate.
+          // The UPDATE right below corrects it for whichever assets a page_regions row still
+          // points at (all it can know; a since-orphaned region fill stays 'page').
           const res = await env.DB.prepare(
-            `INSERT OR IGNORE INTO toon_assets (id, toon_id, file_key, width, height, created_at) VALUES (?, ?, ?, NULL, NULL, ?)`
+            `INSERT OR IGNORE INTO toon_assets (id, toon_id, file_key, width, height, source, created_at) VALUES (?, ?, ?, NULL, NULL, 'page', ?)`
           )
             .bind(crypto.randomUUID(), toon.id, obj.key, obj.uploaded ? obj.uploaded.toISOString() : nowIso())
             .run();
@@ -2036,8 +2047,19 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         if (!listed.truncated) break;
         cursor = listed.cursor;
       }
+      const regionUpdate = await env.DB.prepare(
+        `UPDATE toon_assets SET source = 'region'
+         WHERE toon_id = ? AND source != 'region' AND file_key IN (
+           SELECT page_regions.file_key FROM page_regions
+           INNER JOIN pages ON pages.id = page_regions.page_id
+           WHERE pages.toon_id = ? AND page_regions.file_key IS NOT NULL
+         )`
+      )
+        .bind(toon.id, toon.id)
+        .run();
+      markedRegion += regionUpdate.meta.changes || 0;
     }
-    return json({ toons: toons.length, scanned, inserted }, 200, cors);
+    return json({ toons: toons.length, scanned, inserted, markedRegion }, 200, cors);
   }
 
   const toonAssetsMatch = path.match(/^\/toons\/([^/]+)\/assets$/);
@@ -2050,10 +2072,17 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         return json({ error: "not found" }, 404, cors);
       }
     }
+    // Filtered to the picker that's asking: the region-fill gallery wants area/shape images, the
+    // "Add page" gallery wants whole plates. No `source` param returns everything.
+    const sourceFilter = parseAssetSource(new URL(request.url).searchParams.get("source"));
     const rows = (
-      await env.DB.prepare("SELECT * FROM toon_assets WHERE toon_id = ? ORDER BY created_at DESC")
-        .bind(toon.id)
-        .all<ToonAssetRow>()
+      sourceFilter
+        ? await env.DB.prepare("SELECT * FROM toon_assets WHERE toon_id = ? AND source = ? ORDER BY created_at DESC")
+            .bind(toon.id, sourceFilter)
+            .all<ToonAssetRow>()
+        : await env.DB.prepare("SELECT * FROM toon_assets WHERE toon_id = ? ORDER BY created_at DESC")
+            .bind(toon.id)
+            .all<ToonAssetRow>()
     ).results;
     return json(
       rows.map((row) => ({
@@ -2216,7 +2245,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!toon) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const key = await putPageAsset(env, toon.id, toon.slug, upload);
+    const key = await putPageAsset(env, toon.id, toon.slug, upload, "region");
     const ts = nowIso();
     await env.DB.prepare(
       `UPDATE page_regions SET file_key = ?, file_width = ?, file_height = ?, image_offset_x = 0.5, image_offset_y = 0.5, image_scale = 1, updated_at = ?
