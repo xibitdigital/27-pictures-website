@@ -2,7 +2,8 @@
 /**
  * Every image ever generated or uploaded for this toon — including ones no page or region uses
  * any more (see toon_assets in the Worker). Lets a page or region reuse one instead of
- * re-uploading or re-generating it.
+ * re-uploading or re-generating it. Defaults to shape/area fills (the common case — reusing a
+ * character or object already cut for a panel); the tabs switch to whole plates.
  */
 import { computed, ref, watch } from "vue";
 import { listToonAssets } from "../api";
@@ -10,22 +11,26 @@ import { pushToast } from "../toast";
 import type { ToonAsset, ToonAssetSource } from "../types";
 import EditorDialog from "./ui/EditorDialog.vue";
 
-/** `source` scopes the gallery to what the caller actually wants back: area/shape fills for the
- * region picker, whole plates for the "Add page" picker. */
-const props = defineProps<{ open: boolean; toonId: string; source?: ToonAssetSource }>();
+const props = defineProps<{ open: boolean; toonId: string }>();
 
 const emit = defineEmits<{
   close: [];
   pick: [asset: ToonAsset];
 }>();
 
+const TABS: { value: ToonAssetSource; label: string }[] = [
+  { value: "region", label: "Shapes" },
+  { value: "page", label: "Pages" },
+];
+
+const activeTab = ref<ToonAssetSource>("region");
 const assets = ref<ToonAsset[]>([]);
 const loading = ref(false);
 
 async function load(): Promise<void> {
   loading.value = true;
   try {
-    assets.value = await listToonAssets(props.toonId, props.source);
+    assets.value = await listToonAssets(props.toonId, activeTab.value);
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not load the gallery");
   } finally {
@@ -36,19 +41,39 @@ async function load(): Promise<void> {
 watch(
   () => props.open,
   (open) => {
-    if (open) void load();
+    if (!open) return;
+    activeTab.value = "region";
+    void load();
   },
   { immediate: true }
 );
+
+watch(activeTab, () => {
+  if (props.open) void load();
+});
 
 const isEmpty = computed(() => !loading.value && !assets.value.length);
 </script>
 
 <template>
   <EditorDialog :open="open" title="Choose from gallery" wide @update:open="(next) => !next && emit('close')">
+    <div class="editor-visibility-filter" role="tablist" aria-label="Image kind">
+      <button
+        v-for="tab in TABS"
+        :key="tab.value"
+        type="button"
+        :name="`gallery-tab-${tab.value}`"
+        role="tab"
+        :aria-selected="activeTab === tab.value"
+        :aria-pressed="activeTab === tab.value"
+        @click="activeTab = tab.value"
+      >
+        {{ tab.label }}
+      </button>
+    </div>
     <p class="editor-muted">
       {{
-        source === "region"
+        activeTab === "region"
           ? "Every shape/area image generated or uploaded for this toon, including ones no shape uses any more."
           : "Every plate generated or uploaded for this toon, including ones not on a page any more."
       }}
