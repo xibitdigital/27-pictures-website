@@ -1356,7 +1356,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const generate = parseGenerateConfig(extra.generate);
     const existing = generate.slots.find((slot) => slot.alias === alias);
     if (existing) {
-      existing.kind = "sheet";
+      if (existing.kind !== "style") existing.kind = "sheet";
       existing.fileKey = objectKey;
     } else {
       generate.slots.push({

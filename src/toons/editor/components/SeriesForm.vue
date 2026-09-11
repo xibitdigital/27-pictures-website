@@ -93,7 +93,16 @@ watch(provider, (next, prev) => {
     model.value = RUNWARE_MODELS[0].id;
   }
 });
-const slots = ref<SeriesFlowSlot[]>([]);
+/** New series start with a mandatory "previous plate" and "style" reference — every direct-provider (Flux/Replicate/Runware) call should carry both for continuity, so they're seeded up front and locked (see isLockedSlot) instead of being an opt-in a new series can forget to add. Existing series are untouched; add them by hand if missing. */
+const DEFAULT_SLOTS: SeriesFlowSlot[] = [
+  { alias: "previous", label: "Previous page", kind: "previous", fileKey: null, fileUrl: null },
+  { alias: "style", label: "Style reference", kind: "style", fileKey: null, fileUrl: null },
+];
+const slots = ref<SeriesFlowSlot[]>(isCreate.value ? DEFAULT_SLOTS.map((slot) => ({ ...slot })) : []);
+/** "previous" and "style" are default, always-on references — never removable or re-kindable, on any series (old or new) that has them. */
+function isLockedSlot(slot: SeriesFlowSlot): boolean {
+  return slot.kind === "previous" || slot.kind === "style";
+}
 const previewSlot = ref<SeriesFlowSlot | null>(null);
 const flowLabel = ref("");
 const uploadingFlow = ref(false);
@@ -465,9 +474,15 @@ async function onSubmit(ev: Event): Promise<void> {
                   :aria-label="`Slot ${index + 1} name`"
                   :placeholder="`Image ${index + 1}`"
                 />
-                <EditorSelect v-model="slot.kind" :name="`slot-kind-${index}`" :aria-label="`Slot ${index + 1} kind`">
+                <EditorSelect
+                  v-model="slot.kind"
+                  :disabled="isLockedSlot(slot)"
+                  :name="`slot-kind-${index}`"
+                  :aria-label="`Slot ${index + 1} kind`"
+                >
                   <EditorSelectItem value="sheet">Sheet</EditorSelectItem>
                   <EditorSelectItem value="previous">Previous</EditorSelectItem>
+                  <EditorSelectItem value="style">Style</EditorSelectItem>
                 </EditorSelect>
                 <EditorCheckbox
                   v-if="slot.kind === 'sheet'"
@@ -481,7 +496,7 @@ async function onSubmit(ev: Event): Promise<void> {
                 <span v-else></span>
                 <span>
                   <input
-                    v-if="slot.kind === 'sheet'"
+                    v-if="slot.kind !== 'previous'"
                     type="file"
                     accept="image/webp,image/jpeg,image/png"
                     :name="`slot-file-${index}`"
@@ -490,7 +505,7 @@ async function onSubmit(ev: Event): Promise<void> {
                     @change="onSlotFile(index, $event)"
                   />
                   <button
-                    v-if="slot.kind === 'sheet'"
+                    v-if="slot.kind !== 'previous'"
                     class="editor-btn editor-btn--ghost"
                     type="button"
                     :name="`slot-file-pick-${index}`"
@@ -534,6 +549,8 @@ async function onSubmit(ev: Event): Promise<void> {
                     class="editor-icon-btn"
                     type="button"
                     :name="`slot-remove-${index}`"
+                    :disabled="isLockedSlot(slot)"
+                    :title="isLockedSlot(slot) ? 'Default slot — cannot be removed' : undefined"
                     @click="removeSlot(index)"
                   >
                     ×

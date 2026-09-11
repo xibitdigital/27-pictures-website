@@ -39,6 +39,7 @@ const previousFileInput = ref<HTMLInputElement | null>(null);
 const count = ref("1");
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
+const styleSlot = computed(() => (props.generate?.slots || []).find((s) => s.kind === "style" && s.fileUrl) || null);
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
 /** Any provider that skips the Comfy graph entirely and sends the prompt + reference sheets straight to a hosted model (BFL Flux, Replicate, or Runware). Shared with the Worker contract (apiTypes.ts) so a new provider can't silently fall through to the Comfy-only copy/warning below. */
 const isDirectProvider = computed(() => isDirectProviderName(props.generate?.provider));
@@ -83,13 +84,17 @@ const fluxRefsPrefill = computed(() => {
       : providerLabel[props.generate?.provider || ""] || "flux-2-pro (BFL)";
   const header = [`# model: ${modelName}`, "# mode: image-to-image (multi-reference)"];
   const sheets = fluxSheets.value.filter((s) => isIncluded(s.alias));
-  if (!sheets.length) return `${header.join("\n")}\n\n`;
+  if (!sheets.length && !styleSlot.value && !hasPreviousSlot.value) return `${header.join("\n")}\n\n`;
   const refs = sheets.map((s, i) => `Image ${i + 1} = ${s.label || s.alias}`);
-  if (hasPreviousSlot.value) refs.push(`Image ${sheets.length + 1} = previous page`);
+  let n = sheets.length;
+  if (styleSlot.value) refs.push(`Image ${++n} = ${styleSlot.value.label || "style reference"}`);
+  if (hasPreviousSlot.value) refs.push(`Image ${++n} = previous page`);
   header.push(`# refs: ${refs.join("; ")}`);
   const parts = sheets.map((s, i) => `Image ${i + 1} for ${s.label || s.alias}`);
-  const previous = hasPreviousSlot.value ? ", and the previous page for continuity of set and style" : "";
-  return `${header.join("\n")}\n\nUsing ${parts.join(", ")}${previous} — do not alter identity.\n\n`;
+  if (styleSlot.value) parts.push("the style reference for consistent look");
+  if (hasPreviousSlot.value) parts.push("the previous page for continuity of set and style");
+  if (!parts.length) return `${header.join("\n")}\n\n`;
+  return `${header.join("\n")}\n\nUsing ${parts.join(", ")} — do not alter identity.\n\n`;
 });
 
 /** Tracks the last value we auto-wrote, so toggling a reference after open can refresh the preamble without clobbering scene text the user already typed below it. */
@@ -302,7 +307,7 @@ function onSubmit(): void {
                 : "skipped"
           }}</span>
           <EditorCheckbox
-            v-else-if="isDirectProvider && slot.fileUrl"
+            v-else-if="isDirectProvider && slot.kind === 'sheet' && slot.fileUrl"
             :checked="isIncluded(slot.alias)"
             :name="`include-${slot.alias}`"
             :disabled="busy"

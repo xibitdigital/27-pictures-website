@@ -136,13 +136,13 @@ export interface ToonRecord {
   pages: PageRecord[];
 }
 
-export type SeriesSlotKind = "sheet" | "previous";
+export type SeriesSlotKind = "sheet" | "previous" | "style";
 
 export interface SeriesFlowSlot {
   alias: string;
   label: string;
   kind: SeriesSlotKind;
-  /** A "sheet" slot with no file doesn't block Generate, and its LoadImage node is left unwired. No effect on "previous". */
+  /** A "sheet" slot with no file doesn't block Generate, and its LoadImage node is left unwired. No effect on "previous" or "style" — those require a file (or are silently skipped, for "previous", if there is none). */
   optional?: boolean;
   fileKey?: string | null;
   fileUrl?: string | null;
