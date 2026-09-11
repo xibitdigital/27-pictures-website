@@ -1418,6 +1418,37 @@ body {
   border-top: 0;
 }
 
+/* Generate page: prompt/picker on the left, reference sheets/slots on the right, so a long
+   reference list doesn't push the actual scene prompt further down the dialog. */
+.editor-generate-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 15rem);
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.editor-generate-main,
+.editor-generate-refs {
+  display: grid;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.editor-generate-refs .editor-dialog-slots li {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem;
+}
+
+.editor-generate-refs .editor-dialog-slots li > :last-child {
+  justify-self: start;
+}
+
+@media (max-width: 700px) {
+  .editor-generate-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .editor-plate-picker {
   display: flex;
   flex-wrap: wrap;

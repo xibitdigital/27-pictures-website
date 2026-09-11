@@ -322,71 +322,105 @@ function onSubmit(): void {
       <p v-if="missingComfyFlow" class="editor-error" role="alert">
         Upload a Comfy Save-API graph and reference sheets on the series first.
       </p>
-      <label>
-        <span class="editor-label-row">
-          Prompt
-          <button
-            type="button"
-            class="editor-icon-btn"
-            name="clear-prompt"
-            aria-label="Clear prompt"
-            title="Clear prompt"
-            :disabled="busy"
-            @click="onClearPrompt"
-          >
-            <Eraser :size="14" :stroke-width="1.6" aria-hidden="true" />
-          </button>
-        </span>
-        <textarea
-          name="generate-prompt"
-          v-model="prompt"
-          rows="8"
-          cols="40"
-          required
-          :disabled="busy"
-          placeholder="What happens on this page (no balloons, no SFX lettering)"
-        />
-      </label>
-      <template v-if="hasPreviousSlot">
-        <EditorCheckbox
-          :checked="includePrevious"
-          name="include-previous"
-          :disabled="busy"
-          @update:checked="(v) => (includePrevious = v)"
-        >
-          Include previous page
-        </EditorCheckbox>
-        <template v-if="includePrevious">
-          <div v-if="previousCandidates.length" class="editor-form-span">
-            <span class="editor-generate-label">Plate from this toon</span>
-            <p class="editor-muted">
-              A layout page lists each of its own shapes here, not the flattened page — pick the one shape that's
-              actually the reference.
-            </p>
-            <div class="editor-plate-picker" role="listbox" aria-label="Plate from this toon">
-              <button
-                v-for="candidate in previousCandidates"
-                :key="candidate.key"
-                type="button"
-                class="editor-plate-picker-item"
-                :class="{
-                  'is-selected':
-                    candidate.kind === 'page' ? previousPageId === candidate.id : previousRegionId === candidate.id,
-                }"
-                role="option"
-                :aria-selected="
-                  candidate.kind === 'page' ? previousPageId === candidate.id : previousRegionId === candidate.id
-                "
-                :aria-label="candidate.label"
-                :disabled="busy"
-                @click="pickPrevious(candidate)"
-              >
-                <img :src="candidate.fileUrl" alt="" />
-                <span class="editor-plate-picker-num">{{ candidate.badge }}</span>
-              </button>
-            </div>
-          </div>
+      <div class="editor-generate-columns">
+        <div class="editor-generate-main">
           <label>
+            <span class="editor-label-row">
+              Prompt
+              <button
+                type="button"
+                class="editor-icon-btn"
+                name="clear-prompt"
+                aria-label="Clear prompt"
+                title="Clear prompt"
+                :disabled="busy"
+                @click="onClearPrompt"
+              >
+                <Eraser :size="14" :stroke-width="1.6" aria-hidden="true" />
+              </button>
+            </span>
+            <textarea
+              name="generate-prompt"
+              v-model="prompt"
+              rows="8"
+              cols="40"
+              required
+              :disabled="busy"
+              placeholder="What happens on this page (no balloons, no SFX lettering)"
+            />
+          </label>
+          <template v-if="hasPreviousSlot">
+            <EditorCheckbox
+              :checked="includePrevious"
+              name="include-previous"
+              :disabled="busy"
+              @update:checked="(v) => (includePrevious = v)"
+            >
+              Include previous page
+            </EditorCheckbox>
+            <template v-if="includePrevious">
+              <div v-if="previousCandidates.length" class="editor-form-span">
+                <span class="editor-generate-label">Plate from this toon</span>
+                <p class="editor-muted">
+                  A layout page lists each of its own shapes here, not the flattened page — pick the one shape that's
+                  actually the reference.
+                </p>
+                <div class="editor-plate-picker" role="listbox" aria-label="Plate from this toon">
+                  <button
+                    v-for="candidate in previousCandidates"
+                    :key="candidate.key"
+                    type="button"
+                    class="editor-plate-picker-item"
+                    :class="{
+                      'is-selected':
+                        candidate.kind === 'page' ? previousPageId === candidate.id : previousRegionId === candidate.id,
+                    }"
+                    role="option"
+                    :aria-selected="
+                      candidate.kind === 'page' ? previousPageId === candidate.id : previousRegionId === candidate.id
+                    "
+                    :aria-label="candidate.label"
+                    :disabled="busy"
+                    @click="pickPrevious(candidate)"
+                  >
+                    <img :src="candidate.fileUrl" alt="" />
+                    <span class="editor-plate-picker-num">{{ candidate.badge }}</span>
+                  </button>
+                </div>
+              </div>
+              <label>
+                Images
+                <EditorSelect
+                  name="generate-count"
+                  :model-value="count"
+                  :disabled="busy"
+                  @update:model-value="(v) => (count = v)"
+                >
+                  <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
+                </EditorSelect>
+              </label>
+              <input
+                ref="previousFileInput"
+                type="file"
+                name="previous-file"
+                accept="image/webp,image/jpeg,image/png"
+                hidden
+                :disabled="busy"
+                @change="onPreviousFile"
+              />
+              <button
+                class="editor-btn editor-btn--ghost"
+                type="button"
+                name="previous-file-pick"
+                :disabled="busy"
+                @click="pickPreviousFile"
+              >
+                {{ pages.length ? "Or attach a file" : "Attach a previous plate" }}
+              </button>
+              <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
+            </template>
+          </template>
+          <label v-if="!hasPreviousSlot || !includePrevious">
             Images
             <EditorSelect
               name="generate-count"
@@ -397,71 +431,44 @@ function onSubmit(): void {
               <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
             </EditorSelect>
           </label>
-          <input
-            ref="previousFileInput"
-            type="file"
-            name="previous-file"
-            accept="image/webp,image/jpeg,image/png"
-            hidden
-            :disabled="busy"
-            @change="onPreviousFile"
-          />
-          <button
-            class="editor-btn editor-btn--ghost"
-            type="button"
-            name="previous-file-pick"
-            :disabled="busy"
-            @click="pickPreviousFile"
-          >
-            {{ pages.length ? "Or attach a file" : "Attach a previous plate" }}
-          </button>
-          <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
-        </template>
-      </template>
-      <label v-if="!hasPreviousSlot || !includePrevious">
-        Images
-        <EditorSelect
-          name="generate-count"
-          :model-value="count"
-          :disabled="busy"
-          @update:model-value="(v) => (count = v)"
-        >
-          <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
-        </EditorSelect>
-      </label>
-      <p v-if="isFluxKontext" class="editor-muted" role="status">
-        Flux Kontext sends at most 2 references — {{ includedRefCount }} included{{
-          includedRefCount > 2 ? " (only the first 2 will actually be sent)" : ""
-        }}.
-      </p>
-      <ul v-if="generate?.slots.length" class="editor-dialog-slots">
-        <li v-for="slot in generate.slots" :key="slot.alias">
-          <span>{{
-            slot.rendererInput ? `${slot.rendererInput} — ${slot.label || slot.alias}` : slot.label || slot.alias
-          }}</span>
-          <span v-if="slot.kind === 'previous'" class="editor-muted">{{
-            previousFile
-              ? "custom file"
-              : selectedPreviousPage
-                ? `page ${selectedPreviousPage.position + 1}`
-                : selectedPreviousRegion
-                  ? "shape image"
-                  : "skipped"
-          }}</span>
-          <EditorCheckbox
-            v-else-if="isDirectProvider && slot.kind === 'sheet' && slot.fileUrl"
-            :checked="isIncluded(slot.alias)"
-            :name="`include-${slot.alias}`"
-            :disabled="busy"
-            @update:checked="(v) => setIncluded(slot.alias, v)"
-          >
-            {{ isIncluded(slot.alias) ? "included" : "not sent this time" }}
-          </EditorCheckbox>
-          <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
-          <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>
-          <span v-else class="editor-error">missing sheet</span>
-        </li>
-      </ul>
+        </div>
+        <div v-if="generate?.slots.length" class="editor-generate-refs">
+          <span class="editor-generate-label">References</span>
+          <p v-if="isFluxKontext" class="editor-muted" role="status">
+            Flux Kontext sends at most 2 references — {{ includedRefCount }} included{{
+              includedRefCount > 2 ? " (only the first 2 will actually be sent)" : ""
+            }}.
+          </p>
+          <ul class="editor-dialog-slots">
+            <li v-for="slot in generate.slots" :key="slot.alias">
+              <span>{{
+                slot.rendererInput ? `${slot.rendererInput} — ${slot.label || slot.alias}` : slot.label || slot.alias
+              }}</span>
+              <span v-if="slot.kind === 'previous'" class="editor-muted">{{
+                previousFile
+                  ? "custom file"
+                  : selectedPreviousPage
+                    ? `page ${selectedPreviousPage.position + 1}`
+                    : selectedPreviousRegion
+                      ? "shape image"
+                      : "skipped"
+              }}</span>
+              <EditorCheckbox
+                v-else-if="isDirectProvider && slot.kind === 'sheet' && slot.fileUrl"
+                :checked="isIncluded(slot.alias)"
+                :name="`include-${slot.alias}`"
+                :disabled="busy"
+                @update:checked="(v) => setIncluded(slot.alias, v)"
+              >
+                {{ isIncluded(slot.alias) ? "included" : "not sent this time" }}
+              </EditorCheckbox>
+              <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
+              <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>
+              <span v-else class="editor-error">missing sheet</span>
+            </li>
+          </ul>
+        </div>
+      </div>
       <p v-if="busy" class="editor-muted">{{ status || "Generating page…" }}</p>
       <div class="editor-form-actions">
         <button class="editor-btn editor-btn--ghost" type="button" :disabled="busy" @click="onCancel">Cancel</button>
