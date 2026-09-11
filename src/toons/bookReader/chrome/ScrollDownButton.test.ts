@@ -29,7 +29,7 @@ describe("ScrollDownButton", () => {
     expect(scrollTo).toHaveBeenCalledWith({ top: 720, behavior: "smooth" });
   });
 
-  it("snaps the next plate just under the chrome on the last press", async () => {
+  it("does the normal 90% jump when the next plate's align is behind it", async () => {
     const next = document.createElement("div");
     next.getBoundingClientRect = () =>
       ({
@@ -45,7 +45,7 @@ describe("ScrollDownButton", () => {
       }) as DOMRect;
     const w = mount(ScrollDownButton, { props: { pages: [next] } });
     await w.get("[data-scroll-down]").trigger("click");
-    // Default chrome 4 + 4px gap → align at 400 - 8 = 392, within the 720 jump.
-    expect(scrollTo).toHaveBeenCalledWith({ top: 392, behavior: "smooth" });
+    // Default chrome 4 + 4px gap → align at 400 - 8 = 392, behind the 720 jump — never snap backward.
+    expect(scrollTo).toHaveBeenCalledWith({ top: 720, behavior: "smooth" });
   });
 });

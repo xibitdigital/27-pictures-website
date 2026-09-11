@@ -72,15 +72,21 @@ export function nextPageAlignY(pages: PageBox[], scrollY: number, chromeOffset: 
 }
 
 /**
- * Page-down 90% while the next plate is more than a screen away.
- * If it already starts on this screen (or would be a leftover nudge after
- * 90%), snap it under the chrome so that press is not wasted.
+ * Page-down 90% of the viewport. Only deviate from that jump *forward*, to
+ * land exactly on the next plate's top instead of a few leftover pixels
+ * short of it (a plate ending just past one screen — Nero mobile: 858 vs
+ * 844 — otherwise costs a second, near-zero-progress tap).
+ *
+ * Must never snap *backward* to an align point behind the 90% jump target.
+ * That used to trigger whenever the next plate merely started somewhere
+ * ahead of the current scroll, however close — so on a book whose plates
+ * are shorter than the viewport, any page-down pressed while mid-plate
+ * (not freshly aligned to a plate top) landed on the very next plate's top
+ * a few dozen pixels away instead of advancing a full screen.
  */
 export function scrollTargetY(scrollY: number, viewH: number, nextAlignY: number | null): number {
   const jumpTo = scrollY + viewH * SCROLL_PAGE_FRACTION;
-  // Include PAGE_NUDGE so a plate that starts just past one screen (Nero
-  // mobile: 858 vs 844) snaps now, instead of a 90% jump plus a leftover tap.
-  if (nextAlignY != null && nextAlignY <= scrollY + viewH + PAGE_NUDGE_PX) return nextAlignY;
+  if (nextAlignY != null && nextAlignY >= jumpTo && nextAlignY <= scrollY + viewH + PAGE_NUDGE_PX) return nextAlignY;
   return jumpTo;
 }
 

@@ -29,10 +29,14 @@ describe("scrollPage", () => {
     expect(canScrollPageDown(1200, 800, 2000)).toBe(false);
   });
 
-  it("aligns the next plate just under the chrome when that is within the jump", () => {
+  it("never snaps backward to an align point behind the 90% jump", () => {
+    // The next plate starts well inside this screen (box(500) of 1000), but
+    // aligning to it would be a much smaller move than the normal page-down —
+    // the regression that turned "page down" into a tiny nudge whenever the
+    // reader was mid-plate instead of freshly aligned to a plate top.
     const align = nextPageAlignY([box(0), box(500)], 0, 40);
     expect(align).toBe(460);
-    expect(scrollTargetY(0, 1000, align)).toBe(460);
+    expect(scrollTargetY(0, 1000, align)).toBe(900);
   });
 
   it("keeps the 90% jump when the next plate is further away", () => {
@@ -57,6 +61,14 @@ describe("scrollPage", () => {
     expect(scrollTargetY(0, 1000, 950)).toBe(950);
     // Nero-sized plate on a phone: 858 vs 844 — one pixel past the viewport.
     expect(scrollTargetY(0, 844, 858)).toBe(858);
+  });
+
+  it("still does a real 90% jump from a mid-plate scroll position (Jax repro)", () => {
+    // Jax plates render ~694px tall on a 844px phone viewport. Tapping
+    // page-down from a manual mid-plate scroll (600) used to snap to the
+    // next plate's align (694) — a 94px jump instead of the expected ~90%.
+    const align = 694;
+    expect(scrollTargetY(600, 844, align)).toBe(600 + 844 * SCROLL_PAGE_FRACTION);
   });
 
   it("prefers visualViewport height when the browser reports one", () => {
@@ -119,7 +131,7 @@ describe("scrollPage", () => {
     expect((dispatchEvent.mock.calls[0][0] as Event).type).toBe(USER_SCROLL_EVENT);
   });
 
-  it("snaps to the next plate on the last press of a page", () => {
+  it("does the normal 90% jump when the next plate's align is behind it", () => {
     const scrollTo = vi.fn();
     const win = {
       innerHeight: 1000,
@@ -127,10 +139,10 @@ describe("scrollPage", () => {
       matchMedia: () => ({ matches: false }),
       scrollTo,
     } as unknown as Window;
-    // Plate 2's top is 400px below the viewport top → document Y 600; chrome 40 → align 560.
-    // Jump from 200 is 1000, so 560 is within the jump.
+    // Plate 2's top is 400px below the viewport top → document Y 600; chrome 40 → align 560,
+    // which is behind the 90% jump target (200 + 900 = 1100) — never snap backward to it.
     scrollPageDown(win, { pages: [box(-200), box(400)], chromeOffset: 40 });
-    expect(scrollTo).toHaveBeenCalledWith({ top: 560, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenCalledWith({ top: 1100, behavior: "smooth" });
   });
 
   it("measures top chrome marked with data-reader-chrome", () => {
