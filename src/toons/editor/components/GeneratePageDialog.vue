@@ -440,31 +440,43 @@ function onSubmit(): void {
             }}.
           </p>
           <ul class="editor-dialog-slots">
-            <li v-for="slot in generate.slots" :key="slot.alias">
-              <span>{{
-                slot.rendererInput ? `${slot.rendererInput} — ${slot.label || slot.alias}` : slot.label || slot.alias
-              }}</span>
-              <span v-if="slot.kind === 'previous'" class="editor-muted">{{
-                previousFile
-                  ? "custom file"
-                  : selectedPreviousPage
-                    ? `page ${selectedPreviousPage.position + 1}`
-                    : selectedPreviousRegion
-                      ? "shape image"
-                      : "skipped"
-              }}</span>
-              <EditorCheckbox
-                v-else-if="isDirectProvider && slot.kind === 'sheet' && slot.fileUrl"
-                :checked="isIncluded(slot.alias)"
+            <li
+              v-for="slot in generate.slots"
+              :key="slot.alias"
+              :class="{ 'is-toggle-row': isDirectProvider && slot.kind === 'sheet' && slot.fileUrl }"
+            >
+              <button
+                v-if="isDirectProvider && slot.kind === 'sheet' && slot.fileUrl"
+                type="button"
+                class="editor-dialog-slot-toggle"
+                :class="{ 'is-checked': isIncluded(slot.alias) }"
                 :name="`include-${slot.alias}`"
+                :aria-pressed="isIncluded(slot.alias)"
                 :disabled="busy"
-                @update:checked="(v) => setIncluded(slot.alias, v)"
+                @click="setIncluded(slot.alias, !isIncluded(slot.alias))"
               >
-                {{ isIncluded(slot.alias) ? "included" : "not sent this time" }}
-              </EditorCheckbox>
-              <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
-              <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>
-              <span v-else class="editor-error">missing sheet</span>
+                <span>{{
+                  slot.rendererInput ? `${slot.rendererInput} — ${slot.label || slot.alias}` : slot.label || slot.alias
+                }}</span>
+                <span class="editor-muted">{{ isIncluded(slot.alias) ? "included" : "not sent this time" }}</span>
+              </button>
+              <template v-else>
+                <span>{{
+                  slot.rendererInput ? `${slot.rendererInput} — ${slot.label || slot.alias}` : slot.label || slot.alias
+                }}</span>
+                <span v-if="slot.kind === 'previous'" class="editor-muted">{{
+                  previousFile
+                    ? "custom file"
+                    : selectedPreviousPage
+                      ? `page ${selectedPreviousPage.position + 1}`
+                      : selectedPreviousRegion
+                        ? "shape image"
+                        : "skipped"
+                }}</span>
+                <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
+                <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>
+                <span v-else class="editor-error">missing sheet</span>
+              </template>
             </li>
           </ul>
         </div>

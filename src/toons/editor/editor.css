@@ -1418,6 +1418,50 @@ body {
   border-top: 0;
 }
 
+.editor-dialog-slots li.is-toggle-row {
+  padding: 0;
+}
+
+/* The whole row toggles a reference sheet in/out — no visible checkbox glyph, just a background
+   change, so "is this included" reads at a glance across a long list instead of hunting for a
+   small box next to each row. */
+.editor-dialog-slot-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.45rem 0.7rem;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editor-dialog-slot-toggle:hover {
+  background: var(--bg-menu);
+}
+
+.editor-dialog-slot-toggle:focus-visible {
+  outline: 2px solid var(--red-smile);
+  outline-offset: -2px;
+}
+
+.editor-dialog-slot-toggle.is-checked {
+  background: color-mix(in srgb, var(--red-smile) 22%, transparent);
+}
+
+.editor-dialog-slot-toggle.is-checked:hover {
+  background: color-mix(in srgb, var(--red-smile) 30%, transparent);
+}
+
+.editor-dialog-slot-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* Generate page: prompt/picker on the left, reference sheets/slots on the right, so a long
    reference list doesn't push the actual scene prompt further down the dialog. */
 .editor-generate-columns {
@@ -1441,13 +1485,15 @@ body {
   gap: 0.6rem;
 }
 
-.editor-generate-refs .editor-dialog-slots li > span:first-child {
+.editor-generate-refs .editor-dialog-slots li > span:first-child,
+.editor-generate-refs .editor-dialog-slot-toggle > span:first-child {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.editor-generate-refs .editor-dialog-slots li > :last-child {
+.editor-generate-refs .editor-dialog-slots li > :last-child,
+.editor-generate-refs .editor-dialog-slot-toggle > :last-child {
   flex-shrink: 0;
   font-size: 0.78rem;
 }
