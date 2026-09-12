@@ -778,8 +778,10 @@ pointer keeps the three-column studio. Forms stack the cover preview below
 card — cover art, or `.editor-cover-placeholder` if none.
 
 **Bar order is the same on every screen** (`EditorBar.vue`): ghost actions
-(`#actions`) → All toons (hidden on the list home) → red CTA (`#primary`:
-Save / Create / New toon / Send invite) → account avatar **last**. Ghosts
+(`#actions`) → All toons (hidden on the list home) → primary CTA (`#primary`:
+Save / Create / New toon / Send invite, `--editor-primary` blue — see
+TypeScript Guidelines above for why it isn't `--red-smile`) → account avatar
+**last**. Ghosts
 never sit after the CTA. An existing series page (`#/series/:key`) puts
 **New toon** in `#actions` (pre-fills `?series=&episode=` for the next
 number). Lucide icons on those bar buttons match the list (BookPlus,
@@ -791,6 +793,15 @@ JSON the studio and the Worker agree on lives in
 `worker/toon-editor/src/apiTypes.ts` (no Cloudflare types). The Worker keeps D1
 row types in `src/types.ts`. Vue re-exports the contract from
 `src/toons/editor/types.ts`.
+
+**Independent D1 queries in one request go through `Promise.all`, not one after another.**
+`loadToon` (`index.ts`) — called after nearly every write to hand back the refreshed toon — used
+to run its four queries (toon, pages, bubbles, regions) sequentially; none of them depend on each
+other's result, only on the same toon id. `POST /toons/:id/pages` had the same shape: the webp
+encode (wasm, real CPU time) serialized in front of an unrelated position lookup, and the page
+insert serialized in front of an unrelated toon update. Measured live (network tab): ~700ms before,
+parallelizing cut it substantially. Same rule for any new Worker route with 2+ reads/writes that
+don't feed into each other.
 
 | Hash                             | Screen                                                                                                                       |
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
