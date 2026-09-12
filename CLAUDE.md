@@ -59,8 +59,14 @@ scrollport finally has a definite box. All the JS came back out.
   --silver: #888; /* Tertiary text */
 
   /* Accent Colors */
-  --red-smile: #b30000; /* Primary accent (brand red) */
+  --red-smile: #b30000; /* Primary accent (brand red) — public site + editor destructive actions only */
   --success: #4caf50; /* Success states */
+
+  /* Toon editor only — its primary/CTA buttons (Save, Create, Generate…) use this instead of
+     --red-smile, which reads as a destructive "danger" signal on a routine Save button. Red stays
+     reserved for actually destructive editor confirms (.editor-btn--danger — delete/remove). */
+  --editor-primary: #2f6fed;
+  --editor-primary-hover: #4a84ff;
 
   /* Borders */
   --border: #222; /* Dark borders */

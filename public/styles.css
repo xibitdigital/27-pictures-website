@@ -27,6 +27,13 @@
   --focus-ring: rgba(179, 0, 0, 0.4);
   --card-lift: translateY(-2px);
 
+  /* Toon editor only (src/toons/editor/editor.css) — its primary/CTA buttons (Save, Create,
+     Generate...) used --red-smile, the public site's brand accent, which reads as a destructive
+     "danger" signal on a routine Save button. Red stays reserved for actual destructive actions
+     (delete, discard) in the editor; every other primary button uses this instead. */
+  --editor-primary: #2f6fed;
+  --editor-primary-hover: #4a84ff;
+
   /* Fixed header + a little air. Studio strip and in-page jumps must
      clear the logo; keep in step with nav padding and --nav-logo-h. */
   --nav-offset: 7.25rem;

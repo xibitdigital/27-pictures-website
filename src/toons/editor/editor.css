@@ -256,9 +256,9 @@ body {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.45rem 0.9rem;
-  background: var(--red-smile);
+  background: var(--editor-primary);
   color: var(--text);
-  border: 1px solid var(--red-smile);
+  border: 1px solid var(--editor-primary);
   border-radius: 2px;
   text-decoration: none;
   font: inherit;
@@ -267,7 +267,8 @@ body {
 
 .editor-btn:hover,
 .editor-btn:focus-visible {
-  background: var(--red-smile-hover);
+  background: var(--editor-primary-hover);
+  border-color: var(--editor-primary-hover);
 }
 
 .editor-btn:disabled {
@@ -396,6 +397,20 @@ body {
   background: transparent;
   color: var(--text-muted);
   border-color: var(--border-light);
+}
+
+/* Actually destructive confirms only (ConfirmDialog's Confirm button — remove user, delete
+   page/bubble/region) keep the brand red as a real warning color, unlike every other primary
+   button (Save/Create/Generate), which now uses --editor-primary instead. */
+.editor-btn--danger {
+  background: var(--red-smile);
+  border-color: var(--red-smile);
+}
+
+.editor-btn--danger:hover,
+.editor-btn--danger:focus-visible {
+  background: var(--red-smile-hover);
+  border-color: var(--red-smile-hover);
 }
 
 .editor-muted {
@@ -1750,17 +1765,17 @@ body {
   width: 2rem;
   height: 2rem;
   padding: 0;
-  background: var(--red-smile);
+  background: var(--editor-primary);
   color: var(--text);
-  border: 1px solid var(--red-smile);
+  border: 1px solid var(--editor-primary);
   border-radius: 2px;
   cursor: pointer;
 }
 
 .editor-plate-hint-dismiss:hover,
 .editor-plate-hint-dismiss:focus-visible {
-  background: var(--red-smile-hover);
-  border-color: var(--red-smile-hover);
+  background: var(--editor-primary-hover);
+  border-color: var(--editor-primary-hover);
 }
 
 .editor-plate-hint-dismiss svg {

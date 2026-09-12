@@ -49,7 +49,13 @@ async function onOpenAutoFocus(ev: Event): Promise<void> {
       <button class="editor-btn editor-btn--ghost" type="button" @click="emit('cancel')">
         {{ cancelLabel }}
       </button>
-      <button ref="confirmEl" class="editor-btn" type="button" name="confirm" @click="emit('confirm')">
+      <button
+        ref="confirmEl"
+        class="editor-btn editor-btn--danger"
+        type="button"
+        name="confirm"
+        @click="emit('confirm')"
+      >
         {{ confirmLabel }}
       </button>
     </div>
