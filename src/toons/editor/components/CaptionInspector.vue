@@ -56,6 +56,14 @@ const canMoveEarlier = computed(() => playCount.value > 1 && playIndex.value > 0
 const canMoveLater = computed(() => playCount.value > 1 && playIndex.value < playCount.value - 1);
 
 const textMap = computed(() => (props.bubble ? bubbleTextMap(props.bubble) : {}));
+const enTextareaEl = ref<HTMLTextAreaElement | null>(null);
+/** Called by PageStudio.vue right after a new bubble is created, so typing the caption doesn't
+ * need an extra click into the English field first. */
+function focusEnglish(): void {
+  enTextareaEl.value?.focus();
+}
+defineExpose({ focusEnglish });
+
 const sizeDraft = ref("");
 const sizeFocused = ref(false);
 const angleDraft = ref("");
@@ -456,6 +464,7 @@ async function onGenerateAudio(): Promise<void> {
           @translated="onTranslated"
         >
           <textarea
+            ref="enTextareaEl"
             :value="textMap[lang.code] || ''"
             rows="3"
             :lang="lang.code"

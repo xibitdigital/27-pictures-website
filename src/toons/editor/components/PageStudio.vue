@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Save, Settings2 } from "@lucide/vue";
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import {
   addBubble,
@@ -58,6 +58,7 @@ const router = useRouter();
 
 const toon = ref<ToonRecord | null>(null);
 const selectedId = ref<string | null>(null);
+const captionInspectorRef = ref<InstanceType<typeof CaptionInspector> | null>(null);
 const previewLang = ref<LangCode>("en");
 const loading = ref(true);
 const saving = ref(false);
@@ -465,6 +466,8 @@ async function onAdd(pos: { x: number; y: number }): Promise<void> {
     const created = await addBubble(page.id, { x: pos.x, y: pos.y, textEn: "text", size: 30 });
     page.bubbles.push(created);
     selectedId.value = created.id;
+    await nextTick();
+    captionInspectorRef.value?.focusEnglish?.();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not add bubble");
   }
@@ -993,6 +996,7 @@ async function onRemove(): Promise<void> {
         </div>
         <CaptionInspector
           v-if="showBubbleLayer"
+          ref="captionInspectorRef"
           :bubble="selectedBubble"
           :toon-id="toon.id"
           :asset-page-dir="toon.assetPageDir"
