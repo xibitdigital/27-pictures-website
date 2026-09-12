@@ -18,6 +18,9 @@ const props = defineProps<{
   pages: Pick<PageRecord, "id" | "position" | "fileUrl" | "kind" | "regions">[];
   busy: boolean;
   status: string;
+  /** Series key (or toon id, for an ungrouped toon) — which references were unchecked last time
+   * is remembered per series/toon, not reset on every reopen (see excludedAliases below). */
+  storageKey?: string | null;
 }>();
 
 const emit = defineEmits<{
@@ -112,6 +115,33 @@ const isFluxKontext = computed(() => props.generate?.provider === "replicate-flu
 
 /** Direct-provider only — sheets unchecked here are left out of the API call entirely (not just asked to be ignored), the reliable fix when two references (e.g. a doll and a character) are similar enough to bleed into each other. Flux Kontext (replicate-flux) only ever sends the first 2 included, so this is also how an operator picks which 2. */
 const excludedAliases = ref<Set<string>>(new Set());
+
+function excludedStorageKey(): string | null {
+  return props.storageKey ? `editor-generate-excluded:${props.storageKey}` : null;
+}
+
+function readExcluded(): Set<string> {
+  const storageKey = excludedStorageKey();
+  if (!storageKey) return new Set();
+  try {
+    const raw = localStorage.getItem(storageKey);
+    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
+    return Array.isArray(parsed) ? new Set(parsed.filter((v): v is string => typeof v === "string")) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function writeExcluded(next: Set<string>): void {
+  const storageKey = excludedStorageKey();
+  if (!storageKey) return;
+  try {
+    localStorage.setItem(storageKey, JSON.stringify([...next]));
+  } catch {
+    /* private mode — just doesn't persist across opens this visit */
+  }
+}
+
 function isIncluded(alias: string): boolean {
   return !excludedAliases.value.has(alias);
 }
@@ -120,6 +150,7 @@ function setIncluded(alias: string, included: boolean): void {
   if (included) next.delete(alias);
   else next.add(alias);
   excludedAliases.value = next;
+  writeExcluded(next);
 }
 
 /**
@@ -262,7 +293,7 @@ watch(
     if (previousRegionId.value && !selectedPreviousRegion.value) {
       previousRegionId.value = "";
     }
-    excludedAliases.value = new Set();
+    excludedAliases.value = readExcluded();
     applyPrefill();
   }
 );

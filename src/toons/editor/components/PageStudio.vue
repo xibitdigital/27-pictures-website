@@ -1044,6 +1044,7 @@ async function onRemove(): Promise<void> {
         :pages="toon.pages"
         :busy="generateBusy"
         :status="generateStatus"
+        :storage-key="toon.seriesKey || toon.id"
         @close="closeGenerateDialog"
         @submit="onGenerateSubmit"
       />
