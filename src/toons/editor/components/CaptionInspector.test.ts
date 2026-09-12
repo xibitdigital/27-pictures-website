@@ -48,6 +48,18 @@ describe("CaptionInspector", () => {
     last.unmount();
   });
 
+  it("focusEnglish() moves focus to the English textarea (exposed for PageStudio's onAdd)", () => {
+    const wrapper = mount(CaptionInspector, { props: { bubble }, attachTo: document.body });
+    // The English textarea sits inside a `v-for="lang in CAPTION_LANGS"` — a plain `ref="x"`
+    // there would collect into an array (Vue's v-for ref semantics) rather than the element
+    // itself, so `.focus()` would silently no-op. Asserting real DOM focus here, not just that
+    // the method exists, is what catches that regression.
+    (wrapper.vm as unknown as { focusEnglish: () => void }).focusEnglish();
+    const textarea = wrapper.get('textarea[lang="en"]').element;
+    expect(document.activeElement).toBe(textarea);
+    wrapper.unmount();
+  });
+
   it("keeps variant in the inspector and does not offer a tail select", () => {
     const wrapper = mount(CaptionInspector, { props: { bubble } });
     expect(wrapper.get('button[name="variant"]').exists()).toBe(true);

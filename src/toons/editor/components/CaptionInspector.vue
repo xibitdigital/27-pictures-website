@@ -464,7 +464,7 @@ async function onGenerateAudio(): Promise<void> {
           @translated="onTranslated"
         >
           <textarea
-            ref="enTextareaEl"
+            :ref="(el) => (enTextareaEl = el as HTMLTextAreaElement | null)"
             :value="textMap[lang.code] || ''"
             rows="3"
             :lang="lang.code"
