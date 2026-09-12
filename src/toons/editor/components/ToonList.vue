@@ -130,7 +130,7 @@ const filteredCount = computed(
           <ul class="editor-card-list">
             <li v-for="toon in filteredRecent" :key="`recent-${toon.id}`">
               <ToonCard
-                :to="`/${toon.id}`"
+                :to="`/${toon.id}/pages`"
                 :title="toon.title || toon.slug"
                 :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
                 :cue="relativeTime(toon.updatedAt)"
