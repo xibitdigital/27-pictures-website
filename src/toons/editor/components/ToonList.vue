@@ -22,6 +22,7 @@ const VISIBILITY_FILTERS: { value: VisibilityFilter; label: string }[] = [
 ];
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
+import EditorButton from "./ui/EditorButton.vue";
 
 const RECENT_LIMIT = 8;
 
@@ -106,20 +107,20 @@ const filteredCount = computed(
         <span data-toon-count>{{ filteredCount }}</span>
       </template>
       <template #actions>
-        <RouterLink v-if="isAdmin" class="editor-btn editor-btn--ghost" to="/users">
+        <EditorButton v-if="isAdmin" variant="ghost" to="/users">
           <UserPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
           Manage users
-        </RouterLink>
-        <RouterLink class="editor-btn editor-btn--ghost" to="/series/new">
+        </EditorButton>
+        <EditorButton variant="ghost" to="/series/new">
           <FolderPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
           New series
-        </RouterLink>
+        </EditorButton>
       </template>
       <template #primary>
-        <RouterLink class="editor-btn" to="/new">
+        <EditorButton to="/new">
           <BookPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
           New toon
-        </RouterLink>
+        </EditorButton>
       </template>
     </EditorBar>
     <div class="editor-list-body">

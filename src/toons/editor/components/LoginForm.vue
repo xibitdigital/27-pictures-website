@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { login, register, setToken, type AuthPayload, type EditorUser } from "../api";
 import { pushToast } from "../toast";
+import EditorButton from "./ui/EditorButton.vue";
 
 const props = defineProps<{
   hasUsers: boolean;
@@ -51,8 +52,8 @@ async function onSubmit(ev: Event): Promise<void> {
         required
       />
     </label>
-    <button class="editor-btn" type="submit" :disabled="submitting">
+    <EditorButton type="submit" :disabled="submitting">
       {{ submitting ? "Please wait…" : hasUsers ? "Log in" : "Create account" }}
-    </button>
+    </EditorButton>
   </form>
 </template>

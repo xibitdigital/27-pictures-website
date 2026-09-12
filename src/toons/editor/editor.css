@@ -178,6 +178,11 @@ body {
   flex-shrink: 0;
 }
 
+.editor-user-role {
+  flex-shrink: 0;
+  width: 8rem;
+}
+
 .editor-key-input {
   width: 14rem;
 }
@@ -1009,6 +1014,25 @@ body {
   display: block;
 }
 
+/* Any icon-only button whose action deletes something (a reference slot, a shape, a page) —
+   distinct from the plain ghost-gray up/down/replace icon buttons next to it. */
+.editor-icon-btn--danger {
+  color: var(--red-smile);
+  border-color: var(--red-smile);
+}
+
+.editor-icon-btn--danger:hover,
+.editor-icon-btn--danger:focus-visible {
+  background: var(--red-smile);
+  color: var(--text);
+  border-color: var(--red-smile);
+}
+
+.editor-icon-btn--danger:disabled {
+  color: var(--text-muted);
+  border-color: var(--border-light);
+}
+
 .editor-form-main {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1087,7 +1111,7 @@ body {
   height: 1.15rem;
   padding: 0;
   background: transparent;
-  color: var(--silver);
+  color: var(--red-smile);
   border: 0;
   border-radius: 50%;
   cursor: pointer;
@@ -1703,6 +1727,8 @@ body {
 
 .editor-thumb-remove {
   right: 0.2rem;
+  color: var(--red-smile);
+  border-color: var(--red-smile);
 }
 
 .editor-thumb-replace {
@@ -1908,14 +1934,15 @@ body {
   right: -0.75rem;
   z-index: 3;
   background: var(--bg-card);
-  color: var(--text-muted);
+  color: var(--red-smile);
+  border-color: var(--red-smile);
   opacity: 0.7;
 }
 
 .editor-bubble-delete:hover,
 .editor-bubble-delete:focus-visible {
-  color: var(--red-smile);
-  border-color: var(--red-smile);
+  background: var(--red-smile);
+  color: var(--text);
   opacity: 1;
 }
 

@@ -22,6 +22,7 @@ import type {
   ToonMetaInput,
   ToonRecord,
   UserKeyName,
+  UserRole,
   UserKeyStatus,
 } from "./types";
 
@@ -146,6 +147,11 @@ export function resendPassword(userId: string): Promise<InviteUserResult> {
 /** Admin-only: removes an account (and its series-editor memberships). The Worker refuses to remove the caller's own account. */
 export function removeUser(userId: string): Promise<{ ok: boolean }> {
   return api<{ ok: boolean }>(`/users/${userId}`, { method: "DELETE" });
+}
+
+/** Admin-only: changes another user's role. The Worker refuses to change the caller's own role. */
+export function updateUserRole(userId: string, role: UserRole): Promise<EditorUser> {
+  return api<EditorUser>(`/users/${userId}`, { method: "PATCH", body: JSON.stringify({ role }) });
 }
 
 export function fetchCredits(): Promise<CreditsSnapshot> {

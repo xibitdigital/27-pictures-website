@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { inject, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { inviteUser, listUsers, removeUser, resendPassword } from "../api";
+import { inviteUser, listUsers, removeUser, resendPassword, updateUserRole } from "../api";
 import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
 import type { EditorUser, UserRole } from "../types";
 import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorBar from "./EditorBar.vue";
+import EditorButton from "./ui/EditorButton.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -50,6 +51,24 @@ async function onResendPassword(user: EditorUser): Promise<void> {
     pushToast(err instanceof Error ? err.message : "Could not resend password");
   } finally {
     resendingId.value = null;
+  }
+}
+
+const changingRoleId = ref<string | null>(null);
+
+async function onRoleChange(user: EditorUser, role: UserRole): Promise<void> {
+  if (role === user.role || changingRoleId.value) return;
+  changingRoleId.value = user.id;
+  const previous = user.role;
+  user.role = role; // optimistic — reverted below on failure
+  try {
+    await updateUserRole(user.id, role);
+    pushToast(`${user.username} is now ${role === "admin" ? "an admin" : "an editor"}`, "success");
+  } catch (err) {
+    user.role = previous;
+    pushToast(err instanceof Error ? err.message : "Could not change role");
+  } finally {
+    changingRoleId.value = null;
   }
 }
 
@@ -189,9 +208,9 @@ onUnmounted(() => {
   <div class="editor-page">
     <EditorBar title="Manage users">
       <template #primary>
-        <button class="editor-btn" type="submit" form="invite-user" :disabled="saving">
+        <EditorButton type="submit" form="invite-user" :disabled="saving">
           {{ saving ? "Sending…" : "Send invite" }}
-        </button>
+        </EditorButton>
       </template>
     </EditorBar>
     <div class="editor-page-body">
@@ -204,26 +223,31 @@ onUnmounted(() => {
             <li v-for="user in users" :key="user.id" class="editor-user-row">
               <span class="editor-user-row-info">
                 <strong>{{ user.username }}</strong>
-                <span class="editor-muted">{{ user.email }} · {{ user.role }}</span>
+                <span class="editor-muted">{{ user.email }}</span>
               </span>
+              <EditorSelect
+                class="editor-user-role"
+                :model-value="user.role"
+                :disabled="user.id === userRef?.id || changingRoleId === user.id"
+                :name="`role-${user.id}`"
+                :aria-label="`${user.username}'s role`"
+                @update:model-value="(v) => onRoleChange(user, v as UserRole)"
+              >
+                <EditorSelectItem value="editor">Editor</EditorSelectItem>
+                <EditorSelectItem value="admin">Admin</EditorSelectItem>
+              </EditorSelect>
               <span class="editor-user-row-actions">
-                <button
-                  class="editor-btn editor-btn--ghost"
-                  type="button"
-                  :disabled="resendingId === user.id"
-                  @click="onResendPassword(user)"
-                >
+                <EditorButton variant="ghost" :disabled="resendingId === user.id" @click="onResendPassword(user)">
                   {{ resendingId === user.id ? "Sending…" : "Resend password" }}
-                </button>
-                <button
+                </EditorButton>
+                <EditorButton
                   v-if="user.id !== userRef?.id"
-                  class="editor-btn editor-btn--ghost"
-                  type="button"
+                  variant="danger"
                   :disabled="removingId === user.id"
                   @click="requestRemoveUser(user)"
                 >
                   {{ removingId === user.id ? "Removing…" : "Remove" }}
-                </button>
+                </EditorButton>
               </span>
             </li>
           </ul>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /** Generic yes/no dialog, styled like every other editor modal (GeneratePageDialog). */
 import { nextTick, ref } from "vue";
+import EditorButton from "./ui/EditorButton.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 
 const props = withDefaults(
@@ -26,7 +27,7 @@ const emit = defineEmits<{
   cancel: [];
 }>();
 
-const confirmEl = ref<HTMLButtonElement | null>(null);
+const confirmEl = ref<InstanceType<typeof EditorButton> | null>(null);
 
 async function onOpenAutoFocus(ev: Event): Promise<void> {
   if (!props.focusConfirm) return;
@@ -46,18 +47,12 @@ async function onOpenAutoFocus(ev: Event): Promise<void> {
   >
     <p class="editor-muted">{{ message }}</p>
     <div class="editor-form-actions">
-      <button class="editor-btn editor-btn--ghost" type="button" @click="emit('cancel')">
+      <EditorButton variant="ghost" @click="emit('cancel')">
         {{ cancelLabel }}
-      </button>
-      <button
-        ref="confirmEl"
-        class="editor-btn editor-btn--danger"
-        type="button"
-        name="confirm"
-        @click="emit('confirm')"
-      >
+      </EditorButton>
+      <EditorButton ref="confirmEl" variant="danger" name="confirm" @click="emit('confirm')">
         {{ confirmLabel }}
-      </button>
+      </EditorButton>
     </div>
   </EditorDialog>
 </template>

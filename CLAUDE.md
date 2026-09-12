@@ -131,6 +131,14 @@ The D1 catalog is the worked example of (2): series hubs, readers, cards,
 JSON-LD, sitemap, `llms.txt` and FlipFrame back-cover next/prev all read
 `GET /catalog`. A page that hardcodes an episode list has already forked.
 
+**Toon editor buttons go through `EditorButton.vue` (`src/toons/editor/components/ui/`), not
+a hand-assembled `class="editor-btn editor-btn--ghost"`.** Every caller used to repeat that
+string (and `editor-btn--danger`), which is exactly the "same thing, different content" case
+above — the difference is one `variant` prop (`"primary"` default, `"ghost"`, `"danger"`), not a
+second copy of the class list. It renders a `<button>` or, when a `to` prop is passed, a
+`RouterLink` — so a nav-bar CTA and a form's submit button are the same component. Add a new
+danger-styled button by passing `variant="danger"`, never by writing the class string again.
+
 ## TypeScript Guidelines
 
 **Avoid `string` for a value that only ever takes a small, known set of
@@ -162,7 +170,7 @@ review.** Branching on 3+ cases:
   reads top-to-bottom instead of requiring the reader to track indentation
   depth against which condition it answers.
 - **In a Vue template:** pull the chain into a `computed()` in `<script
-  setup>` — a small lookup object (`Record<Key, string>`) keyed by the same
+setup>` — a small lookup object (`Record<Key, string>`) keyed by the same
   literal union, with a fallback for the default case — and reference the
   computed by name in the template. Adding a case is one line in the lookup,
   not a deeper nested ternary the template has to re-render on every access.
@@ -235,10 +243,10 @@ lookup object plus a one-line `computed()`.
 **Usual path:** push the branch; GitHub Actions builds and deploys.
 **Workflow:** `.github/workflows/deploy.yml` (Node 24, `wrangler@4.86.0`).
 
-| Push to | Pages project | Site |
-| --- | --- | --- |
+| Push to   | Pages project                  | Site                                 |
+| --------- | ------------------------------ | ------------------------------------ |
 | `staging` | `twentyseven-pictures-staging` | https://staging.twentyseven.pictures |
-| `main` | `twentyseven-pictures` | https://twentyseven.pictures |
+| `main`    | `twentyseven-pictures`         | https://twentyseven.pictures         |
 
 A push never updates both. Merge `staging` → `main` to ship production. Manual
 runs from the Actions tab use whichever branch you pick.
@@ -255,7 +263,7 @@ Each Actions run, in order:
 3. `wrangler pages deploy dist` to that branch's Pages project. That also
    ships `functions/` (catalog/hub/reader SSR, sitemap + llms.txt, staging auth). It does
    **not** deploy `worker/toon-editor` — that is `cd worker/toon-editor &&
-   npx wrangler deploy`.
+npx wrangler deploy`.
 4. Prune superseded unique `<hash>.<project>.pages.dev` snapshots. Keep the
    newest (the live custom domain) and any still-aliased deploy; never
    `--force`.
@@ -394,12 +402,12 @@ it; dest is still `public/toons/<toon>/assets/` and the R2 key is
 
 Pick the tool by what the page is doing:
 
-| Job | Tool | Why |
-| --- | --- | --- |
-| **Replace** page N (keep captions) | `make swap-page SRC=… TOON=… PAGE=N` | watermark → WebP q90 → hash → R2 → rewrite `pages[N-1].file` |
-| **Append** at the end | `make swap-page SRC=… TOON=…` (omit `PAGE`, or pass count+1) | same pipeline; new page with `words: []` |
-| **Insert mid-list** (e.g. after page 3) | flatten + watermark + WebP by hand, then splice `config.json` | `swap-page` **cannot insert** — `PAGE=4` on a 17-page book *replaces* page 4 |
-| Stage a raw JPG/PNG, no WebP | `make add-image SRC=… TOON=jax` | keeps the source extension; `--config` **only appends** and publishes |
+| Job                                     | Tool                                                          | Why                                                                          |
+| --------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| **Replace** page N (keep captions)      | `make swap-page SRC=… TOON=… PAGE=N`                          | watermark → WebP q90 → hash → R2 → rewrite `pages[N-1].file`                 |
+| **Append** at the end                   | `make swap-page SRC=… TOON=…` (omit `PAGE`, or pass count+1)  | same pipeline; new page with `words: []`                                     |
+| **Insert mid-list** (e.g. after page 3) | flatten + watermark + WebP by hand, then splice `config.json` | `swap-page` **cannot insert** — `PAGE=4` on a 17-page book _replaces_ page 4 |
+| Stage a raw JPG/PNG, no WebP            | `make add-image SRC=… TOON=jax`                               | keeps the source extension; `--config` **only appends** and publishes        |
 
 Erin EP 2 / Nero / RED SMILE plates are **WebP**. `add-image` will upload a
 PNG if that is what you hand it — use `swap-page` (or the mid-insert recipe)
@@ -453,7 +461,12 @@ Then splice — index `3` is “after page 3” — and add `words[]` by hand:
 const fs = require("fs");
 const p = "content/toons/erin-the-revenge/config.json";
 const data = JSON.parse(fs.readFileSync(p, "utf8"));
-data.pages.splice(3, 0, { file: "assets/<md5>.webp", words: [/* captions */] });
+data.pages.splice(3, 0, {
+  file: "assets/<md5>.webp",
+  words: [
+    /* captions */
+  ],
+});
 fs.writeFileSync(p, JSON.stringify(data, null, 2) + "\n");
 ```
 
@@ -765,12 +778,12 @@ JSON the studio and the Worker agree on lives in
 row types in `src/types.ts`. Vue re-exports the contract from
 `src/toons/editor/types.ts`.
 
-| Hash | Screen |
-| ---- | ------ |
-| `#/` | Episodes grouped under each series, ungrouped toons, visibility badges. Empty series: 2:3 cover card (placeholder if no art) |
+| Hash                             | Screen                                                                                                                       |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `#/`                             | Episodes grouped under each series, ungrouped toons, visibility badges. Empty series: 2:3 cover card (placeholder if no art) |
 | `#/series/new` · `#/series/:key` | Create / edit series (cover, hub URL, descriptions, Comfy flow + sheets). Edit: New toon in the bar, next episode pre-filled |
-| `#/new` · `#/:id` | Create / edit toon (series + episode number + visibility) |
-| `#/:id/pages/:pageId?` | Plate studio (upload or Generate) |
+| `#/new` · `#/:id`                | Create / edit toon (series + episode number + visibility)                                                                    |
+| `#/:id/pages/:pageId?`           | Plate studio (upload or Generate)                                                                                            |
 
 **Bubble lab** (`/toons/editor/bubble-lab/`) is a separate MPA, not a hash
 screen. `src/toons/editor/bubble-lab/` mounts `WordCaption` through
@@ -880,10 +893,10 @@ losing the generation.
 The browser never talks to Comfy or ElevenLabs. For Seedream (a Comfy
 **partner node**) you need both:
 
-| Secret | What it is |
-| --- | --- |
-| `COMFY_URL` | Comfy origin the Worker can `fetch` (`/prompt`, `/upload/image`, `/jobs` or `/history`, `/view`). Staging: `https://cloud.comfy.org/api` (Comfy Cloud) or another public host. **Cannot** use `http://127.0.0.1:8188` on staging. Not the RunComfy square **model** API. |
-| `COMFY_API_KEY` | Comfy **account** key from [platform.comfy.org](https://platform.comfy.org/login) → API Keys (`comfyui-…`). Sent as `extra_data.api_key_comfy_org` (and `Authorization: Bearer`). |
+| Secret          | What it is                                                                                                                                                                                                                                                               |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `COMFY_URL`     | Comfy origin the Worker can `fetch` (`/prompt`, `/upload/image`, `/jobs` or `/history`, `/view`). Staging: `https://cloud.comfy.org/api` (Comfy Cloud) or another public host. **Cannot** use `http://127.0.0.1:8188` on staging. Not the RunComfy square **model** API. |
+| `COMFY_API_KEY` | Comfy **account** key from [platform.comfy.org](https://platform.comfy.org/login) → API Keys (`comfyui-…`). Sent as `extra_data.api_key_comfy_org` (and `Authorization: Bearer`).                                                                                        |
 
 ```bash
 cd worker/toon-editor
@@ -907,8 +920,8 @@ same one `scripts/generate-toon-page.py` already talks to for manual
 prototyping. They share the word "Comfy" and nothing else; reusing one
 secret for the other 401s.
 
-| Secret | What it is |
-| --- | --- |
+| Secret             | What it is                                                                                          |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
 | `RUNCOMFY_API_KEY` | RunComfy bearer token, from your RunComfy account's API keys page. Sent as `Authorization: Bearer`. |
 
 ```bash
@@ -940,16 +953,16 @@ Google’s renderer eventually runs JavaScript; most AI crawlers (Claude,
 GPTBot, Perplexity) do not. The catalog, series landings and readers therefore
 cannot depend on Vue painting the first HTML.
 
-| Layer | What it does |
-| ----- | ------------ |
-| `/toons/` shell | Empty `[data-toon-catalog]`; stub JSON-LD on `data-toon-jsonld` |
-| `src/toons/_hub/` | Empty `<main>` + `seriesPageMain.ts` (nav chrome) |
-| `src/toons/_reader/` | One FlipFrame app (`ToonApp.vue`) for every book |
-| `functions/toonSsr.ts` | `GET /catalog?site=<origin>` (60s cache). Catalog inject; **hubs and readers are written from D1** (`hubMainHtml` / `applyReaderHtml`) |
-| `functions/sitemap.xml.ts` · `llms.txt.ts` | Same catalog: static site pages + hubs + readers |
-| `functions/_middleware.ts` | `withToonSsr`, then staging Basic Auth + `X-Robots-Tag: noindex` |
-| `vite/plugins/toonSsrDev.ts` | Same HTML + `/sitemap.xml` + `/llms.txt` on `make dev` |
-| Browser | Continue-reading, like counts, quick-view. **Does not paint the shelf or hub cards.** |
+| Layer                                      | What it does                                                                                                                           |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `/toons/` shell                            | Empty `[data-toon-catalog]`; stub JSON-LD on `data-toon-jsonld`                                                                        |
+| `src/toons/_hub/`                          | Empty `<main>` + `seriesPageMain.ts` (nav chrome)                                                                                      |
+| `src/toons/_reader/`                       | One FlipFrame app (`ToonApp.vue`) for every book                                                                                       |
+| `functions/toonSsr.ts`                     | `GET /catalog?site=<origin>` (60s cache). Catalog inject; **hubs and readers are written from D1** (`hubMainHtml` / `applyReaderHtml`) |
+| `functions/sitemap.xml.ts` · `llms.txt.ts` | Same catalog: static site pages + hubs + readers                                                                                       |
+| `functions/_middleware.ts`                 | `withToonSsr`, then staging Basic Auth + `X-Robots-Tag: noindex`                                                                       |
+| `vite/plugins/toonSsrDev.ts`               | Same HTML + `/sitemap.xml` + `/llms.txt` on `make dev`                                                                                 |
+| Browser                                    | Continue-reading, like counts, quick-view. **Does not paint the shelf or hub cards.**                                                  |
 
 `src/site/catalogRender.ts` and `src/site/toonPages.ts` are the builders (no
 `document`). A second client-only card template will drift from what crawlers
@@ -984,22 +997,22 @@ Function stamps `data-toon-slug` (D1 slug) and `data-asset-page-dir` (CDN
 prefix). Config is `GET /config/:slug`. Jax music is the only slug-specific
 chrome.
 
-| Path | Role |
-| ---- | ---- |
-| `src/toons/bookReader/` | FlipFrame package |
-| `src/toons/_reader/` | Shared reader HTML + `ToonApp.vue` |
-| Worker `GET /config/:slug` | Live book JSON from D1 |
-| `public/toons/reader-shared.css` | Shared book chrome |
-| `public/toons/<slug>/assets/` | **Gitignored** — R2 via `VITE_ASSET_BASE` |
+| Path                             | Role                                      |
+| -------------------------------- | ----------------------------------------- |
+| `src/toons/bookReader/`          | FlipFrame package                         |
+| `src/toons/_reader/`             | Shared reader HTML + `ToonApp.vue`        |
+| Worker `GET /config/:slug`       | Live book JSON from D1                    |
+| `public/toons/reader-shared.css` | Shared book chrome                        |
+| `public/toons/<slug>/assets/`    | **Gitignored** — R2 via `VITE_ASSET_BASE` |
 
-| Toon | Public URL | D1 slug / CDN prefix | Notes |
-| ---- | ---------- | -------------------- | ----- |
-| Erin EP 1 | `/toons/erin-and-the-goblins/the-missing-child/` | `erin` · `/toons/erin/` | 27 plates. Old `/toons/erin/` 301s |
-| Erin EP 2 | `/toons/erin-and-the-goblins/the-revenge/` | `erin-the-revenge` | 23 plates. Old `/toons/erin-the-revenge/` 301s |
-| Jax EP 1 | `/toons/jax/the-chip/` | `jax` · `/toons/jax/` | Hub `/toons/jax/`. Old `/toons/jax-the-chip/` 301s |
-| Nero EP 1 | `/toons/nero/the-dog/` | `nero` · `/toons/nero/` | Hub `/toons/nero/`. Old `/toons/nero-the-dog/` 301s |
-| RED SMILE EP 1 | `/toons/redsmile/static/` | `redsmile-static` | Hub `/toons/redsmile/` (`key` `red-smile`). Old `/toons/redsmile-static/` 301s |
-| RED SMILE EP 2 | `/toons/redsmile/marcus/` | `redsmile-marcus` | Old `/toons/redsmile-marcus/` 301s |
+| Toon           | Public URL                                       | D1 slug / CDN prefix    | Notes                                                                          |
+| -------------- | ------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------ |
+| Erin EP 1      | `/toons/erin-and-the-goblins/the-missing-child/` | `erin` · `/toons/erin/` | 27 plates. Old `/toons/erin/` 301s                                             |
+| Erin EP 2      | `/toons/erin-and-the-goblins/the-revenge/`       | `erin-the-revenge`      | 23 plates. Old `/toons/erin-the-revenge/` 301s                                 |
+| Jax EP 1       | `/toons/jax/the-chip/`                           | `jax` · `/toons/jax/`   | Hub `/toons/jax/`. Old `/toons/jax-the-chip/` 301s                             |
+| Nero EP 1      | `/toons/nero/the-dog/`                           | `nero` · `/toons/nero/` | Hub `/toons/nero/`. Old `/toons/nero-the-dog/` 301s                            |
+| RED SMILE EP 1 | `/toons/redsmile/static/`                        | `redsmile-static`       | Hub `/toons/redsmile/` (`key` `red-smile`). Old `/toons/redsmile-static/` 301s |
+| RED SMILE EP 2 | `/toons/redsmile/marcus/`                        | `redsmile-marcus`       | Old `/toons/redsmile-marcus/` 301s                                             |
 
 `ASSET_PAGE_DIR` is a **CDN key prefix, not a route**. Jax plates stay
 `toons/jax/assets/<md5>` even though the reader is `/toons/jax/the-chip/`.
@@ -1086,12 +1099,12 @@ that has to be stated in prompts or it leaks in from the other sheets).
 A toon with more than one episode — or one that will have — gets a **series
 landing page** listing its episodes, separate from the readers:
 
-| Series | Landing | Episode 1 reader |
-| ------ | ------- | ---------------- |
+| Series             | Landing                        | Episode 1 reader                                 |
+| ------------------ | ------------------------------ | ------------------------------------------------ |
 | Erin & the Goblins | `/toons/erin-and-the-goblins/` | `/toons/erin-and-the-goblins/the-missing-child/` |
-| Nero | `/toons/nero/` | `/toons/nero/the-dog/` |
-| Jax | `/toons/jax/` | `/toons/jax/the-chip/` |
-| RED SMILE | `/toons/redsmile/` | `/toons/redsmile/static/` |
+| Nero               | `/toons/nero/`                 | `/toons/nero/the-dog/`                           |
+| Jax                | `/toons/jax/`                  | `/toons/jax/the-chip/`                           |
+| RED SMILE          | `/toons/redsmile/`             | `/toons/redsmile/static/`                        |
 
 Landings are indexable and take a locale prefix (`/de/toons/jax/`). The
 language switcher treats `/toons/<series>/` as a hub (one extra path segment);
@@ -1286,9 +1299,15 @@ almost always wants `bottom-left` / `bottom-right`.
 `jax`, …), never the ElevenLabs UUID. Onomatopoeia omit it.
 
 ```json
-{ "x": 0.2, "y": 0.15, "variant": "thought", "tail": "top-left",
+{
+  "x": 0.2,
+  "y": 0.15,
+  "variant": "thought",
+  "tail": "top-left",
   "voice": "erin",
-  "text": { "en": "No signal." }, "audio": "assets/sfx/….mp3" }
+  "text": { "en": "No signal." },
+  "audio": "assets/sfx/….mp3"
+}
 ```
 
 Wrap width comes from the text (`autoWrapCh`, in `ch`), padding from
@@ -1404,7 +1423,7 @@ voice_id`). Current cast includes: `jax`, `riu`, `nova`, `ripperdoc`,
    One-off: `--reverb plaza` (or `--reverb none`).
 
    ```json
-   { "reverb": "plaza", "pages": [ { "reverb": "plaza-deep", "file": "…", "words": [] } ] }
+   { "reverb": "plaza", "pages": [{ "reverb": "plaza-deep", "file": "…", "words": [] }] }
    ```
 
    Erin EP 2 is `plaza`; pages 19–20 are `plaza-deep` (keep / chamber). The
@@ -1715,7 +1734,7 @@ curl -sS https://twentyseven.pictures/robots.txt
   via GitHub Actions.
 - **Staging branch:** `staging` — push deploys
   `https://staging.twentyseven.pictures` (HTTP Basic Auth + `X-Robots-Tag:
-  noindex`). Carries work in review. Merge `staging` → `main` to ship.
+noindex`). Carries work in review. Merge `staging` → `main` to ship.
 - A Pages push ships `functions/` (catalog/hub/reader SSR, `/sitemap.xml`,
   `/llms.txt`). Editor API changes need
   `cd worker/toon-editor && npx wrangler deploy`. `LOCALIZED_SITE_PATHS`

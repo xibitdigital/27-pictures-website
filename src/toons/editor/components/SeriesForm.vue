@@ -38,6 +38,7 @@ import {
 import EditorBar from "./EditorBar.vue";
 import GenerateCharacterDialog from "./GenerateCharacterDialog.vue";
 import TranslateField from "./TranslateField.vue";
+import EditorButton from "./ui/EditorButton.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 import ToonCard from "./ToonCard.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
@@ -470,17 +471,17 @@ async function onSubmit(ev: Event): Promise<void> {
   <div class="editor-page">
     <EditorBar :title="isCreate ? 'New series' : 'Series'">
       <template #actions>
-        <RouterLink v-if="!isCreate" class="editor-btn editor-btn--ghost" :to="addEpisodeTo">
+        <EditorButton v-if="!isCreate" variant="ghost" :to="addEpisodeTo">
           <BookPlus :size="16" :stroke-width="1.4" aria-hidden="true" />
           New toon
-        </RouterLink>
+        </EditorButton>
       </template>
       <template #primary>
-        <button class="editor-btn" type="submit" form="series-meta" :disabled="saving">
+        <EditorButton type="submit" form="series-meta" :disabled="saving">
           <FolderPlus v-if="isCreate" :size="16" :stroke-width="1.4" aria-hidden="true" />
           <Save v-else :size="16" :stroke-width="1.4" aria-hidden="true" />
           {{ saving ? "Saving…" : isCreate ? "Create" : "Save" }}
-        </button>
+        </EditorButton>
       </template>
     </EditorBar>
     <div class="editor-page-body">
@@ -641,25 +642,19 @@ async function onSubmit(ev: Event): Promise<void> {
                     hidden
                     @change="onSlotFile(index, $event)"
                   />
-                  <button
-                    class="editor-btn editor-btn--ghost"
-                    type="button"
-                    :name="`slot-file-pick-${index}`"
-                    @click="pickSlotFile(index)"
-                  >
+                  <EditorButton variant="ghost" :name="`slot-file-pick-${index}`" @click="pickSlotFile(index)">
                     <Upload :size="14" :stroke-width="1.6" aria-hidden="true" />
                     Attach
-                  </button>
-                  <button
+                  </EditorButton>
+                  <EditorButton
                     v-if="canGenerateCharacter"
-                    class="editor-btn editor-btn--ghost"
-                    type="button"
+                    variant="ghost"
                     :name="`slot-generate-${index}`"
                     @click="openCharacterDialog(index)"
                   >
                     <WandSparkles :size="14" :stroke-width="1.6" aria-hidden="true" />
                     Generate
-                  </button>
+                  </EditorButton>
                 </span>
                 <span v-else class="editor-muted">Last plate</span>
                 <button
@@ -693,7 +688,7 @@ async function onSubmit(ev: Event): Promise<void> {
                     ↓
                   </button>
                   <button
-                    class="editor-icon-btn"
+                    class="editor-icon-btn editor-icon-btn--danger"
                     type="button"
                     :name="`slot-remove-${index}`"
                     :disabled="isLockedSlot(slot)"
@@ -705,9 +700,7 @@ async function onSubmit(ev: Event): Promise<void> {
                 </span>
               </li>
             </ol>
-            <button class="editor-btn editor-btn--ghost" type="button" name="add-slot" @click="addSlot">
-              Add slot
-            </button>
+            <EditorButton variant="ghost" name="add-slot" @click="addSlot"> Add slot </EditorButton>
           </div>
           <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
             Description ({{ lang.label }})

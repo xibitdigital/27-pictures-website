@@ -4,6 +4,7 @@ import { ref } from "vue";
 import UsersView from "./UsersView.vue";
 import * as api from "../api";
 import { EDITOR_USER_KEY } from "../session";
+import { pickOption } from "../testSelect";
 import { toasts } from "../toast";
 
 const replace = vi.fn();
@@ -109,7 +110,7 @@ describe("UsersView", () => {
     const rows = wrapper.findAll(".editor-user-row");
     expect(rows).toHaveLength(2);
     expect(rows[0].text()).toContain("u1@example.com");
-    expect(rows[0].find("button").text()).toBe("Resend password");
+    expect(rows[0].find(".editor-user-row-actions button").text()).toBe("Resend password");
   });
 
   it("resends a password and reports success", async () => {
@@ -122,7 +123,7 @@ describe("UsersView", () => {
     });
     await flushPromises();
     const rows = wrapper.findAll(".editor-user-row");
-    await rows[1].find("button").trigger("click");
+    await rows[1].find(".editor-user-row-actions button").trigger("click");
     expect(resend).toHaveBeenCalledWith("u2");
     await flushPromises();
     expect(toasts.some((t) => t.kind === "success" && t.message.includes("u2@example.com"))).toBe(true);
@@ -138,9 +139,44 @@ describe("UsersView", () => {
     });
     await flushPromises();
     const rows = wrapper.findAll(".editor-user-row");
-    await rows[1].find("button").trigger("click");
+    await rows[1].find(".editor-user-row-actions button").trigger("click");
     await flushPromises();
     expect(toasts.some((t) => t.kind === "error" && t.message.includes("failed to send"))).toBe(true);
+  });
+
+  it("shows each user's role and lets an admin change another user's role", async () => {
+    const updateRole = vi
+      .spyOn(api, "updateUserRole")
+      .mockResolvedValue({ id: "u2", email: "u2@example.com", username: "u2", role: "admin" });
+    const wrapper = mount(UsersView, {
+      attachTo: document.body,
+      global: { stubs: { EditorBar: true }, provide: provideUser("admin") },
+    });
+    await flushPromises();
+    expect(document.querySelector('button[name="role-u1"]')?.textContent).toContain("Admin");
+    expect(document.querySelector('button[name="role-u2"]')?.textContent).toContain("Editor");
+    // The signed-in admin's own row can't change its own role.
+    expect(document.querySelector('button[name="role-u1"]')?.hasAttribute("disabled")).toBe(true);
+
+    await pickOption("role-u2", "Admin");
+    expect(updateRole).toHaveBeenCalledWith("u2", "admin");
+    await flushPromises();
+    expect(toasts.some((t) => t.kind === "success" && t.message.includes("u2"))).toBe(true);
+    wrapper.unmount();
+  });
+
+  it("reverts the role on failure and toasts the error", async () => {
+    vi.spyOn(api, "updateUserRole").mockRejectedValue(new Error("could not change role"));
+    const wrapper = mount(UsersView, {
+      attachTo: document.body,
+      global: { stubs: { EditorBar: true }, provide: provideUser("admin") },
+    });
+    await flushPromises();
+    await pickOption("role-u2", "Admin");
+    await flushPromises();
+    expect(toasts.some((t) => t.kind === "error" && t.message === "could not change role")).toBe(true);
+    expect(document.querySelector('button[name="role-u2"]')?.textContent).toContain("Editor");
+    wrapper.unmount();
   });
 
   const confirmDialogStub = {
@@ -160,9 +196,12 @@ describe("UsersView", () => {
     await flushPromises();
     const rows = wrapper.findAll(".editor-user-row");
     // u1 is the logged-in admin (provideUser("admin") uses id "u1").
-    expect(rows[0].findAll("button")).toHaveLength(1);
+    expect(rows[0].findAll(".editor-user-row-actions button")).toHaveLength(1);
     expect(rows[0].text()).not.toContain("Remove");
-    expect(rows[1].findAll("button").map((b) => b.text())).toEqual(["Resend password", "Remove"]);
+    expect(rows[1].findAll(".editor-user-row-actions button").map((b) => b.text())).toEqual([
+      "Resend password",
+      "Remove",
+    ]);
   });
 
   it("removes a user after confirming, and drops them from the list", async () => {
@@ -172,7 +211,7 @@ describe("UsersView", () => {
     });
     await flushPromises();
     const rows = wrapper.findAll(".editor-user-row");
-    await rows[1].findAll("button")[1].trigger("click");
+    await rows[1].findAll(".editor-user-row-actions button")[1].trigger("click");
     expect(wrapper.find("[data-confirm-dialog]").text()).toContain("u2");
     await wrapper.get("[data-confirm-yes]").trigger("click");
     expect(remove).toHaveBeenCalledWith("u2");
@@ -188,7 +227,7 @@ describe("UsersView", () => {
     });
     await flushPromises();
     const rows = wrapper.findAll(".editor-user-row");
-    await rows[1].findAll("button")[1].trigger("click");
+    await rows[1].findAll(".editor-user-row-actions button")[1].trigger("click");
     await wrapper.get("[data-confirm-no]").trigger("click");
     expect(remove).not.toHaveBeenCalled();
     expect(wrapper.findAll(".editor-user-row")).toHaveLength(2);
@@ -201,7 +240,7 @@ describe("UsersView", () => {
     });
     await flushPromises();
     const rows = wrapper.findAll(".editor-user-row");
-    await rows[1].findAll("button")[1].trigger("click");
+    await rows[1].findAll(".editor-user-row-actions button")[1].trigger("click");
     await wrapper.get("[data-confirm-yes]").trigger("click");
     await flushPromises();
     expect(toasts.some((t) => t.kind === "error" && t.message === "cannot remove your own account")).toBe(true);

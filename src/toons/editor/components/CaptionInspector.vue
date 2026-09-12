@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown, ChevronUp, LoaderCircle, Upload, WandSparkles } from "@lucide/vue";
+import { ChevronDown, ChevronUp, LoaderCircle, Trash2, Upload, WandSparkles } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import { defaultSize } from "../../bookReader/captions/captionModel";
 import { editorApiBase, generateAudio, uploadAudio, type CaptionTranslations } from "../api";
@@ -24,6 +24,7 @@ import { resolveAssetUrl } from "../../bookReader/assetUrl";
 import type { LangCode } from "../../bookReader/types";
 import type { BubbleRecord } from "../types";
 import TranslateField from "./TranslateField.vue";
+import EditorButton from "./ui/EditorButton.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -650,9 +651,10 @@ async function onGenerateAudio(): Promise<void> {
         <audio v-if="audioSrc" controls preload="none" :src="audioSrc" />
       </div>
       <div class="editor-form-actions">
-        <button class="editor-btn editor-btn--ghost" type="button" name="delete" @click="emit('remove')">
+        <EditorButton variant="danger" name="delete" @click="emit('remove')">
+          <Trash2 :size="16" :stroke-width="1.4" aria-hidden="true" />
           Delete bubble
-        </button>
+        </EditorButton>
       </div>
     </template>
   </aside>

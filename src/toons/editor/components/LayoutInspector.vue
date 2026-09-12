@@ -5,6 +5,7 @@ import { computed, ref, watch } from "vue";
 import { parseHexColor } from "../mapConfig";
 import { scaleFromSliderPosition, sliderPositionFromScale } from "../regionFit";
 import type { RegionBorderStyle, RegionRecord } from "../types";
+import EditorButton from "./ui/EditorButton.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -234,15 +235,10 @@ function onBorderWidthChange(ev: Event): void {
         <p class="editor-muted">{{ layerIndex + 1 }} of {{ layerCount || 1 }} — later layers paint on top</p>
       </div>
 
-      <button
-        class="editor-btn editor-btn--ghost editor-field-btn"
-        type="button"
-        name="region-reassign"
-        @click="emit('reassign')"
-      >
+      <EditorButton variant="ghost" class="editor-field-btn" name="region-reassign" @click="emit('reassign')">
         <ImageUp :size="16" :stroke-width="1.4" aria-hidden="true" />
         {{ region.fileUrl ? "Replace image" : "Add image" }}
-      </button>
+      </EditorButton>
 
       <label v-if="region.fileUrl">
         Zoom
@@ -318,15 +314,10 @@ function onBorderWidthChange(ev: Event): void {
         </label>
       </template>
 
-      <button
-        class="editor-btn editor-btn--ghost editor-field-btn"
-        type="button"
-        name="region-delete"
-        @click="emit('remove')"
-      >
+      <EditorButton variant="danger" class="editor-field-btn" name="region-delete" @click="emit('remove')">
         <Trash2 :size="16" :stroke-width="1.4" aria-hidden="true" />
         Delete shape
-      </button>
+      </EditorButton>
     </template>
   </aside>
 </template>

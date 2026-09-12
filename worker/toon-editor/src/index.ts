@@ -1214,6 +1214,23 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   }
 
   const userMatch = path.match(/^\/users\/([^/]+)$/);
+  if (isMethod(method, "PATCH") && userMatch) {
+    if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
+    if (userMatch[1] === session.id) return json({ error: "cannot change your own role" }, 400, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const role = parsed.body.role;
+    if (role !== "admin" && role !== "editor") {
+      return json({ error: "role must be admin or editor" }, 400, cors);
+    }
+    const row = await env.DB.prepare("SELECT id, email, username, role FROM users WHERE id = ?")
+      .bind(userMatch[1])
+      .first<UserRow>();
+    if (!row) return json({ error: "not found" }, 404, cors);
+    await env.DB.prepare("UPDATE users SET role = ? WHERE id = ?").bind(role, row.id).run();
+    return json(publicUser({ ...row, role }), 200, cors);
+  }
+
   if (isMethod(method, "DELETE") && userMatch) {
     if (!session || !isAdmin(session)) return json({ error: "forbidden" }, 403, cors);
     if (userMatch[1] === session.id) return json({ error: "cannot remove your own account" }, 400, cors);

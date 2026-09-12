@@ -45,6 +45,11 @@ function makeEnv(state: FakeState): Env {
               const user = state.users.find((u) => u.id === id);
               if (user) user.password_hash = String(stmt.args[0]);
             }
+            if (/UPDATE users SET role = \? WHERE id = \?/.test(sql)) {
+              const [role, id] = stmt.args as [string, string];
+              const user = state.users.find((u) => u.id === id);
+              if (user) user.role = role as UserRow["role"];
+            }
             if (/DELETE FROM series_editors WHERE user_id = \?/.test(sql)) {
               const [id] = stmt.args as [string];
               state.seriesEditors = (state.seriesEditors || []).filter((e) => e.user_id !== id);
@@ -116,6 +121,92 @@ describe("POST /users/:id/resend-password", () => {
     const env = makeEnv(state);
     const res = await worker.fetch(
       new Request("https://toon-editor.example/users/u1/resend-password", { method: "POST" }),
+      env
+    );
+    expect(res.status).toBe(401);
+  });
+});
+
+describe("PATCH /users/:id", () => {
+  it("changes another user's role", async () => {
+    // Clones — the shared `editor` const is reused by every other test in this file, and the
+    // fake DB below mutates `.role` in place; touching the singleton would leak "admin" into
+    // every test that runs after this one.
+    const state: FakeState = { users: [{ ...admin }, { ...editor }] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/u1", admin.id, {
+        method: "PATCH",
+        body: JSON.stringify({ role: "admin" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { id: string; role: string };
+    expect(body).toEqual({ id: "u1", email: "editor@example.com", username: "editor1", role: "admin" });
+    expect(state.users.find((u) => u.id === "u1")?.role).toBe("admin");
+  });
+
+  it("refuses to let an admin change their own role", async () => {
+    const state: FakeState = { users: [admin, editor] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/admin1", admin.id, {
+        method: "PATCH",
+        body: JSON.stringify({ role: "editor" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toMatchObject({ error: "cannot change your own role" });
+    expect(state.users[0].role).toBe("admin");
+  });
+
+  it("rejects a role that isn't admin or editor", async () => {
+    const state: FakeState = { users: [admin, editor] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/u1", admin.id, {
+        method: "PATCH",
+        body: JSON.stringify({ role: "owner" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(400);
+    expect(state.users[1].role).toBe("editor");
+  });
+
+  it("403s for a non-admin caller", async () => {
+    const state: FakeState = { users: [admin, editor] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/admin1", editor.id, {
+        method: "PATCH",
+        body: JSON.stringify({ role: "editor" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it("404s for a user that does not exist", async () => {
+    const state: FakeState = { users: [admin] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/users/missing", admin.id, {
+        method: "PATCH",
+        body: JSON.stringify({ role: "admin" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it("401s with no session at all", async () => {
+    const state: FakeState = { users: [admin, editor] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      new Request("https://toon-editor.example/users/u1", { method: "PATCH", body: JSON.stringify({ role: "admin" }) }),
       env
     );
     expect(res.status).toBe(401);

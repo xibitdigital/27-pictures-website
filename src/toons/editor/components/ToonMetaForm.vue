@@ -27,6 +27,7 @@ import {
   type ToonVisibility,
 } from "../types";
 import EditorBar from "./EditorBar.vue";
+import EditorButton from "./ui/EditorButton.vue";
 import ToonCard from "./ToonCard.vue";
 import TranslateField from "./TranslateField.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
@@ -193,26 +194,21 @@ async function onSubmit(ev: Event): Promise<void> {
   <div class="editor-page">
     <EditorBar :title="isCreate ? 'New toon' : 'Toon'" :badge="previewCue" :visibility="visibility">
       <template #actions>
-        <RouterLink
-          v-if="seriesKey"
-          class="editor-btn editor-btn--ghost"
-          name="open-series"
-          :to="`/series/${seriesKey}`"
-        >
+        <EditorButton v-if="seriesKey" variant="ghost" name="open-series" :to="`/series/${seriesKey}`">
           <Layers :size="16" :stroke-width="1.4" aria-hidden="true" />
           Series
-        </RouterLink>
-        <RouterLink v-if="existing" class="editor-btn editor-btn--ghost" :to="`/${existing.id}/pages`">
+        </EditorButton>
+        <EditorButton v-if="existing" variant="ghost" :to="`/${existing.id}/pages`">
           <Images :size="16" :stroke-width="1.4" aria-hidden="true" />
           Pages
-        </RouterLink>
+        </EditorButton>
       </template>
       <template #primary>
-        <button class="editor-btn" type="submit" form="toon-meta" :disabled="saving">
+        <EditorButton type="submit" form="toon-meta" :disabled="saving">
           <BookPlus v-if="isCreate" :size="16" :stroke-width="1.4" aria-hidden="true" />
           <Save v-else :size="16" :stroke-width="1.4" aria-hidden="true" />
           {{ saving ? "Saving…" : isCreate ? "Create" : "Save" }}
-        </button>
+        </EditorButton>
       </template>
     </EditorBar>
     <form id="toon-meta" class="editor-form" novalidate @submit="onSubmit">

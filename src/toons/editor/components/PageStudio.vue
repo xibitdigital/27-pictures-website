@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Layers, Save, Settings2 } from "@lucide/vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter, RouterLink } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import {
   addBubble,
   addRegion,
@@ -43,6 +43,7 @@ import AssetGalleryDialog from "./AssetGalleryDialog.vue";
 import CaptionInspector from "./CaptionInspector.vue";
 import ConfirmDialog from "./ConfirmDialog.vue";
 import EditorBar from "./EditorBar.vue";
+import EditorButton from "./ui/EditorButton.vue";
 import GeneratePageDialog from "./GeneratePageDialog.vue";
 import type { LayoutTool } from "./GeometryLayer.vue";
 import type { StudioMode } from "./LayoutToolbar.vue";
@@ -910,39 +911,30 @@ async function onRemove(): Promise<void> {
       :visibility="toon ? visibilityFromStatus(toon.status) : ''"
     >
       <template #actions>
-        <RouterLink v-if="toon?.seriesKey" class="editor-btn editor-btn--ghost" :to="`/series/${toon.seriesKey}`">
+        <EditorButton v-if="toon?.seriesKey" variant="ghost" :to="`/series/${toon.seriesKey}`">
           <Layers :size="16" :stroke-width="1.4" aria-hidden="true" />
           Series
-        </RouterLink>
-        <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">
+        </EditorButton>
+        <EditorButton variant="ghost" :to="`/${toonId}`">
           <Settings2 :size="16" :stroke-width="1.4" aria-hidden="true" />
           Meta
-        </RouterLink>
+        </EditorButton>
         <LangSwitcher :languages="switchLangs" v-model="previewLang" />
       </template>
       <template #primary>
-        <button
+        <EditorButton
           v-if="!showBubbleLayer"
-          class="editor-btn"
-          type="button"
           name="save-layout"
           :disabled="!flattenDirty || flattening"
           @click="flattenNow()"
         >
           <Save :size="16" :stroke-width="1.4" aria-hidden="true" />
           {{ flattening ? "Saving…" : flattenDirty ? "Save layout" : "Layout saved" }}
-        </button>
-        <button
-          v-else
-          class="editor-btn"
-          type="button"
-          name="save-bubbles"
-          :disabled="!dirtyCount || saving"
-          @click="saveDirty"
-        >
+        </EditorButton>
+        <EditorButton v-else name="save-bubbles" :disabled="!dirtyCount || saving" @click="saveDirty">
           <Save :size="16" :stroke-width="1.4" aria-hidden="true" />
           {{ saving ? "Saving…" : dirtyCount ? `Save (${dirtyCount})` : "Save" }}
-        </button>
+        </EditorButton>
       </template>
     </EditorBar>
     <p v-if="loading">Loading…</p>

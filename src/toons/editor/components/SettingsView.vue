@@ -4,6 +4,7 @@ import { getUserKeys, saveUserKey } from "../api";
 import { pushToast } from "../toast";
 import { USER_KEY_LABELS, USER_KEY_NAMES, type UserKeyName, type UserKeyStatus } from "../types";
 import EditorBar from "./EditorBar.vue";
+import EditorButton from "./ui/EditorButton.vue";
 
 const status = ref<UserKeyStatus | null>(null);
 const loading = ref(true);
@@ -89,23 +90,21 @@ async function onClear(name: UserKeyName): Promise<void> {
                   :aria-label="`New ${USER_KEY_LABELS[name]}`"
                   placeholder="New key…"
                 />
-                <button
-                  class="editor-btn editor-btn--ghost"
-                  type="button"
+                <EditorButton
+                  variant="ghost"
                   :disabled="!draft[name].trim() || savingKey === name"
                   @click="onSave(name)"
                 >
                   {{ savingKey === name ? "Saving…" : "Save" }}
-                </button>
-                <button
+                </EditorButton>
+                <EditorButton
                   v-if="status?.[name]"
-                  class="editor-btn editor-btn--ghost"
-                  type="button"
+                  variant="danger"
                   :disabled="savingKey === name"
                   @click="onClear(name)"
                 >
                   Clear
-                </button>
+                </EditorButton>
               </span>
             </li>
           </ul>

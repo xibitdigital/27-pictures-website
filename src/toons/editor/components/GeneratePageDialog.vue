@@ -7,6 +7,7 @@ import {
   type PageRecord,
   type SeriesGenerateConfig,
 } from "../types";
+import EditorButton from "./ui/EditorButton.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
@@ -454,15 +455,9 @@ function onSubmit(): void {
                 :disabled="busy"
                 @change="onPreviousFile"
               />
-              <button
-                class="editor-btn editor-btn--ghost"
-                type="button"
-                name="previous-file-pick"
-                :disabled="busy"
-                @click="pickPreviousFile"
-              >
+              <EditorButton variant="ghost" name="previous-file-pick" :disabled="busy" @click="pickPreviousFile">
                 {{ pages.length ? "Or attach a file" : "Attach a previous plate" }}
-              </button>
+              </EditorButton>
               <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
             </template>
           </template>
@@ -529,11 +524,11 @@ function onSubmit(): void {
       </div>
       <p v-if="busy" class="editor-muted">{{ status || "Generating page…" }}</p>
       <div class="editor-form-actions">
-        <button class="editor-btn editor-btn--ghost" type="button" :disabled="busy" @click="onCancel">Cancel</button>
-        <button class="editor-btn" type="submit" :class="{ 'is-busy': busy }" :disabled="!canSubmit">
+        <EditorButton variant="ghost" :disabled="busy" @click="onCancel">Cancel</EditorButton>
+        <EditorButton type="submit" :class="{ 'is-busy': busy }" :disabled="!canSubmit">
           <LoaderCircle v-if="busy" class="editor-spin" :size="16" aria-hidden="true" />
           {{ busy ? "Generating…" : Number(count) > 1 ? `Generate ${count}` : "Generate" }}
-        </button>
+        </EditorButton>
       </div>
     </form>
   </EditorDialog>
