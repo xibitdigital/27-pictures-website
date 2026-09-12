@@ -1337,8 +1337,8 @@ body {
 
 .editor-add-page-choice:hover,
 .editor-add-page-choice:focus-visible {
-  background: var(--red-smile);
-  border-color: var(--red-smile);
+  background: var(--editor-primary);
+  border-color: var(--editor-primary);
 }
 
 /* Reka's DialogOverlay and DialogContent are portalled as siblings, not
@@ -1504,16 +1504,16 @@ body {
 }
 
 .editor-dialog-slot-toggle:focus-visible {
-  outline: 2px solid var(--red-smile);
+  outline: 2px solid var(--editor-primary);
   outline-offset: -2px;
 }
 
 .editor-dialog-slot-toggle.is-checked {
-  background: color-mix(in srgb, var(--red-smile) 22%, transparent);
+  background: color-mix(in srgb, var(--editor-primary) 22%, transparent);
 }
 
 .editor-dialog-slot-toggle.is-checked:hover {
-  background: color-mix(in srgb, var(--red-smile) 30%, transparent);
+  background: color-mix(in srgb, var(--editor-primary) 30%, transparent);
 }
 
 .editor-dialog-slot-toggle:disabled {

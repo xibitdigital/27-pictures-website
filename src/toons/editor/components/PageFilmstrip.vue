@@ -3,6 +3,7 @@ import { nextTick, ref } from "vue";
 import { Images, LayoutGrid, LoaderCircle, Plus, Upload, WandSparkles, X } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import ConfirmDialog from "./ConfirmDialog.vue";
+import EditorChoiceCard from "./ui/EditorChoiceCard.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 import type { PageRecord } from "../types";
 
@@ -193,13 +194,11 @@ function onRemoveConfirm(): void {
   <EditorDialog :open="addOpen" title="Add page" @update:open="(next) => (addOpen = next)">
     <p class="editor-muted">Upload a plate, or generate one with AI if this series has a Comfy graph loaded.</p>
     <div class="editor-add-page-choices">
-      <button class="editor-add-page-choice" type="button" name="add-page-upload" @click="onUploadPick">
+      <EditorChoiceCard name="add-page-upload" @click="onUploadPick">
         <Upload :size="22" :stroke-width="1.8" aria-hidden="true" />
         Upload
-      </button>
-      <button
-        class="editor-add-page-choice"
-        type="button"
+      </EditorChoiceCard>
+      <EditorChoiceCard
         name="add-page-generate"
         :title="
           props.canGenerate
@@ -210,27 +209,23 @@ function onRemoveConfirm(): void {
       >
         <WandSparkles :size="22" :stroke-width="1.8" aria-hidden="true" />
         Generate
-      </button>
-      <button
-        class="editor-add-page-choice"
-        type="button"
+      </EditorChoiceCard>
+      <EditorChoiceCard
         name="add-page-layout"
         title="Draw shapes on a blank page, then fill each with an image"
         @click="onLayoutPick"
       >
         <LayoutGrid :size="22" :stroke-width="1.8" aria-hidden="true" />
         Layout
-      </button>
-      <button
-        class="editor-add-page-choice"
-        type="button"
+      </EditorChoiceCard>
+      <EditorChoiceCard
         name="add-page-gallery"
         title="Reuse an image already generated or uploaded for this toon"
         @click="onGalleryPick"
       >
         <Images :size="22" :stroke-width="1.8" aria-hidden="true" />
         Gallery
-      </button>
+      </EditorChoiceCard>
     </div>
   </EditorDialog>
   <ConfirmDialog

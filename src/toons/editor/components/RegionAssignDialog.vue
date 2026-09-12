@@ -7,6 +7,7 @@
  */
 import { nextTick, ref } from "vue";
 import { Images, Upload, WandSparkles } from "@lucide/vue";
+import EditorChoiceCard from "./ui/EditorChoiceCard.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 
 defineProps<{ open: boolean; canGenerate?: boolean }>();
@@ -49,13 +50,11 @@ function onGeneratePick(): void {
       @change="onFile"
     />
     <div class="editor-add-page-choices">
-      <button class="editor-add-page-choice" type="button" name="region-upload" @click="onUploadPick">
+      <EditorChoiceCard name="region-upload" @click="onUploadPick">
         <Upload :size="22" :stroke-width="1.8" aria-hidden="true" />
         Upload
-      </button>
-      <button
-        class="editor-add-page-choice"
-        type="button"
+      </EditorChoiceCard>
+      <EditorChoiceCard
         name="region-generate"
         :title="
           canGenerate ? 'Generate with the series Comfy graph' : 'Upload a Comfy flow and sheets on the series first'
@@ -64,17 +63,15 @@ function onGeneratePick(): void {
       >
         <WandSparkles :size="22" :stroke-width="1.8" aria-hidden="true" />
         Generate
-      </button>
-      <button
-        class="editor-add-page-choice"
-        type="button"
+      </EditorChoiceCard>
+      <EditorChoiceCard
         name="region-gallery"
         title="Reuse an image already generated or uploaded for this toon"
         @click="emit('gallery')"
       >
         <Images :size="22" :stroke-width="1.8" aria-hidden="true" />
         Gallery
-      </button>
+      </EditorChoiceCard>
     </div>
   </EditorDialog>
 </template>
