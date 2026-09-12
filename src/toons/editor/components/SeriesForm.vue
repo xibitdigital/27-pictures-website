@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookPlus, FolderPlus, Save } from "@lucide/vue";
+import { BookPlus, FolderPlus, Save, Upload, WandSparkles } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import {
@@ -632,9 +632,8 @@ async function onSubmit(ev: Event): Promise<void> {
                   Optional
                 </EditorCheckbox>
                 <span v-else></span>
-                <span>
+                <span v-if="slot.kind !== 'previous'" class="editor-slot-file-actions">
                   <input
-                    v-if="slot.kind !== 'previous'"
                     type="file"
                     accept="image/webp,image/jpeg,image/png"
                     :name="`slot-file-${index}`"
@@ -643,25 +642,26 @@ async function onSubmit(ev: Event): Promise<void> {
                     @change="onSlotFile(index, $event)"
                   />
                   <button
-                    v-if="slot.kind !== 'previous'"
                     class="editor-btn editor-btn--ghost"
                     type="button"
                     :name="`slot-file-pick-${index}`"
                     @click="pickSlotFile(index)"
                   >
+                    <Upload :size="14" :stroke-width="1.6" aria-hidden="true" />
                     Attach
                   </button>
                   <button
-                    v-if="slot.kind !== 'previous' && canGenerateCharacter"
+                    v-if="canGenerateCharacter"
                     class="editor-btn editor-btn--ghost"
                     type="button"
                     :name="`slot-generate-${index}`"
                     @click="openCharacterDialog(index)"
                   >
+                    <WandSparkles :size="14" :stroke-width="1.6" aria-hidden="true" />
                     Generate
                   </button>
-                  <span v-if="slot.kind === 'previous'" class="editor-muted">Last plate</span>
                 </span>
+                <span v-else class="editor-muted">Last plate</span>
                 <button
                   v-if="slot.fileUrl"
                   class="editor-slot-thumb"
