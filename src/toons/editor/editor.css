@@ -30,6 +30,13 @@ body {
   overflow: hidden;
 }
 
+/* .series-card is shared with the public site (public/styles.css) — its red top rule is a site
+   brand accent, not something the studio's own card grids (episode lists, series list) should
+   carry. Scoped here so the public site keeps the line; only the editor drops it. */
+.editor-shell .series-card {
+  border-top: none;
+}
+
 .editor-page,
 .editor-list {
   width: 100%;
