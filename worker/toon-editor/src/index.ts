@@ -1460,9 +1460,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (generate.provider !== "runware" && generate.provider !== "runcomfy") {
       return json({ error: "character generation needs a Runware or RunComfy provider on this series" }, 400, cors);
     }
-    if (!generate.slots.some((slot) => slot.alias === slotAlias)) {
-      return json({ error: "unknown slot" }, 400, cors);
-    }
+    // Not checked against generate.slots here — a slot the operator just added (or renamed)
+    // client-side hasn't necessarily been through a full series save yet. assignSlotFile (called
+    // once the job is done, in the poll route below) upserts by alias the same way the `/refs`
+    // upload route already does, so a not-yet-persisted slot still gets created correctly.
     const model = String(parsed.body.model || generate.model || "").trim();
     if (!model) return json({ error: "series has no model configured" }, 400, cors);
     const started = await startCharacterGenerate(await effectiveEnv(env, session.id), current, generate, {
