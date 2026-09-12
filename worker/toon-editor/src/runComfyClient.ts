@@ -1,18 +1,24 @@
 import type { ComfyPhase } from "./comfyClient";
+import type { RunComfyModel } from "./apiTypes";
 import type { Env } from "./types";
+
+export type { RunComfyModel };
 import { normaliseUserSecret } from "./userKeys";
 
 /**
  * RunComfy — https://runcomfy.com's hosted **model API** (`model-api.runcomfy.net`), not the
  * Worker's own self-hosted ComfyUI (COMFY_URL/COMFY_API_KEY — a different service that happens to
- * share the word "Comfy"; see the RUNCOMFY_API_KEY comment on Env). Mirrors what
- * scripts/generate-toon-page.py already does against this same API for manual prototyping:
- * `POST /models/{model}/{mode}` submits, `GET /requests/{id}/status` polls, `GET /requests/{id}/result`
- * returns the output — every field name and URL shape below is taken straight from that script,
- * confirmed working there before this Worker path existed.
+ * share the word "Comfy"; see the RUNCOMFY_API_KEY comment on Env). Contract per RunComfy's own
+ * docs (docs.runcomfy.com/model-apis/{async-queue-endpoints,model-catalog-endpoints,error-codes}):
+ * `POST /models/{model_id}` submits (no separate "mode" path segment — `model_id` is the exact,
+ * complete id the catalog endpoint returns, e.g. it may already end in a variant/mode of its own),
+ * `GET /requests/{id}/status` polls, `GET /requests/{id}/result` returns the output.
+ * scripts/generate-toon-page.py predates the catalog endpoint and posts to `/models/{model}/{mode}`
+ * for its one hardcoded model — that happens to resolve to the same URL for that specific id, but
+ * isn't the documented contract, so this client doesn't reuse that shape for an arbitrary
+ * catalog-picked model.
  */
 const RUNCOMFY_BASE = "https://model-api.runcomfy.net/v1";
-const DEFAULT_MODE = "image-to-image";
 const MAX_REFS = 10; // the model's own documented limit (generate-toon-page.py)
 
 function runComfyToken(env: Env): string {
@@ -24,6 +30,13 @@ function runComfyHeaders(env: Env): Headers {
   const token = runComfyToken(env);
   if (token) headers.set("Authorization", `Bearer ${token}`);
   return headers;
+}
+
+/** 401/403, or the documented `UserAccountError` (code 400004) — RunComfy's own error-codes docs
+ * put "invalid authentication" under a 400, not 401, for this one case. */
+function isAuthError(status: number, bodyText: string): boolean {
+  if (status === 401 || status === 403) return true;
+  return status === 400 && (bodyText.includes("400004") || bodyText.includes("UserAccountError"));
 }
 
 /**
@@ -77,14 +90,14 @@ export async function runComfySubmit(
   const aspectRatio = nearestAspectRatio(input.width, input.height);
   if (aspectRatio) payload.aspect_ratio = aspectRatio;
 
-  const res = await fetch(`${RUNCOMFY_BASE}/models/${input.model.trim()}/${DEFAULT_MODE}`, {
+  const res = await fetch(`${RUNCOMFY_BASE}/models/${input.model.trim()}`, {
     method: "POST",
     headers: runComfyHeaders(env),
     body: JSON.stringify(payload),
   });
   const text = await res.text();
   if (!res.ok) {
-    if (res.status === 401 || res.status === 403) return { ok: false, error: "RunComfy rejected the API key" };
+    if (isAuthError(res.status, text)) return { ok: false, error: "RunComfy rejected the API key" };
     return { ok: false, error: `RunComfy request failed (${res.status}) ${text.slice(0, 300)}` };
   }
   let parsed: SubmitResponse = {};
@@ -98,12 +111,16 @@ export async function runComfySubmit(
   return { ok: true, id, pollingUrl: id };
 }
 
-function runComfyPhase(status: string): ComfyPhase | null {
+/** Queue-status vocabulary only ("in_queue" | "in_progress" | "completed" | "cancelled", per
+ * docs.runcomfy.com/model-apis/async-queue-endpoints) — "completed" means the job finished
+ * running, not that it succeeded. Whether it actually produced an image is the *result*
+ * endpoint's own `status` field ("succeeded"/"failed"), checked separately below. */
+function runComfyQueuePhase(status: string): ComfyPhase | null {
   const s = status.toLowerCase();
   if (!s) return null;
   if (s === "completed") return "done";
-  if (s === "cancelled" || s === "failed" || s === "error") return "error";
-  return "running";
+  if (s === "cancelled") return "error";
+  return "running"; // in_queue, in_progress, or anything unrecognized yet
 }
 
 /**
@@ -140,10 +157,10 @@ export async function runComfyResult(
     const text = await statusRes.text();
     return { ok: false, error: `RunComfy status check failed (${statusRes.status}) ${text.slice(0, 200)}` };
   }
-  const statusBody = (await statusRes.json()) as { status?: string; state?: string };
-  const phase = runComfyPhase(String(statusBody.status || statusBody.state || ""));
-  if (phase === "error") return { ok: false, error: "RunComfy job failed" };
-  if (phase !== "done") return { ok: true, phase: phase || "running" };
+  const statusBody = (await statusRes.json()) as { status?: string };
+  const queuePhase = runComfyQueuePhase(String(statusBody.status || ""));
+  if (queuePhase === "error") return { ok: false, error: "RunComfy job was cancelled" };
+  if (queuePhase !== "done") return { ok: true, phase: queuePhase || "running" };
 
   const resultRes = await fetch(`${RUNCOMFY_BASE}/requests/${requestId}/result`, {
     headers: runComfyHeaders(env),
@@ -152,7 +169,15 @@ export async function runComfyResult(
     const text = await resultRes.text();
     return { ok: false, error: `RunComfy result fetch failed (${resultRes.status}) ${text.slice(0, 200)}` };
   }
-  const resultBody: unknown = await resultRes.json();
+  const resultBody = (await resultRes.json()) as { status?: string; error?: unknown };
+  // The queue-status "completed" only means the job finished running — this is the field that
+  // says whether it actually produced an image ("succeeded") or not.
+  if (resultBody.status && resultBody.status.toLowerCase() !== "succeeded") {
+    const detail = resultBody.error
+      ? `: ${typeof resultBody.error === "string" ? resultBody.error : JSON.stringify(resultBody.error).slice(0, 200)}`
+      : "";
+    return { ok: false, error: `RunComfy job ${resultBody.status}${detail}` };
+  }
   const excluded = new Set(submittedRefs);
   const urls = collectImageUrls(resultBody, []).filter((u) => !excluded.has(u));
   if (!urls.length) return { ok: false, error: "RunComfy result had no image" };
@@ -167,4 +192,38 @@ export async function runComfyDownload(
   const bytes = await res.arrayBuffer();
   if (!bytes.byteLength) return { ok: false, error: "RunComfy image download was empty" };
   return { ok: true, bytes };
+}
+
+type CatalogModel = { model_id?: string; display_name?: string; categories?: string[] };
+
+/**
+ * RunComfy's own model catalog (docs.runcomfy.com/model-apis/model-catalog-endpoints) —
+ * `category=image-to-image` is exactly the "multi-reference" shape this series form's picker
+ * needs, so the series form can list real, currently-available model ids instead of a
+ * hand-maintained guess (unlike Runware's RUNWARE_MODELS, which is curated because Runware has no
+ * such catalog endpoint to ask).
+ */
+export async function runComfyListModels(
+  env: Env
+): Promise<{ ok: true; models: RunComfyModel[] } | { ok: false; error: string }> {
+  if (!runComfyToken(env)) return { ok: false, error: "RunComfy is not configured (RUNCOMFY_API_KEY missing)" };
+  const res = await fetch(`${RUNCOMFY_BASE}/models?category=image-to-image&limit=100`, {
+    headers: runComfyHeaders(env),
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    if (isAuthError(res.status, text)) return { ok: false, error: "RunComfy rejected the API key" };
+    return { ok: false, error: `RunComfy model list failed (${res.status}) ${text.slice(0, 300)}` };
+  }
+  let parsed: { models?: CatalogModel[] } = {};
+  try {
+    parsed = JSON.parse(text) as { models?: CatalogModel[] };
+  } catch {
+    return { ok: false, error: "RunComfy model list returned non-JSON" };
+  }
+  const models = (parsed.models || [])
+    .filter((m): m is CatalogModel & { model_id: string } => Boolean(m.model_id))
+    .map((m) => ({ id: m.model_id, label: m.display_name || m.model_id }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+  return { ok: true, models };
 }

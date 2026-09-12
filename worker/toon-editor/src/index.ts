@@ -38,6 +38,7 @@ import {
 import { comfyPhaseMessage } from "./comfyClient";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { replicateVerifyToken } from "./replicateClient";
+import { runComfyListModels } from "./runComfyClient";
 import { runwareVerifyToken } from "./runwareClient";
 import { effectiveEnv, getUserKeyStatus, isUserKeyName, saveUserKey } from "./userKeys";
 import { configToImport, descriptionMapFromMeta, rowToWord } from "./importConfig";
@@ -1073,6 +1074,16 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       return json({ error: err instanceof Error ? err.message : "could not save key" }, 500, cors);
     }
     return json(await getUserKeyStatus(env, session.id), 200, cors);
+  }
+
+  // Backs the series form's RunComfy model picker — real, currently-available model ids from
+  // RunComfy's own catalog (docs.runcomfy.com/model-apis/model-catalog-endpoints) instead of a
+  // hand-maintained guess.
+  if (isMethod(method, "GET") && path === "/runcomfy/models") {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
+    const result = await runComfyListModels(await effectiveEnv(env, session.id));
+    if (!result.ok) return json({ error: result.error }, 502, cors);
+    return json(result.models, 200, cors);
   }
 
   if (isMethod(method, "POST") && path === "/translate") {

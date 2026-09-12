@@ -4,6 +4,7 @@ import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import {
   getSeries,
+  listRunComfyModels,
   listUsers,
   readImageSize,
   saveSeries,
@@ -26,6 +27,7 @@ import {
   type EditorUser,
   type GenerateProvider,
   type PromptCandidate,
+  type RunComfyModel,
   type SeriesFlowSlot,
   type SeriesOption,
   type ToonListItem,
@@ -88,12 +90,37 @@ const plateWidth = ref("1152");
 const plateHeight = ref("1728");
 const model = ref("seedream 5.0 pro");
 const provider = ref<GenerateProvider>("comfy");
+const runComfyModels = ref<RunComfyModel[]>([]);
+const runComfyModelsLoading = ref(false);
+const runComfyModelsError = ref("");
+
+/** Fetched once per visit to this form, not cached across app loads — RunComfy's own catalog can
+ * add models between sessions. */
+async function ensureRunComfyModelsLoaded(): Promise<void> {
+  if (runComfyModels.value.length || runComfyModelsLoading.value) return;
+  runComfyModelsLoading.value = true;
+  runComfyModelsError.value = "";
+  try {
+    runComfyModels.value = await listRunComfyModels();
+    if (runComfyModels.value.length && !runComfyModels.value.some((m) => m.id === model.value)) {
+      model.value = runComfyModels.value[0].id;
+    }
+  } catch (err) {
+    runComfyModelsError.value = err instanceof Error ? err.message : "Could not load RunComfy models";
+  } finally {
+    runComfyModelsLoading.value = false;
+  }
+}
+
 watch(provider, (next, prev) => {
   if (next === "runware" && prev !== "runware" && !RUNWARE_MODELS.some((m) => m.id === model.value)) {
     model.value = RUNWARE_MODELS[0].id;
   }
-  if (next === "runcomfy" && prev !== "runcomfy" && !model.value.includes("/")) {
-    model.value = "bytedance/seedream-5.0-pro";
+  if (next === "runcomfy" && prev !== "runcomfy") {
+    // Instant, sane default before the catalog call resolves — corrected to the real first
+    // catalog entry once ensureRunComfyModelsLoaded() actually loads, same as Runware above.
+    if (!model.value.includes("/")) model.value = "bytedance/seedream-5.0-pro";
+    void ensureRunComfyModelsLoaded();
   }
 });
 /** Per-provider hint under the picker — a lookup instead of a nested ternary so a new provider is
@@ -415,13 +442,23 @@ async function onSubmit(ev: Event): Promise<void> {
               <EditorSelectItem v-for="m in RUNWARE_MODELS" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
             </EditorSelect>
           </label>
+          <label v-else-if="provider === 'runcomfy' && runComfyModels.length" class="editor-form-span">
+            RunComfy model
+            <EditorSelect v-model="model" name="generate-model" aria-label="RunComfy model">
+              <EditorSelectItem v-for="m in runComfyModels" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
+            </EditorSelect>
+          </label>
+          <label v-else-if="provider === 'runcomfy'" class="editor-form-span">
+            RunComfy model
+            <input v-model="model" name="generate-model" placeholder="bytedance/seedream-5.0-pro" />
+            <p v-if="runComfyModelsLoading" class="editor-muted">Loading RunComfy's model catalog…</p>
+            <p v-else-if="runComfyModelsError" class="editor-error">
+              {{ runComfyModelsError }} — type the model id (org/model) by hand instead.
+            </p>
+          </label>
           <label v-else class="editor-form-span">
             Model
-            <input
-              v-model="model"
-              name="generate-model"
-              :placeholder="provider === 'runcomfy' ? 'bytedance/seedream-5.0-pro' : 'seedream 5.0 pro'"
-            />
+            <input v-model="model" name="generate-model" placeholder="seedream 5.0 pro" />
           </label>
           <label class="editor-form-span">
             Generation provider

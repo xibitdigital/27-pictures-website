@@ -21,6 +21,7 @@ export type {
   RegionGeometry,
   RegionRecord,
   RegionShapeType,
+  RunComfyModel,
   RunwareModel,
   SeriesFlowSlot,
   SeriesGenerateConfig,

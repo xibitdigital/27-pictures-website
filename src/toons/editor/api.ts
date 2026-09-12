@@ -9,6 +9,7 @@ import type {
   RegionGeometry,
   RegionRecord,
   RegionShapeType,
+  RunComfyModel,
   SeriesInput,
   SeriesOption,
   ToonAsset,
@@ -145,6 +146,12 @@ export function removeUser(userId: string): Promise<{ ok: boolean }> {
 
 export function fetchCredits(): Promise<CreditsSnapshot> {
   return api<CreditsSnapshot>("/credits");
+}
+
+/** Real, currently-available RunComfy image-to-image models, from its own catalog — not a
+ * hand-curated list like RUNWARE_MODELS. */
+export function listRunComfyModels(): Promise<RunComfyModel[]> {
+  return api<RunComfyModel[]>("/runcomfy/models");
 }
 
 export function getUserKeys(): Promise<UserKeyStatus> {

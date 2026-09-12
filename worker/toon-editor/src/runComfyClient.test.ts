@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { runComfyDownload, runComfyResult, runComfySubmit } from "./runComfyClient";
+import { runComfyDownload, runComfyListModels, runComfyResult, runComfySubmit } from "./runComfyClient";
 import type { Env } from "./types";
 
 function env(partial: Partial<Env>): Env {
@@ -49,7 +49,7 @@ describe("runComfySubmit", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("posts to /models/{model}/image-to-image with a Bearer key and the nearest portrait aspect_ratio", async () => {
+  it("posts to /models/{model_id} verbatim (no extra mode segment) with a Bearer key and the nearest portrait aspect_ratio", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ request_id: "req-1" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     const out = await runComfySubmit(env({ RUNCOMFY_API_KEY: "secret" }), {
@@ -61,7 +61,7 @@ describe("runComfySubmit", () => {
     });
     expect(out).toEqual({ ok: true, id: "req-1", pollingUrl: "req-1" });
     expect(String(fetchMock.mock.calls[0][0])).toBe(
-      "https://model-api.runcomfy.net/v1/models/bytedance/seedream-5.0-pro/image-to-image"
+      "https://model-api.runcomfy.net/v1/models/bytedance/seedream-5.0-pro"
     );
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     expect(new Headers(init.headers).get("Authorization")).toBe("Bearer secret");
@@ -72,6 +72,19 @@ describe("runComfySubmit", () => {
       output_format: "png",
       aspect_ratio: "2:3",
     });
+  });
+
+  it("posts to a model_id that already carries its own variant/mode suffix unchanged", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ request_id: "req-x" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await runComfySubmit(env({ RUNCOMFY_API_KEY: "k" }), {
+      prompt: "p",
+      images: ["https://x/a.png"],
+      model: "bytedance/seedream-5.0-pro/image-to-image",
+    });
+    expect(String(fetchMock.mock.calls[0][0])).toBe(
+      "https://model-api.runcomfy.net/v1/models/bytedance/seedream-5.0-pro/image-to-image"
+    );
   });
 
   it("omits aspect_ratio when no width/height is known", async () => {
@@ -110,6 +123,19 @@ describe("runComfySubmit", () => {
     expect(out).toEqual({ ok: false, error: "RunComfy rejected the API key" });
   });
 
+  it("maps a 400 UserAccountError (RunComfy's own auth-failure code) to a key-rejected error", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ code: 400004, error: "UserAccountError" }), { status: 400 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runComfySubmit(env({ RUNCOMFY_API_KEY: "bad" }), {
+      prompt: "p",
+      images: ["https://x/a.png"],
+      model: "bytedance/seedream-5.0-pro",
+    });
+    expect(out).toEqual({ ok: false, error: "RunComfy rejected the API key" });
+  });
+
   it("errors if the response has no request_id", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({}), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
@@ -127,34 +153,48 @@ describe("runComfyResult", () => {
     vi.unstubAllGlobals();
   });
 
-  it("reports running while status is not completed", async () => {
+  it("reports running for in_queue/in_progress queue status", async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValue(new Response(JSON.stringify({ status: "processing" }), { status: 200 }));
+      .mockResolvedValue(new Response(JSON.stringify({ status: "in_progress" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     const out = await runComfyResult(env({ RUNCOMFY_API_KEY: "k" }), "req-1");
     expect(out).toEqual({ ok: true, phase: "running" });
     expect(fetchMock).toHaveBeenCalledTimes(1); // only the status check, no result fetch yet
   });
 
-  it("reports an error phase for a failed job", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "failed" }), { status: 200 }));
+  it("reports an error for a cancelled queue status", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "cancelled" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     const out = await runComfyResult(env({ RUNCOMFY_API_KEY: "k" }), "req-1");
-    expect(out).toEqual({ ok: false, error: "RunComfy job failed" });
+    expect(out).toEqual({ ok: false, error: "RunComfy job was cancelled" });
   });
 
-  it("fetches the result and returns the output image URL once completed", async () => {
+  it("fetches the result and returns the output image URL once the queue status is completed and the result succeeded", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ status: "completed" }), { status: 200 }))
       .mockResolvedValueOnce(
-        new Response(JSON.stringify({ output: { images: ["https://out.example/plate.png"] } }), { status: 200 })
+        new Response(JSON.stringify({ status: "succeeded", output: { image: "https://out.example/plate.png" } }), {
+          status: 200,
+        })
       );
     vi.stubGlobal("fetch", fetchMock);
     const out = await runComfyResult(env({ RUNCOMFY_API_KEY: "k" }), "req-1");
     expect(out).toEqual({ ok: true, phase: "done", imageUrl: "https://out.example/plate.png" });
     expect(String(fetchMock.mock.calls[1][0])).toBe("https://model-api.runcomfy.net/v1/requests/req-1/result");
+  });
+
+  it("errors when the queue status is completed but the result's own status is not succeeded", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ status: "completed" }), { status: 200 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ status: "failed", error: "model refused the prompt" }), { status: 200 })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runComfyResult(env({ RUNCOMFY_API_KEY: "k" }), "req-1");
+    expect(out).toEqual({ ok: false, error: "RunComfy job failed: model refused the prompt" });
   });
 
   it("excludes the submitted reference URLs the result payload echoes back", async () => {
@@ -164,8 +204,9 @@ describe("runComfyResult", () => {
       .mockResolvedValueOnce(
         new Response(
           JSON.stringify({
+            status: "succeeded",
             input: { image: ["https://x/ref.png"] },
-            output: { images: ["https://x/ref.png", "https://out.example/plate.png"] },
+            output: { image: "https://out.example/plate.png" },
           }),
           { status: 200 }
         )
@@ -175,11 +216,11 @@ describe("runComfyResult", () => {
     expect(out).toEqual({ ok: true, phase: "done", imageUrl: "https://out.example/plate.png" });
   });
 
-  it("errors when completed but no non-reference image URL is found", async () => {
+  it("errors when completed/succeeded but no non-reference image URL is found", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ status: "completed" }), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ output: {} }), { status: 200 }));
+      .mockResolvedValueOnce(new Response(JSON.stringify({ status: "succeeded", output: {} }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     const out = await runComfyResult(env({ RUNCOMFY_API_KEY: "k" }), "req-1");
     expect(out).toEqual({ ok: false, error: "RunComfy result had no image" });
@@ -203,5 +244,54 @@ describe("runComfyDownload", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 404 })));
     const out = await runComfyDownload("https://out.example/missing.png");
     expect(out).toEqual({ ok: false, error: "RunComfy image download failed (404)" });
+  });
+});
+
+describe("runComfyListModels", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("errors without asking RunComfy when no key is configured", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runComfyListModels(env({}));
+    expect(out).toEqual({ ok: false, error: "RunComfy is not configured (RUNCOMFY_API_KEY missing)" });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("GETs the image-to-image catalog and maps to {id, label}, sorted by label", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          models: [
+            { model_id: "b/model-b", display_name: "Model B" },
+            { model_id: "a/model-a", display_name: "Model A" },
+            { model_id: "no-name/x" }, // no display_name — falls back to the id
+          ],
+          total: 3,
+        }),
+        { status: 200 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runComfyListModels(env({ RUNCOMFY_API_KEY: "k" }));
+    expect(String(fetchMock.mock.calls[0][0])).toBe(
+      "https://model-api.runcomfy.net/v1/models?category=image-to-image&limit=100"
+    );
+    expect(out).toEqual({
+      ok: true,
+      models: [
+        { id: "a/model-a", label: "Model A" },
+        { id: "b/model-b", label: "Model B" },
+        { id: "no-name/x", label: "no-name/x" },
+      ],
+    });
+  });
+
+  it("maps a 401 to a key-rejected error", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("nope", { status: 401 })));
+    const out = await runComfyListModels(env({ RUNCOMFY_API_KEY: "bad" }));
+    expect(out).toEqual({ ok: false, error: "RunComfy rejected the API key" });
   });
 });

@@ -258,6 +258,14 @@ export const RUNWARE_MODELS: readonly RunwareModel[] = [
   },
 ];
 
+/** One RunComfy catalog entry (`GET /runcomfy/models`, runComfyClient.ts's runComfyListModels) —
+ * unlike RUNWARE_MODELS this isn't a hand-curated list, since RunComfy's own catalog endpoint can
+ * be asked for the current, real set directly. */
+export interface RunComfyModel {
+  id: string;
+  label: string;
+}
+
 /** Any provider that skips the Comfy graph entirely and calls a hosted model directly with the prompt + reference sheets. */
 export function isDirectProvider(provider: GenerateProvider | string | null | undefined): boolean {
   return provider != null && provider !== "comfy";
