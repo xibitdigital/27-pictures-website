@@ -541,7 +541,7 @@ body {
   display: grid;
   place-items: center;
   aspect-ratio: 2 / 3;
-  border: 2px solid var(--red-smile);
+  border: 2px solid var(--editor-primary);
   background: var(--bg-card);
 }
 
@@ -549,12 +549,12 @@ body {
   font-size: 3.5rem;
   line-height: 1;
   font-weight: 700;
-  color: var(--red-smile);
+  color: var(--editor-primary);
 }
 
 .editor-card-list .series-card--add:hover .series-card-art,
 .editor-card-list .series-card--add:focus-visible .series-card-art {
-  background: var(--red-smile);
+  background: var(--editor-primary);
 }
 
 .editor-card-list .series-card--add:hover .editor-add-plus,
