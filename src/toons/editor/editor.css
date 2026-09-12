@@ -1325,8 +1325,8 @@ body {
 .editor-filmstrip-action:hover,
 .editor-filmstrip-action:focus-visible,
 .editor-filmstrip-action[aria-expanded="true"] {
-  background: var(--red-smile);
-  border-color: var(--red-smile);
+  background: var(--editor-primary);
+  border-color: var(--editor-primary);
 }
 
 .editor-add-page-choices {
@@ -1701,7 +1701,7 @@ body {
 }
 
 .editor-thumb.is-active {
-  border-color: var(--red-smile);
+  border-color: var(--editor-primary);
 }
 
 .editor-thumb.is-dragging {
@@ -1926,7 +1926,7 @@ body {
 
 .editor-tail-ring .editor-icon-btn[aria-pressed="true"] {
   color: var(--text);
-  border-color: var(--red-smile);
+  border-color: var(--editor-primary);
 }
 
 .editor-tail-ring .editor-icon-btn[data-tail="left"],
@@ -2129,7 +2129,7 @@ body {
 
 .editor-layout-toolbar .editor-icon-btn[aria-pressed="true"] {
   color: var(--text);
-  border-color: var(--red-smile);
+  border-color: var(--editor-primary);
 }
 
 @media (pointer: coarse) {
