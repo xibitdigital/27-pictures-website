@@ -12,6 +12,7 @@ const draft = reactive<Record<UserKeyName, string>>({
   comfyApiKey: "",
   elevenlabsApiKey: "",
   runwareApiToken: "",
+  runcomfyApiToken: "",
 });
 const savingKey = ref<UserKeyName | null>(null);
 
