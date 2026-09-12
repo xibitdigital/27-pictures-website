@@ -51,6 +51,8 @@ export interface Env {
   BFL_API_KEY?: string;
   REPLICATE_API_TOKEN?: string;
   RUNWARE_API_KEY?: string;
+  /** RunComfy's hosted model API bearer token — NOT the same service as COMFY_URL/COMFY_API_KEY above (self-hosted ComfyUI). */
+  RUNCOMFY_API_KEY?: string;
   /** AES-256-GCM key (base64, 32 raw bytes) for per-user API key encryption — see userKeys.ts. */
   KEYS_ENCRYPTION_KEY?: string;
   RESEND_API_KEY?: string;

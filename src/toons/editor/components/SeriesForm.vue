@@ -92,7 +92,24 @@ watch(provider, (next, prev) => {
   if (next === "runware" && prev !== "runware" && !RUNWARE_MODELS.some((m) => m.id === model.value)) {
     model.value = RUNWARE_MODELS[0].id;
   }
+  if (next === "runcomfy" && prev !== "runcomfy" && !model.value.includes("/")) {
+    model.value = "bytedance/seedream-5.0-pro";
+  }
 });
+/** Per-provider hint under the picker — a lookup instead of a nested ternary so a new provider is
+ * one line here, not a deeper if/else chain in the template. */
+const PROVIDER_HINT: Partial<Record<GenerateProvider, string>> = {
+  flux: "Flux ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to flux-2-pro.",
+  "replicate-flux":
+    "Flux Kontext ignores the ComfyUI flow below. It only accepts 2 reference images — the first 2 included sheets/previous plate are sent, the rest are dropped.",
+  "replicate-seedream":
+    "Seedream (Replicate) ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to Replicate.",
+  runware:
+    "Runware ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate to the Runware model picked above.",
+  runcomfy:
+    "RunComfy ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate to the RunComfy model named above (org/model, e.g. bytedance/seedream-5.0-pro).",
+};
+const providerHint = computed(() => PROVIDER_HINT[provider.value] || "");
 /** New series start with a mandatory "previous plate" and "style" reference — every direct-provider (Flux/Replicate/Runware) call should carry both for continuity, so they're seeded up front and locked (see isLockedSlot) instead of being an opt-in a new series can forget to add. Existing series are untouched; add them by hand if missing. */
 const DEFAULT_SLOTS: SeriesFlowSlot[] = [
   { alias: "previous", label: "Previous page", kind: "previous", fileKey: null, fileUrl: null },
@@ -400,7 +417,11 @@ async function onSubmit(ev: Event): Promise<void> {
           </label>
           <label v-else class="editor-form-span">
             Model
-            <input v-model="model" name="generate-model" placeholder="seedream 5.0 pro" />
+            <input
+              v-model="model"
+              name="generate-model"
+              :placeholder="provider === 'runcomfy' ? 'bytedance/seedream-5.0-pro' : 'seedream 5.0 pro'"
+            />
           </label>
           <label class="editor-form-span">
             Generation provider
@@ -410,19 +431,10 @@ async function onSubmit(ev: Event): Promise<void> {
               <EditorSelectItem value="replicate-flux">Flux Kontext (via Replicate, max 2 refs)</EditorSelectItem>
               <EditorSelectItem value="replicate-seedream">Seedream (via Replicate)</EditorSelectItem>
               <EditorSelectItem value="runware">Runware (pick model above)</EditorSelectItem>
+              <EditorSelectItem value="runcomfy">RunComfy (org/model above, max 10 refs)</EditorSelectItem>
             </EditorSelect>
           </label>
-          <p v-if="provider !== 'comfy'" class="editor-muted editor-form-span">
-            {{
-              provider === "flux"
-                ? "Flux ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to flux-2-pro."
-                : provider === "replicate-flux"
-                  ? "Flux Kontext ignores the ComfyUI flow below. It only accepts 2 reference images — the first 2 included sheets/previous plate are sent, the rest are dropped."
-                  : provider === "replicate-seedream"
-                    ? "Seedream (Replicate) ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate straight to Replicate."
-                    : "Runware ignores the ComfyUI flow below and sends the prompt plus this series's sheets/previous plate to the Runware model picked above."
-            }}
-          </p>
+          <p v-if="provider !== 'comfy'" class="editor-muted editor-form-span">{{ providerHint }}</p>
           <div class="editor-form-span editor-generate">
             <p class="editor-generate-label">ComfyUI flow</p>
             <p class="editor-muted">

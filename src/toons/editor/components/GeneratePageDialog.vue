@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { Eraser, LoaderCircle } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
-import { isDirectProvider as isDirectProviderName, type PageRecord, type SeriesGenerateConfig } from "../types";
+import {
+  isDirectProvider as isDirectProviderName,
+  type GenerateProvider,
+  type PageRecord,
+  type SeriesGenerateConfig,
+} from "../types";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
@@ -166,6 +171,21 @@ const includedRefCount = computed(() => orderedRefEntries.value.length);
  * only this reference-mapping scaffold; the scene/style description is
  * entirely up to whatever the operator types below it.
  */
+/** What the dialog's intro line says per provider — a lookup instead of a nested ternary so a new
+ * provider is one line here, not a deeper if/else chain in the template. */
+const PROVIDER_INTRO: Partial<Record<GenerateProvider, string>> = {
+  flux: "Uses this series’ reference sheets via Flux.",
+  "replicate-flux": "Uses up to 2 of this series’ reference sheets via Flux Kontext (Replicate).",
+  "replicate-seedream": "Uses this series’ reference sheets via Seedream (Replicate).",
+  runware: "Uses this series’ reference sheets via Runware.",
+  runcomfy: "Uses this series’ reference sheets via RunComfy.",
+};
+const providerIntro = computed(
+  () =>
+    (props.generate?.provider && PROVIDER_INTRO[props.generate.provider]) ||
+    "Uses this series’ Comfy graph and reference sheets."
+);
+
 const providerLabel: Record<string, string> = {
   flux: "flux-2-pro (BFL)",
   "replicate-flux": "flux-kontext-apps/multi-image-kontext-pro (Replicate)",
@@ -177,7 +197,9 @@ const fluxRefsPrefill = computed(() => {
   const modelName =
     props.generate?.provider === "runware"
       ? `Runware — ${props.generate.model || "no model configured"}`
-      : providerLabel[props.generate?.provider || ""] || "flux-2-pro (BFL)";
+      : props.generate?.provider === "runcomfy"
+        ? `RunComfy — ${props.generate.model || "no model configured"}`
+        : providerLabel[props.generate?.provider || ""] || "flux-2-pro (BFL)";
   const header = [`# model: ${modelName}`, "# mode: image-to-image (multi-reference)"];
   const entries = orderedRefEntries.value;
   if (!entries.length) return `${header.join("\n")}\n\n`;
@@ -306,19 +328,7 @@ function onSubmit(): void {
 <template>
   <EditorDialog :open="open" title="Generate page" wide @update:open="(next) => !next && onCancel()">
     <form class="editor-dialog-form" @submit.prevent="onSubmit">
-      <p class="editor-muted">
-        {{
-          generate?.provider === "flux"
-            ? "Uses this series’ reference sheets via Flux."
-            : generate?.provider === "replicate-flux"
-              ? "Uses up to 2 of this series’ reference sheets via Flux Kontext (Replicate)."
-              : generate?.provider === "replicate-seedream"
-                ? "Uses this series’ reference sheets via Seedream (Replicate)."
-                : generate?.provider === "runware"
-                  ? "Uses this series’ reference sheets via Runware."
-                  : "Uses this series’ Comfy graph and reference sheets."
-        }}
-      </p>
+      <p class="editor-muted">{{ providerIntro }}</p>
       <p v-if="missingComfyFlow" class="editor-error" role="alert">
         Upload a Comfy Save-API graph and reference sheets on the series first.
       </p>

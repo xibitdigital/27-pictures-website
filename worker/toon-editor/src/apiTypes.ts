@@ -174,9 +174,14 @@ export interface PromptTarget {
  * 'runware' calls Runware's single `imageInference` endpoint (runwareClient.ts)
  * for whichever model the series' `generate.model` names — Runware hosts many
  * models behind one API shape, so the model id is series config, not a kind
- * this type enumerates.
+ * this type enumerates. 'runcomfy' calls RunComfy's hosted model API
+ * (runComfyClient.ts, `model-api.runcomfy.net` — NOT the Worker's own
+ * self-hosted-ComfyUI `COMFY_URL`/`COMFY_API_KEY`, a different service that
+ * happens to share a name; see runcomfyApiToken in UserKeyName) — async
+ * submit/poll/result, `generate.model` is its `org/model` path
+ * (e.g. `bytedance/seedream-5.0-pro`).
  */
-export type GenerateProvider = "comfy" | "flux" | "replicate-flux" | "replicate-seedream" | "runware";
+export type GenerateProvider = "comfy" | "flux" | "replicate-flux" | "replicate-seedream" | "runware" | "runcomfy";
 
 export const GENERATE_PROVIDERS: readonly GenerateProvider[] = [
   "comfy",
@@ -184,6 +189,7 @@ export const GENERATE_PROVIDERS: readonly GenerateProvider[] = [
   "replicate-flux",
   "replicate-seedream",
   "runware",
+  "runcomfy",
 ];
 
 /**
@@ -361,13 +367,19 @@ export interface InviteUserResult {
  * has no per-user proxying and is being dropped from this editor soon
  * regardless, so it's not offered here.
  */
-export type UserKeyName = "replicateApiToken" | "comfyApiKey" | "elevenlabsApiKey" | "runwareApiToken";
+export type UserKeyName =
+  | "replicateApiToken"
+  | "comfyApiKey"
+  | "elevenlabsApiKey"
+  | "runwareApiToken"
+  | "runcomfyApiToken";
 
 export const USER_KEY_NAMES: readonly UserKeyName[] = [
   "replicateApiToken",
   "comfyApiKey",
   "elevenlabsApiKey",
   "runwareApiToken",
+  "runcomfyApiToken",
 ];
 
 export const USER_KEY_LABELS: Record<UserKeyName, string> = {
@@ -375,6 +387,7 @@ export const USER_KEY_LABELS: Record<UserKeyName, string> = {
   comfyApiKey: "Comfy API key",
   elevenlabsApiKey: "ElevenLabs API key",
   runwareApiToken: "Runware API key",
+  runcomfyApiToken: "RunComfy API key",
 };
 
 /** `GET /auth/keys` response — whether each key is set, values never included. */

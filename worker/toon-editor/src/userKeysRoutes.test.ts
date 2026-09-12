@@ -77,6 +77,7 @@ describe("GET /auth/keys", () => {
       comfyApiKey: false,
       elevenlabsApiKey: false,
       runwareApiToken: false,
+      runcomfyApiToken: false,
     });
   });
 
@@ -109,6 +110,7 @@ describe("PUT /auth/keys", () => {
       comfyApiKey: false,
       elevenlabsApiKey: false,
       runwareApiToken: false,
+      runcomfyApiToken: false,
     });
     const stored = state.keys[editor.id].replicate_api_token_enc;
     expect(stored).toBeTruthy();

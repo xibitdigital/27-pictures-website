@@ -25,6 +25,7 @@ import { insertCreditEvent } from "./creditUsage";
 import { fluxDownload, fluxResult, fluxSubmit } from "./fluxClient";
 import { toWebp, webpDimensions } from "./imageOptimize";
 import { replicateDownload, replicateResult, replicateSubmit, type ReplicateKind } from "./replicateClient";
+import { runComfyDownload, runComfyResult, runComfySubmit } from "./runComfyClient";
 import { runwareDownload, runwareResult, runwareSubmit } from "./runwareClient";
 import { recordToonAsset, type ToonAssetSource } from "./toonAssets";
 import type { Env, SeriesRow, ToonRow } from "./types";
@@ -154,6 +155,7 @@ export async function startPageGenerate(
     return startReplicateGenerate(env, input, generate, generate.provider);
   }
   if (generate.provider === "runware") return startRunwareGenerate(env, input, generate);
+  if (generate.provider === "runcomfy") return startRunComfyGenerate(env, input, generate);
   if (!comfyBase(env)) return { ok: false, error: "ComfyUI is not configured", status: 503 };
   if (!generate.flowKey) return { ok: false, error: "series has no Comfy flow", status: 400 };
   const flowBytes = await getObject(env, generate.flowKey);
@@ -538,6 +540,93 @@ async function startRunwareGenerate(
   return { ok: true, job };
 }
 
+/**
+ * Same reference-sheets pipeline as the other direct providers, routed through RunComfy's hosted
+ * model API (runComfyClient.ts — model-api.runcomfy.net, not this Worker's own self-hosted-ComfyUI
+ * COMFY_URL). Async submit/poll like Replicate, not synchronous like Runware, so the submitted
+ * `images` are stashed in the job payload (`refs`) for pollPageJob to exclude from the result
+ * payload, which otherwise echoes them back alongside the actual output.
+ */
+async function startRunComfyGenerate(
+  env: Env,
+  input: Parameters<typeof startPageGenerate>[1],
+  generate: SeriesGenerateConfig
+): Promise<{ ok: true; job: GenerationJob } | { ok: false; error: string; status: number }> {
+  const origin = (input.workerOrigin || "").replace(/\/$/, "");
+  if (!origin) return { ok: false, error: "missing worker origin for RunComfy reference URLs", status: 500 };
+  const targetWidth = input.targetWidth ?? generate.width;
+  const targetHeight = input.targetHeight ?? generate.height;
+
+  const previousKey = await resolvePreviousKey(env, input.toon.id, input);
+
+  const excluded = new Set(input.excludeAliases || []);
+  const images: string[] = [];
+  for (const slot of generate.slots) {
+    if (excluded.has(slot.alias)) continue;
+    let key: string | null;
+    if (slot.kind === "previous" && input.previousOverride) {
+      key = await putRefAsset(env, input.toon.slug, input.previousOverride.bytes, input.previousOverride.type);
+    } else if (slot.kind === "previous") {
+      key = previousKey;
+      if (!key) continue;
+    } else {
+      key = slot.fileKey || null;
+      if (!key) {
+        if (slot.optional) continue;
+        return { ok: false, error: `missing reference: ${slot.label || slot.alias}`, status: 400 };
+      }
+    }
+    images.push(`${origin}/media/${key}`);
+  }
+
+  const count = input.pageId ? 1 : parseGenerateCount(input.count);
+  const promptIds: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const submitted = await runComfySubmit(env, {
+      prompt: input.prompt,
+      images,
+      model: generate.model,
+      width: targetWidth,
+      height: targetHeight,
+    });
+    if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
+    promptIds.push(submitted.pollingUrl);
+  }
+
+  const id = crypto.randomUUID();
+  const ts = nowIso();
+  const regionId = input.regionId || null;
+  await env.DB.prepare(
+    `INSERT INTO generation_jobs (id, kind, toon_id, page_id, region_id, provider, status, prompt, payload_json, error, result_page_id, comfy_prompt_id, created_by, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 'runcomfy', 'running', ?, ?, NULL, NULL, ?, ?, ?, ?)`
+  )
+    .bind(
+      id,
+      regionId ? "region" : "page",
+      input.toon.id,
+      input.pageId,
+      regionId,
+      input.prompt,
+      JSON.stringify({
+        includePrevious: input.includePrevious,
+        previousPageId: input.previousPageId || null,
+        width: targetWidth,
+        height: targetHeight,
+        count,
+        promptIds,
+        refs: images,
+      }),
+      promptIds[0],
+      input.createdBy || null,
+      ts,
+      ts
+    )
+    .run();
+  const job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?").bind(id).first<GenerationJob>();
+  if (!job) return { ok: false, error: "could not create job", status: 500 };
+  return { ok: true, job };
+}
+
 function resolvedImagesFromJob(job: GenerationJob): (string | null)[] {
   try {
     const payload = JSON.parse(job.payload_json) as { resolvedImages?: unknown };
@@ -573,6 +662,18 @@ export function generateCountFromJob(job: GenerationJob): number {
 
 function pickOutputImage(images: ComfyHistoryImage[]): ComfyHistoryImage {
   return images.find((img) => (img.type || "output") === "output") || images[0];
+}
+
+/** RunComfy-only — the reference image URLs a job was submitted with, so pollPageJob can exclude
+ * them from the result payload (which echoes its own inputs back). */
+function refsFromJob(job: GenerationJob): string[] {
+  try {
+    const payload = JSON.parse(job.payload_json) as { refs?: unknown };
+    if (Array.isArray(payload.refs)) return payload.refs.filter((v): v is string => typeof v === "string");
+  } catch {
+    /* fall through */
+  }
+  return [];
 }
 
 function plateSizeFromJob(job: GenerationJob): { width: number | null; height: number | null } {
@@ -625,23 +726,30 @@ export async function pollPageJob(
   const isFlux = job.provider === "flux";
   const isReplicate = job.provider === "replicate-flux" || job.provider === "replicate-seedream";
   const isRunware = job.provider === "runware";
+  const isRunComfy = job.provider === "runcomfy";
   const resolvedImages = isRunware ? resolvedImagesFromJob(job) : [];
-  const outputs: (ComfyHistoryImage | string)[] = []; // string = Flux/Replicate/Runware's signed output URL
+  const runComfyRefs = isRunComfy ? refsFromJob(job) : [];
+  const outputs: (ComfyHistoryImage | string)[] = []; // string = Flux/Replicate/Runware/RunComfy's signed output URL
   let phase: ComfyPhase | null = null;
   for (let i = 0; i < promptIds.length; i++) {
     const promptId = promptIds[i];
-    if (isFlux || isReplicate || isRunware) {
-      // For Flux/Replicate, promptId is the full polling URL; for Runware it's the taskUUID.
-      // Runware answers the submit call synchronously, so the image is normally already known
-      // (resolvedImages, stashed at submit time) — runwareResult's getResponse poll is only a
-      // fallback for the rare case the submit response didn't carry it.
-      const result = isFlux
-        ? await fluxResult(env, promptId)
-        : isReplicate
-          ? await replicateResult(env, promptId)
-          : resolvedImages[i]
-            ? ({ ok: true, phase: "done", imageUrl: resolvedImages[i]! } as const)
-            : await runwareResult(env, promptId);
+    if (isFlux || isReplicate || isRunware || isRunComfy) {
+      // For Flux/Replicate/RunComfy, promptId is the full polling URL or request id; for Runware
+      // it's the taskUUID. Runware answers the submit call synchronously, so the image is normally
+      // already known (resolvedImages, stashed at submit time) — runwareResult's getResponse poll
+      // is only a fallback for the rare case the submit response didn't carry it.
+      let result: { ok: true; phase: ComfyPhase | null; imageUrl?: string } | { ok: false; error: string };
+      if (isFlux) {
+        result = await fluxResult(env, promptId);
+      } else if (isReplicate) {
+        result = await replicateResult(env, promptId);
+      } else if (isRunComfy) {
+        result = await runComfyResult(env, promptId, runComfyRefs);
+      } else if (resolvedImages[i]) {
+        result = { ok: true, phase: "done", imageUrl: resolvedImages[i]! };
+      } else {
+        result = await runwareResult(env, promptId);
+      }
       if (!result.ok) {
         await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
           .bind(result.error, nowIso(), job.id)
@@ -727,6 +835,24 @@ export async function pollPageJob(
       // Unlike Flux (always webp), Replicate's own output format isn't pinned here —
       // route through putPlate() same as the Comfy path, which sniffs the real bytes
       // and re-encodes to webp only if they aren't already.
+      const stored = await putPlate(env, toon, downloaded.bytes, assetSource);
+      plates.push({
+        fileKey: stored.fileKey,
+        width: stored.width ?? requested.width,
+        height: stored.height ?? requested.height,
+      });
+      continue;
+    }
+    if (isRunComfy) {
+      const downloaded = await runComfyDownload(image as string);
+      if (!downloaded.ok) {
+        await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
+          .bind(downloaded.error, nowIso(), job.id)
+          .run();
+        return { ok: true, job: { ...job, status: "error", error: downloaded.error }, phase: "error" };
+      }
+      // RunComfy's own output format isn't pinned to webp (png/jpeg per the submit request) —
+      // route through putPlate(), which sniffs the real bytes and re-encodes.
       const stored = await putPlate(env, toon, downloaded.bytes, assetSource);
       plates.push({
         fileKey: stored.fileKey,

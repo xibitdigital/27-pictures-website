@@ -142,6 +142,7 @@ describe("getUserKeyStatus", () => {
       replicateApiToken: false,
       elevenlabsApiKey: true,
       runwareApiToken: true,
+      runcomfyApiToken: false,
     });
   });
 });

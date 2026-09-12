@@ -147,6 +147,29 @@ for a toon_asset row's kind, a query-string filter, and the gallery dialog's
 `string`/inferred boolean at each of those spots that happened to agree only
 by construction.
 
+**Don't nest ternaries — a chain of 3+ branches reads worse the more it
+grows, and every provider/kind added here makes the next one harder to
+review.** Branching on 3+ cases:
+
+- **In a `.ts` function body:** an `if`/`else if` chain assigning one result
+  variable is worth the extra lines over one nested ternary — each branch
+  reads top-to-bottom instead of requiring the reader to track indentation
+  depth against which condition it answers.
+- **In a Vue template:** pull the chain into a `computed()` in `<script
+  setup>` — a small lookup object (`Record<Key, string>`) keyed by the same
+  literal union, with a fallback for the default case — and reference the
+  computed by name in the template. Adding a case is one line in the lookup,
+  not a deeper nested ternary the template has to re-render on every access.
+
+Worked example: `generatePage.ts`'s per-provider poll-result branch was
+`isFlux ? … : isReplicate ? … : isRunComfy ? … : resolvedImages[i] ? … :
+await runwareResult(…)` — four levels deep before RunComfy was even added.
+Rewritten as `if (isFlux) { result = … } else if (isReplicate) { … } else if
+(isRunComfy) { … } else if (resolvedImages[i]) { … } else { … }`.
+`GeneratePageDialog.vue`'s and `SeriesForm.vue`'s per-provider intro/hint text
+were the template version of the same problem — each is now a `PROVIDER_*`
+lookup object plus a one-line `computed()`.
+
 ## Project Structure
 
 ```
@@ -866,6 +889,39 @@ npx wrangler deploy
 Local `make dev` reads the same names from `worker/toon-editor/.dev.vars`.
 Missing `COMFY_URL` → 503 `ComfyUI is not configured`; the dialog shows that
 string (not the unreachable-API hint).
+
+### RunComfy (`generate.provider === "runcomfy"`) — not the same service as above
+
+**`RUNCOMFY_API_KEY` is a distinct secret from `COMFY_API_KEY` above, on
+purpose.** `COMFY_URL`/`COMFY_API_KEY` are this Worker's own self-hosted
+ComfyUI (via `COMFY_URL`, a Comfy Cloud/self-hosted box, `COMFY_API_KEY` its
+Seedream partner-node key). RunComfy (`runComfyClient.ts`) is a different,
+unrelated hosted platform — `model-api.runcomfy.net`'s square-model API, the
+same one `scripts/generate-toon-page.py` already talks to for manual
+prototyping. They share the word "Comfy" and nothing else; reusing one
+secret for the other 401s.
+
+| Secret | What it is |
+| --- | --- |
+| `RUNCOMFY_API_KEY` | RunComfy bearer token, from your RunComfy account's API keys page. Sent as `Authorization: Bearer`. |
+
+```bash
+cd worker/toon-editor
+npx wrangler secret put RUNCOMFY_API_KEY
+npx wrangler deploy
+```
+
+`generate.model` is RunComfy's `org/model` path (e.g.
+`bytedance/seedream-5.0-pro`, the series form's default) — free text, not a
+curated list like Runware's, since this app only exercises the one model so
+far. Async submit → poll `/requests/:id/status` → `/requests/:id/result`,
+same shape as Replicate; `aspect_ratio` is mapped from the series' plate
+size to RunComfy's own enum (omitting it defaults to a square). Max 10
+reference images (the model's own documented limit). A per-user key can
+override the shared secret via Settings, same as Replicate/Runware
+(`runcomfyApiToken`, `userKeys.ts`) — no cheap verify-token endpoint is
+documented, so (like `comfyApiKey`) saving one skips the "verify before
+save" step the Replicate/Runware keys get.
 
 ```bash
 make dev              # Vite :5173 + editor Worker :8787
