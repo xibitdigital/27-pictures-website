@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Save, Settings2 } from "@lucide/vue";
+import { Layers, Save, Settings2 } from "@lucide/vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import {
@@ -851,6 +851,14 @@ function requestRemove(): void {
   confirmingRemove.value = true;
 }
 
+/** Trash icon on a selected bubble (EditorCaptionLayer) — same confirm dialog as the Delete key
+ * or the inspector's "Delete bubble" button, just selecting the bubble first in case a click
+ * landed on one that wasn't already selected. */
+function onCaptionLayerRemove(id: string): void {
+  selectedId.value = id;
+  requestRemove();
+}
+
 function onRemoveKey(ev: KeyboardEvent): void {
   if (ev.key !== "Delete" && ev.key !== "Backspace") return;
   if (ev.defaultPrevented || ev.repeat) return;
@@ -902,6 +910,10 @@ async function onRemove(): Promise<void> {
       :visibility="toon ? visibilityFromStatus(toon.status) : ''"
     >
       <template #actions>
+        <RouterLink v-if="toon?.seriesKey" class="editor-btn editor-btn--ghost" :to="`/series/${toon.seriesKey}`">
+          <Layers :size="16" :stroke-width="1.4" aria-hidden="true" />
+          Series
+        </RouterLink>
         <RouterLink class="editor-btn editor-btn--ghost" :to="`/${toonId}`">
           <Settings2 :size="16" :stroke-width="1.4" aria-hidden="true" />
           Meta
@@ -970,6 +982,7 @@ async function onRemove(): Promise<void> {
           @persist="onPersist"
           @add="onAdd"
           @tail="onTail"
+          @remove="onCaptionLayerRemove"
           @update-layout-tool="layoutTool = $event"
           @update-studio-mode="onUpdateStudioMode"
           @create-region="onCreateRegion"

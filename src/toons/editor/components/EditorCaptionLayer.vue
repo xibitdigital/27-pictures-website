@@ -13,6 +13,7 @@ import {
   ArrowUpLeft,
   ArrowUpRight,
   Circle,
+  Trash2,
 } from "@lucide/vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Component, type CSSProperties } from "vue";
 import WordCaption from "../../bookReader/captions/WordCaption.vue";
@@ -58,6 +59,7 @@ const emit = defineEmits<{
   persist: [id: string, x: number, y: number];
   add: [pos: { x: number; y: number }];
   tail: [id: string, tail: BubbleTail];
+  remove: [id: string];
 }>();
 
 const rootEl = ref<HTMLElement | null>(null);
@@ -181,6 +183,13 @@ function onTailClick(ev: Event, id: string, tail: BubbleTail): void {
   ev.stopPropagation();
   emit("select", id);
   emit("tail", id, tail);
+}
+
+function onDeleteClick(ev: Event, id: string): void {
+  ev.preventDefault();
+  ev.stopPropagation();
+  emit("select", id);
+  emit("remove", id);
 }
 
 function overlayBox(): ContentBox | null {
@@ -348,6 +357,17 @@ watch(
           <component :is="cell.icon" :size="14" :stroke-width="1.8" aria-hidden="true" />
         </button>
       </div>
+      <button
+        v-if="caption.bubbleId === selectedId && !dragging"
+        class="editor-icon-btn editor-bubble-delete"
+        type="button"
+        aria-label="Delete bubble"
+        title="Delete bubble"
+        @click="onDeleteClick($event, caption.bubbleId)"
+        @pointerdown.stop
+      >
+        <Trash2 :size="14" :stroke-width="1.8" aria-hidden="true" />
+      </button>
     </div>
   </div>
 </template>

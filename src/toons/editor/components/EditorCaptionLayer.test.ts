@@ -176,6 +176,24 @@ describe("EditorCaptionLayer", () => {
     wrapper.unmount();
   });
 
+  it("shows a delete button only on the selected bubble and emits select + remove", async () => {
+    const wrapper = mount(EditorCaptionLayer, {
+      props: {
+        pageNum: 1,
+        bubbles: [bubble({ id: "b1" }), bubble({ id: "b2" })],
+        selectedId: "b1",
+        imageEl: makeImage(),
+      },
+      attachTo: document.body,
+    });
+    await nextTick();
+    expect(wrapper.findAll(".editor-bubble-delete")).toHaveLength(1);
+    await wrapper.get(".editor-bubble-delete").trigger("click");
+    expect(wrapper.emitted("select")?.[0]).toEqual(["b1"]);
+    expect(wrapper.emitted("remove")?.[0]).toEqual(["b1"]);
+    wrapper.unmount();
+  });
+
   it("rotates the tail ring with the bubble angle", async () => {
     const wrapper = mount(EditorCaptionLayer, {
       props: {

@@ -362,7 +362,7 @@ function onSubmit(): void {
 </script>
 
 <template>
-  <EditorDialog :open="open" title="Generate page" wide @update:open="(next) => !next && onCancel()">
+  <EditorDialog :open="open" title="Generate page" wide hide-close @update:open="(next) => !next && onCancel()">
     <form class="editor-dialog-form" @submit.prevent="onSubmit">
       <p class="editor-muted">{{ providerIntro }}</p>
       <p v-if="missingComfyFlow" class="editor-error" role="alert">

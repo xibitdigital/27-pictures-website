@@ -12,6 +12,7 @@
  * caller decides whether to actually act on it (e.g. GeneratePageDialog
  * ignores it while a generate request is in flight).
  */
+import { X } from "@lucide/vue";
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from "reka-ui";
 
 withDefaults(
@@ -24,14 +25,24 @@ withDefaults(
     preview?: boolean;
     /** More form fields than the default width comfortably fits (e.g. the plate picker + slot list in Generate page). */
     wide?: boolean;
+    /**
+     * Hides the corner X — only the two Generate dialogs (page/character) set this: closing them
+     * is a real decision (a running job, a typed prompt) already routed through their own
+     * Cancel/busy-guarded flow, not a stray click a corner icon invites.
+     */
+    hideClose?: boolean;
   }>(),
-  { alertdialog: false, preview: false, wide: false }
+  { alertdialog: false, preview: false, wide: false, hideClose: false }
 );
 
 const emit = defineEmits<{
   "update:open": [value: boolean];
   openAutoFocus: [event: Event];
 }>();
+
+function onClose(): void {
+  emit("update:open", false);
+}
 </script>
 
 <template>
@@ -47,6 +58,16 @@ const emit = defineEmits<{
       >
         <div class="editor-dialog" :data-preview="preview ? '' : undefined" :data-wide="wide ? '' : undefined">
           <div class="editor-dialog-body">
+            <button
+              v-if="!hideClose"
+              class="editor-icon-btn editor-dialog-close"
+              type="button"
+              aria-label="Close"
+              title="Close"
+              @click="onClose"
+            >
+              <X :size="16" :stroke-width="1.6" aria-hidden="true" />
+            </button>
             <DialogTitle as="h2">{{ title }}</DialogTitle>
             <slot />
           </div>

@@ -61,7 +61,10 @@ function mountStudio() {
         GeneratePageDialog: true,
         PlateCanvas: {
           props: ["bubbles"],
-          template: `<button type="button" name="pick-bubble" @click="$emit('select', bubbles[0].id)">pick</button>`,
+          template: `<div>
+            <button type="button" name="pick-bubble" @click="$emit('select', bubbles[0].id)">pick</button>
+            <button type="button" name="remove-bubble" @click="$emit('remove', bubbles[0].id)">trash</button>
+          </div>`,
         },
       },
     },
@@ -148,6 +151,20 @@ describe("PageStudio bubble delete", () => {
     expect(wrapper.text()).toContain("2 of 2");
     const ids = toon.pages[0].bubbles.map((b) => b.id);
     expect(ids).toEqual(["b2", "b1"]);
+    wrapper.unmount();
+  });
+
+  it("confirms from the canvas trash icon without needing the bubble already selected", async () => {
+    const wrapper = mountStudio();
+    await flushPromises();
+    // No selectBubble() first — the trash icon on an unselected bubble must select it too.
+    await wrapper.get('button[name="remove-bubble"]').trigger("click");
+    await flushPromises();
+    expect(document.querySelector(".editor-dialog")?.textContent).toContain("Delete this bubble?");
+    const ok = document.querySelector('button[name="confirm"]') as HTMLButtonElement;
+    ok.click();
+    await flushPromises();
+    expect(api.deleteBubble).toHaveBeenCalledWith("b1");
     wrapper.unmount();
   });
 

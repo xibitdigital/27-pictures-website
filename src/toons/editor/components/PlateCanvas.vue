@@ -55,6 +55,7 @@ const emit = defineEmits<{
   persist: [id: string, x: number, y: number];
   add: [pos: { x: number; y: number }];
   tail: [id: string, tail: BubbleTail];
+  remove: [id: string];
   "create-region": [geometry: RegionGeometry];
   "update-region-geometry": [id: string, geometry: RegionGeometry];
   "persist-region-geometry": [id: string, geometry: RegionGeometry];
@@ -123,6 +124,7 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
         @persist="(id, x, y) => emit('persist', id, x, y)"
         @add="emit('add', $event)"
         @tail="(id, tail) => emit('tail', id, tail)"
+        @remove="(id) => emit('remove', id)"
       />
       <GeometryLayer
         v-if="imgEl && kind === 'layout'"

@@ -1367,6 +1367,13 @@ body {
   overflow: auto;
 }
 
+.editor-dialog-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 2;
+}
+
 /* EditorDialog puts a DialogTitle + the caller's slot content as the two
    direct grid items here — a caller wrapping its fields in a real <form>
    (for Enter-to-submit) needs that form invisible to this grid so its own
@@ -1378,6 +1385,7 @@ body {
 
 .editor-dialog-body h2 {
   margin: 0;
+  padding-right: 1.75rem; /* clears the close (X) button in the corner */
   font-size: 1.25rem;
 }
 
@@ -1875,6 +1883,25 @@ body {
 
 .editor-tail-ring .editor-icon-btn[data-tail="none"] {
   place-self: start center;
+}
+
+/* Sits above the tail ring (which spans -2.5rem..+2.5rem around the bubble) so it never
+   overlaps the 3x3 tail-direction grid. */
+.editor-bubble-delete {
+  position: absolute;
+  top: -4.5rem;
+  right: -0.75rem;
+  z-index: 3;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.editor-bubble-delete:hover,
+.editor-bubble-delete:focus-visible {
+  color: var(--red-smile);
+  border-color: var(--red-smile);
+  opacity: 1;
 }
 
 .editor-inspector {

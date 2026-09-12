@@ -68,7 +68,7 @@ function onSubmit(): void {
 </script>
 
 <template>
-  <EditorDialog :open="open" title="Generate character" wide @update:open="(next) => !next && onCancel()">
+  <EditorDialog :open="open" title="Generate character" wide hide-close @update:open="(next) => !next && onCancel()">
     <form class="editor-dialog-form" @submit.prevent="onSubmit">
       <p class="editor-muted">
         Generates a text-to-image character for the “{{ slotLabel }}” slot — no reference images are sent, only the
