@@ -1,8 +1,8 @@
 import type { ComfyPhase } from "./comfyClient";
-import type { RunComfyModel } from "./apiTypes";
+import type { RunComfyModel, RunComfyModelCategory } from "./apiTypes";
 import type { Env } from "./types";
 
-export type { RunComfyModel };
+export type { RunComfyModel, RunComfyModelCategory };
 import { normaliseUserSecret } from "./userKeys";
 
 /**
@@ -79,14 +79,16 @@ export async function runComfySubmit(
   if (!runComfyToken(env)) return { ok: false, error: "RunComfy is not configured (RUNCOMFY_API_KEY missing)" };
   if (!input.model.trim()) return { ok: false, error: "series has no RunComfy model configured" };
   const refs = input.images.slice(0, MAX_REFS);
-  if (!refs.length) return { ok: false, error: "RunComfy needs at least one reference image" };
 
   const payload: Record<string, unknown> = {
     prompt: input.prompt,
-    image: refs,
     resolution: "1K",
     output_format: "png",
   };
+  // A text-to-image model (the series character generator) is called with no refs at all — its
+  // catalog entry never had an `image` input to begin with, so the key is omitted rather than
+  // sent empty (see runComfyListModels's `category` — image-to-image vs text-to-image).
+  if (refs.length) payload.image = refs;
   const aspectRatio = nearestAspectRatio(input.width, input.height);
   if (aspectRatio) payload.aspect_ratio = aspectRatio;
 
@@ -204,10 +206,11 @@ type CatalogModel = { model_id?: string; display_name?: string; categories?: str
  * such catalog endpoint to ask).
  */
 export async function runComfyListModels(
-  env: Env
+  env: Env,
+  category: RunComfyModelCategory = "image-to-image"
 ): Promise<{ ok: true; models: RunComfyModel[] } | { ok: false; error: string }> {
   if (!runComfyToken(env)) return { ok: false, error: "RunComfy is not configured (RUNCOMFY_API_KEY missing)" };
-  const res = await fetch(`${RUNCOMFY_BASE}/models?category=image-to-image&limit=100`, {
+  const res = await fetch(`${RUNCOMFY_BASE}/models?category=${category}&limit=100`, {
     headers: runComfyHeaders(env),
   });
   const text = await res.text();

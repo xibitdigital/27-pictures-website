@@ -266,6 +266,53 @@ export interface RunComfyModel {
   label: string;
 }
 
+/** RunComfy's own catalog `category` filter — the image-to-image list (existing page-generate
+ * picker) and the text-to-image list (character generator) are genuinely different sets. */
+export type RunComfyModelCategory = "image-to-image" | "text-to-image";
+
+/**
+ * Providers with a real text-to-image path for the series character generator (SeriesForm.vue's
+ * per-slot "Generate" button). Flux/Replicate are edit-only models here (flux-2-pro's multi-ref
+ * mode, Kontext, Seedream-4) with no verified prompt-only model id, so they're left out rather
+ * than guessed at — see runComfyClient.ts/runwareClient.ts and generateCharacter.ts.
+ */
+export type CharacterProvider = Extract<GenerateProvider, "runware" | "runcomfy">;
+
+/** One image ever generated for a series' character slots, kept even after the slot that used it
+ * is reassigned — mirrors ToonAsset's own append-only gallery, keyed by series instead of toon. */
+export interface SeriesCharacter {
+  id: string;
+  seriesKey: string;
+  prompt: string;
+  fileKey: string;
+  fileUrl: string | null;
+  width: number | null;
+  height: number | null;
+  provider: CharacterProvider;
+  model: string;
+  createdAt: string;
+}
+
+export type CharacterJobStatus = "running" | "done" | "error";
+
+/** `GET /series/:key/characters/jobs/:jobId` — polled the same way a page's `generation_jobs` row
+ * is, just scoped to a series slot instead of a toon page. */
+export interface CharacterJob {
+  id: string;
+  seriesKey: string;
+  slotAlias: string;
+  provider: CharacterProvider;
+  model: string;
+  prompt: string;
+  status: CharacterJobStatus;
+  error?: string | null;
+  fileKey?: string | null;
+  fileUrl?: string | null;
+  width?: number | null;
+  height?: number | null;
+  createdAt: string;
+}
+
 /** Any provider that skips the Comfy graph entirely and calls a hosted model directly with the prompt + reference sheets. */
 export function isDirectProvider(provider: GenerateProvider | string | null | undefined): boolean {
   return provider != null && provider !== "comfy";

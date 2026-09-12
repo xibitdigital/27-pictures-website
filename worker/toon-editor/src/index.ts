@@ -28,6 +28,7 @@ import {
   type ComfyGraph,
 } from "./comfyFlow";
 import { insertCreditEvent, loadUserCredits } from "./creditUsage";
+import { assignSlotFile, pollCharacterJob, startCharacterGenerate, type CharacterJobRow } from "./generateCharacter";
 import {
   generateCountFromJob,
   pollPageJob,
@@ -524,6 +525,24 @@ function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: Req
     generate: seriesGenerate(row, request, env),
     ownerId: row.owner_id || null,
     editorIds: row.editor_ids ? String(row.editor_ids).split(",") : [],
+  };
+}
+
+function mapCharacterJob(row: CharacterJobRow, request: RequestLike, env: Env): JsonRecord {
+  return {
+    id: row.id,
+    seriesKey: row.series_key,
+    slotAlias: row.slot_alias,
+    provider: row.provider,
+    model: row.model,
+    prompt: row.prompt,
+    status: row.status,
+    error: row.error,
+    fileKey: row.file_key,
+    fileUrl: row.file_key ? objectUrl(request, env, row.file_key, null) : null,
+    width: row.width,
+    height: row.height,
+    createdAt: row.created_at,
   };
 }
 
@@ -1081,7 +1100,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   // hand-maintained guess.
   if (isMethod(method, "GET") && path === "/runcomfy/models") {
     if (!session) return json({ error: "unauthorized" }, 401, cors);
-    const result = await runComfyListModels(await effectiveEnv(env, session.id));
+    const category =
+      new URL(request.url).searchParams.get("category") === "text-to-image" ? "text-to-image" : "image-to-image";
+    const result = await runComfyListModels(await effectiveEnv(env, session.id), category);
     if (!result.ok) return json({ error: result.error }, 502, cors);
     return json(result.models, 200, cors);
   }
@@ -1419,6 +1440,127 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       .bind(key)
       .first();
     return json(mapSeries(row, request, env), 200, cors);
+  }
+
+  const seriesCharGenerateMatch = path.match(/^\/series\/([^/]+)\/characters\/generate$/);
+  if (isMethod(method, "POST") && seriesCharGenerateMatch) {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
+    const key = seriesCharGenerateMatch[1];
+    if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
+    const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const parsed = await readJson(request);
+    if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
+    const prompt = String(parsed.body.prompt || "").trim();
+    if (!prompt) return json({ error: "prompt is required" }, 400, cors);
+    const slotAlias = String(parsed.body.slotAlias || "").trim();
+    if (!slotAlias) return json({ error: "slotAlias is required" }, 400, cors);
+    const extra = parseToonExtra(current);
+    const generate = parseGenerateConfig(extra.generate);
+    if (generate.provider !== "runware" && generate.provider !== "runcomfy") {
+      return json({ error: "character generation needs a Runware or RunComfy provider on this series" }, 400, cors);
+    }
+    if (!generate.slots.some((slot) => slot.alias === slotAlias)) {
+      return json({ error: "unknown slot" }, 400, cors);
+    }
+    const model = String(parsed.body.model || generate.model || "").trim();
+    if (!model) return json({ error: "series has no model configured" }, 400, cors);
+    const started = await startCharacterGenerate(await effectiveEnv(env, session.id), current, generate, {
+      prompt,
+      slotAlias,
+      provider: generate.provider,
+      model,
+    });
+    if (!started.ok) return json({ error: started.error }, started.status, cors);
+    return json(mapCharacterJob(started.job, request, env), 200, cors);
+  }
+
+  const seriesCharJobMatch = path.match(/^\/series\/([^/]+)\/characters\/jobs\/([^/]+)$/);
+  if (isMethod(method, "GET") && seriesCharJobMatch) {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
+    const key = seriesCharJobMatch[1];
+    const jobId = seriesCharJobMatch[2];
+    const job = await env.DB.prepare("SELECT * FROM character_jobs WHERE id = ? AND series_key = ?")
+      .bind(jobId, key)
+      .first<CharacterJobRow>();
+    if (!job) return json({ error: "not found" }, 404, cors);
+    const wasRunning = job.status === "running";
+    const polled = wasRunning
+      ? await pollCharacterJob(await effectiveEnv(env, session.id), job)
+      : { ok: true as const, job };
+    if (!polled.ok) return json({ error: polled.error }, polled.status, cors);
+    const body: JsonRecord = mapCharacterJob(polled.job, request, env);
+    if (wasRunning && polled.job.status === "done" && "characterFileKey" in polled && polled.characterFileKey) {
+      const currentSeries = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
+      if (currentSeries) {
+        const extra = parseToonExtra(currentSeries);
+        const generate = parseGenerateConfig(extra.generate);
+        generate.slots = assignSlotFile(generate.slots, job.slot_alias, polled.characterFileKey);
+        extra.generate = generate;
+        await env.DB.prepare(`UPDATE series SET extra_json = ?, updated_at = ? WHERE key = ?`)
+          .bind(JSON.stringify(extra), nowIso(), key)
+          .run();
+        const row = await env.DB.prepare(
+          `SELECT series.*,
+                  (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+                  (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
+           FROM series WHERE key = ?`
+        )
+          .bind(key)
+          .first();
+        body.series = mapSeries(row, request, env);
+      }
+      body.character = {
+        id: polled.characterId,
+        seriesKey: key,
+        prompt: job.prompt,
+        fileKey: polled.characterFileKey,
+        fileUrl: objectUrl(request, env, polled.characterFileKey, null),
+        width: polled.characterWidth ?? null,
+        height: polled.characterHeight ?? null,
+        provider: job.provider,
+        model: job.model,
+        createdAt: polled.characterCreatedAt,
+      };
+    }
+    return json(body, 200, cors);
+  }
+
+  const seriesCharactersMatch = path.match(/^\/series\/([^/]+)\/characters$/);
+  if (isMethod(method, "GET") && seriesCharactersMatch) {
+    if (!session) return json({ error: "unauthorized" }, 401, cors);
+    const key = seriesCharactersMatch[1];
+    const rows = (
+      await env.DB.prepare("SELECT * FROM series_characters WHERE series_key = ? ORDER BY created_at DESC")
+        .bind(key)
+        .all()
+    ).results as {
+      id: string;
+      series_key: string;
+      prompt: string;
+      file_key: string;
+      width: number | null;
+      height: number | null;
+      provider: string;
+      model: string;
+      created_at: string;
+    }[];
+    return json(
+      rows.map((row) => ({
+        id: row.id,
+        seriesKey: row.series_key,
+        prompt: row.prompt,
+        fileKey: row.file_key,
+        fileUrl: objectUrl(request, env, row.file_key, null),
+        width: row.width,
+        height: row.height,
+        provider: row.provider,
+        model: row.model,
+        createdAt: row.created_at,
+      })),
+      200,
+      cors
+    );
   }
 
   const seriesOneMatch = path.match(/^\/series\/([^/]+)$/);

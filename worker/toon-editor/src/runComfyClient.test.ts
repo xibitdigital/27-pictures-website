@@ -37,16 +37,19 @@ describe("runComfySubmit", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("errors with no reference images", async () => {
-    const fetchMock = vi.fn();
+  it("omits the image field for a text-to-image call with no reference images", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ request_id: "req-t2i" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     const out = await runComfySubmit(env({ RUNCOMFY_API_KEY: "k" }), {
       prompt: "p",
       images: [],
       model: "bytedance/seedream-5.0-pro",
     });
-    expect(out).toEqual({ ok: false, error: "RunComfy needs at least one reference image" });
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(out).toEqual({ ok: true, id: "req-t2i", pollingUrl: "req-t2i" });
+    const body = JSON.parse(String((fetchMock.mock.calls[0][1] as RequestInit).body));
+    expect(body.image).toBeUndefined();
   });
 
   it("posts to /models/{model_id} verbatim (no extra mode segment) with a Bearer key and the nearest portrait aspect_ratio", async () => {
@@ -287,6 +290,15 @@ describe("runComfyListModels", () => {
         { id: "no-name/x", label: "no-name/x" },
       ],
     });
+  });
+
+  it("GETs the text-to-image catalog when asked (character generator's model picker)", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ models: [] }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await runComfyListModels(env({ RUNCOMFY_API_KEY: "k" }), "text-to-image");
+    expect(String(fetchMock.mock.calls[0][0])).toBe(
+      "https://model-api.runcomfy.net/v1/models?category=text-to-image&limit=100"
+    );
   });
 
   it("maps a 401 to a key-rejected error", async () => {

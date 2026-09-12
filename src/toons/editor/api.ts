@@ -1,5 +1,7 @@
 import type {
   BubbleRecord,
+  CharacterJob,
+  CharacterProvider,
   CreditsSnapshot,
   EditorUser,
   InviteUserInput,
@@ -10,6 +12,8 @@ import type {
   RegionRecord,
   RegionShapeType,
   RunComfyModel,
+  RunComfyModelCategory,
+  SeriesCharacter,
   SeriesInput,
   SeriesOption,
   ToonAsset,
@@ -148,10 +152,11 @@ export function fetchCredits(): Promise<CreditsSnapshot> {
   return api<CreditsSnapshot>("/credits");
 }
 
-/** Real, currently-available RunComfy image-to-image models, from its own catalog — not a
- * hand-curated list like RUNWARE_MODELS. */
-export function listRunComfyModels(): Promise<RunComfyModel[]> {
-  return api<RunComfyModel[]>("/runcomfy/models");
+/** Real, currently-available RunComfy models from its own catalog — not a hand-curated list like
+ * RUNWARE_MODELS. Defaults to the image-to-image list (the existing page-generate picker);
+ * the character generator asks for "text-to-image" instead. */
+export function listRunComfyModels(category?: RunComfyModelCategory): Promise<RunComfyModel[]> {
+  return api<RunComfyModel[]>(`/runcomfy/models${category ? `?category=${category}` : ""}`);
 }
 
 export function getUserKeys(): Promise<UserKeyStatus> {
@@ -217,6 +222,26 @@ export function uploadSeriesRef(key: string, alias: string, file: File): Promise
   body.set("alias", alias);
   body.set("file", file);
   return api<SeriesOption>(`/series/${key}/refs`, { method: "POST", body });
+}
+
+/** Kicks off a text-to-image character generation for one reference slot — Runware/RunComfy only. */
+export function generateCharacter(
+  seriesKey: string,
+  payload: { prompt: string; slotAlias: string; provider: CharacterProvider; model: string }
+): Promise<CharacterJob> {
+  return api<CharacterJob>(`/series/${seriesKey}/characters/generate`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/** Poll result also carries `series`/`character` once the job is done — the slot is already
+ * assigned server-side by then, same as `uploadSeriesRef`'s response. */
+export function getCharacterJob(
+  seriesKey: string,
+  jobId: string
+): Promise<CharacterJob & { series?: SeriesOption; character?: SeriesCharacter }> {
+  return api(`/series/${seriesKey}/characters/jobs/${jobId}`);
 }
 
 export function createToon(input: ToonMetaInput): Promise<ToonRecord> {

@@ -3,6 +3,8 @@ import { BookPlus, FolderPlus, Save } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import {
+  generateCharacter,
+  getCharacterJob,
   getSeries,
   listRunComfyModels,
   listUsers,
@@ -23,6 +25,7 @@ import {
   RUNWARE_MODELS,
   visibilityFromStatus,
   visibilityLabel,
+  type CharacterProvider,
   type DescriptionMap,
   type EditorUser,
   type GenerateProvider,
@@ -33,6 +36,7 @@ import {
   type ToonListItem,
 } from "../types";
 import EditorBar from "./EditorBar.vue";
+import GenerateCharacterDialog from "./GenerateCharacterDialog.vue";
 import TranslateField from "./TranslateField.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 import ToonCard from "./ToonCard.vue";
@@ -332,6 +336,91 @@ async function onSlotFile(index: number, ev: Event): Promise<void> {
   }
 }
 
+/** Character generation is text-to-image only — Flux/Replicate here are edit-only models with no
+ * verified prompt-only id, so the "Generate" button only appears for Runware/RunComfy. */
+const characterProvider = computed<CharacterProvider | null>(() =>
+  provider.value === "runware" || provider.value === "runcomfy" ? provider.value : null
+);
+const canGenerateCharacter = computed(() => characterProvider.value != null);
+const characterDialogSlotIndex = ref<number | null>(null);
+const characterBusy = ref(false);
+const characterStatus = ref("");
+
+function openCharacterDialog(index: number): void {
+  const alias = slots.value[index]?.alias.trim();
+  if (!alias) {
+    pushToast("Give this slot a name before generating a character for it.");
+    return;
+  }
+  if (isCreate.value || !existing.value) {
+    pushToast("Save the series first, then generate a character.");
+    return;
+  }
+  characterDialogSlotIndex.value = index;
+}
+
+function closeCharacterDialog(): void {
+  if (characterBusy.value) return;
+  characterDialogSlotIndex.value = null;
+}
+
+async function onCharacterSubmit(payload: { prompt: string; model: string }): Promise<void> {
+  const index = characterDialogSlotIndex.value;
+  const genProvider = characterProvider.value;
+  if (index == null || !existing.value || !genProvider) return;
+  const alias = slots.value[index].alias.trim();
+  characterBusy.value = true;
+  const started = Date.now();
+  const clock = (): string => {
+    const s = Math.floor((Date.now() - started) / 1000);
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  };
+  const setStatus = (label: string): void => {
+    characterStatus.value = `${label} · ${clock()}`;
+  };
+  setStatus("Queuing…");
+  const tick = window.setInterval(() => {
+    const current = characterStatus.value.replace(/ · \d+:\d+$/, "");
+    setStatus(current || "Generating…");
+  }, 1000);
+  try {
+    const job = await generateCharacter(existing.value.key, {
+      prompt: payload.prompt,
+      slotAlias: alias,
+      provider: genProvider,
+      model: payload.model,
+    });
+    setStatus("Generating…");
+    const deadline = Date.now() + 10 * 60 * 1000;
+    while (Date.now() < deadline) {
+      const snap = await getCharacterJob(existing.value.key, job.id);
+      if (snap.status === "done") {
+        if (snap.series) existing.value = snap.series;
+        if (snap.character) {
+          slots.value[index] = {
+            ...slots.value[index],
+            fileKey: snap.character.fileKey,
+            fileUrl: snap.character.fileUrl,
+          };
+        }
+        characterDialogSlotIndex.value = null;
+        return;
+      }
+      if (snap.status === "error") {
+        pushToast(snap.error || "Character generation failed");
+        return;
+      }
+      await new Promise((resolve) => window.setTimeout(resolve, 1500));
+    }
+    pushToast("Timed out waiting for the character generation");
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Character generation failed");
+  } finally {
+    window.clearInterval(tick);
+    characterBusy.value = false;
+  }
+}
+
 function onCover(ev: Event): void {
   const input = ev.target as HTMLInputElement;
   const file = input.files?.[0] || null;
@@ -562,7 +651,16 @@ async function onSubmit(ev: Event): Promise<void> {
                   >
                     Attach
                   </button>
-                  <span v-else class="editor-muted">Last plate</span>
+                  <button
+                    v-if="slot.kind !== 'previous' && canGenerateCharacter"
+                    class="editor-btn editor-btn--ghost"
+                    type="button"
+                    :name="`slot-generate-${index}`"
+                    @click="openCharacterDialog(index)"
+                  >
+                    Generate
+                  </button>
+                  <span v-if="slot.kind === 'previous'" class="editor-muted">Last plate</span>
                 </span>
                 <button
                   v-if="slot.fileUrl"
@@ -675,5 +773,16 @@ async function onSubmit(ev: Event): Promise<void> {
     >
       <img v-if="previewSlot?.fileUrl" data-slot-preview :src="previewSlot.fileUrl" alt="" />
     </EditorDialog>
+    <GenerateCharacterDialog
+      v-if="characterDialogSlotIndex !== null && characterProvider"
+      :open="true"
+      :slot-label="slots[characterDialogSlotIndex]?.label || slots[characterDialogSlotIndex]?.alias || 'character'"
+      :provider="characterProvider"
+      :runware-model="model"
+      :busy="characterBusy"
+      :status="characterStatus"
+      @close="closeCharacterDialog"
+      @submit="onCharacterSubmit"
+    />
   </div>
 </template>
