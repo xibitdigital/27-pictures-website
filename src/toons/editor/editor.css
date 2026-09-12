@@ -404,6 +404,16 @@ body {
   border-color: var(--border-light);
 }
 
+/* Overrides the base .editor-btn:hover's solid fill — a secondary/ghost action reading as a
+   fully solid primary button on hover looked like it had been promoted to primary; a low-opacity
+   tint keeps the hover feedback without that. */
+.editor-btn--ghost:hover,
+.editor-btn--ghost:focus-visible {
+  background: color-mix(in srgb, var(--editor-primary) 18%, transparent);
+  border-color: var(--editor-primary);
+  color: var(--text);
+}
+
 /* Actually destructive confirms only (ConfirmDialog's Confirm button — remove user, delete
    page/bubble/region) keep the brand red as a real warning color, unlike every other primary
    button (Save/Create/Generate), which now uses --editor-primary instead. */
