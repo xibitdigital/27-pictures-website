@@ -20,6 +20,9 @@ const props = withDefaults(
     visibility?: ToonVisibility | "";
     shareHref?: string;
     add?: boolean;
+    /** .series-card's red top rule is a public-site brand accent (public/styles.css) — the
+     * studio's own card grids (episode lists, series list) don't carry it. */
+    accent?: boolean;
   }>(),
   {
     meta: "",
@@ -31,6 +34,7 @@ const props = withDefaults(
     visibility: "",
     shareHref: "",
     add: false,
+    accent: false,
   }
 );
 
@@ -52,7 +56,7 @@ async function onShare(ev: Event): Promise<void> {
   <component
     :is="to ? RouterLink : 'div'"
     class="series-card"
-    :class="{ 'series-card--add': add }"
+    :class="{ 'series-card--add': add, 'series-card--no-accent': !accent }"
     :to="to || undefined"
     :aria-label="add ? title : undefined"
   >

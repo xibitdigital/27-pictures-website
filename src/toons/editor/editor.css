@@ -31,9 +31,9 @@ body {
 }
 
 /* .series-card is shared with the public site (public/styles.css) — its red top rule is a site
-   brand accent, not something the studio's own card grids (episode lists, series list) should
-   carry. Scoped here so the public site keeps the line; only the editor drops it. */
-.editor-shell .series-card {
+   brand accent. ToonCard.vue's `accent` prop (default false, since every ToonCard usage is in
+   this studio) opts back in; nothing does today. */
+.series-card--no-accent {
   border-top: none;
 }
 
