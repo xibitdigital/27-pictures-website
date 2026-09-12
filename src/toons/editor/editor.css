@@ -751,8 +751,8 @@ body {
 .editor-inspector textarea:focus-visible,
 .editor-gate input:focus-visible,
 .editor-dialog-body textarea:focus-visible {
-  border-color: var(--red-smile);
-  outline: 2px solid var(--red-smile);
+  border-color: var(--editor-primary);
+  outline: 2px solid var(--editor-primary);
   outline-offset: 1px;
 }
 
@@ -789,8 +789,8 @@ body {
 
 .editor-select-trigger:focus-visible,
 .editor-select-trigger[data-state="open"] {
-  border-color: var(--red-smile);
-  outline: 2px solid var(--red-smile);
+  border-color: var(--editor-primary);
+  outline: 2px solid var(--editor-primary);
   outline-offset: 1px;
 }
 
@@ -834,7 +834,7 @@ body {
 }
 
 .editor-select-item[data-highlighted] {
-  background: var(--red-smile);
+  background: var(--editor-primary);
   color: #fff;
   outline: none;
 }
@@ -887,7 +887,7 @@ body {
 .editor-form input[type="file"]::file-selector-button:hover,
 .editor-form input[type="file"]::file-selector-button:focus-visible {
   color: var(--text);
-  border-color: var(--red-smile);
+  border-color: var(--editor-primary);
 }
 
 .editor-pair-row {
@@ -1673,13 +1673,13 @@ body {
 }
 
 .editor-checkbox-root:focus-visible {
-  outline: 2px solid var(--red-smile);
+  outline: 2px solid var(--editor-primary);
   outline-offset: 1px;
 }
 
 .editor-checkbox-root[data-state="checked"] {
-  background: var(--red-smile);
-  border-color: var(--red-smile);
+  background: var(--editor-primary);
+  border-color: var(--editor-primary);
 }
 
 .editor-checkbox-root[data-disabled] {
