@@ -955,7 +955,7 @@ body {
   background: var(--border-light);
   border: none;
   border-radius: 999px;
-  accent-color: var(--red-smile);
+  accent-color: var(--editor-primary);
 }
 
 .editor-form input[type="range"]::-webkit-slider-thumb,
@@ -965,7 +965,7 @@ body {
   height: 0.9rem;
   border: none;
   border-radius: 50%;
-  background: var(--red-smile);
+  background: var(--editor-primary);
   cursor: pointer;
 }
 
@@ -983,7 +983,7 @@ body {
   height: 0.9rem;
   border: none;
   border-radius: 50%;
-  background: var(--red-smile);
+  background: var(--editor-primary);
   cursor: pointer;
 }
 

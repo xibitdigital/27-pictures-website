@@ -138,6 +138,20 @@ above — the difference is one `variant` prop (`"primary"` default, `"ghost"`, 
 second copy of the class list. It renders a `<button>` or, when a `to` prop is passed, a
 `RouterLink` — so a nav-bar CTA and a form's submit button are the same component. Add a new
 danger-styled button by passing `variant="danger"`, never by writing the class string again.
+Same reasoning for `EditorChoiceCard.vue` (the Upload/Generate/Layout/Gallery tiles in
+`PageFilmstrip.vue`'s "Add page" dialog and `RegionAssignDialog.vue`) — one `.editor-add-page-choice`
+wrapper instead of every picker dialog repeating that class.
+
+**Every editor primary/CTA is `--editor-primary` (blue), never `--red-smile`.** Red is reserved
+for genuinely destructive actions (`.editor-btn--danger`, delete/remove icons) — see the
+`--editor-primary` comment in Available CSS Variables above. This also covers range-input thumbs
+(`accent-color`, `::-webkit-slider-thumb`, `::-moz-range-thumb`) and any hover/focus/"included"
+highlight in the studio; a new interactive accent color there should default to
+`--editor-primary`, not brand red, unless the action it marks is actually destructive.
+
+`ToonCard.vue`'s red top rule (shared `.series-card` styling with the public site,
+`public/styles.css`) is opt-in via an `accent` prop (default `false`) rather than an ambient
+selector override — every `ToonCard` usage is in this studio, and none opt in today.
 
 ## TypeScript Guidelines
 
