@@ -563,41 +563,43 @@ async function onSubmit(ev: Event): Promise<void> {
           </label>
           <p v-if="provider !== 'comfy'" class="editor-muted editor-form-span">{{ providerHint }}</p>
           <div class="editor-form-span editor-generate">
-            <p class="editor-generate-label">ComfyUI flow</p>
-            <p class="editor-muted">
-              One API-format graph for every page in this series (Save API / .api.json). Image 1…N follows the PIN
-              titles, not Comfy node ids — re-upload after changing wires. Previous plate last.
-            </p>
-            <label>
-              Flow (.api.json)
-              <input
-                type="file"
-                name="series-flow"
-                accept="application/json,.json"
-                :disabled="uploadingFlow"
-                @change="onFlow"
-              />
-            </label>
-            <p v-if="flowLabel" class="editor-muted">Uploaded: {{ flowLabel }}</p>
-            <p v-else class="editor-muted">No flow yet. Save the series, then upload the graph.</p>
-
-            <template v-if="promptCandidates.length">
-              <p class="editor-generate-label">Prompt goes into</p>
+            <template v-if="provider === 'comfy'">
+              <p class="editor-generate-label">ComfyUI flow</p>
               <p class="editor-muted">
-                Where the typed page prompt is written on generate. Pick the flow’s Prompt / Text node (the concatenate
-                PREFIX stays as FORMAT + PIN). Auto writes onto every Seedream node’s own
-                <code>prompt</code>.
+                One API-format graph for every page in this series (Save API / .api.json). Image 1…N follows the PIN
+                titles, not Comfy node ids — re-upload after changing wires. Previous plate last.
               </p>
-              <EditorSelect v-model="promptTargetKey" name="prompt-target" aria-label="Prompt target">
-                <EditorSelectItem value="">Auto (every Seedream node's prompt)</EditorSelectItem>
-                <EditorSelectItem
-                  v-for="c in promptCandidates"
-                  :key="candidateKey(c.nodeId, c.inputKey)"
-                  :value="candidateKey(c.nodeId, c.inputKey)"
-                >
-                  {{ c.label }} — “{{ c.preview }}”
-                </EditorSelectItem>
-              </EditorSelect>
+              <label>
+                Flow (.api.json)
+                <input
+                  type="file"
+                  name="series-flow"
+                  accept="application/json,.json"
+                  :disabled="uploadingFlow"
+                  @change="onFlow"
+                />
+              </label>
+              <p v-if="flowLabel" class="editor-muted">Uploaded: {{ flowLabel }}</p>
+              <p v-else class="editor-muted">No flow yet. Save the series, then upload the graph.</p>
+
+              <template v-if="promptCandidates.length">
+                <p class="editor-generate-label">Prompt goes into</p>
+                <p class="editor-muted">
+                  Where the typed page prompt is written on generate. Pick the flow’s Prompt / Text node (the
+                  concatenate PREFIX stays as FORMAT + PIN). Auto writes onto every Seedream node’s own
+                  <code>prompt</code>.
+                </p>
+                <EditorSelect v-model="promptTargetKey" name="prompt-target" aria-label="Prompt target">
+                  <EditorSelectItem value="">Auto (every Seedream node's prompt)</EditorSelectItem>
+                  <EditorSelectItem
+                    v-for="c in promptCandidates"
+                    :key="candidateKey(c.nodeId, c.inputKey)"
+                    :value="candidateKey(c.nodeId, c.inputKey)"
+                  >
+                    {{ c.label }} — “{{ c.preview }}”
+                  </EditorSelectItem>
+                </EditorSelect>
+              </template>
             </template>
 
             <p class="editor-generate-label">Reference slots</p>

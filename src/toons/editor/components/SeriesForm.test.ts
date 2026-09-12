@@ -37,6 +37,19 @@ describe("SeriesForm", () => {
     expect(wrapper.get('a[href="/new?series=erin&episode=2"]').text()).toContain("New toon");
   });
 
+  it("hides the ComfyUI flow section for a non-comfy provider, keeps Reference slots visible", async () => {
+    const wrapper = mount(SeriesForm, {
+      attachTo: document.body,
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true } },
+    });
+    expect(wrapper.find('input[name="series-flow"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain("Reference slots");
+    await pickOption("generate-provider", "Runware (pick model above)");
+    expect(wrapper.find('input[name="series-flow"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("Reference slots");
+    wrapper.unmount();
+  });
+
   it("puts a new series and sends the key", async () => {
     const save = vi.spyOn(api, "saveSeries").mockResolvedValue({
       key: "red-smile",
