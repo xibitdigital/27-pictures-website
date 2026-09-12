@@ -343,13 +343,18 @@ const canSubmit = computed(
 
 function onSubmit(): void {
   if (!canSubmit.value) return;
+  // Unchecking "Include previous page" must actually stop it from being sent — the server fills
+  // the "previous" slot from previousPageId/previousRegionId directly, with no gate of its own on
+  // this checkbox, so a plate/file picked earlier has to be nulled out here, not just left
+  // "unincluded" while its id is still sitting in this dialog's own state.
+  const sendPrevious =
+    includePrevious.value && Boolean(previousPageId.value || previousRegionId.value || previousFile.value);
   emit("submit", {
     prompt: prompt.value.trim(),
-    includePrevious:
-      includePrevious.value && Boolean(previousPageId.value || previousRegionId.value || previousFile.value),
-    previousPageId: previousPageId.value || null,
-    previousRegionId: previousRegionId.value || null,
-    previousFile: previousFile.value,
+    includePrevious: sendPrevious,
+    previousPageId: sendPrevious ? previousPageId.value || null : null,
+    previousRegionId: sendPrevious ? previousRegionId.value || null : null,
+    previousFile: sendPrevious ? previousFile.value : null,
     count: Number(count.value) || 1,
     excludeAliases: isDirectProvider.value ? [...excludedAliases.value] : [],
   });

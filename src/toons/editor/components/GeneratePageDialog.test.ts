@@ -157,6 +157,50 @@ describe("GeneratePageDialog previous-plate override", () => {
     wrapper.unmount();
   });
 
+  it("stops sending the previous plate once include-previous is unchecked again", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: {
+        open: false,
+        generate: generateWithPrevious,
+        pages: [{ id: "p1", position: 0, fileUrl: "/p1.webp" }],
+        busy: false,
+        status: "",
+      },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    const includePrevious = document.querySelector('[name="include-previous"]') as HTMLElement;
+    includePrevious.click();
+    await flushPromises();
+    (document.querySelector('button[aria-label="Page 1"]') as HTMLElement).click();
+    await flushPromises();
+    includePrevious.click(); // uncheck — the picked plate must not still be attached
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.value = "Erin walks in.";
+    textarea.dispatchEvent(new Event("input"));
+    await flushPromises();
+    (document.querySelector("form") as HTMLFormElement).dispatchEvent(
+      new Event("submit", { bubbles: true, cancelable: true })
+    );
+    await flushPromises();
+    expect(wrapper.emitted("submit")).toEqual([
+      [
+        {
+          prompt: "Erin walks in.",
+          includePrevious: false,
+          previousPageId: null,
+          previousRegionId: null,
+          previousFile: null,
+          count: 1,
+          excludeAliases: [],
+        },
+      ],
+    ]);
+    wrapper.unmount();
+  });
+
   it("remembers the last plate pick when the dialog is reopened", async () => {
     const wrapper = mount(GeneratePageDialog, {
       props: {
