@@ -20,6 +20,12 @@ export type CharacterJobRow = {
   status: string;
   error: string | null;
   poll_id: string | null;
+  /** Runware answers submit synchronously — the image is often already in that response. Stashed
+   * here so pollCharacterJob can use it directly instead of runwareResult's getResponse poll,
+   * which (per runwareClient.ts's own comment) doesn't reliably track a sync-delivered task and
+   * would otherwise loop "running" forever — same fix generatePage.ts's resolvedImages already
+   * applies for page generation. Always null for RunComfy (genuinely async). */
+  resolved_image_url: string | null;
   file_key: string | null;
   width: number | null;
   height: number | null;
@@ -51,6 +57,7 @@ export async function startCharacterGenerate(
   input: { prompt: string; slotAlias: string; provider: CharacterProvider; model: string }
 ): Promise<{ ok: true; job: CharacterJobRow } | { ok: false; error: string; status: number }> {
   let pollingId: string;
+  let resolvedImageUrl: string | null = null;
   if (input.provider === "runware") {
     const submitted = await runwareSubmit(env, {
       prompt: input.prompt,
@@ -61,6 +68,7 @@ export async function startCharacterGenerate(
     });
     if (!submitted.ok) return { ok: false, error: submitted.error, status: 502 };
     pollingId = submitted.pollingUrl;
+    resolvedImageUrl = submitted.imageUrl || null;
   } else {
     const submitted = await runComfySubmit(env, {
       prompt: input.prompt,
@@ -76,10 +84,21 @@ export async function startCharacterGenerate(
   const id = crypto.randomUUID();
   const ts = nowIso();
   await env.DB.prepare(
-    `INSERT INTO character_jobs (id, series_key, slot_alias, provider, model, prompt, status, error, poll_id, file_key, width, height, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, 'running', NULL, ?, NULL, NULL, NULL, ?, ?)`
+    `INSERT INTO character_jobs (id, series_key, slot_alias, provider, model, prompt, status, error, poll_id, resolved_image_url, file_key, width, height, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, 'running', NULL, ?, ?, NULL, NULL, NULL, ?, ?)`
   )
-    .bind(id, series.key, input.slotAlias, input.provider, input.model, input.prompt, pollingId, ts, ts)
+    .bind(
+      id,
+      series.key,
+      input.slotAlias,
+      input.provider,
+      input.model,
+      input.prompt,
+      pollingId,
+      resolvedImageUrl,
+      ts,
+      ts
+    )
     .run();
   const job = await env.DB.prepare("SELECT * FROM character_jobs WHERE id = ?").bind(id).first<CharacterJobRow>();
   if (!job) return { ok: false, error: "could not create job", status: 500 };
@@ -133,7 +152,12 @@ export async function pollCharacterJob(
   if (job.status !== "running" || !job.poll_id) return { ok: true, job };
 
   const isRunware = job.provider === "runware";
-  const result = isRunware ? await runwareResult(env, job.poll_id) : await runComfyResult(env, job.poll_id, []);
+  const result =
+    isRunware && job.resolved_image_url
+      ? { ok: true as const, phase: "done" as const, imageUrl: job.resolved_image_url }
+      : isRunware
+        ? await runwareResult(env, job.poll_id)
+        : await runComfyResult(env, job.poll_id, []);
   if (!result.ok) {
     await env.DB.prepare(`UPDATE character_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
       .bind(result.error, nowIso(), job.id)
