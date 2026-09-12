@@ -13,6 +13,12 @@ interface ImportMetaEnv {
    * Shown under the FlipFrame name on cover / guide.
    */
   readonly VITE_FLIPFRAME_BUILD?: string;
+  /**
+   * Toon editor build stamp, yy.mm.dd.hh.mm (UTC) — computed at build time (vite.config.ts).
+   * Shown in Settings; also the value src/toons/editor/updateCheck.ts compares against
+   * dist/toons/editor/version.json to detect a newer deploy while the tab is open.
+   */
+  readonly VITE_EDITOR_BUILD?: string;
 }
 
 interface ImportMeta {

@@ -2,6 +2,7 @@
 import { RouterView } from "vue-router";
 import AuthGate from "./AuthGate.vue";
 import EditorToasts from "./components/EditorToasts.vue";
+import UpdateAvailableDialog from "./components/UpdateAvailableDialog.vue";
 </script>
 
 <template>
@@ -11,4 +12,5 @@ import EditorToasts from "./components/EditorToasts.vue";
     </div>
   </AuthGate>
   <EditorToasts />
+  <UpdateAvailableDialog />
 </template>

@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { cdnMediaPlugin } from "./vite/plugins/cdnMedia";
 import { toonConfigDevPlugin } from "./vite/plugins/toonConfigDev";
+import { editorVersionFile } from "./vite/plugins/editorVersion";
 import { hashedCss } from "./vite/plugins/hashedCss";
 import { generateLocalePages, localePagesPlugin } from "./vite/plugins/localePages";
 import { toonSsrDevPlugin } from "./vite/plugins/toonSsrDev";
@@ -58,6 +59,23 @@ function flipframeBuildId(): string {
 const flipframeBuild = flipframeBuildId();
 
 /**
+ * Toon editor build stamp — yy.mm.dd.hh.mm (UTC), computed once per build/dev-server start.
+ * Shown in Settings and used by src/toons/editor/updateCheck.ts to detect a newer deploy (compared
+ * against dist/toons/editor/version.json, written by vite/plugins/editorVersion.ts). A timestamp
+ * rather than a git SHA — the editor is redeployed far more often than committed to, so "when was
+ * this built" is the more useful signal here, unlike FlipFrame's reader-facing build id above.
+ */
+function editorBuildStamp(): string {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(d.getUTCFullYear() % 100)}.${pad(d.getUTCMonth() + 1)}.${pad(d.getUTCDate())}.${pad(
+    d.getUTCHours()
+  )}.${pad(d.getUTCMinutes())}`;
+}
+
+const editorBuild = editorBuildStamp();
+
+/**
  * Multi-page Vue + TypeScript frontend.
  *
  *   src/       Vite root (HTML entries + app code)
@@ -76,6 +94,7 @@ export default defineConfig({
   appType: "mpa",
   define: {
     "import.meta.env.VITE_FLIPFRAME_BUILD": JSON.stringify(flipframeBuild),
+    "import.meta.env.VITE_EDITOR_BUILD": JSON.stringify(editorBuild),
   },
   plugins: [
     // HTTPS is opt-in: `DEV_HTTPS=1 make dev`.
@@ -100,6 +119,7 @@ export default defineConfig({
     cdnMediaPlugin(distDir),
     localePagesPlugin(srcDir),
     toonSsrDevPlugin(),
+    editorVersionFile(editorBuild),
     // Runs last: it rewrites the HTML cdnMediaPlugin has already touched.
     hashedCss(),
   ],

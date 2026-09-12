@@ -15,6 +15,8 @@ const draft = reactive<Record<UserKeyName, string>>({
   runcomfyApiToken: "",
 });
 const savingKey = ref<UserKeyName | null>(null);
+/** yy.mm.dd.hh.mm, baked in at build time (vite.config.ts's VITE_EDITOR_BUILD). */
+const buildStamp = (import.meta.env.VITE_EDITOR_BUILD || "").trim();
 
 onMounted(async () => {
   try {
@@ -107,6 +109,10 @@ async function onClear(name: UserKeyName): Promise<void> {
               </span>
             </li>
           </ul>
+        </section>
+        <section v-if="buildStamp">
+          <h2 class="editor-list-heading">Build</h2>
+          <p class="editor-muted">{{ buildStamp }}</p>
         </section>
       </div>
     </div>
