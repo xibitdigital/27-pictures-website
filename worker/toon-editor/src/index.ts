@@ -873,13 +873,18 @@ async function sha256Hex(buffer: ArrayBuffer): Promise<string> {
 }
 
 async function loadToon(env: Env, request: Request, id: string) {
-  const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>();
+  // None of these four depend on each other's results (bubbles/regions join against `pages` by
+  // toon_id directly, not against the pageRows array) — running them concurrently instead of one
+  // after another is most of what makes "add a page" feel slow, since this is called on every
+  // page-add/replace/reorder to return the refreshed toon.
+  const [toon, pageRowsResult, bubbles, regions] = await Promise.all([
+    env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>(),
+    env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(id).all<PageRow>(),
+    bubblesByPageId(env, id),
+    regionsByPageId(env, id),
+  ]);
   if (!toon) return null;
-  const pageRows = (
-    await env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(id).all<PageRow>()
-  ).results;
-  const bubbles = await bubblesByPageId(env, id);
-  const regions = await regionsByPageId(env, id);
+  const pageRows = pageRowsResult.results;
   const pages = pageRows.map((page) =>
     mapPage(
       page,
@@ -2146,26 +2151,32 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     // a lot of pages that second reload was the main cost of "add layout page", not the upload itself.
     const rawKind = String(form.get("kind") || "");
     const kind = rawKind === "layout" ? "layout" : "plate";
-    const key = await putPageAsset(env, id, current.slug, upload, "page");
-    const posRow = await env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?")
-      .bind(id)
-      .first();
+    // The webp encode inside putPageAsset (wasm, real CPU time) and this position lookup don't
+    // depend on each other — running them together instead of one after another is most of what
+    // made "add page"/"add layout page" feel slow.
+    const [key, posRow] = await Promise.all([
+      putPageAsset(env, id, current.slug, upload, "page"),
+      env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?").bind(id).first(),
+    ]);
     const position = (posRow && Number(posRow.max_pos) > -1 ? Number(posRow.max_pos) : -1) + 1;
     const pageId = crypto.randomUUID();
-    await env.DB.prepare(
-      `INSERT INTO pages (id, toon_id, position, file_key, width, height, kind, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-    )
-      .bind(pageId, id, position, key, upload.width, upload.height, kind, nowIso())
-      .run();
     const stillDefault = current.design_width === 800 && current.design_height === 1424;
-    if (stillDefault && upload.width && upload.height && position === 0) {
-      await env.DB.prepare(`UPDATE toons SET design_width = ?, design_height = ?, updated_at = ? WHERE id = ?`)
-        .bind(upload.width, upload.height, nowIso(), id)
-        .run();
-    } else {
-      await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), id).run();
-    }
+    const updateToon =
+      stillDefault && upload.width && upload.height && position === 0
+        ? env.DB.prepare(`UPDATE toons SET design_width = ?, design_height = ?, updated_at = ? WHERE id = ?`)
+            .bind(upload.width, upload.height, nowIso(), id)
+            .run()
+        : env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), id).run();
+    // The page insert and the toon update touch different rows — no reason to serialize them either.
+    await Promise.all([
+      env.DB.prepare(
+        `INSERT INTO pages (id, toon_id, position, file_key, width, height, kind, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      )
+        .bind(pageId, id, position, key, upload.width, upload.height, kind, nowIso())
+        .run(),
+      updateToon,
+    ]);
     return json(await loadToon(env, request, id), 201, cors);
   }
 
