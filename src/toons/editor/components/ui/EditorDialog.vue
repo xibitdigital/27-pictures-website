@@ -14,6 +14,7 @@
  */
 import { X } from "@lucide/vue";
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from "reka-ui";
+import EditorIconButton from "./EditorIconButton.vue";
 
 withDefaults(
   defineProps<{
@@ -58,16 +59,15 @@ function onClose(): void {
       >
         <div class="editor-dialog" :data-preview="preview ? '' : undefined" :data-wide="wide ? '' : undefined">
           <div class="editor-dialog-body">
-            <button
+            <EditorIconButton
               v-if="!hideClose"
-              class="editor-icon-btn editor-dialog-close"
-              type="button"
+              class="editor-dialog-close"
               aria-label="Close"
               title="Close"
               @click="onClose"
             >
               <X :size="16" :stroke-width="1.6" aria-hidden="true" />
-            </button>
+            </EditorIconButton>
             <DialogTitle as="h2">{{ title }}</DialogTitle>
             <slot />
           </div>

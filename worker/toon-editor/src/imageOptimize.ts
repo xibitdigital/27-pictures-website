@@ -78,10 +78,11 @@ async function decodeToImageData(image: ImageBytes): Promise<Bitmap> {
  * it's already WebP, an unrecognised format, or encoding fails for any
  * reason — a heavier plate beats a broken generation.
  *
- * `watermark`, when given (a series' optional watermark PNG — generatePage.ts only passes one for
- * AI-generated plates, never for uploads/covers), forces a full decode → composite → re-encode
- * even when `image` is already WebP, since compositing needs real pixels either way. Without a
- * watermark this keeps the original already-webp fast path untouched.
+ * `watermark`, when given (a series' optional watermark PNG — generatePage.ts and page
+ * upload/replace pass one for `source === "page"` assets, never for region fills or covers),
+ * forces a full decode → composite → re-encode even when `image` is already WebP, since
+ * compositing needs real pixels either way. Without a watermark this keeps the original
+ * already-webp fast path untouched.
  */
 export async function toWebp(image: ImageBytes, watermark?: ImageBytes | null): Promise<ImageBytes> {
   if (!watermark) {

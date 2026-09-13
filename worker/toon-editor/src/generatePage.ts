@@ -691,8 +691,8 @@ function plateSizeFromJob(job: GenerationJob): { width: number | null; height: n
 }
 
 /** The series' optional watermark PNG (env.ASSETS bytes), or null if this toon has no series or
- * the series has none configured — resolved once per job poll and reused across every plate that
- * poll produces, rather than a D1 + R2 round trip per plate. */
+ * the series has none configured. Callers reuse the buffer across every page plate a job stores,
+ * rather than a D1 + R2 round trip per plate. Region fills must not call this. */
 export async function resolveSeriesWatermark(
   env: Env,
   seriesKey: string | null | undefined
@@ -816,9 +816,10 @@ export async function pollPageJob(
   // webpDimensions(), and only fall back to the requested size if that sniff fails.
   const requested = plateSizeFromJob(job);
   const assetSource: ToonAssetSource = job.region_id ? "region" : "page";
-  // Resolved once and reused for every plate below — a series' watermark is unrelated to which
-  // provider produced this job's output.
-  const watermark = await resolveSeriesWatermark(env, toon.series_key);
+  // Pages only — a Layout region's fill is a crop that may be reused, and the watermark belongs
+  // on the page (generate/upload/replace), not on each area. Skip the D1+R2 lookup entirely for
+  // region jobs rather than fetching a mark we would then ignore.
+  const watermark = assetSource === "page" ? await resolveSeriesWatermark(env, toon.series_key) : null;
   const plates: { fileKey: string; width: number | null; height: number | null }[] = [];
   for (const image of outputs) {
     if (isFlux) {

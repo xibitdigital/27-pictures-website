@@ -276,8 +276,7 @@ Each Actions run, in order:
 2. `npm run build` so the JS bundle asks for the locked names.
 3. `wrangler pages deploy dist` to that branch's Pages project. That also
    ships `functions/` (catalog/hub/reader SSR, sitemap + llms.txt, staging auth). It does
-   **not** deploy `worker/toon-editor` — that is `cd worker/toon-editor &&
-npx wrangler deploy`.
+   **not** deploy `worker/toon-editor` — see **Toon editor Worker** below.
 4. Prune superseded unique `<hash>.<project>.pages.dev` snapshots. Keep the
    newest (the live custom domain) and any still-aliased deploy; never
    `--force`.
@@ -295,14 +294,41 @@ git short SHA). The old `staging.twentyseven-pictures.pages.dev` alias is
 gone; `<hash>.twentyseven-pictures-staging.pages.dev` still exists for the
 current snapshot and is password gated the same way.
 
-Local wrangler still works when you need it:
+Local wrangler still works when you need a Pages one-off **without** a push:
 
 ```bash
 # .env must set VITE_ASSET_BASE or `vite build` fails
 make deploy        # require base → build → Pages production (main)
 make deploy-cdn    # upload R2, then make deploy
-make preview-deploy  # CDN build → staging project
+make preview-deploy  # CDN build → staging Pages project (does not deploy the Worker)
 ```
+
+Do not use `make preview-deploy` as the usual staging path. Commit and push
+`staging`; Actions ships Pages.
+
+### Toon editor Worker
+
+Staging and production share **one** Worker (`toon-editor`,
+`https://toon-editor.sangalli-marco.workers.dev`) and one remote D1. GitHub
+Actions never deploys it. Editor API changes (`worker/toon-editor/**`) need a
+manual Wrangler deploy **from that directory**:
+
+```bash
+cd worker/toon-editor
+npx wrangler deploy
+```
+
+**Never `npx wrangler deploy` from the repo root.** Root `wrangler.toml` is
+the Pages project; Wrangler will ask to proceed as Pages and then fail with
+"Missing entry-point to Worker script".
+
+"Deploy to staging" with Worker changes is two steps:
+
+1. Commit and `git push origin staging` — Actions builds and deploys Pages.
+2. `cd worker/toon-editor && npx wrangler deploy` — ships the API (staging
+   and production both pick it up immediately).
+
+Vue-only editor changes (under `src/toons/editor/`) only need the push.
 
 **Live books are D1**, edited at `/toons/editor/`. Readers load
 `GET /config/:slug` from the toon-editor Worker (local Vite via
@@ -836,8 +862,8 @@ A toon created before this existed self-heals the next time it's saved.
 Ungrouped toons (no series) still end up with `reader_url = null`, falling
 back to `/toons/<slug>/` everywhere that reads it.
 
-Deploy the Worker from its directory (`cd worker/toon-editor && npx wrangler
-deploy`), not the Pages project at the repo root. Full routes:
+Deploy the Worker from `worker/toon-editor` (`npx wrangler deploy` there),
+never from the repo root. Actions does not ship it. Full routes:
 `worker/toon-editor/README.md`.
 
 **Reka UI is scoped to this editor, never the public site.** Dialogs, checkboxes
@@ -1761,11 +1787,12 @@ curl -sS https://twentyseven.pictures/robots.txt
   `https://staging.twentyseven.pictures` (HTTP Basic Auth + `X-Robots-Tag:
 noindex`). Carries work in review. Merge `staging` → `main` to ship.
 - A Pages push ships `functions/` (catalog/hub/reader SSR, `/sitemap.xml`,
-  `/llms.txt`). Editor API changes need
-  `cd worker/toon-editor && npx wrangler deploy`. `LOCALIZED_SITE_PATHS`
+  `/llms.txt`). Editor API changes are a second, manual step:
+  `cd worker/toon-editor && npx wrangler deploy` (never from the repo root;
+  staging and production share that one Worker). `LOCALIZED_SITE_PATHS`
   is imported by the Function — a Pages deploy is enough for a new site path.
-- **Local fallback:** `make preview-deploy` / `make deploy` still talk to
-  Wrangler directly when you need a one-off without a push.
+- **Local fallback (Pages only):** `make preview-deploy` / `make deploy`
+  talk to Wrangler without a push. They do not deploy the editor Worker.
 - **Remote:** `git@github.com:xibitdigital/27-pictures-website.git`
 - **Contributors:**
   - Marco Sangalli (sangalli.marco@gmail.com)

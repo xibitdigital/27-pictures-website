@@ -223,8 +223,9 @@ export function uploadSeriesFlow(key: string, file: File): Promise<SeriesOption>
   return api<SeriesOption>(`/series/${key}/flow`, { method: "POST", body });
 }
 
-/** PNG only (transparency required) — composited onto the bottom-right corner of every plate this
- * series generates from here on. Uploaded pages are never watermarked, only AI-generated ones. */
+/** PNG only (transparency required) — composited onto the bottom-right corner of every page this
+ * series stores from here on (generate, upload, or replace). Layout region/area fills are never
+ * watermarked. */
 export function uploadSeriesWatermark(key: string, file: File): Promise<SeriesOption> {
   const body = new FormData();
   body.set("file", file);

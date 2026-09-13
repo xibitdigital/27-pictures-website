@@ -7,6 +7,7 @@ import { ImageOff, Share } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import { pushToast } from "../toast";
 import type { ToonVisibility } from "../types";
+import EditorVisibilityBadge from "./ui/EditorVisibilityBadge.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -71,7 +72,7 @@ async function onShare(ev: Event): Promise<void> {
         <span v-else class="editor-cover-placeholder" aria-hidden="true">
           <ImageOff :size="32" :stroke-width="1.4" />
         </span>
-        <span v-if="badge" class="editor-visibility-badge" :data-visibility="visibility || undefined">{{ badge }}</span>
+        <EditorVisibilityBadge v-if="badge" :label="badge" :visibility="visibility" />
         <button
           v-if="shareHref && !add"
           class="editor-share-btn"

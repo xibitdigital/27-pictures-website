@@ -3,6 +3,7 @@ import { Languages, LoaderCircle } from "@lucide/vue";
 import { ref } from "vue";
 import { translateFromEnglish, type CaptionTranslations } from "../api";
 import { pushToast } from "../toast";
+import EditorIconButton from "./ui/EditorIconButton.vue";
 
 const props = defineProps<{
   source: string;
@@ -31,9 +32,8 @@ async function onTranslate(): Promise<void> {
 <template>
   <div class="editor-translate-field">
     <slot />
-    <button
-      class="editor-icon-btn editor-translate-btn"
-      type="button"
+    <EditorIconButton
+      class="editor-translate-btn"
       name="translate-langs"
       :disabled="busy || !source.trim()"
       aria-label="Translate English into Italian, German and French"
@@ -42,6 +42,6 @@ async function onTranslate(): Promise<void> {
     >
       <LoaderCircle v-if="busy" class="editor-spin" :size="14" aria-hidden="true" />
       <Languages v-else :size="14" :stroke-width="1.4" aria-hidden="true" />
-    </button>
+    </EditorIconButton>
   </div>
 </template>

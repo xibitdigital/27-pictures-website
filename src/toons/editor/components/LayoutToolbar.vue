@@ -7,6 +7,7 @@
  */
 import { Magnet, MousePointer2, Pentagon, Square } from "@lucide/vue";
 import type { LayoutTool } from "./GeometryLayer.vue";
+import EditorIconButton from "./ui/EditorIconButton.vue";
 
 export type StudioMode = "layout" | "bubbles";
 
@@ -20,46 +21,38 @@ const emit = defineEmits<{
 <template>
   <div class="editor-layout-toolbar">
     <div v-if="mode === 'layout'" class="editor-toolbar-group" role="radiogroup" aria-label="Draw tool">
-      <button
-        class="editor-icon-btn"
-        type="button"
+      <EditorIconButton
         name="tool-select"
         :aria-pressed="tool === 'select'"
         title="Select"
         @click="emit('update:tool', 'select')"
       >
         <MousePointer2 :size="16" :stroke-width="1.6" aria-hidden="true" />
-      </button>
-      <button
-        class="editor-icon-btn"
-        type="button"
+      </EditorIconButton>
+      <EditorIconButton
         name="tool-rect"
         :aria-pressed="tool === 'rect'"
         title="Draw rectangle"
         @click="emit('update:tool', 'rect')"
       >
         <Square :size="16" :stroke-width="1.6" aria-hidden="true" />
-      </button>
-      <button
-        class="editor-icon-btn"
-        type="button"
+      </EditorIconButton>
+      <EditorIconButton
         name="tool-polygon"
         :aria-pressed="tool === 'polygon'"
         title="Draw polygon — click to place points, double-click or Enter to close"
         @click="emit('update:tool', 'polygon')"
       >
         <Pentagon :size="16" :stroke-width="1.6" aria-hidden="true" />
-      </button>
-      <button
-        class="editor-icon-btn"
-        type="button"
+      </EditorIconButton>
+      <EditorIconButton
         name="tool-grid-snap"
         :aria-pressed="!!grid"
         title="Snap to grid"
         @click="emit('update:grid', !grid)"
       >
         <Magnet :size="16" :stroke-width="1.6" aria-hidden="true" />
-      </button>
+      </EditorIconButton>
     </div>
   </div>
 </template>

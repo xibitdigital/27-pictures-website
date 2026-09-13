@@ -6,6 +6,8 @@ import { parseHexColor } from "../mapConfig";
 import { scaleFromSliderPosition, sliderPositionFromScale } from "../regionFit";
 import type { RegionBorderStyle, RegionRecord } from "../types";
 import EditorButton from "./ui/EditorButton.vue";
+import EditorColorField from "./ui/EditorColorField.vue";
+import EditorIconButton from "./ui/EditorIconButton.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -88,8 +90,8 @@ function onPageBgPicker(ev: Event): void {
   emit("persist-page-bg-color", hex);
 }
 
-function onPageBgInput(ev: Event): void {
-  pageBgDraft.value = (ev.target as HTMLInputElement).value;
+function onPageBgInput(value: string): void {
+  pageBgDraft.value = value;
   const hex = parseHexColor(pageBgDraft.value);
   if (hex) emit("page-bg-color", hex);
 }
@@ -137,8 +139,8 @@ function onBorderColorPicker(ev: Event): void {
   emit("persist-border", { borderColor: hex });
 }
 
-function onBorderColorInput(ev: Event): void {
-  borderColorDraft.value = (ev.target as HTMLInputElement).value;
+function onBorderColorInput(value: string): void {
+  borderColorDraft.value = value;
   const hex = parseHexColor(borderColorDraft.value);
   if (hex) emit("border", { borderColor: hex });
 }
@@ -177,25 +179,16 @@ function onBorderWidthChange(ev: Event): void {
 
     <label>
       Page background
-      <span class="editor-color-row">
-        <input
-          type="color"
-          name="page-bg-swatch"
-          :value="pageBgSwatch"
-          :aria-label="pageBgDraft ? 'Page background color' : 'Page background color (default)'"
-          @input="onPageBgPicker"
-        />
-        <input
-          type="text"
-          name="page-bg-color"
-          :value="pageBgDraft"
-          placeholder="default"
-          spellcheck="false"
-          autocomplete="off"
-          @input="onPageBgInput"
-          @blur="onPageBgBlur"
-        />
-      </span>
+      <EditorColorField
+        :model-value="pageBgDraft"
+        :swatch="pageBgSwatch"
+        name="page-bg-color"
+        swatch-name="page-bg-swatch"
+        :ariaLabel="pageBgDraft ? 'Page background color' : 'Page background color (default)'"
+        @update:model-value="onPageBgInput"
+        @picker="onPageBgPicker"
+        @blur="onPageBgBlur"
+      />
     </label>
 
     <p v-if="!region" class="editor-muted">
@@ -208,9 +201,7 @@ function onBorderWidthChange(ev: Event): void {
         <span class="editor-prompt-head">
           Layer
           <span class="editor-prompt-actions">
-            <button
-              class="editor-icon-btn"
-              type="button"
+            <EditorIconButton
               name="layer-backward"
               :disabled="!canMoveBackward"
               aria-label="Send backward"
@@ -218,10 +209,8 @@ function onBorderWidthChange(ev: Event): void {
               @click="emit('reorder', 'backward')"
             >
               <ChevronDown :size="14" :stroke-width="1.4" aria-hidden="true" />
-            </button>
-            <button
-              class="editor-icon-btn"
-              type="button"
+            </EditorIconButton>
+            <EditorIconButton
               name="layer-forward"
               :disabled="!canMoveForward"
               aria-label="Bring forward"
@@ -229,7 +218,7 @@ function onBorderWidthChange(ev: Event): void {
               @click="emit('reorder', 'forward')"
             >
               <ChevronUp :size="14" :stroke-width="1.4" aria-hidden="true" />
-            </button>
+            </EditorIconButton>
           </span>
         </span>
         <p class="editor-muted">{{ layerIndex + 1 }} of {{ layerCount || 1 }} — later layers paint on top</p>
@@ -276,25 +265,16 @@ function onBorderWidthChange(ev: Event): void {
       <template v-if="borderOption !== 'none'">
         <label>
           Border color
-          <span class="editor-color-row">
-            <input
-              type="color"
-              name="region-border-color-swatch"
-              :value="borderColorSwatch"
-              :aria-label="borderColorDraft ? 'Border color' : 'Border color (default)'"
-              @input="onBorderColorPicker"
-            />
-            <input
-              type="text"
-              name="region-border-color"
-              :value="borderColorDraft"
-              placeholder="default"
-              spellcheck="false"
-              autocomplete="off"
-              @input="onBorderColorInput"
-              @blur="onBorderColorBlur"
-            />
-          </span>
+          <EditorColorField
+            :model-value="borderColorDraft"
+            :swatch="borderColorSwatch"
+            name="region-border-color"
+            swatch-name="region-border-color-swatch"
+            :ariaLabel="borderColorDraft ? 'Border color' : 'Border color (default)'"
+            @update:model-value="onBorderColorInput"
+            @picker="onBorderColorPicker"
+            @blur="onBorderColorBlur"
+          />
         </label>
         <label>
           Border width

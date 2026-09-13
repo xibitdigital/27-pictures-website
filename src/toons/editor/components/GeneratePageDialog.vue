@@ -11,6 +11,8 @@ import EditorButton from "./ui/EditorButton.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
 import EditorGenerateFooter from "./ui/EditorGenerateFooter.vue";
+import EditorIconButton from "./ui/EditorIconButton.vue";
+import EditorPlatePicker from "./ui/EditorPlatePicker.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -101,6 +103,21 @@ function pickPrevious(candidate: { kind: "page" | "region"; id: string }): void 
   if (already) return;
   if (candidate.kind === "page") previousPageId.value = candidate.id;
   else previousRegionId.value = candidate.id;
+}
+const previousPickerItems = computed(() =>
+  previousCandidates.value.map((candidate) => ({
+    key: candidate.key,
+    src: candidate.fileUrl,
+    label: candidate.label,
+    badge: candidate.badge,
+    selected:
+      candidate.kind === "page" ? previousPageId.value === candidate.id : previousRegionId.value === candidate.id,
+    disabled: props.busy,
+  }))
+);
+function onPickPrevious(key: string): void {
+  const candidate = previousCandidates.value.find((item) => item.key === key);
+  if (candidate) pickPrevious(candidate);
 }
 const selectedPreviousPage = computed(() => props.pages.find((p) => p.id === previousPageId.value) || null);
 const selectedPreviousRegion = computed(() => {
@@ -375,9 +392,7 @@ function onSubmit(): void {
           <label>
             <span class="editor-label-row">
               Prompt
-              <button
-                type="button"
-                class="editor-icon-btn"
+              <EditorIconButton
                 name="clear-prompt"
                 aria-label="Clear prompt"
                 title="Clear prompt"
@@ -385,7 +400,7 @@ function onSubmit(): void {
                 @click="onClearPrompt"
               >
                 <Eraser :size="14" :stroke-width="1.6" aria-hidden="true" />
-              </button>
+              </EditorIconButton>
             </span>
             <textarea
               name="generate-prompt"
@@ -413,28 +428,11 @@ function onSubmit(): void {
                   A layout page lists each of its own shapes here, not the flattened page — pick the one shape that's
                   actually the reference.
                 </p>
-                <div class="editor-plate-picker" role="listbox" aria-label="Plate from this toon">
-                  <button
-                    v-for="candidate in previousCandidates"
-                    :key="candidate.key"
-                    type="button"
-                    class="editor-plate-picker-item"
-                    :class="{
-                      'is-selected':
-                        candidate.kind === 'page' ? previousPageId === candidate.id : previousRegionId === candidate.id,
-                    }"
-                    role="option"
-                    :aria-selected="
-                      candidate.kind === 'page' ? previousPageId === candidate.id : previousRegionId === candidate.id
-                    "
-                    :aria-label="candidate.label"
-                    :disabled="busy"
-                    @click="pickPrevious(candidate)"
-                  >
-                    <img :src="candidate.fileUrl" alt="" />
-                    <span class="editor-plate-picker-num">{{ candidate.badge }}</span>
-                  </button>
-                </div>
+                <EditorPlatePicker
+                  :items="previousPickerItems"
+                  ariaLabel="Plate from this toon"
+                  @pick="onPickPrevious"
+                />
               </div>
               <label>
                 Images

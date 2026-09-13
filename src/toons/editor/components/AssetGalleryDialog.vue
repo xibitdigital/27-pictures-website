@@ -9,7 +9,9 @@ import { computed, ref, watch } from "vue";
 import { listToonAssets } from "../api";
 import { pushToast } from "../toast";
 import type { ToonAsset, ToonAssetSource } from "../types";
+import EditorChipFilter from "./ui/EditorChipFilter.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
+import EditorPlatePicker from "./ui/EditorPlatePicker.vue";
 
 const props = defineProps<{ open: boolean; toonId: string }>();
 
@@ -53,24 +55,30 @@ watch(activeTab, () => {
 });
 
 const isEmpty = computed(() => !loading.value && !assets.value.length);
+
+const pickerItems = computed(() =>
+  assets.value.map((asset) => ({
+    key: asset.id,
+    src: asset.url,
+    label: `Image from ${asset.createdAt}`,
+  }))
+);
+
+function onPick(key: string): void {
+  const asset = assets.value.find((item) => item.id === key);
+  if (asset) emit("pick", asset);
+}
 </script>
 
 <template>
   <EditorDialog :open="open" title="Choose from gallery" wide @update:open="(next) => !next && emit('close')">
-    <div class="editor-visibility-filter" role="tablist" aria-label="Image kind">
-      <button
-        v-for="tab in TABS"
-        :key="tab.value"
-        type="button"
-        :name="`gallery-tab-${tab.value}`"
-        role="tab"
-        :aria-selected="activeTab === tab.value"
-        :aria-pressed="activeTab === tab.value"
-        @click="activeTab = tab.value"
-      >
-        {{ tab.label }}
-      </button>
-    </div>
+    <EditorChipFilter
+      :options="TABS"
+      v-model="activeTab"
+      role="tablist"
+      ariaLabel="Image kind"
+      name-prefix="gallery-tab-"
+    />
     <p class="editor-muted">
       {{
         activeTab === "region"
@@ -80,18 +88,12 @@ const isEmpty = computed(() => !loading.value && !assets.value.length);
     </p>
     <p v-if="loading">Loading…</p>
     <p v-else-if="isEmpty" class="editor-muted">No images yet — generate or upload one first.</p>
-    <div v-else class="editor-plate-picker editor-asset-gallery" role="listbox" aria-label="Toon image gallery">
-      <button
-        v-for="asset in assets"
-        :key="asset.id"
-        type="button"
-        class="editor-plate-picker-item"
-        role="option"
-        :aria-label="`Image from ${asset.createdAt}`"
-        @click="emit('pick', asset)"
-      >
-        <img v-if="asset.url" :src="asset.url" alt="" />
-      </button>
-    </div>
+    <EditorPlatePicker
+      v-else
+      class="editor-asset-gallery"
+      :items="pickerItems"
+      ariaLabel="Toon image gallery"
+      @pick="onPick"
+    />
   </EditorDialog>
 </template>

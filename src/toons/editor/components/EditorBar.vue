@@ -2,6 +2,7 @@
 import { Library } from "@lucide/vue";
 import EditorSession from "./EditorSession.vue";
 import EditorButton from "./ui/EditorButton.vue";
+import EditorVisibilityBadge from "./ui/EditorVisibilityBadge.vue";
 
 withDefaults(
   defineProps<{
@@ -20,7 +21,7 @@ withDefaults(
     <div class="editor-bar-start">
       <slot name="start" />
       <h1>{{ title }}</h1>
-      <span v-if="badge" class="editor-visibility-badge" :data-visibility="visibility || undefined">{{ badge }}</span>
+      <EditorVisibilityBadge v-if="badge" :label="badge" :visibility="visibility" />
       <slot name="after-title" />
     </div>
     <div class="editor-bar-end">

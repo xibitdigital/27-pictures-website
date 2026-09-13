@@ -149,16 +149,19 @@ CORS locked to `https://twentyseven.pictures`.
 
 ## Deploy notes
 
-- **Usual path:** push. `staging` → https://staging.twentyseven.pictures
+- **Usual path:** commit and push. `staging` → https://staging.twentyseven.pictures
   (HTTP Basic Auth); `main` → https://twentyseven.pictures. See `CLAUDE.md`.
 - Artifact is **`dist/`**, not raw `public/`. Pages also deploys `functions/`
-  (toon SSR, `/sitemap.xml`, `/llms.txt`). The editor Worker is a separate
-  `npx wrangler deploy`.
+  (toon SSR, `/sitemap.xml`, `/llms.txt`).
+- The editor Worker is **not** in Actions. Staging and production share one
+  Worker. From `worker/toon-editor` (never the repo root):
+  `npx wrangler deploy`. Root `wrangler.toml` is Pages; deploying there
+  fails with a missing Worker entry-point.
 - `npm run build` **hard-fails** if `VITE_ASSET_BASE` is missing
 - Actions checks the toon config lock (puts happen on commit), then prunes old
   unique `pages.dev` snapshots (keeps the live custom-domain deploy)
 - After shared CSS changes, `npm run hash-assets` (also runs as part of `build`)
-- Local fallback: `make deploy` / `make preview-deploy`
+- Local fallback (Pages only): `make deploy` / `make preview-deploy`
 
 ## Git
 

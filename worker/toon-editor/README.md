@@ -149,8 +149,22 @@ npx wrangler secret put TURNSTILE_SECRET_KEY
 npx wrangler deploy
 ```
 
-Must deploy from `worker/toon-editor` (this package’s Wrangler), not the Pages
-project at the repo root.
+## Deploy
+
+GitHub Actions deploys Pages only. This Worker is manual, and staging and
+production share the same Worker + D1 (`https://toon-editor.sangalli-marco.workers.dev`).
+
+```bash
+cd worker/toon-editor
+npx wrangler deploy
+```
+
+Must run from this directory (this package’s Wrangler). **Never** `npx wrangler
+deploy` at the repo root — that `wrangler.toml` is the Pages project, and
+Wrangler fails with "Missing entry-point to Worker script".
+
+A Vue-only studio change (`src/toons/editor/`) only needs a push to `staging`
+or `main`. Any change under `worker/toon-editor/` needs this deploy as well.
 
 ## Local
 

@@ -42,6 +42,7 @@ import GenerateCharacterDialog from "./GenerateCharacterDialog.vue";
 import TranslateField from "./TranslateField.vue";
 import EditorButton from "./ui/EditorButton.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
+import EditorIconButton from "./ui/EditorIconButton.vue";
 import ToonCard from "./ToonCard.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
 import EditorUserPills from "./ui/EditorUserPills.vue";
@@ -599,9 +600,9 @@ async function onSubmit(ev: Event): Promise<void> {
           <div class="editor-form-span editor-generate">
             <p class="editor-generate-label">Watermark</p>
             <p class="editor-muted">
-              Optional PNG with transparency, composited onto the bottom-right corner of every page this series
-              generates from here on — so a downloaded plate still carries it. Uploaded pages are never watermarked,
-              only AI-generated ones. Leave unset to skip.
+              Optional PNG with transparency, composited onto the bottom-right corner of every page this series stores
+              from here on (generate, upload, or replace) — so a downloaded plate still carries it. Layout region/area
+              fills are left clean; the mark is for the page, not each shape. Leave unset to skip.
             </p>
             <label>
               Watermark image (.png)
@@ -619,7 +620,7 @@ async function onSubmit(ev: Event): Promise<void> {
                 {{ uploadingWatermark ? "Clearing…" : "Clear watermark" }}
               </EditorButton>
             </p>
-            <p v-else class="editor-muted">No watermark set. Pages generate unwatermarked.</p>
+            <p v-else class="editor-muted">No watermark set. Pages stay unwatermarked.</p>
           </div>
           <div class="editor-form-span editor-generate">
             <template v-if="provider === 'comfy'">
@@ -730,34 +731,25 @@ async function onSubmit(ev: Event): Promise<void> {
                 </button>
                 <span v-else class="editor-slot-thumb" aria-hidden="true"></span>
                 <span class="editor-slot-actions">
-                  <button
-                    class="editor-icon-btn"
-                    type="button"
-                    :name="`slot-up-${index}`"
-                    :disabled="index === 0"
-                    @click="moveSlot(index, -1)"
-                  >
+                  <EditorIconButton :name="`slot-up-${index}`" :disabled="index === 0" @click="moveSlot(index, -1)">
                     ↑
-                  </button>
-                  <button
-                    class="editor-icon-btn"
-                    type="button"
+                  </EditorIconButton>
+                  <EditorIconButton
                     :name="`slot-down-${index}`"
                     :disabled="index === slots.length - 1"
                     @click="moveSlot(index, 1)"
                   >
                     ↓
-                  </button>
-                  <button
-                    class="editor-icon-btn editor-icon-btn--danger"
-                    type="button"
+                  </EditorIconButton>
+                  <EditorIconButton
+                    variant="danger"
                     :name="`slot-remove-${index}`"
                     :disabled="isLockedSlot(slot)"
                     :title="isLockedSlot(slot) ? 'Default slot — cannot be removed' : undefined"
                     @click="removeSlot(index)"
                   >
                     ×
-                  </button>
+                  </EditorIconButton>
                 </span>
               </li>
             </ol>

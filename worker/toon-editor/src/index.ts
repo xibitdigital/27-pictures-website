@@ -2213,7 +2213,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     // depend on each other — running them together instead of one after another is most of what
     // made "add page"/"add layout page" feel slow.
     const [key, posRow] = await Promise.all([
-      resolveSeriesWatermark(env, current.series_key).then((watermark) =>
+      // Layout pages start as a blank canvas — the mark belongs on a real plate (generate,
+      // upload, replace, or flatten-save), not this placeholder. Region fills never get one.
+      (kind === "layout" ? Promise.resolve(null) : resolveSeriesWatermark(env, current.series_key)).then((watermark) =>
         putPageAsset(env, id, current.slug, upload, "page", watermark)
       ),
       env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?").bind(id).first(),

@@ -21,6 +21,7 @@ import { buildCaption, imageContentBox, type CaptionModel } from "../../bookRead
 import { clientToPlateFraction, grabOffset, type ContentBox } from "../plateCoords";
 import { bubbleToWordEntry, bubblesInPlayOrder, type BubbleTail } from "../mapConfig";
 import type { BubbleRecord } from "../types";
+import EditorIconButton from "./ui/EditorIconButton.vue";
 
 const TAIL_PAD: { tail: BubbleTail; label: string; icon: Component }[] = [
   { tail: "top-left", label: "Top left", icon: ArrowUpLeft },
@@ -342,11 +343,9 @@ watch(
         data-tail-ring
         @pointerdown.stop
       >
-        <button
+        <EditorIconButton
           v-for="cell in TAIL_PAD"
           :key="cell.tail"
-          class="editor-icon-btn"
-          type="button"
           :data-tail="cell.tail"
           :aria-label="cell.label"
           :aria-pressed="currentTail(caption.bubbleId) === cell.tail"
@@ -355,19 +354,18 @@ watch(
           @pointerdown.stop
         >
           <component :is="cell.icon" :size="14" :stroke-width="1.8" aria-hidden="true" />
-        </button>
+        </EditorIconButton>
       </div>
-      <button
+      <EditorIconButton
         v-if="caption.bubbleId === selectedId && !dragging"
-        class="editor-icon-btn editor-bubble-delete"
-        type="button"
+        class="editor-bubble-delete"
         aria-label="Delete bubble"
         title="Delete bubble"
         @click="onDeleteClick($event, caption.bubbleId)"
         @pointerdown.stop
       >
         <Trash2 :size="14" :stroke-width="1.8" aria-hidden="true" />
-      </button>
+      </EditorIconButton>
     </div>
   </div>
 </template>

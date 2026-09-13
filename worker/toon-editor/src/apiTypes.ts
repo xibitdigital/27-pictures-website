@@ -346,9 +346,10 @@ export interface SeriesOption {
   generate?: SeriesGenerateConfig;
   ownerId?: string | null;
   editorIds?: string[];
-  /** Optional PNG (with transparency) composited onto the bottom-right corner of every plate this
-   * series generates (generatePage.ts's toWebp watermark param). Uploaded pages are left alone —
-   * only AI-generated output is watermarked. Series with none set skip the step entirely. */
+  /** Optional PNG (with transparency) composited onto the bottom-right corner of every *page*
+   * this series stores (generate, upload, or replace — generatePage.ts / putPageAsset toWebp
+   * watermark). Layout region/area fills are left clean; the mark is for the page, not each
+   * shape. Series with none set skip the step entirely. */
   watermarkKey?: string | null;
   watermarkUrl?: string | null;
 }

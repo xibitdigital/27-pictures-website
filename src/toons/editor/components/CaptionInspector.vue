@@ -25,6 +25,8 @@ import type { LangCode } from "../../bookReader/types";
 import type { BubbleRecord } from "../types";
 import TranslateField from "./TranslateField.vue";
 import EditorButton from "./ui/EditorButton.vue";
+import EditorColorField from "./ui/EditorColorField.vue";
+import EditorIconButton from "./ui/EditorIconButton.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -153,9 +155,9 @@ function onColorPicker(ev: Event): void {
   emit("change", letteringPatch(props.bubble, { color: hex }));
 }
 
-function onColorInput(ev: Event): void {
+function onColorInput(value: string): void {
   if (!props.bubble) return;
-  colorDraft.value = (ev.target as HTMLInputElement).value;
+  colorDraft.value = value;
   const hex = parseHexColor(colorDraft.value);
   if (hex) emit("change", letteringPatch(props.bubble, { color: hex }));
 }
@@ -175,9 +177,9 @@ function onStrokePicker(ev: Event): void {
   emit("change", letteringPatch(props.bubble, { stroke: hex }));
 }
 
-function onStrokeInput(ev: Event): void {
+function onStrokeInput(value: string): void {
   if (!props.bubble) return;
-  strokeDraft.value = (ev.target as HTMLInputElement).value;
+  strokeDraft.value = value;
   const hex = parseHexColor(strokeDraft.value);
   if (hex) emit("change", letteringPatch(props.bubble, { stroke: hex }));
 }
@@ -484,47 +486,29 @@ async function onGenerateAudio(): Promise<void> {
       </label>
       <label>
         Color
-        <span class="editor-color-row">
-          <input
-            type="color"
-            name="color-swatch"
-            :value="colorSwatch"
-            :aria-label="colorDraft ? 'Lettering color' : 'Lettering color (default)'"
-            @input="onColorPicker"
-          />
-          <input
-            type="text"
-            name="color"
-            :value="colorDraft"
-            placeholder="default"
-            spellcheck="false"
-            autocomplete="off"
-            @input="onColorInput"
-            @blur="onColorBlur"
-          />
-        </span>
+        <EditorColorField
+          :model-value="colorDraft"
+          :swatch="colorSwatch"
+          name="color"
+          swatch-name="color-swatch"
+          :ariaLabel="colorDraft ? 'Lettering color' : 'Lettering color (default)'"
+          @update:model-value="onColorInput"
+          @picker="onColorPicker"
+          @blur="onColorBlur"
+        />
       </label>
       <label>
         Stroke
-        <span class="editor-color-row">
-          <input
-            type="color"
-            name="stroke-swatch"
-            :value="strokeSwatch"
-            :aria-label="strokeDraft ? 'Lettering stroke' : 'Lettering stroke (default)'"
-            @input="onStrokePicker"
-          />
-          <input
-            type="text"
-            name="stroke"
-            :value="strokeDraft"
-            placeholder="default"
-            spellcheck="false"
-            autocomplete="off"
-            @input="onStrokeInput"
-            @blur="onStrokeBlur"
-          />
-        </span>
+        <EditorColorField
+          :model-value="strokeDraft"
+          :swatch="strokeSwatch"
+          name="stroke"
+          swatch-name="stroke-swatch"
+          :ariaLabel="strokeDraft ? 'Lettering stroke' : 'Lettering stroke (default)'"
+          @update:model-value="onStrokeInput"
+          @picker="onStrokePicker"
+          @blur="onStrokeBlur"
+        />
       </label>
       <label>
         Stroke thickness
@@ -559,9 +543,7 @@ async function onGenerateAudio(): Promise<void> {
         <span class="editor-prompt-head">
           Play order
           <span class="editor-prompt-actions">
-            <button
-              class="editor-icon-btn"
-              type="button"
+            <EditorIconButton
               name="order-earlier"
               :disabled="!canMoveEarlier"
               aria-label="Play earlier"
@@ -569,10 +551,8 @@ async function onGenerateAudio(): Promise<void> {
               @click="emit('reorder', 'earlier')"
             >
               <ChevronUp :size="14" :stroke-width="1.4" aria-hidden="true" />
-            </button>
-            <button
-              class="editor-icon-btn"
-              type="button"
+            </EditorIconButton>
+            <EditorIconButton
               name="order-later"
               :disabled="!canMoveLater"
               aria-label="Play later"
@@ -580,7 +560,7 @@ async function onGenerateAudio(): Promise<void> {
               @click="emit('reorder', 'later')"
             >
               <ChevronDown :size="14" :stroke-width="1.4" aria-hidden="true" />
-            </button>
+            </EditorIconButton>
           </span>
         </span>
         <p class="editor-muted">{{ playIndex + 1 }} of {{ playCount || 1 }} — captions play in this order</p>
@@ -605,9 +585,7 @@ async function onGenerateAudio(): Promise<void> {
               :disabled="audioBusy || !toonId"
               @change="onAudioFile"
             />
-            <button
-              class="editor-icon-btn"
-              type="button"
+            <EditorIconButton
               name="audio-upload"
               :disabled="audioBusy || !toonId"
               :aria-label="uploading ? 'Uploading' : 'Upload audio'"
@@ -615,10 +593,8 @@ async function onGenerateAudio(): Promise<void> {
               @click="audioFileInput?.click()"
             >
               <Upload :size="14" :stroke-width="1.4" aria-hidden="true" />
-            </button>
-            <button
-              class="editor-icon-btn"
-              type="button"
+            </EditorIconButton>
+            <EditorIconButton
               name="audio-generate"
               :disabled="audioBusy || !canGenerateAudio"
               :aria-label="generating ? 'Generating' : 'Generate audio'"
@@ -635,7 +611,7 @@ async function onGenerateAudio(): Promise<void> {
             >
               <LoaderCircle v-if="generating" class="editor-spin" :size="14" aria-hidden="true" />
               <WandSparkles v-else :size="14" :stroke-width="1.4" aria-hidden="true" />
-            </button>
+            </EditorIconButton>
           </span>
         </span>
         <input

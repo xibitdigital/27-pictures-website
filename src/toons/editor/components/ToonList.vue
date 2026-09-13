@@ -23,6 +23,7 @@ const VISIBILITY_FILTERS: { value: VisibilityFilter; label: string }[] = [
 import EditorBar from "./EditorBar.vue";
 import ToonCard from "./ToonCard.vue";
 import EditorButton from "./ui/EditorButton.vue";
+import EditorChipFilter from "./ui/EditorChipFilter.vue";
 
 const RECENT_LIMIT = 8;
 
@@ -85,25 +86,27 @@ const filteredRecent = computed(() => recentToons.value.filter(matchesFilter));
 const filteredCount = computed(
   () => grouped.value.reduce((n, group) => n + group.toons.length, 0) + ungrouped.value.length
 );
+
+const visibilityChipOptions = computed(() =>
+  VISIBILITY_FILTERS.map((opt) => ({
+    value: opt.value,
+    label: opt.label,
+    visibility: opt.value === "all" ? undefined : opt.value,
+  }))
+);
 </script>
 
 <template>
   <section class="editor-list">
     <EditorBar title="Toon editor" :home="false">
       <template #after-title>
-        <div class="editor-visibility-filter" role="radiogroup" aria-label="Visibility">
-          <button
-            v-for="opt in VISIBILITY_FILTERS"
-            :key="opt.value"
-            type="button"
-            :name="`visibility-filter-${opt.value}`"
-            :aria-pressed="visibilityFilter === opt.value"
-            :data-visibility="opt.value === 'all' ? undefined : opt.value"
-            @click="visibilityFilter = opt.value"
-          >
-            {{ opt.label }}
-          </button>
-        </div>
+        <EditorChipFilter
+          :options="visibilityChipOptions"
+          v-model="visibilityFilter"
+          role="radiogroup"
+          ariaLabel="Visibility"
+          name-prefix="visibility-filter-"
+        />
         <span data-toon-count>{{ filteredCount }}</span>
       </template>
       <template #actions>
