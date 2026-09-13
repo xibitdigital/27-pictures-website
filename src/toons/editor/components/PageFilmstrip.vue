@@ -194,6 +194,14 @@ function onRemoveConfirm(): void {
   <EditorDialog :open="addOpen" title="Add page" @update:open="(next) => (addOpen = next)">
     <p class="editor-muted">Upload a plate, or generate one with AI if this series has a Comfy graph loaded.</p>
     <div class="editor-add-page-choices">
+      <EditorChoiceCard
+        name="add-page-layout"
+        title="Draw shapes on a blank page, then fill each with an image"
+        @click="onLayoutPick"
+      >
+        <LayoutGrid :size="22" :stroke-width="1.8" aria-hidden="true" />
+        Layout
+      </EditorChoiceCard>
       <EditorChoiceCard name="add-page-upload" @click="onUploadPick">
         <Upload :size="22" :stroke-width="1.8" aria-hidden="true" />
         Upload
@@ -210,14 +218,7 @@ function onRemoveConfirm(): void {
         <WandSparkles :size="22" :stroke-width="1.8" aria-hidden="true" />
         Generate
       </EditorChoiceCard>
-      <EditorChoiceCard
-        name="add-page-layout"
-        title="Draw shapes on a blank page, then fill each with an image"
-        @click="onLayoutPick"
-      >
-        <LayoutGrid :size="22" :stroke-width="1.8" aria-hidden="true" />
-        Layout
-      </EditorChoiceCard>
+
       <EditorChoiceCard
         name="add-page-gallery"
         title="Reuse an image already generated or uploaded for this toon"

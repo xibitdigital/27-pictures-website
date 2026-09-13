@@ -96,7 +96,7 @@ export function comfyPhase(raw: string): ComfyPhase | null {
 }
 
 export function comfyPhaseMessage(phase: ComfyPhase | null): string {
-  if (phase === "queued") return "Waiting in the Comfy queue…";
+  if (phase === "queued") return "Waiting in the queue…";
   if (phase === "running") return "Generating the plate…";
   if (phase === "done") return "Saving the plate…";
   return "Generating the plate…";

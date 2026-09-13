@@ -201,14 +201,14 @@ async function onRegionGenerateSubmit(regionId: string, payload: GeneratePayload
   const setStatus = (label: string): void => {
     generateStatus.value = `${label} · ${clock()}`;
   };
-  setStatus("Queuing on Comfy…");
+  setStatus("Queuing…");
   const tick = window.setInterval(() => {
     const current = generateStatus.value.replace(/ · \d+:\d+$/, "");
     setStatus(current || "Generating the image…");
   }, 1000);
   try {
     const queued = await generateRegionImage(regionId, payload);
-    setStatus("Waiting in the Comfy queue…");
+    setStatus("Waiting in the queue…");
     const deadline = Date.now() + 10 * 60 * 1000;
     while (Date.now() < deadline) {
       const snap = await getJob(queued.id);
@@ -226,7 +226,7 @@ async function onRegionGenerateSubmit(regionId: string, payload: GeneratePayload
       setStatus(snap.message || "Generating the image…");
       await new Promise((resolve) => window.setTimeout(resolve, 1500));
     }
-    setGenerateError("Timed out waiting for ComfyUI");
+    setGenerateError("Timed out waiting for the image");
   } catch (err) {
     setGenerateError(err instanceof Error ? err.message : "Generate failed");
   } finally {
@@ -250,14 +250,14 @@ async function onGenerateSubmit(payload: GeneratePayload): Promise<void> {
   const setStatus = (label: string): void => {
     generateStatus.value = `${label} · ${clock()}`;
   };
-  setStatus("Queuing on Comfy…");
+  setStatus("Queuing…");
   const tick = window.setInterval(() => {
     const current = generateStatus.value.replace(/ · \d+:\d+$/, "");
     setStatus(current || "Generating the plate…");
   }, 1000);
   try {
     const queued = await generatePage(toon.value.id, { ...payload, pageId: null });
-    setStatus("Waiting in the Comfy queue…");
+    setStatus("Waiting in the queue…");
     const deadline = Date.now() + 10 * 60 * 1000;
     while (Date.now() < deadline) {
       const snap = await getJob(queued.id);
@@ -275,7 +275,7 @@ async function onGenerateSubmit(payload: GeneratePayload): Promise<void> {
       setStatus(snap.message || "Generating the plate…");
       await new Promise((resolve) => window.setTimeout(resolve, 1500));
     }
-    setGenerateError("Timed out waiting for ComfyUI");
+    setGenerateError("Timed out waiting for the image");
   } catch (err) {
     setGenerateError(err instanceof Error ? err.message : "Generate failed");
   } finally {

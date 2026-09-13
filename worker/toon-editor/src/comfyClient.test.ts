@@ -106,7 +106,7 @@ describe("comfyPhase", () => {
     expect(comfyPhase("completed")).toBe("done");
     expect(comfyPhase("success")).toBe("done");
     expect(comfyPhase("error")).toBe("error");
-    expect(comfyPhaseMessage("queued")).toBe("Waiting in the Comfy queue…");
+    expect(comfyPhaseMessage("queued")).toBe("Waiting in the queue…");
     expect(comfyPhaseMessage("running")).toBe("Generating the plate…");
   });
 });

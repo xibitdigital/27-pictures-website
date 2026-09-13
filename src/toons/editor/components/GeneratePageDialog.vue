@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Eraser, LoaderCircle } from "@lucide/vue";
+import { Eraser } from "@lucide/vue";
 import { computed, ref, watch } from "vue";
 import {
   isDirectProvider as isDirectProviderName,
@@ -10,6 +10,7 @@ import {
 import EditorButton from "./ui/EditorButton.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
 import EditorDialog from "./ui/EditorDialog.vue";
+import EditorGenerateFooter from "./ui/EditorGenerateFooter.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
@@ -522,14 +523,14 @@ function onSubmit(): void {
           </ul>
         </div>
       </div>
-      <p v-if="busy" class="editor-muted">{{ status || "Generating page…" }}</p>
-      <div class="editor-form-actions">
-        <EditorButton variant="ghost" :disabled="busy" @click="onCancel">Cancel</EditorButton>
-        <EditorButton type="submit" :class="{ 'is-busy': busy }" :disabled="!canSubmit">
-          <LoaderCircle v-if="busy" class="editor-spin" :size="16" aria-hidden="true" />
-          {{ busy ? "Generating…" : Number(count) > 1 ? `Generate ${count}` : "Generate" }}
-        </EditorButton>
-      </div>
+      <EditorGenerateFooter
+        :busy="busy"
+        :status="status"
+        default-status="Generating page…"
+        :submit-label="Number(count) > 1 ? `Generate ${count}` : 'Generate'"
+        :can-submit="canSubmit"
+        @cancel="onCancel"
+      />
     </form>
   </EditorDialog>
 </template>
