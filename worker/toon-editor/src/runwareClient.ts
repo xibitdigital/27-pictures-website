@@ -82,8 +82,25 @@ function fitDimensions(dims: RunwareDimensions, width: number, height: number): 
 export const RUNWARE_TOKEN_REJECTED =
   "Runware rejected the API key. Settings showing Set only means a value is stored — Clear it, paste a fresh key from runware.ai/api-keys, and Save.";
 
-type RunwareError = { code?: string; message?: string; taskUUID?: string };
+type RunwareError = { code?: string; errorCode?: string; message?: string; taskUUID?: string };
 type RunwareEnvelope<T> = { data?: T[]; errors?: RunwareError[] };
+
+function errorCodeOf(error: RunwareError | null): string {
+  if (!error) return "";
+  return String(error.code || error.errorCode || "");
+}
+
+function parseRunwareJson<T>(text: string): RunwareEnvelope<T> | null {
+  try {
+    const parsed = JSON.parse(text) as unknown;
+    if (!parsed || typeof parsed !== "object") return {};
+    const obj = parsed as RunwareEnvelope<T> & RunwareError;
+    if (!obj.errors && !obj.data && (obj.errorCode || obj.code)) return { errors: [obj] };
+    return obj;
+  } catch {
+    return null;
+  }
+}
 
 function runwareToken(env: Env): string {
   return env.RUNWARE_API_KEY ? normaliseUserSecret(env.RUNWARE_API_KEY) : "";
@@ -101,7 +118,7 @@ function firstError(errors: RunwareError[] | undefined): RunwareError | null {
 }
 
 function isAuthError(status: number, error: RunwareError | null): boolean {
-  return status === 401 || status === 403 || error?.code === "invalidApiKey";
+  return status === 401 || status === 403 || errorCodeOf(error) === "invalidApiKey";
 }
 
 /** Cheap auth check used when saving a per-user key, so a truncated/masked paste fails at Save instead of at Generate. */
@@ -114,16 +131,11 @@ export async function runwareVerifyToken(token: string): Promise<{ ok: true } | 
     body: JSON.stringify([{ taskType: "authentication", apiKey: normalised }]),
   });
   const text = await res.text();
-  let parsed: RunwareEnvelope<unknown> = {};
-  try {
-    parsed = JSON.parse(text) as RunwareEnvelope<unknown>;
-  } catch {
-    parsed = {};
-  }
+  const parsed = parseRunwareJson<unknown>(text) || {};
   const error = firstError(parsed.errors);
   if (isAuthError(res.status, error)) return { ok: false, error: RUNWARE_TOKEN_REJECTED };
   if (!res.ok) return { ok: false, error: `Could not verify Runware key (${res.status})` };
-  if (error) return { ok: false, error: `Runware rejected the request: ${error.message || error.code}` };
+  if (error) return { ok: false, error: `Runware rejected the request: ${error.message || errorCodeOf(error)}` };
   return { ok: true };
 }
 
@@ -163,17 +175,17 @@ export async function runwareSubmit(
 
   const res = await fetch(RUNWARE_BASE, { method: "POST", headers: runwareHeaders(env), body: JSON.stringify([task]) });
   const text = await res.text();
-  let parsed: RunwareEnvelope<SubmitData> = {};
-  try {
-    parsed = JSON.parse(text) as RunwareEnvelope<SubmitData>;
-  } catch {
-    return { ok: false, error: "Runware request returned non-JSON" };
-  }
+  const parsed = parseRunwareJson<SubmitData>(text);
+  if (!parsed) return { ok: false, error: "Runware request returned non-JSON" };
   const error = firstError(parsed.errors);
-  if (error?.code === TASK_TIMEOUT_CODE) return { ok: true, id: taskUUID, pollingUrl: taskUUID };
+  // Sync wait (or a 504) is not a failed generation — the task keeps running. Poll getResponse /
+  // getTaskDetails. Runware names this `errorCode`, not always `code`.
+  if (errorCodeOf(error) === TASK_TIMEOUT_CODE) {
+    return { ok: true, id: error?.taskUUID || taskUUID, pollingUrl: error?.taskUUID || taskUUID };
+  }
   if (isAuthError(res.status, error)) return { ok: false, error: RUNWARE_TOKEN_REJECTED };
   if (!res.ok) return { ok: false, error: `Runware request failed (${res.status}) ${text.slice(0, 300)}` };
-  if (error) return { ok: false, error: `Runware rejected the request: ${error.message || error.code}` };
+  if (error) return { ok: false, error: `Runware rejected the request: ${error.message || errorCodeOf(error)}` };
   const data = parsed.data && parsed.data[0];
   if (!data?.taskUUID) return { ok: false, error: "Runware request returned no task" };
   // Async so getResponse can find the job. Sync submit used to 504 (failedTaskTimeout) while
@@ -226,16 +238,17 @@ export async function runwareResult(
     body: JSON.stringify([{ taskType: "getResponse", taskUUID }]),
   });
   const text = await res.text();
-  let parsed: RunwareEnvelope<ResultData> = {};
-  try {
-    parsed = JSON.parse(text) as RunwareEnvelope<ResultData>;
-  } catch {
-    return { ok: false, error: "Runware result returned non-JSON" };
-  }
+  const parsed = parseRunwareJson<ResultData>(text);
+  if (!parsed) return { ok: false, error: "Runware result returned non-JSON" };
   const error = firstError(parsed.errors);
   if (isAuthError(res.status, error)) return { ok: false, error: RUNWARE_TOKEN_REJECTED };
+  if (errorCodeOf(error) === TASK_TIMEOUT_CODE) {
+    const recovered = await imageUrlFromTaskDetails(env, taskUUID);
+    if (recovered) return { ok: true, phase: "done", imageUrl: recovered };
+    return { ok: true, phase: "running" };
+  }
   if (!res.ok) return { ok: false, error: `Runware result failed (${res.status}) ${text.slice(0, 200)}` };
-  if (error) return { ok: false, error: `Runware job failed: ${error.message || error.code}` };
+  if (error) return { ok: false, error: `Runware job failed: ${error.message || errorCodeOf(error)}` };
   const data = parsed.data && parsed.data[0];
   if (data?.imageURL) return { ok: true, phase: "done", imageUrl: data.imageURL };
   const phase = runwarePhase(data?.status);

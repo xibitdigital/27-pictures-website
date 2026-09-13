@@ -357,6 +357,33 @@ describe("runwareSubmit", () => {
     expect(out.pollingUrl).toBe(out.id);
     expect(out.imageUrl).toBeUndefined();
   });
+
+  it("treats a bare errorCode timeout body as submitted, not a failure", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          errorCode: "failedTaskTimeout",
+          message: "Task processing timeout. Results were not received within the expected time window.",
+          taskUUID: "20a8a7cf-47ce-4511-9cdd-0c50ef0e57c2",
+          taskType: "imageInference",
+        }),
+        { status: 504 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runwareSubmit(env({ RUNWARE_API_KEY: "k" }), {
+      prompt: "p",
+      images: [],
+      model: "bfl:3@1",
+      width: 800,
+      height: 1424,
+    });
+    expect(out).toEqual({
+      ok: true,
+      id: "20a8a7cf-47ce-4511-9cdd-0c50ef0e57c2",
+      pollingUrl: "20a8a7cf-47ce-4511-9cdd-0c50ef0e57c2",
+    });
+  });
 });
 
 describe("runwareResult", () => {
@@ -443,6 +470,25 @@ describe("runwareResult", () => {
     vi.stubGlobal("fetch", fetchMock);
     const out = await runwareResult(env({ RUNWARE_API_KEY: "k" }), "task-1");
     expect(out).toEqual({ ok: false, error: "Runware result had no image" });
+  });
+
+  it("keeps polling on failedTaskTimeout instead of failing the job", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            errorCode: "failedTaskTimeout",
+            message: "Task processing timeout.",
+            taskUUID: "task-1",
+          }),
+          { status: 504 }
+        )
+      )
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: [] }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runwareResult(env({ RUNWARE_API_KEY: "k" }), "task-1");
+    expect(out).toEqual({ ok: true, phase: "running" });
   });
 
   it("maps a 401 to the key-rejected hint", async () => {
