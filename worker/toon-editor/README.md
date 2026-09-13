@@ -114,7 +114,7 @@ and local see published + staging; production sees published only.
 | PATCH | `/toons/:id` | JWT | metadata + series + visibility — 403 for an editor not assigned to its (or the target) series, or who tries to publish |
 | POST | `/toons/:id/cover` | JWT | cover |
 | POST | `/toons/:id/audio` | JWT | caption clip |
-| POST | `/toons/:id/audio/generate` | JWT | ElevenLabs TTS (voice set) or SFX (voice empty) → `{ key, url, audio }` |
+| POST | `/toons/:id/audio/generate` | JWT | ElevenLabs TTS (voice set) or SFX (voice empty) → `{ key, url, audio }`. Worker holds the key and calls REST; the browser never talks to ElevenLabs. Session/single-use tokens are for live sockets only, not this path. |
 | POST | `/toons/:id/pages` | JWT | append plate |
 | POST | `/toons/:id/pages/generate` | JWT | JSON `{ prompt, includePrevious, pageId? }` → queue Comfy job |
 | GET | `/jobs/:id` | JWT | poll generate job; includes toon when done |
@@ -191,7 +191,7 @@ secrets. The studio never sees these keys.
 | Name | Local | Remote | Purpose |
 | --- | --- | --- | --- |
 | `JWT_SECRET` | `.dev.vars` | secret | editor JWT |
-| `ELEVENLABS_API_KEY` | `.dev.vars` | secret | inspector Generate audio |
+| `ELEVENLABS_API_KEY` | `.dev.vars` | secret | inspector Generate audio (Worker → REST TTS/SFX). Never send this to the browser. |
 | `COMFY_URL` | `.dev.vars` | secret | Comfy origin. Staging uses `https://cloud.comfy.org/api` (X-API-Key). Local Comfy is `http://127.0.0.1:8188`. Not `https://model-api.runcomfy.net`. |
 | `COMFY_API_KEY` | `.dev.vars` | secret | Comfy **account** key from https://platform.comfy.org → API Keys. Seedream partner nodes need it as `extra_data.api_key_comfy_org` on `/prompt`. |
 | `RESEND_API_KEY` | `.dev.vars` | secret | Invite emails (`src/inviteEmail.ts`). Same provider/domain as the separate `worker/` contact-form Worker, its own key on this Worker. Missing key just no-ops (`emailSent: false`) — the account is still created. |

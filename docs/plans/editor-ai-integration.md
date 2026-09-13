@@ -14,6 +14,10 @@ Keep `/toons/editor/` as it is (upload plate, upload mp3, place bubbles). Add tw
 2. **Bubble audio** — inspector magic wand. Bytes come from ElevenLabs TTS, then the Worker stores them like `POST /toons/:id/audio` and patches `extra.audio`.
 
 The browser never talks to ComfyUI or ElevenLabs. Keys stay on the Worker.
+ElevenLabs REST TTS/SFX (`POST /v1/text-to-speech`, `/v1/sound-generation`)
+authenticate with `xi-api-key` on the server. Their single-use / session tokens
+are only for live sockets (`tts_websocket`, Scribe, agents) — do not mint one
+for caption generate; we need the mp3 on R2 and we use `eleven_v3` over HTTP.
 
 ## Monthly budgets
 

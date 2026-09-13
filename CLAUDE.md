@@ -916,6 +916,17 @@ Caption TTS / SFX from the inspector wand is
 and `npx wrangler secret put ELEVENLABS_API_KEY` on the Worker (repo-root
 `.env` is only for the Python CLI). Upload an mp3 still works without it.
 
+**The browser never talks to ElevenLabs.** The Worker holds the key, calls REST
+TTS (`/v1/text-to-speech/{voice_id}`) or sound-generation, puts the mp3 on R2,
+and returns `{ key, url, audio }`. That is the documented pattern for this
+product: their developer landing and auth docs use `xi-api-key` on a server;
+**do not put the key in client-side code**. ElevenLabs single-use / session
+tokens (`POST /v1/single-use-token/{type}`, signed agent URLs) exist only for
+live sockets — `tts_websocket`, Scribe, Conversational AI — not REST convert
+or SFX. Do not mint a frontend token for caption generate: we need the bytes
+on R2 anyway, and `eleven_v3` caption clips use the HTTP path, not the TTS
+websocket.
+
 Plate **Generate** on the filmstrip plus card (after the last thumb) is
 `POST /toons/:id/pages/generate`. The series owns one Comfy **Save API**
 `.json` plus character-sheet slots (`POST /series/:key/flow` and `/refs`).
