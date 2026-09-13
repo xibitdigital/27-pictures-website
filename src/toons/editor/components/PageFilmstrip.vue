@@ -147,8 +147,8 @@ function onRemoveConfirm(): void {
         @click.stop
         @pointerdown.stop
       >
-        <LoaderCircle v-if="replacingId === page.id" class="editor-spin" :size="12" aria-hidden="true" />
-        <Upload v-else :size="12" :stroke-width="2.25" aria-hidden="true" />
+        <LoaderCircle v-if="replacingId === page.id" class="editor-spin" :size="14" aria-hidden="true" />
+        <Upload v-else :size="14" :stroke-width="2.25" aria-hidden="true" />
         <input
           type="file"
           accept="image/webp,image/jpeg,image/png"
@@ -166,7 +166,7 @@ function onRemoveConfirm(): void {
         @click="onRemoveClick($event, page)"
         @pointerdown.stop
       >
-        <X :size="12" :stroke-width="2.25" aria-hidden="true" />
+        <X :size="14" :stroke-width="2.25" aria-hidden="true" />
       </button>
     </RouterLink>
     <div class="editor-filmstrip-add">
