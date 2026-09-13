@@ -690,13 +690,30 @@ function plateSizeFromJob(job: GenerationJob): { width: number | null; height: n
   }
 }
 
+/** The series' optional watermark PNG (env.ASSETS bytes), or null if this toon has no series or
+ * the series has none configured — resolved once per job poll and reused across every plate that
+ * poll produces, rather than a D1 + R2 round trip per plate. */
+async function resolveSeriesWatermark(env: Env, seriesKey: string | null | undefined): Promise<ArrayBuffer | null> {
+  if (!seriesKey) return null;
+  const row = await env.DB.prepare("SELECT watermark_key FROM series WHERE key = ?")
+    .bind(seriesKey)
+    .first<{ watermark_key: string | null }>();
+  if (!row?.watermark_key) return null;
+  const obj = await env.ASSETS.get(row.watermark_key);
+  return obj ? obj.arrayBuffer() : null;
+}
+
 async function putPlate(
   env: Env,
   toon: ToonRow,
   bytes: ArrayBuffer,
-  source: ToonAssetSource
+  source: ToonAssetSource,
+  watermark?: ArrayBuffer | null
 ): Promise<{ fileKey: string; ext: string; type: string; width: number | null; height: number | null }> {
-  const optimized = await toWebp({ bytes, ...sniffImage(bytes) });
+  const optimized = await toWebp(
+    { bytes, ...sniffImage(bytes) },
+    watermark ? { bytes: watermark, ext: "png", type: "image/png" } : null
+  );
   const hash = await sha256Hex(optimized.bytes);
   const fileKey = `editor/${toon.slug}/assets/${hash}.${optimized.ext}`;
   await env.ASSETS.put(fileKey, optimized.bytes, {
@@ -796,6 +813,9 @@ export async function pollPageJob(
   // webpDimensions(), and only fall back to the requested size if that sniff fails.
   const requested = plateSizeFromJob(job);
   const assetSource: ToonAssetSource = job.region_id ? "region" : "page";
+  // Resolved once and reused for every plate below — a series' watermark is unrelated to which
+  // provider produced this job's output.
+  const watermark = await resolveSeriesWatermark(env, toon.series_key);
   const plates: { fileKey: string; width: number | null; height: number | null }[] = [];
   for (const image of outputs) {
     if (isFlux) {
@@ -806,22 +826,14 @@ export async function pollPageJob(
           .run();
         return { ok: true, job: { ...job, status: "error", error: downloaded.error }, phase: "error" };
       }
-      // Flux was asked for output_format: "webp" — store as-is, skip toWebp's decode/encode entirely.
-      const hash = await sha256Hex(downloaded.bytes);
-      const fileKey = `editor/${toon.slug}/assets/${hash}.webp`;
-      await env.ASSETS.put(fileKey, downloaded.bytes, {
-        httpMetadata: { contentType: "image/webp", cacheControl: "public, max-age=31536000, immutable" },
+      // Flux was asked for output_format: "webp" — putPlate's toWebp still takes the fast
+      // store-as-is path for it when there's no watermark to composite (same as before).
+      const stored = await putPlate(env, toon, downloaded.bytes, assetSource, watermark);
+      plates.push({
+        fileKey: stored.fileKey,
+        width: stored.width ?? requested.width,
+        height: stored.height ?? requested.height,
       });
-      const dims = webpDimensions(downloaded.bytes);
-      await recordToonAsset(
-        env,
-        toon.id,
-        fileKey,
-        dims?.width ?? requested.width,
-        dims?.height ?? requested.height,
-        assetSource
-      );
-      plates.push({ fileKey, width: dims?.width ?? requested.width, height: dims?.height ?? requested.height });
       continue;
     }
     if (isReplicate) {
@@ -835,7 +847,7 @@ export async function pollPageJob(
       // Unlike Flux (always webp), Replicate's own output format isn't pinned here —
       // route through putPlate() same as the Comfy path, which sniffs the real bytes
       // and re-encodes to webp only if they aren't already.
-      const stored = await putPlate(env, toon, downloaded.bytes, assetSource);
+      const stored = await putPlate(env, toon, downloaded.bytes, assetSource, watermark);
       plates.push({
         fileKey: stored.fileKey,
         width: stored.width ?? requested.width,
@@ -853,7 +865,7 @@ export async function pollPageJob(
       }
       // RunComfy's own output format isn't pinned to webp (png/jpeg per the submit request) —
       // route through putPlate(), which sniffs the real bytes and re-encodes.
-      const stored = await putPlate(env, toon, downloaded.bytes, assetSource);
+      const stored = await putPlate(env, toon, downloaded.bytes, assetSource, watermark);
       plates.push({
         fileKey: stored.fileKey,
         width: stored.width ?? requested.width,
@@ -869,7 +881,7 @@ export async function pollPageJob(
           .run();
         return { ok: true, job: { ...job, status: "error", error: downloaded.error }, phase: "error" };
       }
-      const stored = await putPlate(env, toon, downloaded.bytes, assetSource);
+      const stored = await putPlate(env, toon, downloaded.bytes, assetSource, watermark);
       plates.push({
         fileKey: stored.fileKey,
         width: stored.width ?? requested.width,
@@ -884,7 +896,7 @@ export async function pollPageJob(
         .run();
       return { ok: true, job: { ...job, status: "error", error: viewed.error }, phase: "error" };
     }
-    const stored = await putPlate(env, toon, viewed.bytes, assetSource);
+    const stored = await putPlate(env, toon, viewed.bytes, assetSource, watermark);
     plates.push({
       fileKey: stored.fileKey,
       width: stored.width ?? requested.width,

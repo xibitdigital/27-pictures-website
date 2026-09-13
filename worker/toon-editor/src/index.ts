@@ -519,6 +519,8 @@ function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: Req
     descriptions,
     coverKey: row.cover_key || null,
     coverUrl: objectUrl(request, env, row.cover_key, null),
+    watermarkKey: row.watermark_key || null,
+    watermarkUrl: objectUrl(request, env, row.watermark_key, null),
     hubUrl: row.hub_url || null,
     sort: Number(row.sort) || 0,
     toonCount: Number(row.toon_count) || 0,
@@ -1342,6 +1344,54 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     await putImage(env, objectKey, optimized.bytes, optimized.type);
     await env.DB.prepare(`UPDATE series SET cover_key = ?, updated_at = ? WHERE key = ?`)
       .bind(objectKey, nowIso(), key)
+      .run();
+    const row = await env.DB.prepare(
+      `SELECT series.*,
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+              (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
+       FROM series WHERE key = ?`
+    )
+      .bind(key)
+      .first();
+    return json(mapSeries(row, request, env), 200, cors);
+  }
+
+  const seriesWatermarkMatch = path.match(/^\/series\/([^/]+)\/watermark$/);
+  if (isMethod(method, "POST") && seriesWatermarkMatch) {
+    const key = seriesWatermarkMatch[1];
+    if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
+    const current = await env.DB.prepare("SELECT * FROM series WHERE key = ?").bind(key).first<SeriesRow>();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    const upload = await readUpload(await request.formData());
+    if ("error" in upload) return json({ error: upload.error }, 400, cors);
+    // Stored as-is (no toWebp re-encode) — PNG only, so the transparency that makes it a watermark
+    // instead of a solid rectangle survives untouched, and generatePage.ts's compositor can decode
+    // it with the PNG decoder it already has rather than needing a second image format to support.
+    if (upload.ext !== "png") return json({ error: "watermark must be a PNG with transparency" }, 400, cors);
+    const hash = await sha256Hex(upload.bytes);
+    const objectKey = `editor/_series/${key}/watermark/${hash}.png`;
+    await putImage(env, objectKey, upload.bytes, "image/png");
+    await env.DB.prepare(`UPDATE series SET watermark_key = ?, updated_at = ? WHERE key = ?`)
+      .bind(objectKey, nowIso(), key)
+      .run();
+    const row = await env.DB.prepare(
+      `SELECT series.*,
+              (SELECT COUNT(*) FROM toons WHERE toons.series_key = series.key) AS toon_count,
+              (SELECT group_concat(user_id) FROM series_editors WHERE series_editors.series_key = series.key) AS editor_ids
+       FROM series WHERE key = ?`
+    )
+      .bind(key)
+      .first();
+    return json(mapSeries(row, request, env), 200, cors);
+  }
+
+  if (isMethod(method, "DELETE") && seriesWatermarkMatch) {
+    const key = seriesWatermarkMatch[1];
+    if (!SLUG_RE.test(key)) return json({ error: "not found" }, 404, cors);
+    const current = await env.DB.prepare("SELECT key FROM series WHERE key = ?").bind(key).first();
+    if (!current) return json({ error: "not found" }, 404, cors);
+    await env.DB.prepare(`UPDATE series SET watermark_key = NULL, updated_at = ? WHERE key = ?`)
+      .bind(nowIso(), key)
       .run();
     const row = await env.DB.prepare(
       `SELECT series.*,

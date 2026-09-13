@@ -2,18 +2,27 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@jsquash/jpeg/codec/dec/mozjpeg_dec.wasm", () => ({ default: {} }));
 vi.mock("@jsquash/png/codec/pkg/squoosh_png_bg.wasm", () => ({ default: {} }));
+vi.mock("@jsquash/webp/codec/dec/webp_dec.wasm", () => ({ default: {} }));
 vi.mock("@jsquash/webp/codec/enc/webp_enc_simd.wasm", () => ({ default: {} }));
 
 const { decodedImage } = vi.hoisted(() => ({
   decodedImage: { width: 2, height: 2, data: new Uint8ClampedArray(16) },
 }));
 
+const decodeJpegMock = vi.fn().mockResolvedValue(decodedImage);
+const decodePngMock = vi.fn().mockResolvedValue(decodedImage);
+const decodeWebpMock = vi.fn().mockResolvedValue(decodedImage);
+
 vi.mock("@jsquash/jpeg/decode", () => ({
-  default: vi.fn().mockResolvedValue(decodedImage),
+  default: (...args: unknown[]) => decodeJpegMock(...args),
   init: vi.fn().mockResolvedValue(undefined),
 }));
 vi.mock("@jsquash/png/decode", () => ({
-  default: vi.fn().mockResolvedValue(decodedImage),
+  default: (...args: unknown[]) => decodePngMock(...args),
+  init: vi.fn().mockResolvedValue(undefined),
+}));
+vi.mock("@jsquash/webp/decode", () => ({
+  default: (...args: unknown[]) => decodeWebpMock(...args),
   init: vi.fn().mockResolvedValue(undefined),
 }));
 vi.mock("@jsquash/webp/encode", () => ({
@@ -23,6 +32,21 @@ vi.mock("@jsquash/webp/encode", () => ({
 
 import encodeWebp from "@jsquash/webp/encode";
 import { toWebp, webpDimensions } from "./imageOptimize";
+
+/** A solid-color opaque bitmap, in the {data,width,height} shape jsquash decoders return. */
+function solidBitmap(
+  width: number,
+  height: number,
+  rgba: [number, number, number, number]
+): {
+  data: Uint8ClampedArray;
+  width: number;
+  height: number;
+} {
+  const data = new Uint8ClampedArray(width * height * 4);
+  for (let i = 0; i < width * height; i++) data.set(rgba, i * 4);
+  return { data, width, height };
+}
 
 function bytesFromBase64(b64: string): ArrayBuffer {
   const binary = atob(b64);
@@ -78,6 +102,43 @@ describe("toWebp", () => {
     vi.mocked(encodeWebp).mockRejectedValueOnce(new Error("boom"));
     const image = { bytes: new ArrayBuffer(4), ext: "png", type: "image/png" };
     expect(await toWebp(image)).toBe(image);
+  });
+
+  describe("with a watermark", () => {
+    afterEach(() => {
+      decodeWebpMock.mockClear();
+      decodePngMock.mockResolvedValue(decodedImage);
+    });
+
+    it("forces a decode+encode even when the image is already webp", async () => {
+      decodeWebpMock.mockResolvedValueOnce(solidBitmap(100, 100, [10, 20, 30, 255]));
+      decodePngMock.mockResolvedValueOnce(solidBitmap(10, 10, [255, 255, 255, 255]));
+      const image = { bytes: new ArrayBuffer(4), ext: "webp", type: "image/webp" };
+      const watermark = { bytes: new ArrayBuffer(4), ext: "png", type: "image/png" };
+      const out = await toWebp(image, watermark);
+      expect(decodeWebpMock).toHaveBeenCalled();
+      expect(out.ext).toBe("webp");
+      expect(out.bytes).not.toBe(image.bytes);
+    });
+
+    it("composites the watermark onto the base image's bottom-right corner", async () => {
+      const base = solidBitmap(20, 20, [0, 0, 0, 255]);
+      const mark = solidBitmap(4, 4, [255, 255, 255, 255]);
+      decodePngMock.mockResolvedValueOnce(base).mockResolvedValueOnce(mark);
+      const image = { bytes: new ArrayBuffer(4), ext: "png", type: "image/png" };
+      const watermark = { bytes: new ArrayBuffer(4), ext: "png", type: "image/png" };
+      await toWebp(image, watermark);
+      // margin 20/16 leaves no room in a 20x20 base — composite is a no-op, base stays untouched.
+      expect(base.data[0]).toBe(0);
+    });
+
+    it("falls back to the plain (no-watermark) re-encode if the watermark path throws", async () => {
+      decodePngMock.mockRejectedValueOnce(new Error("bad watermark png"));
+      const image = { bytes: new ArrayBuffer(4), ext: "png", type: "image/png" };
+      const watermark = { bytes: new ArrayBuffer(4), ext: "png", type: "image/png" };
+      const out = await toWebp(image, watermark);
+      expect(out.ext).toBe("webp");
+    });
   });
 });
 

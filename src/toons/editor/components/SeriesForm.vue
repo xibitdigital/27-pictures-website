@@ -3,6 +3,7 @@ import { BookPlus, FolderPlus, Save, Upload, WandSparkles } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import {
+  clearSeriesWatermark,
   generateCharacter,
   getCharacterJob,
   getSeries,
@@ -13,6 +14,7 @@ import {
   uploadSeriesCover,
   uploadSeriesFlow,
   uploadSeriesRef,
+  uploadSeriesWatermark,
   type CaptionTranslations,
 } from "../api";
 import { CAPTION_LANGS } from "../mapConfig";
@@ -155,6 +157,7 @@ function isLockedSlot(slot: SeriesFlowSlot): boolean {
 const previewSlot = ref<SeriesFlowSlot | null>(null);
 const flowLabel = ref("");
 const uploadingFlow = ref(false);
+const uploadingWatermark = ref(false);
 const promptCandidates = ref<PromptCandidate[]>([]);
 /** "" = Auto (legacy: every Seedream node's `prompt`); otherwise `${nodeId}::${inputKey}`. */
 const promptTargetKey = ref("");
@@ -297,6 +300,37 @@ async function onFlow(ev: Event): Promise<void> {
     pushToast(err instanceof Error ? err.message : "Flow upload failed");
   } finally {
     uploadingFlow.value = false;
+  }
+}
+
+async function onWatermark(ev: Event): Promise<void> {
+  const input = ev.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (!file) return;
+  if (isCreate.value || !existing.value) {
+    pushToast("Save the series first, then upload a watermark.");
+    return;
+  }
+  uploadingWatermark.value = true;
+  try {
+    existing.value = await uploadSeriesWatermark(existing.value.key, file);
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Watermark upload failed");
+  } finally {
+    uploadingWatermark.value = false;
+  }
+}
+
+async function onClearWatermark(): Promise<void> {
+  if (!existing.value || uploadingWatermark.value) return;
+  uploadingWatermark.value = true;
+  try {
+    existing.value = await clearSeriesWatermark(existing.value.key);
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not clear the watermark");
+  } finally {
+    uploadingWatermark.value = false;
   }
 }
 
@@ -562,6 +596,31 @@ async function onSubmit(ev: Event): Promise<void> {
             </EditorSelect>
           </label>
           <p v-if="provider !== 'comfy'" class="editor-muted editor-form-span">{{ providerHint }}</p>
+          <div class="editor-form-span editor-generate">
+            <p class="editor-generate-label">Watermark</p>
+            <p class="editor-muted">
+              Optional PNG with transparency, composited onto the bottom-right corner of every page this series
+              generates from here on — so a downloaded plate still carries it. Uploaded pages are never watermarked,
+              only AI-generated ones. Leave unset to skip.
+            </p>
+            <label>
+              Watermark image (.png)
+              <input
+                type="file"
+                name="series-watermark"
+                accept="image/png"
+                :disabled="uploadingWatermark"
+                @change="onWatermark"
+              />
+            </label>
+            <p v-if="existing?.watermarkUrl" class="editor-muted">
+              <img :src="existing.watermarkUrl" alt="" class="editor-watermark-preview" />
+              <EditorButton variant="ghost" :disabled="uploadingWatermark" @click="onClearWatermark">
+                {{ uploadingWatermark ? "Clearing…" : "Clear watermark" }}
+              </EditorButton>
+            </p>
+            <p v-else class="editor-muted">No watermark set. Pages generate unwatermarked.</p>
+          </div>
           <div class="editor-form-span editor-generate">
             <template v-if="provider === 'comfy'">
               <p class="editor-generate-label">ComfyUI flow</p>

@@ -223,6 +223,18 @@ export function uploadSeriesFlow(key: string, file: File): Promise<SeriesOption>
   return api<SeriesOption>(`/series/${key}/flow`, { method: "POST", body });
 }
 
+/** PNG only (transparency required) — composited onto the bottom-right corner of every plate this
+ * series generates from here on. Uploaded pages are never watermarked, only AI-generated ones. */
+export function uploadSeriesWatermark(key: string, file: File): Promise<SeriesOption> {
+  const body = new FormData();
+  body.set("file", file);
+  return api<SeriesOption>(`/series/${key}/watermark`, { method: "POST", body });
+}
+
+export function clearSeriesWatermark(key: string): Promise<SeriesOption> {
+  return api<SeriesOption>(`/series/${key}/watermark`, { method: "DELETE" });
+}
+
 export function uploadSeriesRef(key: string, alias: string, file: File): Promise<SeriesOption> {
   const body = new FormData();
   body.set("alias", alias);

@@ -251,6 +251,13 @@ body {
   margin: 1.5rem 0 0;
 }
 
+/* Generate page/character's busy-status line reads as a caption directly attached to the
+   Cancel/Generate row below it, not a paragraph floating with the same gap as everything else
+   in the dialog. */
+.editor-generate-status + .editor-form-actions {
+  margin-top: 0.4rem;
+}
+
 .editor-bar h1,
 .editor-form h1 {
   font-size: 1.5rem;
@@ -1081,6 +1088,16 @@ body {
   margin: 0.4rem 0 0;
   font-size: 0.85rem;
   color: var(--text);
+}
+
+.editor-watermark-preview {
+  display: block;
+  max-width: 12rem;
+  max-height: 3rem;
+  margin: 0.4rem 0 0.6rem;
+  padding: 0.4rem;
+  background: repeating-conic-gradient(var(--border-light) 0% 25%, var(--bg-card) 0% 50%) 0 0 / 10px 10px;
+  border: 1px solid var(--border-light);
 }
 
 .editor-slot-list {

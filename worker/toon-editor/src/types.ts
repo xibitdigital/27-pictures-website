@@ -157,6 +157,7 @@ export interface SeriesRow {
   tagline: string;
   description: string;
   cover_key: string | null;
+  watermark_key: string | null;
   hub_url: string | null;
   sort: number;
   extra_json?: string | null;
