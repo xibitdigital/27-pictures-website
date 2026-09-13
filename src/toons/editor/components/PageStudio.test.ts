@@ -154,6 +154,31 @@ describe("PageStudio bubble delete", () => {
     wrapper.unmount();
   });
 
+  it("shows the mode switch only for a layout-kind page, and toggles Layout/Bubbles", async () => {
+    const toon = sampleToon();
+    toon.pages[0].kind = "layout";
+    toon.pages[0].regions = [];
+    vi.mocked(api.getToon).mockResolvedValue(toon);
+    const wrapper = mountStudio();
+    await flushPromises();
+    expect(document.querySelector('[name="mode-layout"]')?.getAttribute("aria-pressed")).toBe("true");
+    expect(document.querySelector('[name="mode-bubbles"]')?.getAttribute("aria-pressed")).toBe("false");
+    expect(wrapper.find(".editor-inspector h2").text()).toBe("Layout");
+
+    (document.querySelector('[name="mode-bubbles"]') as HTMLButtonElement).click();
+    await flushPromises();
+    expect(document.querySelector('[name="mode-bubbles"]')?.getAttribute("aria-pressed")).toBe("true");
+    expect(wrapper.find(".editor-inspector h2").text()).toBe("Bubble");
+    wrapper.unmount();
+  });
+
+  it("hides the mode switch entirely for a plain plate page", async () => {
+    const wrapper = mountStudio();
+    await flushPromises();
+    expect(document.querySelector('[name="mode-layout"]')).toBeNull();
+    wrapper.unmount();
+  });
+
   it("confirms from the canvas trash icon without needing the bubble already selected", async () => {
     const wrapper = mountStudio();
     await flushPromises();

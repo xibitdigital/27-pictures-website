@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Layers, Save, Settings2 } from "@lucide/vue";
+import { Layers, LayoutGrid, MessageSquare, Save, Settings2 } from "@lucide/vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
@@ -877,8 +877,10 @@ onBeforeUnmount(() => {
   if (flattenDirty.value) pushToast("Layout changes on that page were not saved");
 });
 
+// studioMode is intentionally NOT reset here — it persists across page navigation (e.g. staying
+// in Bubbles mode while flipping through several layout pages), not forced back to "layout" every
+// time the page changes.
 watch(pageId, (_next, prev) => {
-  studioMode.value = "layout";
   if (prev && flattenDirty.value) pushToast("Layout changes on the previous page were not saved");
   flattenDirty.value = false;
 });
@@ -976,7 +978,6 @@ async function onRemove(): Promise<void> {
           @tail="onTail"
           @remove="onCaptionLayerRemove"
           @update-layout-tool="layoutTool = $event"
-          @update-studio-mode="onUpdateStudioMode"
           @create-region="onCreateRegion"
           @update-region-geometry="onUpdateRegionGeometry"
           @persist-region-geometry="onPersistRegionGeometry"
@@ -999,35 +1000,64 @@ async function onRemove(): Promise<void> {
             />
           </label>
         </div>
-        <CaptionInspector
-          v-if="showBubbleLayer"
-          ref="captionInspectorRef"
-          :bubble="selectedBubble"
-          :toon-id="toon.id"
-          :asset-page-dir="toon.assetPageDir"
-          :play-index="playOrder.index"
-          :play-count="playOrder.count"
-          @change="onInspectChange"
-          @preview="previewLang = $event"
-          @remove="requestRemove"
-          @reorder="onReorder"
-        />
-        <LayoutInspector
-          v-else
-          :region="selectedRegion"
-          :layer-index="regionStackOrder.index"
-          :layer-count="regionStackOrder.count"
-          :page-bg-color="activePage?.bgColor ?? null"
-          @reassign="onLayoutInspectorReassign"
-          @scale="onRegionScalePreview"
-          @persist-scale="onRegionScalePersist"
-          @border="onRegionBorderPreview"
-          @persist-border="onRegionBorderPersist"
-          @reorder="onRegionReorder"
-          @remove="requestRegionRemove"
-          @page-bg-color="onPageBgColorPreview"
-          @persist-page-bg-color="onPageBgColorPersist"
-        />
+        <div class="editor-inspector-col">
+          <div
+            v-if="activePage?.kind === 'layout'"
+            class="editor-inspector-mode-switch"
+            role="radiogroup"
+            aria-label="Studio mode"
+          >
+            <button
+              type="button"
+              name="mode-layout"
+              :aria-pressed="studioMode === 'layout'"
+              title="Layout — draw and fill panels"
+              @click="onUpdateStudioMode('layout')"
+            >
+              <LayoutGrid :size="16" :stroke-width="1.6" aria-hidden="true" />
+              Layout
+            </button>
+            <button
+              type="button"
+              name="mode-bubbles"
+              :aria-pressed="studioMode === 'bubbles'"
+              title="Bubbles — place captions on the flattened plate"
+              @click="onUpdateStudioMode('bubbles')"
+            >
+              <MessageSquare :size="16" :stroke-width="1.6" aria-hidden="true" />
+              Bubbles
+            </button>
+          </div>
+          <CaptionInspector
+            v-if="showBubbleLayer"
+            ref="captionInspectorRef"
+            :bubble="selectedBubble"
+            :toon-id="toon.id"
+            :asset-page-dir="toon.assetPageDir"
+            :play-index="playOrder.index"
+            :play-count="playOrder.count"
+            @change="onInspectChange"
+            @preview="previewLang = $event"
+            @remove="requestRemove"
+            @reorder="onReorder"
+          />
+          <LayoutInspector
+            v-else
+            :region="selectedRegion"
+            :layer-index="regionStackOrder.index"
+            :layer-count="regionStackOrder.count"
+            :page-bg-color="activePage?.bgColor ?? null"
+            @reassign="onLayoutInspectorReassign"
+            @scale="onRegionScalePreview"
+            @persist-scale="onRegionScalePersist"
+            @border="onRegionBorderPreview"
+            @persist-border="onRegionBorderPersist"
+            @reorder="onRegionReorder"
+            @remove="requestRegionRemove"
+            @page-bg-color="onPageBgColorPreview"
+            @persist-page-bg-color="onPageBgColorPersist"
+          />
+        </div>
       </div>
       <ConfirmDialog
         :open="confirmingRemove"

@@ -1,6 +1,11 @@
 <script setup lang="ts">
-/** Floating tool switch over the Layout-mode canvas — draw tools are explicit so idle clicks never start a shape. */
-import { LayoutGrid, Magnet, MessageSquare, MousePointer2, Pentagon, Square } from "@lucide/vue";
+/**
+ * Floating tool switch over the Layout-mode canvas — draw tools are explicit so idle clicks never
+ * start a shape. The bubbles/layout mode switch itself lives in the inspector column header
+ * (PageStudio.vue), not here — it used to be the first button group in this floating toolbar,
+ * which made it easy to miss since it's only visible while already in Layout mode.
+ */
+import { Magnet, MousePointer2, Pentagon, Square } from "@lucide/vue";
 import type { LayoutTool } from "./GeometryLayer.vue";
 
 export type StudioMode = "layout" | "bubbles";
@@ -8,35 +13,12 @@ export type StudioMode = "layout" | "bubbles";
 defineProps<{ tool: LayoutTool; mode: StudioMode; grid?: boolean }>();
 const emit = defineEmits<{
   "update:tool": [tool: LayoutTool];
-  "update:mode": [mode: StudioMode];
   "update:grid": [grid: boolean];
 }>();
 </script>
 
 <template>
   <div class="editor-layout-toolbar">
-    <div class="editor-toolbar-group" role="radiogroup" aria-label="Studio mode">
-      <button
-        class="editor-icon-btn"
-        type="button"
-        name="mode-layout"
-        :aria-pressed="mode === 'layout'"
-        title="Layout — draw and fill panels"
-        @click="emit('update:mode', 'layout')"
-      >
-        <LayoutGrid :size="16" :stroke-width="1.6" aria-hidden="true" />
-      </button>
-      <button
-        class="editor-icon-btn"
-        type="button"
-        name="mode-bubbles"
-        :aria-pressed="mode === 'bubbles'"
-        title="Bubbles — place captions on the flattened plate"
-        @click="emit('update:mode', 'bubbles')"
-      >
-        <MessageSquare :size="16" :stroke-width="1.6" aria-hidden="true" />
-      </button>
-    </div>
     <div v-if="mode === 'layout'" class="editor-toolbar-group" role="radiogroup" aria-label="Draw tool">
       <button
         class="editor-icon-btn"

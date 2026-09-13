@@ -1967,7 +1967,53 @@ body {
   opacity: 1;
 }
 
+/* Wraps the mode switch + whichever inspector (Caption/Layout) is mounted, so the switch survives
+   the v-if/v-else swap between them instead of belonging to either one. */
+.editor-inspector-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.editor-inspector-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  padding: 0.6rem 0.6rem 0;
+  background: var(--bg-card);
+}
+
+.editor-inspector-mode-switch button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.6rem;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editor-inspector-mode-switch button:hover,
+.editor-inspector-mode-switch button:focus-visible {
+  color: var(--text);
+  border-color: var(--silver);
+}
+
+.editor-inspector-mode-switch button[aria-pressed="true"] {
+  background: var(--editor-primary);
+  color: var(--text);
+  border-color: var(--editor-primary);
+}
+
 .editor-inspector {
+  flex: 1;
   min-height: 0;
   overflow: auto;
   background: var(--bg-card);

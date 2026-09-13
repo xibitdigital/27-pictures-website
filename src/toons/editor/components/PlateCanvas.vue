@@ -63,7 +63,6 @@ const emit = defineEmits<{
   "persist-region-image": [id: string, offsetX: number, offsetY: number];
   "request-region-assign": [id: string];
   "update-layout-tool": [tool: LayoutTool];
-  "update-studio-mode": [mode: StudioMode];
 }>();
 
 const imgEl = ref<HTMLImageElement | null>(null);
@@ -94,7 +93,6 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
         :mode="studioMode"
         :grid="showGrid"
         @update:tool="emit('update-layout-tool', $event)"
-        @update:mode="emit('update-studio-mode', $event)"
         @update:grid="showGrid = $event"
       />
     </div>
