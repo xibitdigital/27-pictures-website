@@ -2269,11 +2269,24 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const key = await putPageAsset(env, page.toon_id, current.slug, upload, "page", watermark);
     const width = upload.width || page.width || null;
     const height = upload.height || page.height || null;
-    await env.DB.prepare(`UPDATE pages SET file_key = ?, width = ?, height = ? WHERE id = ?`)
-      .bind(key, width, height, page.id)
-      .run();
-    await env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), page.toon_id).run();
-    return json(await loadToon(env, request, page.toon_id), 200, cors);
+    await Promise.all([
+      env.DB.prepare(`UPDATE pages SET file_key = ?, width = ?, height = ? WHERE id = ?`)
+        .bind(key, width, height, page.id)
+        .run(),
+      env.DB.prepare(`UPDATE toons SET updated_at = ? WHERE id = ?`).bind(nowIso(), page.toon_id).run(),
+    ]);
+    // Save layout / thumb replace only needs the new plate. loadToon would re-query every
+    // page, bubble and region on a long book — that's the stall, not the encode.
+    return json(
+      {
+        fileKey: key,
+        fileUrl: objectUrl(request, env, key, current.asset_page_dir) || "",
+        width,
+        height,
+      },
+      200,
+      cors
+    );
   }
 
   // One-off/idempotent: backfills toon_assets from what's already sitting in R2 under each toon's

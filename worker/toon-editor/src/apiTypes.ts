@@ -116,6 +116,14 @@ export interface PageRecord {
   regions: RegionRecord[];
 }
 
+/** POST /pages/:id/file — plate swap only. Does not reload the rest of the toon. */
+export interface PageFilePatch {
+  fileKey: string;
+  fileUrl: string;
+  width: number | null;
+  height: number | null;
+}
+
 export interface ToonRecord {
   id: string;
   slug: string;

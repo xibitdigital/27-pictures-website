@@ -11,6 +11,8 @@ vi.mock("vue-router", () => ({
   useRoute: () => route,
   useRouter: () => ({ push: vi.fn(), replace }),
   RouterLink: { template: "<a><slot /></a>" },
+  onBeforeRouteLeave: vi.fn(),
+  onBeforeRouteUpdate: vi.fn(),
 }));
 
 const bubble: BubbleRecord = {
@@ -201,6 +203,101 @@ describe("PageStudio bubble delete", () => {
     await flushPromises();
     expect(document.querySelector(".editor-dialog")?.textContent).toContain("Delete this bubble?");
     expect(api.deleteBubble).not.toHaveBeenCalled();
+    wrapper.unmount();
+  });
+});
+
+describe("PageStudio unsaved layout", () => {
+  const region = {
+    id: "r1",
+    shapeType: "rect" as const,
+    geometry: { kind: "rect" as const, x: 0.1, y: 0.1, w: 0.4, h: 0.4 },
+    fileKey: null,
+    fileUrl: null,
+    fileWidth: null,
+    fileHeight: null,
+    imageOffsetX: 0.5,
+    imageOffsetY: 0.5,
+    imageScale: 1,
+    borderColor: null,
+    borderWidth: 0,
+    borderStyle: "solid" as const,
+    sort: 0,
+  };
+
+  function layoutToon(): ToonRecord {
+    const next = sampleToon();
+    next.pages[0].kind = "layout";
+    next.pages[0].regions = [{ ...region }];
+    return next;
+  }
+
+  function mountLayoutStudio() {
+    return mount(PageStudio, {
+      attachTo: document.body,
+      global: {
+        stubs: {
+          EditorBar: true,
+          GeneratePageDialog: true,
+          PageFilmstrip: {
+            template: `<button type="button" name="add-page" @click="$emit('layout')">add</button>`,
+          },
+          PlateCanvas: {
+            props: ["bubbles"],
+            template: `<button type="button" name="dirty-layout" @click="$emit('persist-region-geometry', 'r1', { kind: 'rect', x: 0.2, y: 0.2, w: 0.3, h: 0.3 })">dirty</button>`,
+          },
+        },
+      },
+    });
+  }
+
+  beforeEach(() => {
+    route.params = { id: "t1", pageId: "p1" };
+    vi.spyOn(HTMLCanvasElement.prototype, "toBlob").mockImplementation(function (cb) {
+      cb(new Blob([new Uint8Array([1, 2, 3])], { type: "image/png" }));
+    });
+    vi.spyOn(api, "getToon").mockResolvedValue(layoutToon());
+    vi.spyOn(api, "patchRegion").mockResolvedValue({
+      ...region,
+      geometry: { kind: "rect", x: 0.2, y: 0.2, w: 0.3, h: 0.3 },
+    });
+    vi.spyOn(api, "uploadPage").mockResolvedValue(layoutToon());
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    document.body.innerHTML = "";
+  });
+
+  it("blocks adding a page until Stay or Discard", async () => {
+    const wrapper = mountLayoutStudio();
+    await flushPromises();
+    await wrapper.get('button[name="dirty-layout"]').trigger("click");
+    await flushPromises();
+    await wrapper.get('button[name="add-page"]').trigger("click");
+    await flushPromises();
+    expect(document.querySelector(".editor-dialog")?.textContent).toContain("Save this page's layout first");
+    expect(api.uploadPage).not.toHaveBeenCalled();
+
+    const stay = [...document.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Stay");
+    stay?.click();
+    await flushPromises();
+    expect(api.uploadPage).not.toHaveBeenCalled();
+    expect(document.querySelector(".editor-dialog-root")).toBeFalsy();
+    wrapper.unmount();
+  });
+
+  it("discards and continues when Discard is chosen", async () => {
+    const wrapper = mountLayoutStudio();
+    await flushPromises();
+    await wrapper.get('button[name="dirty-layout"]').trigger("click");
+    await flushPromises();
+    await wrapper.get('button[name="add-page"]').trigger("click");
+    await flushPromises();
+    const discard = [...document.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Discard");
+    discard?.click();
+    await flushPromises();
+    expect(api.uploadPage).toHaveBeenCalled();
     wrapper.unmount();
   });
 });

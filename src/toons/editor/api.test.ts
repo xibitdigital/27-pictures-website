@@ -325,14 +325,17 @@ describe("editor api", () => {
     vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev/");
     setToken("sess-1");
     const fetchMock = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ id: "t1", pages: [{ id: "p1", fileKey: "editor/demo/assets/new.webp" }] }), {
-        status: 200,
-      })
+      new Response(
+        JSON.stringify({ fileKey: "editor/demo/assets/new.webp", fileUrl: "/new.webp", width: 1152, height: 1728 }),
+        {
+          status: 200,
+        }
+      )
     );
     vi.stubGlobal("fetch", fetchMock);
     const file = new File([new Uint8Array([1, 2, 3])], "plate.webp", { type: "image/webp" });
     const out = await replacePage("p1", file, { width: 1152, height: 1728 });
-    expect(out.pages[0].fileKey).toBe("editor/demo/assets/new.webp");
+    expect(out.fileKey).toBe("editor/demo/assets/new.webp");
     expect(fetchMock.mock.calls[0][0]).toBe("https://editor.example.dev/pages/p1/file");
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     expect(init.method).toBe("POST");

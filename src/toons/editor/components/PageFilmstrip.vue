@@ -1,25 +1,19 @@
 <script setup lang="ts">
-import { nextTick, ref } from "vue";
-import { Images, LayoutGrid, LoaderCircle, Plus, Upload, WandSparkles, X } from "@lucide/vue";
+import { ref } from "vue";
+import { LoaderCircle, Plus, Upload, X } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import ConfirmDialog from "./ConfirmDialog.vue";
-import EditorChoiceCard from "./ui/EditorChoiceCard.vue";
-import EditorDialog from "./ui/EditorDialog.vue";
 import type { PageRecord } from "../types";
 
 const props = defineProps<{
   toonId: string;
   pages: PageRecord[];
   activeId: string | null;
-  canGenerate?: boolean;
   replacingId?: string | null;
 }>();
 
 const emit = defineEmits<{
-  upload: [file: File];
-  generate: [];
   layout: [];
-  gallery: [];
   remove: [pageId: string];
   replace: [pageId: string, file: File];
   /** Every page id, in the new desired order — the whole list, not just the moved one. */
@@ -27,8 +21,6 @@ const emit = defineEmits<{
 }>();
 
 const pendingRemove = ref<PageRecord | null>(null);
-const addOpen = ref(false);
-const pageFile = ref<HTMLInputElement | null>(null);
 
 const draggedId = ref<string | null>(null);
 const dragOverId = ref<string | null>(null);
@@ -69,34 +61,6 @@ function onDrop(ev: DragEvent, page: PageRecord): void {
 function onDragEnd(): void {
   draggedId.value = null;
   dragOverId.value = null;
-}
-
-function onFile(ev: Event): void {
-  const input = ev.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (file) emit("upload", file);
-  input.value = "";
-}
-
-async function onUploadPick(): Promise<void> {
-  addOpen.value = false;
-  await nextTick();
-  pageFile.value?.click();
-}
-
-function onGeneratePick(): void {
-  addOpen.value = false;
-  emit("generate");
-}
-
-function onLayoutPick(): void {
-  addOpen.value = false;
-  emit("layout");
-}
-
-function onGalleryPick(): void {
-  addOpen.value = false;
-  emit("gallery");
 }
 
 function onReplaceFile(ev: Event, page: PageRecord): void {
@@ -170,65 +134,18 @@ function onRemoveConfirm(): void {
       </button>
     </RouterLink>
     <div class="editor-filmstrip-add">
-      <input
-        ref="pageFile"
-        type="file"
-        accept="image/webp,image/jpeg,image/png"
-        aria-label="Upload page"
-        hidden
-        @change="onFile"
-      />
       <button
         class="editor-filmstrip-action"
         type="button"
         name="add-page"
         aria-label="Add page"
-        aria-haspopup="dialog"
-        :aria-expanded="addOpen"
-        @click="addOpen = true"
+        title="Add a layout page"
+        @click="emit('layout')"
       >
         <Plus :size="28" :stroke-width="2" aria-hidden="true" />
       </button>
     </div>
   </nav>
-  <EditorDialog :open="addOpen" title="Add page" @update:open="(next) => (addOpen = next)">
-    <p class="editor-muted">Upload a plate, or generate one with AI if this series has a Comfy graph loaded.</p>
-    <div class="editor-add-page-choices">
-      <EditorChoiceCard
-        name="add-page-layout"
-        title="Draw shapes on a blank page, then fill each with an image"
-        @click="onLayoutPick"
-      >
-        <LayoutGrid :size="22" :stroke-width="1.8" aria-hidden="true" />
-        Layout
-      </EditorChoiceCard>
-      <EditorChoiceCard name="add-page-upload" @click="onUploadPick">
-        <Upload :size="22" :stroke-width="1.8" aria-hidden="true" />
-        Upload
-      </EditorChoiceCard>
-      <EditorChoiceCard
-        name="add-page-generate"
-        :title="
-          props.canGenerate
-            ? 'Generate page with the series Comfy graph'
-            : 'Upload a Comfy flow and sheets on the series first'
-        "
-        @click="onGeneratePick"
-      >
-        <WandSparkles :size="22" :stroke-width="1.8" aria-hidden="true" />
-        Generate
-      </EditorChoiceCard>
-
-      <EditorChoiceCard
-        name="add-page-gallery"
-        title="Reuse an image already generated or uploaded for this toon"
-        @click="onGalleryPick"
-      >
-        <Images :size="22" :stroke-width="1.8" aria-hidden="true" />
-        Gallery
-      </EditorChoiceCard>
-    </div>
-  </EditorDialog>
   <ConfirmDialog
     :open="Boolean(pendingRemove)"
     title="Delete page"

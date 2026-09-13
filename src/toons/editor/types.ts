@@ -16,6 +16,7 @@ export type {
   GenerateProvider,
   InviteUserInput,
   InviteUserResult,
+  PageFilePatch,
   PageKind,
   PageRecord,
   PromptCandidate,

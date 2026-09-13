@@ -6,6 +6,7 @@ import type {
   EditorUser,
   InviteUserInput,
   InviteUserResult,
+  PageFilePatch,
   PageKind,
   RegionBorderStyle,
   RegionGeometry,
@@ -347,14 +348,18 @@ export function uploadPage(
 }
 
 /** Swap the plate on an existing page. Captions stay; the file is a new hashed key. */
-export function replacePage(pageId: string, file: File, size?: { width: number; height: number }): Promise<ToonRecord> {
+export function replacePage(
+  pageId: string,
+  file: File,
+  size?: { width: number; height: number }
+): Promise<PageFilePatch> {
   const body = new FormData();
   body.set("file", file);
   if (size) {
     body.set("width", String(size.width));
     body.set("height", String(size.height));
   }
-  return api<ToonRecord>(`/pages/${pageId}/file`, { method: "POST", body });
+  return api<PageFilePatch>(`/pages/${pageId}/file`, { method: "POST", body });
 }
 
 /** Every image ever generated or uploaded for this toon — including ones no page or region uses

@@ -43,26 +43,31 @@ function toon(pages: PageRecord[]): ToonRecord {
 
 describe("mergeReplacedPage", () => {
   it("swaps the plate and keeps unsaved bubbles on that page", () => {
-    const local = toon([page({ id: "p1" })]);
-    const remote = toon([
-      page({
-        id: "p1",
+    const local = toon([page({ id: "p1" }), page({ id: "p2", position: 1 })]);
+    const next = mergeReplacedPage(
+      local,
+      {
         fileKey: "new.webp",
         fileUrl: "https://cdn.example/new.webp",
         width: 1152,
         height: 1728,
-        bubbles: [],
-      }),
-    ]);
-    const next = mergeReplacedPage(local, remote, "p1");
+      },
+      "p1"
+    );
     expect(next.pages[0].fileKey).toBe("new.webp");
     expect(next.pages[0].fileUrl).toBe("https://cdn.example/new.webp");
     expect(next.pages[0].width).toBe(1152);
     expect(next.pages[0].bubbles[0].textEn).toBe("unsaved");
+    expect(next.pages[1].fileKey).toBe("old.webp");
   });
 
-  it("falls back to the remote toon when that page is not in the payload", () => {
-    const remote = toon([page({ id: "p2", fileKey: "other.webp" })]);
-    expect(mergeReplacedPage(toon([page({ id: "p1" })]), remote, "missing").pages[0].id).toBe("p2");
+  it("leaves other pages alone when the id is missing", () => {
+    const local = toon([page({ id: "p1" })]);
+    const next = mergeReplacedPage(
+      local,
+      { fileKey: "new.webp", fileUrl: "https://cdn.example/new.webp", width: 1, height: 1 },
+      "missing"
+    );
+    expect(next.pages[0].fileKey).toBe("old.webp");
   });
 });

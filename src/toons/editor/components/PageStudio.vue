@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Layers, LayoutGrid, MessageSquare, Save, Settings2 } from "@lucide/vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import {
   addBubble,
   addRegion,
@@ -84,6 +84,8 @@ const generateTargetRegionId = ref<string | null>(null);
 const confirmingRegionRemove = ref(false);
 const flattenDirty = ref(false);
 const flattening = ref(false);
+const leaveLayoutOpen = ref(false);
+let leaveLayoutWaiters: ((proceed: boolean) => void)[] = [];
 /** Gallery dialog's fill target — a region id when picking to fill a shape, null when picking
  * to add a brand-new page from an existing image. The dialog owns its own region/page tab
  * (defaults to region); this is only which action a pick actually performs. */
@@ -333,8 +335,8 @@ async function onReplaceThumb(pageId: string, file: File): Promise<void> {
   replacingId.value = pageId;
   try {
     const size = await readImageSize(file);
-    const next = await replacePage(pageId, file, size);
-    toon.value = toon.value ? mergeReplacedPage(toon.value, next, pageId) : next;
+    const plate = await replacePage(pageId, file, size);
+    if (toon.value) toon.value = mergeReplacedPage(toon.value, plate, pageId);
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Replace failed");
   } finally {
@@ -365,8 +367,25 @@ async function onReorderPages(order: string[]): Promise<void> {
  * code path that ever creates a layout page. Used to be upload-then-PATCH-kind, two full toon
  * reloads back to back for a toon that can have a lot of pages/bubbles; the upload endpoint now
  * takes the kind directly instead. */
+async function confirmLeaveDirtyLayout(): Promise<boolean> {
+  if (!flattenDirty.value) return true;
+  leaveLayoutOpen.value = true;
+  return new Promise((resolve) => {
+    leaveLayoutWaiters.push(resolve);
+  });
+}
+
+function resolveLeaveLayout(proceed: boolean): void {
+  leaveLayoutOpen.value = false;
+  if (proceed) flattenDirty.value = false;
+  const waiters = leaveLayoutWaiters;
+  leaveLayoutWaiters = [];
+  for (const wait of waiters) wait(proceed);
+}
+
 async function onAddLayoutPage(): Promise<void> {
   if (!toon.value) return;
+  if (!(await confirmLeaveDirtyLayout())) return;
   try {
     const canvas = document.createElement("canvas");
     canvas.width = toon.value.designWidth;
@@ -628,8 +647,8 @@ async function flattenNow(): Promise<void> {
     if (!blob) throw new Error("Could not render the layout");
     const isWebp = blob.type === "image/webp";
     const file = new File([blob], isWebp ? "layout.webp" : "layout.png", { type: blob.type || "image/png" });
-    const next = await replacePage(page.id, file, { width: canvas.width, height: canvas.height });
-    toon.value = toon.value ? mergeReplacedPage(toon.value, next, page.id) : next;
+    const plate = await replacePage(page.id, file, { width: canvas.width, height: canvas.height });
+    if (toon.value) toon.value = mergeReplacedPage(toon.value, plate, page.id);
     flattenDirty.value = false;
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not update the flattened plate");
@@ -777,46 +796,20 @@ function onAssignGallery(): void {
   galleryOpen.value = true;
 }
 
-function onAddPageGallery(): void {
-  galleryRegionId.value = null;
-  galleryOpen.value = true;
-}
-
 function closeGallery(): void {
   galleryOpen.value = false;
   galleryRegionId.value = null;
 }
 
-/**
- * A region fill repoints file_key server-side (setRegionFileFromAsset) — no bytes move. A new page
- * has no id yet to repoint, so it refetches the asset's own bytes and reuses the existing
- * uploadPage() path; the content hash is unchanged, so this doesn't create a second copy in R2 or
- * a duplicate toon_assets row.
- */
+/** A region fill repoints file_key server-side (setRegionFileFromAsset) — no bytes move. */
 async function onGalleryPick(asset: ToonAsset): Promise<void> {
   const regionId = galleryRegionId.value;
   closeGallery();
   try {
-    if (regionId) {
-      const saved = await setRegionFileFromAsset(regionId, asset.fileKey);
-      applyRegionLocal(regionId, saved);
-      markFlattenDirty();
-      return;
-    }
-    if (!toon.value || !asset.url) return;
-    const res = await fetch(asset.url);
-    if (!res.ok) throw new Error("Could not load that image");
-    const blob = await res.blob();
-    const ext = asset.fileKey.split(".").pop() || "webp";
-    const file = new File([blob], `gallery.${ext}`, { type: blob.type || `image/${ext}` });
-    // Measured from the actual bytes rather than trusted from the asset row — a backfilled
-    // asset (recorded before this feature existed) has no stored width/height.
-    const size = await readImageSize(file);
-    const next = await uploadPage(toon.value.id, file, size);
-    toon.value = next;
-    dirtyIds.value = new Set();
-    const last = next.pages[next.pages.length - 1];
-    if (last) await router.push(`/${next.id}/pages/${last.id}`);
+    if (!regionId) return;
+    const saved = await setRegionFileFromAsset(regionId, asset.fileKey);
+    applyRegionLocal(regionId, saved);
+    markFlattenDirty();
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Could not use that image");
   }
@@ -895,14 +888,21 @@ function onRemoveKey(ev: KeyboardEvent): void {
 onMounted(() => window.addEventListener("keydown", onRemoveKey));
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", onRemoveKey);
-  if (flattenDirty.value) pushToast("Layout changes on that page were not saved");
+});
+
+onBeforeRouteLeave(async () => {
+  if (!(await confirmLeaveDirtyLayout())) return false;
+});
+
+onBeforeRouteUpdate(async (to) => {
+  if (String(to.params.pageId || "") === (pageId.value || "")) return;
+  if (!(await confirmLeaveDirtyLayout())) return false;
 });
 
 // studioMode is intentionally NOT reset here — it persists across page navigation (e.g. staying
 // in Bubbles mode while flipping through several layout pages), not forced back to "layout" every
-// time the page changes.
-watch(pageId, (_next, prev) => {
-  if (prev && flattenDirty.value) pushToast("Layout changes on the previous page were not saved");
+// time the page changes. Dirty layout is confirmed in the route guards above, not silently dropped.
+watch(pageId, () => {
   flattenDirty.value = false;
 });
 
@@ -967,12 +967,8 @@ async function onRemove(): Promise<void> {
           :toon-id="toon.id"
           :pages="toon.pages"
           :active-id="activePage?.id ?? null"
-          :can-generate="canGenerate"
           :replacing-id="replacingId"
-          @upload="onUpload"
-          @generate="generateOpen = true"
           @layout="onAddLayoutPage"
-          @gallery="onAddPageGallery"
           @remove="onRemovePage"
           @replace="onReplaceThumb"
           @reorder-pages="onReorderPages"
@@ -1098,6 +1094,15 @@ async function onRemove(): Promise<void> {
         focus-confirm
         @confirm="onRegionRemove"
         @cancel="confirmingRegionRemove = false"
+      />
+      <ConfirmDialog
+        :open="leaveLayoutOpen"
+        title="Unsaved layout"
+        message="Save this page's layout first, or discard the changes and continue."
+        confirm-label="Discard"
+        cancel-label="Stay"
+        @confirm="resolveLeaveLayout(true)"
+        @cancel="resolveLeaveLayout(false)"
       />
       <GeneratePageDialog
         :open="generateOpen"
