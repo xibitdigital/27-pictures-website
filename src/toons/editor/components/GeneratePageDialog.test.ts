@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import GeneratePageDialog from "./GeneratePageDialog.vue";
-import { pickOption } from "../testSelect";
 
 const generate = {
   width: 1152,
@@ -29,6 +28,24 @@ describe("GeneratePageDialog", () => {
     expect(root).toBeTruthy();
     expect(root.parentElement).toBe(document.body);
     expect(root.querySelector("h2")?.textContent).toBe("Generate page");
+    wrapper.unmount();
+  });
+
+  it("opens a formatted JSON debug view of the request and reference URLs", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: true, generate, pages: [], busy: false, status: "" },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    (document.querySelector('button[name="generate-debug"]') as HTMLButtonElement).click();
+    await flushPromises();
+    const titles = [...document.querySelectorAll(".editor-dialog h2")].map((el) => el.textContent);
+    expect(titles).toContain("Generate request");
+    const json = document.querySelector(".editor-debug-json")?.textContent || "";
+    expect(json).toContain('"model": "seedream"');
+    expect(json).toContain("Image 1");
+    expect(json).toContain("/erin.webp");
+    expect(document.querySelector('.editor-debug-refs img[src="/erin.webp"]')).toBeTruthy();
     wrapper.unmount();
   });
 
@@ -336,38 +353,6 @@ describe("GeneratePageDialog previous-plate override", () => {
           previousRegionId: null,
           previousFile: file,
           count: 1,
-          excludeAliases: [],
-        },
-      ],
-    ]);
-    wrapper.unmount();
-  });
-
-  it("lets the operator pick how many plates to generate", async () => {
-    const wrapper = mount(GeneratePageDialog, {
-      props: { open: false, generate: generateWithPrevious, pages: [], busy: false, status: "" },
-      attachTo: document.body,
-    });
-    await wrapper.setProps({ open: true });
-    await flushPromises();
-    await pickOption("generate-count", "3");
-    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
-    textarea.value = "Erin walks in.";
-    textarea.dispatchEvent(new Event("input"));
-    await flushPromises();
-    (document.querySelector("form") as HTMLFormElement).dispatchEvent(
-      new Event("submit", { bubbles: true, cancelable: true })
-    );
-    await flushPromises();
-    expect(wrapper.emitted("submit")).toEqual([
-      [
-        {
-          prompt: "Erin walks in.",
-          includePrevious: false,
-          previousPageId: null,
-          previousRegionId: null,
-          previousFile: null,
-          count: 3,
           excludeAliases: [],
         },
       ],

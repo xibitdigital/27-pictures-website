@@ -13,8 +13,6 @@ import EditorDialog from "./ui/EditorDialog.vue";
 import EditorGenerateFooter from "./ui/EditorGenerateFooter.vue";
 import EditorIconButton from "./ui/EditorIconButton.vue";
 import EditorPlatePicker from "./ui/EditorPlatePicker.vue";
-import EditorSelect from "./ui/EditorSelect.vue";
-import EditorSelectItem from "./ui/EditorSelectItem.vue";
 
 const props = defineProps<{
   open: boolean;
@@ -42,8 +40,6 @@ const emit = defineEmits<{
   ];
 }>();
 
-const COUNT_OPTIONS = [1, 2, 3, 4] as const;
-
 const prompt = ref("");
 const includePrevious = ref(false);
 const previousPageId = ref("");
@@ -51,7 +47,7 @@ const previousPageId = ref("");
 const previousRegionId = ref("");
 const previousFile = ref<File | null>(null);
 const previousFileInput = ref<HTMLInputElement | null>(null);
-const count = ref("1");
+const debugOpen = ref(false);
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
 /** Whether a previous plate will actually be sent this call — the legend must match this, not just
@@ -212,6 +208,76 @@ const orderedRefEntries = computed(() => {
 });
 const includedRefCount = computed(() => orderedRefEntries.value.length);
 
+function previousRefUrl(): string {
+  if (previousFile.value) return `(file) ${previousFile.value.name}`;
+  if (selectedPreviousRegion.value?.fileUrl) return selectedPreviousRegion.value.fileUrl;
+  if (selectedPreviousPage.value?.fileUrl) return selectedPreviousPage.value.fileUrl;
+  return "";
+}
+
+type DebugRef = { image: string; kind: string; label: string; url: string };
+
+function debugRequest(): {
+  provider: string | null;
+  model: string | null;
+  width: number | null;
+  height: number | null;
+  numberResults: number;
+  positivePrompt: string;
+  referenceImages: string[];
+  referenceMap: DebugRef[];
+  deliveryMethod?: string;
+} {
+  const generate = props.generate;
+  const referenceMap: DebugRef[] = [];
+  const referenceImages: string[] = [];
+  let n = 0;
+  for (const slot of generate?.slots || []) {
+    let url = "";
+    let label = "";
+    if (slot.kind === "sheet") {
+      if (!slot.fileUrl || !isIncluded(slot.alias)) continue;
+      url = slot.fileUrl;
+      label = cleanSlotLabel(slot);
+    } else if (slot.kind === "style") {
+      if (!slot.fileUrl) continue;
+      url = slot.fileUrl;
+      label = "style reference";
+    } else if (slot.kind === "previous") {
+      if (!willSendPrevious.value) continue;
+      url = previousRefUrl();
+      label = previousRegionId.value ? "previous shape" : "previous page";
+    } else {
+      continue;
+    }
+    n += 1;
+    referenceImages.push(url);
+    referenceMap.push({ image: `Image ${n}`, kind: slot.kind, label, url });
+  }
+  const payload: ReturnType<typeof debugRequest> = {
+    provider: generate?.provider || null,
+    model: generate?.model || null,
+    width: generate?.width ?? null,
+    height: generate?.height ?? null,
+    numberResults: 1,
+    positivePrompt: prompt.value,
+    referenceImages,
+    referenceMap,
+  };
+  if (generate?.provider === "runware") payload.deliveryMethod = "async";
+  return payload;
+}
+
+const debugPayload = computed(() => debugRequest());
+const debugJson = computed(() => JSON.stringify(debugPayload.value, null, 2));
+const debugPreviewUrls = computed(() => {
+  const urls: string[] = [];
+  for (const item of debugPayload.value.referenceMap) {
+    if (item.url.startsWith("http") || item.url.startsWith("/")) urls.push(item.url);
+  }
+  return urls;
+});
+
 /**
  * Flux gets no fixed FORMAT/PIN prefix the way the Comfy graph does — every
  * generation has to spell out "Image N = what" itself or reference adherence
@@ -305,7 +371,10 @@ watch(fluxRefsPrefill, () => {
 watch(
   () => props.open,
   (open) => {
-    if (!open) return;
+    if (!open) {
+      debugOpen.value = false;
+      return;
+    }
     if (previousPageId.value && !props.pages.some((p) => p.id === previousPageId.value)) {
       previousPageId.value = "";
     }
@@ -374,7 +443,7 @@ function onSubmit(): void {
     previousPageId: sendPrevious ? previousPageId.value || null : null,
     previousRegionId: sendPrevious ? previousRegionId.value || null : null,
     previousFile: sendPrevious ? previousFile.value : null,
-    count: Number(count.value) || 1,
+    count: 1,
     excludeAliases: isDirectProvider.value ? [...excludedAliases.value] : [],
   });
 }
@@ -434,17 +503,6 @@ function onSubmit(): void {
                   @pick="onPickPrevious"
                 />
               </div>
-              <label>
-                Images
-                <EditorSelect
-                  name="generate-count"
-                  :model-value="count"
-                  :disabled="busy"
-                  @update:model-value="(v) => (count = v)"
-                >
-                  <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
-                </EditorSelect>
-              </label>
               <input
                 ref="previousFileInput"
                 type="file"
@@ -460,17 +518,6 @@ function onSubmit(): void {
               <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
             </template>
           </template>
-          <label v-if="!hasPreviousSlot || !includePrevious">
-            Images
-            <EditorSelect
-              name="generate-count"
-              :model-value="count"
-              :disabled="busy"
-              @update:model-value="(v) => (count = v)"
-            >
-              <EditorSelectItem v-for="n in COUNT_OPTIONS" :key="n" :value="String(n)">{{ n }}</EditorSelectItem>
-            </EditorSelect>
-          </label>
         </div>
         <div v-if="generate?.slots.length" class="editor-generate-refs">
           <span class="editor-generate-label">References</span>
@@ -525,10 +572,20 @@ function onSubmit(): void {
         :busy="busy"
         :status="status"
         default-status="Generating page…"
-        :submit-label="Number(count) > 1 ? `Generate ${count}` : 'Generate'"
+        submit-label="Generate"
         :can-submit="canSubmit"
         @cancel="onCancel"
-      />
+      >
+        <EditorButton variant="ghost" type="button" name="generate-debug" :disabled="busy" @click="debugOpen = true">
+          Debug
+        </EditorButton>
+      </EditorGenerateFooter>
     </form>
+  </EditorDialog>
+  <EditorDialog :open="debugOpen" title="Generate request" @update:open="(next) => (debugOpen = next)">
+    <pre class="editor-debug-json">{{ debugJson }}</pre>
+    <div v-if="debugPreviewUrls.length" class="editor-debug-refs">
+      <img v-for="url in debugPreviewUrls" :key="url" :src="url" alt="" />
+    </div>
   </EditorDialog>
 </template>

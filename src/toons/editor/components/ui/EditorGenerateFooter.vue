@@ -25,6 +25,7 @@ const emit = defineEmits<{ cancel: [] }>();
 <template>
   <p v-if="busy" class="editor-muted editor-generate-status">{{ status || defaultStatus }}</p>
   <div class="editor-form-actions">
+    <slot />
     <EditorButton variant="ghost" :disabled="busy" @click="emit('cancel')">Cancel</EditorButton>
     <EditorButton type="submit" :class="{ 'is-busy': busy }" :disabled="!canSubmit">
       <LoaderCircle v-if="busy" class="editor-spin" :size="16" aria-hidden="true" />

@@ -1655,6 +1655,37 @@ body {
   }
 }
 
+.editor-debug-json {
+  margin: 0;
+  max-height: min(50vh, 28rem);
+  overflow: auto;
+  padding: 0.75rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+  background: var(--bg-dark);
+  border: 1px solid var(--border-light);
+}
+
+.editor-debug-refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.editor-debug-refs img {
+  display: block;
+  width: 5rem;
+  height: 5rem;
+  object-fit: cover;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+}
+
 .editor-plate-picker {
   display: flex;
   flex-wrap: wrap;
@@ -1680,8 +1711,8 @@ body {
 }
 
 .editor-plate-picker-item.is-selected {
-  border-color: var(--red-smile);
-  outline: 2px solid var(--red-smile);
+  border-color: var(--editor-primary);
+  outline: 2px solid var(--editor-primary);
   outline-offset: -1px;
 }
 
