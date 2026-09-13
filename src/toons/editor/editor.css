@@ -1763,11 +1763,15 @@ body {
 }
 
 .editor-thumb-remove:hover,
-.editor-thumb-remove:focus-visible,
-.editor-thumb-replace:hover,
-.editor-thumb-replace:focus-within {
+.editor-thumb-remove:focus-visible {
   background: var(--red-smile);
   border-color: var(--red-smile);
+}
+
+.editor-thumb-replace:hover,
+.editor-thumb-replace:focus-within {
+  background: var(--editor-primary);
+  border-color: var(--editor-primary);
 }
 
 .editor-canvas {
