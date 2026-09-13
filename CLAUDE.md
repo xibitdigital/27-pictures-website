@@ -131,16 +131,42 @@ The D1 catalog is the worked example of (2): series hubs, readers, cards,
 JSON-LD, sitemap, `llms.txt` and FlipFrame back-cover next/prev all read
 `GET /catalog`. A page that hardcodes an episode list has already forked.
 
-**Toon editor buttons go through `EditorButton.vue` (`src/toons/editor/components/ui/`), not
-a hand-assembled `class="editor-btn editor-btn--ghost"`.** Every caller used to repeat that
-string (and `editor-btn--danger`), which is exactly the "same thing, different content" case
-above — the difference is one `variant` prop (`"primary"` default, `"ghost"`, `"danger"`), not a
-second copy of the class list. It renders a `<button>` or, when a `to` prop is passed, a
-`RouterLink` — so a nav-bar CTA and a form's submit button are the same component. Add a new
-danger-styled button by passing `variant="danger"`, never by writing the class string again.
-Same reasoning for `EditorChoiceCard.vue` (the Upload/Generate/Layout/Gallery tiles in
-`PageFilmstrip.vue`'s "Add page" dialog and `RegionAssignDialog.vue`) — one `.editor-add-page-choice`
-wrapper instead of every picker dialog repeating that class.
+**Toon editor chrome primitives live in `src/toons/editor/components/ui/`.** The Vue file owns
+the class string; the look stays in `editor.css`. Do not copy `class="editor-btn editor-btn--ghost"`
+(or `--danger`, `.editor-icon-btn`, …) into a second template, and do not move those rules into
+`<style scoped>` — that forks the one editor sheet the same way a second card layout did.
+
+Worked example: `EditorButton.vue`. Every caller used to repeat that class list. The difference
+is one `variant` prop (`"primary"` default, `"ghost"`, `"danger"`). It renders a `<button>` or,
+when a `to` prop is passed, a `RouterLink`. Add a danger-styled button with
+`variant="danger"`, never by writing the class string again.
+
+When a widget shows up in two templates (or one class string is about to be typed a third time),
+add a wrapper next to `EditorButton`:
+
+1. Put it in `src/toons/editor/components/ui/Editor*.vue` with a sibling `Editor*.test.ts`.
+2. Keep the CSS in `editor.css`. The component's only job is the root class + `variant` (or
+   equivalent props) + a slot. Extra classes (`editor-dialog-close`, `editor-translate-btn`)
+   and `name` / `disabled` / `aria-*` stay on the caller via fallthrough.
+3. Pressed/selected fill that depends on *where* the control sits (toolbar, tail ring) stays a
+   **container** rule, not a new variant.
+4. `vue-tsc` does not map template `aria-label` onto a prop named `ariaLabel` — pass
+   `:ariaLabel="…"` (camelCase) at the call site. The wrapper still binds `:aria-label` on the
+   real DOM node.
+5. Layout, form-control resets, and CSS used by a single parent (filmstrip thumbs, slot rows)
+   stay CSS. Reka roots that *are* the interactive element (`DropdownMenuItem as="button"`)
+   cannot wrap `EditorButton` (nested buttons) — leave the class on that item.
+
+| Wrapper | Class it owns |
+| --- | --- |
+| `EditorButton` | `.editor-btn` + `--ghost` / `--danger` |
+| `EditorIconButton` | `.editor-icon-btn` + `--danger` (never `.editor-btn` next to an input) |
+| `EditorChoiceCard` | `.editor-add-page-choice` |
+| `EditorColorField` | `.editor-color-row` (swatch + hex) |
+| `EditorVisibilityBadge` | `.editor-visibility-badge` |
+| `EditorChipFilter` | `.editor-visibility-filter` (not the inspector Layout/Bubbles switch) |
+| `EditorPlatePicker` | `.editor-plate-picker` |
+| `EditorDialog` / `EditorSelect` / `EditorCheckbox` / `EditorUserPills` / `EditorGenerateFooter` | Reka or composite chrome already wrapped |
 
 **Every editor primary/CTA is `--editor-primary` (blue), never `--red-smile`.** Red is reserved
 for genuinely destructive actions (`.editor-btn--danger`, delete/remove icons) — see the
