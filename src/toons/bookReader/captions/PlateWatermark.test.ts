@@ -33,10 +33,10 @@ describe("PlateWatermark", () => {
     Object.defineProperty(mark.element, "naturalHeight", { value: 40 });
     await mark.trigger("load");
     const style = mark.attributes("style") || "";
-    expect(style).toContain("left: 868px");
-    expect(style).toContain("top: 1736px");
-    expect(style).toContain("width: 120px");
-    expect(style).toContain("height: 40px");
+    expect(style).toContain("left: 928px");
+    expect(style).toContain("top: 1756px");
+    expect(style).toContain("width: 60px");
+    expect(style).toContain("height: 20px");
     wrapper.unmount();
   });
 });

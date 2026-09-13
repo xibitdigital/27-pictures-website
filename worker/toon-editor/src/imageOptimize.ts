@@ -34,19 +34,26 @@ function isWebpBytes(bytes: ArrayBuffer): boolean {
   return u[0] === 0x52 && u[1] === 0x49 && u[2] === 0x46 && u[3] === 0x46 && u[8] === 0x57 && u[9] === 0x45;
 }
 
+/** Half native mark size — same as `watermarkDrawRect` in the editor/reader overlay. */
+const WATERMARK_SCALE = 0.5;
+
 /**
  * Alpha-composites `mark` onto `base`'s bottom-right corner in place, at a fixed pixel margin
- * (matching scripts/watermark-images.sh's own fixed offsets — no scaling by plate size). Silently
- * does nothing if the watermark doesn't fit inside the plate at all, rather than clipping it into
- * something illegible.
+ * (matching scripts/watermark-images.sh's own fixed offsets — no scaling by plate size). Drawn at
+ * half the PNG's native size. Silently does nothing if the watermark doesn't fit inside the plate
+ * at all, rather than clipping it into something illegible.
  */
 function compositeBottomRight(base: Bitmap, mark: Bitmap, marginX = 20, marginY = 16): void {
-  const x0 = base.width - mark.width - marginX;
-  const y0 = base.height - mark.height - marginY;
+  const dw = Math.max(1, Math.round(mark.width * WATERMARK_SCALE));
+  const dh = Math.max(1, Math.round(mark.height * WATERMARK_SCALE));
+  const x0 = base.width - dw - marginX;
+  const y0 = base.height - dh - marginY;
   if (x0 < 0 || y0 < 0) return;
-  for (let y = 0; y < mark.height; y++) {
-    for (let x = 0; x < mark.width; x++) {
-      const mi = (y * mark.width + x) * 4;
+  for (let y = 0; y < dh; y++) {
+    for (let x = 0; x < dw; x++) {
+      const sx = Math.min(mark.width - 1, Math.floor(x / WATERMARK_SCALE));
+      const sy = Math.min(mark.height - 1, Math.floor(y / WATERMARK_SCALE));
+      const mi = (sy * mark.width + sx) * 4;
       const alpha = mark.data[mi + 3] / 255;
       if (alpha <= 0) continue;
       const bi = ((y0 + y) * base.width + (x0 + x)) * 4;

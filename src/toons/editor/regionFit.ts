@@ -19,9 +19,10 @@ import type { RegionGeometry, RegionRecord } from "./types";
 export const MIN_IMAGE_SCALE = 0.25;
 export const MAX_IMAGE_SCALE = 4;
 
-/** Matches `imageOptimize.compositeBottomRight` — native mark size, design-px inset. */
+/** Matches `imageOptimize.compositeBottomRight` — half native size, design-px inset. */
 export const WATERMARK_MARGIN_X = 20;
 export const WATERMARK_MARGIN_Y = 16;
+export const WATERMARK_SCALE = 0.5;
 
 /**
  * Where to draw the series watermark on a plate (canvas or overlay box). Returns
@@ -33,8 +34,8 @@ export function watermarkDrawRect(
   designWidth: number
 ): { x: number; y: number; width: number; height: number } | null {
   const scale = plate.width / designWidth;
-  const width = mark.width * scale;
-  const height = mark.height * scale;
+  const width = mark.width * WATERMARK_SCALE * scale;
+  const height = mark.height * WATERMARK_SCALE * scale;
   const x = plate.width - width - WATERMARK_MARGIN_X * scale;
   const y = plate.height - height - WATERMARK_MARGIN_Y * scale;
   if (x < 0 || y < 0) return null;

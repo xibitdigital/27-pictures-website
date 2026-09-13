@@ -242,21 +242,21 @@ describe("regionsInStackOrder / moveRegionInStack", () => {
 });
 
 describe("watermarkDrawRect", () => {
-  it("places the mark at the Worker compositor's bottom-right inset", () => {
+  it("places the mark at half native size, bottom-right inset", () => {
     expect(watermarkDrawRect({ width: 120, height: 40 }, { width: 1008, height: 1792 }, 1008)).toEqual({
-      x: 868,
-      y: 1736,
-      width: 120,
-      height: 40,
+      x: 928,
+      y: 1756,
+      width: 60,
+      height: 20,
     });
   });
 
   it("scales with the displayed plate", () => {
     expect(watermarkDrawRect({ width: 120, height: 40 }, { width: 504, height: 896 }, 1008)).toEqual({
-      x: 434,
-      y: 868,
-      width: 60,
-      height: 20,
+      x: 464,
+      y: 878,
+      width: 30,
+      height: 10,
     });
   });
 
