@@ -600,9 +600,9 @@ async function onSubmit(ev: Event): Promise<void> {
           <div class="editor-form-span editor-generate">
             <p class="editor-generate-label">Watermark</p>
             <p class="editor-muted">
-              Optional PNG with transparency, composited onto the bottom-right corner of every page this series stores
-              from here on (generate, upload, or replace) — so a downloaded plate still carries it. Layout region/area
-              fills are left clean; the mark is for the page, not each shape. Leave unset to skip.
+              Optional PNG with transparency. Plate pages bake it into the file on generate/upload/replace. Layout pages
+              show it as a locked last layer (not a selectable region) and Save layout bakes the same placement into the
+              plate. Area/region fills stay clean. Leave unset to skip.
             </p>
             <label>
               Watermark image (.png)

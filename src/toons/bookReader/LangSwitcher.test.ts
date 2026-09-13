@@ -18,7 +18,11 @@ function mockCaptions(lang = "en"): ToonCaptionsStore {
     designWidth: computed(() => 1008),
     designHeight: computed(() => 1792),
     fontFamily: computed(() => '"Bangers", cursive'),
+    watermarkUrl: computed(() => ""),
     wordsForPage: () => [],
+    regionsForPage: () => [],
+    pageKind: () => "plate" as const,
+    warmPageAudio: vi.fn(),
     setLang: vi.fn((code: string) => {
       current.value = code;
     }),

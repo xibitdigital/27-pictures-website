@@ -453,6 +453,7 @@ function mapToon(
     seriesKey: row.series_key || null,
     episodeN: row.episode_n != null ? Number(row.episode_n) : null,
     ownerId: row.owner_id || null,
+    watermarkUrl: objectUrl(request, env, (row as { series_watermark_key?: string | null }).series_watermark_key, null),
     pages: pages || [],
   };
 }
@@ -843,6 +844,12 @@ async function readerConfigFromToon(env: Pick<Env, "DB">, toon: ToonRow, request
     pages,
   };
   if (extra.reverb) cfg.reverb = extra.reverb;
+  if (toon.series_key) {
+    const series = await env.DB.prepare("SELECT watermark_key FROM series WHERE key = ?")
+      .bind(toon.series_key)
+      .first<{ watermark_key: string | null }>();
+    if (series?.watermark_key) cfg.watermark = publicPageFile(request, series.watermark_key);
+  }
   return cfg;
 }
 
@@ -881,7 +888,12 @@ async function loadToon(env: Env, request: Request, id: string) {
   // after another is most of what makes "add a page" feel slow, since this is called on every
   // page-add/replace/reorder to return the refreshed toon.
   const [toon, pageRowsResult, bubbles, regions] = await Promise.all([
-    env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(id).first<ToonRow>(),
+    env.DB.prepare(
+      `SELECT toons.*, series.watermark_key AS series_watermark_key
+       FROM toons LEFT JOIN series ON series.key = toons.series_key WHERE toons.id = ?`
+    )
+      .bind(id)
+      .first<ToonRow & { series_watermark_key?: string | null }>(),
     env.DB.prepare("SELECT * FROM pages WHERE toon_id = ? ORDER BY position ASC").bind(id).all<PageRow>(),
     bubblesByPageId(env, id),
     regionsByPageId(env, id),
@@ -2250,7 +2262,10 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const watermark = await resolveSeriesWatermark(env, current.series_key);
+    // Layout flatten is a 640px thumb the reader never shows as art — live regions cover it,
+    // and the PNG often does not even fit so compositing no-ops. The reader overlays the
+    // series mark on the composed page instead. Plate replace still bakes it in.
+    const watermark = page.kind === "layout" ? null : await resolveSeriesWatermark(env, current.series_key);
     const key = await putPageAsset(env, page.toon_id, current.slug, upload, "page", watermark);
     const width = upload.width || page.width || null;
     const height = upload.height || page.height || null;

@@ -5,6 +5,7 @@
  * Renders nothing for toons without captions (e.g. Erin).
  */
 import { computed, onBeforeUnmount, watchEffect } from "vue";
+import PlateWatermark from "./PlateWatermark.vue";
 import RegionLayer from "./RegionLayer.vue";
 import WordLayer from "./WordLayer.vue";
 import { useToonCaptions } from "./useToonCaptions";
@@ -22,6 +23,9 @@ const captions = useToonCaptions();
 
 const words = computed(() => captions?.wordsForPage(props.pageNum) ?? []);
 const regions = computed(() => captions?.regionsForPage(props.pageNum) ?? []);
+const layoutWatermark = computed(() =>
+  captions?.pageKind(props.pageNum) === "layout" ? captions.watermarkUrl.value : ""
+);
 
 /**
  * Warm this page's clips only as its plate nears the viewport. The gate
@@ -71,6 +75,12 @@ onBeforeUnmount(() => {
     v-if="regions.length"
     :page-num="pageNum"
     :regions="regions"
+    :image-el="imageEl ?? null"
+    :design-width="captions?.designWidth.value ?? 1008"
+  />
+  <PlateWatermark
+    v-if="layoutWatermark"
+    :src="layoutWatermark"
     :image-el="imageEl ?? null"
     :design-width="captions?.designWidth.value ?? 1008"
   />

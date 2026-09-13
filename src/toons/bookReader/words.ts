@@ -30,7 +30,11 @@ export function resolveWordsAssets(config: WordsConfig, pageDir?: string): Words
       : page?.regions;
     return { ...page, file, words, regions };
   });
-  return { ...config, pages };
+  const watermark =
+    config.watermark && typeof config.watermark === "string"
+      ? resolveAssetUrl(config.watermark.trim(), pageDir)
+      : config.watermark;
+  return { ...config, pages, watermark };
 }
 
 /**

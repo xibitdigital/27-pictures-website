@@ -35,6 +35,8 @@ export interface ToonCaptionsStore {
   regionsForPage: (pageNum: number) => ReaderRegion[];
   /** "layout" only when the page has at least one filled region to live-render. */
   pageKind: (pageNum: number) => "plate" | "layout";
+  /** Series watermark URL for Layout-page overlay; empty when the series has none. */
+  watermarkUrl: ComputedRef<string>;
   /** Warm the browser cache for one page's caption audio (idempotent). */
   warmPageAudio: (pageNum: number) => void;
   setLang: (code: LangCode) => void;
@@ -57,6 +59,7 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
   const designWidth = computed(() => Number(config.value?.designWidth) || 1008);
   const designHeight = computed(() => Number(config.value?.designHeight) || 1792);
   const fontFamily = computed(() => config.value?.fontFamily || '"Bangers", cursive');
+  const watermarkUrl = computed(() => config.value?.watermark || "");
 
   /** The page's own language, when this book has captions in it. */
   function pageLang(available: LangOption[]): LangCode | null {
@@ -199,6 +202,7 @@ export function createToonCaptions(options: ToonCaptionsOptions): ToonCaptionsSt
     designWidth,
     designHeight,
     fontFamily,
+    watermarkUrl,
     wordsForPage,
     regionsForPage,
     pageKind,

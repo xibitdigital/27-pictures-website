@@ -255,6 +255,8 @@ export interface ReaderConfig {
   languages: unknown;
   pages: { file: string; words: CaptionWord[]; kind?: "layout"; regions?: ReaderRegion[] }[];
   reverb?: unknown;
+  /** Series watermark PNG URL — layout pages overlay this; plate pages bake it in. */
+  watermark?: string;
 }
 
 export interface SeriesMeta {

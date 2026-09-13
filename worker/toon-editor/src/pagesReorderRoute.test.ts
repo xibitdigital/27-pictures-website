@@ -105,7 +105,7 @@ function makeEnv(state: FakeState): Env {
               const toon = state.toons.find((t) => t.id === stmt.args[0]);
               return (toon ? { id: toon.id } : null) as unknown as T;
             }
-            if (/FROM toons WHERE id = \?/.test(sql)) {
+            if (/FROM toons WHERE id = \?/.test(sql) || /FROM toons LEFT JOIN series/.test(sql)) {
               return (state.toons.find((t) => t.id === stmt.args[0]) || null) as unknown as T;
             }
             if (/SELECT \* FROM pages WHERE id = \?/.test(sql)) {

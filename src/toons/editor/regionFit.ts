@@ -19,6 +19,28 @@ import type { RegionGeometry, RegionRecord } from "./types";
 export const MIN_IMAGE_SCALE = 0.25;
 export const MAX_IMAGE_SCALE = 4;
 
+/** Matches `imageOptimize.compositeBottomRight` — native mark size, design-px inset. */
+export const WATERMARK_MARGIN_X = 20;
+export const WATERMARK_MARGIN_Y = 16;
+
+/**
+ * Where to draw the series watermark on a plate (canvas or overlay box). Returns
+ * null when the mark does not fit — same skip as the Worker compositor.
+ */
+export function watermarkDrawRect(
+  mark: { width: number; height: number },
+  plate: { width: number; height: number },
+  designWidth: number
+): { x: number; y: number; width: number; height: number } | null {
+  const scale = plate.width / designWidth;
+  const width = mark.width * scale;
+  const height = mark.height * scale;
+  const x = plate.width - width - WATERMARK_MARGIN_X * scale;
+  const y = plate.height - height - WATERMARK_MARGIN_Y * scale;
+  if (x < 0 || y < 0) return null;
+  return { x, y, width, height };
+}
+
 /** Default snap-to-grid spacing: 48 divisions of the plate (double the rows/columns of the original 24), for finer panel-gutter alignment without fighting freehand drawing. */
 export const DEFAULT_GRID_SIZE = 1 / 48;
 

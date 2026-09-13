@@ -14,6 +14,7 @@ import {
   sliderPositionFromScale,
   snapPointToGrid,
   snapToGrid,
+  watermarkDrawRect,
 } from "./regionFit";
 import type { RegionGeometry, RegionRecord } from "./types";
 
@@ -237,5 +238,29 @@ describe("regionsInStackOrder / moveRegionInStack", () => {
   it("returns null at either end of the stack", () => {
     expect(moveRegionInStack(regions, "a", "backward")).toBeNull();
     expect(moveRegionInStack(regions, "c", "forward")).toBeNull();
+  });
+});
+
+describe("watermarkDrawRect", () => {
+  it("places the mark at the Worker compositor's bottom-right inset", () => {
+    expect(watermarkDrawRect({ width: 120, height: 40 }, { width: 1008, height: 1792 }, 1008)).toEqual({
+      x: 868,
+      y: 1736,
+      width: 120,
+      height: 40,
+    });
+  });
+
+  it("scales with the displayed plate", () => {
+    expect(watermarkDrawRect({ width: 120, height: 40 }, { width: 504, height: 896 }, 1008)).toEqual({
+      x: 434,
+      y: 868,
+      width: 60,
+      height: 20,
+    });
+  });
+
+  it("skips when the mark does not fit", () => {
+    expect(watermarkDrawRect({ width: 400, height: 40 }, { width: 200, height: 400 }, 200)).toBeNull();
   });
 });

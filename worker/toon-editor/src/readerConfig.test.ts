@@ -5,7 +5,7 @@ function requestAt(url) {
   return { url };
 }
 
-function dbWith(pages, bubblesByPage, regionsByPage = {}) {
+function dbWith(pages, bubblesByPage, regionsByPage = {}, series: { watermark_key?: string | null } | null = null) {
   return {
     prepare(sql) {
       return {
@@ -26,6 +26,10 @@ function dbWith(pages, bubblesByPage, regionsByPage = {}) {
               }
               if (/FROM pages/.test(sql) && !/INNER JOIN pages/.test(sql)) return { results: pages };
               return { results: [] };
+            },
+            async first() {
+              if (/FROM series/.test(sql)) return series;
+              return null;
             },
           };
         },
@@ -219,5 +223,25 @@ describe("readerConfigFromToon", () => {
     );
     expect(cfg.pages[0]).not.toHaveProperty("kind");
     expect(cfg.pages[0]).not.toHaveProperty("regions");
+  });
+
+  it("exposes the series watermark URL for Layout-page overlay", async () => {
+    const withSeries = { ...toon, series_key: "ivy-bloom" };
+    const cfg = await readerConfigFromToon(
+      { DB: dbWith(pages, {}, {}, { watermark_key: "editor/_series/ivy-bloom/watermark/abc.png" }) },
+      withSeries,
+      requestAt("https://toon-editor.example/config/ivy-bloom-origins")
+    );
+    expect(cfg.watermark).toBe("https://toon-editor.example/media/editor/_series/ivy-bloom/watermark/abc.png");
+  });
+
+  it("omits watermark when the series has none", async () => {
+    const withSeries = { ...toon, series_key: "ivy-bloom" };
+    const cfg = await readerConfigFromToon(
+      { DB: dbWith(pages, {}, {}, { watermark_key: null }) },
+      withSeries,
+      requestAt("https://toon-editor.example/config/ivy-bloom-origins")
+    );
+    expect(cfg).not.toHaveProperty("watermark");
   });
 });

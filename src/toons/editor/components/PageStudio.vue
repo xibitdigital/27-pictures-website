@@ -35,7 +35,14 @@ import {
   type ToonRecord,
 } from "../types";
 import { mergeReplacedPage } from "../pageFile";
-import { coverImageRect, moveRegionInStack, regionBoundingBox, regionPoints, regionsInStackOrder } from "../regionFit";
+import {
+  coverImageRect,
+  moveRegionInStack,
+  regionBoundingBox,
+  regionPoints,
+  regionsInStackOrder,
+  watermarkDrawRect,
+} from "../regionFit";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import { bubbleWritePayload, bubblesInPlayOrder, CAPTION_LANGS, moveBubbleInPlayOrder } from "../mapConfig";
 import { pushToast } from "../toast";
@@ -596,6 +603,20 @@ async function flattenNow(): Promise<void> {
       }
       ctx.restore();
     }
+    // Locked last layer — same placement as the live overlay (PlateWatermark). Not a D1
+    // region so it cannot be selected, moved, or deleted. Bake it here so the filmstrip
+    // thumb matches the composed page; the reader still live-paints the overlay because
+    // this flatten is only a 640px measurement/thumb plate.
+    const markUrl = toon.value.watermarkUrl;
+    if (markUrl) {
+      const mark = await loadImageEl(markUrl);
+      const rect = watermarkDrawRect(
+        { width: mark.naturalWidth, height: mark.naturalHeight },
+        { width: canvas.width, height: canvas.height },
+        designWidth
+      );
+      if (rect) ctx.drawImage(mark, rect.x, rect.y, rect.width, rect.height);
+    }
     // Export WebP directly: the Worker's own upload pipeline re-encodes
     // anything that isn't already WebP (toWebp() in imageOptimize.ts), so a
     // PNG upload here meant a second full decode+encode pass server-side on
@@ -971,6 +992,7 @@ async function onRemove(): Promise<void> {
           :layout-tool="layoutTool"
           :studio-mode="studioMode"
           :bg-color="activePage.bgColor"
+          :watermark-url="toon.watermarkUrl"
           @select="selectedId = $event"
           @move="onMove"
           @persist="onPersist"

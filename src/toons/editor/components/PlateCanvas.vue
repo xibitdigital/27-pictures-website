@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { X } from "@lucide/vue";
 import { computed, ref } from "vue";
+import PlateWatermark from "../../bookReader/captions/PlateWatermark.vue";
 import EditorCaptionLayer from "./EditorCaptionLayer.vue";
 import GeometryLayer, { type LayoutTool } from "./GeometryLayer.vue";
 import LayoutToolbar, { type StudioMode } from "./LayoutToolbar.vue";
@@ -45,8 +46,10 @@ const props = withDefaults(
     studioMode?: StudioMode;
     /** Live preview of the page's editor-set backdrop color, shown through any transparent gap. */
     bgColor?: string | null;
+    /** Series watermark overlay on Layout pages (plate pages already bake it into the file). */
+    watermarkUrl?: string | null;
   }>(),
-  { kind: "plate", regions: () => [], layoutTool: "select", studioMode: "bubbles", bgColor: null }
+  { kind: "plate", regions: () => [], layoutTool: "select", studioMode: "bubbles", bgColor: null, watermarkUrl: null }
 );
 
 const emit = defineEmits<{
@@ -141,6 +144,12 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
         @move-image="(id, x, y) => emit('move-region-image', id, x, y)"
         @persist-image="(id, x, y) => emit('persist-region-image', id, x, y)"
         @request-assign="emit('request-region-assign', $event)"
+      />
+      <PlateWatermark
+        v-if="kind === 'layout' && watermarkUrl && imgEl"
+        :src="watermarkUrl"
+        :image-el="imgEl"
+        :design-width="designWidth"
       />
     </div>
   </div>

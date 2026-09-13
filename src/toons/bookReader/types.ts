@@ -152,6 +152,11 @@ export interface ToonConfig {
   reverb?: string;
   /** Ordered pages: each has `file` + optional `words`. */
   pages?: ToonPage[];
+  /**
+   * Series watermark PNG (absolute `/media/…` URL). Layout pages overlay this
+   * on the live-composited plate; plate pages already have it baked in.
+   */
+  watermark?: string;
 }
 
 /** @deprecated Use ToonConfig */

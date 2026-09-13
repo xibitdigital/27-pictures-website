@@ -133,6 +133,8 @@ export interface ToonRecord {
   seriesKey?: string | null;
   episodeN?: number | null;
   ownerId?: string | null;
+  /** Series watermark PNG — Layout studio overlay. Empty/null when the series has none. */
+  watermarkUrl?: string | null;
   pages: PageRecord[];
 }
 
