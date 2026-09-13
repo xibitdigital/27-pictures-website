@@ -76,10 +76,10 @@ export function extraPatch(bubble: BubbleRecord, key: string, value: unknown): P
 export function parseHexColor(raw: string): string | null {
   const s = String(raw || "").trim();
   if (!s) return null;
-  const m = s.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  const m = s.match(/^#?([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
   if (!m) return null;
   let h = m[1].toLowerCase();
-  if (h.length === 3)
+  if (h.length === 3 || h.length === 4)
     h = h
       .split("")
       .map((c) => `${c}${c}`)

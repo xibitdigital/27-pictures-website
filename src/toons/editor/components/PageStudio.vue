@@ -44,7 +44,13 @@ import {
   watermarkDrawRect,
 } from "../regionFit";
 import LangSwitcher from "../../bookReader/LangSwitcher.vue";
-import { bubbleWritePayload, bubblesInPlayOrder, CAPTION_LANGS, moveBubbleInPlayOrder } from "../mapConfig";
+import {
+  bubbleWritePayload,
+  bubblesInPlayOrder,
+  CAPTION_LANGS,
+  moveBubbleInPlayOrder,
+  parseHexColor,
+} from "../mapConfig";
 import { pushToast } from "../toast";
 import AssetGalleryDialog from "./AssetGalleryDialog.vue";
 import CaptionInspector from "./CaptionInspector.vue";
@@ -561,10 +567,8 @@ async function flattenNow(): Promise<void> {
     // that needs to ask for it explicitly.
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    if (page.bgColor) {
-      ctx.fillStyle = page.bgColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
+    ctx.fillStyle = parseHexColor(page.bgColor || "#0000") || "rgba(0,0,0,0)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     const ordered = [...page.regions].sort((a, b) => a.sort - b.sort);
     const fillable = ordered.filter((r) => r.fileUrl && r.fileWidth && r.fileHeight);
     // Load every region's image in parallel first — the draw loop below then

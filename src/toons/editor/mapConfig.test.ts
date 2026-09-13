@@ -78,6 +78,7 @@ describe("bubbleToWordEntry", () => {
   it("normalises hex colors and reads lettering extras", () => {
     expect(parseHexColor("#fff")).toBe("#ffffff");
     expect(parseHexColor("b30000")).toBe("#b30000");
+    expect(parseHexColor("#0000")).toBe("#00000000");
     expect(parseHexColor("nope")).toBeNull();
     expect(parseHexColor("")).toBeNull();
     const ink = bubble({

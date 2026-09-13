@@ -485,9 +485,8 @@ async function startRunwareGenerate(
 
   const count = input.pageId ? 1 : parseGenerateCount(input.count);
   const promptIds: string[] = [];
-  // Runware answers the submit call synchronously (no deliveryMethod: "async" is set) — the image
-  // is already in that response when ready. Stash it so pollPageJob can use it directly instead of
-  // polling getResponse, which doesn't reliably track a sync-delivered task (see runwareClient.ts).
+  // Submit is async (deliveryMethod: "async") so getResponse can find the job. A fast reply may
+  // still include imageURL — stash it so pollPageJob can skip getResponse in that case.
   const resolvedImages: (string | null)[] = [];
   for (let i = 0; i < count; i++) {
     const submitted = await runwareSubmit(env, {
@@ -755,9 +754,7 @@ export async function pollPageJob(
     const promptId = promptIds[i];
     if (isFlux || isReplicate || isRunware || isRunComfy) {
       // For Flux/Replicate/RunComfy, promptId is the full polling URL or request id; for Runware
-      // it's the taskUUID. Runware answers the submit call synchronously, so the image is normally
-      // already known (resolvedImages, stashed at submit time) — runwareResult's getResponse poll
-      // is only a fallback for the rare case the submit response didn't carry it.
+      // it's the taskUUID. A submit that already included imageURL is stashed in resolvedImages.
       let result: { ok: true; phase: ComfyPhase | null; imageUrl?: string } | { ok: false; error: string };
       if (isFlux) {
         result = await fluxResult(env, promptId);

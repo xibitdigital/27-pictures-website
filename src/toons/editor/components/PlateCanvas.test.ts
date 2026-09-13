@@ -102,6 +102,12 @@ describe("PlateCanvas Layout-page regions", () => {
     await nextTick();
   }
 
+  it("defaults the plate background to transparent #0000", () => {
+    const wrapper = mountLayoutPlate("layout");
+    expect(wrapper.get(".editor-plate").attributes("style")).toContain("background-color: #0000");
+    wrapper.unmount();
+  });
+
   it("still shows a region's real image in Bubbles mode, not just the low-res flattened plate", async () => {
     const wrapper = mountLayoutPlate("bubbles");
     await stubPlateImageLoaded(wrapper);

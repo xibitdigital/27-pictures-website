@@ -69,10 +69,17 @@ const emit = defineEmits<{
 }>();
 
 const imgEl = ref<HTMLImageElement | null>(null);
-const plateStyle = computed(() => ({
-  "--plate-aspect": `${props.designWidth} / ${props.designHeight}`,
-  ...(props.bgColor ? { backgroundColor: props.bgColor } : {}),
-}));
+const plateStyle = computed(() => {
+  const style: Record<string, string> = {
+    "--plate-aspect": `${props.designWidth} / ${props.designHeight}`,
+  };
+  if (props.kind === "layout") {
+    style.backgroundColor = props.bgColor || "#0000";
+  } else if (props.bgColor) {
+    style.backgroundColor = props.bgColor;
+  }
+  return style;
+});
 const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMode === "bubbles");
 </script>
 

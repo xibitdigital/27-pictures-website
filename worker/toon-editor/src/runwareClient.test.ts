@@ -88,6 +88,7 @@ describe("runwareSubmit", () => {
     ];
     expect(body).toHaveLength(1);
     expect(body[0].taskType).toBe("imageInference");
+    expect((body[0] as { deliveryMethod?: string }).deliveryMethod).toBe("async");
     expect(body[0].model).toBe("bfl:3@1");
     expect(body[0].positivePrompt).toBe("Erin walks in.");
     // Flux Kontext (via Runware) only accepts 9 fixed pairs — 800x1424 isn't one, nearest by aspect is 752x1392.
@@ -307,7 +308,7 @@ describe("runwareSubmit", () => {
     expect(out).toEqual({ ok: false, error: "Runware request returned no task" });
   });
 
-  it("surfaces the image URL when the submit response already carries it (no deliveryMethod: async was requested, so Runware answers synchronously)", async () => {
+  it("surfaces the image URL when the submit response already carries it", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue(
@@ -366,9 +367,10 @@ describe("runwareResult", () => {
   it("posts a getResponse task for the given taskUUID", async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValue(
+      .mockResolvedValueOnce(
         new Response(JSON.stringify({ data: [{ status: "processing" }], errors: [] }), { status: 200 })
-      );
+      )
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: [] }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     const out = await runwareResult(env({ RUNWARE_API_KEY: "k" }), "task-1");
     expect(out).toEqual({ ok: true, phase: "running" });
@@ -377,6 +379,10 @@ describe("runwareResult", () => {
       { taskType: string; taskUUID: string },
     ];
     expect(body).toEqual([{ taskType: "getResponse", taskUUID: "task-1" }]);
+    const details = JSON.parse(String((fetchMock.mock.calls[1][1] as RequestInit).body)) as [
+      { taskType: string; taskUUID: string },
+    ];
+    expect(details).toEqual([{ taskType: "getTaskDetails", taskUUID: "task-1" }]);
   });
 
   it("returns the image URL on success", async () => {
@@ -399,10 +405,41 @@ describe("runwareResult", () => {
     expect(out).toEqual({ ok: false, error: "Runware job failed" });
   });
 
+  it("treats an imageURL with no status as done", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ data: [{ imageURL: "https://out/a.png" }], errors: [] }), { status: 200 })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runwareResult(env({ RUNWARE_API_KEY: "k" }), "task-1");
+    expect(out).toEqual({ ok: true, phase: "done", imageUrl: "https://out/a.png" });
+  });
+
+  it("recovers a dashboard-ready image via getTaskDetails when getResponse is empty", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: [] }), { status: 200 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            data: [{ response: { data: [{ imageURL: "https://im.runware.ai/ready.jpg" }] } }],
+          }),
+          { status: 200 }
+        )
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await runwareResult(env({ RUNWARE_API_KEY: "k" }), "task-1");
+    expect(out).toEqual({ ok: true, phase: "done", imageUrl: "https://im.runware.ai/ready.jpg" });
+  });
+
   it("errors if succeeded but there's no imageURL", async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValue(new Response(JSON.stringify({ data: [{ status: "success" }], errors: [] }), { status: 200 }));
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ data: [{ status: "success" }], errors: [] }), { status: 200 })
+      )
+      .mockResolvedValueOnce(new Response(JSON.stringify({ data: [] }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     const out = await runwareResult(env({ RUNWARE_API_KEY: "k" }), "task-1");
     expect(out).toEqual({ ok: false, error: "Runware result had no image" });

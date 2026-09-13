@@ -487,7 +487,9 @@ describe("PATCH /regions/:id", () => {
       env
     );
     expect(res.status).toBe(400);
-    await expect(res.json()).resolves.toMatchObject({ error: "color must be a hex string like #rrggbb, or null" });
+    await expect(res.json()).resolves.toMatchObject({
+      error: "color must be a hex string like #rrggbb or #rgba, or null",
+    });
   });
 
   it("ignores an unrecognized borderStyle and keeps the stored one", async () => {
@@ -568,6 +570,20 @@ describe("PATCH /pages/:id kind", () => {
     await expect(res.json()).resolves.toMatchObject({ error: "kind must be plate or layout" });
   });
 
+  it("accepts a 4-digit transparent hex", async () => {
+    const state = makeState({ pages: [samplePage({ kind: "layout" })] });
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/p1", {
+        method: "PATCH",
+        body: JSON.stringify({ bgColor: "#0000" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(200);
+    expect(state.pages[0].bg_color).toBe("#0000");
+  });
+
   it("sets a page background color without touching kind", async () => {
     const state = makeState({ pages: [samplePage({ kind: "layout" })] });
     const env = makeEnv(state);
@@ -593,7 +609,9 @@ describe("PATCH /pages/:id kind", () => {
       env
     );
     expect(res.status).toBe(400);
-    await expect(res.json()).resolves.toMatchObject({ error: "color must be a hex string like #rrggbb, or null" });
+    await expect(res.json()).resolves.toMatchObject({
+      error: "color must be a hex string like #rrggbb or #rgba, or null",
+    });
   });
 
   it("clears bgColor with null", async () => {

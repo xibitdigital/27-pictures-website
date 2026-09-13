@@ -75,12 +75,16 @@ const pageBgDraft = ref("");
 watch(
   () => props.pageBgColor,
   (v) => {
-    pageBgDraft.value = v || "";
+    pageBgDraft.value = v || "#0000";
   },
   { immediate: true }
 );
 
-const pageBgSwatch = computed(() => parseHexColor(pageBgDraft.value) || FALLBACK_SWATCH);
+const pageBgSwatch = computed(() => {
+  const hex = parseHexColor(pageBgDraft.value);
+  if (!hex) return FALLBACK_SWATCH;
+  return hex.length === 9 ? hex.slice(0, 7) : hex;
+});
 
 function onPageBgPicker(ev: Event): void {
   const hex = parseHexColor((ev.target as HTMLInputElement).value);

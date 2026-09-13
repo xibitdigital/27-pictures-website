@@ -340,11 +340,12 @@ function regionCorners(rect: { x: number; y: number; w: number; h: number }): { 
   ];
 }
 
-/** `null`/empty clears the color back to the default background; anything else must be a real hex color. */
+/** `null`/empty clears the color back to the default background; anything else must be a real hex
+ * color (3/4/6/8 digits — `#0000` is transparent). */
 function validateHexColor(input: unknown): { ok: true; value: string | null } | { ok: false; error: string } {
   if (input === null || input === undefined || input === "") return { ok: true, value: null };
-  if (typeof input !== "string" || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(input)) {
-    return { ok: false, error: "color must be a hex string like #rrggbb, or null" };
+  if (typeof input !== "string" || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(input)) {
+    return { ok: false, error: "color must be a hex string like #rrggbb or #rgba, or null" };
   }
   return { ok: true, value: input.toLowerCase() };
 }
@@ -2244,10 +2245,20 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     // The page insert and the toon update touch different rows — no reason to serialize them either.
     await Promise.all([
       env.DB.prepare(
-        `INSERT INTO pages (id, toon_id, position, file_key, width, height, kind, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO pages (id, toon_id, position, file_key, width, height, kind, bg_color, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
-        .bind(pageId, id, position, key, upload.width, upload.height, kind, nowIso())
+        .bind(
+          pageId,
+          id,
+          position,
+          key,
+          upload.width,
+          upload.height,
+          kind,
+          kind === "layout" ? "#0000" : null,
+          nowIso()
+        )
         .run(),
       updateToon,
     ]);

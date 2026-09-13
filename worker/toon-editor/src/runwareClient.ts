@@ -152,6 +152,7 @@ export async function runwareSubmit(
   const task: Record<string, unknown> = {
     taskType: "imageInference",
     taskUUID,
+    deliveryMethod: "async",
     model: input.model.trim(),
     positivePrompt: input.prompt,
     width,
@@ -175,10 +176,9 @@ export async function runwareSubmit(
   if (error) return { ok: false, error: `Runware rejected the request: ${error.message || error.code}` };
   const data = parsed.data && parsed.data[0];
   if (!data?.taskUUID) return { ok: false, error: "Runware request returned no task" };
-  // We never set deliveryMethod: "async", so Runware answers this POST synchronously — the
-  // image, when ready, is already in this response. `getResponse` (runwareResult) is documented
-  // for async delivery only and does not reliably track a sync-delivered task, so a job that
-  // relied on it here would poll "processing" forever even after Runware had already finished.
+  // Async so getResponse can find the job. Sync submit used to 504 (failedTaskTimeout) while
+  // Runware kept going — then getResponse never saw it (docs: getResponse is for async ops only)
+  // and the editor polled until timeout with the image sitting on the dashboard.
   return { ok: true, id: data.taskUUID, pollingUrl: data.taskUUID, imageUrl: data.imageURL };
 }
 
@@ -191,6 +191,29 @@ function runwarePhase(status: string | undefined): ComfyPhase | null {
 }
 
 type ResultData = { status?: string; imageURL?: string };
+
+type TaskDetailsData = {
+  response?: { data?: ResultData[] };
+};
+
+/** Recovers a finished image when getResponse is empty — sync-delivered jobs and dashboard-ready
+ * tasks that were never queued as async. Errors here are not job failures; the poll keeps going. */
+async function imageUrlFromTaskDetails(env: Env, taskUUID: string): Promise<string | null> {
+  const res = await fetch(RUNWARE_BASE, {
+    method: "POST",
+    headers: runwareHeaders(env),
+    body: JSON.stringify([{ taskType: "getTaskDetails", taskUUID }]),
+  });
+  if (!res.ok) return null;
+  let parsed: RunwareEnvelope<TaskDetailsData> = {};
+  try {
+    parsed = JSON.parse(await res.text()) as RunwareEnvelope<TaskDetailsData>;
+  } catch {
+    return null;
+  }
+  const inner = parsed.data?.[0]?.response?.data?.[0];
+  return inner?.imageURL || null;
+}
 
 /** `taskUUID` must be the id `runwareSubmit` returned — Runware polls by re-asking for that task, not a per-job URL. */
 export async function runwareResult(
@@ -214,11 +237,13 @@ export async function runwareResult(
   if (!res.ok) return { ok: false, error: `Runware result failed (${res.status}) ${text.slice(0, 200)}` };
   if (error) return { ok: false, error: `Runware job failed: ${error.message || error.code}` };
   const data = parsed.data && parsed.data[0];
+  if (data?.imageURL) return { ok: true, phase: "done", imageUrl: data.imageURL };
   const phase = runwarePhase(data?.status);
   if (phase === "error") return { ok: false, error: "Runware job failed" };
-  if (phase !== "done") return { ok: true, phase: phase || "running" };
-  if (!data?.imageURL) return { ok: false, error: "Runware result had no image" };
-  return { ok: true, phase: "done", imageUrl: data.imageURL };
+  const recovered = await imageUrlFromTaskDetails(env, taskUUID);
+  if (recovered) return { ok: true, phase: "done", imageUrl: recovered };
+  if (phase === "done") return { ok: false, error: "Runware result had no image" };
+  return { ok: true, phase: phase || "running" };
 }
 
 export async function runwareDownload(
