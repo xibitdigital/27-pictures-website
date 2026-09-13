@@ -646,6 +646,64 @@ body {
   border-color: var(--success);
 }
 
+/* Grid sizing is the container's own property — column floor + gap only. Everything about the
+   card's own internals (font sizes, badge, share button) lives on ToonCard's `compact` prop
+   instead (`.series-card--compact` below), not cascaded down from here. */
+.editor-card-list--compact {
+  grid-template-columns: repeat(auto-fill, minmax(10.8rem, 1fr));
+  gap: 0.45rem;
+}
+
+/* ToonCard's `compact` prop — every rule here is the matching base .series-card-* rule scaled
+   ~60% (40% smaller). Used on the toon list screen (#/) so a shelf with many books doesn't force
+   endless scrolling. */
+.series-card--compact {
+  padding-top: 8px;
+}
+
+.series-card--compact .series-card-art {
+  border-radius: 7px;
+}
+
+.series-card--compact .series-card-meta {
+  margin-top: 7px;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+
+.series-card--compact .series-card-title {
+  margin-top: 2px;
+  font-size: clamp(0.69rem, 1.3vw, 0.9rem);
+}
+
+.series-card--compact .series-card-cue {
+  margin-top: 4px;
+  font-size: 7px;
+}
+
+.series-card--compact .editor-visibility-badge {
+  top: 0.33rem;
+  right: 0.33rem;
+  padding: 0.12rem 0.27rem;
+  font-size: 0.41rem;
+}
+
+.series-card--compact .editor-share-btn {
+  top: 0.33rem;
+  left: 0.33rem;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.series-card--compact .editor-share-btn svg {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.series-card--compact .editor-add-plus {
+  font-size: 2.1rem;
+}
+
 .editor-card {
   display: grid;
   grid-template-columns: 4.5rem 1fr;

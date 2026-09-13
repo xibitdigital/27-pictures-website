@@ -33,6 +33,7 @@ import {
   generateCountFromJob,
   pollPageJob,
   recordImageCredit,
+  resolveSeriesWatermark,
   startPageGenerate,
   type GenerationJob,
 } from "./generatePage";
@@ -951,8 +952,15 @@ async function resolveAssetDims(
   return dims;
 }
 
-async function putPageAsset(env: Env, toonId: string, slug: string, upload: ImageUpload, source: ToonAssetSource) {
-  const optimized = await toWebp(upload);
+async function putPageAsset(
+  env: Env,
+  toonId: string,
+  slug: string,
+  upload: ImageUpload,
+  source: ToonAssetSource,
+  watermark?: ArrayBuffer | null
+) {
+  const optimized = await toWebp(upload, watermark ? { bytes: watermark, ext: "png", type: "image/png" } : null);
   const hash = await sha256Hex(optimized.bytes);
   const key = `editor/${slug}/assets/${hash}.${optimized.ext}`;
   await putImage(env, key, optimized.bytes, optimized.type);
@@ -2205,7 +2213,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     // depend on each other — running them together instead of one after another is most of what
     // made "add page"/"add layout page" feel slow.
     const [key, posRow] = await Promise.all([
-      putPageAsset(env, id, current.slug, upload, "page"),
+      resolveSeriesWatermark(env, current.series_key).then((watermark) =>
+        putPageAsset(env, id, current.slug, upload, "page", watermark)
+      ),
       env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?").bind(id).first(),
     ]);
     const position = (posRow && Number(posRow.max_pos) > -1 ? Number(posRow.max_pos) : -1) + 1;
@@ -2238,7 +2248,8 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!current) return json({ error: "not found" }, 404, cors);
     const upload = await readUpload(await request.formData());
     if ("error" in upload) return json({ error: upload.error }, 400, cors);
-    const key = await putPageAsset(env, page.toon_id, current.slug, upload, "page");
+    const watermark = await resolveSeriesWatermark(env, current.series_key);
+    const key = await putPageAsset(env, page.toon_id, current.slug, upload, "page", watermark);
     const width = upload.width || page.width || null;
     const height = upload.height || page.height || null;
     await env.DB.prepare(`UPDATE pages SET file_key = ?, width = ?, height = ? WHERE id = ?`)

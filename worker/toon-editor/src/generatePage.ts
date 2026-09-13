@@ -693,7 +693,10 @@ function plateSizeFromJob(job: GenerationJob): { width: number | null; height: n
 /** The series' optional watermark PNG (env.ASSETS bytes), or null if this toon has no series or
  * the series has none configured — resolved once per job poll and reused across every plate that
  * poll produces, rather than a D1 + R2 round trip per plate. */
-async function resolveSeriesWatermark(env: Env, seriesKey: string | null | undefined): Promise<ArrayBuffer | null> {
+export async function resolveSeriesWatermark(
+  env: Env,
+  seriesKey: string | null | undefined
+): Promise<ArrayBuffer | null> {
   if (!seriesKey) return null;
   const row = await env.DB.prepare("SELECT watermark_key FROM series WHERE key = ?")
     .bind(seriesKey)

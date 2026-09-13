@@ -23,6 +23,9 @@ const props = withDefaults(
     /** .series-card's red top rule is a public-site brand accent (public/styles.css) — the
      * studio's own card grids (episode lists, series list) don't carry it. */
     accent?: boolean;
+    /** ~40% smaller — same card, denser shelf (toon list screen, #/). See `.series-card--compact`
+     * in editor.css; the container's grid only sets column width/gap, never card internals. */
+    compact?: boolean;
   }>(),
   {
     meta: "",
@@ -35,6 +38,7 @@ const props = withDefaults(
     shareHref: "",
     add: false,
     accent: false,
+    compact: false,
   }
 );
 
@@ -56,7 +60,7 @@ async function onShare(ev: Event): Promise<void> {
   <component
     :is="to ? RouterLink : 'div'"
     class="series-card"
-    :class="{ 'series-card--add': add, 'series-card--no-accent': !accent }"
+    :class="{ 'series-card--add': add, 'series-card--no-accent': !accent, 'series-card--compact': compact }"
     :to="to || undefined"
     :aria-label="add ? title : undefined"
   >

@@ -128,9 +128,10 @@ const filteredCount = computed(
       <template v-else>
         <section v-if="filteredRecent.length" class="editor-list-section editor-list-section--recent">
           <h2 class="editor-list-heading">Recently changed</h2>
-          <ul class="editor-card-list">
+          <ul class="editor-card-list editor-card-list--compact">
             <li v-for="toon in filteredRecent" :key="`recent-${toon.id}`">
               <ToonCard
+                compact
                 :to="`/${toon.id}/pages`"
                 :title="toon.title || toon.slug"
                 :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
@@ -149,9 +150,10 @@ const filteredCount = computed(
           <h2 class="editor-list-heading">
             <RouterLink :to="`/series/${group.series.key}`">{{ group.series.title }}</RouterLink>
           </h2>
-          <ul class="editor-card-list">
+          <ul class="editor-card-list editor-card-list--compact">
             <li v-if="!group.toons.length">
               <ToonCard
+                compact
                 :to="`/series/${group.series.key}`"
                 :title="group.series.title"
                 :meta="group.series.tagline || ''"
@@ -161,6 +163,7 @@ const filteredCount = computed(
             </li>
             <li v-for="toon in group.toons" :key="toon.id">
               <ToonCard
+                compact
                 :to="`/${toon.id}`"
                 :title="toon.title || toon.slug"
                 :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
@@ -175,9 +178,10 @@ const filteredCount = computed(
         </section>
         <section v-if="ungrouped.length" class="editor-list-section">
           <h2 class="editor-list-heading">Ungrouped</h2>
-          <ul class="editor-card-list">
+          <ul class="editor-card-list editor-card-list--compact">
             <li v-for="toon in ungrouped" :key="toon.id">
               <ToonCard
+                compact
                 :to="`/${toon.id}`"
                 :title="toon.title || toon.slug"
                 :meta="toon.subtitle || ''"
