@@ -19,6 +19,10 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Polled by a long-open editor tab — must never freeze under a hashed or query-less cache key.
+/toons/editor/version.json
+  Cache-Control: no-store
+
 /logo.png
   Cache-Control: public, max-age=31536000, immutable
 

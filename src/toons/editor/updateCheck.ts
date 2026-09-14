@@ -4,11 +4,12 @@ import { ref } from "vue";
  * Polls `dist/toons/editor/version.json` (written by vite/plugins/editorVersion.ts) against this
  * tab's own baked-in build stamp (VITE_EDITOR_BUILD, vite.config.ts) so a long-open editor tab
  * notices a newer deploy instead of silently running stale JS until someone hard-refreshes.
+ * Visible-tab poll is 30s; also rechecks on focus and when the tab is shown again.
  * Module-level state — every `useUpdateCheck()` caller shares one poll loop and one dismissal,
  * since EditorApp.vue only ever mounts one UpdateAvailableDialog for the whole app.
  */
 
-const POLL_MS = 5 * 60 * 1000; // 5 minutes — a deploy landing mid-session is not urgent to the second
+const POLL_MS = 30 * 1000;
 const VERSION_URL = "/toons/editor/version.json";
 
 const currentBuild = (import.meta.env.VITE_EDITOR_BUILD || "").trim();
@@ -40,6 +41,7 @@ export function useUpdateCheck(): { available: typeof available; dismiss: () => 
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") void checkOnce();
     });
+    window.addEventListener("focus", () => void checkOnce());
   }
   function dismiss(): void {
     dismissedBuild = lastLatest;

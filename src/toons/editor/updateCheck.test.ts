@@ -53,7 +53,7 @@ describe("useUpdateCheck", () => {
     await vi.waitFor(() => expect(available.value).toBe(true));
     dismiss();
     expect(available.value).toBe(false);
-    await vi.advanceTimersByTimeAsync(5 * 60 * 1000 + 1000);
+    await vi.advanceTimersByTimeAsync(30 * 1000 + 1000);
     expect(available.value).toBe(false);
   });
 
