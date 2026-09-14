@@ -2340,6 +2340,7 @@ body {
   cursor: pointer;
 }
 
+/* Same box as `.jax-bubble-svg` — slotted inside `.jax-word` so em and scale match. */
 .editor-bubble-handles {
   position: absolute;
   left: 50%;

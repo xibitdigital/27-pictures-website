@@ -170,7 +170,8 @@ type DragState =
       pointerId: number;
       index: number;
       points: BubblePoint[];
-      overlay: HTMLElement;
+      grabX: number;
+      grabY: number;
     };
 
 let drag: DragState | null = null;
@@ -195,17 +196,32 @@ const reshapePoints = computed<BubblePoint[] | null>(() => {
   return captionPoints(bubble, caption.index, caption.text);
 });
 
+/** Live balloon SVG (viewBox 0–100) or the handle layer — never a stale node from pointerdown. */
+function viewBoxSpace(id: string): HTMLElement | null {
+  const host = rootEl.value?.querySelector(`[data-bubble-id="${id}"]`) as HTMLElement | null;
+  if (!host) return null;
+  return (
+    (host.querySelector(".jax-bubble-svg") as HTMLElement | null) ||
+    (host.querySelector("[data-bubble-handles]") as HTMLElement | null) ||
+    host
+  );
+}
+
+/**
+ * Viewport → balloon viewBox. Prefer the SVG's screen CTM so rotate/scale on the
+ * caption host match the path; AABB of a transformed box does not.
+ */
 function clientToViewBox(el: HTMLElement, clientX: number, clientY: number): BubblePoint {
-  const svg = el as unknown as SVGSVGElement;
-  if (typeof svg.createSVGPoint === "function") {
+  if (el.tagName.toLowerCase() === "svg") {
+    const svg = el as unknown as SVGSVGElement;
     try {
       const ctm = svg.getScreenCTM?.();
-      if (ctm) {
+      if (ctm && typeof svg.createSVGPoint === "function") {
         const pt = svg.createSVGPoint();
         pt.x = clientX;
         pt.y = clientY;
         const local = pt.matrixTransform(ctm.inverse());
-        return [local.x, local.y];
+        if (Number.isFinite(local.x) && Number.isFinite(local.y)) return [local.x, local.y];
       }
     } catch {
       /* jsdom / degenerate matrix */
@@ -270,7 +286,10 @@ function onWindowMove(ev: PointerEvent): void {
   if (!drag || ev.pointerId !== drag.pointerId) return;
   if (drag.kind === "vertex") {
     const vertex = drag;
-    const pos = clientToViewBox(vertex.overlay, ev.clientX, ev.clientY);
+    const space = viewBoxSpace(vertex.id);
+    if (!space) return;
+    const at = clientToViewBox(space, ev.clientX, ev.clientY);
+    const pos: BubblePoint = [at[0] + vertex.grabX, at[1] + vertex.grabY];
     const next = vertex.points.map((p, i) => (i === vertex.index ? pos : p));
     vertex.points = next;
     emit("reshape", vertex.id, roundBubblePoints(next));
@@ -334,15 +353,25 @@ function onPointerDown(ev: PointerEvent): void {
 
   if (vertexEl && host && props.tool === "reshape") {
     const id = host.getAttribute("data-bubble-id");
-    const overlay = vertexEl.closest("[data-bubble-handles]") as HTMLElement | null;
     const index = Number(vertexEl.getAttribute("data-bubble-vertex") || 0);
-    if (!id || !overlay || !reshapePoints.value) return;
+    if (!id || !reshapePoints.value) return;
     const bubble = props.bubbles.find((b) => b.id === id);
-    if (!bubble) return;
+    const space = viewBoxSpace(id);
+    if (!bubble || !space) return;
     ev.preventDefault();
     emit("select", id);
     const points = reshapePoints.value.map((p) => [p[0], p[1]] as BubblePoint);
-    drag = { kind: "vertex", id, pointerId: ev.pointerId, index, points, overlay };
+    const at = clientToViewBox(space, ev.clientX, ev.clientY);
+    const origin = points[index] || at;
+    drag = {
+      kind: "vertex",
+      id,
+      pointerId: ev.pointerId,
+      index,
+      points,
+      grabX: origin[0] - at[0],
+      grabY: origin[1] - at[1],
+    };
     dragging.value = true;
     const layer = rootEl.value;
     try {
@@ -447,22 +476,23 @@ watch(
       :style="hostStyle(caption)"
     >
       <span data-play-order aria-hidden="true">{{ caption.playIndex }}</span>
-      <WordCaption :caption="hostedCaption(caption)" :data-bubble-id="caption.bubbleId" />
-      <div
-        v-if="caption.bubbleId === selectedId && tool === 'reshape' && reshapePoints"
-        class="editor-bubble-handles"
-        data-bubble-handles
-      >
+      <WordCaption :caption="hostedCaption(caption)" :data-bubble-id="caption.bubbleId">
         <div
-          v-for="(pt, i) in reshapePoints"
-          :key="i"
-          class="editor-bubble-handle"
-          :data-bubble-vertex="String(i)"
-          :aria-label="`Control point ${i + 1}`"
-          role="button"
-          :style="{ left: `${pt[0]}%`, top: `${pt[1]}%` }"
-        />
-      </div>
+          v-if="caption.bubbleId === selectedId && tool === 'reshape' && reshapePoints"
+          class="editor-bubble-handles"
+          data-bubble-handles
+        >
+          <div
+            v-for="(pt, i) in reshapePoints"
+            :key="i"
+            class="editor-bubble-handle"
+            :data-bubble-vertex="String(i)"
+            :aria-label="`Control point ${i + 1}`"
+            role="button"
+            :style="{ left: `${pt[0]}%`, top: `${pt[1]}%` }"
+          />
+        </div>
+      </WordCaption>
       <div
         v-if="caption.bubbleId === selectedId && !dragging && tool !== 'reshape'"
         class="editor-tail-ring"

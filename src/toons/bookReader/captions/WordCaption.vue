@@ -92,5 +92,7 @@ function onClick(ev: Event): void {
   >
     <BubbleChrome v-if="caption.bubble" :chrome="caption.bubble" :style="caption.bubbleStyle ?? undefined" />
     <span class="jax-word-text" :style="caption.textStyle">{{ caption.text }}</span>
+    <!-- Editor reshape handles slot in here so they share the SVG's box (em, scale, viewBox). -->
+    <slot />
   </div>
 </template>

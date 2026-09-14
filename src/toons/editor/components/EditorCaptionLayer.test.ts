@@ -226,8 +226,9 @@ describe("EditorCaptionLayer", () => {
     expect(handles.length).toBeGreaterThan(3);
     expect(wrapper.find("[data-tail-ring]").exists()).toBe(false);
 
-    const overlay = wrapper.get("[data-bubble-handles]").element as HTMLElement;
-    vi.spyOn(overlay, "getBoundingClientRect").mockReturnValue({
+    const space = wrapper.get(".jax-bubble-svg").element as SVGSVGElement;
+    vi.spyOn(space, "getScreenCTM").mockReturnValue(null);
+    vi.spyOn(space, "getBoundingClientRect").mockReturnValue({
       x: 0,
       y: 0,
       left: 0,
@@ -239,6 +240,8 @@ describe("EditorCaptionLayer", () => {
       toJSON: () => ({}),
     } as DOMRect);
 
+    const startX = parseFloat((handles[0].element as HTMLElement).style.left);
+    const startY = parseFloat((handles[0].element as HTMLElement).style.top);
     handles[0].element.dispatchEvent(pointer("pointerdown", 10, 10));
     window.dispatchEvent(pointer("pointermove", 25, 40));
     window.dispatchEvent(pointer("pointerup", 25, 40));
@@ -248,7 +251,8 @@ describe("EditorCaptionLayer", () => {
     expect(reshape).toBeTruthy();
     expect(reshape![0][0]).toBe("b1");
     const pts = reshape![0][1] as number[][];
-    expect(pts[0]).toEqual([25, 40]);
+    expect(pts[0][0]).toBeCloseTo(startX + 15, 1);
+    expect(pts[0][1]).toBeCloseTo(startY + 30, 1);
     expect(wrapper.emitted("persist-reshape")?.[0][0]).toBe("b1");
     expect(wrapper.emitted("move")).toBeFalsy();
     wrapper.unmount();
