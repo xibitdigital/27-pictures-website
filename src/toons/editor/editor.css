@@ -1627,31 +1627,49 @@ body {
   display: block;
 }
 
+.editor-prompt-highlight,
+.editor-prompt-wrap textarea {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  font: inherit;
+  font-weight: 400;
+  font-size: inherit;
+  line-height: 1.35;
+  letter-spacing: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
+  tab-size: 8;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
 .editor-prompt-highlight {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   pointer-events: none;
-  box-sizing: border-box;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid transparent;
-  font: inherit;
-  line-height: 1.35;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
   color: var(--text);
   background: var(--bg-input);
+  scrollbar-width: none;
+}
+
+.editor-prompt-highlight::-webkit-scrollbar {
+  display: none;
 }
 
 .editor-prompt-highlight strong {
-  font-weight: 700;
+  font-weight: inherit;
   color: var(--editor-primary);
 }
 
 .editor-prompt-wrap textarea {
   position: relative;
   z-index: 1;
-  width: 100%;
+  display: block;
   background: transparent;
   color: transparent;
   caret-color: var(--text);
