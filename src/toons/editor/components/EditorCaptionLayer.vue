@@ -269,10 +269,11 @@ function overlayBox(): ContentBox | null {
 function onWindowMove(ev: PointerEvent): void {
   if (!drag || ev.pointerId !== drag.pointerId) return;
   if (drag.kind === "vertex") {
-    const pos = clientToViewBox(drag.overlay, ev.clientX, ev.clientY);
-    const next = drag.points.map((p, i) => (i === drag.index ? pos : p));
-    drag.points = next;
-    emit("reshape", drag.id, roundBubblePoints(next));
+    const vertex = drag;
+    const pos = clientToViewBox(vertex.overlay, ev.clientX, ev.clientY);
+    const next = vertex.points.map((p, i) => (i === vertex.index ? pos : p));
+    vertex.points = next;
+    emit("reshape", vertex.id, roundBubblePoints(next));
     return;
   }
   const plate = overlayBox();
