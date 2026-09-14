@@ -1627,8 +1627,34 @@ body {
   display: block;
 }
 
+.editor-prompt-highlight {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  box-sizing: border-box;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid transparent;
+  font: inherit;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  background: var(--bg-input);
+}
+
+.editor-prompt-highlight strong {
+  font-weight: 700;
+  color: var(--text);
+}
+
 .editor-prompt-wrap textarea {
+  position: relative;
+  z-index: 1;
   width: 100%;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text);
 }
 
 .editor-mention-menu {

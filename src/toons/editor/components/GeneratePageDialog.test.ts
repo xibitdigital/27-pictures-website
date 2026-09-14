@@ -129,6 +129,7 @@ describe("GeneratePageDialog", () => {
     expect(textarea.value).not.toContain("@Rinn");
     expect(textarea.value).not.toContain("@image-4");
     expect(document.querySelector("[data-mention-list]")).toBeNull();
+    expect(document.querySelector("[data-prompt-highlight] strong")?.textContent).toBe("Rinn");
     wrapper.unmount();
   });
 });

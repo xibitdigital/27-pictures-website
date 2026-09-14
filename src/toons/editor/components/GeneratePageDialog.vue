@@ -272,6 +272,53 @@ const mentionMatches = computed(() => {
   });
 });
 
+const highlightEl = ref<HTMLElement | null>(null);
+
+function escapeHtml(raw: string): string {
+  return raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function highlightIncludedRefs(text: string): string {
+  const tags = mentionOptions.value
+    .map((opt) => opt.tag)
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length);
+  if (!tags.length) return escapeHtml(text);
+  const parts: string[] = [];
+  let i = 0;
+  while (i < text.length) {
+    let hit: string | null = null;
+    for (const tag of tags) {
+      const slice = text.slice(i, i + tag.length);
+      if (slice.toLowerCase() !== tag.toLowerCase()) continue;
+      const beforeOk = i === 0 || !/[A-Za-z0-9]/.test(text.charAt(i - 1));
+      const afterOk = i + tag.length >= text.length || !/[A-Za-z0-9]/.test(text.charAt(i + tag.length));
+      if (beforeOk && afterOk) {
+        hit = slice;
+        break;
+      }
+    }
+    if (hit) {
+      parts.push(`<strong>${escapeHtml(hit)}</strong>`);
+      i += hit.length;
+    } else {
+      parts.push(escapeHtml(text.charAt(i)));
+      i += 1;
+    }
+  }
+  return parts.join("");
+}
+
+const highlightedPrompt = computed(() => highlightIncludedRefs(prompt.value) + "\n");
+
+function onPromptScroll(): void {
+  const src = promptEl.value;
+  const dest = highlightEl.value;
+  if (!src || !dest) return;
+  dest.scrollTop = src.scrollTop;
+  dest.scrollLeft = src.scrollLeft;
+}
+
 function mentionAt(text: string, cursor: number): { start: number; query: string } | null {
   const before = text.slice(0, cursor);
   const at = before.lastIndexOf("@");
@@ -645,6 +692,13 @@ function onSubmit(): void {
               </EditorIconButton>
             </span>
             <span class="editor-prompt-wrap">
+              <span
+                ref="highlightEl"
+                class="editor-prompt-highlight"
+                data-prompt-highlight
+                aria-hidden="true"
+                v-html="highlightedPrompt"
+              />
               <textarea
                 ref="promptEl"
                 name="generate-prompt"
@@ -657,6 +711,7 @@ function onSubmit(): void {
                 @input="onPromptInput"
                 @keyup="onPromptKeyup"
                 @keydown="onPromptKeydown"
+                @scroll="onPromptScroll"
               />
             </span>
             <Teleport to="body">
