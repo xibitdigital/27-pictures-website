@@ -92,7 +92,7 @@ describe("GeneratePageDialog", () => {
           ...generate,
           provider: "runware" as const,
           slots: [
-            { alias: "erin", label: "Erin", kind: "sheet", fileUrl: "/erin.webp" },
+            { alias: "image-4", label: "Rinn", kind: "sheet", fileUrl: "/erin.webp" },
             { alias: "goblin", label: "Goblin", kind: "sheet", fileUrl: "/goblin.webp" },
           ],
         },
@@ -113,14 +113,16 @@ describe("GeneratePageDialog", () => {
     await flushPromises();
     const list = document.querySelector("[data-mention-list]");
     expect(list).toBeTruthy();
-    expect(list?.textContent).toContain("@erin");
+    expect(list?.textContent).toContain("@Rinn");
+    expect(list?.textContent).not.toContain("@image-4");
     expect(list?.textContent).toContain("Image 1");
-    expect(list?.textContent).not.toContain("@goblin");
-    (document.querySelector('button[name="mention-erin"]') as HTMLButtonElement).dispatchEvent(
+    expect(list?.textContent).not.toContain("@Goblin");
+    (document.querySelector('button[name="mention-image-4"]') as HTMLButtonElement).dispatchEvent(
       new MouseEvent("mousedown", { bubbles: true })
     );
     await flushPromises();
-    expect(textarea.value).toContain("@erin ");
+    expect(textarea.value).toContain("@Rinn ");
+    expect(textarea.value).not.toContain("@image-4");
     expect(document.querySelector("[data-mention-list]")).toBeNull();
     wrapper.unmount();
   });

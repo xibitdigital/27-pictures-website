@@ -213,17 +213,18 @@ const orderedRefEntries = computed(() => {
 });
 const includedRefCount = computed(() => orderedRefEntries.value.length);
 
-type MentionOption = { tag: string; image: string; title: string };
+type MentionOption = { tag: string; alias: string; image: string; title: string };
 
 const mentionOptions = computed((): MentionOption[] =>
   orderedRefEntries.value.map((entry, i) => {
     const image = `Image ${i + 1}`;
-    if (entry.kind === "style") return { tag: "style", image, title: "style reference" };
+    if (entry.kind === "style") return { tag: "style", alias: "style", image, title: "style reference" };
     if (entry.kind === "previous") {
       const title = previousRegionId.value ? "previous shape" : "previous page";
-      return { tag: "previous", image, title };
+      return { tag: "previous", alias: "previous", image, title };
     }
-    return { tag: entry.alias, image, title: entry.label };
+    const tag = entry.label || entry.alias;
+    return { tag, alias: entry.alias, image, title: tag };
   })
 );
 
@@ -611,11 +612,11 @@ function onSubmit(): void {
                 data-mention-list
               >
                 <li v-if="!mentionMatches.length" class="editor-muted" role="presentation">No matching reference</li>
-                <li v-for="(opt, i) in mentionMatches" :key="opt.tag">
+                <li v-for="(opt, i) in mentionMatches" :key="opt.alias">
                   <button
                     type="button"
                     role="option"
-                    :name="`mention-${opt.tag}`"
+                    :name="`mention-${opt.alias}`"
                     :aria-selected="i === mentionIndex"
                     :class="{ 'is-active': i === mentionIndex }"
                     @mousedown.prevent="insertMention(opt)"
