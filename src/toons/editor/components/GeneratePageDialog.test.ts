@@ -83,6 +83,47 @@ describe("GeneratePageDialog", () => {
     expect(textarea.value).toBe("");
     wrapper.unmount();
   });
+
+  it("offers @ mentions only for included references", async () => {
+    const wrapper = mount(GeneratePageDialog, {
+      props: {
+        open: true,
+        generate: {
+          ...generate,
+          provider: "runware" as const,
+          slots: [
+            { alias: "erin", label: "Erin", kind: "sheet", fileUrl: "/erin.webp" },
+            { alias: "goblin", label: "Goblin", kind: "sheet", fileUrl: "/goblin.webp" },
+          ],
+        },
+        pages: [],
+        busy: false,
+        status: "",
+      },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    (document.querySelector('button[name="include-goblin"]') as HTMLButtonElement).click();
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    textarea.focus();
+    textarea.value = "@";
+    textarea.setSelectionRange(1, 1);
+    textarea.dispatchEvent(new Event("input", { bubbles: true }));
+    await flushPromises();
+    const list = document.querySelector("[data-mention-list]");
+    expect(list).toBeTruthy();
+    expect(list?.textContent).toContain("@erin");
+    expect(list?.textContent).toContain("Image 1");
+    expect(list?.textContent).not.toContain("@goblin");
+    (document.querySelector('button[name="mention-erin"]') as HTMLButtonElement).dispatchEvent(
+      new MouseEvent("mousedown", { bubbles: true })
+    );
+    await flushPromises();
+    expect(textarea.value).toContain("@erin ");
+    expect(document.querySelector("[data-mention-list]")).toBeNull();
+    wrapper.unmount();
+  });
 });
 
 describe("GeneratePageDialog previous-plate override", () => {

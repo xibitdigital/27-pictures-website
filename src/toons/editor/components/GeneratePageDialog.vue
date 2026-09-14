@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Eraser } from "@lucide/vue";
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import {
   isDirectProvider as isDirectProviderName,
   type GenerateProvider,
@@ -47,7 +47,12 @@ const previousPageId = ref("");
 const previousRegionId = ref("");
 const previousFile = ref<File | null>(null);
 const previousFileInput = ref<HTMLInputElement | null>(null);
+const promptEl = ref<HTMLTextAreaElement | null>(null);
 const debugOpen = ref(false);
+const mentionOpen = ref(false);
+const mentionQuery = ref("");
+const mentionStart = ref(-1);
+const mentionIndex = ref(0);
 
 const hasPreviousSlot = computed(() => (props.generate?.slots || []).some((s) => s.kind === "previous"));
 /** Whether a previous plate will actually be sent this call — the legend must match this, not just
@@ -191,22 +196,134 @@ function cleanSlotLabel(slot: { label: string; alias: string }): string {
  */
 const orderedRefEntries = computed(() => {
   const slots = props.generate?.slots || [];
-  const out: { kind: "sheet" | "style" | "previous"; label: string }[] = [];
+  const out: { kind: "sheet" | "style" | "previous"; label: string; alias: string }[] = [];
   for (const slot of slots) {
     if (slot.kind === "sheet") {
       if (!slot.fileUrl || !isIncluded(slot.alias)) continue;
-      out.push({ kind: "sheet", label: cleanSlotLabel(slot) });
+      out.push({ kind: "sheet", label: cleanSlotLabel(slot), alias: slot.alias });
     } else if (slot.kind === "style") {
       if (!slot.fileUrl) continue;
-      out.push({ kind: "style", label: "" });
+      out.push({ kind: "style", label: "", alias: "style" });
     } else if (slot.kind === "previous") {
       if (!willSendPrevious.value) continue;
-      out.push({ kind: "previous", label: "" });
+      out.push({ kind: "previous", label: "", alias: "previous" });
     }
   }
   return out;
 });
 const includedRefCount = computed(() => orderedRefEntries.value.length);
+
+type MentionOption = { tag: string; image: string; title: string };
+
+const mentionOptions = computed((): MentionOption[] =>
+  orderedRefEntries.value.map((entry, i) => {
+    const image = `Image ${i + 1}`;
+    if (entry.kind === "style") return { tag: "style", image, title: "style reference" };
+    if (entry.kind === "previous") {
+      const title = previousRegionId.value ? "previous shape" : "previous page";
+      return { tag: "previous", image, title };
+    }
+    return { tag: entry.alias, image, title: entry.label };
+  })
+);
+
+const mentionMatches = computed(() => {
+  const q = mentionQuery.value.trim().toLowerCase();
+  if (!q) return mentionOptions.value;
+  return mentionOptions.value.filter((opt) => {
+    const hay = `${opt.tag} ${opt.image} ${opt.title}`.toLowerCase();
+    return hay.includes(q);
+  });
+});
+
+function mentionAt(text: string, cursor: number): { start: number; query: string } | null {
+  const before = text.slice(0, cursor);
+  const at = before.lastIndexOf("@");
+  if (at < 0) return null;
+  if (at > 0 && /[A-Za-z0-9]/.test(before.charAt(at - 1))) return null;
+  const query = before.slice(at + 1);
+  if (/[\s\n]/.test(query)) return null;
+  return { start: at, query };
+}
+
+function syncMentionFromEl(el: HTMLTextAreaElement): void {
+  const cursor = el.selectionStart ?? el.value.length;
+  const hit = mentionAt(el.value, cursor);
+  if (!hit || !mentionOptions.value.length) {
+    mentionOpen.value = false;
+    return;
+  }
+  mentionStart.value = hit.start;
+  mentionQuery.value = hit.query;
+  mentionOpen.value = true;
+  if (mentionIndex.value >= mentionMatches.value.length) mentionIndex.value = 0;
+}
+
+function onPromptInput(ev: Event): void {
+  const el = ev.target as HTMLTextAreaElement;
+  syncMentionFromEl(el);
+}
+
+function onPromptKeyup(ev: KeyboardEvent): void {
+  if (ev.key === "Escape" || ev.key === "Enter") return;
+  const el = ev.target as HTMLTextAreaElement;
+  syncMentionFromEl(el);
+}
+
+function closeMention(): void {
+  mentionOpen.value = false;
+  mentionQuery.value = "";
+  mentionStart.value = -1;
+  mentionIndex.value = 0;
+}
+
+function insertMention(opt: MentionOption): void {
+  const el = promptEl.value;
+  const start = mentionStart.value;
+  if (!el || start < 0) return;
+  const cursor = el.selectionStart ?? prompt.value.length;
+  const token = `@${opt.tag} `;
+  prompt.value = prompt.value.slice(0, start) + token + prompt.value.slice(cursor);
+  closeMention();
+  const caret = start + token.length;
+  void nextTick(() => {
+    el.focus();
+    el.setSelectionRange(caret, caret);
+  });
+}
+
+function onPromptKeydown(ev: KeyboardEvent): void {
+  if (!mentionOpen.value || !mentionMatches.value.length) {
+    if (ev.key === "Escape") closeMention();
+    return;
+  }
+  if (ev.key === "ArrowDown") {
+    ev.preventDefault();
+    mentionIndex.value = (mentionIndex.value + 1) % mentionMatches.value.length;
+    return;
+  }
+  if (ev.key === "ArrowUp") {
+    ev.preventDefault();
+    mentionIndex.value = (mentionIndex.value - 1 + mentionMatches.value.length) % mentionMatches.value.length;
+    return;
+  }
+  if (ev.key === "Enter" || ev.key === "Tab") {
+    const opt = mentionMatches.value[mentionIndex.value];
+    if (opt) {
+      ev.preventDefault();
+      insertMention(opt);
+    }
+    return;
+  }
+  if (ev.key === "Escape") {
+    ev.preventDefault();
+    closeMention();
+  }
+}
+
+watch(mentionMatches, (list) => {
+  if (mentionIndex.value >= list.length) mentionIndex.value = 0;
+});
 
 function previousRefUrl(): string {
   if (previousFile.value) return `(file) ${previousFile.value.name}`;
@@ -373,6 +490,7 @@ watch(
   (open) => {
     if (!open) {
       debugOpen.value = false;
+      closeMention();
       return;
     }
     if (previousPageId.value && !props.pages.some((p) => p.id === previousPageId.value)) {
@@ -471,15 +589,43 @@ function onSubmit(): void {
                 <Eraser :size="14" :stroke-width="1.6" aria-hidden="true" />
               </EditorIconButton>
             </span>
-            <textarea
-              name="generate-prompt"
-              v-model="prompt"
-              rows="8"
-              cols="40"
-              required
-              :disabled="busy"
-              placeholder="What happens on this page (no balloons, no SFX lettering)"
-            />
+            <span class="editor-prompt-wrap">
+              <textarea
+                ref="promptEl"
+                name="generate-prompt"
+                v-model="prompt"
+                rows="8"
+                cols="40"
+                required
+                :disabled="busy"
+                placeholder="What happens on this page (no balloons, no SFX lettering). Type @ to tag an included reference."
+                @input="onPromptInput"
+                @keyup="onPromptKeyup"
+                @keydown="onPromptKeydown"
+              />
+              <ul
+                v-if="mentionOpen"
+                class="editor-mention-menu"
+                role="listbox"
+                aria-label="Included references"
+                data-mention-list
+              >
+                <li v-if="!mentionMatches.length" class="editor-muted" role="presentation">No matching reference</li>
+                <li v-for="(opt, i) in mentionMatches" :key="opt.tag">
+                  <button
+                    type="button"
+                    role="option"
+                    :name="`mention-${opt.tag}`"
+                    :aria-selected="i === mentionIndex"
+                    :class="{ 'is-active': i === mentionIndex }"
+                    @mousedown.prevent="insertMention(opt)"
+                  >
+                    <span>@{{ opt.tag }}</span>
+                    <span class="editor-muted">{{ opt.image }} — {{ opt.title }}</span>
+                  </button>
+                </li>
+              </ul>
+            </span>
           </label>
           <template v-if="hasPreviousSlot">
             <EditorCheckbox

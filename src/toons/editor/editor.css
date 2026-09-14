@@ -1622,6 +1622,59 @@ body {
   gap: 1.25rem;
 }
 
+.editor-prompt-wrap {
+  position: relative;
+  display: block;
+}
+
+.editor-prompt-wrap textarea {
+  width: 100%;
+}
+
+.editor-mention-menu {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin: 0.2rem 0 0;
+  padding: 0.25rem 0;
+  max-height: 12rem;
+  overflow: auto;
+  list-style: none;
+  background: var(--bg-menu);
+  border: 1px solid var(--border-light);
+}
+
+.editor-mention-menu li {
+  margin: 0;
+}
+
+.editor-mention-menu [role="presentation"] {
+  padding: 0.4rem 0.7rem;
+}
+
+.editor-mention-menu button {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.4rem 0.7rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editor-mention-menu button:hover,
+.editor-mention-menu button.is-active,
+.editor-mention-menu button[aria-selected="true"] {
+  background: color-mix(in srgb, var(--editor-primary) 22%, transparent);
+}
+
 .editor-generate-main,
 .editor-generate-refs {
   display: grid;
