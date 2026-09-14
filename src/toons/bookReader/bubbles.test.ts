@@ -4,6 +4,7 @@ import {
   defaultBubblePoints,
   organicBubblePathFromPoints,
   organicBubblePoints,
+  organicTailSplit,
   parseBubblePoints,
   sketchyBubblePath,
   thoughtBubblePath,
@@ -72,8 +73,7 @@ describe("sketchyBubblePath tails", () => {
   it("aims corner tails 45 degrees outward from the mouth", () => {
     const expectAngle = (tail: string, want: number) => {
       const pts = organicBubblePoints(tail, 1);
-      const body = pts.slice(0, -3);
-      const tip = pts[pts.length - 2];
+      const { body, tip } = organicTailSplit(pts);
       const mx = (body[0][0] + body[body.length - 1][0]) / 2;
       const my = (body[0][1] + body[body.length - 1][1]) / 2;
       const got = Math.atan2(tip[1] - my, tip[0] - mx);
@@ -89,7 +89,7 @@ describe("sketchyBubblePath tails", () => {
   it("hangs corner tails off the rounded corner, not the flat side", () => {
     const mouth = (tail: string) => {
       const pts = organicBubblePoints(tail, 42);
-      const body = pts.slice(0, -3);
+      const { body } = organicTailSplit(pts);
       const a = body[0];
       const b = body[body.length - 1];
       return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
@@ -144,9 +144,17 @@ describe("sketchyBubblePath tails", () => {
     expect(maxR2).toBeGreaterThan(1.15);
   });
 
+  it("draws the tail as a sharp triangle, not a rounded spline", () => {
+    const d = sketchyBubblePath("bottom", 42);
+    expect(d).toMatch(/ L [-.\d]+ [-.\d]+ L [-.\d]+ [-.\d]+ Z$/);
+    expect(organicBubblePoints("bottom", 42).length).toBe(
+      organicTailSplit(organicBubblePoints("bottom", 42)).body.length + 1
+    );
+  });
+
   it("keeps the tail mouth a thin pointer", () => {
     const pts = organicBubblePoints("bottom", 42);
-    const body = pts.slice(0, -3);
+    const { body } = organicTailSplit(pts);
     const mouth = Math.hypot(body[0][0] - body[body.length - 1][0], body[0][1] - body[body.length - 1][1]);
     expect(mouth).toBeLessThan(10);
     expect(mouth).toBeGreaterThan(4);
@@ -201,7 +209,7 @@ describe("bubbleBodyPoints", () => {
   it("drops the tail handles so wrap follows the body, not the lobe", () => {
     const pts = organicBubblePoints("bottom-left", 7);
     expect(pts.length).toBeGreaterThan(6);
-    expect(bubbleBodyPoints("organic", "bottom-left", pts).length).toBe(pts.length - 3);
+    expect(bubbleBodyPoints("organic", "bottom-left", pts).length).toBe(pts.length - 1);
     expect(bubbleBodyPoints("organic", "none", pts).length).toBe(pts.length);
   });
 });

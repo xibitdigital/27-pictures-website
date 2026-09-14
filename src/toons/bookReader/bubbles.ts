@@ -211,7 +211,7 @@ function mouthAngle(attachA: number, rx: number, ry: number, halfWidth: number):
 
 /**
  * Seeded organic control points in viewBox 0–100. Tailless: 8 body anchors.
- * Tailed: body anchors + midL + tip + midR (same order `organicBubblePathFromPoints` consumes).
+ * Tailed: body anchors + one tip (triangle: two mouth points, one tip).
  */
 export function organicBubblePoints(tail: string, seed?: number): BubblePoint[] {
   const rnd = mulberry32(seed || 1);
@@ -257,28 +257,36 @@ export function organicBubblePoints(tail: string, seed?: number): BubblePoint[] 
   }
 
   const tipJ: BubblePoint = [tip[0] + j(1.2), tip[1] + j(1.2)];
-  const mouthL = body[body.length - 1];
-  const mouthR = body[0];
-  // Mids hug the tip so the sides stay a thin triangle and do not re-widen the mouth.
-  const midL: BubblePoint = [mouthL[0] * 0.18 + tipJ[0] * 0.82 + j(0.8), mouthL[1] * 0.18 + tipJ[1] * 0.82 + j(0.8)];
-  const midR: BubblePoint = [mouthR[0] * 0.18 + tipJ[0] * 0.82 + j(0.8), mouthR[1] * 0.18 + tipJ[1] * 0.82 + j(0.8)];
-  return [...body, midL, tipJ, midR];
+  return [...body, tipJ];
+}
+
+/**
+ * Split authored/seeded points into body + tip. New tails store one tip after
+ * the body. Staging reshape briefly stored midL/tip/midR — if the middle of
+ * the last three is farthest from the centre, treat that as the tip.
+ */
+export function organicTailSplit(pts: BubblePoint[]): { body: BubblePoint[]; tip: BubblePoint } {
+  if (pts.length >= 6) {
+    const midL = pts[pts.length - 3];
+    const maybeTip = pts[pts.length - 2];
+    const midR = pts[pts.length - 1];
+    const dist = (p: BubblePoint) => Math.hypot(p[0] - BODY_CX, p[1] - BODY_CY);
+    if (dist(maybeTip) > dist(midL) && dist(maybeTip) > dist(midR)) {
+      return { body: pts.slice(0, -3), tip: maybeTip };
+    }
+  }
+  return { body: pts.slice(0, -1), tip: pts[pts.length - 1] };
 }
 
 /** Rebuild the organic outline from authored (or seeded) control points. */
 export function organicBubblePathFromPoints(pts: BubblePoint[], tail: string): string {
   const t = tail || "bottom";
-  if (t === "none" || pts.length < 6) return cubicSplineThrough(pts, true);
-  const body = pts.slice(0, -3);
-  const midL = pts[pts.length - 3];
-  const tip = pts[pts.length - 2];
-  const midR = pts[pts.length - 1];
-  const mouthL = body[body.length - 1];
+  if (t === "none" || pts.length < 4) return cubicSplineThrough(pts, true);
+  const { body, tip } = organicTailSplit(pts);
+  if (body.length < 3) return cubicSplineThrough(pts, true);
   const mouthR = body[0];
   let d = cubicSplineThrough(body, false, true);
-  d += cubicSplineThrough([mouthL, midL, tip], false, false);
-  d += cubicSplineThrough([tip, midR, mouthR], false, false);
-  d += " Z";
+  d += ` L ${tip[0].toFixed(2)} ${tip[1].toFixed(2)} L ${mouthR[0].toFixed(2)} ${mouthR[1].toFixed(2)} Z`;
   return d;
 }
 
@@ -503,11 +511,11 @@ export function defaultBubblePoints(shape: string, tail: string, seed: number): 
 export const DEFAULT_BODY_SIZE = { w: 92, h: 88 };
 
 /**
- * Vertices that form the balloon body. Organic tails store midL + tip + midR
- * after the body; those must not drive wrap/padding or the lobe pulls the box.
+ * Vertices that form the balloon body. Organic tails store a single tip after
+ * the body; that must not drive wrap/padding or the lobe pulls the box.
  */
 export function bubbleBodyPoints(shape: string, tail: string, points: BubblePoint[]): BubblePoint[] {
-  if (shape === "organic" && tail !== "none" && points.length >= 6) return points.slice(0, -3);
+  if (shape === "organic" && tail !== "none" && points.length >= 4) return organicTailSplit(points).body;
   return points;
 }
 
