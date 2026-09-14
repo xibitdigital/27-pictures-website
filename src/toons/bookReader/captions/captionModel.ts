@@ -232,6 +232,16 @@ export function shapeTextFit(
   const box = pointsBBox(body);
   let refW = DEFAULT_BODY_SIZE.w;
   if (shape === "star") refW = 96;
+  const refH = shape === "star" ? 96 : DEFAULT_BODY_SIZE.h;
+  const defaultish =
+    Math.abs(box.w - refW) < 10 &&
+    Math.abs(box.h - refH) < 10 &&
+    Math.abs(box.x + box.w / 2 - 50) < 10 &&
+    Math.abs(box.y + box.h / 2 - 50) < 10;
+  if (defaultish) {
+    const pad = ellipsePadding(text, baseWrapCh, base, shape);
+    return { wrapCh: baseWrapCh, pad: textPadding(pad.padX, pad.padY) };
+  }
   let wrapScale = box.w / refW;
   if (wrapScale < 0.5) wrapScale = 0.5;
   else if (wrapScale > 1.8) wrapScale = 1.8;

@@ -12,6 +12,7 @@ import {
   paddingCss,
   textPadding,
 } from "./captionModel";
+import { organicBubblePoints } from "../bubbles";
 import type { WordEntry } from "../types";
 
 const ctx: CaptionContext = {
@@ -132,6 +133,24 @@ describe("buildCaption", () => {
     expect(parseFloat(wideCap.textStyle["max-width"] || "0")).toBeGreaterThan(seedWrap);
     expect(parseFloat(narrowCap.textStyle["max-width"] || "0")).toBeLessThan(seedWrap);
     expect(narrowCap.textStyle.padding).not.toBe(seeded.textStyle.padding);
+  });
+
+  it("keeps wrap and padding when bubblePoints are the seeded outline", () => {
+    const line = "Hello my dear lady friends today";
+    const seeded = buildCaption({ x: 0.5, y: 0.5, variant: "bubble", text: line } as WordEntry, 0, ctx)!;
+    const materialized = buildCaption(
+      {
+        x: 0.5,
+        y: 0.5,
+        variant: "bubble",
+        text: line,
+        bubblePoints: organicBubblePoints("bottom-left", 1),
+      } as WordEntry,
+      0,
+      ctx
+    )!;
+    expect(materialized.textStyle["max-width"]).toBe(seeded.textStyle["max-width"]);
+    expect(materialized.textStyle.padding).toBe(seeded.textStyle.padding);
   });
 
   it("draws an authored balloon outline when bubblePoints are set", () => {

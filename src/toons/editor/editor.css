@@ -2340,14 +2340,21 @@ body {
   cursor: pointer;
 }
 
-/* Same box as `.jax-bubble-svg` — slotted inside `.jax-word` so em and scale match. */
+/* Same box as `.jax-bubble-svg` — slotted inside `.jax-word` so em and scale match.
+   Must stay out of the inline-flex size (width: max-content). An in-flow
+   `100% + 0.7em` overlay grows the word, which grows the overlay, and the
+   balloon jumps the moment reshape handles mount. */
+.editor-word-layer .jax-word--bubble .editor-bubble-handles,
 .editor-bubble-handles {
   position: absolute;
   left: 50%;
   top: 50%;
   z-index: 4;
+  display: block;
+  flex: 0 0 0;
   width: calc(100% + 0.7em);
   height: calc(100% + 0.7em);
+  margin: 0;
   overflow: visible;
   pointer-events: none;
   transform: translate(-50%, -50%) scale(var(--jax-bubble-scale, 1));

@@ -210,6 +210,22 @@ describe("EditorCaptionLayer", () => {
     wrapper.unmount();
   });
 
+  it("does not change the balloon box when reshape handles mount", async () => {
+    const props = { pageNum: 1, bubbles: [bubble()], selectedId: "b1", imageEl: makeImage() };
+    const select = mount(EditorCaptionLayer, { props, attachTo: document.body });
+    await nextTick();
+    const word = select.get(".jax-word-text").element as HTMLElement;
+    const before = { pad: word.style.padding, wrap: word.style.maxWidth };
+    select.unmount();
+    const reshape = mount(EditorCaptionLayer, { props: { ...props, tool: "reshape" }, attachTo: document.body });
+    await nextTick();
+    const after = reshape.get(".jax-word-text").element as HTMLElement;
+    expect(after.style.padding).toBe(before.pad);
+    expect(after.style.maxWidth).toBe(before.wrap);
+    expect(reshape.find("[data-bubble-handles]").exists()).toBe(true);
+    reshape.unmount();
+  });
+
   it("shows reshape handles on the selected balloon and emits reshape on drag", async () => {
     const wrapper = mount(EditorCaptionLayer, {
       props: {
