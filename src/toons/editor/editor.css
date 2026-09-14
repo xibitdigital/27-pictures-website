@@ -1645,7 +1645,7 @@ body {
 
 .editor-prompt-highlight strong {
   font-weight: 700;
-  color: var(--text);
+  color: var(--editor-primary);
 }
 
 .editor-prompt-wrap textarea {
