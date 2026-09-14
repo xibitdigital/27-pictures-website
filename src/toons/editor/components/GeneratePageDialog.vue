@@ -670,7 +670,7 @@ function onSubmit(): void {
 </script>
 
 <template>
-  <EditorDialog :open="open" title="Generate page" wide hide-close @update:open="(next) => !next && onCancel()">
+  <EditorDialog :open="open" title="Generate page" wide tall hide-close @update:open="(next) => !next && onCancel()">
     <form class="editor-dialog-form" @submit.prevent="onSubmit">
       <p class="editor-muted">{{ providerIntro }}</p>
       <p v-if="missingComfyFlow" class="editor-error" role="alert">
@@ -703,7 +703,7 @@ function onSubmit(): void {
                 ref="promptEl"
                 name="generate-prompt"
                 v-model="prompt"
-                rows="8"
+                rows="16"
                 cols="40"
                 required
                 :disabled="busy"

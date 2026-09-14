@@ -1477,6 +1477,14 @@ body {
   width: min(58rem, calc(100vw - 2rem));
 }
 
+.editor-dialog[data-tall] {
+  min-height: min(46rem, 90dvh);
+}
+
+.editor-dialog[data-tall] .editor-prompt-wrap textarea {
+  min-height: 22rem;
+}
+
 .editor-dialog[data-preview] [data-slot-preview] {
   display: block;
   width: 100%;
@@ -1618,7 +1626,7 @@ body {
 .editor-generate-columns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem);
-  align-items: start;
+  align-items: stretch;
   gap: 1.25rem;
 }
 

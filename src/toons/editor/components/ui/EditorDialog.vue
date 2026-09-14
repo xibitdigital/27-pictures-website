@@ -26,6 +26,8 @@ withDefaults(
     preview?: boolean;
     /** More form fields than the default width comfortably fits (e.g. the plate picker + slot list in Generate page). */
     wide?: boolean;
+    /** Taller default shell — Generate page prompt needs more room than the other wide dialogs. */
+    tall?: boolean;
     /**
      * Hides the corner X — only the two Generate dialogs (page/character) set this: closing them
      * is a real decision (a running job, a typed prompt) already routed through their own
@@ -33,7 +35,7 @@ withDefaults(
      */
     hideClose?: boolean;
   }>(),
-  { alertdialog: false, preview: false, wide: false, hideClose: false }
+  { alertdialog: false, preview: false, wide: false, tall: false, hideClose: false }
 );
 
 const emit = defineEmits<{
@@ -57,7 +59,12 @@ function onClose(): void {
         @open-auto-focus="emit('openAutoFocus', $event)"
         @focus-outside="(event: Event) => event.preventDefault()"
       >
-        <div class="editor-dialog" :data-preview="preview ? '' : undefined" :data-wide="wide ? '' : undefined">
+        <div
+          class="editor-dialog"
+          :data-preview="preview ? '' : undefined"
+          :data-wide="wide ? '' : undefined"
+          :data-tall="tall ? '' : undefined"
+        >
           <div class="editor-dialog-body">
             <EditorIconButton
               v-if="!hideClose"
