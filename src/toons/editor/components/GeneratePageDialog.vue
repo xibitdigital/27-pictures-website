@@ -214,20 +214,24 @@ const orderedRefEntries = computed(() => {
 });
 const includedRefCount = computed(() => orderedRefEntries.value.length);
 
-type MentionOption = { tag: string; alias: string; image: string; title: string };
+type MentionOption = { tag: string; alias: string; hint: string };
 
-const mentionOptions = computed((): MentionOption[] =>
-  orderedRefEntries.value.map((entry, i) => {
-    const image = `Image ${i + 1}`;
-    if (entry.kind === "style") return { tag: "style", alias: "style", image, title: "style reference" };
+const mentionOptions = computed((): MentionOption[] => {
+  const out: MentionOption[] = [];
+  for (const [i, entry] of orderedRefEntries.value.entries()) {
+    if (entry.kind === "style") continue;
+    const hint = `Image ${i + 1}`;
     if (entry.kind === "previous") {
-      const title = previousRegionId.value ? "previous shape" : "previous page";
-      return { tag: title, alias: "previous", image, title };
+      out.push({ tag: "previous page", alias: "previous", hint });
+      continue;
     }
-    const tag = entry.label || entry.alias;
-    return { tag, alias: entry.alias, image, title: tag };
-  })
-);
+    out.push({ tag: entry.label || entry.alias, alias: entry.alias, hint });
+  }
+  if (hasPreviousSlot.value && !out.some((opt) => opt.alias === "previous")) {
+    out.push({ tag: "previous page", alias: "previous", hint: "" });
+  }
+  return out;
+});
 
 const mentionMenuStyle = ref<CSSProperties>({});
 
@@ -263,7 +267,7 @@ const mentionMatches = computed(() => {
   const q = mentionQuery.value.trim().toLowerCase();
   if (!q) return mentionOptions.value;
   return mentionOptions.value.filter((opt) => {
-    const hay = `${opt.tag} ${opt.image} ${opt.title}`.toLowerCase();
+    const hay = `${opt.tag} ${opt.hint} ${opt.alias}`.toLowerCase();
     return hay.includes(q);
   });
 });
@@ -676,7 +680,7 @@ function onSubmit(): void {
                     @mousedown.prevent="insertMention(opt)"
                   >
                     <span>{{ opt.tag }}</span>
-                    <span class="editor-muted">{{ opt.image }} — {{ opt.title }}</span>
+                    <span v-if="opt.hint" class="editor-muted">{{ opt.hint }}</span>
                   </button>
                 </li>
               </ul>

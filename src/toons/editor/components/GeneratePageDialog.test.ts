@@ -94,6 +94,8 @@ describe("GeneratePageDialog", () => {
           slots: [
             { alias: "image-4", label: "Rinn", kind: "sheet", fileUrl: "/erin.webp" },
             { alias: "goblin", label: "Goblin", kind: "sheet", fileUrl: "/goblin.webp" },
+            { alias: "style", label: "Style", kind: "style", fileUrl: "/style.webp" },
+            { alias: "previous", label: "Previous", kind: "previous", fileUrl: null },
           ],
         },
         pages: [],
@@ -117,6 +119,8 @@ describe("GeneratePageDialog", () => {
     expect(list?.textContent).not.toContain("@image-4");
     expect(list?.textContent).toContain("Image 1");
     expect(list?.textContent).not.toContain("Goblin");
+    expect(list?.textContent).toContain("previous page");
+    expect(list?.textContent).not.toContain("style");
     (document.querySelector('button[name="mention-image-4"]') as HTMLButtonElement).dispatchEvent(
       new MouseEvent("mousedown", { bubbles: true })
     );
