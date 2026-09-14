@@ -201,6 +201,8 @@ export interface WordBubbleStyle {
   opacity?: number;
   /** Alias for strokeWidth (balloon outline thickness). */
   strokeThickness?: number;
+  /** Authored outline vertices in viewBox 0–100 (organic / thought / star). */
+  points?: number[][];
 }
 
 export interface WordEntry {
@@ -221,6 +223,11 @@ export interface WordEntry {
   mode?: string;
   tail?: string;
   bubble?: WordBubbleStyle;
+  /**
+   * Authored balloon outline in viewBox 0–100. Organic / thought / burst only.
+   * Omitted balloons keep the seeded path.
+   */
+  bubblePoints?: number[][];
   /** Legacy flat bubble keys (still accepted by resolveBubbleStyle). */
   bubbleShape?: string;
   bubbleFill?: string;

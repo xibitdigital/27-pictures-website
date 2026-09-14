@@ -2089,6 +2089,10 @@ body {
   cursor: grabbing;
 }
 
+.editor-word-layer.is-reshaping .jax-word {
+  cursor: default;
+}
+
 .editor-word-layer .jax-word.is-editor-selected {
   outline: 2px solid var(--red-smile);
   outline-offset: 4px;
@@ -2098,6 +2102,10 @@ body {
   position: relative;
   left: auto;
   top: auto;
+}
+
+.editor-caption-host {
+  overflow: visible;
 }
 
 .editor-caption-host [data-play-order] {
@@ -2330,6 +2338,34 @@ body {
   transform: translate(-50%, -50%);
   pointer-events: auto;
   cursor: pointer;
+}
+
+.editor-bubble-handles {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  width: calc(100% + 0.7em);
+  height: calc(100% + 0.7em);
+  overflow: visible;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(var(--jax-bubble-scale, 1));
+}
+
+.editor-bubble-handle {
+  position: absolute;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--text);
+  border: 2px solid var(--editor-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.editor-word-layer.is-dragging .editor-bubble-handle {
+  cursor: grabbing;
 }
 
 .editor-region-draft-rect {

@@ -210,6 +210,74 @@ describe("EditorCaptionLayer", () => {
     wrapper.unmount();
   });
 
+  it("shows reshape handles on the selected balloon and emits reshape on drag", async () => {
+    const wrapper = mount(EditorCaptionLayer, {
+      props: {
+        pageNum: 1,
+        bubbles: [bubble()],
+        selectedId: "b1",
+        imageEl: makeImage(),
+        tool: "reshape",
+      },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const handles = wrapper.findAll("[data-bubble-vertex]");
+    expect(handles.length).toBeGreaterThan(3);
+    expect(wrapper.find("[data-tail-ring]").exists()).toBe(false);
+
+    const overlay = wrapper.get("[data-bubble-handles]").element as HTMLElement;
+    vi.spyOn(overlay, "getBoundingClientRect").mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      right: 100,
+      bottom: 100,
+      width: 100,
+      height: 100,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    handles[0].element.dispatchEvent(pointer("pointerdown", 10, 10));
+    window.dispatchEvent(pointer("pointermove", 25, 40));
+    window.dispatchEvent(pointer("pointerup", 25, 40));
+    await nextTick();
+
+    const reshape = wrapper.emitted("reshape");
+    expect(reshape).toBeTruthy();
+    expect(reshape![0][0]).toBe("b1");
+    const pts = reshape![0][1] as number[][];
+    expect(pts[0]).toEqual([25, 40]);
+    expect(wrapper.emitted("persist-reshape")?.[0][0]).toBe("b1");
+    expect(wrapper.emitted("move")).toBeFalsy();
+    wrapper.unmount();
+  });
+
+  it("does not add a bubble when reshape is armed and the plate is empty", async () => {
+    const wrapper = mount(EditorCaptionLayer, {
+      props: { pageNum: 1, bubbles: [], imageEl: makeImage(), tool: "reshape" },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const layer = wrapper.find(".editor-word-layer").element as HTMLElement;
+    vi.spyOn(layer, "getBoundingClientRect").mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      right: 400,
+      bottom: 712,
+      width: 400,
+      height: 712,
+      toJSON: () => ({}),
+    } as DOMRect);
+    layer.dispatchEvent(pointer("pointerdown", 100, 178));
+    await nextTick();
+    expect(wrapper.emitted("add")).toBeFalsy();
+    wrapper.unmount();
+  });
+
   it("emits add when the empty plate is clicked", async () => {
     const wrapper = mount(EditorCaptionLayer, {
       props: { pageNum: 1, bubbles: [], imageEl: makeImage() },

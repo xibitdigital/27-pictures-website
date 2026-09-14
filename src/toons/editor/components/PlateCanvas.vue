@@ -4,9 +4,9 @@ import { computed, ref } from "vue";
 import PlateWatermark from "../../bookReader/captions/PlateWatermark.vue";
 import EditorCaptionLayer from "./EditorCaptionLayer.vue";
 import GeometryLayer, { type LayoutTool } from "./GeometryLayer.vue";
-import LayoutToolbar, { type StudioMode } from "./LayoutToolbar.vue";
+import LayoutToolbar, { type BubbleTool, type StudioMode } from "./LayoutToolbar.vue";
 import type { BubbleRecord, PageKind, RegionGeometry, RegionRecord } from "../types";
-import type { BubbleTail } from "../mapConfig";
+import { bubblePoints, type BubbleTail } from "../mapConfig";
 
 const HINT_KEY = "editor-plate-click-hint";
 
@@ -21,6 +21,8 @@ function readHintDismissed(): boolean {
 const showHint = ref(!readHintDismissed());
 /** Pure view/interaction preference, not persisted per-region — resets when the studio remounts. Defaults on so draw/resize/reshape snaps out of the box. */
 const showGrid = ref(true);
+/** Same for the bubble toolbar: select vs reshape is a visit preference, not stored on the caption. */
+const bubbleTool = ref<BubbleTool>("select");
 
 function dismissHint(): void {
   showHint.value = false;
@@ -66,7 +68,21 @@ const emit = defineEmits<{
   "persist-region-image": [id: string, offsetX: number, offsetY: number];
   "request-region-assign": [id: string];
   "update-layout-tool": [tool: LayoutTool];
+  reshape: [id: string, points: number[][]];
+  "persist-reshape": [id: string, points: number[][]];
+  "reset-shape": [id: string];
 }>();
+
+const canResetShape = computed(() => {
+  if (!props.selectedId) return false;
+  const bubble = props.bubbles.find((b) => b.id === props.selectedId);
+  return Boolean(bubble && bubblePoints(bubble));
+});
+
+function onResetShape(): void {
+  if (!props.selectedId || !canResetShape.value) return;
+  emit("reset-shape", props.selectedId);
+}
 
 const imgEl = ref<HTMLImageElement | null>(null);
 const plateStyle = computed(() => {
@@ -85,7 +101,12 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
 
 <template>
   <div class="editor-canvas">
-    <p v-if="showHint && showBubbleLayer" class="editor-plate-hint" data-plate-hint role="status">
+    <p
+      v-if="showHint && showBubbleLayer && bubbleTool === 'select'"
+      class="editor-plate-hint"
+      data-plate-hint
+      role="status"
+    >
       Click the page to add a bubble.
       <button
         class="editor-plate-hint-dismiss"
@@ -97,13 +118,17 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
         <X :size="18" :stroke-width="2.2" aria-hidden="true" />
       </button>
     </p>
-    <div v-if="kind === 'layout'" class="editor-toolbar-sticky">
+    <div class="editor-toolbar-sticky">
       <LayoutToolbar
         :tool="layoutTool"
-        :mode="studioMode"
+        :mode="kind === 'layout' ? studioMode : 'bubbles'"
         :grid="showGrid"
+        :bubble-tool="bubbleTool"
+        :can-reset-shape="canResetShape"
         @update:tool="emit('update-layout-tool', $event)"
         @update:grid="showGrid = $event"
+        @update:bubble-tool="bubbleTool = $event"
+        @reset-shape="onResetShape"
       />
     </div>
     <div class="editor-plate" :style="plateStyle">
@@ -127,12 +152,15 @@ const showBubbleLayer = computed(() => props.kind !== "layout" || props.studioMo
         :design-width="designWidth"
         :design-height="designHeight"
         :image-el="imgEl"
+        :tool="bubbleTool"
         @select="emit('select', $event)"
         @move="(id, x, y) => emit('move', id, x, y)"
         @persist="(id, x, y) => emit('persist', id, x, y)"
         @add="emit('add', $event)"
         @tail="(id, tail) => emit('tail', id, tail)"
         @remove="(id) => emit('remove', id)"
+        @reshape="(id, pts) => emit('reshape', id, pts)"
+        @persist-reshape="(id, pts) => emit('persist-reshape', id, pts)"
       />
       <GeometryLayer
         v-if="imgEl && kind === 'layout'"

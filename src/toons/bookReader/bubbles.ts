@@ -36,6 +36,9 @@ export function hashSeed(...parts: Array<string | number | null | undefined>): n
 
 export type BubbleTail = "none" | "bottom" | "bottom-left" | "bottom-right" | "left" | "right";
 
+/** One spline / polygon vertex in the 0–100 bubble viewBox. */
+export type BubblePoint = [number, number];
+
 export interface BubbleStyle {
   shape: string;
   fill: string;
@@ -48,6 +51,11 @@ export interface BubbleStyle {
   scratches: number;
   /** 0–1 fill opacity of the bubble body only (stroke stays opaque). */
   opacity: number;
+  /**
+   * Optional authored outline. Organic / thought / star balloons generated
+   * from seed when omitted; the editor writes these when a control point moves.
+   */
+  points?: BubblePoint[];
 }
 
 /** Default outline thickness for organic speech balloons (SVG stroke-width). */
@@ -113,11 +121,37 @@ function cubicSplineThrough(pts: number[][], closed = false, startWithMove = tru
   return d;
 }
 
+/** True when this chrome is a spline/star the studio can reshape with handles. */
+export function isReshapableBubbleShape(shape: string): boolean {
+  return shape === "organic" || shape === "thought" || shape === "star";
+}
+
 /**
- * Sketchy organic speech bubble in viewBox 0–100.
- * Catmull–Rom cubic spline outline: ellipse body + integrated triangular tail.
+ * Config / extraJson `bubblePoints` → viewBox vertices, or null if missing/invalid.
+ * Needs at least 3 finite [x, y] pairs.
  */
-export function sketchyBubblePath(tail: string, seed?: number): string {
+export function parseBubblePoints(raw: unknown): BubblePoint[] | null {
+  if (!Array.isArray(raw) || raw.length < 3) return null;
+  const pts: BubblePoint[] = [];
+  for (const p of raw) {
+    if (!Array.isArray(p) || p.length < 2) return null;
+    const x = Number(p[0]);
+    const y = Number(p[1]);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+    pts.push([x, y]);
+  }
+  return pts;
+}
+
+export function roundBubblePoints(pts: BubblePoint[]): BubblePoint[] {
+  return pts.map((p) => [Math.round(p[0] * 100) / 100, Math.round(p[1] * 100) / 100]);
+}
+
+/**
+ * Seeded organic control points in viewBox 0–100. Tailless: 8 body anchors.
+ * Tailed: body anchors + midL + tip + midR (same order `organicBubblePathFromPoints` consumes).
+ */
+export function organicBubblePoints(tail: string, seed?: number): BubblePoint[] {
   const rnd = mulberry32(seed || 1);
   const j = (amp: number) => (rnd() - 0.5) * 2 * amp;
   const t = tail || "bottom";
@@ -129,14 +163,14 @@ export function sketchyBubblePath(tail: string, seed?: number): string {
   // Sparse anchors — cubic spline fills the gaps with smooth curves
   const n = 8;
 
-  function onEllipse(a: number) {
+  function onEllipse(a: number): BubblePoint {
     return [cx + Math.cos(a) * (rx + j(1.2)), cy + Math.sin(a) * (ry + j(1.2))];
   }
 
   if (t === "none") {
-    const pts: number[][] = [];
+    const pts: BubblePoint[] = [];
     for (let i = 0; i < n; i++) pts.push(onEllipse((i / n) * Math.PI * 2 - Math.PI / 2));
-    return cubicSplineThrough(pts, true);
+    return pts;
   }
 
   let attachA = Math.PI / 2;
@@ -171,27 +205,43 @@ export function sketchyBubblePath(tail: string, seed?: number): string {
 
   const a0 = attachA + halfW;
   const span = Math.PI * 2 - halfW * 2;
-  const body: number[][] = [];
+  const body: BubblePoint[] = [];
   for (let i = 0; i <= n; i++) {
     body.push(onEllipse(a0 + (i / n) * span));
   }
 
-  const tipJ = [tip[0] + j(1.2), tip[1] + j(1.2)];
+  const tipJ: BubblePoint = [tip[0] + j(1.2), tip[1] + j(1.2)];
   const mouthL = body[body.length - 1];
   const mouthR = body[0];
+  const midL: BubblePoint = [mouthL[0] * 0.28 + tipJ[0] * 0.72 + j(1.2), mouthL[1] * 0.28 + tipJ[1] * 0.72 + j(1.2)];
+  const midR: BubblePoint = [mouthR[0] * 0.28 + tipJ[0] * 0.72 + j(1.2), mouthR[1] * 0.28 + tipJ[1] * 0.72 + j(1.2)];
+  return [...body, midL, tipJ, midR];
+}
 
-  // Body: open cubic spline mouthR → … → mouthL
+/** Rebuild the organic outline from authored (or seeded) control points. */
+export function organicBubblePathFromPoints(pts: BubblePoint[], tail: string): string {
+  const t = tail || "bottom";
+  if (t === "none" || pts.length < 6) return cubicSplineThrough(pts, true);
+  const body = pts.slice(0, -3);
+  const midL = pts[pts.length - 3];
+  const tip = pts[pts.length - 2];
+  const midR = pts[pts.length - 1];
+  const mouthL = body[body.length - 1];
+  const mouthR = body[0];
   let d = cubicSplineThrough(body, false, true);
-
-  // Tail sides as cubic splines (3-point open CR: mouth → mid → tip / tip → mid → mouth).
-  // Mids sit closer to the tip so the sides do not bow out and re-widen the base.
-  const midL = [mouthL[0] * 0.28 + tipJ[0] * 0.72 + j(1.2), mouthL[1] * 0.28 + tipJ[1] * 0.72 + j(1.2)];
-  const midR = [mouthR[0] * 0.28 + tipJ[0] * 0.72 + j(1.2), mouthR[1] * 0.28 + tipJ[1] * 0.72 + j(1.2)];
-
-  d += cubicSplineThrough([mouthL, midL, tipJ], false, false);
-  d += cubicSplineThrough([tipJ, midR, mouthR], false, false);
+  d += cubicSplineThrough([mouthL, midL, tip], false, false);
+  d += cubicSplineThrough([tip, midR, mouthR], false, false);
   d += " Z";
   return d;
+}
+
+/**
+ * Sketchy organic speech bubble in viewBox 0–100.
+ * Catmull–Rom cubic spline outline: ellipse body + integrated triangular tail.
+ */
+export function sketchyBubblePath(tail: string, seed?: number, controlPoints?: BubblePoint[] | null): string {
+  const pts = controlPoints && controlPoints.length >= 3 ? controlPoints : organicBubblePoints(tail, seed);
+  return organicBubblePathFromPoints(pts, tail);
 }
 
 /** Tail tip coordinates shared by the pointed (sketchy) and dotted (thought) bubble tails. */
@@ -270,16 +320,20 @@ export function thoughtTailDots(tail: string, seed?: number): Array<{ x: number;
  * fraction of the centre→tip vector — that older scheme dropped the first dot
  * *inside* the balloon on side tails, so the rim cut straight through it.
  */
-export function thoughtBubblePath(tail: string, seed?: number): string {
+export function thoughtBubblePoints(_tail: string, seed?: number): BubblePoint[] {
   const rnd = mulberry32(seed || 1);
   const j = (amp: number) => (rnd() - 0.5) * 2 * amp;
   const { cx, cy, rx, ry, anchors } = THOUGHT_BODY;
-
-  const pts: number[][] = [];
+  const pts: BubblePoint[] = [];
   for (let i = 0; i < anchors; i++) {
     const a = (i / anchors) * Math.PI * 2 - Math.PI / 2;
     pts.push([cx + Math.cos(a) * (rx + j(THOUGHT_WOBBLE)), cy + Math.sin(a) * (ry + j(THOUGHT_WOBBLE))]);
   }
+  return pts;
+}
+
+export function thoughtBubblePath(tail: string, seed?: number, controlPoints?: BubblePoint[] | null): string {
+  const pts = controlPoints && controlPoints.length >= 3 ? controlPoints : thoughtBubblePoints(tail, seed);
   let d = cubicSplineThrough(pts, true);
 
   for (const { x, y, r } of thoughtTailDots(tail, seed)) {
@@ -356,16 +410,16 @@ export function cleanBoxPath(seed?: number): string {
  * Jagged star-burst outline (viewBox 0-100 x 0-100) — no tail.
  * Shouted lines / impact captions ("TOO SLOW, MAN!" style).
  */
-export function starBurstPath(seed?: number, points?: number): string {
+export function starBurstPoints(seed?: number, pointCount?: number): BubblePoint[] {
   const rnd = mulberry32(seed || 1);
-  const n = points || 13;
+  const n = pointCount || 13;
   const total = n * 2;
   const cx = 50;
   const cy = 50;
   const outerR = 48;
   const innerR = 27;
 
-  const pts = [];
+  const pts: BubblePoint[] = [];
   for (let i = 0; i < total; i++) {
     const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
     const baseR = i % 2 === 0 ? outerR : innerR;
@@ -373,13 +427,30 @@ export function starBurstPath(seed?: number, points?: number): string {
     const a = angle + (rnd() - 0.5) * 2 * ((Math.PI / total) * 0.4);
     pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
   }
+  return pts;
+}
 
+export function starBurstPathFromPoints(pts: BubblePoint[]): string {
+  if (pts.length < 3) return "";
   let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
   for (let i = 1; i < pts.length; i++) {
     d += ` L ${pts[i][0].toFixed(2)} ${pts[i][1].toFixed(2)}`;
   }
   d += " Z";
   return d;
+}
+
+export function starBurstPath(seed?: number, points?: number, controlPoints?: BubblePoint[] | null): string {
+  const pts = controlPoints && controlPoints.length >= 3 ? controlPoints : starBurstPoints(seed, points);
+  return starBurstPathFromPoints(pts);
+}
+
+/** Seeded handles for a reshapable chrome shape, or null for HUD/box variants. */
+export function defaultBubblePoints(shape: string, tail: string, seed: number): BubblePoint[] | null {
+  if (shape === "thought") return thoughtBubblePoints(tail, seed);
+  if (shape === "star") return starBurstPoints(seed);
+  if (shape === "organic") return organicBubblePoints(tail, seed);
+  return null;
 }
 
 /**
@@ -502,6 +573,7 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
     scratches:
       b.scratches != null ? Number(b.scratches) : isClean ? 0 : isBadai ? 16 : isAi ? 6 : shape === "box" ? 10 : 0,
     opacity,
+    points: parseBubblePoints(b.points) || parseBubblePoints(w.bubblePoints) || undefined,
   };
 }
 

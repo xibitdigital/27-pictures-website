@@ -37,6 +37,14 @@ describe("PlateCanvas", () => {
     localStorage.removeItem(HINT_KEY);
   });
 
+  it("shows the bubble toolbar on a plate page", () => {
+    const wrapper = mountPlate();
+    expect(wrapper.find('button[name="tool-select"]').exists()).toBe(true);
+    expect(wrapper.find('button[name="tool-reshape"]').exists()).toBe(true);
+    expect(wrapper.find('button[name="tool-rect"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
   it("renders the plate image", () => {
     const wrapper = mountPlate();
     expect(wrapper.get("img").attributes("src")).toBe("https://cdn.example/plate.webp");
@@ -118,6 +126,15 @@ describe("PlateCanvas Layout-page regions", () => {
     expect(wrapper.get(".editor-geometry-layer").attributes("style")).toContain("pointer-events: none");
     // The mode switcher stays (to switch back to Layout), but its draw tools don't.
     expect(wrapper.find('button[name="tool-rect"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("swaps the floating toolbar to bubble reshape tools in Bubbles mode", async () => {
+    const wrapper = mountLayoutPlate("bubbles");
+    expect(wrapper.find('button[name="tool-reshape"]').exists()).toBe(true);
+    expect(wrapper.find('button[name="tool-rect"]').exists()).toBe(false);
+    await wrapper.get('button[name="tool-reshape"]').trigger("click");
+    expect(wrapper.get('button[name="tool-reshape"]').attributes("aria-pressed")).toBe("true");
     wrapper.unmount();
   });
 

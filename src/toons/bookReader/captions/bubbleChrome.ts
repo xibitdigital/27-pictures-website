@@ -26,9 +26,9 @@ export interface BubbleChromeModel {
 
 function bodyPath(style: BubbleStyle, seed: number, isBoxy: boolean): string {
   if (isBoxy) return boxPathForShape(style.shape, seed);
-  if (style.shape === "star") return starBurstPath(seed);
-  if (style.shape === "thought") return thoughtBubblePath(style.tail, seed);
-  return sketchyBubblePath(style.tail, seed);
+  if (style.shape === "star") return starBurstPath(seed, undefined, style.points);
+  if (style.shape === "thought") return thoughtBubblePath(style.tail, seed, style.points);
+  return sketchyBubblePath(style.tail, seed, style.points);
 }
 
 /**

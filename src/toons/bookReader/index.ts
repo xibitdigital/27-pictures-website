@@ -100,8 +100,12 @@ export {
   cleanBoxPath,
   starBurstPath,
   resolveBubbleStyle,
+  parseBubblePoints,
+  defaultBubblePoints,
+  isReshapableBubbleShape,
   type BubbleTail,
   type BubbleStyle,
+  type BubblePoint,
 } from "./bubbles";
 
 // Types

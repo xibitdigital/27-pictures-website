@@ -4,6 +4,7 @@
  * round-trips into that shape without a second schema.
  */
 import voicesLock from "../../../scripts/voices.json";
+import { parseBubblePoints } from "../bookReader/bubbles";
 import type { LangCode, ToonConfig, WordEntry, WordTextMap } from "../bookReader/types";
 import type { BubbleRecord, PageRecord, ToonRecord } from "./types";
 
@@ -172,6 +173,10 @@ export function bubbleAudio(bubble: BubbleRecord): string {
 export function bubbleVoice(bubble: BubbleRecord): string {
   const voice = bubbleExtra(bubble).voice;
   return typeof voice === "string" ? voice : "";
+}
+
+export function bubblePoints(bubble: BubbleRecord): number[][] | null {
+  return parseBubblePoints(bubbleExtra(bubble).bubblePoints);
 }
 
 const VARIANT_AUDIO_TAG: Record<string, string> = {

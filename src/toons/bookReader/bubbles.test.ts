@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
 import {
+  defaultBubblePoints,
+  organicBubblePathFromPoints,
+  organicBubblePoints,
+  parseBubblePoints,
   sketchyBubblePath,
   thoughtBubblePath,
   thoughtTailDots,
@@ -71,6 +75,64 @@ describe("sketchyBubblePath tails", () => {
   it("passes a top tail through resolveBubbleStyle", () => {
     const style = resolveBubbleStyle({ x: 0, y: 0, bubble: { tail: "top-right" } } as never, "bubble");
     expect(style.tail).toBe("top-right");
+  });
+
+  it("rebuilds the seeded path from its own control points", () => {
+    for (const tail of ["none", "bottom", "bottom-left", "top-right", "left"]) {
+      const pts = organicBubblePoints(tail, 42);
+      expect(organicBubblePathFromPoints(pts, tail)).toBe(sketchyBubblePath(tail, 42));
+    }
+  });
+
+  it("uses authored control points instead of the seed", () => {
+    const pts = organicBubblePoints("none", 1);
+    const moved: typeof pts = pts.map((p, i) => (i === 0 ? [p[0], 8] : p));
+    expect(sketchyBubblePath("none", 1, moved)).not.toBe(sketchyBubblePath("none", 1));
+    expect(sketchyBubblePath("none", 1, moved)).toBe(organicBubblePathFromPoints(moved, "none"));
+  });
+
+  it("reads bubblePoints on the word into the resolved style", () => {
+    const pts = [
+      [20, 20],
+      [80, 20],
+      [80, 80],
+      [20, 80],
+    ];
+    const style = resolveBubbleStyle({ x: 0, y: 0, bubblePoints: pts } as never, "bubble");
+    expect(style.points).toEqual(pts);
+  });
+});
+
+describe("parseBubblePoints", () => {
+  it("rejects short or non-numeric lists", () => {
+    expect(parseBubblePoints(null)).toBeNull();
+    expect(parseBubblePoints([[1, 2]])).toBeNull();
+    expect(
+      parseBubblePoints([
+        [1, 2],
+        [3, 4],
+        ["x", 5],
+      ])
+    ).toBeNull();
+  });
+
+  it("accepts at least three finite vertices", () => {
+    expect(
+      parseBubblePoints([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ])
+    ).toEqual([
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ]);
+  });
+
+  it("returns organic handles for a speech balloon", () => {
+    expect(defaultBubblePoints("organic", "bottom-left", 7)?.length).toBeGreaterThan(3);
+    expect(defaultBubblePoints("box", "none", 7)).toBeNull();
   });
 });
 

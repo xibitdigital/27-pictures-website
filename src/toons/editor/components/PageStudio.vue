@@ -47,6 +47,7 @@ import LangSwitcher from "../../bookReader/LangSwitcher.vue";
 import {
   bubbleWritePayload,
   bubblesInPlayOrder,
+  extraPatch,
   CAPTION_LANGS,
   moveBubbleInPlayOrder,
   parseHexColor,
@@ -438,7 +439,12 @@ function applyLocal(id: string, patch: Partial<BubbleRecord>): void {
 
 function onInspectChange(patch: Partial<BubbleRecord>): void {
   if (!selectedId.value) return;
-  applyLocal(selectedId.value, patch);
+  const bubble = findBubble(selectedId.value);
+  let next = patch;
+  if (bubble && patch.variant != null && patch.variant !== bubble.variant) {
+    next = { ...patch, ...extraPatch(bubble, "bubblePoints", null) };
+  }
+  applyLocal(selectedId.value, next);
   markDirty(selectedId.value);
 }
 
@@ -453,7 +459,23 @@ function onPersist(id: string, x: number, y: number): void {
 }
 
 function onTail(id: string, tail: string): void {
-  applyLocal(id, { tail });
+  const bubble = findBubble(id);
+  if (!bubble) return;
+  applyLocal(id, { tail, ...extraPatch(bubble, "bubblePoints", null) });
+  markDirty(id);
+}
+
+function onReshape(id: string, points: number[][]): void {
+  const bubble = findBubble(id);
+  if (!bubble) return;
+  applyLocal(id, extraPatch(bubble, "bubblePoints", points));
+  markDirty(id);
+}
+
+function onResetShape(id: string): void {
+  const bubble = findBubble(id);
+  if (!bubble) return;
+  applyLocal(id, extraPatch(bubble, "bubblePoints", null));
   markDirty(id);
 }
 
@@ -999,6 +1021,9 @@ async function onRemove(): Promise<void> {
           @add="onAdd"
           @tail="onTail"
           @remove="onCaptionLayerRemove"
+          @reshape="onReshape"
+          @persist-reshape="onReshape"
+          @reset-shape="onResetShape"
           @update-layout-tool="layoutTool = $event"
           @create-region="onCreateRegion"
           @update-region-geometry="onUpdateRegionGeometry"

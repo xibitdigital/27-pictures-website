@@ -18,9 +18,19 @@ import {
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Component, type CSSProperties } from "vue";
 import WordCaption from "../../bookReader/captions/WordCaption.vue";
 import { buildCaption, imageContentBox, type CaptionModel } from "../../bookReader/captions/captionModel";
+import {
+  defaultBubblePoints,
+  hashSeed,
+  isReshapableBubbleShape,
+  parseBubblePoints,
+  resolveBubbleStyle,
+  roundBubblePoints,
+  type BubblePoint,
+} from "../../bookReader/bubbles";
 import { clientToPlateFraction, grabOffset, type ContentBox } from "../plateCoords";
-import { bubbleToWordEntry, bubblesInPlayOrder, type BubbleTail } from "../mapConfig";
+import { bubbleExtra, bubbleToWordEntry, bubblesInPlayOrder, type BubbleTail } from "../mapConfig";
 import type { BubbleRecord } from "../types";
+import type { BubbleTool } from "./LayoutToolbar.vue";
 import EditorIconButton from "./ui/EditorIconButton.vue";
 
 const TAIL_PAD: { tail: BubbleTail; label: string; icon: Component }[] = [
@@ -44,6 +54,7 @@ const props = withDefaults(
     designWidth?: number;
     designHeight?: number;
     imageEl?: HTMLImageElement | null;
+    tool?: BubbleTool;
   }>(),
   {
     selectedId: null,
@@ -51,6 +62,7 @@ const props = withDefaults(
     designWidth: 800,
     designHeight: 1424,
     imageEl: null,
+    tool: "select",
   }
 );
 
@@ -61,6 +73,8 @@ const emit = defineEmits<{
   add: [pos: { x: number; y: number }];
   tail: [id: string, tail: BubbleTail];
   remove: [id: string];
+  reshape: [id: string, points: BubblePoint[]];
+  "persist-reshape": [id: string, points: BubblePoint[]];
 }>();
 
 const rootEl = ref<HTMLElement | null>(null);
@@ -140,16 +154,67 @@ function measure(): void {
   }
 }
 
-let drag: {
-  id: string;
-  pointerId: number;
-  offsetX: number;
-  offsetY: number;
-  x: number;
-  y: number;
-} | null = null;
+type DragState =
+  | {
+      kind: "move";
+      id: string;
+      pointerId: number;
+      offsetX: number;
+      offsetY: number;
+      x: number;
+      y: number;
+    }
+  | {
+      kind: "vertex";
+      id: string;
+      pointerId: number;
+      index: number;
+      points: BubblePoint[];
+      overlay: HTMLElement;
+    };
+
+let drag: DragState | null = null;
 
 const dragging = ref(false);
+
+function captionPoints(bubble: BubbleRecord, index: number, text: string): BubblePoint[] | null {
+  const custom = parseBubblePoints(bubbleExtra(bubble).bubblePoints);
+  if (custom) return custom;
+  const entry = bubbleToWordEntry(bubble);
+  const style = resolveBubbleStyle(entry as unknown as Record<string, unknown>, bubble.variant);
+  if (!isReshapableBubbleShape(style.shape)) return null;
+  const seed = hashSeed(props.pageNum, index, text, bubble.x, bubble.y, style.tail);
+  return defaultBubblePoints(style.shape, style.tail, seed);
+}
+
+const reshapePoints = computed<BubblePoint[] | null>(() => {
+  if (props.tool !== "reshape" || !props.selectedId) return null;
+  const caption = captions.value.find((c) => c.bubbleId === props.selectedId);
+  const bubble = props.bubbles.find((b) => b.id === props.selectedId);
+  if (!caption || !bubble || !caption.bubble) return null;
+  return captionPoints(bubble, caption.index, caption.text);
+});
+
+function clientToViewBox(el: HTMLElement, clientX: number, clientY: number): BubblePoint {
+  const svg = el as unknown as SVGSVGElement;
+  if (typeof svg.createSVGPoint === "function") {
+    try {
+      const ctm = svg.getScreenCTM?.();
+      if (ctm) {
+        const pt = svg.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        const local = pt.matrixTransform(ctm.inverse());
+        return [local.x, local.y];
+      }
+    } catch {
+      /* jsdom / degenerate matrix */
+    }
+  }
+  const rect = el.getBoundingClientRect();
+  if (!rect.width || !rect.height) return [50, 50];
+  return [((clientX - rect.left) / rect.width) * 100, ((clientY - rect.top) / rect.height) * 100];
+}
 
 function hostedCaption(caption: EditorCaption): CaptionModel {
   return {
@@ -203,6 +268,13 @@ function overlayBox(): ContentBox | null {
 
 function onWindowMove(ev: PointerEvent): void {
   if (!drag || ev.pointerId !== drag.pointerId) return;
+  if (drag.kind === "vertex") {
+    const pos = clientToViewBox(drag.overlay, ev.clientX, ev.clientY);
+    const next = drag.points.map((p, i) => (i === drag.index ? pos : p));
+    drag.points = next;
+    emit("reshape", drag.id, roundBubblePoints(next));
+    return;
+  }
   const plate = overlayBox();
   if (!plate) return;
   const pos = clientToPlateFraction(ev.clientX, ev.clientY, plate, drag.offsetX, drag.offsetY);
@@ -215,7 +287,12 @@ function endDrag(ev: PointerEvent, commit: boolean): void {
   if (!drag || ev.pointerId !== drag.pointerId) return;
   const done = drag;
   unbindDrag();
-  if (commit) emit("persist", done.id, done.x, done.y);
+  if (!commit) return;
+  if (done.kind === "vertex") {
+    emit("persist-reshape", done.id, roundBubblePoints(done.points));
+    return;
+  }
+  emit("persist", done.id, done.x, done.y);
 }
 
 function unbindDrag(): void {
@@ -249,11 +326,37 @@ function onPointerDown(ev: PointerEvent): void {
   if (ev.isPrimary === false) return;
   if (ev.pointerType === "mouse" && ev.button !== 0) return;
   const target = ev.target as HTMLElement | null;
+  const vertexEl = target?.closest?.("[data-bubble-vertex]") as HTMLElement | null;
   const host = target?.closest?.("[data-bubble-id]") as HTMLElement | null;
   const plate = overlayBox();
   if (!plate) return;
 
+  if (vertexEl && host && props.tool === "reshape") {
+    const id = host.getAttribute("data-bubble-id");
+    const overlay = vertexEl.closest("[data-bubble-handles]") as HTMLElement | null;
+    const index = Number(vertexEl.getAttribute("data-bubble-vertex") || 0);
+    if (!id || !overlay || !reshapePoints.value) return;
+    const bubble = props.bubbles.find((b) => b.id === id);
+    if (!bubble) return;
+    ev.preventDefault();
+    emit("select", id);
+    const points = reshapePoints.value.map((p) => [p[0], p[1]] as BubblePoint);
+    drag = { kind: "vertex", id, pointerId: ev.pointerId, index, points, overlay };
+    dragging.value = true;
+    const layer = rootEl.value;
+    try {
+      layer?.setPointerCapture?.(ev.pointerId);
+    } catch {
+      /* happy-dom / already captured */
+    }
+    window.addEventListener("pointermove", onWindowMove);
+    window.addEventListener("pointerup", onWindowUp);
+    window.addEventListener("pointercancel", onWindowCancel);
+    return;
+  }
+
   if (!host) {
+    if (props.tool === "reshape") return;
     const pos = clientToPlateFraction(ev.clientX, ev.clientY, plate);
     emit("add", pos);
     return;
@@ -264,10 +367,19 @@ function onPointerDown(ev: PointerEvent): void {
   const bubble = props.bubbles.find((b) => b.id === id);
   if (!bubble) return;
   emit("select", id);
+  if (props.tool === "reshape") return;
   ev.preventDefault();
   const off = grabOffset(ev.clientX, ev.clientY, plate, bubble.x, bubble.y);
   frozenOrder.value = orderedBubbles.value.map((item) => item.id);
-  drag = { id, pointerId: ev.pointerId, offsetX: off.offsetX, offsetY: off.offsetY, x: bubble.x, y: bubble.y };
+  drag = {
+    kind: "move",
+    id,
+    pointerId: ev.pointerId,
+    offsetX: off.offsetX,
+    offsetY: off.offsetY,
+    x: bubble.x,
+    y: bubble.y,
+  };
   dragging.value = true;
   // Capture on the layer, not the caption: Vue re-renders the bubble on
   // select/move and would drop a capture held on that node — then pointerup
@@ -322,7 +434,7 @@ watch(
   <div
     ref="rootEl"
     class="editor-word-layer"
-    :class="{ 'is-dragging': dragging }"
+    :class="{ 'is-dragging': dragging, 'is-reshaping': tool === 'reshape' }"
     :style="layerStyle"
     @pointerdown="onPointerDown"
   >
@@ -336,7 +448,22 @@ watch(
       <span data-play-order aria-hidden="true">{{ caption.playIndex }}</span>
       <WordCaption :caption="hostedCaption(caption)" :data-bubble-id="caption.bubbleId" />
       <div
-        v-if="caption.bubbleId === selectedId && !dragging"
+        v-if="caption.bubbleId === selectedId && tool === 'reshape' && reshapePoints"
+        class="editor-bubble-handles"
+        data-bubble-handles
+      >
+        <div
+          v-for="(pt, i) in reshapePoints"
+          :key="i"
+          class="editor-bubble-handle"
+          :data-bubble-vertex="String(i)"
+          :aria-label="`Control point ${i + 1}`"
+          role="button"
+          :style="{ left: `${pt[0]}%`, top: `${pt[1]}%` }"
+        />
+      </div>
+      <div
+        v-if="caption.bubbleId === selectedId && !dragging && tool !== 'reshape'"
         class="editor-tail-ring"
         role="radiogroup"
         aria-label="Tail"
@@ -357,7 +484,7 @@ watch(
         </EditorIconButton>
       </div>
       <EditorIconButton
-        v-if="caption.bubbleId === selectedId && !dragging"
+        v-if="caption.bubbleId === selectedId && !dragging && tool !== 'reshape'"
         class="editor-bubble-delete"
         aria-label="Delete bubble"
         title="Delete bubble"

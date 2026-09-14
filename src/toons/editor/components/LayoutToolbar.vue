@@ -1,20 +1,29 @@
 <script setup lang="ts">
 /**
- * Floating tool switch over the Layout-mode canvas — draw tools are explicit so idle clicks never
- * start a shape. The bubbles/layout mode switch itself lives in the inspector column header
- * (PageStudio.vue), not here — it used to be the first button group in this floating toolbar,
- * which made it easy to miss since it's only visible while already in Layout mode.
+ * Floating tool switch over the plate. Layout draw tools are explicit so idle clicks never
+ * start a shape. Bubbles mode gets the same chrome: select (move / click-to-add) vs reshape
+ * (drag the balloon's spline handles). The layout/bubbles mode switch itself lives in the
+ * inspector column header (PageStudio.vue), not here.
  */
-import { Magnet, MousePointer2, Pentagon, Square } from "@lucide/vue";
+import { Magnet, MousePointer2, Pentagon, RotateCcw, Spline, Square } from "@lucide/vue";
 import type { LayoutTool } from "./GeometryLayer.vue";
 import EditorIconButton from "./ui/EditorIconButton.vue";
 
 export type StudioMode = "layout" | "bubbles";
+export type BubbleTool = "select" | "reshape";
 
-defineProps<{ tool: LayoutTool; mode: StudioMode; grid?: boolean }>();
+defineProps<{
+  tool: LayoutTool;
+  mode: StudioMode;
+  grid?: boolean;
+  bubbleTool?: BubbleTool;
+  canResetShape?: boolean;
+}>();
 const emit = defineEmits<{
   "update:tool": [tool: LayoutTool];
   "update:grid": [grid: boolean];
+  "update:bubbleTool": [tool: BubbleTool];
+  "reset-shape": [];
 }>();
 </script>
 
@@ -52,6 +61,32 @@ const emit = defineEmits<{
         @click="emit('update:grid', !grid)"
       >
         <Magnet :size="16" :stroke-width="1.6" aria-hidden="true" />
+      </EditorIconButton>
+    </div>
+    <div v-else class="editor-toolbar-group" role="radiogroup" aria-label="Bubble tool">
+      <EditorIconButton
+        name="tool-select"
+        :aria-pressed="bubbleTool !== 'reshape'"
+        title="Select — drag to move, click empty plate to add"
+        @click="emit('update:bubbleTool', 'select')"
+      >
+        <MousePointer2 :size="16" :stroke-width="1.6" aria-hidden="true" />
+      </EditorIconButton>
+      <EditorIconButton
+        name="tool-reshape"
+        :aria-pressed="bubbleTool === 'reshape'"
+        title="Reshape — drag control points to change the balloon"
+        @click="emit('update:bubbleTool', 'reshape')"
+      >
+        <Spline :size="16" :stroke-width="1.6" aria-hidden="true" />
+      </EditorIconButton>
+      <EditorIconButton
+        name="tool-reset-shape"
+        title="Reset shape to the default balloon"
+        :disabled="!canResetShape"
+        @click="emit('reset-shape')"
+      >
+        <RotateCcw :size="16" :stroke-width="1.6" aria-hidden="true" />
       </EditorIconButton>
     </div>
   </div>

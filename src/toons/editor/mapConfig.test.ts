@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   bubbleAudio,
   bubbleColor,
+  bubblePoints,
   bubbleStrokeColor,
   bubbleStrokeThickness,
   bubbleTextMap,
@@ -58,6 +59,21 @@ describe("bubbleToWordEntry", () => {
     const patch = textPatch(b, "fr", "Bonjour");
     expect(patch.textEn).toBe("Hello");
     expect(JSON.parse(patch.textJson)).toEqual({ en: "Hello", de: "Hallo", fr: "Bonjour" });
+  });
+
+  it("round-trips authored balloon control points through extraJson", () => {
+    const pts = [
+      [20, 20],
+      [80, 20],
+      [80, 80],
+      [20, 80],
+    ];
+    const b = bubble({ extraJson: JSON.stringify({ voice: "erin", bubblePoints: pts }) });
+    expect(bubblePoints(b)).toEqual(pts);
+    const word = bubbleToWordEntry(b);
+    expect(word.bubblePoints).toEqual(pts);
+    const cleared = extraPatch(b, "bubblePoints", null);
+    expect(JSON.parse(cleared.extraJson as string)).toEqual({ voice: "erin" });
   });
 
   it("patches audio into extraJson without dropping other extras", () => {

@@ -103,6 +103,23 @@ describe("buildCaption", () => {
     expect(buildCaption(w, 0, { ...ctx, lang: "de" })!.text).toBe("HELLO");
   });
 
+  it("draws an authored balloon outline when bubblePoints are set", () => {
+    const pts = [
+      [20, 20],
+      [80, 20],
+      [80, 80],
+      [20, 80],
+    ];
+    const seeded = buildCaption({ x: 0.5, y: 0.5, variant: "bubble", text: "Hi" } as WordEntry, 0, ctx)!;
+    const authored = buildCaption(
+      { x: 0.5, y: 0.5, variant: "bubble", text: "Hi", bubblePoints: pts } as WordEntry,
+      0,
+      ctx
+    )!;
+    expect(authored.bubble?.paths[0].d).not.toBe(seeded.bubble?.paths[0].d);
+    expect(authored.bubble?.paths[0].d).toContain("20.00");
+  });
+
   it("gives bubbles chrome and makes them (and any SFX word) clickable", () => {
     const bubble = buildCaption({ x: 0.5, y: 0.5, variant: "bubble", text: "Hi" } as WordEntry, 0, ctx)!;
     expect(bubble.classes).toContain("jax-word--bubble");
