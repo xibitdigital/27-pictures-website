@@ -2,7 +2,15 @@
  * Word entries (config) → caption view models (props for WordCaption.vue).
  * Pure: no DOM, no side effects — the components just render what comes out.
  */
-import { hashSeed, resolveBubbleStyle, resolveBubbleVariantClass } from "../bubbles";
+import {
+  bubbleBodyPoints,
+  DEFAULT_BODY_SIZE,
+  hashSeed,
+  pointsBBox,
+  resolveBubbleStyle,
+  resolveBubbleVariantClass,
+  type BubblePoint,
+} from "../bubbles";
 import type { LangCode, WordEntry } from "../types";
 import { buildBubbleChrome, type BubbleChromeModel } from "./bubbleChrome";
 
@@ -201,6 +209,66 @@ export function ellipsePadding(
   };
 }
 
+function clampPad(value: number, min: number, cap: number): number {
+  if (value < min) return min;
+  if (value > cap) return cap;
+  return value;
+}
+
+/**
+ * Wrap width + four-sided padding so lettering sits in a custom outline.
+ * Wider authored bodies wrap longer; a pinched or lopsided body insets the
+ * glyphs toward the remaining ink instead of leaving them on the old ellipse.
+ */
+export function shapeTextFit(
+  points: BubblePoint[],
+  shape: string,
+  tail: string,
+  text: string,
+  baseWrapCh: number,
+  base: { padX: number; padY: number }
+): { wrapCh: number; pad: BoxPadding } {
+  const body = bubbleBodyPoints(shape, tail, points);
+  const box = pointsBBox(body);
+  let refW = DEFAULT_BODY_SIZE.w;
+  if (shape === "star") refW = 96;
+  let wrapScale = box.w / refW;
+  if (wrapScale < 0.5) wrapScale = 0.5;
+  else if (wrapScale > 1.8) wrapScale = 1.8;
+  const longestWord = text.split(/\s+/).reduce((n, word) => Math.max(n, word.length), 0);
+  const wrapCh = Math.max(longestWord, Math.round(baseWrapCh * wrapScale));
+
+  const inset = shape === "star" ? 0.28 : ELLIPSE_INSET;
+  const insW = Math.max(18, box.w * (1 - 2 * inset));
+  const insH = Math.max(16, box.h * (1 - 2 * inset));
+  const insX = box.x + (box.w - insW) / 2;
+  const insY = box.y + (box.h - insH) / 2;
+
+  const len = text.replace(/\s+/g, " ").trim().length;
+  const widthEm = Math.min(len, wrapCh) * EM_PER_CHAR;
+  const lines = Math.max(1, Math.ceil(len / wrapCh));
+  const heightEm = lines * EM_PER_LINE;
+  const extraX = widthEm * (100 / insW - 1);
+  const extraY = heightEm * (100 / insH - 1);
+  const leftoverX = Math.max(0.001, 100 - insW);
+  const leftoverY = Math.max(0.001, 100 - insH);
+  const capX = shape === "star" ? 3.6 : 3.2;
+  const capY = shape === "star" ? 2.6 : 2.4;
+  const left = clampPad(extraX * (insX / leftoverX), base.padX * 0.5, capX);
+  const right = clampPad(extraX - left, base.padX * 0.5, capX);
+  const top = clampPad(extraY * (insY / leftoverY), base.padY * 0.5, capY);
+  const bottom = clampPad(extraY - top, base.padY * 0.5, capY);
+  return {
+    wrapCh,
+    pad: {
+      top: Math.round(top * 100) / 100,
+      right: Math.round(right * 100) / 100,
+      bottom: Math.round(bottom * 100) / 100,
+      left: Math.round(left * 100) / 100,
+    },
+  };
+}
+
 export interface BoxPadding {
   top: number;
   right: number;
@@ -315,9 +383,19 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     // block is measured in em from the wrap width and the line count, so the
     // padding tracks the type size like the rest of the chrome.
     const roundShape = style_.shape === "organic" || style_.shape === "thought" || style_.shape === "star";
-    const pad = roundShape ? ellipsePadding(text, w.maxWidth != null ? null : wrapCh, style_, style_.shape) : style_;
-    const box = textPadding(pad.padX, pad.padY);
-    textStyle["max-width"] = `${wrapCh}ch`;
+    let wrapForBox = wrapCh;
+    let box: BoxPadding;
+    if (roundShape && style_.points && style_.points.length >= 3) {
+      const fit = shapeTextFit(style_.points, style_.shape, style_.tail, text, wrapCh, style_);
+      wrapForBox = fit.wrapCh;
+      box = fit.pad;
+    } else if (roundShape) {
+      const pad = ellipsePadding(text, w.maxWidth != null ? null : wrapCh, style_, style_.shape);
+      box = textPadding(pad.padX, pad.padY);
+    } else {
+      box = textPadding(style_.padX, style_.padY);
+    }
+    textStyle["max-width"] = `${wrapForBox}ch`;
     textStyle.padding = paddingCss(box);
 
     if (stroke) {

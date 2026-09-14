@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  bubbleBodyPoints,
   defaultBubblePoints,
   organicBubblePathFromPoints,
   organicBubblePoints,
@@ -133,6 +134,15 @@ describe("parseBubblePoints", () => {
   it("returns organic handles for a speech balloon", () => {
     expect(defaultBubblePoints("organic", "bottom-left", 7)?.length).toBeGreaterThan(3);
     expect(defaultBubblePoints("box", "none", 7)).toBeNull();
+  });
+});
+
+describe("bubbleBodyPoints", () => {
+  it("drops the tail handles so wrap follows the body, not the lobe", () => {
+    const pts = organicBubblePoints("bottom-left", 7);
+    expect(pts.length).toBeGreaterThan(6);
+    expect(bubbleBodyPoints("organic", "bottom-left", pts).length).toBe(pts.length - 3);
+    expect(bubbleBodyPoints("organic", "none", pts).length).toBe(pts.length);
   });
 });
 

@@ -103,6 +103,37 @@ describe("buildCaption", () => {
     expect(buildCaption(w, 0, { ...ctx, lang: "de" })!.text).toBe("HELLO");
   });
 
+  it("reflows wrap and padding when the authored outline is wider or pinched", () => {
+    const line = "Hello my dear lady friends today";
+    const wide = [
+      [0, 20],
+      [100, 20],
+      [100, 80],
+      [0, 80],
+    ];
+    const narrow = [
+      [32, 20],
+      [68, 20],
+      [68, 80],
+      [32, 80],
+    ];
+    const seeded = buildCaption({ x: 0.5, y: 0.5, variant: "bubble", text: line } as WordEntry, 0, ctx)!;
+    const wideCap = buildCaption(
+      { x: 0.5, y: 0.5, variant: "bubble", text: line, bubblePoints: wide } as WordEntry,
+      0,
+      ctx
+    )!;
+    const narrowCap = buildCaption(
+      { x: 0.5, y: 0.5, variant: "bubble", text: line, bubblePoints: narrow } as WordEntry,
+      0,
+      ctx
+    )!;
+    const seedWrap = parseFloat(seeded.textStyle["max-width"] || "0");
+    expect(parseFloat(wideCap.textStyle["max-width"] || "0")).toBeGreaterThan(seedWrap);
+    expect(parseFloat(narrowCap.textStyle["max-width"] || "0")).toBeLessThan(seedWrap);
+    expect(narrowCap.textStyle.padding).not.toBe(seeded.textStyle.padding);
+  });
+
   it("draws an authored balloon outline when bubblePoints are set", () => {
     const pts = [
       [20, 20],

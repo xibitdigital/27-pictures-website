@@ -453,6 +453,33 @@ export function defaultBubblePoints(shape: string, tail: string, seed: number): 
   return null;
 }
 
+/** Organic / thought ellipse before jitter (2 × rx, 2 × ry) in viewBox units. */
+export const DEFAULT_BODY_SIZE = { w: 92, h: 88 };
+
+/**
+ * Vertices that form the balloon body. Organic tails store midL + tip + midR
+ * after the body; those must not drive wrap/padding or the lobe pulls the box.
+ */
+export function bubbleBodyPoints(shape: string, tail: string, points: BubblePoint[]): BubblePoint[] {
+  if (shape === "organic" && tail !== "none" && points.length >= 6) return points.slice(0, -3);
+  return points;
+}
+
+export function pointsBBox(pts: BubblePoint[]): { x: number; y: number; w: number; h: number } {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const p of pts) {
+    if (p[0] < minX) minX = p[0];
+    if (p[1] < minY) minY = p[1];
+    if (p[0] > maxX) maxX = p[0];
+    if (p[1] > maxY) maxY = p[1];
+  }
+  if (!Number.isFinite(minX)) return { x: 8, y: 6, w: DEFAULT_BODY_SIZE.w, h: DEFAULT_BODY_SIZE.h };
+  return { x: minX, y: minY, w: Math.max(1, maxX - minX), h: Math.max(1, maxY - minY) };
+}
+
 /**
  * Short overshooting scratch strokes from the box perimeter (sketchy AI panels).
  */
