@@ -283,13 +283,14 @@ function insertMention(opt: MentionOption): void {
   const start = mentionStart.value;
   if (!el || start < 0) return;
   const cursor = el.selectionStart ?? prompt.value.length;
-  const token = `@${opt.tag} `;
+  const token = `${opt.tag} `;
   prompt.value = prompt.value.slice(0, start) + token + prompt.value.slice(cursor);
   closeMention();
   const caret = start + token.length;
   void nextTick(() => {
     el.focus();
     el.setSelectionRange(caret, caret);
+    closeMention();
   });
 }
 
@@ -621,7 +622,7 @@ function onSubmit(): void {
                     :class="{ 'is-active': i === mentionIndex }"
                     @mousedown.prevent="insertMention(opt)"
                   >
-                    <span>@{{ opt.tag }}</span>
+                    <span>{{ opt.tag }}</span>
                     <span class="editor-muted">{{ opt.image }} — {{ opt.title }}</span>
                   </button>
                 </li>
