@@ -148,6 +148,68 @@ export function roundBubblePoints(pts: BubblePoint[]): BubblePoint[] {
 }
 
 /**
+ * Superellipse exponent. n=2 is an oval; n=4 is a squircle — flat sides,
+ * round corners — which is what speech / thought balloons should read as.
+ */
+const SQUIRCLE_N = 4;
+/** Half the tail mouth, in viewBox units — a pointer, not a second lobe. */
+const TAIL_MOUTH = 3.6;
+const BODY_CX = 50;
+const BODY_CY = 50;
+const BODY_RX = 46;
+const BODY_RY = 44;
+const BODY_ANCHORS = 8;
+
+function squirclePoint(a: number, rx: number, ry: number, jx = 0, jy = 0): BubblePoint {
+  const c = Math.cos(a);
+  const s = Math.sin(a);
+  const e = 2 / SQUIRCLE_N;
+  return [
+    BODY_CX + Math.sign(c) * rx * Math.pow(Math.abs(c), e) + jx,
+    BODY_CY + Math.sign(s) * ry * Math.pow(Math.abs(s), e) + jy,
+  ];
+}
+
+/** Distance from the body centre to the squircle outline along unit (ux, uy). */
+export function squircleEdge(ux: number, uy: number, rx: number, ry: number): number {
+  const n = SQUIRCLE_N;
+  const a = Math.pow(Math.abs(ux / rx), n) + Math.pow(Math.abs(uy / ry), n);
+  if (a <= 0) return Math.min(rx, ry);
+  return Math.pow(a, -1 / n);
+}
+
+/** Length past the rim along a 45° diagonal — similar reach to the axis tails. */
+const CORNER_TAIL_LEN = 38;
+const INV_SQRT2 = 1 / Math.sqrt(2);
+
+const CORNER_TAILS: Record<string, { attachA: number; dir: [number, number] }> = {
+  "bottom-left": { attachA: (3 * Math.PI) / 4, dir: [-1, 1] },
+  "bottom-right": { attachA: Math.PI / 4, dir: [1, 1] },
+  "top-left": { attachA: (-3 * Math.PI) / 4, dir: [-1, -1] },
+  "top-right": { attachA: -Math.PI / 4, dir: [1, -1] },
+};
+
+function cornerTailTip(attachA: number, dir: [number, number]): [number, number] {
+  const p = squirclePoint(attachA, BODY_RX, BODY_RY);
+  return [p[0] + dir[0] * INV_SQRT2 * CORNER_TAIL_LEN, p[1] + dir[1] * INV_SQRT2 * CORNER_TAIL_LEN];
+}
+
+/** Parameter step from `attachA` whose chord on the squircle is `halfWidth`. */
+function mouthAngle(attachA: number, rx: number, ry: number, halfWidth: number): number {
+  const origin = squirclePoint(attachA, rx, ry);
+  let lo = 0.002;
+  let hi = 0.55;
+  for (let i = 0; i < 18; i++) {
+    const mid = (lo + hi) / 2;
+    const p = squirclePoint(attachA + mid, rx, ry);
+    const d = Math.hypot(p[0] - origin[0], p[1] - origin[1]);
+    if (d < halfWidth) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
+/**
  * Seeded organic control points in viewBox 0–100. Tailless: 8 body anchors.
  * Tailed: body anchors + midL + tip + midR (same order `organicBubblePathFromPoints` consumes).
  */
@@ -155,66 +217,51 @@ export function organicBubblePoints(tail: string, seed?: number): BubblePoint[] 
   const rnd = mulberry32(seed || 1);
   const j = (amp: number) => (rnd() - 0.5) * 2 * amp;
   const t = tail || "bottom";
+  const rx = BODY_RX;
+  const ry = BODY_RY;
+  const n = BODY_ANCHORS;
 
-  const cx = 50;
-  const cy = 50;
-  const rx = 46;
-  const ry = 44;
-  // Sparse anchors — cubic spline fills the gaps with smooth curves
-  const n = 8;
-
-  function onEllipse(a: number): BubblePoint {
-    return [cx + Math.cos(a) * (rx + j(1.2)), cy + Math.sin(a) * (ry + j(1.2))];
+  function onBody(a: number): BubblePoint {
+    return squirclePoint(a, rx + j(0.6), ry + j(0.6), j(0.8), j(0.8));
   }
 
   if (t === "none") {
     const pts: BubblePoint[] = [];
-    for (let i = 0; i < n; i++) pts.push(onEllipse((i / n) * Math.PI * 2 - Math.PI / 2));
+    for (let i = 0; i < n; i++) pts.push(onBody((i / n) * Math.PI * 2 - Math.PI / 2));
     return pts;
   }
 
   let attachA = Math.PI / 2;
-  let tip = [50, 118];
-  /** Half-angle of the tail mouth on the ellipse. Keep this tight so the
-   *  lobe reads as a pointer, not a second balloon. */
-  let halfW = 0.16;
-  if (t === "bottom-left") {
-    attachA = Math.PI / 2 + 0.4;
-    tip = [28, 116];
-  } else if (t === "bottom-right") {
-    attachA = Math.PI / 2 - 0.4;
-    tip = [72, 116];
+  let tip: [number, number] = [50, 118];
+  const corner = CORNER_TAILS[t];
+  if (corner) {
+    attachA = corner.attachA;
+    tip = cornerTailTip(corner.attachA, corner.dir);
   } else if (t === "left") {
     attachA = Math.PI;
     tip = [-16, 52];
-    halfW = 0.15;
   } else if (t === "right") {
     attachA = 0;
     tip = [116, 52];
-    halfW = 0.15;
   } else if (t === "top") {
     attachA = -Math.PI / 2;
     tip = [50, -18];
-  } else if (t === "top-left") {
-    attachA = -Math.PI / 2 - 0.4;
-    tip = [28, -16];
-  } else if (t === "top-right") {
-    attachA = -Math.PI / 2 + 0.4;
-    tip = [72, -16];
   }
 
+  const halfW = mouthAngle(attachA, rx, ry, TAIL_MOUTH);
   const a0 = attachA + halfW;
   const span = Math.PI * 2 - halfW * 2;
   const body: BubblePoint[] = [];
   for (let i = 0; i <= n; i++) {
-    body.push(onEllipse(a0 + (i / n) * span));
+    body.push(onBody(a0 + (i / n) * span));
   }
 
   const tipJ: BubblePoint = [tip[0] + j(1.2), tip[1] + j(1.2)];
   const mouthL = body[body.length - 1];
   const mouthR = body[0];
-  const midL: BubblePoint = [mouthL[0] * 0.28 + tipJ[0] * 0.72 + j(1.2), mouthL[1] * 0.28 + tipJ[1] * 0.72 + j(1.2)];
-  const midR: BubblePoint = [mouthR[0] * 0.28 + tipJ[0] * 0.72 + j(1.2), mouthR[1] * 0.28 + tipJ[1] * 0.72 + j(1.2)];
+  // Mids hug the tip so the sides stay a thin triangle and do not re-widen the mouth.
+  const midL: BubblePoint = [mouthL[0] * 0.18 + tipJ[0] * 0.82 + j(0.8), mouthL[1] * 0.18 + tipJ[1] * 0.82 + j(0.8)];
+  const midR: BubblePoint = [mouthR[0] * 0.18 + tipJ[0] * 0.82 + j(0.8), mouthR[1] * 0.18 + tipJ[1] * 0.82 + j(0.8)];
   return [...body, midL, tipJ, midR];
 }
 
@@ -237,7 +284,7 @@ export function organicBubblePathFromPoints(pts: BubblePoint[], tail: string): s
 
 /**
  * Sketchy organic speech bubble in viewBox 0–100.
- * Catmull–Rom cubic spline outline: ellipse body + integrated triangular tail.
+ * Catmull–Rom cubic spline outline: squircle body + a thin triangular tail.
  */
 export function sketchyBubblePath(tail: string, seed?: number, controlPoints?: BubblePoint[] | null): string {
   const pts = controlPoints && controlPoints.length >= 3 ? controlPoints : organicBubblePoints(tail, seed);
@@ -247,17 +294,17 @@ export function sketchyBubblePath(tail: string, seed?: number, controlPoints?: B
 /** Tail tip coordinates shared by the pointed (sketchy) and dotted (thought) bubble tails. */
 const BUBBLE_TAIL_TIPS: Record<string, [number, number]> = {
   bottom: [50, 118],
-  "bottom-left": [28, 116],
-  "bottom-right": [72, 116],
+  "bottom-left": cornerTailTip(CORNER_TAILS["bottom-left"].attachA, CORNER_TAILS["bottom-left"].dir),
+  "bottom-right": cornerTailTip(CORNER_TAILS["bottom-right"].attachA, CORNER_TAILS["bottom-right"].dir),
   left: [-16, 52],
   right: [116, 52],
   top: [50, -18],
-  "top-left": [28, -16],
-  "top-right": [72, -16],
+  "top-left": cornerTailTip(CORNER_TAILS["top-left"].attachA, CORNER_TAILS["top-left"].dir),
+  "top-right": cornerTailTip(CORNER_TAILS["top-right"].attachA, CORNER_TAILS["top-right"].dir),
 };
 
 /** Thought-body geometry — shared by the outline and the trailing-dot spacing. */
-const THOUGHT_BODY = { cx: 50, cy: 50, rx: 46, ry: 44, anchors: 8 };
+const THOUGHT_BODY = { cx: BODY_CX, cy: BODY_CY, rx: BODY_RX, ry: BODY_RY, anchors: BODY_ANCHORS };
 /** Per-anchor jitter of the body spline: the outline can bulge this far past rx/ry. */
 const THOUGHT_WOBBLE = 1.2;
 /** Clear air left between body↔dot and dot↔dot outlines (viewBox units). */
@@ -289,9 +336,9 @@ export function thoughtTailDots(tail: string, seed?: number): Array<{ x: number;
   const nx = -uy;
   const ny = ux;
 
-  // Where the body outline sits along the trail: ray/ellipse hit, with rx/ry
+  // Where the body outline sits along the trail: ray/squircle hit, with rx/ry
   // padded by the spline wobble so the bulges between anchors are covered too.
-  const edge = 1 / Math.hypot(ux / (rx + THOUGHT_WOBBLE), uy / (ry + THOUGHT_WOBBLE));
+  const edge = squircleEdge(ux, uy, rx + THOUGHT_WOBBLE, ry + THOUGHT_WOBBLE);
 
   const dots: Array<{ x: number; y: number; r: number }> = [];
   let reach = edge;
@@ -306,11 +353,10 @@ export function thoughtTailDots(tail: string, seed?: number): Array<{ x: number;
 }
 
 /**
- * Thought bubble in viewBox 0–100: a plain closed ellipse body — same
- * geometry as the tailless organic bubble, which is already proven safe
- * under the non-uniform `preserveAspectRatio="none"` stretch every caption
- * box applies — plus 2 shrinking trailing dots standing in for a pointed
- * tail, the classic "thinking" trail toward the speaker.
+ * Thought bubble in viewBox 0–100: the same squircle body as a tailless
+ * speech balloon (rounded-rect, safe under `preserveAspectRatio="none"`)
+ * plus 2 shrinking trailing dots standing in for a pointed tail, the
+ * classic "thinking" trail toward the speaker.
  *
  * A scalloped cloud outline was tried first and rejected: at a wide/short
  * caption aspect the lobes cross over each other (the spline self-
@@ -323,11 +369,11 @@ export function thoughtTailDots(tail: string, seed?: number): Array<{ x: number;
 export function thoughtBubblePoints(_tail: string, seed?: number): BubblePoint[] {
   const rnd = mulberry32(seed || 1);
   const j = (amp: number) => (rnd() - 0.5) * 2 * amp;
-  const { cx, cy, rx, ry, anchors } = THOUGHT_BODY;
+  const { rx, ry, anchors } = THOUGHT_BODY;
   const pts: BubblePoint[] = [];
   for (let i = 0; i < anchors; i++) {
     const a = (i / anchors) * Math.PI * 2 - Math.PI / 2;
-    pts.push([cx + Math.cos(a) * (rx + j(THOUGHT_WOBBLE)), cy + Math.sin(a) * (ry + j(THOUGHT_WOBBLE))]);
+    pts.push(squirclePoint(a, rx + j(0.6), ry + j(0.6), j(0.8), j(0.8)));
   }
   return pts;
 }

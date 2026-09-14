@@ -10,6 +10,7 @@ import {
   thoughtTailDots,
   resolveBubbleStyle,
   resolveBubbleVariantClass,
+  squircleEdge,
 } from "./bubbles";
 
 /** Every coordinate pair in a path, as [xs, ys]. */
@@ -68,6 +69,45 @@ describe("sketchyBubblePath tails", () => {
     expect(tip("top-right")).toBeGreaterThan(tip("top"));
   });
 
+  it("aims corner tails 45 degrees outward from the mouth", () => {
+    const expectAngle = (tail: string, want: number) => {
+      const pts = organicBubblePoints(tail, 1);
+      const body = pts.slice(0, -3);
+      const tip = pts[pts.length - 2];
+      const mx = (body[0][0] + body[body.length - 1][0]) / 2;
+      const my = (body[0][1] + body[body.length - 1][1]) / 2;
+      const got = Math.atan2(tip[1] - my, tip[0] - mx);
+      const err = Math.abs(Math.atan2(Math.sin(got - want), Math.cos(got - want)));
+      expect(err, tail).toBeLessThan(0.25);
+    };
+    expectAngle("bottom-left", (3 * Math.PI) / 4);
+    expectAngle("bottom-right", Math.PI / 4);
+    expectAngle("top-left", (-3 * Math.PI) / 4);
+    expectAngle("top-right", -Math.PI / 4);
+  });
+
+  it("hangs corner tails off the rounded corner, not the flat side", () => {
+    const mouth = (tail: string) => {
+      const pts = organicBubblePoints(tail, 42);
+      const body = pts.slice(0, -3);
+      const a = body[0];
+      const b = body[body.length - 1];
+      return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    };
+    const bl = mouth("bottom-left");
+    const br = mouth("bottom-right");
+    const tl = mouth("top-left");
+    const tr = mouth("top-right");
+    expect(bl[0]).toBeLessThan(30);
+    expect(bl[1]).toBeGreaterThan(70);
+    expect(br[0]).toBeGreaterThan(70);
+    expect(br[1]).toBeGreaterThan(70);
+    expect(tl[0]).toBeLessThan(30);
+    expect(tl[1]).toBeLessThan(30);
+    expect(tr[0]).toBeGreaterThan(70);
+    expect(tr[1]).toBeLessThan(30);
+  });
+
   it("falls back to a bottom tail for unknown values", () => {
     const [, ys] = coords(sketchyBubblePath("sideways", 42));
     expect(Math.max(...ys)).toBeGreaterThan(110);
@@ -90,6 +130,26 @@ describe("sketchyBubblePath tails", () => {
     const moved: typeof pts = pts.map((p, i) => (i === 0 ? [p[0], 8] : p));
     expect(sketchyBubblePath("none", 1, moved)).not.toBe(sketchyBubblePath("none", 1));
     expect(sketchyBubblePath("none", 1, moved)).toBe(organicBubblePathFromPoints(moved, "none"));
+  });
+
+  it("sits on a squircle, not a pure ellipse", () => {
+    const pts = organicBubblePoints("none", 1);
+    let maxR2 = 0;
+    for (const [x, y] of pts) {
+      const dx = (x - 50) / 46;
+      const dy = (y - 50) / 44;
+      maxR2 = Math.max(maxR2, dx * dx + dy * dy);
+    }
+    // Ellipse of rx/ry: dx²+dy² ≈ 1. A squircle's diagonal anchors push past that.
+    expect(maxR2).toBeGreaterThan(1.15);
+  });
+
+  it("keeps the tail mouth a thin pointer", () => {
+    const pts = organicBubblePoints("bottom", 42);
+    const body = pts.slice(0, -3);
+    const mouth = Math.hypot(body[0][0] - body[body.length - 1][0], body[0][1] - body[body.length - 1][1]);
+    expect(mouth).toBeLessThan(10);
+    expect(mouth).toBeGreaterThan(4);
   });
 
   it("reads bubblePoints on the word into the resolved style", () => {
@@ -182,11 +242,11 @@ describe("thoughtBubblePath", () => {
         const dots = thoughtTailDots(tail, seed);
         expect(dots.length, tail).toBe(2);
         for (const d of dots) {
-          // Scale the ellipse out by r along the dot's own radial direction:
-          // >1 means the whole disc clears the outline.
-          const ang = Math.atan2(d.y - cy, d.x - cx);
-          const edge = 1 / Math.hypot(Math.cos(ang) / rx, Math.sin(ang) / ry);
-          expect(Math.hypot(d.x - cx, d.y - cy), `${tail}/${seed}`).toBeGreaterThan(edge + d.r);
+          const ux = d.x - cx;
+          const uy = d.y - cy;
+          const len = Math.hypot(ux, uy) || 1;
+          const edge = squircleEdge(ux / len, uy / len, rx, ry);
+          expect(len, `${tail}/${seed}`).toBeGreaterThan(edge + d.r);
         }
         const gap = Math.hypot(dots[0].x - dots[1].x, dots[0].y - dots[1].y) - dots[0].r - dots[1].r;
         expect(gap, `${tail}/${seed} dot gap`).toBeGreaterThan(0);
