@@ -48,6 +48,7 @@ const previousRegionId = ref("");
 const previousFile = ref<File | null>(null);
 const previousFileInput = ref<HTMLInputElement | null>(null);
 const promptEl = ref<HTMLTextAreaElement | null>(null);
+const mentionListEl = ref<HTMLElement | null>(null);
 const debugOpen = ref(false);
 const mentionOpen = ref(false);
 const mentionQuery = ref("");
@@ -215,18 +216,28 @@ const includedRefCount = computed(() => orderedRefEntries.value.length);
 
 type MentionOption = { tag: string; alias: string; image: string; title: string };
 
-const mentionOptions = computed((): MentionOption[] =>
-  orderedRefEntries.value.map((entry, i) => {
+const mentionOptions = computed((): MentionOption[] => {
+  const out: MentionOption[] = [];
+  for (const [i, entry] of orderedRefEntries.value.entries()) {
+    if (entry.kind === "style") continue;
     const image = `Image ${i + 1}`;
-    if (entry.kind === "style") return { tag: "style", alias: "style", image, title: "style reference" };
     if (entry.kind === "previous") {
-      const title = previousRegionId.value ? "previous shape" : "previous page";
-      return { tag: "previous", alias: "previous", image, title };
+      out.push({ tag: "previous page", alias: "previous", image, title: "previous page" });
+      continue;
     }
     const tag = entry.label || entry.alias;
-    return { tag, alias: entry.alias, image, title: tag };
-  })
-);
+    out.push({ tag, alias: entry.alias, image, title: tag });
+  }
+  if (hasPreviousSlot.value && !out.some((opt) => opt.alias === "previous")) {
+    out.push({
+      tag: "previous page",
+      alias: "previous",
+      image: "previous page",
+      title: "previous page",
+    });
+  }
+  return out;
+});
 
 const mentionMatches = computed(() => {
   const q = mentionQuery.value.trim().toLowerCase();
@@ -325,6 +336,13 @@ function onPromptKeydown(ev: KeyboardEvent): void {
 
 watch(mentionMatches, (list) => {
   if (mentionIndex.value >= list.length) mentionIndex.value = 0;
+});
+
+watch([mentionIndex, mentionOpen], () => {
+  if (!mentionOpen.value) return;
+  void nextTick(() => {
+    mentionListEl.value?.querySelector("[aria-selected='true']")?.scrollIntoView({ block: "nearest" });
+  });
 });
 
 function previousRefUrl(): string {
@@ -607,6 +625,7 @@ function onSubmit(): void {
               />
               <ul
                 v-if="mentionOpen"
+                ref="mentionListEl"
                 class="editor-mention-menu"
                 role="listbox"
                 aria-label="Included references"
