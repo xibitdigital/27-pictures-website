@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Eraser } from "@lucide/vue";
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from "vue";
 import {
   isDirectProvider as isDirectProviderName,
   type GenerateProvider,
@@ -216,28 +216,48 @@ const includedRefCount = computed(() => orderedRefEntries.value.length);
 
 type MentionOption = { tag: string; alias: string; image: string; title: string };
 
-const mentionOptions = computed((): MentionOption[] => {
-  const out: MentionOption[] = [];
-  for (const [i, entry] of orderedRefEntries.value.entries()) {
-    if (entry.kind === "style") continue;
+const mentionOptions = computed((): MentionOption[] =>
+  orderedRefEntries.value.map((entry, i) => {
     const image = `Image ${i + 1}`;
+    if (entry.kind === "style") return { tag: "style", alias: "style", image, title: "style reference" };
     if (entry.kind === "previous") {
-      out.push({ tag: "previous page", alias: "previous", image, title: "previous page" });
-      continue;
+      const title = previousRegionId.value ? "previous shape" : "previous page";
+      return { tag: title, alias: "previous", image, title };
     }
     const tag = entry.label || entry.alias;
-    out.push({ tag, alias: entry.alias, image, title: tag });
+    return { tag, alias: entry.alias, image, title: tag };
+  })
+);
+
+const mentionMenuStyle = ref<CSSProperties>({});
+
+function placeMentionMenu(): void {
+  const el = promptEl.value;
+  if (!el) return;
+  const box = el.getBoundingClientRect();
+  const gap = 4;
+  const roomBelow = window.innerHeight - box.bottom - gap;
+  const roomAbove = box.top - gap;
+  const cap = 12 * 16;
+  let top = box.bottom + gap;
+  let maxHeight = Math.min(cap, Math.max(4 * 16, roomBelow));
+  if (roomBelow < 8 * 16 && roomAbove > roomBelow) {
+    maxHeight = Math.min(cap, Math.max(4 * 16, roomAbove));
+    top = box.top - gap - maxHeight;
   }
-  if (hasPreviousSlot.value && !out.some((opt) => opt.alias === "previous")) {
-    out.push({
-      tag: "previous page",
-      alias: "previous",
-      image: "previous page",
-      title: "previous page",
-    });
-  }
-  return out;
-});
+  mentionMenuStyle.value = {
+    position: "fixed",
+    top: `${top}px`,
+    left: `${box.left}px`,
+    width: `${box.width}px`,
+    maxHeight: `${maxHeight}px`,
+    zIndex: 500,
+  };
+}
+
+function onMentionReposition(): void {
+  if (mentionOpen.value) placeMentionMenu();
+}
 
 const mentionMatches = computed(() => {
   const q = mentionQuery.value.trim().toLowerCase();
@@ -269,6 +289,7 @@ function syncMentionFromEl(el: HTMLTextAreaElement): void {
   mentionQuery.value = hit.query;
   mentionOpen.value = true;
   if (mentionIndex.value >= mentionMatches.value.length) mentionIndex.value = 0;
+  void nextTick(() => placeMentionMenu());
 }
 
 function onPromptInput(ev: Event): void {
@@ -341,8 +362,18 @@ watch(mentionMatches, (list) => {
 watch([mentionIndex, mentionOpen], () => {
   if (!mentionOpen.value) return;
   void nextTick(() => {
+    placeMentionMenu();
     mentionListEl.value?.querySelector("[aria-selected='true']")?.scrollIntoView({ block: "nearest" });
   });
+});
+
+onMounted(() => {
+  window.addEventListener("resize", onMentionReposition);
+  window.addEventListener("scroll", onMentionReposition, true);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", onMentionReposition);
+  window.removeEventListener("scroll", onMentionReposition, true);
 });
 
 function previousRefUrl(): string {
@@ -623,6 +654,8 @@ function onSubmit(): void {
                 @keyup="onPromptKeyup"
                 @keydown="onPromptKeydown"
               />
+            </span>
+            <Teleport to="body">
               <ul
                 v-if="mentionOpen"
                 ref="mentionListEl"
@@ -630,6 +663,7 @@ function onSubmit(): void {
                 role="listbox"
                 aria-label="Included references"
                 data-mention-list
+                :style="mentionMenuStyle"
               >
                 <li v-if="!mentionMatches.length" class="editor-muted" role="presentation">No matching reference</li>
                 <li v-for="(opt, i) in mentionMatches" :key="opt.alias">
@@ -646,7 +680,7 @@ function onSubmit(): void {
                   </button>
                 </li>
               </ul>
-            </span>
+            </Teleport>
           </label>
           <template v-if="hasPreviousSlot">
             <EditorCheckbox
