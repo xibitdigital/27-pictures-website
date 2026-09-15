@@ -58,7 +58,56 @@ describe("ToonList", () => {
     expect(wrapper.get(".editor-cover-placeholder").exists()).toBe(true);
     expect(wrapper.text()).not.toContain("Manage users");
     expect(wrapper.get('button[name="visibility-filter-all"]').attributes("aria-pressed")).toBe("true");
+    expect(wrapper.get('button[name="catalog-filter-studio"]').attributes("aria-selected")).toBe("true");
     expect(wrapper.get("[data-toon-count]").text()).toBe("2");
+  });
+
+  it("splits the shelf between 27 Pictures and the creator site", async () => {
+    vi.spyOn(api, "listSeries").mockResolvedValue([
+      { key: "red-smile", title: "RED SMILE", tagline: "Horror", toonCount: 1, coverUrl: null, publishSite: "studio" },
+      { key: "indie", title: "Indie", tagline: "", toonCount: 1, coverUrl: null, publishSite: "community" },
+    ]);
+    vi.spyOn(api, "listToons").mockResolvedValue([
+      {
+        id: "a",
+        slug: "redsmile-static",
+        title: "static",
+        coverUrl: null,
+        pageCount: 12,
+        status: "published",
+        seriesKey: "red-smile",
+        episodeN: 1,
+        publishSite: "studio",
+      },
+      {
+        id: "b",
+        slug: "indie-ep",
+        title: "Indie ep",
+        coverUrl: null,
+        pageCount: 4,
+        status: "draft",
+        seriesKey: "indie",
+        episodeN: 1,
+        publishSite: "community",
+      },
+    ]);
+    const wrapper = mount(ToonList, {
+      global: {
+        stubs: {
+          EditorBar: { template: '<div><slot name="start" /><slot name="after-title" /><slot name="actions" /></div>' },
+          EditorSession: true,
+        },
+      },
+    });
+    await vi.waitFor(() => expect(wrapper.text()).toContain("RED SMILE"));
+    expect(wrapper.text()).toContain("static");
+    expect(wrapper.text()).not.toContain("Indie ep");
+    await wrapper.get('button[name="catalog-filter-community"]').trigger("click");
+    expect(wrapper.get('button[name="catalog-filter-community"]').attributes("aria-selected")).toBe("true");
+    expect(wrapper.text()).toContain("Indie");
+    expect(wrapper.text()).toContain("Indie ep");
+    expect(wrapper.text()).not.toContain("RED SMILE");
+    expect(wrapper.get("[data-toon-count]").text()).toBe("1");
   });
 
   it("filters the shelf to one visibility", async () => {

@@ -6,9 +6,12 @@ import { listSeries, listToons } from "../api";
 import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
 import {
+  parsePublishSite,
+  PUBLISH_SITE_OPTIONS,
   TOON_VISIBILITY,
   visibilityFromStatus,
   visibilityLabel,
+  type PublishSite,
   type SeriesOption,
   type ToonListItem,
   type ToonVisibility,
@@ -34,6 +37,7 @@ const seriesList = ref<SeriesOption[]>([]);
 const recentToons = ref<ToonListItem[]>([]);
 const loading = ref(true);
 const visibilityFilter = ref<VisibilityFilter>("all");
+const catalogFilter = ref<PublishSite>("studio");
 
 onMounted(async () => {
   try {
@@ -69,19 +73,39 @@ function matchesFilter(toon: ToonListItem): boolean {
   return visibilityFromStatus(toon.status) === visibilityFilter.value;
 }
 
+function seriesCatalog(series: SeriesOption): PublishSite {
+  return parsePublishSite(series.publishSite);
+}
+
+function toonCatalog(toon: ToonListItem): PublishSite {
+  if (toon.seriesKey) {
+    const series = seriesList.value.find((item) => item.key === toon.seriesKey);
+    if (series) return seriesCatalog(series);
+  }
+  return parsePublishSite(toon.publishSite);
+}
+
+function matchesCatalog(toon: ToonListItem): boolean {
+  return toonCatalog(toon) === catalogFilter.value;
+}
+
 const grouped = computed(() => {
-  const groups = seriesList.value.map((series) => ({
-    series,
-    toons: toons.value
-      .filter((toon) => toon.seriesKey === series.key && matchesFilter(toon))
-      .sort((a, b) => (a.episodeN ?? 99) - (b.episodeN ?? 99)),
-  }));
+  const groups = seriesList.value
+    .filter((series) => seriesCatalog(series) === catalogFilter.value)
+    .map((series) => ({
+      series,
+      toons: toons.value
+        .filter((toon) => toon.seriesKey === series.key && matchesFilter(toon))
+        .sort((a, b) => (a.episodeN ?? 99) - (b.episodeN ?? 99)),
+    }));
   if (visibilityFilter.value === "all") return groups;
   return groups.filter((group) => group.toons.length);
 });
 
-const ungrouped = computed(() => toons.value.filter((toon) => !toon.seriesKey && matchesFilter(toon)));
-const filteredRecent = computed(() => recentToons.value.filter(matchesFilter));
+const ungrouped = computed(() =>
+  toons.value.filter((toon) => !toon.seriesKey && matchesFilter(toon) && matchesCatalog(toon))
+);
+const filteredRecent = computed(() => recentToons.value.filter((toon) => matchesFilter(toon) && matchesCatalog(toon)));
 
 const filteredCount = computed(
   () => grouped.value.reduce((n, group) => n + group.toons.length, 0) + ungrouped.value.length
@@ -100,6 +124,13 @@ const visibilityChipOptions = computed(() =>
   <section class="editor-list">
     <EditorBar title="Toon editor" :home="false">
       <template #after-title>
+        <EditorChipFilter
+          :options="PUBLISH_SITE_OPTIONS"
+          v-model="catalogFilter"
+          role="tablist"
+          ariaLabel="Catalog"
+          name-prefix="catalog-filter-"
+        />
         <EditorChipFilter
           :options="visibilityChipOptions"
           v-model="visibilityFilter"
