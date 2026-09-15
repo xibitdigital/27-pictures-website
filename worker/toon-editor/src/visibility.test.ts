@@ -38,6 +38,8 @@ describe("parseStatus", () => {
 describe("staging host visibility", () => {
   it("treats staging and local hosts as staging", () => {
     expect(isStagingHostname("staging.twentyseven.pictures")).toBe(true);
+    expect(isStagingHostname("staging.toons.twentyseven.pictures")).toBe(true);
+    expect(isStagingHostname("toons.twentyseven.pictures")).toBe(false);
     expect(isStagingHostname("localhost")).toBe(true);
     expect(isStagingHostname("127.0.0.1")).toBe(true);
     expect(isStagingHostname("twentyseven.pictures")).toBe(false);
@@ -103,11 +105,18 @@ describe("publish site", () => {
 
   it("treats toons.twentyseven.pictures (and toons.localhost) as the creator catalog", () => {
     expect(isCommunityHostname("toons.twentyseven.pictures")).toBe(true);
+    expect(isCommunityHostname("staging.toons.twentyseven.pictures")).toBe(true);
     expect(isCommunityHostname("toons.localhost")).toBe(true);
     expect(isCommunityHostname("twentyseven.pictures")).toBe(false);
     expect(isCommunityHostname("staging.twentyseven.pictures")).toBe(false);
     expect(publishSiteForRequest(req({ origin: "https://twentyseven.pictures" }))).toBe("studio");
     expect(publishSiteForRequest(req({ origin: "https://toons.twentyseven.pictures" }))).toBe("community");
+    expect(publishSiteForRequest(req({ origin: "https://staging.toons.twentyseven.pictures" }))).toBe("community");
     expect(publishSiteForRequest(req({ origin: "https://staging.twentyseven.pictures" }))).toBe("studio");
+    expect(publicStatusesForRequest(req({ origin: "https://staging.toons.twentyseven.pictures" }))).toEqual([
+      "published",
+      "staging",
+    ]);
+    expect(publicStatusesForRequest(req({ origin: "https://toons.twentyseven.pictures" }))).toEqual(["published"]);
   });
 });

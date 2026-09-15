@@ -75,6 +75,7 @@ import {
   type JsonRecord,
   type PageRecord,
   type PageRow,
+  type PublishSite,
   type ReaderConfig,
   type ReaderRegion,
   type RegionGeometry,
@@ -748,6 +749,26 @@ async function seriesPublishSite(env: Env, seriesKey: string | null): Promise<st
     .bind(seriesKey)
     .first<{ publish_site: string | null }>();
   return row?.publish_site ?? null;
+}
+
+/** Grouped toons follow the series. An admin may retarget the whole series from a toon save. */
+async function applyPublishSite(
+  env: Env,
+  session: EditorUser | null,
+  seriesKey: string | null,
+  raw: unknown,
+  fallback: PublishSite = "studio"
+): Promise<PublishSite> {
+  if (!seriesKey) return parsePublishSite(raw, fallback);
+  const current = parsePublishSite(await seriesPublishSite(env, seriesKey), fallback);
+  if (!isAdmin(session) || raw == null || raw === "") return current;
+  const next = parsePublishSite(raw, current);
+  if (next !== current) {
+    await env.DB.prepare(`UPDATE series SET publish_site = ?, updated_at = ? WHERE key = ?`)
+      .bind(next, nowIso(), seriesKey)
+      .run();
+  }
+  return next;
 }
 
 async function isSeriesEditor(env: Env, seriesKey: string, userId: string): Promise<boolean> {
@@ -2041,9 +2062,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         if (!canManageSeries(session, isMember)) return json({ error: "forbidden" }, 403, cors);
       }
     }
-    const publishSite = seriesKey
-      ? parsePublishSite(await seriesPublishSite(env, seriesKey))
-      : parsePublishSite(body.publishSite);
+    const publishSite = await applyPublishSite(env, session, seriesKey, body.publishSite);
     const id = crypto.randomUUID();
     const ts = nowIso();
     const extra: JsonRecord = {};
@@ -2120,9 +2139,13 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     }
     const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
     const readerUrl = (await deriveReaderUrl(env, seriesKey, current.slug)) || current.reader_url;
-    const publishSite = seriesKey
-      ? parsePublishSite(await seriesPublishSite(env, seriesKey))
-      : parsePublishSite(body.publishSite, parsePublishSite(current.publish_site));
+    const publishSite = await applyPublishSite(
+      env,
+      session,
+      seriesKey,
+      body.publishSite,
+      parsePublishSite(current.publish_site)
+    );
     await env.DB.prepare(
       `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, reader_url = ?, publish_site = ?, updated_at = ? WHERE id = ?`
     )

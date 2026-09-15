@@ -33,11 +33,14 @@ const payload: CatalogPayload = {
 };
 
 describe("community host", () => {
-  it("recognises production and local hosts", () => {
+  it("recognises production, staging, and local hosts", () => {
     expect(isCommunityHost("toons.twentyseven.pictures")).toBe(true);
+    expect(isCommunityHost("staging.toons.twentyseven.pictures")).toBe(true);
     expect(isCommunityHost("toons.localhost")).toBe(true);
     expect(isCommunityHost("twentyseven.pictures")).toBe(false);
+    expect(isCommunityHost("staging.twentyseven.pictures")).toBe(false);
     expect(isCommunityOrigin("https://toons.twentyseven.pictures")).toBe(true);
+    expect(isCommunityOrigin("https://staging.toons.twentyseven.pictures")).toBe(true);
   });
 
   it("redirects studio paths and the /toons/ catalog to the right origin", () => {
@@ -50,6 +53,12 @@ describe("community host", () => {
     );
     expect(communityRedirect("https://toons.twentyseven.pictures/")).toBeNull();
     expect(communityRedirect("https://toons.twentyseven.pictures/toons/demo/")).toBeNull();
+    expect(communityRedirect("https://staging.toons.twentyseven.pictures/cosplay/")).toBe(
+      "https://staging.twentyseven.pictures/cosplay/"
+    );
+    expect(communityRedirect("https://staging.toons.twentyseven.pictures/toons/")).toBe(
+      "https://staging.toons.twentyseven.pictures/"
+    );
   });
 
   it("parses a creator username and rejects reserved segments", () => {

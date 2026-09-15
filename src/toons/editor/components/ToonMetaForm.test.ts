@@ -122,11 +122,43 @@ describe("ToonMetaForm visibility", () => {
     await wrapper.get("form").trigger("submit");
     expect(create.mock.calls[0][0].seriesKey).toBe("erin");
     expect(create.mock.calls[0][0].episodeN).toBe(2);
-    expect(create.mock.calls[0][0].publishSite).toBeUndefined();
+    expect(create.mock.calls[0][0].publishSite).toBe("studio");
     wrapper.unmount();
   });
 
-  it("locks Publish on to the series destination", async () => {
+  it("lets an admin change Publish on for a series toon", async () => {
+    vi.spyOn(api, "listSeries").mockResolvedValue([
+      { key: "erin", title: "Erin & the Goblins", publishSite: "studio" },
+    ]);
+    const create = vi.spyOn(api, "createToon").mockResolvedValue({
+      id: "t1",
+      slug: "demo",
+      title: "Demo",
+      subtitle: "",
+      description: "",
+      coverKey: null,
+      coverUrl: null,
+      designWidth: 800,
+      designHeight: 1424,
+      pages: [],
+    });
+    const wrapper = mount(ToonMetaForm, {
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: ADMIN_PROVIDE },
+      attachTo: document.body,
+    });
+    await vi.waitFor(async () => {
+      await pickOption("series", "Erin & the Goblins");
+    });
+    expect(wrapper.get('button[name="publish-site"]').attributes("disabled")).toBeUndefined();
+    await pickOption("publish-site", "Creator site");
+    await wrapper.get('input[name="slug"]').setValue("demo");
+    await wrapper.get('input[name="title"]').setValue("Demo");
+    await wrapper.get("form").trigger("submit");
+    expect(create.mock.calls[0][0].publishSite).toBe("community");
+    wrapper.unmount();
+  });
+
+  it("locks Publish on to the series destination for an editor", async () => {
     vi.spyOn(api, "listSeries").mockResolvedValue([
       { key: "erin", title: "Erin & the Goblins", publishSite: "community" },
     ]);
@@ -142,8 +174,11 @@ describe("ToonMetaForm visibility", () => {
       designHeight: 1424,
       pages: [],
     });
+    const editorProvide = {
+      [EDITOR_USER_KEY as symbol]: ref({ id: "u1", email: "e@example.com", username: "e", role: "editor" as const }),
+    };
     const wrapper = mount(ToonMetaForm, {
-      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: ADMIN_PROVIDE },
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: editorProvide },
       attachTo: document.body,
     });
     await vi.waitFor(async () => {

@@ -6,7 +6,7 @@ compatibility_date = "2024-01-01"
 # bot cannot mint unbounded KV keys by inventing toon names.
 [vars]
 ALLOWED_TOONS = "erin,erin-the-revenge,jax,nero,redsmile-static,redsmile-marcus"
-ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures,https://toons.twentyseven.pictures,https://staging.twentyseven-pictures.pages.dev"
+ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures,https://toons.twentyseven.pictures,https://staging.toons.twentyseven.pictures,https://staging.twentyseven-pictures.pages.dev"
 
 # One-time setup:
 #   npx wrangler kv namespace create TOON_LIKES

@@ -3,7 +3,7 @@
  * Hubs and readers reuse the shared _hub / _reader templates with community chrome.
  */
 import { APEX, catalogJsonLd, landingGridHtml, payloadForEditor, type CatalogPayload } from "./catalogRender";
-import { COMMUNITY_RESERVED_SEGMENTS } from "./communityHost";
+import { COMMUNITY_RESERVED_SEGMENTS, COMMUNITY_STAGING_HOST } from "./communityHost";
 import { breadcrumbNavHtml, toonTrail } from "./breadcrumb";
 import { splitLocale, UI } from "./i18n";
 
@@ -62,16 +62,22 @@ export function communityUsername(pathname: string): string | null {
   return name;
 }
 
+function studioOrigin(hostname: string): string {
+  if (hostname === COMMUNITY_STAGING_HOST) return "https://staging.twentyseven.pictures";
+  return APEX;
+}
+
 /** 301 target, or null to SSR this request. */
 export function communityRedirect(requestUrl: string): string | null {
   const url = new URL(requestUrl);
   const { locale, path } = splitLocale(url.pathname);
   const norm = path.endsWith("/") ? path : `${path}/`;
   const origin = url.origin;
+  const studio = studioOrigin(url.hostname);
   if (norm === "/toons/" || path === "/toons") return `${origin}/`;
-  if (path.startsWith("/toons/editor")) return `${APEX}${url.pathname}${url.search}`;
+  if (path.startsWith("/toons/editor")) return `${studio}${url.pathname}${url.search}`;
   if (APEX_STUDIO_PREFIXES.some((p) => norm === p || path.startsWith(p))) {
-    return `${APEX}${url.pathname}${url.search}`;
+    return `${studio}${url.pathname}${url.search}`;
   }
   if (locale !== "en" && (norm === "/" || path === "")) return `${origin}/`;
   if (locale !== "en" && path.startsWith("/toons/")) return `${origin}${norm}${url.search}`;

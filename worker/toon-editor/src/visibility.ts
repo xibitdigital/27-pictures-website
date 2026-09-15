@@ -7,6 +7,7 @@ export { parsePublishSite };
 
 /** Hosts that serve the creator-site catalog. Anything else is studio. */
 export const COMMUNITY_HOST = "toons.twentyseven.pictures";
+export const COMMUNITY_STAGING_HOST = "staging.toons.twentyseven.pictures";
 export const COMMUNITY_DEV_HOST = "toons.localhost";
 
 /**
@@ -53,6 +54,7 @@ export function isStagingHostname(host: string): boolean {
   const h = String(host || "").toLowerCase();
   if (h === "localhost" || h === "127.0.0.1") return true;
   if (h === "staging.twentyseven.pictures") return true;
+  if (h === COMMUNITY_STAGING_HOST) return true;
   if (h === "local.twentyseven.test") return true;
   if (h.endsWith(".twentyseven-pictures-staging.pages.dev")) return true;
   return false;
@@ -91,7 +93,7 @@ export function isCommunityHostname(host: string): boolean {
   const h = String(host || "")
     .split(":")[0]
     .toLowerCase();
-  return h === COMMUNITY_HOST || h === COMMUNITY_DEV_HOST;
+  return h === COMMUNITY_HOST || h === COMMUNITY_STAGING_HOST || h === COMMUNITY_DEV_HOST;
 }
 
 /** Studio catalog unless the caller is the creator-site host. */

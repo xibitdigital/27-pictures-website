@@ -7,7 +7,7 @@ compatibility_date = "2024-01-01"
 # failure, whether or not the mail actually went out.
 # The retired staging.twentyseven-pictures.pages.dev alias is deliberately absent.
 [vars]
-ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures,https://toons.twentyseven.pictures"
+ALLOWED_ORIGINS = "https://twentyseven.pictures,https://staging.twentyseven.pictures,https://toons.twentyseven.pictures,https://staging.toons.twentyseven.pictures"
 TO_EMAIL = "27pictures@proton.me"
 FROM_EMAIL = "noreply@twentyseven.pictures"
 FROM_NAME = "27 Pictures Contact Form"

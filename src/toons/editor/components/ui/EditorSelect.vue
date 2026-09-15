@@ -35,6 +35,7 @@ const emit = defineEmits<{
 <template>
   <SelectRoot
     :model-value="toInternalValue(props.modelValue)"
+    :disabled="disabled"
     @update:model-value="(value) => emit('update:modelValue', toExternalValue(value as string | undefined))"
   >
     <SelectTrigger class="editor-select-trigger" :name="name" :aria-label="ariaLabel" :disabled="disabled">

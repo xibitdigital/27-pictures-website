@@ -2,7 +2,8 @@
  * Pages middleware: HTTP Basic auth + noindex for every non-production host.
  *
  * Production (`twentyseven.pictures`, `www`) passes straight through.
- * `toons.twentyseven.pictures` is gated (FlipFrame creator site, not public yet)
+ * `toons.twentyseven.pictures` and `staging.toons.twentyseven.pictures` are gated
+ * (FlipFrame creator site, not public yet)
  * even though it is attached to the production Pages project. Everything else —
  * `staging.twentyseven.pictures`, the `*.pages.dev` aliases, per-deploy preview
  * URLs — needs credentials, so unreleased toons are not readable by anyone who

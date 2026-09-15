@@ -68,10 +68,7 @@ const visibilityOptions = computed(() =>
 
 const selectedSeries = computed(() => seriesList.value.find((item) => item.key === seriesKey.value) || null);
 
-const effectivePublishSite = computed<PublishSite>(() => {
-  if (selectedSeries.value) return parsePublishSite(selectedSeries.value.publishSite);
-  return publishSite.value;
-});
+const canSetPublishSite = computed(() => isAdmin.value || !seriesKey.value.trim());
 
 const VISIBILITY_HINT: Record<ToonVisibility, string> = {
   public: "Public toons appear on their catalog and the reader loads from the database.",
@@ -82,11 +79,17 @@ const VISIBILITY_HINT: Record<ToonVisibility, string> = {
 const visibilityHint = computed(() => VISIBILITY_HINT[visibility.value]);
 
 const publishSiteHint = computed(() => {
-  if (selectedSeries.value) {
-    if (effectivePublishSite.value === "community") {
+  if (selectedSeries.value && !isAdmin.value) {
+    if (publishSite.value === "community") {
       return "Episodes follow the series. This one will appear on the creator site when Public.";
     }
     return "Episodes follow the series. This one will appear on the 27 Pictures catalog when Public.";
+  }
+  if (selectedSeries.value && isAdmin.value) {
+    if (publishSite.value === "community") {
+      return "The whole series appears on the creator site when Public.";
+    }
+    return "The whole series appears on the 27 Pictures catalog when Public.";
   }
   if (publishSite.value === "community") {
     return "Public toons appear on the creator site, not on twentyseven.pictures/toons/.";
@@ -95,9 +98,17 @@ const publishSiteHint = computed(() => {
 });
 
 function onPublishSite(value: string): void {
-  if (seriesKey.value) return;
+  if (!canSetPublishSite.value) return;
   publishSite.value = parsePublishSite(value);
 }
+
+watch(
+  () => [seriesKey.value, seriesList.value] as const,
+  () => {
+    const series = selectedSeries.value;
+    if (series) publishSite.value = parsePublishSite(series.publishSite);
+  }
+);
 
 function slugFromTitle(value: string): string {
   return value
@@ -202,7 +213,7 @@ async function onSubmit(ev: Event): Promise<void> {
         status: statusFromVisibility(visibility.value),
         seriesKey: seriesKey.value.trim() || null,
         episodeN: episodePayload(),
-        ...(seriesKey.value.trim() ? {} : { publishSite: publishSite.value }),
+        ...(canSetPublishSite.value ? { publishSite: publishSite.value } : {}),
       });
     } else {
       toon = await patchToon(String(route.params.id), {
@@ -213,7 +224,7 @@ async function onSubmit(ev: Event): Promise<void> {
         status: statusFromVisibility(visibility.value),
         seriesKey: seriesKey.value.trim() || null,
         episodeN: episodePayload(),
-        ...(seriesKey.value.trim() ? {} : { publishSite: publishSite.value }),
+        ...(canSetPublishSite.value ? { publishSite: publishSite.value } : {}),
       });
     }
     if (coverFile.value) {
@@ -318,9 +329,9 @@ async function onSubmit(ev: Event): Promise<void> {
           <label>
             Publish on
             <EditorSelect
-              :model-value="effectivePublishSite"
+              :model-value="publishSite"
               name="publish-site"
-              :disabled="Boolean(seriesKey)"
+              :disabled="!canSetPublishSite"
               @update:model-value="onPublishSite"
             >
               <EditorSelectItem v-for="opt in PUBLISH_SITE_OPTIONS" :key="opt.value" :value="opt.value">{{
