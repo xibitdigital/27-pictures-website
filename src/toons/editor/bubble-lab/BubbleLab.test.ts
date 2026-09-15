@@ -20,8 +20,18 @@ describe("BubbleLab", () => {
   it("puts the typed line on every caption", async () => {
     const wrapper = mount(BubbleLab);
     await wrapper.get('input[name="lab-line"]').setValue("Too slow.");
-    const texts = wrapper.findAll(".jax-word-text").map((node) => node.text());
+    const texts = wrapper.findAll("article[data-tail] .jax-word-text").map((node) => node.text());
     expect(texts.length).toBe(BUBBLE_VARIANTS.length * BUBBLE_TAILS.length);
     expect(new Set(texts)).toEqual(new Set(["Too slow."]));
+  });
+
+  it("renders a reshape-fit stage for each stand-in scale", () => {
+    const wrapper = mount(BubbleLab);
+    const section = wrapper.get('[data-variant="reshape-fit"]');
+    const cells = section.findAll("article[data-reshape]");
+    expect(cells.length).toBeGreaterThan(0);
+    for (const cell of cells) {
+      expect(cell.find(".jax-word-text").exists()).toBe(true);
+    }
   });
 });

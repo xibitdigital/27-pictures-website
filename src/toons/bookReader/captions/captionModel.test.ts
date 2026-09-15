@@ -129,10 +129,33 @@ describe("buildCaption", () => {
       0,
       ctx
     )!;
-    const seedWrap = parseFloat(seeded.textStyle["max-width"] || "0");
-    expect(parseFloat(wideCap.textStyle["max-width"] || "0")).toBeGreaterThan(seedWrap);
-    expect(parseFloat(narrowCap.textStyle["max-width"] || "0")).toBeLessThan(seedWrap);
+    expect(parseFloat(wideCap.style.width || "0")).toBeGreaterThan(parseFloat(narrowCap.style.width || "0"));
+    expect(parseFloat(wideCap.style["--jax-bubble-body-w"] || "0")).toBeGreaterThan(
+      parseFloat(narrowCap.style["--jax-bubble-body-w"] || "0")
+    );
+    expect(wideCap.textStyle["max-width"]).toBe("100%");
+    expect(narrowCap.textStyle["max-width"]).toBe("100%");
     expect(narrowCap.textStyle.padding).not.toBe(seeded.textStyle.padding);
+    expect(seeded.style["--jax-bubble-body-w"]).toBeUndefined();
+  });
+
+  it("grows type size when the authored outline is larger than the seeded body", () => {
+    const line = "Hello my dear lady friends today";
+    const huge = [
+      [0, 0],
+      [150, 0],
+      [150, 160],
+      [0, 160],
+    ];
+    const seeded = buildCaption({ x: 0.5, y: 0.5, variant: "bubble", text: line } as WordEntry, 0, ctx)!;
+    const hugeCap = buildCaption(
+      { x: 0.5, y: 0.5, variant: "bubble", text: line, bubblePoints: huge } as WordEntry,
+      0,
+      ctx
+    )!;
+    expect(parseFloat(hugeCap.style["font-size"] || "0")).toBeGreaterThan(parseFloat(seeded.style["font-size"] || "0"));
+    expect(parseFloat(hugeCap.style.width || "0")).toBeGreaterThan(0);
+    expect(parseFloat(hugeCap.style.height || "0")).toBeGreaterThan(0);
   });
 
   it("keeps wrap and padding when bubblePoints are the seeded outline", () => {

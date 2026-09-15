@@ -179,6 +179,10 @@ const ELLIPSE_INSET = 0.207;
  * 0.48 a side, rounded up for a margin that reads as deliberate.
  */
 const STAR_INSET = 0.62;
+/** Fraction of a star bbox to keep clear of the spikes when fitting lettering. */
+const STAR_BODY_INSET = 0.28;
+/** 2^(-1/4) — inscribed rect of a squircle (|x|^4 + |y|^4 = 1), which is the organic body. */
+const SQUIRCLE_FILL = 0.841;
 
 /**
  * Padding that keeps every line inside a curved balloon, in em.
@@ -215,10 +219,55 @@ function clampPad(value: number, min: number, cap: number): number {
   return value;
 }
 
+function clampScale(value: number, min: number, cap: number): number {
+  if (value < min) return min;
+  if (value > cap) return cap;
+  return value;
+}
+
 /**
- * Wrap width + four-sided padding so lettering sits in a custom outline.
- * Wider authored bodies wrap longer; a pinched or lopsided body insets the
- * glyphs toward the remaining ink instead of leaving them on the old ellipse.
+ * Usable fraction of a balloon body (inscribed rect / ellipse). A star's inner
+ * radius is tighter than a squircle, so lettering cannot claim as much of the
+ * bbox without sitting on the spikes.
+ */
+function bodyFill(shape: string): number {
+  if (shape === "star") return 1 - 2 * STAR_BODY_INSET;
+  return SQUIRCLE_FILL;
+}
+
+/**
+ * How much bigger the lettering itself should render for a body dragged well
+ * past the default outline. Reshaping into a large custom outline used to
+ * leave the extra room as dead padding — the wrap/pad math below only ever
+ * nudges lines toward the remaining ink, it does not know a body 2× the
+ * default area should carry 2× the letters. Clamped so a stray drag cannot
+ * produce illegible micro-text or a giant balloon that swallows the panel.
+ */
+const RESHAPE_FONT_SCALE_MIN = 0.75;
+const RESHAPE_FONT_SCALE_MAX = 2.5;
+const RESHAPE_BOX_SCALE_MIN = 0.45;
+const RESHAPE_BOX_SCALE_MAX = 2.8;
+
+export interface ShapeTextFit {
+  wrapCh: number;
+  pad: BoxPadding;
+  fontScale: number;
+  /** Word box in em at the unscaled type size; null when the body is the seeded outline. */
+  boxEm: { w: number; h: number } | null;
+  bodyW: number;
+  bodyH: number;
+  bodyCx: number;
+  bodyCy: number;
+  reshaped: boolean;
+}
+
+/**
+ * Wrap, padding, type size and word-box so lettering fills a custom outline.
+ *
+ * The SVG viewBox stays 0–100 and is stretched over the word. A reshaped body
+ * overflows that viewBox, so mapping `--jax-bubble-body-*` onto the SVG (and
+ * sizing the word to the body's width/height ratio) is what actually lets the
+ * glyphs use the extra ink instead of sitting in a hole in the middle.
  */
 export function shapeTextFit(
   points: BubblePoint[],
@@ -227,55 +276,89 @@ export function shapeTextFit(
   text: string,
   baseWrapCh: number,
   base: { padX: number; padY: number }
-): { wrapCh: number; pad: BoxPadding } {
+): ShapeTextFit {
   const body = bubbleBodyPoints(shape, tail, points);
   const box = pointsBBox(body);
+  const bodyCx = box.x + box.w / 2;
+  const bodyCy = box.y + box.h / 2;
   let refW = DEFAULT_BODY_SIZE.w;
   if (shape === "star") refW = 96;
   const refH = shape === "star" ? 96 : DEFAULT_BODY_SIZE.h;
   const defaultish =
     Math.abs(box.w - refW) < 10 &&
     Math.abs(box.h - refH) < 10 &&
-    Math.abs(box.x + box.w / 2 - 50) < 10 &&
-    Math.abs(box.y + box.h / 2 - 50) < 10;
+    Math.abs(bodyCx - 50) < 10 &&
+    Math.abs(bodyCy - 50) < 10;
   if (defaultish) {
     const pad = ellipsePadding(text, baseWrapCh, base, shape);
-    return { wrapCh: baseWrapCh, pad: textPadding(pad.padX, pad.padY) };
+    return {
+      wrapCh: baseWrapCh,
+      pad: textPadding(pad.padX, pad.padY),
+      fontScale: 1,
+      boxEm: null,
+      bodyW: 100,
+      bodyH: 100,
+      bodyCx: 50,
+      bodyCy: 50,
+      reshaped: false,
+    };
   }
-  let wrapScale = box.w / refW;
-  if (wrapScale < 0.5) wrapScale = 0.5;
-  else if (wrapScale > 1.8) wrapScale = 1.8;
-  const longestWord = text.split(/\s+/).reduce((n, word) => Math.max(n, word.length), 0);
-  const wrapCh = Math.max(longestWord, Math.round(baseWrapCh * wrapScale));
 
-  const inset = shape === "star" ? 0.28 : ELLIPSE_INSET;
-  const insW = Math.max(18, box.w * (1 - 2 * inset));
-  const insH = Math.max(16, box.h * (1 - 2 * inset));
-  const insX = box.x + (box.w - insW) / 2;
-  const insY = box.y + (box.h - insH) / 2;
-
+  const scaleX = clampScale(box.w / refW, RESHAPE_BOX_SCALE_MIN, RESHAPE_BOX_SCALE_MAX);
+  const scaleY = clampScale(box.h / refH, RESHAPE_BOX_SCALE_MIN, RESHAPE_BOX_SCALE_MAX);
+  const fill = bodyFill(shape);
   const len = text.replace(/\s+/g, " ").trim().length;
-  const widthEm = Math.min(len, wrapCh) * EM_PER_CHAR;
-  const lines = Math.max(1, Math.ceil(len / wrapCh));
-  const heightEm = lines * EM_PER_LINE;
-  const extraX = widthEm * (100 / insW - 1);
-  const extraY = heightEm * (100 / insH - 1);
-  const leftoverX = Math.max(0.001, 100 - insW);
-  const leftoverY = Math.max(0.001, 100 - insH);
-  const capX = shape === "star" ? 3.6 : 3.2;
-  const capY = shape === "star" ? 2.6 : 2.4;
-  const left = clampPad(extraX * (insX / leftoverX), base.padX * 0.5, capX);
-  const right = clampPad(extraX - left, base.padX * 0.5, capX);
-  const top = clampPad(extraY * (insY / leftoverY), base.padY * 0.5, capY);
-  const bottom = clampPad(extraY - top, base.padY * 0.5, capY);
+  const longestWord = text.split(/\s+/).reduce((n, word) => Math.max(n, word.length), 0);
+  const basePad = ellipsePadding(text, baseWrapCh, base, shape);
+  const contentW0 = Math.min(len, baseWrapCh) * EM_PER_CHAR;
+  const lines0 = Math.max(1, Math.ceil(len / Math.max(1, baseWrapCh)));
+  const contentH0 = lines0 * EM_PER_LINE;
+  const w0 = contentW0 + basePad.padX * 2;
+  const h0 = contentH0 + basePad.padY * 2;
+  const boxW = w0 * scaleX;
+  const boxH = h0 * scaleY;
+  const innerW = Math.max(1, boxW * fill);
+  const innerH = Math.max(1, boxH * fill);
+
+  let fontScale = clampScale(
+    Math.sqrt((innerW * innerH) / Math.max(0.001, contentW0 * contentH0)),
+    RESHAPE_FONT_SCALE_MIN,
+    RESHAPE_FONT_SCALE_MAX
+  );
+  for (let i = 0; i < 6; i++) {
+    const wrapAt = Math.max(longestWord, innerW / (fontScale * EM_PER_CHAR));
+    const lines = Math.max(1, Math.ceil(len / wrapAt));
+    const textH = lines * EM_PER_LINE * fontScale;
+    fontScale = clampScale(
+      fontScale * (innerH / Math.max(0.001, textH)),
+      RESHAPE_FONT_SCALE_MIN,
+      RESHAPE_FONT_SCALE_MAX
+    );
+  }
+  const wrapCh = Math.max(longestWord, Math.round(innerW / (fontScale * EM_PER_CHAR)));
+
+  // Padding is a fraction of the fitted word (in em at the scaled face) so the
+  // glyphs sit in the inscribed rect of this outline, not the seeded ellipse.
+  const wordWEm = boxW / fontScale;
+  const wordHEm = boxH / fontScale;
+  const inset = (1 - fill) / 2;
+  const padX = clampPad(wordWEm * inset, base.padX * 0.85, wordWEm * 0.32);
+  const padY = clampPad(wordHEm * inset, base.padY * 0.85, wordHEm * 0.32);
   return {
     wrapCh,
     pad: {
-      top: Math.round(top * 100) / 100,
-      right: Math.round(right * 100) / 100,
-      bottom: Math.round(bottom * 100) / 100,
-      left: Math.round(left * 100) / 100,
+      top: Math.round(padY * 100) / 100,
+      right: Math.round(padX * 100) / 100,
+      bottom: Math.round(padY * 100) / 100,
+      left: Math.round(padX * 100) / 100,
     },
+    fontScale,
+    boxEm: { w: boxW, h: boxH },
+    bodyW: box.w,
+    bodyH: box.h,
+    bodyCx,
+    bodyCy,
+    reshaped: true,
   };
 }
 
@@ -395,17 +478,42 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     const roundShape = style_.shape === "organic" || style_.shape === "thought" || style_.shape === "star";
     let wrapForBox = wrapCh;
     let box: BoxPadding;
+    let fillWord = false;
     if (roundShape && style_.points && style_.points.length >= 3) {
       const fit = shapeTextFit(style_.points, style_.shape, style_.tail, text, wrapCh, style_);
       wrapForBox = fit.wrapCh;
       box = fit.pad;
+      if (fit.reshaped) {
+        // Map the overflowing body onto this word so the outline is the box
+        // the glyphs fill, not a larger halo around a shrink-wrapped line.
+        style["--jax-bubble-body-w"] = fit.bodyW.toFixed(2);
+        style["--jax-bubble-body-h"] = fit.bodyH.toFixed(2);
+        style["--jax-bubble-body-cx"] = fit.bodyCx.toFixed(2);
+        style["--jax-bubble-body-cy"] = fit.bodyCy.toFixed(2);
+        if (fit.boxEm) {
+          style.width = `${(fit.boxEm.w * sizePx).toFixed(1)}px`;
+          style.height = `${(fit.boxEm.h * sizePx).toFixed(1)}px`;
+        }
+        style["font-size"] = `${Math.max(10, sizePx * fit.fontScale)}px`;
+        fillWord = true;
+      }
     } else if (roundShape) {
       const pad = ellipsePadding(text, w.maxWidth != null ? null : wrapCh, style_, style_.shape);
       box = textPadding(pad.padX, pad.padY);
     } else {
       box = textPadding(style_.padX, style_.padY);
     }
-    textStyle["max-width"] = `${wrapForBox}ch`;
+    if (fillWord) {
+      textStyle.width = "100%";
+      textStyle["max-width"] = "100%";
+      textStyle.height = "100%";
+      textStyle["box-sizing"] = "border-box";
+      textStyle["display"] = "flex";
+      textStyle["align-items"] = "center";
+      textStyle["justify-content"] = "center";
+    } else {
+      textStyle["max-width"] = `${wrapForBox}ch`;
+    }
     textStyle.padding = paddingCss(box);
 
     if (stroke) {

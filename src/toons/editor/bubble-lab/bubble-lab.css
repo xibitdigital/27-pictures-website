@@ -95,3 +95,21 @@ body,
   min-height: 8.5rem;
   overflow: visible;
 }
+
+/* Reshape-fit stand-ins can render several times the default balloon's
+   footprint (that's the point — a big reshaped body should carry bigger
+   lettering). One column and a tall, generous stage keeps each from
+   spilling into its neighbour instead of trying to cram them into the
+   small-caption grid above. */
+.bubble-lab-grid--reshape {
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+.bubble-lab-cell--reshape {
+  min-height: 34rem;
+}
+
+.bubble-lab-stage--reshape {
+  min-height: 30rem;
+}

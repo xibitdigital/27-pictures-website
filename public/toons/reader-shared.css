@@ -1692,15 +1692,18 @@ body.view-vertical .vertical-page.page-slot > img {
 .jax-word--bubble .jax-bubble-svg {
   /* Body is centred on the text box. Tails sit outside viewBox 0–100 and
      paint via overflow — stretching this SVG toward the tail shifted the
-     ellipse off the glyphs. */
+     ellipse off the glyphs.
+     A reshaped body overflows 0–100; `--jax-bubble-body-*` (set by
+     shapeTextFit) scales this SVG down so that overflowing outline lands on
+     the word box the glyphs fill. Unset vars keep the seeded 100×100 mapping. */
   position: absolute;
   z-index: 0;
   overflow: visible;
   pointer-events: none;
-  left: 50%;
-  top: 50%;
-  width: calc(100% + 0.7em);
-  height: calc(100% + 0.7em);
+  left: calc(50% - (var(--jax-bubble-body-cx, 50) - 50) / var(--jax-bubble-body-w, 100) * 100%);
+  top: calc(50% - (var(--jax-bubble-body-cy, 50) - 50) / var(--jax-bubble-body-h, 100) * 100%);
+  width: calc(100% * 100 / var(--jax-bubble-body-w, 100) + 0.7em);
+  height: calc(100% * 100 / var(--jax-bubble-body-h, 100) + 0.7em);
   transform: translate(-50%, -50%) scale(var(--jax-bubble-scale, 1));
 }
 
