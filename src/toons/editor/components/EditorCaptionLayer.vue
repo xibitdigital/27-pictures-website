@@ -229,7 +229,29 @@ function clientToViewBox(el: HTMLElement, clientX: number, clientY: number): Bub
   }
   const rect = el.getBoundingClientRect();
   if (!rect.width || !rect.height) return [50, 50];
-  return [((clientX - rect.left) / rect.width) * 100, ((clientY - rect.top) / rect.height) * 100];
+  let x0 = 0;
+  let y0 = 0;
+  let w = 100;
+  let h = 100;
+  if (el.tagName.toLowerCase() === "svg") {
+    const vb = (el as unknown as SVGSVGElement).viewBox?.baseVal;
+    if (vb && vb.width && vb.height) {
+      x0 = vb.x;
+      y0 = vb.y;
+      w = vb.width;
+      h = vb.height;
+    }
+  }
+  return [x0 + ((clientX - rect.left) / rect.width) * w, y0 + ((clientY - rect.top) / rect.height) * h];
+}
+
+function handleStyle(pt: BubblePoint, caption: EditorCaption): { left: string; top: string } {
+  const vb = caption.bubble?.viewBox;
+  if (!vb || !vb.w || !vb.h) return { left: `${pt[0]}%`, top: `${pt[1]}%` };
+  return {
+    left: `${((pt[0] - vb.x) / vb.w) * 100}%`,
+    top: `${((pt[1] - vb.y) / vb.h) * 100}%`,
+  };
 }
 
 function hostedCaption(caption: EditorCaption): CaptionModel {
@@ -489,7 +511,7 @@ watch(
             :data-bubble-vertex="String(i)"
             :aria-label="`Control point ${i + 1}`"
             role="button"
-            :style="{ left: `${pt[0]}%`, top: `${pt[1]}%` }"
+            :style="handleStyle(pt, caption)"
           />
         </div>
       </WordCaption>

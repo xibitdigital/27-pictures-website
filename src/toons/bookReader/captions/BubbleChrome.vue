@@ -11,7 +11,14 @@ defineProps<{
 </script>
 
 <template>
-  <svg class="jax-bubble-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+  <svg
+    class="jax-bubble-svg"
+    :viewBox="
+      chrome.viewBox ? `${chrome.viewBox.x} ${chrome.viewBox.y} ${chrome.viewBox.w} ${chrome.viewBox.h}` : '0 0 100 100'
+    "
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
     <!-- paint-order draws the stroke first, so only its outer half shows over
          a semi-transparent body; non-scaling-stroke keeps the rim even. -->
     <path

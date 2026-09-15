@@ -2347,13 +2347,13 @@ body {
 .editor-word-layer .jax-word--bubble .editor-bubble-handles,
 .editor-bubble-handles {
   position: absolute;
-  left: calc(50% - (var(--jax-bubble-body-cx, 50) - 50) / var(--jax-bubble-body-w, 100) * 100%);
-  top: calc(50% - (var(--jax-bubble-body-cy, 50) - 50) / var(--jax-bubble-body-h, 100) * 100%);
+  left: 50%;
+  top: 50%;
   z-index: 4;
   display: block;
   flex: 0 0 0;
-  width: calc(100% * 100 / var(--jax-bubble-body-w, 100) + 0.7em);
-  height: calc(100% * 100 / var(--jax-bubble-body-h, 100) + 0.7em);
+  width: calc(100% + 0.7em);
+  height: calc(100% + 0.7em);
   margin: 0;
   overflow: visible;
   pointer-events: none;

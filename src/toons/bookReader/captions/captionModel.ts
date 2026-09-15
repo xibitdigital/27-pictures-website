@@ -179,10 +179,9 @@ const ELLIPSE_INSET = 0.207;
  * 0.48 a side, rounded up for a margin that reads as deliberate.
  */
 const STAR_INSET = 0.62;
-/** Fraction of a star bbox to keep clear of the spikes when fitting lettering. */
-const STAR_BODY_INSET = 0.28;
-/** 2^(-1/4) — inscribed rect of a squircle (|x|^4 + |y|^4 = 1), which is the organic body. */
-const SQUIRCLE_FILL = 0.841;
+/** Bangers + tracking: used only to stop reshape type from overflowing the box. */
+const FIT_EM_PER_CHAR = 0.52;
+const FONT_FIT_SAFETY = 0.94;
 
 /**
  * Padding that keeps every line inside a curved balloon, in em.
@@ -213,12 +212,6 @@ export function ellipsePadding(
   };
 }
 
-function clampPad(value: number, min: number, cap: number): number {
-  if (value < min) return min;
-  if (value > cap) return cap;
-  return value;
-}
-
 function clampScale(value: number, min: number, cap: number): number {
   if (value < min) return min;
   if (value > cap) return cap;
@@ -226,25 +219,12 @@ function clampScale(value: number, min: number, cap: number): number {
 }
 
 /**
- * Usable fraction of a balloon body (inscribed rect / ellipse). A star's inner
- * radius is tighter than a squircle, so lettering cannot claim as much of the
- * bbox without sitting on the spikes.
- */
-function bodyFill(shape: string): number {
-  if (shape === "star") return 1 - 2 * STAR_BODY_INSET;
-  return SQUIRCLE_FILL;
-}
-
-/**
  * How much bigger the lettering itself should render for a body dragged well
- * past the default outline. Reshaping into a large custom outline used to
- * leave the extra room as dead padding — the wrap/pad math below only ever
- * nudges lines toward the remaining ink, it does not know a body 2× the
- * default area should carry 2× the letters. Clamped so a stray drag cannot
- * produce illegible micro-text or a giant balloon that swallows the panel.
+ * past the default outline. Clamped so a stray drag cannot produce illegible
+ * micro-text or a giant balloon that swallows the panel.
  */
-const RESHAPE_FONT_SCALE_MIN = 0.75;
-const RESHAPE_FONT_SCALE_MAX = 2.5;
+const RESHAPE_FONT_SCALE_MIN = 0.6;
+const RESHAPE_FONT_SCALE_MAX = 2.2;
 const RESHAPE_BOX_SCALE_MIN = 0.45;
 const RESHAPE_BOX_SCALE_MAX = 2.8;
 
@@ -254,20 +234,19 @@ export interface ShapeTextFit {
   fontScale: number;
   /** Word box in em at the unscaled type size; null when the body is the seeded outline. */
   boxEm: { w: number; h: number } | null;
+  bodyX: number;
+  bodyY: number;
   bodyW: number;
   bodyH: number;
-  bodyCx: number;
-  bodyCy: number;
   reshaped: boolean;
 }
 
 /**
  * Wrap, padding, type size and word-box so lettering fills a custom outline.
  *
- * The SVG viewBox stays 0–100 and is stretched over the word. A reshaped body
- * overflows that viewBox, so mapping `--jax-bubble-body-*` onto the SVG (and
- * sizing the word to the body's width/height ratio) is what actually lets the
- * glyphs use the extra ink instead of sitting in a hole in the middle.
+ * A reshaped body is painted with the SVG viewBox set to that body's bbox, so
+ * the outline wraps the word the same way a seeded balloon does. Type is
+ * scaled to the new box and then shrunk if it would still overflow.
  */
 export function shapeTextFit(
   points: BubblePoint[],
@@ -296,68 +275,58 @@ export function shapeTextFit(
       pad: textPadding(pad.padX, pad.padY),
       fontScale: 1,
       boxEm: null,
+      bodyX: 0,
+      bodyY: 0,
       bodyW: 100,
       bodyH: 100,
-      bodyCx: 50,
-      bodyCy: 50,
       reshaped: false,
     };
   }
 
   const scaleX = clampScale(box.w / refW, RESHAPE_BOX_SCALE_MIN, RESHAPE_BOX_SCALE_MAX);
   const scaleY = clampScale(box.h / refH, RESHAPE_BOX_SCALE_MIN, RESHAPE_BOX_SCALE_MAX);
-  const fill = bodyFill(shape);
   const len = text.replace(/\s+/g, " ").trim().length;
   const longestWord = text.split(/\s+/).reduce((n, word) => Math.max(n, word.length), 0);
-  const basePad = ellipsePadding(text, baseWrapCh, base, shape);
   const contentW0 = Math.min(len, baseWrapCh) * EM_PER_CHAR;
   const lines0 = Math.max(1, Math.ceil(len / Math.max(1, baseWrapCh)));
   const contentH0 = lines0 * EM_PER_LINE;
-  const w0 = contentW0 + basePad.padX * 2;
-  const h0 = contentH0 + basePad.padY * 2;
-  const boxW = w0 * scaleX;
-  const boxH = h0 * scaleY;
-  const innerW = Math.max(1, boxW * fill);
-  const innerH = Math.max(1, boxH * fill);
+  const balloonW = (contentW0 + base.padX * 2) * scaleX;
+  const balloonH = (contentH0 + base.padY * 2) * scaleY;
+  // Squircle inscribed rect is ~8% in from the bbox; a hair more for jitter
+  // so the first/last lines stay in the ink without leaving a hole.
+  const inset = shape === "star" ? 0.22 : 0.09;
+  const padX0 = balloonW * inset;
+  const padY0 = balloonH * inset;
+  const availW = Math.max(1, balloonW - 2 * padX0);
+  const availH = Math.max(1, balloonH - 2 * padY0);
 
   let fontScale = clampScale(
-    Math.sqrt((innerW * innerH) / Math.max(0.001, contentW0 * contentH0)),
+    Math.sqrt((availW * availH) / Math.max(0.001, len * FIT_EM_PER_CHAR * EM_PER_LINE)),
     RESHAPE_FONT_SCALE_MIN,
     RESHAPE_FONT_SCALE_MAX
   );
-  for (let i = 0; i < 6; i++) {
-    const wrapAt = Math.max(longestWord, innerW / (fontScale * EM_PER_CHAR));
+  for (let i = 0; i < 5; i++) {
+    const wrapAt = Math.max(longestWord, availW / (fontScale * FIT_EM_PER_CHAR));
     const lines = Math.max(1, Math.ceil(len / wrapAt));
     const textH = lines * EM_PER_LINE * fontScale;
     fontScale = clampScale(
-      fontScale * (innerH / Math.max(0.001, textH)),
+      fontScale * (availH / Math.max(0.001, textH)),
       RESHAPE_FONT_SCALE_MIN,
       RESHAPE_FONT_SCALE_MAX
     );
   }
-  const wrapCh = Math.max(longestWord, Math.round(innerW / (fontScale * EM_PER_CHAR)));
+  fontScale *= FONT_FIT_SAFETY;
+  const wrapCh = Math.max(longestWord, Math.round(availW / (fontScale * FIT_EM_PER_CHAR)));
 
-  // Padding is a fraction of the fitted word (in em at the scaled face) so the
-  // glyphs sit in the inscribed rect of this outline, not the seeded ellipse.
-  const wordWEm = boxW / fontScale;
-  const wordHEm = boxH / fontScale;
-  const inset = (1 - fill) / 2;
-  const padX = clampPad(wordWEm * inset, base.padX * 0.85, wordWEm * 0.32);
-  const padY = clampPad(wordHEm * inset, base.padY * 0.85, wordHEm * 0.32);
   return {
     wrapCh,
-    pad: {
-      top: Math.round(padY * 100) / 100,
-      right: Math.round(padX * 100) / 100,
-      bottom: Math.round(padY * 100) / 100,
-      left: Math.round(padX * 100) / 100,
-    },
+    pad: textPadding(padX0 / fontScale, padY0 / fontScale),
     fontScale,
-    boxEm: { w: boxW, h: boxH },
+    boxEm: { w: balloonW, h: balloonH },
+    bodyX: box.x,
+    bodyY: box.y,
     bodyW: box.w,
     bodyH: box.h,
-    bodyCx,
-    bodyCy,
     reshaped: true,
   };
 }
@@ -484,12 +453,12 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
       wrapForBox = fit.wrapCh;
       box = fit.pad;
       if (fit.reshaped) {
-        // Map the overflowing body onto this word so the outline is the box
-        // the glyphs fill, not a larger halo around a shrink-wrapped line.
-        style["--jax-bubble-body-w"] = fit.bodyW.toFixed(2);
-        style["--jax-bubble-body-h"] = fit.bodyH.toFixed(2);
-        style["--jax-bubble-body-cx"] = fit.bodyCx.toFixed(2);
-        style["--jax-bubble-body-cy"] = fit.bodyCy.toFixed(2);
+        // ViewBox is the body bbox so the outline wraps this word; type is
+        // already scaled to that box (and shrunk if it would overflow).
+        bubble = {
+          ...bubble,
+          viewBox: { x: fit.bodyX, y: fit.bodyY, w: fit.bodyW, h: fit.bodyH },
+        };
         if (fit.boxEm) {
           style.width = `${(fit.boxEm.w * sizePx).toFixed(1)}px`;
           style.height = `${(fit.boxEm.h * sizePx).toFixed(1)}px`;
@@ -511,6 +480,7 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
       textStyle["display"] = "flex";
       textStyle["align-items"] = "center";
       textStyle["justify-content"] = "center";
+      textStyle.overflow = "hidden";
     } else {
       textStyle["max-width"] = `${wrapForBox}ch`;
     }

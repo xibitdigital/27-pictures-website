@@ -107,9 +107,9 @@ body,
 }
 
 .bubble-lab-cell--reshape {
-  min-height: 34rem;
+  min-height: 22rem;
 }
 
 .bubble-lab-stage--reshape {
-  min-height: 30rem;
+  min-height: 18rem;
 }

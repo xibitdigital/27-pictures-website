@@ -30,6 +30,9 @@ describe("BubbleLab", () => {
     const section = wrapper.get('[data-variant="reshape-fit"]');
     const cells = section.findAll("article[data-reshape]");
     expect(cells.length).toBeGreaterThan(0);
+    const keys = cells.map((cell) => cell.attributes("data-reshape"));
+    expect(keys).toContain("lopsided");
+    expect(keys).toContain("wide-short");
     for (const cell of cells) {
       expect(cell.find(".jax-word-text").exists()).toBe(true);
     }

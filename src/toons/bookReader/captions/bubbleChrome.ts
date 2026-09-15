@@ -20,8 +20,17 @@ export interface BubblePathModel {
   strokeWidth: number;
 }
 
+export interface BubbleViewBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 export interface BubbleChromeModel {
   paths: BubblePathModel[];
+  /** When set, the SVG viewBox is the body bbox so the outline wraps the word. */
+  viewBox?: BubbleViewBox;
 }
 
 function bodyPath(style: BubbleStyle, seed: number, isBoxy: boolean): string {
