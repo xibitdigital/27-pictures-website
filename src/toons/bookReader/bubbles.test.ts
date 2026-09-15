@@ -275,10 +275,10 @@ describe("thoughtBubblePath", () => {
 
 describe("resolveBubbleVariantClass", () => {
   it("maps each variant to its class(es)", () => {
-    expect(resolveBubbleVariantClass("badai")).toBe(" jax-word--ai jax-word--badai");
-    expect(resolveBubbleVariantClass("ai")).toBe(" jax-word--ai");
-    expect(resolveBubbleVariantClass("burst")).toBe(" jax-word--burst");
-    expect(resolveBubbleVariantClass("thought")).toBe(" jax-word--thought");
+    expect(resolveBubbleVariantClass("badai")).toBe(" toon-word--ai toon-word--badai");
+    expect(resolveBubbleVariantClass("ai")).toBe(" toon-word--ai");
+    expect(resolveBubbleVariantClass("burst")).toBe(" toon-word--burst");
+    expect(resolveBubbleVariantClass("thought")).toBe(" toon-word--thought");
     expect(resolveBubbleVariantClass("bubble")).toBe("");
     expect(resolveBubbleVariantClass("plain")).toBe("");
   });

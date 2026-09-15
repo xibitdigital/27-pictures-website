@@ -111,7 +111,7 @@ describe("RegionLayer", () => {
       attachTo: document.body,
     });
     await nextTick();
-    const style = wrapper.find(".jax-region-layer").attributes("style") || "";
+    const style = wrapper.find(".toon-region-layer").attributes("style") || "";
     expect(style).toContain(`width: ${BOX.width}px`);
     expect(style).toContain(`height: ${BOX.height}px`);
     expect(style).toContain("z-index: 20");
@@ -131,7 +131,7 @@ describe("RegionLayer", () => {
     });
 
     // Outer, unclipped positioning box.
-    const outerEl = wrapper.find(".jax-region-layer > div");
+    const outerEl = wrapper.find(".toon-region-layer > div");
     const outerStyle = outerEl.attributes("style") || "";
     expectStyleCloseTo(outerStyle, "left", frame.left);
     expectStyleCloseTo(outerStyle, "top", frame.top);
@@ -158,7 +158,7 @@ describe("RegionLayer", () => {
     });
     await nextTick();
     const frame = expectedFrame(polygonRegion);
-    const outerStyle = wrapper.find(".jax-region-layer > div").attributes("style") || "";
+    const outerStyle = wrapper.find(".toon-region-layer > div").attributes("style") || "";
     expectStyleCloseTo(outerStyle, "width", frame.width);
     expectStyleCloseTo(outerStyle, "height", frame.height);
     const clipStyle = wrapper.find("[style*='clip-path']").attributes("style") || "";

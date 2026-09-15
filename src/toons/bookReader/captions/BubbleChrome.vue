@@ -12,7 +12,7 @@ defineProps<{
 
 <template>
   <svg
-    class="jax-bubble-svg"
+    class="toon-bubble-svg"
     :viewBox="
       chrome.viewBox ? `${chrome.viewBox.x} ${chrome.viewBox.y} ${chrome.viewBox.w} ${chrome.viewBox.h}` : '0 0 100 100'
     "

@@ -1315,8 +1315,7 @@ on `src/toons/_reader/index.html`. Jax music is the only slug-specific chrome
 (`ToonApp.vue` when `data-toon-slug="jax"`).
 
 Everything shared belongs in `public/toons/reader-shared.css` — including
-`.jax-word*` / bubble SVG chrome (class names are historical; used by every
-toon). Caption pages should load **Bangers** + **VT323** from Google Fonts.
+`.toon-word*` / bubble SVG chrome. Caption pages should load **Bangers** + **VT323** from Google Fonts.
 
 ### Cache-busting shared CSS (hashed filenames)
 

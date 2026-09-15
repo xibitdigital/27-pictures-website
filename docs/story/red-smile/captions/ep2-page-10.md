@@ -25,7 +25,7 @@ over ink — no bubble, no stroke, nothing to lift it off a plate.
 
 `credit` is the right variant for that. It is what page 1's _NEXORA. After
 hours._ uses, and its CSS is already written for black
-(`.jax-word--credit` in `reader-shared.css`: Bangers, weight 400,
+(`.toon-word--credit` in `reader-shared.css`: Bangers, weight 400,
 `color-mix(--text 72%)`, `line-height 1.35`). `align: left` keeps it a block
 rather than a centred banner.
 

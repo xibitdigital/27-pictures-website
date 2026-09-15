@@ -384,7 +384,7 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     top: `${y * 100}%`,
     // Base position/rotation lives in a custom property, not `transform`, so the
     // hover/speaking CSS can append scale() without clobbering placement.
-    "--jax-transform": transform.join(" "),
+    "--toon-transform": transform.join(" "),
     "font-family": w.fontFamily || ctx.fontFamily,
     "font-size": `${Math.max(10, sizePx)}px`,
     "line-height": isCredit ? "1.35" : "1.15",
@@ -395,8 +395,8 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
   };
   // Credit fill defaults in CSS; an explicit `color` on the word always wins.
   if (isCredit && w.color) {
-    style["--jax-word-color"] = w.color;
-    style["--jax-word-shadow"] = "none";
+    style["--toon-word-color"] = w.color;
+    style["--toon-word-shadow"] = "none";
   } else if (!isBubble && !isCredit) {
     style.color = w.color || "#fff";
   }
@@ -430,7 +430,7 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     if (scale && scale !== 1 && !Number.isNaN(scale)) {
       // Scale only the bubble background shape, never the text on top.
       // Keep the CSS translate(-50%, -50%) that centres the SVG on the word.
-      bubbleStyle = { "--jax-bubble-scale": String(scale) };
+      bubbleStyle = { "--toon-bubble-scale": String(scale) };
     }
 
     // Organic/burst/badai = dark ink; good AI HUD = white.
@@ -509,12 +509,12 @@ export function buildCaption(w: WordEntry, index: number, ctx: CaptionContext): 
     }
   }
 
-  const classes = ["jax-word"];
-  if (isBubble) classes.push("jax-word--bubble");
+  const classes = ["toon-word"];
+  if (isBubble) classes.push("toon-word--bubble");
   const variantClass = resolveBubbleVariantClass(variant);
   if (variantClass) classes.push(variantClass);
-  if (isCredit) classes.push("jax-word--credit");
-  if (audio) classes.push("jax-word--sfx");
+  if (isCredit) classes.push("toon-word--credit");
+  if (audio) classes.push("toon-word--sfx");
 
   return {
     key: `${ctx.pageNum}:${index}:${text}`,

@@ -103,13 +103,13 @@ describe("WordLayer", () => {
     ] as WordEntry[]);
     await nextTick();
 
-    const captions = wrapper.findAll(".jax-word");
+    const captions = wrapper.findAll(".toon-word");
     expect(captions).toHaveLength(2);
     expect(captions[0].text()).toBe("HELLO");
-    expect(captions[1].classes()).toContain("jax-word--ai");
+    expect(captions[1].classes()).toContain("toon-word--ai");
     // AI/bubble variants carry their SVG chrome as a child component.
-    expect(captions[1].find("svg.jax-bubble-svg").exists()).toBe(true);
-    expect(wrapper.find(".jax-word-layer").attributes("style")).toContain("width: 504px");
+    expect(captions[1].find("svg.toon-bubble-svg").exists()).toBe(true);
+    expect(wrapper.find(".toon-word-layer").attributes("style")).toContain("width: 504px");
   });
 
   it("plays a caption's SFX on click and does not let the click turn the page", async () => {
@@ -136,7 +136,7 @@ describe("WordLayer", () => {
     });
     await nextTick();
 
-    await wrapper.find(".jax-word--sfx").trigger("click");
+    await wrapper.find(".toon-word--sfx").trigger("click");
     expect(playSpy).toHaveBeenCalled();
     expect(parentClick).not.toHaveBeenCalled();
     controller.stop();
@@ -157,7 +157,7 @@ describe("WordLayer", () => {
     });
     const speaking = (): string =>
       wrapper
-        .findAll(".jax-word.is-speaking")
+        .findAll(".toon-word.is-speaking")
         .map((w) => w.text())
         .join("|");
 

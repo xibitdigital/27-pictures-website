@@ -20,7 +20,7 @@ describe("BubbleLab", () => {
   it("puts the typed line on every caption", async () => {
     const wrapper = mount(BubbleLab);
     await wrapper.get('input[name="lab-line"]').setValue("Too slow.");
-    const texts = wrapper.findAll("article[data-tail] .jax-word-text").map((node) => node.text());
+    const texts = wrapper.findAll("article[data-tail] .toon-word-text").map((node) => node.text());
     expect(texts.length).toBe(BUBBLE_VARIANTS.length * BUBBLE_TAILS.length);
     expect(new Set(texts)).toEqual(new Set(["Too slow."]));
   });
@@ -34,7 +34,7 @@ describe("BubbleLab", () => {
     expect(keys).toContain("lopsided");
     expect(keys).toContain("wide-short");
     for (const cell of cells) {
-      expect(cell.find(".jax-word-text").exists()).toBe(true);
+      expect(cell.find(".toon-word-text").exists()).toBe(true);
     }
   });
 });

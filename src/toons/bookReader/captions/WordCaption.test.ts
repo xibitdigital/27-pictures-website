@@ -8,7 +8,7 @@ function makeCaption(overrides: Partial<CaptionModel> = {}): CaptionModel {
     key: "1-0",
     index: 0,
     text: "HELLO",
-    classes: ["jax-word", "jax-word--bubble", "jax-word--sfx"],
+    classes: ["toon-word", "toon-word--bubble", "toon-word--sfx"],
     style: {
       position: "absolute",
       left: "50%",
@@ -90,7 +90,7 @@ describe("WordCaption mobile tap", () => {
 
   it("does not treat non-audio captions as buttons", () => {
     const wrapper = mount(WordCaption, {
-      props: { caption: makeCaption({ audio: null, classes: ["jax-word", "jax-word--credit"] }) },
+      props: { caption: makeCaption({ audio: null, classes: ["toon-word", "toon-word--credit"] }) },
     });
     expect(wrapper.attributes("role")).toBeUndefined();
     expect(wrapper.attributes("tabindex")).toBeUndefined();

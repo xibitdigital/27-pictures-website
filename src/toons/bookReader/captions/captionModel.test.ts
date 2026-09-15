@@ -91,9 +91,9 @@ describe("buildCaption", () => {
     expect(c.text).toBe("HELLO");
     expect(c.style.left).toBe("50%");
     expect(c.style.top).toBe("25%");
-    expect(c.style["--jax-transform"]).toContain("translate(-50%, -50%)");
+    expect(c.style["--toon-transform"]).toContain("translate(-50%, -50%)");
     expect(c.style.transform).toBeUndefined();
-    expect(c.classes).toContain("jax-word");
+    expect(c.classes).toContain("toon-word");
     expect(c.bubble).toBeNull();
   });
 
@@ -227,13 +227,13 @@ describe("buildCaption", () => {
 
   it("gives bubbles chrome and makes them (and any SFX word) clickable", () => {
     const bubble = buildCaption({ x: 0.5, y: 0.5, variant: "bubble", text: "Hi" } as WordEntry, 0, ctx)!;
-    expect(bubble.classes).toContain("jax-word--bubble");
+    expect(bubble.classes).toContain("toon-word--bubble");
     expect(bubble.bubble?.paths.length).toBeGreaterThan(0);
     // Layer is pointer-events:none — captures clicks so .nav-zone can't turn the page.
     expect(bubble.style["pointer-events"]).toBe("auto");
 
     const sfx = buildCaption({ x: 0.5, y: 0.5, text: "BOOM", audio: "sfx/x.mp3" } as WordEntry, 1, ctx)!;
-    expect(sfx.classes).toContain("jax-word--sfx");
+    expect(sfx.classes).toContain("toon-word--sfx");
     expect(sfx.audio).toBe("sfx/x.mp3");
     expect(sfx.style["pointer-events"]).toBe("auto");
     expect(sfx.style.cursor).toBe("pointer");
@@ -319,7 +319,7 @@ describe("config defaults (a lean word entry)", () => {
       0,
       ctx
     )!;
-    expect(c.style["--jax-word-color"]).toBe("#111111");
+    expect(c.style["--toon-word-color"]).toBe("#111111");
     expect(c.textStyle.color).toBe("#111111");
     expect(c.textStyle["-webkit-text-stroke"]).toMatch(/#fff/i);
   });
@@ -327,7 +327,7 @@ describe("config defaults (a lean word entry)", () => {
   it("does not force white onto a credit caption without color", () => {
     const c = buildCaption({ x: 0.5, y: 0.9, variant: "credit", text: { en: "To be continued…" } }, 0, ctx)!;
     expect(c.textStyle.color).toBeUndefined();
-    expect(c.style["--jax-word-color"]).toBeUndefined();
+    expect(c.style["--toon-word-color"]).toBeUndefined();
   });
 
   it("still obeys an explicit size and maxWidth", () => {

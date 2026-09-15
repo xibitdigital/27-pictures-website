@@ -89,7 +89,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect());
 </script>
 
 <template>
-  <div class="jax-plate-watermark" :style="layerStyle" aria-hidden="true">
+  <div class="toon-plate-watermark" :style="layerStyle" aria-hidden="true">
     <img :src="src" alt="" draggable="false" :style="markStyle" @load="onMarkLoad" />
   </div>
 </template>

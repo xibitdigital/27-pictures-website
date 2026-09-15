@@ -229,7 +229,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="jax-region-layer" :style="layerStyle" :data-page-num="pageNum">
+  <div class="toon-region-layer" :style="layerStyle" :data-page-num="pageNum">
     <div v-for="(layout, index) in layouts" :key="layout.key" :style="layout.frameStyle">
       <div :style="layout.clipStyle">
         <img

@@ -56,7 +56,7 @@ describe("EditorCaptionLayer", () => {
       attachTo: document.body,
     });
     await nextTick();
-    const caption = wrapper.find(".jax-word");
+    const caption = wrapper.find(".toon-word");
     expect(caption.exists()).toBe(true);
     expect(caption.text()).toBe("HELLO");
     expect(caption.attributes("data-bubble-id")).toBe("b1");
@@ -143,7 +143,7 @@ describe("EditorCaptionLayer", () => {
       toJSON: () => ({}),
     } as DOMRect);
 
-    const el = wrapper.find(".jax-word").element as HTMLElement;
+    const el = wrapper.find(".toon-word").element as HTMLElement;
     el.dispatchEvent(pointer("pointerdown", 200, 178));
     window.dispatchEvent(pointer("pointermove", 240, 250));
     // Drop off the caption — the previous listener lived only on the overlay,
@@ -214,12 +214,12 @@ describe("EditorCaptionLayer", () => {
     const props = { pageNum: 1, bubbles: [bubble()], selectedId: "b1", imageEl: makeImage() };
     const select = mount(EditorCaptionLayer, { props, attachTo: document.body });
     await nextTick();
-    const word = select.get(".jax-word-text").element as HTMLElement;
+    const word = select.get(".toon-word-text").element as HTMLElement;
     const before = { pad: word.style.padding, wrap: word.style.maxWidth };
     select.unmount();
     const reshape = mount(EditorCaptionLayer, { props: { ...props, tool: "reshape" }, attachTo: document.body });
     await nextTick();
-    const after = reshape.get(".jax-word-text").element as HTMLElement;
+    const after = reshape.get(".toon-word-text").element as HTMLElement;
     expect(after.style.padding).toBe(before.pad);
     expect(after.style.maxWidth).toBe(before.wrap);
     expect(reshape.find("[data-bubble-handles]").exists()).toBe(true);
@@ -242,7 +242,7 @@ describe("EditorCaptionLayer", () => {
     expect(handles.length).toBeGreaterThan(3);
     expect(wrapper.find("[data-tail-ring]").exists()).toBe(false);
 
-    const space = wrapper.get(".jax-bubble-svg").element as SVGSVGElement;
+    const space = wrapper.get(".toon-bubble-svg").element as SVGSVGElement;
     vi.spyOn(space, "getScreenCTM").mockReturnValue(null);
     vi.spyOn(space, "getBoundingClientRect").mockReturnValue({
       x: 0,

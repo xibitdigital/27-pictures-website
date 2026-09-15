@@ -659,21 +659,21 @@ export function resolveBubbleStyle(w: Record<string, unknown>, variant: string):
 }
 
 /**
- * Extra CSS class(es) a bubble variant needs beyond the base `jax-word--bubble`.
- * `badai` gets both `jax-word--ai` and `jax-word--badai` (shares AI HUD rules,
+ * Extra CSS class(es) a bubble variant needs beyond the base `toon-word--bubble`.
+ * `badai` gets both `toon-word--ai` and `toon-word--badai` (shares AI HUD rules,
  * then overrides polarity). Leading space so callers can splice it straight
  * into a className string without a separate join step.
  */
 export function resolveBubbleVariantClass(variant: string): string {
   switch (variant) {
     case "badai":
-      return " jax-word--ai jax-word--badai";
+      return " toon-word--ai toon-word--badai";
     case "ai":
-      return " jax-word--ai";
+      return " toon-word--ai";
     case "burst":
-      return " jax-word--burst";
+      return " toon-word--burst";
     case "thought":
-      return " jax-word--thought";
+      return " toon-word--thought";
     default:
       return "";
   }

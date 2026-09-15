@@ -201,7 +201,7 @@ function viewBoxSpace(id: string): HTMLElement | null {
   const host = rootEl.value?.querySelector(`[data-bubble-id="${id}"]`) as HTMLElement | null;
   if (!host) return null;
   return (
-    (host.querySelector(".jax-bubble-svg") as HTMLElement | null) ||
+    (host.querySelector(".toon-bubble-svg") as HTMLElement | null) ||
     (host.querySelector("[data-bubble-handles]") as HTMLElement | null) ||
     host
   );
@@ -262,7 +262,7 @@ function hostedCaption(caption: EditorCaption): CaptionModel {
       position: "relative",
       left: "auto",
       top: "auto",
-      "--jax-transform": "none",
+      "--toon-transform": "none",
     },
   };
 }
@@ -272,7 +272,7 @@ function hostStyle(caption: EditorCaption): CSSProperties {
     position: "absolute",
     left: caption.style.left,
     top: caption.style.top,
-    transform: caption.style["--jax-transform"] || "translate(-50%, -50%)",
+    transform: caption.style["--toon-transform"] || "translate(-50%, -50%)",
     zIndex: caption.bubbleId === props.selectedId ? 37 : 36,
   };
 }
