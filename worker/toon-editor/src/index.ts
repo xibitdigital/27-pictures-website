@@ -52,7 +52,14 @@ import { canManageSeries, canManageToon, isAdmin, publishError } from "./roles";
 import { isMethod } from "./httpMethod";
 import { translateFromEnglish } from "./translate";
 import { isReaderLookupPath, readerStatuses, toonMatchesReaderPath } from "./readerLookup";
-import { parseStatus, publicStatusesForRequest } from "./visibility";
+import {
+  CATALOG_PUBLISH_SITE_SQL,
+  effectivePublishSite,
+  parsePublishSite,
+  parseStatus,
+  publicStatusesForRequest,
+  publishSiteForRequest,
+} from "./visibility";
 import { renderSitemapXml, siteOriginFromRequest, staticSitemapUrls, toonSitemapUrls } from "./sitemap";
 import { recordToonAsset, type ToonAssetRow, type ToonAssetSource } from "./toonAssets";
 
@@ -454,6 +461,7 @@ function mapToon(
     seriesKey: row.series_key || null,
     episodeN: row.episode_n != null ? Number(row.episode_n) : null,
     ownerId: row.owner_id || null,
+    publishSite: effectivePublishSite(row),
     watermarkUrl: objectUrl(request, env, (row as { series_watermark_key?: string | null }).series_watermark_key, null),
     pages: pages || [],
   };
@@ -473,6 +481,7 @@ function mapToonListItem(row: ToonRow | Record<string, unknown>, request: Reques
     seriesKey: row.series_key || null,
     episodeN: row.episode_n != null ? Number(row.episode_n) : null,
     ownerId: row.owner_id || null,
+    publishSite: effectivePublishSite(row),
     updatedAt: row.updated_at || null,
   };
 }
@@ -496,6 +505,7 @@ function mapCatalogEpisode(row: ToonRow | Record<string, unknown>, request: Requ
     assetPageDir: t.asset_page_dir || `/toons/${t.slug}/`,
     designWidth: t.design_width,
     designHeight: t.design_height,
+    ownerUsername: (t as { owner_username?: string | null }).owner_username || null,
   };
 }
 
@@ -530,6 +540,7 @@ function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: Req
     generate: seriesGenerate(row, request, env),
     ownerId: row.owner_id || null,
     editorIds: row.editor_ids ? String(row.editor_ids).split(",") : [],
+    publishSite: parsePublishSite(row.publish_site),
   };
 }
 
@@ -689,9 +700,10 @@ async function upsertSeries(
       : found
         ? found.hub_url
         : null;
+  const publishSite = parsePublishSite(seriesMeta.publishSite, parsePublishSite(found?.publish_site));
   if (found) {
     await env.DB.prepare(
-      `UPDATE series SET title = ?, tagline = ?, description = ?, cover_key = ?, hub_url = ?, sort = ?, extra_json = ?, updated_at = ?
+      `UPDATE series SET title = ?, tagline = ?, description = ?, cover_key = ?, hub_url = ?, sort = ?, extra_json = ?, publish_site = ?, updated_at = ?
        WHERE key = ?`
     )
       .bind(
@@ -702,14 +714,15 @@ async function upsertSeries(
         hubUrl,
         Number(seriesMeta.sort) || 0,
         extraJson,
+        publishSite,
         ts,
         skey
       )
       .run();
   } else {
     await env.DB.prepare(
-      `INSERT INTO series (key, title, tagline, description, cover_key, hub_url, sort, extra_json, owner_id, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO series (key, title, tagline, description, cover_key, hub_url, sort, extra_json, owner_id, publish_site, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         skey,
@@ -721,11 +734,20 @@ async function upsertSeries(
         Number(seriesMeta.sort) || 0,
         extraJson,
         ownerId,
+        publishSite,
         ts,
         ts
       )
       .run();
   }
+}
+
+async function seriesPublishSite(env: Env, seriesKey: string | null): Promise<string | null> {
+  if (!seriesKey) return null;
+  const row = await env.DB.prepare("SELECT publish_site FROM series WHERE key = ?")
+    .bind(seriesKey)
+    .first<{ publish_site: string | null }>();
+  return row?.publish_site ?? null;
 }
 
 async function isSeriesEditor(env: Env, seriesKey: string, userId: string): Promise<boolean> {
@@ -890,7 +912,8 @@ async function loadToon(env: Env, request: Request, id: string) {
   // page-add/replace/reorder to return the refreshed toon.
   const [toon, pageRowsResult, bubbles, regions] = await Promise.all([
     env.DB.prepare(
-      `SELECT toons.*, series.watermark_key AS series_watermark_key
+      `SELECT toons.*, series.watermark_key AS series_watermark_key,
+              series.publish_site AS series_publish_site
        FROM toons LEFT JOIN series ON series.key = toons.series_key WHERE toons.id = ?`
     )
       .bind(id)
@@ -1676,8 +1699,11 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const toonRows = (
       await env.DB.prepare(
         `SELECT toons.*,
-                (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
-         FROM toons WHERE series_key = ? ORDER BY episode_n ASC, title ASC`
+                (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count,
+                series.publish_site AS series_publish_site
+         FROM toons
+         LEFT JOIN series ON series.key = toons.series_key
+         WHERE toons.series_key = ? ORDER BY toons.episode_n ASC, toons.title ASC`
       )
         .bind(key)
         .all()
@@ -1730,13 +1756,26 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
   if (isMethod(method, "GET") && path === "/sitemap.xml") {
     const origin = siteOriginFromRequest(request);
     const statuses = publicStatusesForRequest(request);
-    const seriesRows = (await env.DB.prepare("SELECT * FROM series ORDER BY sort ASC, title ASC").all<SeriesRow>())
-      .results;
+    const catalogSite = publishSiteForRequest(request);
+    const seriesRows = (
+      await env.DB.prepare(
+        `SELECT * FROM series
+         WHERE COALESCE(NULLIF(publish_site, ''), 'studio') = ?
+         ORDER BY sort ASC, title ASC`
+      )
+        .bind(catalogSite)
+        .all<SeriesRow>()
+    ).results;
     const toonRows = (
       await env.DB.prepare(
-        `SELECT * FROM toons WHERE status IN (${statuses.map(() => "?").join(",")}) ORDER BY updated_at DESC`
+        `SELECT toons.*, series.publish_site AS series_publish_site
+         FROM toons
+         LEFT JOIN series ON series.key = toons.series_key
+         WHERE toons.status IN (${statuses.map(() => "?").join(",")})
+           AND (${CATALOG_PUBLISH_SITE_SQL}) = ?
+         ORDER BY toons.updated_at DESC`
       )
-        .bind(...statuses)
+        .bind(...statuses, catalogSite)
         .all<ToonRow>()
     ).results;
     const visibleKeys = new Set(toonRows.map((row) => row.series_key).filter((key): key is string => Boolean(key)));
@@ -1756,36 +1795,55 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       updatedAt: row.updated_at || null,
       status: row.status || "draft",
     }));
-    const urls = [
-      ...staticSitemapUrls(origin, String(env.ASSET_BASE || "")),
-      ...toonSitemapUrls(origin, series, toons),
-    ];
+    const community = catalogSite === "community";
+    const site = origin.replace(/\/$/, "");
+    const editorUrls = community ? [{ loc: `${site}/` }] : staticSitemapUrls(origin, String(env.ASSET_BASE || ""));
+    const urls = [...editorUrls, ...toonSitemapUrls(origin, series, toons, { locales: !community })];
     return xml(renderSitemapXml(urls), cors);
   }
 
   if (isMethod(method, "GET") && path === "/catalog") {
-    const seriesRows = (await env.DB.prepare("SELECT * FROM series ORDER BY sort ASC, title ASC").all()).results;
     const statuses = publicStatusesForRequest(request);
+    const catalogSite = publishSiteForRequest(request);
+    const seriesRows = (
+      await env.DB.prepare(
+        `SELECT series.*, users.username AS owner_username
+         FROM series
+         LEFT JOIN users ON users.id = series.owner_id
+         WHERE COALESCE(NULLIF(series.publish_site, ''), 'studio') = ?
+         ORDER BY series.sort ASC, series.title ASC`
+      )
+        .bind(catalogSite)
+        .all()
+    ).results;
     const countRows = (
       await env.DB.prepare(
-        `SELECT series_key AS key, COUNT(*) AS n FROM toons
-         WHERE series_key IS NOT NULL AND series_key != ''
-           AND status IN (${statuses.map(() => "?").join(",")})
-         GROUP BY series_key`
+        `SELECT toons.series_key AS key, COUNT(*) AS n FROM toons
+         LEFT JOIN series ON series.key = toons.series_key
+         WHERE toons.series_key IS NOT NULL AND toons.series_key != ''
+           AND toons.status IN (${statuses.map(() => "?").join(",")})
+           AND (${CATALOG_PUBLISH_SITE_SQL}) = ?
+         GROUP BY toons.series_key`
       )
-        .bind(...statuses)
+        .bind(...statuses, catalogSite)
         .all()
     ).results;
     const episodeCounts = new Map(countRows.map((row) => [row.key, Number(row.n) || 0]));
     const toonRows = (
       await env.DB.prepare(
         `SELECT toons.*,
-                (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
+                (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count,
+                series.publish_site AS series_publish_site,
+                COALESCE(series_owner.username, toon_owner.username) AS owner_username
          FROM toons
-         WHERE status IN (${statuses.map(() => "?").join(",")})
-         ORDER BY episode_n ASC, title ASC`
+         LEFT JOIN series ON series.key = toons.series_key
+         LEFT JOIN users AS series_owner ON series_owner.id = series.owner_id
+         LEFT JOIN users AS toon_owner ON toon_owner.id = toons.owner_id
+         WHERE toons.status IN (${statuses.map(() => "?").join(",")})
+           AND (${CATALOG_PUBLISH_SITE_SQL}) = ?
+         ORDER BY toons.episode_n ASC, toons.title ASC`
       )
-        .bind(...statuses)
+        .bind(...statuses, catalogSite)
         .all()
     ).results;
     const episodesOf = (key: string) =>
@@ -1803,6 +1861,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
           descriptions,
           coverUrl: objectUrl(request, env, String(row.cover_key || "") || null, null),
           hubUrl: (row.hub_url as string | null) || null,
+          ownerUsername: (row.owner_username as string | null) || null,
           episodes: episodesOf(String(row.key)),
           episodeCount: episodeCounts.get(String(row.key)) || 0,
         };
@@ -1938,15 +1997,17 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const rawLimit = Number(new URL(request.url).searchParams.get("limit"));
     const limit = Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(Math.round(rawLimit), 50) : null;
     const toonsListSql = `SELECT toons.*,
-                (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count
+                (SELECT COUNT(*) FROM pages WHERE pages.toon_id = toons.id) AS page_count,
+                series.publish_site AS series_publish_site
          FROM toons
+         LEFT JOIN series ON series.key = toons.series_key
          ${
            isAdmin(session)
              ? ""
-             : `WHERE (series_key IN (SELECT series_key FROM series_editors WHERE user_id = ?))
-                OR (series_key IS NULL AND owner_id = ?)`
+             : `WHERE (toons.series_key IN (SELECT series_key FROM series_editors WHERE user_id = ?))
+                OR (toons.series_key IS NULL AND toons.owner_id = ?)`
          }
-         ORDER BY updated_at DESC
+         ORDER BY toons.updated_at DESC
          ${limit ? "LIMIT ?" : ""}`;
     const binds: (string | number)[] = isAdmin(session) ? [] : [session ? session.id : "", session ? session.id : ""];
     if (limit) binds.push(limit);
@@ -1980,6 +2041,9 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         if (!canManageSeries(session, isMember)) return json({ error: "forbidden" }, 403, cors);
       }
     }
+    const publishSite = seriesKey
+      ? parsePublishSite(await seriesPublishSite(env, seriesKey))
+      : parsePublishSite(body.publishSite);
     const id = crypto.randomUUID();
     const ts = nowIso();
     const extra: JsonRecord = {};
@@ -1987,8 +2051,8 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const episodeN = seriesKey ? parseEpisodeN(body, null) : null;
     const readerUrl = await deriveReaderUrl(env, seriesKey, slug);
     await env.DB.prepare(
-      `INSERT INTO toons (id, slug, title, subtitle, description, status, reader_url, extra_json, series_key, episode_n, owner_id, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO toons (id, slug, title, subtitle, description, status, reader_url, extra_json, series_key, episode_n, owner_id, publish_site, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         id,
@@ -2002,6 +2066,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         seriesKey,
         episodeN,
         session ? session.id : null,
+        publishSite,
         ts,
         ts
       )
@@ -2055,10 +2120,25 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     }
     const episodeN = seriesKey ? parseEpisodeN(body, current.episode_n ?? null) : null;
     const readerUrl = (await deriveReaderUrl(env, seriesKey, current.slug)) || current.reader_url;
+    const publishSite = seriesKey
+      ? parsePublishSite(await seriesPublishSite(env, seriesKey))
+      : parsePublishSite(body.publishSite, parsePublishSite(current.publish_site));
     await env.DB.prepare(
-      `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, reader_url = ?, updated_at = ? WHERE id = ?`
+      `UPDATE toons SET title = ?, subtitle = ?, description = ?, status = ?, extra_json = ?, series_key = ?, episode_n = ?, reader_url = ?, publish_site = ?, updated_at = ? WHERE id = ?`
     )
-      .bind(title, subtitle, description, status, JSON.stringify(extra), seriesKey, episodeN, readerUrl, nowIso(), id)
+      .bind(
+        title,
+        subtitle,
+        description,
+        status,
+        JSON.stringify(extra),
+        seriesKey,
+        episodeN,
+        readerUrl,
+        publishSite,
+        nowIso(),
+        id
+      )
       .run();
     return json(await loadToon(env, request, id), 200, cors);
   }

@@ -21,6 +21,7 @@ export type {
   PageRecord,
   PromptCandidate,
   PromptTarget,
+  PublishSite,
   RegionBorderStyle,
   RegionGeometry,
   RegionRecord,
@@ -50,13 +51,15 @@ export {
   GENERATE_PROVIDERS,
   isDirectProvider,
   parseDescriptionMap,
+  parsePublishSite,
   pickDescription,
+  PUBLISH_SITES,
   RUNWARE_MODELS,
   USER_KEY_LABELS,
   USER_KEY_NAMES,
 } from "../../../worker/toon-editor/src/apiTypes";
 
-import type { ToonStatus } from "../../../worker/toon-editor/src/apiTypes";
+import { parsePublishSite, type PublishSite, type ToonStatus } from "../../../worker/toon-editor/src/apiTypes";
 
 export type ToonVisibility = "draft" | "staging" | "public";
 
@@ -76,6 +79,16 @@ export function statusFromVisibility(visibility: ToonVisibility): ToonStatus {
   if (visibility === "public") return "published";
   if (visibility === "staging") return "staging";
   return "draft";
+}
+
+export const PUBLISH_SITE_OPTIONS: { value: PublishSite; label: string }[] = [
+  { value: "studio", label: "27 Pictures" },
+  { value: "community", label: "Creator site" },
+];
+
+export function publishSiteLabel(site?: string | null): string {
+  const parsed = parsePublishSite(site);
+  return PUBLISH_SITE_OPTIONS.find((opt) => opt.value === parsed)?.label ?? "27 Pictures";
 }
 
 export function visibilityLabel(status?: string | null): string {

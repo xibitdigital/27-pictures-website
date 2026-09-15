@@ -65,6 +65,26 @@ describe("SiteNav", () => {
     expect(hrefs).not.toContain("/#contact");
   });
 
+  it("keeps creator-site nav to the catalog and the studio apex", () => {
+    const wrapper = mount(SiteNav, {
+      props: { page: "community" },
+      attachTo: document.body,
+      global: {
+        stubs: {
+          TransitionRoot: false,
+          TransitionChild: false,
+          Dialog: { template: "<div><slot /></div>" },
+          DialogPanel: { template: "<div><slot /></div>" },
+          DialogTitle: { template: "<div><slot /></div>" },
+        },
+      },
+    });
+    const hrefs = wrapper.findAll(".nav-links a.magnetic").map((a) => a.attributes("href"));
+    expect(hrefs).toEqual(["/", "https://twentyseven.pictures/"]);
+    expect(wrapper.find("nav > a.magnetic").attributes("href")).toBe("/");
+    wrapper.unmount();
+  });
+
   it("prefixes homepage hashes when on the toons page", () => {
     const wrapper = mount(SiteNav, {
       props: { page: "toons" },

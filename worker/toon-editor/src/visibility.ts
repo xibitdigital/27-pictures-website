@@ -1,6 +1,33 @@
 /** Catalog / public reader visibility, keyed off the calling site hostname. */
 
+import { parsePublishSite, type PublishSite } from "./apiTypes";
 import type { RequestLike, ToonStatus } from "./types";
+
+export { parsePublishSite };
+
+/** Hosts that serve the creator-site catalog. Anything else is studio. */
+export const COMMUNITY_HOST = "toons.twentyseven.pictures";
+export const COMMUNITY_DEV_HOST = "toons.localhost";
+
+/**
+ * Effective catalog destination for a toon row. A grouped episode follows
+ * its series; `toons.publish_site` is only used when `series_key` is empty.
+ */
+export function effectivePublishSite(row: {
+  series_key?: string | null;
+  publish_site?: string | null;
+  series_publish_site?: string | null;
+}): PublishSite {
+  if (row.series_key) return parsePublishSite(row.series_publish_site ?? row.publish_site);
+  return parsePublishSite(row.publish_site);
+}
+
+/** SQL: catalog site for a `toons` row `LEFT JOIN series`. */
+export const CATALOG_PUBLISH_SITE_SQL = `CASE
+  WHEN toons.series_key IS NOT NULL AND toons.series_key != ''
+    THEN COALESCE(NULLIF(series.publish_site, ''), 'studio')
+  ELSE COALESCE(NULLIF(toons.publish_site, ''), 'studio')
+END`;
 
 export function parseStatus(raw: unknown, fallback: ToonStatus): ToonStatus {
   if (raw == null || raw === "") return fallback;
@@ -58,4 +85,16 @@ export function publicStatuses(isStaging: boolean): ToonStatus[] {
 
 export function publicStatusesForRequest(request: RequestLike): ToonStatus[] {
   return publicStatuses(isStagingHostname(callerHostname(request)));
+}
+
+export function isCommunityHostname(host: string): boolean {
+  const h = String(host || "")
+    .split(":")[0]
+    .toLowerCase();
+  return h === COMMUNITY_HOST || h === COMMUNITY_DEV_HOST;
+}
+
+/** Studio catalog unless the caller is the creator-site host. */
+export function publishSiteForRequest(request: RequestLike): PublishSite {
+  return isCommunityHostname(callerHostname(request)) ? "community" : "studio";
 }

@@ -13,6 +13,7 @@ import {
   type SitemapUrl,
 } from "../../worker/toon-editor/src/sitemap";
 import { catalogEpisodes, type CatalogPayload } from "./catalogRender";
+import { isCommunityOrigin } from "./communityHost";
 import { UI, type Locale } from "./i18n";
 
 export const DEFAULT_ASSET_BASE = "https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev";
@@ -69,7 +70,51 @@ function mdLink(origin: string, path: string, title: string, note: string): stri
   return `- [${title}](${abs(origin, path)}): ${note}`;
 }
 
+function renderCommunityLlmsTxt(origin: string, payload: CatalogPayload): string {
+  const site = origin.replace(/\/$/, "");
+  const lines: string[] = [
+    mdLink(site, "/", "FlipFrame catalog", "interactive toons from independent editors — voiced FlipFrame readers"),
+  ];
+  for (const series of payload.series) {
+    const hub = series.hubUrl || `/toons/${series.key}/`;
+    const n = series.episodes.length;
+    const cue = n === 1 ? "1 episode" : `${n} episodes`;
+    lines.push(
+      mdLink(
+        site,
+        hub,
+        `${series.title} series`,
+        `${series.tagline || series.description || "interactive toon series"} — ${cue}`
+      )
+    );
+    for (const ep of series.episodes) {
+      const path = ep.readerUrl || `/toons/${ep.slug}/`;
+      const pages = ep.pageCount > 0 ? `${ep.pageCount}-page` : "interactive";
+      lines.push(mdLink(site, path, ep.title, `${pages} FlipFrame toon`));
+    }
+  }
+  for (const ep of payload.ungrouped) {
+    const path = ep.readerUrl || `/toons/${ep.slug}/`;
+    lines.push(mdLink(site, path, ep.title, "FlipFrame toon"));
+  }
+  return `# FlipFrame
+
+> FlipFrame is the interactive toon reader from 27 Pictures. This host
+> (${site}) lists toons published by independent editors. 27 Pictures' own
+> series live at https://twentyseven.pictures/toons/.
+
+We welcome visibility in AI search results when our content is accurately
+represented. Attribute 27 Pictures (twentyseven.pictures) when citing.
+Crawler access rules live in /robots.txt.
+
+## Catalog
+
+${lines.join("\n")}
+`;
+}
+
 export function renderLlmsTxt(origin: string, payload: CatalogPayload): string {
+  if (isCommunityOrigin(origin)) return renderCommunityLlmsTxt(origin, payload);
   const site = origin.replace(/\/$/, "");
   const toonLines: string[] = [
     mdLink(
@@ -147,7 +192,9 @@ ${localeLines.join("\n")}
 }
 
 export function renderCatalogSitemap(origin: string, payload: CatalogPayload, assetBase = DEFAULT_ASSET_BASE): string {
-  const staticUrls = staticSitemapUrls(origin, assetBase);
+  const community = isCommunityOrigin(origin);
+  const site = origin.replace(/\/$/, "");
+  const staticUrls = community ? [{ loc: `${site}/` }] : staticSitemapUrls(origin, assetBase);
   const toonUrls = toonSitemapUrls(
     origin,
     payload.series.map((s) => ({
@@ -160,7 +207,8 @@ export function renderCatalogSitemap(origin: string, payload: CatalogPayload, as
       slug: ep.slug,
       coverUrl: ep.coverUrl,
       title: ep.title,
-    }))
+    })),
+    { locales: !community }
   );
   const seen = new Set<string>();
   const urls: SitemapUrl[] = [];

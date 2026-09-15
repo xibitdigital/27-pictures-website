@@ -53,4 +53,19 @@ describe("renderCatalogSitemap", () => {
     expect(xml).not.toContain("/toons/editor");
     expect(xml).not.toContain("/toons/redsmile-static/");
   });
+
+  it("omits studio pages on the creator host", () => {
+    const xml = renderCatalogSitemap("https://toons.twentyseven.pictures", {
+      ...payload,
+      series: [{ ...payload.series[0], ownerUsername: "marco" }],
+    });
+    expect(xml).toContain("<loc>https://toons.twentyseven.pictures/</loc>");
+    expect(xml).not.toContain("/marco/");
+    expect(xml).toContain("<loc>https://toons.twentyseven.pictures/toons/redsmile/</loc>");
+    expect(xml).not.toContain("/de/toons/redsmile/");
+    expect(xml).not.toContain("/cosplay/");
+    const txt = renderLlmsTxt("https://toons.twentyseven.pictures", payload);
+    expect(txt).toContain("# FlipFrame");
+    expect(txt).not.toContain("/cosplay/");
+  });
 });

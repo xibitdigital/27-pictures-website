@@ -9,6 +9,18 @@ export type DescriptionMap = Record<CaptionLang, string>;
 
 export type ToonStatus = "draft" | "staging" | "published";
 
+/** Public catalog a series (or ungrouped toon) is allowed to appear on.
+ * Grouped episodes follow the series — they do not pick a site of their own. */
+export const PUBLISH_SITES = ["studio", "community"] as const;
+export type PublishSite = (typeof PUBLISH_SITES)[number];
+
+export function parsePublishSite(raw: unknown, fallback: PublishSite = "studio"): PublishSite {
+  if (raw == null || raw === "") return fallback;
+  const s = String(raw).trim().toLowerCase();
+  if (s === "studio" || s === "community") return s;
+  return fallback;
+}
+
 export type UserRole = "admin" | "editor";
 
 export interface EditorUser {
@@ -141,6 +153,8 @@ export interface ToonRecord {
   seriesKey?: string | null;
   episodeN?: number | null;
   ownerId?: string | null;
+  /** Effective catalog: series site when grouped, else this toon's own flag. */
+  publishSite?: PublishSite;
   /** Series watermark PNG — Layout studio overlay. Empty/null when the series has none. */
   watermarkUrl?: string | null;
   pages: PageRecord[];
@@ -356,6 +370,7 @@ export interface SeriesOption {
   generate?: SeriesGenerateConfig;
   ownerId?: string | null;
   editorIds?: string[];
+  publishSite?: PublishSite;
   /** Optional PNG (with transparency) composited onto the bottom-right corner of every *page*
    * this series stores (generate, upload, or replace — generatePage.ts / putPageAsset toWebp
    * watermark). Layout region/area fills are left clean; the mark is for the page, not each
@@ -375,6 +390,7 @@ export interface SeriesInput {
   generate?: Partial<SeriesGenerateConfig> | null;
   /** Only honoured server-side when the caller is admin. */
   editorIds?: string[];
+  publishSite?: PublishSite;
 }
 
 export interface ToonListItem {
@@ -389,6 +405,7 @@ export interface ToonListItem {
   seriesKey?: string | null;
   episodeN?: number | null;
   ownerId?: string | null;
+  publishSite?: PublishSite;
   updatedAt?: string | null;
 }
 
@@ -417,6 +434,8 @@ export interface ToonMetaInput {
   status?: ToonStatus;
   seriesKey?: string | null;
   episodeN?: number | null;
+  /** Ignored when `seriesKey` is set — the series owns the catalog. */
+  publishSite?: PublishSite;
 }
 
 export interface InviteUserInput {

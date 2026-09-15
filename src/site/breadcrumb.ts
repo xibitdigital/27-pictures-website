@@ -14,8 +14,20 @@ export function toonTrail(opts: {
   locale: Locale;
   series?: { title: string; hubUrl: string | null };
   episodeName?: string;
+  community?: boolean;
 }): BreadcrumbItem[] {
   const ui = UI[opts.locale];
+  if (opts.community) {
+    const home: BreadcrumbItem = { href: "/", name: ui.toons };
+    if (opts.episodeName) {
+      const items: BreadcrumbItem[] = [home];
+      if (opts.series?.hubUrl) items.push({ href: opts.series.hubUrl, name: opts.series.title });
+      items.push({ name: opts.episodeName });
+      return items;
+    }
+    if (opts.series) return [home, { name: opts.series.title }];
+    return [{ name: ui.toons }];
+  }
   const home: BreadcrumbItem = { href: localePath("/", opts.locale), name: ui.home };
   if (opts.episodeName) {
     const items: BreadcrumbItem[] = [home, { href: localePath("/toons/", opts.locale), name: ui.toons }];

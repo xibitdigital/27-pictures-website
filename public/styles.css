@@ -2498,6 +2498,24 @@ button:focus-visible {
   border-color: var(--red-smile);
 }
 
+.community-editors {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+
+.community-editors a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.community-editors a:hover {
+  color: var(--text);
+}
+
 /* The rule belongs above the section heading, not below it: it separates this
    block from what came before, and sitting under the label made it read as
    the first row's own divider. */

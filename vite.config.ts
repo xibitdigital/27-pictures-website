@@ -156,7 +156,7 @@ export default defineConfig({
     // All interfaces + custom hosts name (see /etc/hosts → local.twentyseven.test)
     host: true,
     // HTTPS only when DEV_HTTPS=1 injects @vitejs/plugin-basic-ssl certs
-    allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1"],
+    allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1", "toons.localhost"],
     fs: { allow: [__dirname] },
     // Editor API: same-origin in `make dev` so login is not a CORS fetch to :8787.
     proxy: {
@@ -170,7 +170,7 @@ export default defineConfig({
   preview: {
     port: 4173,
     host: true,
-    allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1"],
+    allowedHosts: ["local.twentyseven.test", "localhost", "127.0.0.1", "toons.localhost"],
     proxy: {
       "/__editor-api": {
         target: process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787",

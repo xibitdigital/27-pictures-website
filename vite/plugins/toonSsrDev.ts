@@ -11,7 +11,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Plugin } from "vite";
-import { matchToonRoute, parseCatalog, type CatalogPayload } from "../../src/site/catalogRender";
+import {
+  matchToonRoute,
+  parseCatalog,
+  payloadForEditor,
+  ownerUsernames,
+  type CatalogPayload,
+} from "../../src/site/catalogRender";
+import { isCommunityHost } from "../../src/site/communityHost";
+import { applyCommunityHomeHtml, communityRedirect, communityUsername } from "../../src/site/communityPages";
 import { applyHubHtml, applyReaderHtml } from "../../src/site/toonPages";
 import { injectToonHtml, resolveStagingReader } from "../../functions/toonSsr";
 import { DEFAULT_ASSET_BASE, renderCatalogSitemap, renderLlmsTxt } from "../../src/site/crawlerDocs";
@@ -23,7 +31,7 @@ const CATALOG_TTL_MS = 60_000;
 /** `_hub` / `_reader` shells — SSR is applied after Vite HTML transform. */
 export function isToonShellPath(urlPath: string): boolean {
   const p = urlPath.replace(/\\/g, "/");
-  return p.includes("/toons/_hub/") || p.includes("/toons/_reader/");
+  return p.includes("/toons/_hub/") || p.includes("/toons/_reader/") || p.includes("/toons/_community/");
 }
 
 export function createDevCatalogLoader(opts?: {
@@ -32,29 +40,32 @@ export function createDevCatalogLoader(opts?: {
 }): (site: string) => Promise<CatalogPayload | null> {
   const ttl = opts?.ttlMs ?? CATALOG_TTL_MS;
   const fetchImpl = opts?.fetchImpl ?? fetch;
-  let cache: { at: number; payload: CatalogPayload } | null = null;
-  let inflight: Promise<CatalogPayload | null> | null = null;
+  const caches = new Map<string, { at: number; payload: CatalogPayload }>();
+  const inflight = new Map<string, Promise<CatalogPayload | null>>();
 
   return (site: string) => {
-    if (cache && Date.now() - cache.at < ttl) return Promise.resolve(cache.payload);
-    if (inflight) return inflight;
-    inflight = (async () => {
+    const hit = caches.get(site);
+    if (hit && Date.now() - hit.at < ttl) return Promise.resolve(hit.payload);
+    const pending = inflight.get(site);
+    if (pending) return pending;
+    const job = (async () => {
       const target = process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787";
       try {
         const res = await fetchImpl(`${target}/catalog?site=${encodeURIComponent(site)}`, {
           headers: { Accept: "application/json" },
         });
-        if (!res.ok) return cache?.payload ?? null;
+        if (!res.ok) return caches.get(site)?.payload ?? null;
         const payload = parseCatalog(await res.json());
-        if (payload) cache = { at: Date.now(), payload };
+        if (payload) caches.set(site, { at: Date.now(), payload });
         return payload;
       } catch {
-        return cache?.payload ?? null;
+        return caches.get(site)?.payload ?? null;
       } finally {
-        inflight = null;
+        inflight.delete(site);
       }
     })();
-    return inflight;
+    inflight.set(site, job);
+    return job;
   };
 }
 
@@ -77,39 +88,78 @@ export function toonSsrDevPlugin(): Plugin {
       },
     },
     configureServer(server) {
-      const site = () => `http://127.0.0.1:${server.config.server.port ?? 5173}`;
+      const port = () => server.config.server.port ?? 5173;
+      const siteFor = (req: { headers: { host?: string } }) => {
+        const host = String(req.headers.host || "")
+          .split(":")[0]
+          .toLowerCase();
+        if (isCommunityHost(host)) return `http://${host}:${port()}`;
+        return `http://127.0.0.1:${port()}`;
+      };
       server.middlewares.use(async (req, res, next) => {
         if (req.method !== "GET" && req.method !== "HEAD") return next();
         const url = (req.url || "").split("?")[0];
+        const site = siteFor(req);
+        const community = isCommunityHost(new URL(site).hostname);
+        const requestUrl = `${site}${url.endsWith("/") || url.includes(".") ? url : `${url}/`}`;
+        if (community) {
+          const dest = communityRedirect(requestUrl);
+          if (dest) {
+            res.statusCode = 301;
+            res.setHeader("Location", dest);
+            res.end();
+            return;
+          }
+        }
         if (url === "/llms.txt" || url === "/sitemap.xml") {
-          const payload = await loadCatalog(site());
+          const payload = await loadCatalog(site);
           if (!payload) return next();
           if (url === "/llms.txt") {
             res.statusCode = 200;
             res.setHeader("Content-Type", "text/plain; charset=utf-8");
-            res.end(renderLlmsTxt(site(), payload));
+            res.end(renderLlmsTxt(site, payload));
             return;
           }
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/xml; charset=utf-8");
-          res.end(renderCatalogSitemap(site(), payload, process.env.VITE_ASSET_BASE || DEFAULT_ASSET_BASE));
+          res.end(renderCatalogSitemap(site, payload, process.env.VITE_ASSET_BASE || DEFAULT_ASSET_BASE));
           return;
         }
         const { path: sitePath } = splitLocale(url);
-        if (
-          !sitePath.startsWith("/toons/") ||
-          sitePath.startsWith("/toons/editor") ||
-          sitePath.startsWith("/toons/_")
-        ) {
-          return next();
-        }
-        if (sitePath === "/toons/") return next();
         try {
-          const payload = await loadCatalog(site());
+          if (community) {
+            const homePath = sitePath === "/" || sitePath === "";
+            const editor = homePath ? null : communityUsername(url);
+            if (homePath || editor) {
+              const catalog = (await loadCatalog(site)) || { series: [], ungrouped: [] };
+              if (editor) {
+                const slice = payloadForEditor(catalog, editor);
+                const known = ownerUsernames(catalog).some((name) => name.toLowerCase() === editor);
+                if (!known && !slice.series.length && !slice.ungrouped.length) return next();
+              }
+              const file = path.join(srcDir, "toons/_community/index.html");
+              if (!fs.existsSync(file)) return next();
+              const raw = fs.readFileSync(file, "utf8");
+              const transformed = await server.transformIndexHtml("/toons/_community/index.html", raw);
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "text/html; charset=utf-8");
+              res.end(applyCommunityHomeHtml(transformed, catalog, requestUrl, editor || undefined));
+              return;
+            }
+          }
+          if (
+            !sitePath.startsWith("/toons/") ||
+            sitePath.startsWith("/toons/editor") ||
+            sitePath.startsWith("/toons/_")
+          ) {
+            return next();
+          }
+          if (sitePath === "/toons/") return next();
+          const payload = await loadCatalog(site);
           const route = payload ? matchToonRoute(url, payload) : null;
           const editorApi = process.env.VITE_EDITOR_PROXY_TARGET || "http://127.0.0.1:8787";
           const unlisted =
-            !route || (route.kind !== "hub" && route.kind !== "reader")
+            !community && (!route || (route.kind !== "hub" && route.kind !== "reader"))
               ? await resolveStagingReader(url, fetch, editorApi)
               : null;
           if (route?.kind !== "hub" && route?.kind !== "reader" && !unlisted) return next();
@@ -118,7 +168,6 @@ export function toonSsrDevPlugin(): Plugin {
           if (!fs.existsSync(file)) return next();
           const raw = fs.readFileSync(file, "utf8");
           const transformed = await server.transformIndexHtml(`/${tplRel}`, raw);
-          const requestUrl = `${site()}${url.endsWith("/") ? url : `${url}/`}`;
           const html =
             route?.kind === "hub"
               ? applyHubHtml(transformed, route.series, requestUrl)

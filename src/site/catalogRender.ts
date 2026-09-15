@@ -5,6 +5,7 @@
  */
 import { pickDescription, type DescriptionMap } from "../toons/editor/types";
 import { breadcrumbListJsonLd, toonTrail } from "./breadcrumb";
+import { isCommunityHost } from "./communityHost";
 import { localePath, splitLocale, UI, withCaptionLang, type Locale } from "./i18n";
 
 export const APEX = "https://twentyseven.pictures";
@@ -24,6 +25,7 @@ export interface CatalogEpisode {
   assetPageDir?: string | null;
   designWidth?: number | null;
   designHeight?: number | null;
+  ownerUsername?: string | null;
 }
 
 export interface CatalogSeries {
@@ -35,6 +37,8 @@ export interface CatalogSeries {
   coverUrl: string | null;
   hubUrl: string | null;
   episodes: CatalogEpisode[];
+  /** Public editor username; omitted for house-owned series. */
+  ownerUsername?: string | null;
 }
 
 export interface CatalogPayload {
@@ -149,18 +153,34 @@ export function absApex(path: string): string {
   return `${APEX}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+export function originFromRequest(requestUrl: string): string {
+  try {
+    const url = new URL(requestUrl);
+    if (isCommunityHost(url.hostname)) return url.origin;
+  } catch {
+    /* fall through */
+  }
+  return APEX;
+}
+
+export function absSite(path: string, origin: string): string {
+  if (path.startsWith("http")) return path;
+  return `${origin.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
 export function seriesJsonLd(
   series: CatalogSeries,
-  opts: { pageUrl: string; locale: Locale }
+  opts: { pageUrl: string; locale: Locale; origin?: string }
 ): { "@context": string; "@graph": Record<string, unknown>[] } {
   const page = opts.pageUrl.endsWith("/") ? opts.pageUrl : `${opts.pageUrl}/`;
+  const origin = opts.origin || APEX;
   const desc = cardDescription(series, opts.locale);
   const locale = opts.locale;
   const hasPart = series.episodes.map((ep) => {
     const part: Record<string, unknown> = {
       "@type": "CreativeWork",
       name: ep.n != null ? `Episode ${ep.n} — ${cardTitle(ep, locale)}` : cardTitle(ep, locale),
-      url: absApex(ep.readerUrl || `/toons/${ep.slug}/`),
+      url: absSite(ep.readerUrl || `/toons/${ep.slug}/`, origin),
     };
     if (ep.pageCount > 0) part.numberOfPages = ep.pageCount;
     return part;
@@ -187,12 +207,12 @@ export function seriesJsonLd(
         url: page,
         name: `${series.title} | 27 Pictures`,
         ...(desc ? { description: desc } : {}),
-        isPartOf: { "@id": `${APEX}/#website` },
+        isPartOf: { "@id": `${origin}/#website` },
         publisher: { "@id": `${APEX}/#organization` },
         inLanguage: locale,
         mainEntity: { "@id": `${page}#series` },
       },
-      breadcrumbListJsonLd(toonTrail({ locale, series }), page, APEX),
+      breadcrumbListJsonLd(toonTrail({ locale, series, community: origin !== APEX }), page, origin),
       seriesNode,
     ],
   };
@@ -200,14 +220,15 @@ export function seriesJsonLd(
 
 export function catalogJsonLd(
   payload: CatalogPayload,
-  opts: { pageUrl: string; locale: Locale }
+  opts: { pageUrl: string; locale: Locale; origin?: string }
 ): { "@context": string; "@graph": Record<string, unknown>[] } {
   const page = opts.pageUrl.endsWith("/") ? opts.pageUrl : `${opts.pageUrl}/`;
+  const origin = opts.origin || APEX;
   const locale = opts.locale;
   const ui = UI[locale];
   const items = [
     ...payload.series.map((s, i) => {
-      const hub = absApex(localePath(s.hubUrl || `/toons/${s.key}/`, locale));
+      const hub = absSite(localePath(s.hubUrl || `/toons/${s.key}/`, locale), origin);
       return {
         "@type": "ListItem",
         position: i + 1,
@@ -223,7 +244,7 @@ export function catalogJsonLd(
       };
     }),
     ...payload.ungrouped.map((ep, i) => {
-      const url = absApex(ep.readerUrl || `/toons/${ep.slug}/`);
+      const url = absSite(ep.readerUrl || `/toons/${ep.slug}/`, origin);
       return {
         "@type": "ListItem",
         position: payload.series.length + i + 1,
@@ -245,15 +266,15 @@ export function catalogJsonLd(
         "@type": "CollectionPage",
         "@id": `${page}#webpage`,
         url: page,
-        name: `${ui.toons} | 27 Pictures`,
+        name: origin === APEX ? `${ui.toons} | 27 Pictures` : `${ui.toons} | FlipFrame`,
         headline: ui.toons,
         inLanguage: locale,
-        isPartOf: { "@id": `${APEX}/#website` },
+        isPartOf: { "@id": `${origin}/#website` },
         about: { "@id": `${APEX}/#organization` },
         publisher: { "@id": `${APEX}/#organization` },
         mainEntity: { "@id": `${page}#itemlist` },
       },
-      breadcrumbListJsonLd(toonTrail({ locale }), page, APEX),
+      breadcrumbListJsonLd(toonTrail({ locale, community: origin !== APEX }), page, origin),
       {
         "@type": "ItemList",
         "@id": `${page}#itemlist`,
@@ -271,6 +292,27 @@ export function parseCatalog(body: unknown): CatalogPayload | null {
   const series = Array.isArray(rec.series) ? (rec.series as CatalogSeries[]) : [];
   const ungrouped = Array.isArray(rec.ungrouped) ? (rec.ungrouped as CatalogEpisode[]) : [];
   return { series, ungrouped };
+}
+
+export function ownerUsernames(payload: CatalogPayload): string[] {
+  const names = new Set<string>();
+  for (const series of payload.series) {
+    const name = series.ownerUsername?.trim();
+    if (name) names.add(name);
+  }
+  for (const ep of payload.ungrouped) {
+    const name = ep.ownerUsername?.trim();
+    if (name) names.add(name);
+  }
+  return [...names].sort((a, b) => a.localeCompare(b));
+}
+
+export function payloadForEditor(payload: CatalogPayload, username: string): CatalogPayload {
+  const name = username.trim().toLowerCase();
+  return {
+    series: payload.series.filter((s) => (s.ownerUsername || "").toLowerCase() === name),
+    ungrouped: payload.ungrouped.filter((ep) => (ep.ownerUsername || "").toLowerCase() === name),
+  };
 }
 
 export function seriesForPath(pathname: string, payload: CatalogPayload): CatalogSeries | undefined {

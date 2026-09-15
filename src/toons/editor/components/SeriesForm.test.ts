@@ -226,6 +226,27 @@ describe("SeriesForm", () => {
     expect(save).toHaveBeenCalledWith(expect.objectContaining({ editorIds: ["e1"] }));
   });
 
+  it("sends the publish-on destination", async () => {
+    const save = vi.spyOn(api, "saveSeries").mockResolvedValue({ key: "demo", title: "Demo" });
+    const wrapper = mount(SeriesForm, {
+      global: {
+        stubs: { EditorBar: true, ToonCard: true, EditorSession: true },
+        provide: {
+          [EDITOR_USER_KEY as symbol]: ref({ id: "u1", email: "a@example.com", username: "a", role: "admin" as const }),
+        },
+      },
+      attachTo: document.body,
+    });
+    await flushPromises();
+    await wrapper.get('input[name="title"]').setValue("Demo");
+    await wrapper.get('input[name="key"]').setValue("demo");
+    expect(wrapper.get('button[name="publish-site"]').text()).toBe("27 Pictures");
+    await pickOption("publish-site", "Creator site");
+    await wrapper.get("form").trigger("submit");
+    expect(save).toHaveBeenCalledWith(expect.objectContaining({ publishSite: "community" }));
+    wrapper.unmount();
+  });
+
   it("links empty-roster copy to the invite form", async () => {
     vi.spyOn(api, "listUsers").mockResolvedValue([]);
     const wrapper = mount(SeriesForm, {

@@ -28,6 +28,14 @@ function isReaderLookupPath(pathname: string): boolean {
   return p.slice("/toons/".length).replace(/\/$/, "").includes("/");
 }
 import { splitLocale, UI } from "../src/site/i18n";
+import { isCommunityHost } from "../src/site/communityHost";
+import {
+  applyCommunityHomeHtml,
+  COMMUNITY_TEMPLATE_PATH,
+  communityRedirect,
+  communityUsername,
+} from "../src/site/communityPages";
+import { ownerUsernames, payloadForEditor } from "../src/site/catalogRender";
 import { applyHubHtml, applyReaderHtml, HUB_TEMPLATE_PATH, READER_TEMPLATE_PATH } from "../src/site/toonPages";
 
 export const EDITOR_API = "https://toon-editor.sangalli-marco.workers.dev";
@@ -127,7 +135,11 @@ export function injectToonHtml(html: string, payload: CatalogPayload, requestUrl
       breadcrumbNavHtml(toonTrail({ locale }), UI[locale].breadcrumb)
     );
     if (html.includes("data-toon-jsonld")) {
-      out = replaceScript(out, "data-toon-jsonld", catalogJsonLd(payload, { pageUrl, locale }));
+      out = replaceScript(
+        out,
+        "data-toon-jsonld",
+        catalogJsonLd(payload, { pageUrl, locale, origin: new URL(requestUrl).origin })
+      );
     }
   }
 
@@ -165,19 +177,33 @@ async function loadTemplate(
   }
 }
 
+function redirectTo(location: string, response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set("Location", location);
+  headers.set("Cache-Control", "public, max-age=300");
+  return new Response(null, { status: 301, headers });
+}
+
 export async function withToonSsr(
   request: Request,
   response: Response,
   fetcher: typeof fetch = fetch,
   assets?: AssetStore
 ): Promise<Response> {
-  const pathname = new URL(request.url).pathname;
+  const requestUrl = new URL(request.url);
+  const pathname = requestUrl.pathname;
   const { path } = splitLocale(pathname);
-  if (!path.startsWith("/toons") || path.startsWith("/toons/editor") || path.startsWith("/toons/_")) {
-    return response;
+  const community = isCommunityHost(requestUrl.hostname);
+
+  if (community) {
+    const dest = communityRedirect(request.url);
+    if (dest) return redirectTo(dest, response);
   }
 
-  const origin = new URL(request.url).origin;
+  const studioToonPath = path.startsWith("/toons") && !path.startsWith("/toons/editor") && !path.startsWith("/toons/_");
+  if (!community && !studioToonPath) return response;
+
+  const origin = requestUrl.origin;
   const payload = await loadCatalogForOrigin(origin, fetcher);
   const type = response.headers.get("content-type") || "";
   const htmlOk = type.includes("text/html");
@@ -187,6 +213,22 @@ export async function withToonSsr(
     headers.set("Cache-Control", "public, max-age=120, stale-while-revalidate=600");
     return new Response(body, { status, headers });
   };
+
+  if (community) {
+    const homePath = path === "/" || path === "";
+    const editor = homePath ? null : communityUsername(pathname);
+    if (homePath || editor) {
+      const catalog = payload || { series: [], ungrouped: [] };
+      if (editor) {
+        const slice = payloadForEditor(catalog, editor);
+        const known = ownerUsernames(catalog).some((name) => name.toLowerCase() === editor);
+        if (!known && !slice.series.length && !slice.ungrouped.length) return response;
+      }
+      const tpl = await loadTemplate(request, COMMUNITY_TEMPLATE_PATH, assets, fetcher);
+      if (!tpl) return response;
+      return replay(applyCommunityHomeHtml(tpl, catalog, request.url, editor || undefined));
+    }
+  }
 
   if (isToonIndexPath(pathname) && response.status === 200 && htmlOk) {
     if (!payload) return response;
@@ -207,6 +249,8 @@ export async function withToonSsr(
     if (!tpl) return response;
     return replay(applyReaderHtml(tpl, route.episode, route.series, request.url));
   }
+
+  if (community) return response;
 
   const unlisted = await resolveStagingReader(pathname, fetcher);
   if (!unlisted) return response;

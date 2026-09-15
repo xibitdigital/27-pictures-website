@@ -24,6 +24,8 @@ import {
   emptyDescriptionMap,
   GENERATE_PROVIDERS,
   parseDescriptionMap,
+  parsePublishSite,
+  PUBLISH_SITE_OPTIONS,
   RUNWARE_MODELS,
   visibilityFromStatus,
   visibilityLabel,
@@ -32,6 +34,7 @@ import {
   type EditorUser,
   type GenerateProvider,
   type PromptCandidate,
+  type PublishSite,
   type RunComfyModel,
   type SeriesFlowSlot,
   type SeriesOption,
@@ -69,6 +72,7 @@ const title = ref("");
 const lastDerivedKey = ref("");
 const tagline = ref("");
 const hubUrl = ref("");
+const publishSite = ref<PublishSite>(isAdmin.value ? "studio" : "community");
 const sort = ref("0");
 const descriptions = reactive<DescriptionMap>(emptyDescriptionMap());
 const coverPreview = ref("");
@@ -207,6 +211,7 @@ async function loadSeries(seriesKey: string): Promise<void> {
     title.value = body.series.title;
     tagline.value = body.series.tagline || "";
     hubUrl.value = body.series.hubUrl || `/toons/${body.series.key}/`;
+    publishSite.value = parsePublishSite(body.series.publishSite, isAdmin.value ? "studio" : "community");
     sort.value = String(body.series.sort ?? 0);
     Object.assign(descriptions, parseDescriptionMap(body.series.descriptions, body.series.description || ""));
     coverPreview.value = body.series.coverUrl || "";
@@ -483,6 +488,7 @@ async function onSubmit(ev: Event): Promise<void> {
       description: desc.en,
       descriptions: desc,
       hubUrl: normaliseHubUrl(hubUrl.value) || `/toons/${seriesKey}/`,
+      publishSite: publishSite.value,
       sort: Number(sort.value) || 0,
       generate: generatePayload(),
       ...(isAdmin.value ? { editorIds: selectedEditorIds.value } : {}),
@@ -540,6 +546,21 @@ async function onSubmit(ev: Event): Promise<void> {
             Hub URL
             <input v-model="hubUrl" name="hub-url" placeholder="/toons/erin-and-the-goblins/" />
           </label>
+          <label>
+            Publish on
+            <EditorSelect v-model="publishSite" name="publish-site">
+              <EditorSelectItem v-for="opt in PUBLISH_SITE_OPTIONS" :key="opt.value" :value="opt.value">{{
+                opt.label
+              }}</EditorSelectItem>
+            </EditorSelect>
+          </label>
+          <p class="editor-muted editor-form-span">
+            {{
+              publishSite === "community"
+                ? "Public episodes appear on the creator site, not on twentyseven.pictures/toons/."
+                : "Public episodes appear on the 27 Pictures catalog at /toons/."
+            }}
+          </p>
           <label>
             Sort
             <input v-model="sort" type="number" name="sort" step="1" />

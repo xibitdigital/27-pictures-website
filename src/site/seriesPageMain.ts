@@ -6,6 +6,7 @@
 import { createApp } from "vue";
 import SiteApp from "./SiteApp.vue";
 import { vMagnetic } from "./directives/magnetic";
+import { isCommunityHost } from "./communityHost";
 import { rememberDocumentLocale } from "./i18n";
 import { initEpisodeVotes } from "./seriesCards";
 
@@ -27,7 +28,8 @@ if (episodeOne && new URLSearchParams(window.location.search).has("page")) {
   window.location.replace(`${episodeOne}${window.location.search}${window.location.hash}`);
 }
 
-const app = createApp(SiteApp, { page: "toons" });
+const page = isCommunityHost(typeof location !== "undefined" ? location.hostname : "") ? "community" : "toons";
+const app = createApp(SiteApp, { page });
 app.directive("magnetic", vMagnetic);
 app.mount("#site-app");
 

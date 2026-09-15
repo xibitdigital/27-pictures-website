@@ -7,7 +7,7 @@ import { documentLocale, isLocalizedPath, LOCALES, LOCALE_LABELS, LOCALE_NAMES, 
 
 const props = withDefaults(
   defineProps<{
-    page?: "home" | "toons" | "cosplay" | "horror-shorts" | "watch";
+    page?: "home" | "toons" | "cosplay" | "horror-shorts" | "watch" | "community";
   }>(),
   { page: "home" }
 );
@@ -33,7 +33,7 @@ const section = (hash: string) => (props.page === "home" ? hash : localePath(`/$
 
 const currentPath = typeof window === "undefined" ? "/" : window.location.pathname;
 /** Only pages with a real translated document get a language switcher. */
-const showLangs = isLocalizedPath(currentPath);
+const showLangs = props.page !== "community" && isLocalizedPath(currentPath);
 
 /** Every locale, including this one — the current code is the selected chip. */
 const languages = computed(() =>
@@ -53,15 +53,23 @@ const languages = computed(() =>
  * localePath(); this one was simply missed, and a Vue component's hrefs are
  * never touched by the locale-page generator that rewrites HTML templates.
  */
-const homeHref = localePath("/", locale);
+const homeHref = props.page === "community" ? "/" : localePath("/", locale);
 
-const links = computed(() => [
-  { href: localePath("/horror-shorts/", locale), label: t.darkroom, current: props.page === "horror-shorts" },
-  { href: localePath("/watch/", locale), label: t.watch, current: props.page === "watch" },
-  { href: localePath("/toons/", locale), label: t.toons, current: props.page === "toons" },
-  { href: localePath("/cosplay/", locale), label: t.cosplay, current: props.page === "cosplay" },
-  { href: section("#contact"), label: t.contact },
-]);
+const links = computed(() => {
+  if (props.page === "community") {
+    return [
+      { href: "/", label: t.toons, current: true },
+      { href: "https://twentyseven.pictures/", label: "27 Pictures" },
+    ];
+  }
+  return [
+    { href: localePath("/horror-shorts/", locale), label: t.darkroom, current: props.page === "horror-shorts" },
+    { href: localePath("/watch/", locale), label: t.watch, current: props.page === "watch" },
+    { href: localePath("/toons/", locale), label: t.toons, current: props.page === "toons" },
+    { href: localePath("/cosplay/", locale), label: t.cosplay, current: props.page === "cosplay" },
+    { href: section("#contact"), label: t.contact },
+  ];
+});
 
 watch(menuOpen, (open) => {
   document.body.style.overflow = open ? "hidden" : "";

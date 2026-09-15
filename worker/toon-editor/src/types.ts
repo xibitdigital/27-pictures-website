@@ -3,7 +3,14 @@
  * The JSON contract lives in `apiTypes.ts` and is imported by the Vue studio.
  */
 
-import type { DescriptionMap, RegionBorderStyle, RegionGeometry, SeriesGenerateConfig, UserRole } from "./apiTypes";
+import type {
+  DescriptionMap,
+  PublishSite,
+  RegionBorderStyle,
+  RegionGeometry,
+  SeriesGenerateConfig,
+  UserRole,
+} from "./apiTypes";
 
 export type {
   BubbleRecord,
@@ -26,9 +33,10 @@ export type {
   ToonMetaInput,
   ToonRecord,
   ToonStatus,
+  PublishSite,
   UserRole,
 } from "./apiTypes";
-export { DESC_LANGS, emptyDescriptionMap, parseDescriptionMap, pickDescription } from "./apiTypes";
+export { DESC_LANGS, emptyDescriptionMap, parseDescriptionMap, parsePublishSite, pickDescription } from "./apiTypes";
 
 export interface AiBinding {
   run(
@@ -95,6 +103,8 @@ export interface ToonRow {
   series_key?: string | null;
   episode_n?: number | null;
   owner_id?: string | null;
+  publish_site?: string | null;
+  series_publish_site?: string | null;
   page_count?: number;
   created_at?: string;
   updated_at?: string;
@@ -164,6 +174,7 @@ export interface SeriesRow {
   toon_count?: number;
   owner_id?: string | null;
   editor_ids?: string | null;
+  publish_site?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -269,6 +280,7 @@ export interface SeriesMeta {
   hubUrl?: string | null;
   sort?: number;
   generate?: Partial<SeriesGenerateConfig> | null;
+  publishSite?: PublishSite;
 }
 
 export type CorsHeaders = Record<string, string>;

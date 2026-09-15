@@ -184,7 +184,8 @@ export function toonSitemapUrls(
     title: string;
     updatedAt?: string | null;
     status?: string | null;
-  }[]
+  }[],
+  opts?: { locales?: boolean }
 ): SitemapUrl[] {
   const site = origin.replace(/\/$/, "");
   const urls: SitemapUrl[] = [];
@@ -203,7 +204,8 @@ export function toonSitemapUrls(
     const image: SitemapImage | undefined = row.coverUrl
       ? { loc: row.coverUrl, title: row.title, caption: row.title }
       : undefined;
-    for (const locale of SITEMAP_LOCALES) {
+    const locales = opts?.locales === false ? (["en"] as const) : SITEMAP_LOCALES;
+    for (const locale of locales) {
       add(localePath(hub, locale), lastmodDay(row.updatedAt), image);
     }
   }

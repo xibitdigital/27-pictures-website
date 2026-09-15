@@ -6,6 +6,7 @@ import { breadcrumbListJsonLd, breadcrumbNavHtml, toonTrail } from "./breadcrumb
 import {
   APEX,
   absApex,
+  absSite,
   assetDirForEpisode,
   cardDescription,
   cardTitle,
@@ -14,6 +15,7 @@ import {
   episodeNavFromCatalog,
   episodesHeading,
   esc,
+  originFromRequest,
   readerTokens,
   seriesJsonLd,
   type CatalogEpisode,
@@ -75,13 +77,20 @@ function replaceHreflang(html: string, pagePath: string): string {
   return html.replace("</head>", `    ${hreflangBlock(pagePath)}\n  </head>`);
 }
 
-export function hubMainHtml(series: CatalogSeries, locale: Locale): string {
+export function hubMainHtml(series: CatalogSeries, locale: Locale, community = false): string {
   const copy = localizeHubCopy(HUB_COPY[locale], locale);
   const ui = UI[locale];
   const lead = cardDescription(series, locale);
   const heading = episodesHeading(series.episodes.length, locale);
   const cards = series.episodes.map((ep) => episodeCardHtml(ep, locale)).join("\n");
-  const toonsHref = localePath("/toons/", locale);
+  const toonsHref = community ? "/" : localePath("/toons/", locale);
+  const footerLinks = community
+    ? `<a href="/">${esc(copy.footerToons)}</a>
+          <a href="${APEX}/">27 Pictures</a>`
+    : `<a href="${esc(toonsHref)}">${esc(copy.footerToons)}</a>
+          <a href="${esc(localePath("/horror-shorts/", locale))}">${esc(copy.footerDarkroom)}</a>
+          <a href="${esc(localePath("/watch/", locale))}">${esc(copy.footerWatch)}</a>
+          <a href="${esc(localePath("/#contact", locale))}">${esc(copy.footerContact)}</a>`;
   return `<main class="page series-page" id="main-content" role="main">
       ${breadcrumbNavHtml(toonTrail({ locale, series }), ui.breadcrumb)}
       <div data-series-page>
@@ -109,10 +118,7 @@ ${cards}
       <footer class="page-footer series-footer">
         <p>${esc(copy.footer)}</p>
         <nav class="page-footer-nav series-footer-nav" aria-label="${esc(copy.footerNav)}">
-          <a href="${esc(toonsHref)}">${esc(copy.footerToons)}</a>
-          <a href="${esc(localePath("/horror-shorts/", locale))}">${esc(copy.footerDarkroom)}</a>
-          <a href="${esc(localePath("/watch/", locale))}">${esc(copy.footerWatch)}</a>
-          <a href="${esc(localePath("/#contact", locale))}">${esc(copy.footerContact)}</a>
+          ${footerLinks}
         </nav>
       </footer>
     </main>`;
@@ -121,9 +127,11 @@ ${cards}
 export function applyHubHtml(html: string, series: CatalogSeries, requestUrl: string): string {
   const { locale, path } = splitLocale(new URL(requestUrl).pathname);
   const pagePath = catalogPath(path);
-  const pageUrl = `${APEX}${localePath(pagePath, locale)}`;
+  const origin = originFromRequest(requestUrl);
+  const community = origin !== APEX;
+  const pageUrl = community ? `${origin}${pagePath}` : `${APEX}${localePath(pagePath, locale)}`;
   const lead = cardDescription(series, locale);
-  const title = `${series.title} | 27 Pictures`;
+  const title = community ? `${series.title} | FlipFrame` : `${series.title} | 27 Pictures`;
   const desc = lead;
   const ep1 = series.episodes.find((e) => e.readerUrl);
   let out = html;
@@ -132,7 +140,7 @@ export function applyHubHtml(html: string, series: CatalogSeries, requestUrl: st
   if (ep1?.readerUrl) out = replaceAttr(out, "data-episode-one", ep1.readerUrl);
   out = setTitle(out, title);
   out = setCanonical(out, pageUrl);
-  out = replaceHreflang(out, pagePath);
+  if (!community) out = replaceHreflang(out, pagePath);
   out = setMeta(out, "name", "description", desc);
   out = setMeta(out, "property", "og:url", pageUrl);
   out = setMeta(out, "property", "og:title", title);
@@ -144,17 +152,19 @@ export function applyHubHtml(html: string, series: CatalogSeries, requestUrl: st
     out = setMeta(out, "name", "twitter:image", series.coverUrl);
   }
   out = setMeta(out, "property", "og:locale", locale === "en" ? "en_US" : `${locale}_${locale.toUpperCase()}`);
-  out = replaceScript(out, "data-series-jsonld", seriesJsonLd(series, { pageUrl, locale }));
-  out = out.replace(/<main\b[^>]*>[\s\S]*?<\/main>/, hubMainHtml(series, locale));
+  out = replaceScript(out, "data-series-jsonld", seriesJsonLd(series, { pageUrl, locale, origin }));
+  out = out.replace(/<main\b[^>]*>[\s\S]*?<\/main>/, hubMainHtml(series, locale, community));
   return out;
 }
 
 export function readerJsonLd(
   ep: CatalogEpisode,
   series: CatalogSeries | undefined,
-  opts: { pageUrl: string }
+  opts: { pageUrl: string; origin?: string }
 ): { "@context": string; "@graph": Record<string, unknown>[] } {
   const page = opts.pageUrl.endsWith("/") ? opts.pageUrl : `${opts.pageUrl}/`;
+  const origin = opts.origin || APEX;
+  const community = origin !== APEX;
   const name = series ? `${series.title}: ${cardTitle(ep, "en")}` : cardTitle(ep, "en");
   const desc = cardDescription(ep, "en");
   const work: Record<string, unknown> = {
@@ -171,7 +181,7 @@ export function readerJsonLd(
   if (ep.pageCount > 0) work.numberOfPages = ep.pageCount;
   if (ep.coverUrl) work.image = { "@type": "ImageObject", url: ep.coverUrl };
   if (series?.hubUrl) {
-    work.isPartOf = { "@id": `${absApex(series.hubUrl)}#series` };
+    work.isPartOf = { "@id": `${absSite(series.hubUrl, origin)}#series` };
     if (ep.n != null) work.position = ep.n;
   }
   return {
@@ -181,9 +191,9 @@ export function readerJsonLd(
         "@type": "WebPage",
         "@id": `${page}#webpage`,
         url: page,
-        name: `${name} — Interactive Toon | 27 Pictures`,
+        name: community ? `${name} — FlipFrame` : `${name} — Interactive Toon | 27 Pictures`,
         description: desc,
-        isPartOf: { "@id": `${APEX}/#website` },
+        isPartOf: { "@id": `${origin}/#website` },
         about: { "@id": `${page}#toon` },
         inLanguage: ["en", "it", "de", "fr"],
       },
@@ -192,16 +202,17 @@ export function readerJsonLd(
           locale: "en",
           series,
           episodeName: cardTitle(ep, "en"),
+          community,
         }),
         page,
-        APEX
+        origin
       ),
       work,
     ],
   };
 }
 
-export function readerFallbackHtml(ep: CatalogEpisode, series: CatalogSeries | undefined): string {
+export function readerFallbackHtml(ep: CatalogEpisode, series: CatalogSeries | undefined, community = false): string {
   const title = series ? `${series.title}: ${cardTitle(ep, "en")}` : cardTitle(ep, "en");
   const desc = cardDescription(ep, "en");
   const pages = ep.pageCount > 0 ? `${ep.pageCount} pages` : "interactive toon";
@@ -229,9 +240,8 @@ export function readerFallbackHtml(ep: CatalogEpisode, series: CatalogSeries | u
           read.
         </p>
         <p>
-          ${hub}<a href="/toons/">All interactive toons</a> ·
-          <a href="/horror-shorts/">Horror shorts</a> ·
-          <a href="/#contact">Commission one</a>
+          ${hub}<a href="${community ? "/" : "/toons/"}">All interactive toons</a> ·
+          <a href="${APEX}/">27 Pictures</a>
         </p>
       </article>`;
 }
@@ -243,9 +253,11 @@ export function applyReaderHtml(
   requestUrl: string,
   opts?: { noindex?: boolean }
 ): string {
-  const pageUrl = `${APEX}${catalogPath(new URL(requestUrl).pathname)}`;
+  const origin = originFromRequest(requestUrl);
+  const community = origin !== APEX;
+  const pageUrl = `${origin}${catalogPath(new URL(requestUrl).pathname)}`;
   const name = series ? `${series.title}: ${cardTitle(ep, "en")}` : cardTitle(ep, "en");
-  const title = `${name} — Interactive Toon | 27 Pictures`;
+  const title = community ? `${name} — FlipFrame` : `${name} — Interactive Toon | 27 Pictures`;
   const desc = cardDescription(ep, "en");
   const tokens = readerTokens(ep);
   const dir = assetDirForEpisode(ep);
@@ -275,15 +287,15 @@ export function applyReaderHtml(
     out = setMeta(out, "property", "og:image", ep.coverUrl);
     out = setMeta(out, "name", "twitter:image", ep.coverUrl);
   }
-  out = replaceScript(out, "data-toon-jsonld", readerJsonLd(ep, series, { pageUrl }));
+  out = replaceScript(out, "data-toon-jsonld", readerJsonLd(ep, series, { pageUrl, origin }));
   const nav = episodeNavFromCatalog(series, ep.slug);
   out = replaceScript(out, "data-episode-nav", nav, "application/json");
   const trail = breadcrumbNavHtml(
-    toonTrail({ locale: "en", series, episodeName: cardTitle(ep, "en") }),
+    toonTrail({ locale: "en", series, episodeName: cardTitle(ep, "en"), community }),
     UI.en.breadcrumb
   ).replace("<nav ", "<nav data-reader-trail ");
   out = out.replace(/<nav\b[^>]*\bdata-reader-trail\b[^>]*>[\s\S]*?<\/nav>/, trail);
-  const fallback = readerFallbackHtml(ep, series);
+  const fallback = readerFallbackHtml(ep, series, community);
   out = out.replace(/<article class="reader-fallback">[\s\S]*?<\/article>/, fallback);
   return out;
 }

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>FlipFrame | Interactive Toons</title>
+    <meta
+      name="description"
+      content="FlipFrame interactive toons from independent editors — illustrated stories with voiced captions you read rather than watch."
+    />
+    <meta name="author" content="27 Pictures" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://toons.twentyseven.pictures/" />
+    <meta name="theme-color" content="#b30000" />
+    <link rel="icon" type="image/png" href="/logosquare.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://toons.twentyseven.pictures/" />
+    <meta property="og:title" content="FlipFrame | Interactive Toons" />
+    <meta
+      property="og:description"
+      content="FlipFrame interactive toons from independent editors — illustrated stories with voiced captions you read rather than watch."
+    />
+    <meta property="og:image" content="%VITE_ASSET_BASE%/card-art/toons-og.jpg" />
+    <meta property="og:site_name" content="FlipFrame" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@27pictures" />
+    <meta name="twitter:title" content="FlipFrame | Interactive Toons" />
+    <meta
+      name="twitter:description"
+      content="FlipFrame interactive toons from independent editors — illustrated stories with voiced captions you read rather than watch."
+    />
+    <meta name="twitter:image" content="%VITE_ASSET_BASE%/card-art/toons-og.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Inter:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="application/ld+json" data-toon-jsonld>
+      { "@context": "https://schema.org", "@graph": [] }
+    </script>
+  </head>
+  <body>
+    <div id="site-app"></div>
+    <main class="experiments-page" id="main-content" role="main">
+      <nav aria-label="Breadcrumb" class="page-breadcrumb" data-page-trail>
+        <ol>
+          <li aria-current="page">Interactive Toons</li>
+        </ol>
+      </nav>
+      <header class="experiments-header">
+        <h1 id="toons-title" data-community-title>Interactive Toons</h1>
+        <p class="lead" data-community-lead>
+          FlipFrame interactive toons from independent editors — you read them rather than watch.
+        </p>
+      </header>
+      <section class="toon-series series-shelf" aria-labelledby="toons-title">
+        <div class="series-grid" data-toon-catalog></div>
+      </section>
+      <section class="toon-series" aria-labelledby="community-editors-title" data-community-editors-wrap hidden>
+        <h2 id="community-editors-title" class="experiments-section-label">Creators</h2>
+        <div data-community-editors></div>
+      </section>
+      <footer class="page-footer series-footer">
+        <p>FlipFrame is the reading engine from 27 Pictures.</p>
+        <nav class="page-footer-nav series-footer-nav" aria-label="Related links">
+          <a href="https://twentyseven.pictures/">27 Pictures</a>
+        </nav>
+      </footer>
+    </main>
+    <script type="module" src="/site/communityMain.ts"></script>
+  </body>
+</html>

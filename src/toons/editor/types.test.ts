@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   parseDescriptionMap,
+  parsePublishSite,
   pickDescription,
+  publishSiteLabel,
   statusFromVisibility,
   visibilityFromStatus,
   visibilityLabel,
@@ -23,6 +25,15 @@ describe("toon visibility", () => {
     expect(statusFromVisibility("public")).toBe("published");
     expect(statusFromVisibility("staging")).toBe("staging");
     expect(statusFromVisibility("draft")).toBe("draft");
+  });
+});
+
+describe("publish site", () => {
+  it("labels studio vs creator site", () => {
+    expect(parsePublishSite("community")).toBe("community");
+    expect(publishSiteLabel("studio")).toBe("27 Pictures");
+    expect(publishSiteLabel("community")).toBe("Creator site");
+    expect(publishSiteLabel(undefined)).toBe("27 Pictures");
   });
 });
 

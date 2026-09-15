@@ -18,10 +18,13 @@ import {
   TOON_VISIBILITY,
   emptyDescriptionMap,
   parseDescriptionMap,
+  parsePublishSite,
+  PUBLISH_SITE_OPTIONS,
   visibilityFromStatus,
   statusFromVisibility,
   visibilityLabel,
   type DescriptionMap,
+  type PublishSite,
   type SeriesOption,
   type ToonRecord,
   type ToonVisibility,
@@ -47,6 +50,7 @@ const lastDerivedSlug = ref("");
 const subtitle = ref("");
 const descriptions = reactive<DescriptionMap>(emptyDescriptionMap());
 const visibility = ref<ToonVisibility>("draft");
+const publishSite = ref<PublishSite>(isAdmin.value ? "studio" : "community");
 const seriesList = ref<SeriesOption[]>([]);
 const seriesKey = ref("");
 const episodeN = ref("");
@@ -61,6 +65,39 @@ const previewPages = computed(() => existing.value?.pages.length ?? 0);
 const visibilityOptions = computed(() =>
   isAdmin.value ? TOON_VISIBILITY : TOON_VISIBILITY.filter((opt) => opt.value !== "public")
 );
+
+const selectedSeries = computed(() => seriesList.value.find((item) => item.key === seriesKey.value) || null);
+
+const effectivePublishSite = computed<PublishSite>(() => {
+  if (selectedSeries.value) return parsePublishSite(selectedSeries.value.publishSite);
+  return publishSite.value;
+});
+
+const VISIBILITY_HINT: Record<ToonVisibility, string> = {
+  public: "Public toons appear on their catalog and the reader loads from the database.",
+  staging: "Staging toons appear on staging.twentyseven.pictures and local preview. They stay hidden on production.",
+  draft: "Draft toons stay in the editor. They are hidden from the website.",
+};
+
+const visibilityHint = computed(() => VISIBILITY_HINT[visibility.value]);
+
+const publishSiteHint = computed(() => {
+  if (selectedSeries.value) {
+    if (effectivePublishSite.value === "community") {
+      return "Episodes follow the series. This one will appear on the creator site when Public.";
+    }
+    return "Episodes follow the series. This one will appear on the 27 Pictures catalog when Public.";
+  }
+  if (publishSite.value === "community") {
+    return "Public toons appear on the creator site, not on twentyseven.pictures/toons/.";
+  }
+  return "Public toons appear on the 27 Pictures catalog at /toons/.";
+});
+
+function onPublishSite(value: string): void {
+  if (seriesKey.value) return;
+  publishSite.value = parsePublishSite(value);
+}
 
 function slugFromTitle(value: string): string {
   return value
@@ -88,6 +125,7 @@ async function loadToon(id: string): Promise<void> {
     subtitle.value = toon.subtitle;
     Object.assign(descriptions, parseDescriptionMap(toon.descriptions, toon.description));
     visibility.value = visibilityFromStatus(toon.status);
+    publishSite.value = parsePublishSite(toon.publishSite, isAdmin.value ? "studio" : "community");
     seriesKey.value = toon.seriesKey || "";
     episodeN.value = toon.episodeN != null ? String(toon.episodeN) : "";
     coverPreview.value = toon.coverUrl || "";
@@ -164,6 +202,7 @@ async function onSubmit(ev: Event): Promise<void> {
         status: statusFromVisibility(visibility.value),
         seriesKey: seriesKey.value.trim() || null,
         episodeN: episodePayload(),
+        ...(seriesKey.value.trim() ? {} : { publishSite: publishSite.value }),
       });
     } else {
       toon = await patchToon(String(route.params.id), {
@@ -174,6 +213,7 @@ async function onSubmit(ev: Event): Promise<void> {
         status: statusFromVisibility(visibility.value),
         seriesKey: seriesKey.value.trim() || null,
         episodeN: episodePayload(),
+        ...(seriesKey.value.trim() ? {} : { publishSite: publishSite.value }),
       });
     }
     if (coverFile.value) {
@@ -266,23 +306,31 @@ async function onSubmit(ev: Event): Promise<void> {
             rows="4"
           />
         </label>
-        <label>
-          Visibility
-          <EditorSelect v-model="visibility" name="visibility">
-            <EditorSelectItem v-for="opt in visibilityOptions" :key="opt.value" :value="opt.value">{{
-              opt.label
-            }}</EditorSelectItem>
-          </EditorSelect>
-        </label>
-        <p class="editor-muted">
-          {{
-            visibility === "public"
-              ? "Public toons appear on /toons/ and their reader loads from the database."
-              : visibility === "staging"
-                ? "Staging toons appear on staging.twentyseven.pictures and local preview. They stay hidden on production."
-                : "Draft toons stay in the editor. They are hidden from the website."
-          }}
-        </p>
+        <div class="editor-pair-row editor-form-span">
+          <label>
+            Visibility
+            <EditorSelect v-model="visibility" name="visibility">
+              <EditorSelectItem v-for="opt in visibilityOptions" :key="opt.value" :value="opt.value">{{
+                opt.label
+              }}</EditorSelectItem>
+            </EditorSelect>
+          </label>
+          <label>
+            Publish on
+            <EditorSelect
+              :model-value="effectivePublishSite"
+              name="publish-site"
+              :disabled="Boolean(seriesKey)"
+              @update:model-value="onPublishSite"
+            >
+              <EditorSelectItem v-for="opt in PUBLISH_SITE_OPTIONS" :key="opt.value" :value="opt.value">{{
+                opt.label
+              }}</EditorSelectItem>
+            </EditorSelect>
+          </label>
+        </div>
+        <p class="editor-muted">{{ visibilityHint }}</p>
+        <p class="editor-muted">{{ publishSiteHint }}</p>
         <p v-if="!isAdmin" class="editor-muted">Editors are capped at Draft/Staging — only an admin can publish.</p>
       </div>
       <aside class="editor-form-preview">

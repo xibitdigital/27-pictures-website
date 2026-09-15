@@ -91,6 +91,7 @@ describe("ToonMetaForm visibility", () => {
       status: "published",
       seriesKey: null,
       episodeN: null,
+      publishSite: "studio",
     });
     wrapper.unmount();
   });
@@ -121,6 +122,36 @@ describe("ToonMetaForm visibility", () => {
     await wrapper.get("form").trigger("submit");
     expect(create.mock.calls[0][0].seriesKey).toBe("erin");
     expect(create.mock.calls[0][0].episodeN).toBe(2);
+    expect(create.mock.calls[0][0].publishSite).toBeUndefined();
+    wrapper.unmount();
+  });
+
+  it("locks Publish on to the series destination", async () => {
+    vi.spyOn(api, "listSeries").mockResolvedValue([
+      { key: "erin", title: "Erin & the Goblins", publishSite: "community" },
+    ]);
+    vi.spyOn(api, "createToon").mockResolvedValue({
+      id: "t1",
+      slug: "demo",
+      title: "Demo",
+      subtitle: "",
+      description: "",
+      coverKey: null,
+      coverUrl: null,
+      designWidth: 800,
+      designHeight: 1424,
+      pages: [],
+    });
+    const wrapper = mount(ToonMetaForm, {
+      global: { stubs: { EditorBar: true, ToonCard: true, EditorSession: true }, provide: ADMIN_PROVIDE },
+      attachTo: document.body,
+    });
+    await vi.waitFor(async () => {
+      await pickOption("series", "Erin & the Goblins");
+    });
+    expect(wrapper.get('button[name="publish-site"]').text()).toBe("Creator site");
+    expect(wrapper.get('button[name="publish-site"]').attributes("disabled")).toBeDefined();
+    expect(wrapper.text()).toContain("Episodes follow the series");
     wrapper.unmount();
   });
 

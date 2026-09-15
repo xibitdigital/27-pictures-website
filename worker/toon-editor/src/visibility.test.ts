@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { callerHostname, isStagingHostname, parseStatus, publicStatuses, publicStatusesForRequest } from "./visibility";
+import {
+  callerHostname,
+  effectivePublishSite,
+  isCommunityHostname,
+  isStagingHostname,
+  parsePublishSite,
+  parseStatus,
+  publicStatuses,
+  publicStatusesForRequest,
+  publishSiteForRequest,
+} from "./visibility";
 
 function req({ origin, referer, url }: { origin?: string; referer?: string; url?: string } = {}) {
   return {
@@ -72,5 +82,32 @@ describe("staging host visibility", () => {
     ]);
     expect(publicStatusesForRequest(req({ origin: "https://twentyseven.pictures" }))).toEqual(["published"]);
     expect(publicStatusesForRequest(req({}))).toEqual(["published"]);
+  });
+});
+
+describe("publish site", () => {
+  it("parses studio / community and falls back", () => {
+    expect(parsePublishSite("community")).toBe("community");
+    expect(parsePublishSite("studio")).toBe("studio");
+    expect(parsePublishSite("nope")).toBe("studio");
+    expect(parsePublishSite("", "community")).toBe("community");
+  });
+
+  it("lets the series own the catalog for grouped toons", () => {
+    expect(effectivePublishSite({ series_key: "erin", publish_site: "studio", series_publish_site: "community" })).toBe(
+      "community"
+    );
+    expect(effectivePublishSite({ series_key: null, publish_site: "community" })).toBe("community");
+    expect(effectivePublishSite({ series_key: "jax", publish_site: "community" })).toBe("community");
+  });
+
+  it("treats toons.twentyseven.pictures (and toons.localhost) as the creator catalog", () => {
+    expect(isCommunityHostname("toons.twentyseven.pictures")).toBe(true);
+    expect(isCommunityHostname("toons.localhost")).toBe(true);
+    expect(isCommunityHostname("twentyseven.pictures")).toBe(false);
+    expect(isCommunityHostname("staging.twentyseven.pictures")).toBe(false);
+    expect(publishSiteForRequest(req({ origin: "https://twentyseven.pictures" }))).toBe("studio");
+    expect(publishSiteForRequest(req({ origin: "https://toons.twentyseven.pictures" }))).toBe("community");
+    expect(publishSiteForRequest(req({ origin: "https://staging.twentyseven.pictures" }))).toBe("studio");
   });
 });
