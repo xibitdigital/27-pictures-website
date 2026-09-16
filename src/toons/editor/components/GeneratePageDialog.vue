@@ -742,6 +742,10 @@ function onSubmit(): void {
                   aria-label="Included references"
                   data-mention-list
                   :style="mentionMenuStyle"
+                  @mousedown.prevent.stop
+                  @mouseup.prevent.stop
+                  @click.prevent.stop
+                  @pointerdown.prevent.stop
                 >
                   <li v-if="!mentionMatches.length" class="editor-muted" role="presentation">No matching reference</li>
                   <li v-for="(opt, i) in mentionMatches" :key="opt.alias">
@@ -751,7 +755,8 @@ function onSubmit(): void {
                       :name="`mention-${opt.alias}`"
                       :aria-selected="i === mentionIndex"
                       :class="{ 'is-active': i === mentionIndex }"
-                      @mousedown.prevent="insertMention(opt)"
+                      @mousedown.prevent.stop
+                      @click.prevent.stop="insertMention(opt)"
                     >
                       <span>{{ opt.tag }}</span>
                       <span v-if="opt.hint" class="editor-muted">{{ opt.hint }}</span>

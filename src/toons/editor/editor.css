@@ -1677,11 +1677,18 @@ body {
 }
 
 .editor-dialog-slot-toggle.is-checked {
-  background: color-mix(in srgb, var(--editor-primary) 22%, transparent);
+  background: color-mix(in srgb, var(--editor-primary) 42%, transparent);
+  box-shadow: inset 3px 0 0 var(--editor-primary);
+  font-weight: 700;
 }
 
 .editor-dialog-slot-toggle.is-checked:hover {
-  background: color-mix(in srgb, var(--editor-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--editor-primary) 52%, transparent);
+}
+
+.editor-dialog-slot-toggle.is-checked .editor-muted {
+  color: var(--text);
+  font-weight: 700;
 }
 
 .editor-dialog-slot-toggle:disabled {
@@ -1779,6 +1786,8 @@ body {
   list-style: none;
   background: var(--bg-menu);
   border: 1px solid var(--border-light);
+  pointer-events: auto;
+  isolation: isolate;
 }
 
 .editor-mention-menu li {

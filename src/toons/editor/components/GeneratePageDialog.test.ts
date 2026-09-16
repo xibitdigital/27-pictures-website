@@ -121,9 +121,9 @@ describe("GeneratePageDialog", () => {
     expect(list?.textContent).not.toContain("Goblin");
     expect(list?.textContent).toContain("previous page");
     expect(list?.textContent).not.toContain("style");
-    (document.querySelector('button[name="mention-image-4"]') as HTMLButtonElement).dispatchEvent(
-      new MouseEvent("mousedown", { bubbles: true })
-    );
+    const mentionBtn = document.querySelector('button[name="mention-image-4"]') as HTMLButtonElement;
+    mentionBtn.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }));
+    mentionBtn.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
     await flushPromises();
     expect(textarea.value).toContain("Rinn ");
     expect(textarea.value).not.toContain("@Rinn");
