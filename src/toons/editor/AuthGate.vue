@@ -40,9 +40,18 @@ async function refresh(): Promise<void> {
     try {
       const me = await fetchMe();
       user.value = me.user;
-    } catch {
-      clearToken();
-      user.value = null;
+    } catch (err) {
+      // Only a real 401 ("unauthorized") means the token is actually invalid — anything else
+      // (a transient 500, a network blip) isn't a logged-out state and clearing the token here
+      // would wrongly bounce a valid session back to the login form. This bit a user with no
+      // series assigned particularly hard: nothing else about that account is unusual, so any
+      // non-auth hiccup on this one request looked identical to "you're logged out."
+      if (err instanceof Error && err.message === "unauthorized") {
+        clearToken();
+        user.value = null;
+      } else {
+        apiError.value = err instanceof Error ? err.message : "Can't reach the editor API.";
+      }
     }
   } catch (err) {
     user.value = null;

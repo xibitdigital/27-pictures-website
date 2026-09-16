@@ -47,4 +47,33 @@ describe("AuthGate", () => {
     await flushPromises();
     expect(wrapper.get("h1").text()).toBe("Log in");
   });
+
+  it("a real 401 from /auth/me clears the token and shows the login form", async () => {
+    vi.spyOn(api, "editorApiBase").mockReturnValue("https://editor.example.dev");
+    vi.spyOn(api, "authStatus").mockResolvedValue({ hasUsers: true });
+    vi.spyOn(api, "getToken").mockReturnValue("stale-token");
+    const clearToken = vi.spyOn(api, "clearToken").mockImplementation(() => {});
+    vi.spyOn(api, "fetchMe").mockRejectedValue(new Error("unauthorized"));
+
+    const wrapper = mount(AuthGate, { slots: { default: () => h("div", "app") } });
+    await flushPromises();
+
+    expect(clearToken).toHaveBeenCalled();
+    expect(wrapper.get("h1").text()).toBe("Log in");
+  });
+
+  it("a non-auth failure from /auth/me (e.g. a user with no series assigned hitting a transient error) keeps the session instead of bouncing to login", async () => {
+    vi.spyOn(api, "editorApiBase").mockReturnValue("https://editor.example.dev");
+    vi.spyOn(api, "authStatus").mockResolvedValue({ hasUsers: true });
+    vi.spyOn(api, "getToken").mockReturnValue("valid-token");
+    const clearToken = vi.spyOn(api, "clearToken").mockImplementation(() => {});
+    vi.spyOn(api, "fetchMe").mockRejectedValue(new Error("editor api 500"));
+
+    const wrapper = mount(AuthGate, { slots: { default: () => h("div", "app") } });
+    await flushPromises();
+
+    expect(clearToken).not.toHaveBeenCalled();
+    expect(wrapper.find("h1").exists()).toBe(false); // not the login form
+    expect(wrapper.get('[role="alert"]').text()).toBe("editor api 500");
+  });
 });
