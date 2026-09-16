@@ -1745,13 +1745,23 @@ body {
 .editor-generate-main,
 .editor-generate-refs {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.45rem;
   min-width: 0;
+  align-content: start;
+}
+
+.editor-generate-refs {
+  align-self: start;
+}
+
+.editor-generate-refs .editor-generate-label {
+  margin: 0;
 }
 
 .editor-generate-refs .editor-dialog-slots {
   max-height: min(28rem, 55dvh);
   overflow-y: auto;
+  align-content: start;
 }
 
 .editor-generate-refs .editor-dialog-slots li {
