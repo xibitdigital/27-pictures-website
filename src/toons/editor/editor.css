@@ -1246,6 +1246,20 @@ a:focus-visible {
   color: var(--text);
 }
 
+/* Series form's "Defaults for new items" — 5 short fields read better as a compact grid than one
+   per row like the rest of this card. */
+.editor-defaults-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem 1rem;
+}
+
+@media (max-width: 640px) {
+  .editor-defaults-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .editor-watermark-preview {
   display: block;
   max-width: 12rem;

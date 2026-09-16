@@ -118,6 +118,22 @@ const defaultRegionBorderColorSwatch = computed(
 const defaultRegionBorderWidth = ref("");
 const defaultRegionBorderStyle = ref<RegionBorderStyle | "">("");
 
+// Range inputs need a real number to show a thumb position — fall back to the placeholder value
+// while the field is blank, without writing anything into the (still-unset) text ref itself.
+const defaultBubbleOpacitySlider = computed(() =>
+  defaultBubbleOpacityPct.value.trim() ? Number(defaultBubbleOpacityPct.value) : 75
+);
+function onDefaultBubbleOpacitySlider(ev: Event): void {
+  defaultBubbleOpacityPct.value = (ev.target as HTMLInputElement).value;
+}
+
+const defaultRegionBorderWidthSlider = computed(() =>
+  defaultRegionBorderWidth.value.trim() ? Number(defaultRegionBorderWidth.value) : 0
+);
+function onDefaultRegionBorderWidthSlider(ev: Event): void {
+  defaultRegionBorderWidth.value = (ev.target as HTMLInputElement).value;
+}
+
 function onDefaultPageBgColorPicker(ev: Event): void {
   const hex = parseHexColor((ev.target as HTMLInputElement).value);
   if (hex) defaultPageBgColor.value = hex;
@@ -630,67 +646,97 @@ async function onSubmit(ev: Event): Promise<void> {
               Starting values for a brand-new bubble, page, or layout region in this series — a designer can still
               change any of these afterward. Leave blank to keep the studio's own defaults.
             </p>
-            <label>
-              Bubble opacity (%)
-              <input
-                v-model="defaultBubbleOpacityPct"
-                type="number"
-                name="default-bubble-opacity"
-                min="0"
-                max="100"
-                step="1"
-                placeholder="75"
-              />
-            </label>
-            <label>
-              Page background
-              <EditorColorField
-                v-model="defaultPageBgColor"
-                :swatch="defaultPageBgColorSwatch"
-                name="default-page-bg-color"
-                swatch-name="default-page-bg-color-swatch"
-                :ariaLabel="'Default page background color'"
-                @picker="onDefaultPageBgColorPicker"
-                @blur="onDefaultPageBgColorBlur"
-              />
-            </label>
-            <label>
-              Region border color
-              <EditorColorField
-                v-model="defaultRegionBorderColor"
-                :swatch="defaultRegionBorderColorSwatch"
-                name="default-region-border-color"
-                swatch-name="default-region-border-color-swatch"
-                :ariaLabel="'Default region border color'"
-                @picker="onDefaultRegionBorderColorPicker"
-                @blur="onDefaultRegionBorderColorBlur"
-              />
-            </label>
-            <label>
-              Region border width
-              <input
-                v-model="defaultRegionBorderWidth"
-                type="number"
-                name="default-region-border-width"
-                min="0"
-                max="20"
-                step="0.5"
-                placeholder="0"
-              />
-            </label>
-            <label>
-              Region border style
-              <EditorSelect
-                v-model="defaultRegionBorderStyle"
-                name="default-region-border-style"
-                aria-label="Default region border style"
-              >
-                <EditorSelectItem value="">Studio default</EditorSelectItem>
-                <EditorSelectItem value="solid">Solid</EditorSelectItem>
-                <EditorSelectItem value="dashed">Dashed</EditorSelectItem>
-                <EditorSelectItem value="dotted">Dotted</EditorSelectItem>
-              </EditorSelect>
-            </label>
+            <div class="editor-defaults-grid">
+              <label>
+                Bubble opacity (%)
+                <span class="editor-slider-row">
+                  <input
+                    type="range"
+                    name="default-bubble-opacity-slider"
+                    min="0"
+                    max="100"
+                    step="1"
+                    :value="defaultBubbleOpacitySlider"
+                    :aria-valuemin="0"
+                    :aria-valuemax="100"
+                    :aria-valuenow="defaultBubbleOpacitySlider"
+                    @input="onDefaultBubbleOpacitySlider"
+                  />
+                  <input
+                    v-model="defaultBubbleOpacityPct"
+                    type="number"
+                    name="default-bubble-opacity"
+                    min="0"
+                    max="100"
+                    step="1"
+                    placeholder="75"
+                  />
+                </span>
+              </label>
+              <label>
+                Page background
+                <EditorColorField
+                  v-model="defaultPageBgColor"
+                  :swatch="defaultPageBgColorSwatch"
+                  name="default-page-bg-color"
+                  swatch-name="default-page-bg-color-swatch"
+                  :ariaLabel="'Default page background color'"
+                  @picker="onDefaultPageBgColorPicker"
+                  @blur="onDefaultPageBgColorBlur"
+                />
+              </label>
+              <label>
+                Region border color
+                <EditorColorField
+                  v-model="defaultRegionBorderColor"
+                  :swatch="defaultRegionBorderColorSwatch"
+                  name="default-region-border-color"
+                  swatch-name="default-region-border-color-swatch"
+                  :ariaLabel="'Default region border color'"
+                  @picker="onDefaultRegionBorderColorPicker"
+                  @blur="onDefaultRegionBorderColorBlur"
+                />
+              </label>
+              <label>
+                Region border width
+                <span class="editor-slider-row">
+                  <input
+                    type="range"
+                    name="default-region-border-width-slider"
+                    min="0"
+                    max="20"
+                    step="0.5"
+                    :value="defaultRegionBorderWidthSlider"
+                    :aria-valuemin="0"
+                    :aria-valuemax="20"
+                    :aria-valuenow="defaultRegionBorderWidthSlider"
+                    @input="onDefaultRegionBorderWidthSlider"
+                  />
+                  <input
+                    v-model="defaultRegionBorderWidth"
+                    type="number"
+                    name="default-region-border-width"
+                    min="0"
+                    max="20"
+                    step="0.5"
+                    placeholder="0"
+                  />
+                </span>
+              </label>
+              <label>
+                Region border style
+                <EditorSelect
+                  v-model="defaultRegionBorderStyle"
+                  name="default-region-border-style"
+                  aria-label="Default region border style"
+                >
+                  <EditorSelectItem value="">Studio default</EditorSelectItem>
+                  <EditorSelectItem value="solid">Solid</EditorSelectItem>
+                  <EditorSelectItem value="dashed">Dashed</EditorSelectItem>
+                  <EditorSelectItem value="dotted">Dotted</EditorSelectItem>
+                </EditorSelect>
+              </label>
+            </div>
           </div>
           <div v-if="isAdmin" class="editor-form-span editor-generate">
             <p class="editor-generate-label">Editors</p>
