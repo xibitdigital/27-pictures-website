@@ -11,7 +11,6 @@ vi.mock("./inviteEmail", () => ({
   sendInviteEmail: (...args: unknown[]) => sendInviteEmail(...args),
   sendPasswordResetEmail: (...args: unknown[]) => sendPasswordResetEmail(...args),
 }));
-vi.mock("./turnstile", () => ({ verifyTurnstile: vi.fn().mockResolvedValue(true) }));
 
 const admin: UserRow = { id: "admin1", email: "admin@example.com", username: "admin", role: "admin" };
 const editor: UserRow = { id: "u1", email: "editor@example.com", username: "editor1", role: "editor" };
@@ -301,7 +300,7 @@ describe("POST /auth/users (invite)", () => {
     const res = await worker.fetch(
       await authedRequest("https://toon-editor.example/auth/users", admin.id, {
         method: "POST",
-        body: JSON.stringify({ email: "new@example.com", username: "newperson", turnstileToken: "tok" }),
+        body: JSON.stringify({ email: "new@example.com", username: "newperson" }),
       }),
       env
     );

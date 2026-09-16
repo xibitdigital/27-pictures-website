@@ -442,7 +442,6 @@ export interface InviteUserInput {
   username: string;
   email: string;
   role?: UserRole;
-  turnstileToken: string;
 }
 
 export interface InviteUserResult {

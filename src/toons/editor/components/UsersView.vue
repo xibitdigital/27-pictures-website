@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, onUnmounted, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { inviteUser, listUsers, removeUser, resendPassword, updateUserRole } from "../api";
 import { EDITOR_USER_KEY } from "../session";
@@ -10,10 +10,6 @@ import EditorBar from "./EditorBar.vue";
 import EditorButton from "./ui/EditorButton.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
-
-// Its own Turnstile widget — separate from the contact form's
-// (src/site/components/ContactForm.vue) so rotating one never affects the other.
-const TURNSTILE_SITE_KEY = "0x4AAAAAAEmUTf_BMK-zvngt";
 
 const router = useRouter();
 const userRef = inject(EDITOR_USER_KEY);
@@ -100,9 +96,6 @@ const email = ref("");
 const role = ref<UserRole>("editor");
 const saving = ref(false);
 
-let turnstileToken = "";
-let formReadyToSubmit = false;
-
 async function sendInvite(): Promise<void> {
   saving.value = true;
   try {
@@ -110,7 +103,6 @@ async function sendInvite(): Promise<void> {
       username: username.value.trim(),
       email: email.value.trim(),
       role: role.value,
-      turnstileToken,
     });
     if (result.emailSent) {
       pushToast(`Invite sent to ${result.user.email}`, "success");
@@ -124,7 +116,6 @@ async function sendInvite(): Promise<void> {
     username.value = "";
     email.value = "";
     role.value = "editor";
-    turnstileToken = "";
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Invite failed");
   } finally {
@@ -134,74 +125,8 @@ async function sendInvite(): Promise<void> {
 
 function onSubmit(ev: Event): void {
   ev.preventDefault();
-  if (turnstileToken) {
-    void sendInvite();
-    return;
-  }
-  formReadyToSubmit = true;
-  saving.value = true;
-  if (window.turnstile) {
-    window.turnstile.execute();
-  } else {
-    void sendInvite();
-  }
+  void sendInvite();
 }
-
-function onTurnstileSuccess(token: string): void {
-  turnstileToken = token;
-  if (formReadyToSubmit) {
-    formReadyToSubmit = false;
-    void sendInvite();
-  }
-}
-
-function onTurnstileExpired(): void {
-  turnstileToken = "";
-}
-
-const turnstileEl = ref<HTMLElement | null>(null);
-let turnstileWidgetId: string | null = null;
-
-function renderTurnstile(): void {
-  const el = turnstileEl.value;
-  if (!el || !window.turnstile) return;
-  turnstileWidgetId = window.turnstile.render(el, {
-    sitekey: TURNSTILE_SITE_KEY,
-    appearance: "interaction-only",
-    callback: onTurnstileSuccess,
-    "expired-callback": onTurnstileExpired,
-  });
-}
-
-let turnstilePollId: number | null = null;
-let turnstilePollTimeoutId: number | null = null;
-
-onMounted(() => {
-  renderTurnstile();
-  turnstilePollId = window.setInterval(() => {
-    if (window.turnstile) {
-      renderTurnstile();
-      if (turnstilePollId != null) window.clearInterval(turnstilePollId);
-      turnstilePollId = null;
-    }
-  }, 200);
-  turnstilePollTimeoutId = window.setTimeout(() => {
-    if (turnstilePollId != null) window.clearInterval(turnstilePollId);
-    turnstilePollId = null;
-  }, 8000);
-});
-
-onUnmounted(() => {
-  if (turnstilePollId != null) window.clearInterval(turnstilePollId);
-  if (turnstilePollTimeoutId != null) window.clearTimeout(turnstilePollTimeoutId);
-  if (turnstileWidgetId && window.turnstile) {
-    try {
-      window.turnstile.remove(turnstileWidgetId);
-    } catch {
-      /* ignore */
-    }
-  }
-});
 </script>
 
 <template>
@@ -275,7 +200,6 @@ onUnmounted(() => {
             <p class="editor-muted">
               A password is generated automatically and emailed to the invited address — it is never shown here.
             </p>
-            <div ref="turnstileEl" class="cf-turnstile" />
           </form>
         </aside>
       </div>
