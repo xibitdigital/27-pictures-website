@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Check } from "@lucide/vue";
 import { onMounted, reactive, ref } from "vue";
 import { getUserKeys, saveUserKey } from "../api";
 import { pushToast } from "../toast";
@@ -81,7 +82,11 @@ async function onClear(name: UserKeyName): Promise<void> {
                   <strong>{{ USER_KEY_LABELS[name] }}</strong>
                   <a :href="USER_KEY_LINKS[name]" target="_blank" rel="noopener" class="editor-field-link">Get a key</a>
                 </span>
-                <span class="editor-muted">{{ status?.[name] ? "Set" : "Not set — using the shared key" }}</span>
+                <span v-if="status?.[name]" class="editor-key-status">
+                  <Check :size="12" :stroke-width="2.6" aria-hidden="true" />
+                  Set
+                </span>
+                <span v-else class="editor-muted">Not set — using the shared key</span>
               </span>
               <span class="editor-user-row-actions">
                 <input

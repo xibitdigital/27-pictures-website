@@ -27,4 +27,20 @@ describe("SettingsView", () => {
       expect(link.attributes("rel")).toBe("noopener");
     }
   });
+
+  it("shows a Set badge only for keys that are actually set", async () => {
+    vi.spyOn(api, "getUserKeys").mockResolvedValue({
+      replicateApiToken: false,
+      comfyApiKey: false,
+      elevenlabsApiKey: false,
+      runwareApiToken: true,
+      runcomfyApiToken: true,
+    });
+    const wrapper = mount(SettingsView, { global: { stubs: { EditorBar: true } } });
+    await flushPromises();
+
+    expect(wrapper.findAll(".editor-key-status")).toHaveLength(2);
+    expect(wrapper.get(".editor-key-status").text()).toContain("Set");
+    expect(wrapper.findAll(".editor-muted").filter((el) => el.text().includes("Not set")).length).toBe(3);
+  });
 });

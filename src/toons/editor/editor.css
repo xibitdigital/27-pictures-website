@@ -11,6 +11,17 @@ body {
   overflow: hidden;
 }
 
+/* Default link color for the studio — was unset, so a plain <a> fell back to --silver-ish muted
+   text (see .editor-field-link below) and read as disabled rather than clickable. */
+a {
+  color: var(--editor-primary);
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--editor-primary-hover);
+}
+
 .editor-shell,
 .editor-studio,
 .editor-list,
@@ -243,6 +254,19 @@ body {
 
 .editor-key-input {
   width: 14rem;
+}
+
+.editor-key-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+  padding: 0.1rem 0.5rem 0.1rem 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--success) 18%, transparent);
+  color: var(--success);
 }
 
 .editor-gate {
@@ -517,14 +541,12 @@ body {
 }
 
 .editor-field-link {
-  color: var(--silver);
   font-size: 0.8rem;
   text-decoration: none;
 }
 
 .editor-field-link:hover,
 .editor-field-link:focus-visible {
-  color: var(--text);
   text-decoration: underline;
 }
 
