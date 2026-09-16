@@ -153,6 +153,14 @@ generate-qr: ## Branded QR PDF → ~/Downloads/
 generate-qr-image: ## QR image helper
 	$(NPM) run generate-qr-image
 
+.PHONY: image-protection-pdf
+image-protection-pdf: ## Designer "image protection" doc PDF (EN) → ~/Downloads/
+	$(NPM) run generate-image-protection-pdf
+
+.PHONY: image-protection-pdf-it
+image-protection-pdf-it: ## Same, Italian → ~/Downloads/
+	$(NPM) run generate-image-protection-pdf:it
+
 .PHONY: watermark
 watermark: ## Bake site watermark (pass ARGS=…)
 	$(NPM) run watermark -- $(ARGS)
