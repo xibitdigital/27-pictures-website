@@ -85,11 +85,11 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
       <section>
         <h2 class="editor-list-heading">Questions people actually have</h2>
         <p>
-          <strong>Will [insert big AI company] train on my drawing?</strong> Not if they follow the rule they've
-          published for themselves — GPTBot, Google's training crawler, Apple's and Anthropic's all say they honour
-          exactly this signal. That's a real, working "no." It is not the same as a lock: it relies on a company keeping
-          its own word, the way robots.txt has relied on that for every website since 1994. We can't force a bad actor
-          to comply — no site can — which is exactly why the watermark exists as a second, independent line.
+          <strong>Will a big AI company train on my drawing?</strong> Not if they follow the rule they've published for
+          themselves — GPTBot, Google's training crawler, Apple's and Anthropic's all say they honour exactly this
+          signal. That's a real, working "no." It is not the same as a lock: it relies on a company keeping its own
+          word, the way robots.txt has relied on that for every website since 1994. We can't force a bad actor to comply
+          — no site can — which is exactly why the watermark exists as a second, independent line.
         </p>
         <p>
           <strong
@@ -114,7 +114,10 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
         <ul class="editor-protection-list">
           <li>Does — tells every major, honest AI crawler not to fetch or train on the images.</li>
           <li>Does — keeps a visible credit on the artwork if it's ever copied off-site.</li>
-          <li>Does — carries a "no AI training" rights notice inside the file's own metadata, hidden but intact.</li>
+          <li>
+            Does — carries a "no AI training" rights notice inside the file's own metadata (the WebP's XMP data), hidden
+            but intact.
+          </li>
           <li>
             Does — leaves training entirely opt-in: an upload only reaches an AI provider when someone in the studio
             picks it as a reference for a specific generation, on purpose.
@@ -129,11 +132,11 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
       <section>
         <h2 class="editor-list-heading">6. The "no training" notice is baked into the file, not just the page</h2>
         <p>
-          Every plate is also stamped with a rights notice inside the image file itself (the same kind of hidden
-          metadata a camera uses for the date and lens) — a short note saying it's not licensed for AI training, plus a
-          credit back to twentyseven.pictures. It travels with the file wherever it goes: download it, re-host it, drag
-          it into another tool, and that notice is still there, the way the visible watermark is — just not visible to a
-          person looking at the picture.
+          Every plate is a WebP file, and every one gets a rights notice written into its XMP metadata (the same kind of
+          hidden metadata a camera uses for the date and lens) — a short note saying it's not licensed for AI training,
+          plus a credit back to twentyseven.pictures. It travels with the file wherever it goes: download it, re-host
+          it, drag it into another tool, and that notice is still there, the way the visible watermark is — just not
+          visible to a person looking at the picture.
         </p>
         <p class="editor-muted">
           Same honest caveat as the rest of this page: metadata like this can be stripped in one command by anyone who
