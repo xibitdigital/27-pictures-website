@@ -3,7 +3,7 @@
  * Serve a static folder (default: dist/) on loopback only, with HTTP Basic Auth.
  *
  * For local CDN testing:
- *   VITE_ASSET_BASE=https://pub-….r2.dev npm run build
+ *   VITE_ASSET_BASE=https://assets.twentyseven.pictures npm run build
  *   npm run local:cdn
  *   # or: make local-cdn
  *

@@ -75,7 +75,6 @@ export function cdnMediaPlugin(distDir: string): Plugin {
           [
             "VITE_ASSET_BASE is required for production builds (toon/card media lives on R2).",
             "Add to .env, e.g.:",
-            "  VITE_ASSET_BASE=https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev",
             "  VITE_ASSET_BASE=https://assets.twentyseven.pictures",
           ].join("\n")
         );

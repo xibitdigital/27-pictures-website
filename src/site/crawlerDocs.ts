@@ -16,7 +16,9 @@ import { catalogEpisodes, type CatalogPayload } from "./catalogRender";
 import { isCommunityOrigin } from "./communityHost";
 import { UI, type Locale } from "./i18n";
 
-export const DEFAULT_ASSET_BASE = "https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev";
+/** Fallback only — the bucket's r2.dev URL is disabled. Set VITE_ASSET_BASE as a Pages
+ * environment variable so functions/sitemap.xml.ts never actually falls back to this. */
+export const DEFAULT_ASSET_BASE = "https://assets.twentyseven.pictures";
 
 const FILM_LINKS: Array<{ href: string; title: string; note: string }> = [
   {

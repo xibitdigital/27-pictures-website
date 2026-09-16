@@ -159,19 +159,19 @@ add a wrapper next to `EditorButton`:
    `:ariaLabel="…"` (camelCase) at the call site. The wrapper still binds `:aria-label` on the
    real DOM node.
 5. Layout, form-control resets, and CSS used by a single parent (filmstrip thumbs, slot rows)
-   stay CSS. Reka roots that *are* the interactive element (`DropdownMenuItem as="button"`)
+   stay CSS. Reka roots that _are_ the interactive element (`DropdownMenuItem as="button"`)
    cannot wrap `EditorButton` (nested buttons) — leave the class on that item.
 
-| Wrapper | Class it owns |
-| --- | --- |
-| `EditorButton` | `.editor-btn` + `--ghost` / `--danger` + `--small` / `--large` |
-| `EditorIconButton` | `.editor-icon-btn` + `--danger` (never `.editor-btn` next to an input) |
-| `EditorChoiceCard` | `.editor-add-page-choice` |
-| `EditorColorField` | `.editor-color-row` (swatch + hex) |
-| `EditorVisibilityBadge` | `.editor-visibility-badge` |
-| `EditorChipFilter` | `.editor-visibility-filter` (not the inspector Layout/Bubbles switch) |
-| `EditorPlatePicker` | `.editor-plate-picker` |
-| `EditorDialog` / `EditorSelect` / `EditorCheckbox` / `EditorUserPills` / `EditorGenerateFooter` | Reka or composite chrome already wrapped |
+| Wrapper                                                                                         | Class it owns                                                          |
+| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `EditorButton`                                                                                  | `.editor-btn` + `--ghost` / `--danger` + `--small` / `--large`         |
+| `EditorIconButton`                                                                              | `.editor-icon-btn` + `--danger` (never `.editor-btn` next to an input) |
+| `EditorChoiceCard`                                                                              | `.editor-add-page-choice`                                              |
+| `EditorColorField`                                                                              | `.editor-color-row` (swatch + hex)                                     |
+| `EditorVisibilityBadge`                                                                         | `.editor-visibility-badge`                                             |
+| `EditorChipFilter`                                                                              | `.editor-visibility-filter` (not the inspector Layout/Bubbles switch)  |
+| `EditorPlatePicker`                                                                             | `.editor-plate-picker`                                                 |
+| `EditorDialog` / `EditorSelect` / `EditorCheckbox` / `EditorUserPills` / `EditorGenerateFooter` | Reka or composite chrome already wrapped                               |
 
 **Every editor primary/CTA is `--editor-primary` (blue), never `--red-smile`.** Red is reserved
 for genuinely destructive actions (`.editor-btn--danger`, delete/remove icons) — see the
@@ -386,12 +386,30 @@ tests never inherit a developer `.env`.
 
 ```bash
 # .env (required for build/deploy)
-VITE_ASSET_BASE=https://pub-e60c8fa8eea343fbac708bf75981d19c.r2.dev
-# or: VITE_ASSET_BASE=https://assets.twentyseven.pictures
+VITE_ASSET_BASE=https://assets.twentyseven.pictures
 
 make deploy        # require base + build + Pages
 make deploy-cdn    # upload R2 first, then deploy
 ```
+
+**The `twentyseven-assets` R2 bucket's public `r2.dev` URL is disabled** (2026-09).
+`assets.twentyseven.pictures` (`worker/assets`) is the only way to reach plate/card-art
+bytes now — it fronts the same bucket via an R2 binding, applies its own `robots.txt`
+(blocks every AI training crawler) and `X-Robots-Tag: noai, noimageai`, and is what
+every reader/catalog/OG image URL resolves to. Re-enabling the dev URL
+(`npx wrangler r2 bucket dev-url enable twentyseven-assets`, or `upload-assets --enable-dev-url`)
+would put the bytes back on an unprotected, world-readable host — don't, without a reason
+and without re-adding the crawler blocks that host never had.
+
+`VITE_ASSET_BASE` is **two separate places**, and both need it or something breaks:
+
+1. Build-time — the `.env` above, read by `vite/plugins/cdnMedia.ts` and `vite build`.
+2. **Pages Functions runtime** — `functions/sitemap.xml.ts` reads `context.env.VITE_ASSET_BASE`
+   at request time (Functions don't inherit the build's `.env`), falling back to
+   `DEFAULT_ASSET_BASE` in `src/site/crawlerDocs.ts` if unset. Set it as a **Pages project
+   environment variable** (dashboard → Pages → project → Settings → Environment variables,
+   Production **and** Preview) or the sitemap's card-art `<image:loc>` URLs silently point
+   at the old fallback instead of the live CDN host. A redeploy is required after adding it.
 
 Static card-art URLs use the token **`%VITE_ASSET_BASE%/card-art/…`** in HTML
 (expanded at build by `vite/plugins/cdnMedia.ts`). `/sitemap.xml` and
