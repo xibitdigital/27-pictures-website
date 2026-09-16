@@ -42,8 +42,13 @@ export const DEV_EDITOR_API = "/__editor-api";
 /** Deployed Worker origin (also in `public/_headers` connect-src). */
 export const DEFAULT_EDITOR_API = "https://toon-editor.sangalli-marco.workers.dev";
 
+// The `make editor-worker` hint only makes sense on a developer's own machine — showing it to a
+// real editor on staging/production (an outage, a network blip) told them to run a terminal
+// command they have no access to, instead of just "try again".
 const REACH_ERROR =
-  "Can't reach the editor API. In local dev run `make editor-worker` in another terminal, then reload.";
+  import.meta.env.DEV && !import.meta.env.VITEST
+    ? "Can't reach the editor API. In local dev run `make editor-worker` in another terminal, then reload."
+    : "Can't reach the editor API right now. Reload in a moment — if it keeps happening, let an admin know.";
 
 export function editorApiBase(): string | null {
   const raw = (import.meta.env.VITE_EDITOR_API as string | undefined)?.trim();

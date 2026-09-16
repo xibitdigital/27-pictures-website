@@ -97,6 +97,9 @@ import {
 } from "./types";
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+// Every newly invited editor gets added here so they land with something real to click into
+// instead of an empty toon list on first login.
+const PLAYGROUND_SERIES_KEY = "playground";
 // Raw PNG character sheets (uncompressed, high-res) routinely land well past
 // 8MB — that limit rejected legitimate reference uploads.
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
@@ -1260,11 +1263,21 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (existingUsername) return json({ error: "username taken" }, 409, cors);
     const id = crypto.randomUUID();
     const password = generatePassword();
+    const createdAt = nowIso();
     await env.DB.prepare(
       `INSERT INTO users (id, email, username, role, password_hash, invited_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
     )
-      .bind(id, email, username, role, await hashPassword(password), session.id, nowIso())
+      .bind(id, email, username, role, await hashPassword(password), session.id, createdAt)
       .run();
+    // Every new editor lands with a real series to practice on instead of an empty list —
+    // best-effort: a missing/renamed "playground" series shouldn't fail the invite itself.
+    try {
+      await env.DB.prepare(`INSERT OR IGNORE INTO series_editors (series_key, user_id, created_at) VALUES (?, ?, ?)`)
+        .bind(PLAYGROUND_SERIES_KEY, id, createdAt)
+        .run();
+    } catch {
+      /* the playground series may not exist in every environment (e.g. local D1) */
+    }
     const origin = request.headers.get("Origin") || siteOriginFromRequest(request);
     const loginUrl = `${origin}/toons/editor/`;
     const emailSent = await sendInviteEmail(env, { to: email, username, password, loginUrl });

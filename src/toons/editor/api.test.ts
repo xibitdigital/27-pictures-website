@@ -48,10 +48,12 @@ describe("editor api", () => {
     );
   });
 
-  it("maps a network failure to the start-the-Worker hint", async () => {
+  it("maps a network failure to a reload hint, not the local-dev-only instruction", async () => {
+    // Vitest always reports DEV=true, so api.ts treats VITEST as "not dev" here the same way
+    // editorApiBase() does — this is the message a real staging/production editor sees.
     vi.stubEnv("VITE_EDITOR_API", "https://editor.example.dev");
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
-    await expect(login("a@b.c", "password1")).rejects.toThrow(/make editor-worker/);
+    await expect(login("a@b.c", "password1")).rejects.toThrow(/reload in a moment/i);
   });
 
   it("surfaces a Worker 5xx body instead of the unreachable-API hint", async () => {

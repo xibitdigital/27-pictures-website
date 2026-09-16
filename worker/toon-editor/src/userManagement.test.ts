@@ -6,10 +6,12 @@ import type { Env, UserRow } from "./types";
 const SECRET = "a".repeat(32);
 
 const sendPasswordResetEmail = vi.fn().mockResolvedValue(true);
+const sendInviteEmail = vi.fn().mockResolvedValue(true);
 vi.mock("./inviteEmail", () => ({
-  sendInviteEmail: vi.fn().mockResolvedValue(true),
+  sendInviteEmail: (...args: unknown[]) => sendInviteEmail(...args),
   sendPasswordResetEmail: (...args: unknown[]) => sendPasswordResetEmail(...args),
 }));
+vi.mock("./turnstile", () => ({ verifyTurnstile: vi.fn().mockResolvedValue(true) }));
 
 const admin: UserRow = { id: "admin1", email: "admin@example.com", username: "admin", role: "admin" };
 const editor: UserRow = { id: "u1", email: "editor@example.com", username: "editor1", role: "editor" };
@@ -37,6 +39,12 @@ function makeEnv(state: FakeState): Env {
             if (/FROM users WHERE id = \?/.test(sql)) {
               return (state.users.find((u) => u.id === stmt.args[0]) || null) as unknown as T;
             }
+            if (/FROM users WHERE email = \?/.test(sql)) {
+              return (state.users.find((u) => u.email === stmt.args[0]) || null) as unknown as T;
+            }
+            if (/FROM users WHERE username = \?/.test(sql)) {
+              return (state.users.find((u) => u.username === stmt.args[0]) || null) as unknown as T;
+            }
             return null;
           },
           async run() {
@@ -57,6 +65,17 @@ function makeEnv(state: FakeState): Env {
             if (/DELETE FROM users WHERE id = \?/.test(sql)) {
               const [id] = stmt.args as [string];
               state.users = state.users.filter((u) => u.id !== id);
+            }
+            if (/INSERT INTO users/.test(sql)) {
+              const [id, email, username, role] = stmt.args as [string, string, string, UserRow["role"]];
+              state.users.push({ id, email, username, role });
+            }
+            if (/INSERT OR IGNORE INTO series_editors/.test(sql)) {
+              const [series_key, user_id] = stmt.args as [string, string];
+              state.seriesEditors = state.seriesEditors || [];
+              if (!state.seriesEditors.some((e) => e.series_key === series_key && e.user_id === user_id)) {
+                state.seriesEditors.push({ series_key, user_id });
+              }
             }
             return {};
           },
@@ -271,5 +290,25 @@ describe("DELETE /users/:id", () => {
     const env = makeEnv(state);
     const res = await worker.fetch(new Request("https://toon-editor.example/users/u1", { method: "DELETE" }), env);
     expect(res.status).toBe(401);
+  });
+});
+
+describe("POST /auth/users (invite)", () => {
+  it("adds the new editor to the playground series", async () => {
+    sendInviteEmail.mockClear();
+    const state: FakeState = { users: [admin], seriesEditors: [] };
+    const env = makeEnv(state);
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/auth/users", admin.id, {
+        method: "POST",
+        body: JSON.stringify({ email: "new@example.com", username: "newperson", turnstileToken: "tok" }),
+      }),
+      env
+    );
+    expect(res.status).toBe(201);
+    expect(sendInviteEmail).toHaveBeenCalledTimes(1);
+    expect(state.users.some((u) => u.email === "new@example.com")).toBe(true);
+    const newUser = state.users.find((u) => u.email === "new@example.com");
+    expect(state.seriesEditors).toContainEqual({ series_key: "playground", user_id: newUser?.id });
   });
 });
