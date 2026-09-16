@@ -502,9 +502,9 @@ const debugPreviewUrls = computed(() => {
  * generation has to spell out "Image N = what" itself or reference adherence
  * drifts (see docs.bfl.ml/guides/prompting_editing_overview's own example).
  * The reference mapping is mechanically built from orderedRefEntries, so
- * "Image N" here always matches reality. No fixed style line is injected —
- * only this reference-mapping scaffold; the scene/style description is
- * entirely up to whatever the operator types below it.
+ * "Image N" here always matches reality. A style slot adds a PIN that that
+ * Image owns ink/palette; character sheets stay identity only. No canned
+ * "black and white manga" line — the style image is the lock.
  */
 /** What the dialog's intro line says per provider — a lookup instead of a nested ternary so a new
  * provider is one line here, not a deeper if/else chain in the template. */
@@ -551,12 +551,30 @@ const fluxRefsPrefill = computed(() => {
     return `Image ${i + 1} = ${what}`;
   });
   header.push(`# refs: ${refs.join("; ")}`);
-  const parts = entries.map((e, i) => {
-    if (e.kind === "style") return "the style reference for ink technique and rendering style only — not a character";
-    if (e.kind === "previous") return "the previous page for continuity of set and style";
-    return `Image ${i + 1} for ${e.label}`;
-  });
-  return `${header.join("\n")}\n\nUsing ${parts.join(", ")} — do not alter identity.\n\n`;
+  const parts: string[] = [];
+  const stylePins: string[] = [];
+  for (const [i, e] of entries.entries()) {
+    const n = i + 1;
+    if (e.kind === "style") {
+      parts.push(`Image ${n} for ink technique and rendering style only — not a character`);
+      stylePins.push(
+        `match ink technique, line, and palette from Image ${n} only; character sheets are identity and costume, not color or rendering`
+      );
+    } else if (e.kind === "previous") {
+      parts.push(`Image ${n} for continuity of set`);
+    } else {
+      parts.push(`Image ${n} for ${e.label}`);
+    }
+  }
+  let body = `Using ${parts.join(", ")}.`;
+  if (stylePins.length) {
+    body += ` PIN: ${stylePins.join(
+      "; "
+    )}. Do not copy color or rendering from the character sheets. Do not alter character identity.`;
+  } else {
+    body += ` Do not alter identity.`;
+  }
+  return `${header.join("\n")}\n\n${body}\n\n`;
 });
 
 /** Tracks the last value we auto-wrote, so toggling a reference after open can refresh the preamble without clobbering scene text the user already typed below it. */

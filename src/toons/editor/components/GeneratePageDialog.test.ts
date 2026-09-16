@@ -517,6 +517,36 @@ describe("GeneratePageDialog Flux provider", () => {
     expect(textarea.value).toContain(
       "# refs: Image 1 = style reference (ink technique/rendering only, not a character); Image 2 = Doll; Image 3 = Victim"
     );
+    expect(textarea.value).toContain("Using Image 1 for ink technique and rendering style only");
+    expect(textarea.value).toContain("PIN: match ink technique, line, and palette from Image 1 only");
+    wrapper.unmount();
+  });
+
+  it("pins a trailing style slot by its sent Image number", async () => {
+    const generateStyleLast = {
+      width: 1152,
+      height: 1728,
+      model: "seedream 5.0 pro",
+      provider: "runware",
+      flowKey: null,
+      flowUrl: null,
+      slots: [
+        { alias: "violet", label: "Violet", kind: "sheet", fileKey: "v.png", fileUrl: "/v.png" },
+        { alias: "rinn", label: "Rinn", kind: "sheet", fileKey: "r.webp", fileUrl: "/r.webp" },
+        { alias: "style", label: "style reference", kind: "style", fileKey: "s.jpg", fileUrl: "/s.jpg" },
+      ],
+    };
+    const wrapper = mount(GeneratePageDialog, {
+      props: { open: false, generate: generateStyleLast, pages: [], busy: false, status: "" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+    expect(textarea.value).toContain("Image 3 = style reference");
+    expect(textarea.value).toContain("Using Image 1 for Violet, Image 2 for Rinn, Image 3 for ink technique");
+    expect(textarea.value).toContain("PIN: match ink technique, line, and palette from Image 3 only");
+    expect(textarea.value).toContain("Do not copy color or rendering from the character sheets");
     wrapper.unmount();
   });
 

@@ -1500,8 +1500,8 @@ body {
   min-height: min(46rem, 90dvh);
 }
 
-.editor-dialog[data-tall] .editor-prompt-wrap textarea {
-  min-height: 22rem;
+.editor-dialog[data-tall] .editor-prompt-wrap {
+  min-height: 12rem;
 }
 
 .editor-dialog[data-preview] [data-slot-preview] {
@@ -1567,7 +1567,8 @@ body {
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.85rem;
 }
 
@@ -1695,17 +1696,39 @@ body {
   grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem);
   align-items: stretch;
   gap: 1.25rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-generate-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 0;
+}
+
+.editor-generate-main > label:has(.editor-prompt-wrap) {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .editor-prompt-wrap {
   position: relative;
-  display: block;
+  display: grid;
+  flex: 1;
+  min-height: 12rem;
+  min-width: 0;
 }
 
 .editor-prompt-highlight,
 .editor-prompt-wrap textarea {
+  grid-area: 1 / 1;
   box-sizing: border-box;
   width: 100%;
+  height: 100%;
+  min-height: 0;
   margin: 0;
   padding: 0.55rem 0.7rem;
   border: 1px solid var(--border-light);
@@ -1720,12 +1743,11 @@ body {
   word-break: normal;
   tab-size: 8;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
+  resize: none;
 }
 
 .editor-prompt-highlight {
-  position: absolute;
-  inset: 0;
   pointer-events: none;
   color: var(--text);
   background: var(--bg-input);
@@ -1742,9 +1764,7 @@ body {
 }
 
 .editor-prompt-wrap textarea {
-  position: relative;
   z-index: 1;
-  display: block;
   background: transparent;
   color: transparent;
   caret-color: var(--text);
@@ -1790,15 +1810,11 @@ body {
   background: color-mix(in srgb, var(--editor-primary) 22%, transparent);
 }
 
-.editor-generate-main,
 .editor-generate-refs {
   display: grid;
   gap: 0.45rem;
   min-width: 0;
   align-content: start;
-}
-
-.editor-generate-refs {
   align-self: start;
 }
 
