@@ -1541,6 +1541,54 @@ body {
   display: contents;
 }
 
+/* Generate dialogs: scroll the fields, pin Cancel/Generate to the shell bottom. */
+.editor-dialog:has(.editor-dialog-form--fill) .editor-dialog-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  max-height: none;
+}
+
+.editor-dialog:has(.editor-dialog-form--fill) .editor-dialog-body > h2 {
+  flex-shrink: 0;
+}
+
+.editor-dialog-form--fill {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 0.85rem;
+}
+
+.editor-dialog-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.editor-generate-footer {
+  flex-shrink: 0;
+  display: grid;
+  gap: 0.45rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  background: var(--bg-menu);
+  border-top: 1px solid var(--border);
+}
+
+.editor-generate-footer .editor-generate-status {
+  margin: 0;
+}
+
+.editor-generate-footer .editor-form-actions {
+  margin: 0;
+}
+
 .editor-dialog-body h2 {
   margin: 0;
   padding-right: 1.75rem; /* clears the close (X) button in the corner */

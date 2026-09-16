@@ -69,36 +69,39 @@ function onSubmit(): void {
 
 <template>
   <EditorDialog :open="open" title="Generate character" wide hide-close @update:open="(next) => !next && onCancel()">
-    <form class="editor-dialog-form" @submit.prevent="onSubmit">
-      <p class="editor-muted">
-        Generates a text-to-image character for the “{{ slotLabel }}” slot — no reference images are sent, only the
-        description below. The result is saved to this series' character gallery and assigned to the slot automatically.
-      </p>
-      <label>
-        Description
-        <textarea
-          name="character-prompt"
-          v-model="prompt"
-          rows="8"
-          cols="40"
-          required
-          :disabled="busy"
-          placeholder="Who this character is, appearance, pose, framing…"
-        />
-      </label>
-      <label v-if="provider === 'runcomfy'" class="editor-form-span">
-        RunComfy model
-        <EditorSelect
-          v-model="runComfyModel"
-          name="character-model"
-          aria-label="RunComfy text-to-image model"
-          :disabled="busy"
-        >
-          <EditorSelectItem v-for="m in runComfyModels" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
-        </EditorSelect>
-        <p v-if="runComfyModelsLoading" class="editor-muted">Loading RunComfy's text-to-image catalog…</p>
-        <p v-else-if="runComfyModelsError" class="editor-error">{{ runComfyModelsError }}</p>
-      </label>
+    <form class="editor-dialog-form editor-dialog-form--fill" @submit.prevent="onSubmit">
+      <div class="editor-dialog-scroll">
+        <p class="editor-muted">
+          Generates a text-to-image character for the “{{ slotLabel }}” slot — no reference images are sent, only the
+          description below. The result is saved to this series' character gallery and assigned to the slot
+          automatically.
+        </p>
+        <label>
+          Description
+          <textarea
+            name="character-prompt"
+            v-model="prompt"
+            rows="8"
+            cols="40"
+            required
+            :disabled="busy"
+            placeholder="Who this character is, appearance, pose, framing…"
+          />
+        </label>
+        <label v-if="provider === 'runcomfy'" class="editor-form-span">
+          RunComfy model
+          <EditorSelect
+            v-model="runComfyModel"
+            name="character-model"
+            aria-label="RunComfy text-to-image model"
+            :disabled="busy"
+          >
+            <EditorSelectItem v-for="m in runComfyModels" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
+          </EditorSelect>
+          <p v-if="runComfyModelsLoading" class="editor-muted">Loading RunComfy's text-to-image catalog…</p>
+          <p v-else-if="runComfyModelsError" class="editor-error">{{ runComfyModelsError }}</p>
+        </label>
+      </div>
       <EditorGenerateFooter
         :busy="busy"
         :status="status"

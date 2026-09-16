@@ -671,161 +671,167 @@ function onSubmit(): void {
 
 <template>
   <EditorDialog :open="open" title="Generate page" wide tall hide-close @update:open="(next) => !next && onCancel()">
-    <form class="editor-dialog-form" @submit.prevent="onSubmit">
-      <p class="editor-muted">{{ providerIntro }}</p>
-      <p v-if="missingComfyFlow" class="editor-error" role="alert">
-        Upload a Comfy Save-API graph and reference sheets on the series first.
-      </p>
-      <div class="editor-generate-columns">
-        <div class="editor-generate-main">
-          <label>
-            <span class="editor-label-row">
-              Prompt
-              <EditorIconButton
-                name="clear-prompt"
-                aria-label="Clear prompt"
-                title="Clear prompt"
-                :disabled="busy"
-                @click="onClearPrompt"
-              >
-                <Eraser :size="14" :stroke-width="1.6" aria-hidden="true" />
-              </EditorIconButton>
-            </span>
-            <span class="editor-prompt-wrap">
-              <span
-                ref="highlightEl"
-                class="editor-prompt-highlight"
-                data-prompt-highlight
-                aria-hidden="true"
-                v-html="highlightedPrompt"
-              />
-              <textarea
-                ref="promptEl"
-                name="generate-prompt"
-                v-model="prompt"
-                rows="16"
-                cols="40"
-                required
-                :disabled="busy"
-                placeholder="What happens on this page (no balloons, no SFX lettering). Type @ to tag an included reference."
-                @input="onPromptInput"
-                @keyup="onPromptKeyup"
-                @keydown="onPromptKeydown"
-                @scroll="onPromptScroll"
-              />
-            </span>
-            <Teleport to="body">
-              <ul
-                v-if="mentionOpen"
-                ref="mentionListEl"
-                class="editor-mention-menu"
-                role="listbox"
-                aria-label="Included references"
-                data-mention-list
-                :style="mentionMenuStyle"
-              >
-                <li v-if="!mentionMatches.length" class="editor-muted" role="presentation">No matching reference</li>
-                <li v-for="(opt, i) in mentionMatches" :key="opt.alias">
-                  <button
-                    type="button"
-                    role="option"
-                    :name="`mention-${opt.alias}`"
-                    :aria-selected="i === mentionIndex"
-                    :class="{ 'is-active': i === mentionIndex }"
-                    @mousedown.prevent="insertMention(opt)"
-                  >
-                    <span>{{ opt.tag }}</span>
-                    <span v-if="opt.hint" class="editor-muted">{{ opt.hint }}</span>
-                  </button>
-                </li>
-              </ul>
-            </Teleport>
-          </label>
-          <template v-if="hasPreviousSlot">
-            <EditorCheckbox
-              :checked="includePrevious"
-              name="include-previous"
-              :disabled="busy"
-              @update:checked="(v) => (includePrevious = v)"
-            >
-              Include previous page
-            </EditorCheckbox>
-            <template v-if="includePrevious">
-              <div v-if="previousCandidates.length" class="editor-form-span">
-                <span class="editor-generate-label">Plate from this toon</span>
-                <p class="editor-muted">
-                  A layout page lists each of its own shapes here, not the flattened page — pick the one shape that's
-                  actually the reference.
-                </p>
-                <EditorPlatePicker
-                  :items="previousPickerItems"
-                  ariaLabel="Plate from this toon"
-                  @pick="onPickPrevious"
+    <form class="editor-dialog-form editor-dialog-form--fill" @submit.prevent="onSubmit">
+      <div class="editor-dialog-scroll">
+        <p class="editor-muted">{{ providerIntro }}</p>
+        <p v-if="missingComfyFlow" class="editor-error" role="alert">
+          Upload a Comfy Save-API graph and reference sheets on the series first.
+        </p>
+        <div class="editor-generate-columns">
+          <div class="editor-generate-main">
+            <label>
+              <span class="editor-label-row">
+                Prompt
+                <EditorIconButton
+                  name="clear-prompt"
+                  aria-label="Clear prompt"
+                  title="Clear prompt"
+                  :disabled="busy"
+                  @click="onClearPrompt"
+                >
+                  <Eraser :size="14" :stroke-width="1.6" aria-hidden="true" />
+                </EditorIconButton>
+              </span>
+              <span class="editor-prompt-wrap">
+                <span
+                  ref="highlightEl"
+                  class="editor-prompt-highlight"
+                  data-prompt-highlight
+                  aria-hidden="true"
+                  v-html="highlightedPrompt"
                 />
-              </div>
-              <input
-                ref="previousFileInput"
-                type="file"
-                name="previous-file"
-                accept="image/webp,image/jpeg,image/png"
-                hidden
+                <textarea
+                  ref="promptEl"
+                  name="generate-prompt"
+                  v-model="prompt"
+                  rows="16"
+                  cols="40"
+                  required
+                  :disabled="busy"
+                  placeholder="What happens on this page (no balloons, no SFX lettering). Type @ to tag an included reference."
+                  @input="onPromptInput"
+                  @keyup="onPromptKeyup"
+                  @keydown="onPromptKeydown"
+                  @scroll="onPromptScroll"
+                />
+              </span>
+              <Teleport to="body">
+                <ul
+                  v-if="mentionOpen"
+                  ref="mentionListEl"
+                  class="editor-mention-menu"
+                  role="listbox"
+                  aria-label="Included references"
+                  data-mention-list
+                  :style="mentionMenuStyle"
+                >
+                  <li v-if="!mentionMatches.length" class="editor-muted" role="presentation">No matching reference</li>
+                  <li v-for="(opt, i) in mentionMatches" :key="opt.alias">
+                    <button
+                      type="button"
+                      role="option"
+                      :name="`mention-${opt.alias}`"
+                      :aria-selected="i === mentionIndex"
+                      :class="{ 'is-active': i === mentionIndex }"
+                      @mousedown.prevent="insertMention(opt)"
+                    >
+                      <span>{{ opt.tag }}</span>
+                      <span v-if="opt.hint" class="editor-muted">{{ opt.hint }}</span>
+                    </button>
+                  </li>
+                </ul>
+              </Teleport>
+            </label>
+            <template v-if="hasPreviousSlot">
+              <EditorCheckbox
+                :checked="includePrevious"
+                name="include-previous"
                 :disabled="busy"
-                @change="onPreviousFile"
-              />
-              <EditorButton variant="ghost" name="previous-file-pick" :disabled="busy" @click="pickPreviousFile">
-                {{ pages.length ? "Or attach a file" : "Attach a previous plate" }}
-              </EditorButton>
-              <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
-            </template>
-          </template>
-        </div>
-        <div v-if="generate?.slots.length" class="editor-generate-refs">
-          <span class="editor-generate-label">References</span>
-          <p v-if="isFluxKontext" class="editor-muted" role="status">
-            Flux Kontext sends at most 2 references — {{ includedRefCount }} included{{
-              includedRefCount > 2 ? " (only the first 2 will actually be sent)" : ""
-            }}.
-          </p>
-          <ul class="editor-dialog-slots">
-            <li
-              v-for="slot in generate.slots"
-              :key="slot.alias"
-              :class="{ 'is-toggle-row': isDirectProvider && slot.kind === 'sheet' && slot.fileUrl }"
-            >
-              <button
-                v-if="isDirectProvider && slot.kind === 'sheet' && slot.fileUrl"
-                type="button"
-                class="editor-dialog-slot-toggle"
-                :class="{ 'is-checked': isIncluded(slot.alias) }"
-                :name="`include-${slot.alias}`"
-                :aria-pressed="isIncluded(slot.alias)"
-                :disabled="busy"
-                @click="setIncluded(slot.alias, !isIncluded(slot.alias))"
+                @update:checked="(v) => (includePrevious = v)"
               >
-                <span>{{
-                  slot.rendererInput ? `${slot.rendererInput} — ${slot.label || slot.alias}` : slot.label || slot.alias
-                }}</span>
-                <span class="editor-muted">{{ isIncluded(slot.alias) ? "included" : "not sent this time" }}</span>
-              </button>
-              <template v-else>
-                <span>{{
-                  slot.rendererInput ? `${slot.rendererInput} — ${slot.label || slot.alias}` : slot.label || slot.alias
-                }}</span>
-                <span v-if="slot.kind === 'previous'" class="editor-muted">{{
-                  previousFile
-                    ? "custom file"
-                    : selectedPreviousPage
-                      ? `page ${selectedPreviousPage.position + 1}`
-                      : selectedPreviousRegion
-                        ? "shape image"
-                        : "skipped"
-                }}</span>
-                <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
-                <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>
-                <span v-else class="editor-error">missing sheet</span>
+                Include previous page
+              </EditorCheckbox>
+              <template v-if="includePrevious">
+                <div v-if="previousCandidates.length" class="editor-form-span">
+                  <span class="editor-generate-label">Plate from this toon</span>
+                  <p class="editor-muted">
+                    A layout page lists each of its own shapes here, not the flattened page — pick the one shape that's
+                    actually the reference.
+                  </p>
+                  <EditorPlatePicker
+                    :items="previousPickerItems"
+                    ariaLabel="Plate from this toon"
+                    @pick="onPickPrevious"
+                  />
+                </div>
+                <input
+                  ref="previousFileInput"
+                  type="file"
+                  name="previous-file"
+                  accept="image/webp,image/jpeg,image/png"
+                  hidden
+                  :disabled="busy"
+                  @change="onPreviousFile"
+                />
+                <EditorButton variant="ghost" name="previous-file-pick" :disabled="busy" @click="pickPreviousFile">
+                  {{ pages.length ? "Or attach a file" : "Attach a previous plate" }}
+                </EditorButton>
+                <p v-if="previousFile" class="editor-muted">Using {{ previousFile.name }} instead of a toon plate.</p>
               </template>
-            </li>
-          </ul>
+            </template>
+          </div>
+          <div v-if="generate?.slots.length" class="editor-generate-refs">
+            <span class="editor-generate-label">References</span>
+            <p v-if="isFluxKontext" class="editor-muted" role="status">
+              Flux Kontext sends at most 2 references — {{ includedRefCount }} included{{
+                includedRefCount > 2 ? " (only the first 2 will actually be sent)" : ""
+              }}.
+            </p>
+            <ul class="editor-dialog-slots">
+              <li
+                v-for="slot in generate.slots"
+                :key="slot.alias"
+                :class="{ 'is-toggle-row': isDirectProvider && slot.kind === 'sheet' && slot.fileUrl }"
+              >
+                <button
+                  v-if="isDirectProvider && slot.kind === 'sheet' && slot.fileUrl"
+                  type="button"
+                  class="editor-dialog-slot-toggle"
+                  :class="{ 'is-checked': isIncluded(slot.alias) }"
+                  :name="`include-${slot.alias}`"
+                  :aria-pressed="isIncluded(slot.alias)"
+                  :disabled="busy"
+                  @click="setIncluded(slot.alias, !isIncluded(slot.alias))"
+                >
+                  <span>{{
+                    slot.rendererInput
+                      ? `${slot.rendererInput} — ${slot.label || slot.alias}`
+                      : slot.label || slot.alias
+                  }}</span>
+                  <span class="editor-muted">{{ isIncluded(slot.alias) ? "included" : "not sent this time" }}</span>
+                </button>
+                <template v-else>
+                  <span>{{
+                    slot.rendererInput
+                      ? `${slot.rendererInput} — ${slot.label || slot.alias}`
+                      : slot.label || slot.alias
+                  }}</span>
+                  <span v-if="slot.kind === 'previous'" class="editor-muted">{{
+                    previousFile
+                      ? "custom file"
+                      : selectedPreviousPage
+                        ? `page ${selectedPreviousPage.position + 1}`
+                        : selectedPreviousRegion
+                          ? "shape image"
+                          : "skipped"
+                  }}</span>
+                  <span v-else-if="slot.fileUrl" class="editor-muted">ready</span>
+                  <span v-else-if="slot.optional" class="editor-muted">optional — skipped</span>
+                  <span v-else class="editor-error">missing sheet</span>
+                </template>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       <EditorGenerateFooter
