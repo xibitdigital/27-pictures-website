@@ -66,6 +66,11 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
           consistent. That's a one-off request you started: the reference goes out for that single generation only, the
           same way pasting a photo into an AI chat to ask "draw this next" would.
         </p>
+        <p class="editor-muted">
+          AI generation is entirely optional, not something the studio requires or does on its own. You can draw or
+          paint every page yourself and upload it — never touching Generate at all. If you do use it, which provider and
+          model runs is your own choice, set in your account's Settings, not something switched on for you.
+        </p>
       </section>
 
       <section>

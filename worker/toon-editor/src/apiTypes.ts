@@ -479,5 +479,14 @@ export const USER_KEY_LABELS: Record<UserKeyName, string> = {
   runcomfyApiToken: "RunComfy API key",
 };
 
+/** Where to go get each key — shown as a "Get a key" link next to the field in Settings. */
+export const USER_KEY_LINKS: Record<UserKeyName, string> = {
+  replicateApiToken: "https://replicate.com/account/api-tokens",
+  comfyApiKey: "https://platform.comfy.org/login",
+  elevenlabsApiKey: "https://elevenlabs.io/app/settings/api-keys",
+  runwareApiToken: "https://runware.ai/api-keys",
+  runcomfyApiToken: "https://www.runcomfy.com/",
+};
+
 /** `GET /auth/keys` response — whether each key is set, values never included. */
 export type UserKeyStatus = Record<UserKeyName, boolean>;
