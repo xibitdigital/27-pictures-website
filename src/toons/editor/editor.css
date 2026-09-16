@@ -2478,6 +2478,15 @@ body {
   cursor: pointer;
 }
 
+/* Sits above the frame's own top-right corner, clear of the nw/ne resize handles (which sit
+   directly on the frame edge, not above it). */
+.editor-region-download {
+  position: absolute;
+  top: -1.85rem;
+  right: -0.4rem;
+  z-index: 3;
+}
+
 /* Same box as `.toon-bubble-svg` — slotted inside `.toon-word` so em and scale match.
    Must stay out of the inline-flex size (width: max-content). An in-flow
    `100% + 0.7em` overlay grows the word, which grows the overlay, and the

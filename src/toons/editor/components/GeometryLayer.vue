@@ -7,6 +7,7 @@
  * with three hit-test tiers instead of one: resize/vertex handles, a
  * shape's interior, then empty canvas (only while a draw tool is armed).
  */
+import { Download } from "@lucide/vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from "vue";
 import { imageContentBox } from "../../bookReader/captions/captionModel";
 import { clientToPlateFraction, type ContentBox } from "../plateCoords";
@@ -20,8 +21,10 @@ import {
   snapPointToGrid,
   type Point,
 } from "../regionFit";
+import { pushToast } from "../toast";
 import type { RegionGeometry, RegionRecord } from "../types";
 import RegionShape from "./RegionShape.vue";
+import EditorIconButton from "./ui/EditorIconButton.vue";
 
 export type LayoutTool = "select" | "rect" | "polygon";
 
@@ -463,6 +466,30 @@ function onDblClick(): void {
   if (props.tool === "polygon") finishPolygon();
 }
 
+/** Fetch + blob instead of a plain `<a download>` — the file lives cross-origin (R2/the assets
+ * Worker), and the `download` attribute is silently ignored on a cross-origin link, so a click
+ * would just navigate to the image instead of saving it. */
+async function onDownloadClick(ev: Event, region: RegionRecord): Promise<void> {
+  ev.preventDefault();
+  ev.stopPropagation();
+  if (!region.fileUrl) return;
+  try {
+    const res = await fetch(region.fileUrl);
+    if (!res.ok) throw new Error(`Download failed (${res.status})`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = region.fileUrl.split("/").pop()?.split("?")[0] || `region-${region.id}`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    pushToast(err instanceof Error ? err.message : "Could not download image");
+  }
+}
+
 function onKeydown(ev: KeyboardEvent): void {
   if (props.tool !== "polygon") return;
   if (ev.key === "Enter") {
@@ -553,6 +580,16 @@ watch(
           :style="{ left: `${h.x}%`, top: `${h.y}%` }"
         />
       </div>
+      <EditorIconButton
+        v-if="interactive && layout.region.id === selectedId && layout.region.fileUrl"
+        class="editor-region-download"
+        aria-label="Download image"
+        title="Download image"
+        @click="onDownloadClick($event, layout.region)"
+        @pointerdown.stop
+      >
+        <Download :size="14" :stroke-width="1.8" aria-hidden="true" />
+      </EditorIconButton>
     </div>
     <div v-if="draftRectStyle" class="editor-region-draft-rect" :style="draftRectStyle" />
     <svg v-if="draftPolygonPoints" class="editor-region-draft-polygon">
