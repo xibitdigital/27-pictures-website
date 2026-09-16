@@ -114,6 +114,7 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
         <ul class="editor-protection-list">
           <li>Does — tells every major, honest AI crawler not to fetch or train on the images.</li>
           <li>Does — keeps a visible credit on the artwork if it's ever copied off-site.</li>
+          <li>Does — carries a "no AI training" rights notice inside the file's own metadata, hidden but intact.</li>
           <li>
             Does — leaves training entirely opt-in: an upload only reaches an AI provider when someone in the studio
             picks it as a reference for a specific generation, on purpose.
@@ -123,6 +124,22 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
             crawlers agree to follow, not a lock; the watermark is the backstop for that case.
           </li>
         </ul>
+      </section>
+
+      <section>
+        <h2 class="editor-list-heading">6. The "no training" notice is baked into the file, not just the page</h2>
+        <p>
+          Every plate is also stamped with a rights notice inside the image file itself (the same kind of hidden
+          metadata a camera uses for the date and lens) — a short note saying it's not licensed for AI training, plus a
+          credit back to twentyseven.pictures. It travels with the file wherever it goes: download it, re-host it, drag
+          it into another tool, and that notice is still there, the way the visible watermark is — just not visible to a
+          person looking at the picture.
+        </p>
+        <p class="editor-muted">
+          Same honest caveat as the rest of this page: metadata like this can be stripped in one command by anyone who
+          wants to. It's not a lock either — it's one more place the "please don't train on this" request is written
+          down, on top of the crawler rule, the header, and the visible mark.
+        </p>
       </section>
 
       <p class="editor-muted">

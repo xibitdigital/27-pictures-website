@@ -7,6 +7,8 @@
  * Editor originals (`editor/…`) stay on toon-editor GET /media/.
  */
 
+import { buildXmpPacket, injectXmp } from "./webpXmp";
+
 export interface Env {
   ASSETS: R2Bucket;
 }
@@ -135,13 +137,20 @@ export default {
 
     const type = contentTypeFor(key, object.httpMetadata?.contentType);
     const headers = assetHeaders(type, etag);
-    headers.set("Content-Length", String(object.size));
+
+    // WebP only: mux in an XMP rights/opt-out packet so the "don't train on this" signal
+    // travels with the file itself, not just this response's headers. Buffering the whole
+    // object is fine here — the result is what gets cached, so this only runs once per key.
+    const body = type === "image/webp" ? injectXmp(new Uint8Array(await object.arrayBuffer()), buildXmpPacket()) : null;
+
+    if (body) headers.set("Content-Length", String(body.length));
+    else headers.set("Content-Length", String(object.size));
 
     if (method === "HEAD") {
       return new Response(null, { status: 200, headers });
     }
 
-    const response = new Response(object.body, { status: 200, headers });
+    const response = new Response(body ?? object.body, { status: 200, headers });
     ctx.waitUntil(cache.put(cacheKey, response.clone()));
     return response;
   },

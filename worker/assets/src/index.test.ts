@@ -1,5 +1,23 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import worker, { contentTypeFor, objectKey } from "./index";
+import { buildXmpPacket, injectXmp } from "./webpXmp";
+
+/** A minimal valid VP8L WebP — real enough for injectXmp to actually run, not just no-op. */
+function makeSimpleWebp(width: number, height: number): Uint8Array {
+  const bits = (width - 1) | ((height - 1) << 14);
+  const vp8lData = new Uint8Array([0x2f, bits & 0xff, (bits >> 8) & 0xff, (bits >> 16) & 0xff, 0, 0, 0]);
+  const chunkSize = vp8lData.length;
+  const riffPayload = new Uint8Array(4 + 8 + chunkSize + (chunkSize % 2));
+  riffPayload.set(new TextEncoder().encode("WEBP"), 0);
+  riffPayload.set(new TextEncoder().encode("VP8L"), 4);
+  new DataView(riffPayload.buffer).setUint32(8, chunkSize, true);
+  riffPayload.set(vp8lData, 12);
+  const out = new Uint8Array(8 + riffPayload.length);
+  out.set(new TextEncoder().encode("RIFF"), 0);
+  new DataView(out.buffer).setUint32(4, riffPayload.length, true);
+  out.set(riffPayload, 8);
+  return out;
+}
 
 describe("objectKey", () => {
   it("allows toons and card-art keys", () => {
@@ -70,6 +88,7 @@ describe("assets worker", () => {
       envWith(async () => {
         return {
           body: body as unknown as ReadableStream,
+          arrayBuffer: async () => body.buffer,
           size: 3,
           etag: '"abc"',
           httpEtag: '"abc"',
@@ -82,5 +101,27 @@ describe("assets worker", () => {
     expect(res.headers.get("Content-Type")).toBe("image/webp");
     expect(res.headers.get("Cache-Control")).toContain("immutable");
     expect(res.headers.get("X-Robots-Tag")).toBe("noai, noimageai, noindex");
+  });
+
+  it("embeds an XMP rights packet into a real webp's bytes", async () => {
+    const original = makeSimpleWebp(12, 9);
+    const res = await worker.fetch(
+      new Request("https://assets.twentyseven.pictures/toons/jax/assets/a.webp"),
+      envWith(async () => {
+        return {
+          body: original as unknown as ReadableStream,
+          arrayBuffer: async () => original.buffer,
+          size: original.length,
+          etag: '"abc"',
+          httpEtag: '"abc"',
+          httpMetadata: { contentType: "image/webp" },
+        } as unknown as R2ObjectBody;
+      }),
+      { waitUntil() {}, passThroughOnException() {}, props: {} }
+    );
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    expect(bytes.length).toBe(injectXmp(original, buildXmpPacket()).length);
+    expect(Number(res.headers.get("Content-Length"))).toBe(bytes.length);
+    expect(new TextDecoder().decode(bytes)).toContain("Not licensed for AI/ML training");
   });
 });
