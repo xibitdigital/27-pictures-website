@@ -1,0 +1,154 @@
+<!--
+  Italian translation of ImageProtectionInfo.vue's content, for the PDF only.
+  The live editor UI stays English-only (it's an internal admin tool, no i18n
+  system there) — this is a hand-kept translation, not generated. If the
+  English source changes, update this file to match.
+-->
+<div class="editor-protection-doc">
+  <p class="editor-muted">
+    Se sei preoccupato che i tuoi disegni finiscano per addestrare il modello AI di qualcun altro — è una preoccupazione
+    legittima in questo momento, e merita una risposta diretta, non una semplicemente rassicurante. Ecco esattamente
+    cosa è attivo, cosa impedisce davvero, e dove siamo onesti sul fatto che una promessa non può essere fatta.
+  </p>
+
+  <section>
+    <h2 class="editor-list-heading">1. I file immagine stessi sono off-limits per l'AI</h2>
+    <p>
+      Ogni tavola, copertina e immagine di card viene servita dal proprio indirizzo —
+      <code>assets.twentyseven.pictures</code> — separato dalle pagine che le persone leggono davvero. Quell'indirizzo
+      ha una regola per ogni crawler AI importante (GPTBot di OpenAI, il crawler di training di Google, quello di Apple,
+      Common Crawl, Bytespider, quello di Anthropic): <strong>restare fuori</strong>. Ogni risposta immagine porta anche
+      un tag <code>noai, noimageai</code>, lo stesso segnale "non usare questo per il training" che diverse di queste
+      aziende hanno dichiarato di rispettare direttamente sul file, non solo sulla cartella.
+    </p>
+    <p class="editor-muted">
+      In breve: anche un bot autorizzato a leggere le nostre pagine editoriali resta comunque escluso dalle immagini su
+      quelle pagine.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="editor-list-heading">2. Le pagine editoriali restano aperte — di proposito</h2>
+    <p>
+      Le pagine che le persone visitano davvero (<code>twentyseven.pictures</code>) permettono l'accesso ai motori di
+      ricerca e ai crawler AI "di citazione" — quelli che rispondono a una domanda e ci linkano indietro, come la
+      funzione di ricerca di ChatGPT o Perplexity. È deliberato: vogliamo che il sito sia trovato e citato. Bloccare
+      tutto nasconderebbe anche noi da quel traffico. Solo i byte grezzi delle immagini ricevono il "no" categorico.
+    </p>
+    <p>
+      Due bot sono bloccati ovunque, incluse le pagine editoriali stesse: <strong>Bytespider</strong> (il crawler di
+      TikTok) e <strong>CCBot</strong> (Common Crawl) — entrambi sono scraper di massa con una storia di alimentare
+      dataset di training aperti, non strumenti di citazione.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="editor-list-heading">3. Ogni tavola pubblicata porta una filigrana visibile</h2>
+    <p>
+      Indipendentemente da qualsiasi regola per i crawler, ogni tavola che viene pubblicata ha il nome del sito impresso
+      nei pixel prima di uscire. Una regola robots può essere ignorata da un attore in malafede; un marchio impresso
+      nell'immagine la accompagna anche se qualcuno fa uno screenshot o ripubblica l'immagine altrove.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="editor-list-heading">4. Niente di ciò che carichi addestra un modello AI da solo</h2>
+    <p>
+      Caricare una tavola, una copertina o una character sheet su un toon non alimenta nessun modello AI. Quei file
+      restano semplicemente nello storage finché qualcuno apre lo studio e li guarda — la piattaforma stessa non invia
+      mai immagini salvate per essere usate come training.
+    </p>
+    <p>
+      L'unico momento in cui un'immagine lascia lo storage verso un fornitore AI è quando <strong>tu</strong> scegli di
+      generare una nuova tavola e allega deliberatamente un riferimento — una character sheet, o la pagina precedente,
+      per mantenere coerenza artistica. È una richiesta puntuale che hai avviato tu: il riferimento esce solo per quella
+      singola generazione, allo stesso modo in cui incollare una foto in una chat AI per chiedere "disegna questo dopo"
+      farebbe.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="editor-list-heading">5. Il lavoro in corso non è pubblicato, indicizzato o annunciato</h2>
+    <p>
+      Un toon in bozza, una pagina non finita, una character sheet appena caricata — niente di tutto ciò è linkato da
+      nessuna parte pubblica. Non è nella sitemap, non è in <code>/llms.txt</code>, non è su nessuna card del catalogo,
+      finché qualcuno qui non lo porta deliberatamente a Public. Motori di ricerca e crawler di citazione vedono solo
+      ciò che è effettivamente pubblicato.
+    </p>
+    <p class="editor-muted">
+      Una precisazione onesta: lo studio stesso non è dietro un secondo muro di segretezza — un link diretto a un file,
+      se qualcuno lo avesse, si aprirebbe. Nulla indicizza o elenca quei link, ma trattali come tratteresti un link
+      privato di cloud storage: non incollarli da nessuna parte pubblica.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="editor-list-heading">Le domande che le persone si fanno davvero</h2>
+    <p>
+      <strong>[Inserisci una grande azienda AI] userà il mio disegno per il training?</strong> Non se rispettano la
+      regola che hanno pubblicato loro stessi — GPTBot, il crawler di training di Google, quelli di Apple e Anthropic
+      dichiarano tutti di rispettare esattamente questo segnale. È un "no" reale e funzionante. Non è come un lucchetto:
+      si basa sul fatto che un'azienda mantenga la propria parola, allo stesso modo in cui robots.txt si basa su questo
+      per ogni sito web dal 1994. Non possiamo costringere un attore in malafede a rispettarlo — nessun sito può farlo —
+      ed è esattamente per questo che esiste la filigrana come seconda linea indipendente.
+    </p>
+    <p>
+      <strong
+        >Quando genero una nuova tavola, l'immagine di riferimento che allego viene conservata da quello strumento AI
+        per addestrarsi?</strong
+      >
+      Risposta diretta: non controlliamo cosa succede sui server del fornitore di generazione dopo che ricevono una
+      richiesta — è tra noi e i loro termini pubblicati, come per qualsiasi strumento costruito sull'API di qualcun
+      altro. Ciò che controlliamo, e possiamo promettere: un riferimento lascia questa piattaforma solo quando una
+      persona qui lo allega deliberatamente a una generazione specifica. Nulla viene inviato automaticamente, in blocco,
+      o senza che qualcuno scelga di inviarlo.
+    </p>
+    <p>
+      <strong>Quindi il mio lavoro è davvero al sicuro?</strong> È protetto nel modo in cui una porta d'ingresso chiusa
+      a chiave protegge una casa — realmente, e vale la pena averla, non è l'affermazione che niente di brutto possa mai
+      succedere. Se questo non è abbastanza rassicurante per un pezzo specifico, dillo — è una conversazione che vale la
+      pena avere caso per caso, non una casella che questa pagina può spuntare per te.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="editor-list-heading">Cosa fa e cosa non fa</h2>
+    <ul class="editor-protection-list">
+      <li>Fa — dice a ogni crawler AI importante e onesto di non scaricare o addestrarsi sulle immagini.</li>
+      <li>Fa — mantiene un credito visibile sull'opera se viene mai copiata altrove.</li>
+      <li>Fa — porta un avviso di diritti "no AI training" dentro i metadati del file stesso, nascosto ma intatto.</li>
+      <li>
+        Fa — lascia il training interamente opt-in: un caricamento raggiunge un fornitore AI solo quando qualcuno nello
+        studio lo sceglie come riferimento per una generazione specifica, di proposito.
+      </li>
+      <li>
+        Non fa — impedire a una persona di salvare un'immagine a mano e usarla comunque. Le regole robots sono una
+        richiesta che i crawler accettano di rispettare, non un lucchetto; la filigrana è il backstop per quel caso.
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="editor-list-heading">6. L'avviso "no training" è impresso nel file, non solo nella pagina</h2>
+    <p>
+      Ogni tavola porta anche un avviso di diritti dentro il file immagine stesso (lo stesso tipo di metadati nascosti
+      che una fotocamera usa per data e obiettivo) — una breve nota che dice che non è concessa in licenza per il
+      training AI, più un credito verso twentyseven.pictures. Accompagna il file ovunque vada: scaricalo, ripubblicalo
+      altrove, trascinalo in un altro strumento, e quell'avviso è ancora lì, allo stesso modo della filigrana visibile —
+      solo non visibile a chi guarda l'immagine.
+    </p>
+    <p class="editor-muted">
+      Stessa precisazione onesta del resto di questa pagina: metadati come questi possono essere rimossi con un comando
+      da chiunque lo voglia. Non è un lucchetto nemmeno questo — è un altro posto dove è scritta la richiesta "per
+      favore non usare questo per il training", in aggiunta alla regola per i crawler, all'header, e al marchio
+      visibile.
+    </p>
+  </section>
+
+  <p class="editor-muted">
+    Vuoi sapere se uno strumento specifico rispetta questo? È pubblico — chiunque può verificare
+    <a href="https://assets.twentyseven.pictures/robots.txt" target="_blank" rel="noopener">
+      assets.twentyseven.pictures/robots.txt </a
+    >.
+  </p>
+</div>

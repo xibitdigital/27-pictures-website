@@ -5,6 +5,7 @@
     "generate-qr": "node scripts/generate-qr.js",
     "generate-qr-image": "node scripts/generate-qr-image.js",
     "generate-image-protection-pdf": "node scripts/generate-image-protection-pdf.js",
+    "generate-image-protection-pdf:it": "node scripts/generate-image-protection-pdf.js --lang=it",
     "watermark": "bash scripts/watermark-images.sh",
     "add-image": "node scripts/add-toon-image.js",
     "convert-plates": "node scripts/convert-toon-plates.js",

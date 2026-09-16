@@ -3,14 +3,21 @@
  * Renders the "Image protection" designer doc (the same copy shown in the
  * toon editor's account menu → Image protection dialog) to a standalone PDF.
  *
- * Single source of truth: this pulls the prose straight out of
- * ImageProtectionInfo.vue's template rather than keeping a second copy, so
- * the PDF can't quietly drift from what's live in the editor. It's just the
- * static markup — no Vue runtime involved, no dev server needed.
+ * English (default): pulls the prose straight out of ImageProtectionInfo.vue's
+ * template rather than keeping a second copy, so the PDF can't quietly drift
+ * from what's live in the editor. It's just the static markup — no Vue
+ * runtime involved, no dev server needed.
+ *
+ * --lang=it: the editor UI itself stays English-only (an internal admin
+ * tool, no i18n system there), so this reads a hand-kept translation from
+ * scripts/lib/image-protection-content.it.html instead. If the English
+ * source changes, that file needs updating by hand to match — there's no
+ * automated sync.
  *
  * Usage:
  *   npm run generate-image-protection-pdf
- *   npm run generate-image-protection-pdf -- ~/Desktop/image-protection.pdf
+ *   npm run generate-image-protection-pdf:it
+ *   npm run generate-image-protection-pdf -- --lang=it ~/Desktop/protezione-immagini.pdf
  */
 
 const fs = require("fs");
@@ -18,8 +25,16 @@ const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
+const args = process.argv.slice(2);
+const langArg = args.find((a) => a.startsWith("--lang="));
+const LANG = langArg ? langArg.slice("--lang=".length) : "en";
+const OUTPUT_ARG = args.find((a) => !a.startsWith("--"));
+
 const SOURCE = path.join(__dirname, "..", "src/toons/editor/components/ImageProtectionInfo.vue");
-const OUTPUT = process.argv[2] || path.join(os.homedir(), "Downloads", "image-protection.pdf");
+const IT_SOURCE = path.join(__dirname, "lib", "image-protection-content.it.html");
+const OUTPUT =
+  OUTPUT_ARG ||
+  path.join(os.homedir(), "Downloads", LANG === "it" ? "image-protection-it.pdf" : "image-protection.pdf");
 
 function extractDocMarkup(vueSource) {
   const start = vueSource.indexOf('<div class="editor-protection-doc">');
@@ -45,13 +60,29 @@ function extractDocMarkup(vueSource) {
   return vueSource.slice(openTagEnd, cursor).trim();
 }
 
-function toPrintHtml(bodyMarkup) {
+const COPY = {
+  en: {
+    htmlLang: "en",
+    title: "Image protection",
+    generatedBy: "generated",
+    footer: "for internal / designer reference",
+  },
+  it: {
+    htmlLang: "it",
+    title: "Protezione immagini",
+    generatedBy: "generato il",
+    footer: "per uso interno / riferimento designer",
+  },
+};
+
+function toPrintHtml(bodyMarkup, lang) {
+  const copy = COPY[lang] || COPY.en;
   const generated = new Date().toISOString().slice(0, 10);
   return `<!doctype html>
-<html lang="en">
+<html lang="${copy.htmlLang}">
 <head>
 <meta charset="utf-8" />
-<title>Image protection — 27 Pictures</title>
+<title>${copy.title} — 27 Pictures</title>
 <style>
   @page { size: A4; margin: 20mm 18mm; }
   * { box-sizing: border-box; }
@@ -91,11 +122,11 @@ function toPrintHtml(bodyMarkup) {
 </head>
 <body>
   <header>
-    <h1>Image protection</h1>
-    <span>27 Pictures &middot; generated ${generated}</span>
+    <h1>${copy.title}</h1>
+    <span>27 Pictures &middot; ${copy.generatedBy} ${generated}</span>
   </header>
   ${bodyMarkup}
-  <footer>twentyseven.pictures &middot; for internal / designer reference</footer>
+  <footer>twentyseven.pictures &middot; ${copy.footer}</footer>
 </body>
 </html>
 `;
@@ -116,9 +147,14 @@ function findChrome() {
 }
 
 function main() {
-  const vueSource = fs.readFileSync(SOURCE, "utf8");
-  const bodyMarkup = extractDocMarkup(vueSource);
-  const html = toPrintHtml(bodyMarkup);
+  let bodyMarkup;
+  if (LANG === "it") {
+    bodyMarkup = fs.readFileSync(IT_SOURCE, "utf8").trim();
+  } else {
+    const vueSource = fs.readFileSync(SOURCE, "utf8");
+    bodyMarkup = extractDocMarkup(vueSource);
+  }
+  const html = toPrintHtml(bodyMarkup, LANG);
 
   const tmpHtml = path.join(os.tmpdir(), `image-protection-${Date.now()}.html`);
   fs.writeFileSync(tmpHtml, html, "utf8");
