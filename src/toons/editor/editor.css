@@ -222,6 +222,14 @@ body {
   gap: 0.15rem;
 }
 
+/* Keeps "Get a key" clearly separate from the bold label — it used to sit inside the <strong>
+   itself, inheriting the bold weight and reading as one cramped run of text. */
+.editor-user-row-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
 .editor-user-row-actions {
   display: flex;
   gap: 0.5rem;

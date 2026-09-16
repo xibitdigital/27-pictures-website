@@ -77,10 +77,10 @@ async function onClear(name: UserKeyName): Promise<void> {
           <ul v-else class="editor-user-roster">
             <li v-for="name in USER_KEY_NAMES" :key="name" class="editor-user-row">
               <span class="editor-user-row-info">
-                <strong>
-                  {{ USER_KEY_LABELS[name] }}
+                <span class="editor-user-row-label">
+                  <strong>{{ USER_KEY_LABELS[name] }}</strong>
                   <a :href="USER_KEY_LINKS[name]" target="_blank" rel="noopener" class="editor-field-link">Get a key</a>
-                </strong>
+                </span>
                 <span class="editor-muted">{{ status?.[name] ? "Set" : "Not set — using the shared key" }}</span>
               </span>
               <span class="editor-user-row-actions">
