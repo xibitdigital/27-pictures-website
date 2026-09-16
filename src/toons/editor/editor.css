@@ -1419,6 +1419,11 @@ a:focus-visible {
 .editor-form-preview {
   position: sticky;
   top: 1rem;
+  /* Cover card + Defaults form can get taller than the viewport (long series) — without a bound
+     this column just grew past it and scrolled along with the left column instead of on its own.
+     5.5rem ≈ the bar's own height + this column's top/bottom breathing room. */
+  max-height: calc(100dvh - 5.5rem);
+  overflow-y: auto;
 }
 
 .editor-form-preview .series-grid {
@@ -1437,6 +1442,8 @@ a:focus-visible {
   .editor-form-preview {
     position: static;
     max-width: 22rem;
+    max-height: none;
+    overflow-y: visible;
   }
 }
 

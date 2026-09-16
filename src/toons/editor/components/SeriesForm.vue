@@ -886,10 +886,6 @@ async function onSubmit(ev: Event): Promise<void> {
           </div>
           <div class="editor-generate">
             <p class="editor-generate-label">Defaults for new items</p>
-            <p class="editor-muted">
-              Starting values for a brand-new bubble, page, or layout region in this series — a designer can still
-              change any of these afterward. Leave blank to keep the studio's own defaults.
-            </p>
             <label>
               Bubble opacity (%)
               <span class="editor-slider-row">
