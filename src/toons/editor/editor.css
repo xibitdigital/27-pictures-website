@@ -542,6 +542,22 @@ a:focus-visible {
   border-color: var(--red-smile-hover);
 }
 
+/* A lighter-weight destructive action (Clear watermark) — still ghost, just red instead of the
+   neutral gray, so it reads as "removes something" without the full solid-fill danger weight
+   ConfirmDialog's actually-destructive confirms use. */
+.editor-btn--ghost.editor-btn--danger {
+  background: transparent;
+  color: var(--red-smile);
+  border-color: var(--red-smile);
+}
+
+.editor-btn--ghost.editor-btn--danger:hover,
+.editor-btn--ghost.editor-btn--danger:focus-visible {
+  background: color-mix(in srgb, var(--red-smile) 18%, transparent);
+  border-color: var(--red-smile-hover);
+  color: var(--text);
+}
+
 .editor-muted {
   color: var(--silver);
 }

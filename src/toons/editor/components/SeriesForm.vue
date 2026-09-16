@@ -712,7 +712,12 @@ async function onSubmit(ev: Event): Promise<void> {
             </label>
             <p v-if="existing?.watermarkUrl" class="editor-muted">
               <img :src="existing.watermarkUrl" alt="" class="editor-watermark-preview" />
-              <EditorButton variant="ghost" :disabled="uploadingWatermark" @click="onClearWatermark">
+              <EditorButton
+                variant="ghost"
+                class="editor-btn--danger"
+                :disabled="uploadingWatermark"
+                @click="onClearWatermark"
+              >
                 {{ uploadingWatermark ? "Clearing…" : "Clear watermark" }}
               </EditorButton>
             </p>
