@@ -1508,6 +1508,17 @@ body {
   background: color-mix(in srgb, var(--bg-dark) 72%, transparent);
 }
 
+/* UpdateAvailableDialog only — always wins over any other dialog open underneath it (including
+   an open EditorSelect popup at 410, see .editor-select-content below), instead of stacking by
+   DOM/mount order like every other dialog sharing 400/401. */
+.editor-dialog-root[data-elevated] {
+  z-index: 421;
+}
+
+.editor-dialog-backdrop[data-elevated] {
+  z-index: 420;
+}
+
 .editor-dialog {
   position: relative;
   z-index: 1;

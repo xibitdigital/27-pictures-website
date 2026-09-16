@@ -34,8 +34,15 @@ withDefaults(
      * Cancel/busy-guarded flow, not a stray click a corner icon invites.
      */
     hideClose?: boolean;
+    /**
+     * Every dialog shares one z-index, so two open at once stack by DOM/mount order — normally
+     * fine, but UpdateAvailableDialog can pop up while another dialog (Generate, Image
+     * protection, …) is already open, and it needs to always win that fight, not lose it by
+     * mounting-order coincidence.
+     */
+    elevated?: boolean;
   }>(),
-  { alertdialog: false, preview: false, wide: false, tall: false, hideClose: false }
+  { alertdialog: false, preview: false, wide: false, tall: false, hideClose: false, elevated: false }
 );
 
 const emit = defineEmits<{
@@ -51,9 +58,10 @@ function onClose(): void {
 <template>
   <DialogRoot :open="open" @update:open="(value) => emit('update:open', value)">
     <DialogPortal>
-      <DialogOverlay class="editor-dialog-backdrop" />
+      <DialogOverlay class="editor-dialog-backdrop" :data-elevated="elevated ? '' : undefined" />
       <DialogContent
         class="editor-dialog-root"
+        :data-elevated="elevated ? '' : undefined"
         :role="alertdialog ? 'alertdialog' : undefined"
         :aria-describedby="undefined"
         @open-auto-focus="emit('openAutoFocus', $event)"

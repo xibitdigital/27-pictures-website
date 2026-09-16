@@ -31,4 +31,30 @@ describe("EditorDialog", () => {
     expect(document.querySelector('button[aria-label="Close"]')).toBeNull();
     wrapper.unmount();
   });
+
+  it("marks the backdrop and content data-elevated when elevated is set (UpdateAvailableDialog, above any other open dialog)", async () => {
+    const wrapper = mount(EditorDialog, {
+      props: { open: false, title: "Update available", elevated: true },
+      slots: { default: "<p>body</p>" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    expect(document.querySelector(".editor-dialog-backdrop")?.hasAttribute("data-elevated")).toBe(true);
+    expect(document.querySelector(".editor-dialog-root")?.hasAttribute("data-elevated")).toBe(true);
+    wrapper.unmount();
+  });
+
+  it("leaves data-elevated off by default", async () => {
+    const wrapper = mount(EditorDialog, {
+      props: { open: false, title: "Add page" },
+      slots: { default: "<p>body</p>" },
+      attachTo: document.body,
+    });
+    await wrapper.setProps({ open: true });
+    await flushPromises();
+    expect(document.querySelector(".editor-dialog-backdrop")?.hasAttribute("data-elevated")).toBe(false);
+    expect(document.querySelector(".editor-dialog-root")?.hasAttribute("data-elevated")).toBe(false);
+    wrapper.unmount();
+  });
 });
