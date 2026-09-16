@@ -19,6 +19,7 @@ import {
   percentPoints,
   regionBoundingBox,
   snapPointToGrid,
+  snapToGrid,
   translateGeometry,
   type Point,
 } from "../regionFit";
@@ -332,8 +333,16 @@ function onWindowMove(ev: PointerEvent): void {
     let dy = (ev.clientY - drag.startClientY) / box.value.height;
     // Clamp the delta (not each translated point) so every corner/vertex moves together and the
     // shape can't be squashed against the plate edge — it just stops there, still full size.
-    dx = Math.max(-bbox.x, Math.min(1 - bbox.x - bbox.w, dx));
-    dy = Math.max(-bbox.y, Math.min(1 - bbox.y - bbox.h, dy));
+    const clampX = (v: number) => Math.max(-bbox.x, Math.min(1 - bbox.x - bbox.w, v));
+    const clampY = (v: number) => Math.max(-bbox.y, Math.min(1 - bbox.y - bbox.h, v));
+    dx = clampX(dx);
+    dy = clampY(dy);
+    if (props.grid) {
+      // Snap the shape's own top-left corner to the grid, not the cursor — re-clamp after,
+      // since a snap can round an already-clamped delta back past the plate edge.
+      dx = clampX(snapToGrid(bbox.x + dx) - bbox.x);
+      dy = clampY(snapToGrid(bbox.y + dy) - bbox.y);
+    }
     const next = translateGeometry(drag.geometry, dx, dy);
     drag.current = next;
     emit("update-geometry", drag.regionId, next);
