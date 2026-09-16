@@ -27,7 +27,7 @@ describe("GeneratePageDialog", () => {
     const root = document.querySelector(".editor-dialog-root") as HTMLElement;
     expect(root).toBeTruthy();
     expect(root.parentElement).toBe(document.body);
-    expect(root.querySelector("h2")?.textContent).toBe("Generate page");
+    expect(root.querySelector("h2")?.textContent).toBe("Generate image");
     wrapper.unmount();
   });
 

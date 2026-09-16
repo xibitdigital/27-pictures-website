@@ -688,7 +688,7 @@ function onSubmit(): void {
 </script>
 
 <template>
-  <EditorDialog :open="open" title="Generate page" wide tall hide-close @update:open="(next) => !next && onCancel()">
+  <EditorDialog :open="open" title="Generate image" wide tall hide-close @update:open="(next) => !next && onCancel()">
     <form class="editor-dialog-form editor-dialog-form--fill" @submit.prevent="onSubmit">
       <div class="editor-dialog-scroll">
         <p class="editor-muted">{{ providerIntro }}</p>

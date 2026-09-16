@@ -24,9 +24,9 @@ withDefaults(
     alertdialog?: boolean;
     /** Tall image preview — wider box, image fills the remaining height. */
     preview?: boolean;
-    /** More form fields than the default width comfortably fits (e.g. the plate picker + slot list in Generate page). */
+    /** More form fields than the default width comfortably fits (e.g. the plate picker + slot list in Generate image). */
     wide?: boolean;
-    /** Taller default shell — Generate page prompt needs more room than the other wide dialogs. */
+    /** Taller default shell — Generate image prompt needs more room than the other wide dialogs. */
     tall?: boolean;
     /**
      * Hides the corner X — only the two Generate dialogs (page/character) set this: closing them
