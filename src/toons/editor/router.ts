@@ -5,7 +5,6 @@ import SeriesForm from "./components/SeriesForm.vue";
 import PageStudio from "./components/PageStudio.vue";
 import UsersView from "./components/UsersView.vue";
 import SettingsView from "./components/SettingsView.vue";
-import ImageProtectionInfo from "./components/ImageProtectionInfo.vue";
 
 export const router = createRouter({
   // Hash history: this is an MPA entry. Vite `appType: "mpa"` and Pages have
@@ -22,7 +21,6 @@ export const router = createRouter({
     // 403 on POST /auth/users.
     { path: "/users", name: "users", component: UsersView },
     { path: "/settings", name: "settings", component: SettingsView },
-    { path: "/image-protection", name: "image-protection", component: ImageProtectionInfo },
     { path: "/:id", name: "meta", component: ToonMetaForm },
     { path: "/:id/pages/:pageId?", name: "studio", component: PageStudio },
   ],

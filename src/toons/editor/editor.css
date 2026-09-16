@@ -65,14 +65,19 @@ body {
 }
 
 .editor-protection-doc {
-  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.editor-protection-doc section + section {
-  margin-top: 1.75rem;
+.editor-protection-doc section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .editor-protection-doc p {
+  margin: 0;
   color: var(--text);
   line-height: 1.6;
 }
