@@ -14,6 +14,7 @@ import {
   sliderPositionFromScale,
   snapPointToGrid,
   snapToGrid,
+  translateGeometry,
   watermarkDrawRect,
 } from "./regionFit";
 import type { RegionGeometry, RegionRecord } from "./types";
@@ -262,5 +263,31 @@ describe("watermarkDrawRect", () => {
 
   it("skips when the mark does not fit", () => {
     expect(watermarkDrawRect({ width: 400, height: 40 }, { width: 200, height: 400 }, 200)).toBeNull();
+  });
+});
+
+describe("translateGeometry", () => {
+  it("shifts a rect's x/y, keeping w/h unchanged", () => {
+    const next = translateGeometry(rect, 0.1, -0.05);
+    expect(next.kind).toBe("rect");
+    if (next.kind !== "rect") return;
+    expect(next.x).toBeCloseTo(0.3, 10);
+    expect(next.y).toBeCloseTo(0.05, 10);
+    expect(next.w).toBe(rect.kind === "rect" ? rect.w : 0);
+    expect(next.h).toBe(rect.kind === "rect" ? rect.h : 0);
+  });
+
+  it("shifts every polygon point by the same delta", () => {
+    const next = translateGeometry(polygon, 0.05, 0.1);
+    expect(next.kind).toBe("polygon");
+    if (next.kind !== "polygon" || polygon.kind !== "polygon") return;
+    next.points.forEach((p, i) => {
+      expect(p.x).toBeCloseTo(polygon.points[i].x + 0.05, 10);
+      expect(p.y).toBeCloseTo(polygon.points[i].y + 0.1, 10);
+    });
+  });
+
+  it("a zero delta returns an equal geometry", () => {
+    expect(translateGeometry(rect, 0, 0)).toEqual(rect);
   });
 });

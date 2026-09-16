@@ -19,6 +19,7 @@ import {
   percentPoints,
   regionBoundingBox,
   snapPointToGrid,
+  translateGeometry,
   type Point,
 } from "../regionFit";
 import { pushToast } from "../toast";
@@ -26,7 +27,7 @@ import type { RegionGeometry, RegionRecord } from "../types";
 import RegionShape from "./RegionShape.vue";
 import EditorIconButton from "./ui/EditorIconButton.vue";
 
-export type LayoutTool = "select" | "rect" | "polygon";
+export type LayoutTool = "select" | "rect" | "polygon" | "move";
 
 const MIN_DRAW_SIZE = 0.03;
 const RECT_CORNERS = ["nw", "ne", "se", "sw"] as const;
@@ -187,7 +188,7 @@ const layerStyle = computed<CSSProperties>(() => ({
   // this same 35 for their own layer — regions must sit below them (matches
   // the reader's RegionLayer.vue, z-index 20, same reasoning).
   zIndex: props.interactive ? 35 : 20,
-  cursor: props.tool === "select" ? undefined : "crosshair",
+  cursor: props.tool === "select" ? undefined : props.tool === "move" ? "grab" : "crosshair",
 }));
 
 /** A faint reference grid at the same spacing draw/resize/reshape snaps to — purely visual, never intercepts pointer events. */
@@ -247,6 +248,17 @@ type DragState =
   | { mode: "draw-rect"; pointerId: number }
   | { mode: "resize"; regionId: string; corner: string; pointerId: number; geometry: RegionGeometry }
   | { mode: "vertex"; regionId: string; index: number; pointerId: number; geometry: RegionGeometry }
+  | {
+      mode: "move-region";
+      regionId: string;
+      pointerId: number;
+      startClientX: number;
+      startClientY: number;
+      /** Start geometry — delta is always measured from this, not frame-to-frame, so the move never drifts. */
+      geometry: RegionGeometry;
+      /** Latest translated geometry, for persist-geometry on commit. */
+      current: RegionGeometry;
+    }
   | {
       mode: "pan";
       regionId: string;
@@ -313,6 +325,20 @@ function onWindowMove(ev: PointerEvent): void {
     emit("update-geometry", drag.regionId, next);
     return;
   }
+  if (drag.mode === "move-region") {
+    if (!box.value) return;
+    const bbox = regionBoundingBox(drag.geometry);
+    let dx = (ev.clientX - drag.startClientX) / box.value.width;
+    let dy = (ev.clientY - drag.startClientY) / box.value.height;
+    // Clamp the delta (not each translated point) so every corner/vertex moves together and the
+    // shape can't be squashed against the plate edge — it just stops there, still full size.
+    dx = Math.max(-bbox.x, Math.min(1 - bbox.x - bbox.w, dx));
+    dy = Math.max(-bbox.y, Math.min(1 - bbox.y - bbox.h, dy));
+    const next = translateGeometry(drag.geometry, dx, dy);
+    drag.current = next;
+    emit("update-geometry", drag.regionId, next);
+    return;
+  }
   if (drag.mode === "pan") {
     const panRegionId = drag.regionId;
     const region = props.regions.find((r) => r.id === panRegionId);
@@ -353,6 +379,10 @@ function endDrag(ev: PointerEvent, commit: boolean): void {
   }
   if (done.mode === "resize" || done.mode === "vertex") {
     emit("persist-geometry", done.regionId, done.geometry);
+    return;
+  }
+  if (done.mode === "move-region") {
+    emit("persist-geometry", done.regionId, done.current);
     return;
   }
   if (done.mode === "pan") {
@@ -407,6 +437,26 @@ function onPointerDown(ev: PointerEvent): void {
   const handleEl = target?.closest?.("[data-region-handle]") as HTMLElement | null;
   const vertexEl = !handleEl ? (target?.closest?.("[data-region-vertex]") as HTMLElement | null) : null;
   const regionEl = target?.closest?.("[data-region-id]") as HTMLElement | null;
+
+  if (props.tool === "move") {
+    if (!regionEl) return;
+    const regionId = regionEl.getAttribute("data-region-id") || "";
+    const region = props.regions.find((r) => r.id === regionId);
+    if (!region) return;
+    ev.preventDefault();
+    emit("select", regionId);
+    drag = {
+      mode: "move-region",
+      regionId,
+      pointerId: ev.pointerId,
+      startClientX: ev.clientX,
+      startClientY: ev.clientY,
+      geometry: region.geometry,
+      current: region.geometry,
+    };
+    capturePointer(ev.pointerId);
+    return;
+  }
 
   if (handleEl && regionEl) {
     const regionId = regionEl.getAttribute("data-region-id") || "";
@@ -571,7 +621,7 @@ watch(
         :frame-height="layout.frameHeight"
         :scale="layout.scale"
       />
-      <div v-if="interactive && layout.region.id === selectedId" class="editor-region-handles">
+      <div v-if="interactive && layout.region.id === selectedId && tool !== 'move'" class="editor-region-handles">
         <div
           v-for="h in layout.handles"
           :key="h.key"

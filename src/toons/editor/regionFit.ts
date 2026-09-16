@@ -194,6 +194,17 @@ export function moveRegionInStack(
   return next.map((r, n) => (r.sort === n ? r : { ...r, sort: n }));
 }
 
+/** Shifts a whole shape by a plate-fraction delta — every rect corner / polygon vertex moves by
+ * the same amount, so the shape keeps its size, just moves. Not clamped: the drag handler clamps
+ * the delta itself (see GeometryLayer.vue's "move-region" drag), because clamping per-point here
+ * would let a shape's corners drift apart when only one edge hits the plate boundary. */
+export function translateGeometry(geometry: RegionGeometry, dx: number, dy: number): RegionGeometry {
+  if (geometry.kind === "polygon") {
+    return { kind: "polygon", points: geometry.points.map((p) => ({ x: p.x + dx, y: p.y + dy })) };
+  }
+  return { ...geometry, x: geometry.x + dx, y: geometry.y + dy };
+}
+
 /** Converts a pointer-drag delta (bbox-local px) into a new offset pair, clamped to [0,1]. Dragging the image right/down should reveal more of its left/top, hence the sign flip. */
 export function offsetFromDrag(
   current: { offsetX: number; offsetY: number },

@@ -5,7 +5,7 @@
  * (drag the balloon's spline handles). The layout/bubbles mode switch itself lives in the
  * inspector column header (PageStudio.vue), not here.
  */
-import { Magnet, MousePointer2, Pentagon, RotateCcw, Spline, Square } from "@lucide/vue";
+import { Magnet, Move, MousePointer2, Pentagon, RotateCcw, Spline, Square } from "@lucide/vue";
 import type { LayoutTool } from "./GeometryLayer.vue";
 import EditorIconButton from "./ui/EditorIconButton.vue";
 
@@ -53,6 +53,14 @@ const emit = defineEmits<{
         @click="emit('update:tool', 'polygon')"
       >
         <Pentagon :size="16" :stroke-width="1.6" aria-hidden="true" />
+      </EditorIconButton>
+      <EditorIconButton
+        name="tool-move"
+        :aria-pressed="tool === 'move'"
+        title="Move — drag a region to reposition it, same size"
+        @click="emit('update:tool', 'move')"
+      >
+        <Move :size="16" :stroke-width="1.6" aria-hidden="true" />
       </EditorIconButton>
       <EditorIconButton
         name="tool-grid-snap"

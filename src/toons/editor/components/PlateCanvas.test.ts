@@ -145,6 +145,7 @@ describe("PlateCanvas Layout-page regions", () => {
     expect(regionImg.exists()).toBe(true);
     expect(wrapper.get(".editor-geometry-layer").attributes("style")).toContain("pointer-events: auto");
     expect(wrapper.find('button[name="tool-rect"]').exists()).toBe(true);
+    expect(wrapper.find('button[name="tool-move"]').exists()).toBe(true);
     wrapper.unmount();
   });
 });
