@@ -190,6 +190,7 @@ export default defineConfig({
       "vite/**/*.{test,spec}.ts",
       "scripts/**/*.{test,spec}.js",
       "worker/toon-editor/src/**/*.test.ts",
+      "worker/assets/src/**/*.test.ts",
       "functions/**/*.test.ts",
     ],
     setupFiles: ["src/test/setup.ts"],
