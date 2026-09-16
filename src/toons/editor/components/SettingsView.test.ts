@@ -41,6 +41,24 @@ describe("SettingsView", () => {
 
     expect(wrapper.findAll(".editor-key-status")).toHaveLength(2);
     expect(wrapper.get(".editor-key-status").text()).toContain("Set");
-    expect(wrapper.findAll(".editor-muted").filter((el) => el.text().includes("Not set")).length).toBe(3);
+  });
+
+  it("splits keys into a Set container and a Not-set container", async () => {
+    vi.spyOn(api, "getUserKeys").mockResolvedValue({
+      replicateApiToken: false,
+      comfyApiKey: false,
+      elevenlabsApiKey: false,
+      runwareApiToken: true,
+      runcomfyApiToken: true,
+    });
+    const wrapper = mount(SettingsView, { global: { stubs: { EditorBar: true } } });
+    await flushPromises();
+
+    const groups = wrapper.findAll(".editor-key-group");
+    expect(groups).toHaveLength(2);
+    expect(groups[0].get("h3").text()).toBe("Set");
+    expect(groups[0].findAll(".editor-user-row")).toHaveLength(2);
+    expect(groups[1].get("h3").text()).toBe("Not set — using the shared key");
+    expect(groups[1].findAll(".editor-user-row")).toHaveLength(3);
   });
 });

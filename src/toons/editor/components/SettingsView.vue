@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check } from "@lucide/vue";
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { getUserKeys, saveUserKey } from "../api";
 import { pushToast } from "../toast";
 import { USER_KEY_LABELS, USER_KEY_LINKS, USER_KEY_NAMES, type UserKeyName, type UserKeyStatus } from "../types";
@@ -8,6 +8,10 @@ import EditorBar from "./EditorBar.vue";
 import EditorButton from "./ui/EditorButton.vue";
 
 const status = ref<UserKeyStatus | null>(null);
+const keyGroups = computed(() => [
+  { title: "Set", names: USER_KEY_NAMES.filter((name) => status.value?.[name]) },
+  { title: "Not set — using the shared key", names: USER_KEY_NAMES.filter((name) => !status.value?.[name]) },
+]);
 const loading = ref(true);
 const draft = reactive<Record<UserKeyName, string>>({
   replicateApiToken: "",
@@ -75,47 +79,53 @@ async function onClear(name: UserKeyName): Promise<void> {
             “Set” only means a value is stored.
           </p>
           <p v-if="loading" class="editor-muted">Loading…</p>
-          <ul v-else class="editor-user-roster">
-            <li v-for="name in USER_KEY_NAMES" :key="name" class="editor-user-row">
-              <span class="editor-user-row-info">
-                <span class="editor-user-row-label">
-                  <strong>{{ USER_KEY_LABELS[name] }}</strong>
-                  <a :href="USER_KEY_LINKS[name]" target="_blank" rel="noopener" class="editor-field-link">Get a key</a>
-                </span>
-                <span v-if="status?.[name]" class="editor-key-status">
-                  <Check :size="12" :stroke-width="2.6" aria-hidden="true" />
-                  Set
-                </span>
-                <span v-else class="editor-muted">Not set — using the shared key</span>
-              </span>
-              <span class="editor-user-row-actions">
-                <input
-                  v-model="draft[name]"
-                  type="password"
-                  autocomplete="off"
-                  class="editor-key-input"
-                  :name="`key-${name}`"
-                  :aria-label="`New ${USER_KEY_LABELS[name]}`"
-                  placeholder="New key…"
-                />
-                <EditorButton
-                  variant="ghost"
-                  :disabled="!draft[name].trim() || savingKey === name"
-                  @click="onSave(name)"
-                >
-                  {{ savingKey === name ? "Saving…" : "Save" }}
-                </EditorButton>
-                <EditorButton
-                  v-if="status?.[name]"
-                  variant="danger"
-                  :disabled="savingKey === name"
-                  @click="onClear(name)"
-                >
-                  Clear
-                </EditorButton>
-              </span>
-            </li>
-          </ul>
+          <template v-else>
+            <div v-for="group in keyGroups" :key="group.title" class="editor-key-group">
+              <h3 v-if="group.names.length" class="editor-list-subheading">{{ group.title }}</h3>
+              <ul v-if="group.names.length" class="editor-user-roster">
+                <li v-for="name in group.names" :key="name" class="editor-user-row">
+                  <span class="editor-user-row-info">
+                    <span class="editor-user-row-label">
+                      <strong>{{ USER_KEY_LABELS[name] }}</strong>
+                      <a :href="USER_KEY_LINKS[name]" target="_blank" rel="noopener" class="editor-field-link"
+                        >Get a key</a
+                      >
+                    </span>
+                    <span v-if="status?.[name]" class="editor-key-status">
+                      <Check :size="12" :stroke-width="2.6" aria-hidden="true" />
+                      Set
+                    </span>
+                  </span>
+                  <span class="editor-user-row-actions">
+                    <input
+                      v-model="draft[name]"
+                      type="password"
+                      autocomplete="off"
+                      class="editor-key-input"
+                      :name="`key-${name}`"
+                      :aria-label="`New ${USER_KEY_LABELS[name]}`"
+                      placeholder="New key…"
+                    />
+                    <EditorButton
+                      variant="ghost"
+                      :disabled="!draft[name].trim() || savingKey === name"
+                      @click="onSave(name)"
+                    >
+                      {{ savingKey === name ? "Saving…" : "Save" }}
+                    </EditorButton>
+                    <EditorButton
+                      v-if="status?.[name]"
+                      variant="danger"
+                      :disabled="savingKey === name"
+                      @click="onClear(name)"
+                    >
+                      Clear
+                    </EditorButton>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </template>
         </section>
         <section v-if="buildStamp">
           <h2 class="editor-list-heading">Build</h2>
