@@ -21,6 +21,24 @@ describe("EditorButton", () => {
     expect(wrapper.get("button").classes()).toContain("editor-btn--ghost");
   });
 
+  it("adds editor-btn--small / --large and leaves default unmarked", () => {
+    expect(
+      mount(EditorButton, { slots: { default: "Save" } })
+        .get("button")
+        .classes()
+    ).not.toContain("editor-btn--small");
+    expect(
+      mount(EditorButton, { props: { size: "small" }, slots: { default: "Save" } })
+        .get("button")
+        .classes()
+    ).toContain("editor-btn--small");
+    expect(
+      mount(EditorButton, { props: { size: "large" }, slots: { default: "Save" } })
+        .get("button")
+        .classes()
+    ).toContain("editor-btn--large");
+  });
+
   it("adds editor-btn--danger for variant=danger", () => {
     const wrapper = mount(EditorButton, { props: { variant: "danger" }, slots: { default: "Delete" } });
     expect(wrapper.get("button").classes()).toContain("editor-btn--danger");

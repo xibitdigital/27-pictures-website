@@ -137,19 +137,24 @@ the class string; the look stays in `editor.css`. Do not copy `class="editor-btn
 `<style scoped>` — that forks the one editor sheet the same way a second card layout did.
 
 Worked example: `EditorButton.vue`. Every caller used to repeat that class list. The difference
-is one `variant` prop (`"primary"` default, `"ghost"`, `"danger"`). It renders a `<button>` or,
-when a `to` prop is passed, a `RouterLink`. Add a danger-styled button with
-`variant="danger"`, never by writing the class string again.
+is `variant` (`"primary"` default, `"ghost"`, `"danger"`) and `size` (`"small"` / `"default"` /
+`"large"`). It renders a `<button>` or, when a `to` prop is passed, a `RouterLink`. Add a
+danger-styled button with `variant="danger"`, a compact one with `size="small"` — never by
+writing the class string again, and never by restyling `.editor-btn` from a parent.
+
+Prefer a prop on the primitive over more CSS. Parent containers own layout (gap, wrap), not
+the control's look or selected/pressed fill. If two places need a smaller ghost button, that
+is `size="small"` on `EditorButton`, not `.some-toolbar .editor-btn { padding: … }`.
 
 When a widget shows up in two templates (or one class string is about to be typed a third time),
 add a wrapper next to `EditorButton`:
 
 1. Put it in `src/toons/editor/components/ui/Editor*.vue` with a sibling `Editor*.test.ts`.
-2. Keep the CSS in `editor.css`. The component's only job is the root class + `variant` (or
-   equivalent props) + a slot. Extra classes (`editor-dialog-close`, `editor-translate-btn`)
+2. Keep the CSS in `editor.css`. The component's only job is the root class + `variant` / `size`
+   (or equivalent props) + a slot. Extra classes (`editor-dialog-close`, `editor-translate-btn`)
    and `name` / `disabled` / `aria-*` stay on the caller via fallthrough.
-3. Pressed/selected fill that depends on *where* the control sits (toolbar, tail ring) stays a
-   **container** rule, not a new variant.
+3. Selected/pressed fill belongs on the primitive (a prop, or an attribute the component already
+   exposes such as `aria-selected`) — not a parent selector that restyles `.editor-btn`.
 4. `vue-tsc` does not map template `aria-label` onto a prop named `ariaLabel` — pass
    `:ariaLabel="…"` (camelCase) at the call site. The wrapper still binds `:aria-label` on the
    real DOM node.
@@ -159,7 +164,7 @@ add a wrapper next to `EditorButton`:
 
 | Wrapper | Class it owns |
 | --- | --- |
-| `EditorButton` | `.editor-btn` + `--ghost` / `--danger` |
+| `EditorButton` | `.editor-btn` + `--ghost` / `--danger` + `--small` / `--large` |
 | `EditorIconButton` | `.editor-icon-btn` + `--danger` (never `.editor-btn` next to an input) |
 | `EditorChoiceCard` | `.editor-add-page-choice` |
 | `EditorColorField` | `.editor-color-row` (swatch + hex) |

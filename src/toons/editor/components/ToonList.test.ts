@@ -12,6 +12,7 @@ vi.mock("vue-router", () => ({
 describe("ToonList", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    localStorage.removeItem("editor-catalog-filter");
   });
 
   it("lists series and groups episode cards under them", async () => {
@@ -108,6 +109,21 @@ describe("ToonList", () => {
     expect(wrapper.text()).toContain("Indie ep");
     expect(wrapper.text()).not.toContain("RED SMILE");
     expect(wrapper.get("[data-toon-count]").text()).toBe("1");
+    expect(localStorage.getItem("editor-catalog-filter")).toBe("community");
+    wrapper.unmount();
+
+    const again = mount(ToonList, {
+      global: {
+        stubs: {
+          EditorBar: { template: '<div><slot name="start" /><slot name="after-title" /><slot name="actions" /></div>' },
+          EditorSession: true,
+        },
+      },
+    });
+    await vi.waitFor(() => expect(again.text()).toContain("Indie ep"));
+    expect(again.get('button[name="catalog-filter-community"]').attributes("aria-selected")).toBe("true");
+    expect(again.text()).not.toContain("RED SMILE");
+    again.unmount();
   });
 
   it("filters the shelf to one visibility", async () => {

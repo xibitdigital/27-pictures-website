@@ -64,6 +64,13 @@ body {
   padding: 1.25rem 1.75rem 4rem;
 }
 
+.editor-list-catalog {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-left: 0.75rem;
+}
+
 .editor-visibility-filter {
   display: flex;
   flex-wrap: wrap;
@@ -295,6 +302,17 @@ body {
   cursor: not-allowed;
 }
 
+.editor-btn--small {
+  padding: 0.25rem 0.55rem;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.editor-btn--large {
+  padding: 0.65rem 1.2rem;
+  font-size: 1.05rem;
+}
+
 .editor-btn.is-busy {
   cursor: wait;
   animation: editor-pulse 1.4s ease-in-out infinite;
@@ -422,7 +440,8 @@ body {
    fully solid primary button on hover looked like it had been promoted to primary; a low-opacity
    tint keeps the hover feedback without that. */
 .editor-btn--ghost:hover,
-.editor-btn--ghost:focus-visible {
+.editor-btn--ghost:focus-visible,
+.editor-btn--ghost[aria-selected="true"] {
   background: color-mix(in srgb, var(--editor-primary) 18%, transparent);
   border-color: var(--editor-primary);
   color: var(--text);

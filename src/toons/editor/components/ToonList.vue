@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BookPlus, FolderPlus, UserPlus } from "@lucide/vue";
-import { computed, inject, onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
 import { listSeries, listToons } from "../api";
 import { EDITOR_USER_KEY } from "../session";
@@ -29,6 +29,15 @@ import EditorButton from "./ui/EditorButton.vue";
 import EditorChipFilter from "./ui/EditorChipFilter.vue";
 
 const RECENT_LIMIT = 8;
+const CATALOG_FILTER_KEY = "editor-catalog-filter";
+
+function readCatalogFilter(): PublishSite {
+  try {
+    return parsePublishSite(localStorage.getItem(CATALOG_FILTER_KEY));
+  } catch {
+    return "studio";
+  }
+}
 
 const userRef = inject(EDITOR_USER_KEY);
 const isAdmin = computed(() => userRef?.value?.role === "admin");
@@ -37,7 +46,15 @@ const seriesList = ref<SeriesOption[]>([]);
 const recentToons = ref<ToonListItem[]>([]);
 const loading = ref(true);
 const visibilityFilter = ref<VisibilityFilter>("all");
-const catalogFilter = ref<PublishSite>("studio");
+const catalogFilter = ref<PublishSite>(readCatalogFilter());
+
+watch(catalogFilter, (value) => {
+  try {
+    localStorage.setItem(CATALOG_FILTER_KEY, value);
+  } catch {
+    /* private mode */
+  }
+});
 
 onMounted(async () => {
   try {
@@ -124,13 +141,19 @@ const visibilityChipOptions = computed(() =>
   <section class="editor-list">
     <EditorBar title="Toon editor" :home="false">
       <template #after-title>
-        <EditorChipFilter
-          :options="PUBLISH_SITE_OPTIONS"
-          v-model="catalogFilter"
-          role="tablist"
-          ariaLabel="Catalog"
-          name-prefix="catalog-filter-"
-        />
+        <div class="editor-list-catalog" role="tablist" aria-label="Catalog">
+          <EditorButton
+            v-for="opt in PUBLISH_SITE_OPTIONS"
+            :key="opt.value"
+            variant="ghost"
+            size="small"
+            :name="`catalog-filter-${opt.value}`"
+            role="tab"
+            :aria-selected="catalogFilter === opt.value"
+            @click="catalogFilter = opt.value"
+            >{{ opt.label }}</EditorButton
+          >
+        </div>
         <EditorChipFilter
           :options="visibilityChipOptions"
           v-model="visibilityFilter"
