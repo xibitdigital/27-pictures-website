@@ -30,6 +30,7 @@ export type {
   RunComfyModelCategory,
   RunwareModel,
   SeriesCharacter,
+  SeriesDefaults,
   SeriesFlowSlot,
   SeriesGenerateConfig,
   SeriesInput,

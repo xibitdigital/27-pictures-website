@@ -70,6 +70,7 @@ interface FakeState {
   toons: ToonRow[];
   pages: PageRow[];
   regions: RegionRow[];
+  series: { key: string; extra_json: string | null }[];
 }
 
 function makeState(overrides: Partial<FakeState> = {}): FakeState {
@@ -77,6 +78,7 @@ function makeState(overrides: Partial<FakeState> = {}): FakeState {
     toons: [sampleToon()],
     pages: [samplePage()],
     regions: [],
+    series: [],
     ...overrides,
   };
 }
@@ -111,8 +113,15 @@ function makeEnv(state: FakeState): Env {
             if (/FROM pages WHERE id = \?/.test(sql)) {
               return (state.pages.find((p) => p.id === stmt.args[0]) || null) as unknown as T;
             }
+            if (/SELECT series_key FROM toons WHERE id = \?/.test(sql)) {
+              const toon = state.toons.find((t) => t.id === stmt.args[0]);
+              return (toon ? { series_key: toon.series_key } : null) as unknown as T;
+            }
             if (/FROM toons WHERE id = \?/.test(sql) || /FROM toons LEFT JOIN series/.test(sql)) {
               return (state.toons.find((t) => t.id === stmt.args[0]) || null) as unknown as T;
+            }
+            if (/SELECT extra_json FROM series WHERE key = \?/.test(sql)) {
+              return (state.series.find((s) => s.key === stmt.args[0]) || null) as unknown as T;
             }
             return null;
           },
@@ -130,15 +139,18 @@ function makeEnv(state: FakeState): Env {
           },
           async run() {
             if (/INSERT INTO page_regions/.test(sql)) {
-              const [id, pageId, shapeType, geometryJson, sort, createdAt, updatedAt] = stmt.args as [
-                string,
-                string,
-                string,
-                string,
-                number,
-                string,
-                string,
-              ];
+              const [
+                id,
+                pageId,
+                shapeType,
+                geometryJson,
+                borderColor,
+                borderWidth,
+                borderStyle,
+                sort,
+                createdAt,
+                updatedAt,
+              ] = stmt.args as [string, string, string, string, string | null, number, string, number, string, string];
               state.regions.push({
                 id,
                 page_id: pageId,
@@ -150,9 +162,9 @@ function makeEnv(state: FakeState): Env {
                 image_offset_x: 0.5,
                 image_offset_y: 0.5,
                 image_scale: 1,
-                border_color: null,
-                border_width: 0,
-                border_style: "solid",
+                border_color: borderColor,
+                border_width: borderWidth,
+                border_style: borderStyle,
                 sort,
                 created_at: createdAt,
                 updated_at: updatedAt,
@@ -255,6 +267,50 @@ describe("POST /pages/:id/regions", () => {
     );
     expect(res.status).toBe(201);
     await expect(res.json()).resolves.toMatchObject({ sort: 2 });
+  });
+
+  it("applies the series' region border default to a brand-new region", async () => {
+    const env = makeEnv(
+      makeState({
+        toons: [sampleToon({ series_key: "s1" })],
+        series: [
+          {
+            key: "s1",
+            extra_json: JSON.stringify({
+              defaults: { regionBorderColor: "#ff00aa", regionBorderWidth: 3, regionBorderStyle: "dashed" },
+            }),
+          },
+        ],
+      })
+    );
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/p1/regions", {
+        method: "POST",
+        body: JSON.stringify({ geometry: { kind: "rect", x: 0.1, y: 0.2, w: 0.3, h: 0.4 } }),
+      }),
+      env
+    );
+    expect(res.status).toBe(201);
+    await expect(res.json()).resolves.toMatchObject({
+      borderColor: "#ff00aa",
+      borderWidth: 3,
+      borderStyle: "dashed",
+    });
+  });
+
+  it("falls back to the schema defaults when the series has no region border default", async () => {
+    const env = makeEnv(
+      makeState({ toons: [sampleToon({ series_key: "s1" })], series: [{ key: "s1", extra_json: null }] })
+    );
+    const res = await worker.fetch(
+      await authedRequest("https://toon-editor.example/pages/p1/regions", {
+        method: "POST",
+        body: JSON.stringify({ geometry: { kind: "rect", x: 0.1, y: 0.2, w: 0.3, h: 0.4 } }),
+      }),
+      env
+    );
+    expect(res.status).toBe(201);
+    await expect(res.json()).resolves.toMatchObject({ borderColor: null, borderWidth: 0, borderStyle: "solid" });
   });
 
   it("creates a polygon region", async () => {

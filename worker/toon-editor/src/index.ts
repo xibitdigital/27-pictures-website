@@ -84,6 +84,8 @@ import {
   type RegionRow,
   type RegionShapeType,
   type RequestLike,
+  type RegionBorderStyle,
+  type SeriesDefaults,
   type SeriesMeta,
   type SeriesOption,
   type SeriesRow,
@@ -525,6 +527,109 @@ function seriesGenerate(row: SeriesRow, request: RequestLike, env: Env): SeriesO
   return generate;
 }
 
+/** Reads extra.defaults straight off the row — no clamping/validation here, that happens once on
+ * write in parseSeriesDefaults. Missing/malformed extra_json just yields an empty object. */
+function seriesDefaults(row: SeriesRow): SeriesDefaults {
+  const extra = parseToonExtra(row);
+  const raw = extra.defaults;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  return raw as SeriesDefaults;
+}
+
+/** `undefined` = series has no override, the caller keeps its own hardcoded default. `null` is a
+ * real value — the series explicitly cleared its default back to "no color". */
+async function resolveSeriesPageBgColor(
+  env: Pick<Env, "DB">,
+  seriesKey: string | null | undefined
+): Promise<string | null | undefined> {
+  if (!seriesKey) return undefined;
+  const row = await env.DB.prepare("SELECT extra_json FROM series WHERE key = ?")
+    .bind(seriesKey)
+    .first<{ extra_json: string | null }>();
+  const extra = parseToonExtra(row);
+  const defaults = extra.defaults && typeof extra.defaults === "object" ? (extra.defaults as SeriesDefaults) : null;
+  if (!defaults || !("pageBgColor" in defaults)) return undefined;
+  return defaults.pageBgColor ?? null;
+}
+
+/** Same "series has no override" convention as resolveSeriesPageBgColor above. */
+async function resolveSeriesRegionBorder(
+  env: Pick<Env, "DB">,
+  seriesKey: string | null | undefined
+): Promise<{ color: string | null; width: number | null; style: RegionBorderStyle | null } | undefined> {
+  if (!seriesKey) return undefined;
+  const row = await env.DB.prepare("SELECT extra_json FROM series WHERE key = ?")
+    .bind(seriesKey)
+    .first<{ extra_json: string | null }>();
+  const extra = parseToonExtra(row);
+  const defaults = extra.defaults && typeof extra.defaults === "object" ? (extra.defaults as SeriesDefaults) : null;
+  if (!defaults) return undefined;
+  const hasAny = "regionBorderColor" in defaults || "regionBorderWidth" in defaults || "regionBorderStyle" in defaults;
+  if (!hasAny) return undefined;
+  return {
+    color: defaults.regionBorderColor ?? null,
+    width: defaults.regionBorderWidth ?? null,
+    style: defaults.regionBorderStyle ?? null,
+  };
+}
+
+/** Same "series has no override" convention as resolveSeriesPageBgColor above. */
+async function resolveSeriesBubbleOpacity(
+  env: Pick<Env, "DB">,
+  seriesKey: string | null | undefined
+): Promise<number | null | undefined> {
+  if (!seriesKey) return undefined;
+  const row = await env.DB.prepare("SELECT extra_json FROM series WHERE key = ?")
+    .bind(seriesKey)
+    .first<{ extra_json: string | null }>();
+  const extra = parseToonExtra(row);
+  const defaults = extra.defaults && typeof extra.defaults === "object" ? (extra.defaults as SeriesDefaults) : null;
+  if (!defaults || !("bubbleOpacity" in defaults)) return undefined;
+  return defaults.bubbleOpacity ?? null;
+}
+
+const REGION_BORDER_STYLES: readonly RegionBorderStyle[] = ["solid", "dashed", "dotted"];
+
+/** Validates a series-form submission of `defaults`, merged onto whatever's already stored —
+ * same shape as mergeGenerate/parseGenerateConfig (comfyFlow.ts) but simple enough not to need a
+ * dedicated parse+merge pair. `undefined` on an individual field keeps the current value; `null`
+ * clears it back to "no series default" (each route's own hardcoded fallback applies again). */
+function mergeSeriesDefaults(current: SeriesDefaults, incoming: unknown): SeriesDefaults {
+  if (incoming === undefined) return current;
+  if (incoming === null) return {};
+  if (typeof incoming !== "object" || Array.isArray(incoming)) return current;
+  const rec = incoming as Record<string, unknown>;
+  const next: SeriesDefaults = { ...current };
+
+  if ("bubbleOpacity" in rec) {
+    const v = rec.bubbleOpacity;
+    next.bubbleOpacity = v === null ? null : Number.isFinite(Number(v)) ? clamp01(v) : current.bubbleOpacity ?? null;
+  }
+  if ("pageBgColor" in rec) {
+    const validated = validateHexColor(rec.pageBgColor);
+    next.pageBgColor = validated.ok ? validated.value : current.pageBgColor ?? null;
+  }
+  if ("regionBorderColor" in rec) {
+    const validated = validateHexColor(rec.regionBorderColor);
+    next.regionBorderColor = validated.ok ? validated.value : current.regionBorderColor ?? null;
+  }
+  if ("regionBorderWidth" in rec) {
+    const v = rec.regionBorderWidth;
+    next.regionBorderWidth =
+      v === null
+        ? null
+        : Number.isFinite(Number(v))
+          ? Math.max(0, Math.min(20, Number(v)))
+          : current.regionBorderWidth ?? null;
+  }
+  if ("regionBorderStyle" in rec) {
+    const v = rec.regionBorderStyle;
+    next.regionBorderStyle =
+      v === null ? null : REGION_BORDER_STYLES.includes(v as RegionBorderStyle) ? (v as RegionBorderStyle) : null;
+  }
+  return next;
+}
+
 function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: RequestLike, env: Env): SeriesOption {
   if (!row) throw new Error("missing series");
   row = row as SeriesRow;
@@ -546,6 +651,7 @@ function mapSeries(row: SeriesRow | Record<string, unknown> | null, request: Req
     ownerId: row.owner_id || null,
     editorIds: row.editor_ids ? String(row.editor_ids).split(",") : [],
     publishSite: parsePublishSite(row.publish_site),
+    defaults: seriesDefaults(row),
   };
 }
 
@@ -696,6 +802,10 @@ async function upsertSeries(
   const currentGenerate = parseGenerateConfig(extra.generate);
   extra.generate =
     seriesMeta.generate !== undefined ? mergeGenerate(currentGenerate, seriesMeta.generate) : currentGenerate;
+  const currentDefaults = (
+    extra.defaults && typeof extra.defaults === "object" ? extra.defaults : {}
+  ) as SeriesDefaults;
+  extra.defaults = mergeSeriesDefaults(currentDefaults, seriesMeta.defaults);
   const extraJson = JSON.stringify(extra);
   const description = descriptionMapFromMeta(seriesMeta).en || String(seriesMeta.description || "");
   const coverKey = seriesMeta.coverKey !== undefined ? seriesMeta.coverKey || null : (found && found.cover_key) || null;
@@ -2348,13 +2458,14 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     // The webp encode inside putPageAsset (wasm, real CPU time) and this position lookup don't
     // depend on each other — running them together instead of one after another is most of what
     // made "add page"/"add layout page" feel slow.
-    const [key, posRow] = await Promise.all([
+    const [key, posRow, seriesBgColor] = await Promise.all([
       // Layout pages start as a blank canvas — the mark belongs on a real plate (generate,
       // upload, replace, or flatten-save), not this placeholder. Region fills never get one.
       (kind === "layout" ? Promise.resolve(null) : resolveSeriesWatermark(env, current.series_key)).then((watermark) =>
         putPageAsset(env, id, current.slug, upload, "page", watermark)
       ),
       env.DB.prepare("SELECT COALESCE(MAX(position), -1) AS max_pos FROM pages WHERE toon_id = ?").bind(id).first(),
+      resolveSeriesPageBgColor(env, current.series_key),
     ]);
     const position = (posRow && Number(posRow.max_pos) > -1 ? Number(posRow.max_pos) : -1) + 1;
     const pageId = crypto.randomUUID();
@@ -2379,7 +2490,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
           upload.width,
           upload.height,
           kind,
-          kind === "layout" ? "#0000" : null,
+          seriesBgColor !== undefined ? seriesBgColor : kind === "layout" ? "#0000" : null,
           nowIso()
         )
         .run(),
@@ -2622,19 +2733,35 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const validated = validateRegionGeometry(parsed.body.geometry);
     if (!validated.ok) return json({ error: validated.error }, 400, cors);
-    const sortRow = await env.DB.prepare(
-      "SELECT COALESCE(MAX(sort), -1) AS max_sort FROM page_regions WHERE page_id = ?"
-    )
-      .bind(page.id)
-      .first<{ max_sort: number }>();
+    // Independent lookups (this page's next sort slot, its toon's series) — no reason to serialize.
+    const [sortRow, toonRow] = await Promise.all([
+      env.DB.prepare("SELECT COALESCE(MAX(sort), -1) AS max_sort FROM page_regions WHERE page_id = ?")
+        .bind(page.id)
+        .first<{ max_sort: number }>(),
+      env.DB.prepare("SELECT series_key FROM toons WHERE id = ?")
+        .bind(page.toon_id)
+        .first<{ series_key: string | null }>(),
+    ]);
     const sort = (sortRow && Number(sortRow.max_sort) > -1 ? Number(sortRow.max_sort) : -1) + 1;
+    const border = await resolveSeriesRegionBorder(env, toonRow?.series_key ?? null);
     const id = crypto.randomUUID();
     const ts = nowIso();
     await env.DB.prepare(
-      `INSERT INTO page_regions (id, page_id, shape_type, geometry_json, file_key, file_width, file_height, image_offset_x, image_offset_y, image_scale, sort, created_at, updated_at)
-       VALUES (?, ?, ?, ?, NULL, NULL, NULL, 0.5, 0.5, 1, ?, ?, ?)`
+      `INSERT INTO page_regions (id, page_id, shape_type, geometry_json, file_key, file_width, file_height, image_offset_x, image_offset_y, image_scale, border_color, border_width, border_style, sort, created_at, updated_at)
+       VALUES (?, ?, ?, ?, NULL, NULL, NULL, 0.5, 0.5, 1, ?, ?, ?, ?, ?, ?)`
     )
-      .bind(id, page.id, validated.shapeType, JSON.stringify(validated.value), sort, ts, ts)
+      .bind(
+        id,
+        page.id,
+        validated.shapeType,
+        JSON.stringify(validated.value),
+        border?.color ?? null,
+        border?.width ?? 0,
+        border?.style ?? "solid",
+        sort,
+        ts,
+        ts
+      )
       .run();
     await env.DB.prepare("UPDATE toons SET updated_at = ? WHERE id = ?").bind(ts, page.toon_id).run();
     const row = await getRegionOrNull(env, id);
@@ -2798,17 +2925,27 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
     const parsed = await readJson(request);
     if (!parsed.ok) return json({ error: parsed.error }, 400, cors);
     const body = parsed.body;
-    const sortRow = await env.DB.prepare("SELECT COALESCE(MAX(sort), -1) AS max_sort FROM bubbles WHERE page_id = ?")
-      .bind(page.id)
-      .first<{ max_sort: number }>();
+    // Independent lookups (this page's next sort slot, its toon's series) — no reason to serialize.
+    const [sortRow, toonRow] = await Promise.all([
+      env.DB.prepare("SELECT COALESCE(MAX(sort), -1) AS max_sort FROM bubbles WHERE page_id = ?")
+        .bind(page.id)
+        .first<{ max_sort: number }>(),
+      env.DB.prepare("SELECT series_key FROM toons WHERE id = ?")
+        .bind(page.toon_id)
+        .first<{ series_key: string | null }>(),
+    ]);
     const sort = (sortRow && Number(sortRow.max_sort) > -1 ? Number(sortRow.max_sort) : -1) + 1;
+    // rowToWord (importConfig.ts) Object.assign()s a bubble's parsed extra_json straight onto the
+    // reader's word object, and resolveBubbleStyle (bubbles.ts) already reads w.bubbleOpacity as a
+    // fallback — writing it here is the entire wiring needed, no reader change required.
+    const bubbleOpacity = await resolveSeriesBubbleOpacity(env, toonRow?.series_key ?? null);
     const id = crypto.randomUUID();
     const ts = nowIso();
     const variant = String(body.variant || DEFAULT_VARIANT);
     const tail = body.tail != null ? String(body.tail) : DEFAULT_TAIL;
     await env.DB.prepare(
-      `INSERT INTO bubbles (id, page_id, x, y, variant, tail, size, angle, text_en, sort, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO bubbles (id, page_id, x, y, variant, tail, size, angle, text_en, extra_json, sort, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         id,
@@ -2820,6 +2957,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
         body.size != null ? Number(body.size) : null,
         body.angle != null ? Number(body.angle) : null,
         String(body.textEn ?? body.text_en ?? ""),
+        bubbleOpacity != null ? JSON.stringify({ bubbleOpacity }) : null,
         sort,
         ts,
         ts

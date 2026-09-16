@@ -356,6 +356,22 @@ export interface SeriesGenerateConfig {
   promptTarget: PromptTarget | null;
 }
 
+/**
+ * Series-level starting points for a brand-new bubble/page/region — folded into each creation
+ * route's own INSERT (see POST /pages/:id/bubbles, POST /toons/:id/pages, POST /pages/:id/regions
+ * in index.ts), not a runtime fallback. A designer can still change any of these per item after
+ * creation; this only sets what a new one starts as.
+ */
+export interface SeriesDefaults {
+  /** 0-1. Unset = each reader falls back to BUBBLE_FILL_OPACITY (bubbles.ts), same as today. */
+  bubbleOpacity?: number | null;
+  /** Hex. Unset = the existing hardcoded per-page-kind default (#0000 for layout, none for plate). */
+  pageBgColor?: string | null;
+  regionBorderColor?: string | null;
+  regionBorderWidth?: number | null;
+  regionBorderStyle?: RegionBorderStyle | null;
+}
+
 export interface SeriesOption {
   key: string;
   title: string;
@@ -377,6 +393,7 @@ export interface SeriesOption {
    * shape. Series with none set skip the step entirely. */
   watermarkKey?: string | null;
   watermarkUrl?: string | null;
+  defaults?: SeriesDefaults;
 }
 
 export interface SeriesInput {
@@ -391,6 +408,7 @@ export interface SeriesInput {
   /** Only honoured server-side when the caller is admin. */
   editorIds?: string[];
   publishSite?: PublishSite;
+  defaults?: Partial<SeriesDefaults> | null;
 }
 
 export interface ToonListItem {

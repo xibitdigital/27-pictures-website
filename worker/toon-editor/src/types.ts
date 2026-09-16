@@ -8,6 +8,7 @@ import type {
   PublishSite,
   RegionBorderStyle,
   RegionGeometry,
+  SeriesDefaults,
   SeriesGenerateConfig,
   UserRole,
 } from "./apiTypes";
@@ -26,6 +27,7 @@ export type {
   RegionGeometry,
   RegionRecord,
   RegionShapeType,
+  SeriesDefaults,
   SeriesGenerateConfig,
   SeriesInput,
   SeriesOption,
@@ -291,6 +293,7 @@ export interface SeriesMeta {
   sort?: number;
   generate?: Partial<SeriesGenerateConfig> | null;
   publishSite?: PublishSite;
+  defaults?: Partial<SeriesDefaults> | null;
 }
 
 export type CorsHeaders = Record<string, string>;

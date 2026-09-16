@@ -17,7 +17,7 @@ import {
   uploadSeriesWatermark,
   type CaptionTranslations,
 } from "../api";
-import { CAPTION_LANGS } from "../mapConfig";
+import { CAPTION_LANGS, parseHexColor } from "../mapConfig";
 import { EDITOR_USER_KEY } from "../session";
 import { pushToast } from "../toast";
 import {
@@ -35,8 +35,10 @@ import {
   type GenerateProvider,
   type PromptCandidate,
   type PublishSite,
+  type RegionBorderStyle,
   type RunComfyModel,
   type SeriesFlowSlot,
+  type SeriesInput,
   type SeriesOption,
   type ToonListItem,
 } from "../types";
@@ -48,6 +50,7 @@ import EditorDialog from "./ui/EditorDialog.vue";
 import EditorIconButton from "./ui/EditorIconButton.vue";
 import ToonCard from "./ToonCard.vue";
 import EditorCheckbox from "./ui/EditorCheckbox.vue";
+import EditorColorField from "./ui/EditorColorField.vue";
 import EditorUserPills from "./ui/EditorUserPills.vue";
 import EditorSelect from "./ui/EditorSelect.vue";
 import EditorSelectItem from "./ui/EditorSelectItem.vue";
@@ -100,6 +103,38 @@ onMounted(async () => {
 const saving = ref(false);
 const plateWidth = ref("1152");
 const plateHeight = ref("1728");
+
+// Starting values for a brand-new bubble/page/region in this series — folded into each creation
+// route's own INSERT server-side (see SeriesDefaults in apiTypes.ts), not applied here. Blank/unset
+// means "keep the studio's own hardcoded default", same convention the backend uses.
+const DEFAULT_COLOR_SWATCH = "#111111";
+const defaultBubbleOpacityPct = ref("");
+const defaultPageBgColor = ref("");
+const defaultPageBgColorSwatch = computed(() => parseHexColor(defaultPageBgColor.value) || DEFAULT_COLOR_SWATCH);
+const defaultRegionBorderColor = ref("");
+const defaultRegionBorderColorSwatch = computed(
+  () => parseHexColor(defaultRegionBorderColor.value) || DEFAULT_COLOR_SWATCH
+);
+const defaultRegionBorderWidth = ref("");
+const defaultRegionBorderStyle = ref<RegionBorderStyle | "">("");
+
+function onDefaultPageBgColorPicker(ev: Event): void {
+  const hex = parseHexColor((ev.target as HTMLInputElement).value);
+  if (hex) defaultPageBgColor.value = hex;
+}
+
+function onDefaultPageBgColorBlur(): void {
+  defaultPageBgColor.value = parseHexColor(defaultPageBgColor.value) || "";
+}
+
+function onDefaultRegionBorderColorPicker(ev: Event): void {
+  const hex = parseHexColor((ev.target as HTMLInputElement).value);
+  if (hex) defaultRegionBorderColor.value = hex;
+}
+
+function onDefaultRegionBorderColorBlur(): void {
+  defaultRegionBorderColor.value = parseHexColor(defaultRegionBorderColor.value) || "";
+}
 const model = ref("seedream 5.0 pro");
 const provider = ref<GenerateProvider>("comfy");
 const runComfyModels = ref<RunComfyModel[]>([]);
@@ -217,6 +252,7 @@ async function loadSeries(seriesKey: string): Promise<void> {
     coverPreview.value = body.series.coverUrl || "";
     selectedEditorIds.value = body.series.editorIds || [];
     applyGenerate(body.series);
+    applyDefaults(body.series);
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Failed to load");
   }
@@ -243,6 +279,27 @@ function applyGenerate(series: SeriesOption): void {
   promptCandidates.value = generate?.promptCandidates || [];
   const target = generate?.promptTarget;
   promptTargetKey.value = target ? candidateKey(target.nodeId, target.inputKey) : "";
+}
+
+function applyDefaults(series: SeriesOption): void {
+  const d = series.defaults;
+  defaultBubbleOpacityPct.value = d?.bubbleOpacity != null ? String(Math.round(d.bubbleOpacity * 100)) : "";
+  defaultPageBgColor.value = d?.pageBgColor || "";
+  defaultRegionBorderColor.value = d?.regionBorderColor || "";
+  defaultRegionBorderWidth.value = d?.regionBorderWidth != null ? String(d.regionBorderWidth) : "";
+  defaultRegionBorderStyle.value = d?.regionBorderStyle || "";
+}
+
+function defaultsPayload(): SeriesInput["defaults"] {
+  const pct = defaultBubbleOpacityPct.value.trim();
+  const width = defaultRegionBorderWidth.value.trim();
+  return {
+    bubbleOpacity: pct ? Math.max(0, Math.min(100, Number(pct))) / 100 : null,
+    pageBgColor: defaultPageBgColor.value.trim() || null,
+    regionBorderColor: defaultRegionBorderColor.value.trim() || null,
+    regionBorderWidth: width ? Number(width) : null,
+    regionBorderStyle: defaultRegionBorderStyle.value || null,
+  };
 }
 
 function generatePayload() {
@@ -491,6 +548,7 @@ async function onSubmit(ev: Event): Promise<void> {
       publishSite: publishSite.value,
       sort: Number(sort.value) || 0,
       generate: generatePayload(),
+      defaults: defaultsPayload(),
       ...(isAdmin.value ? { editorIds: selectedEditorIds.value } : {}),
     });
     if (coverFile.value) {
@@ -499,6 +557,7 @@ async function onSubmit(ev: Event): Promise<void> {
     }
     existing.value = series;
     applyGenerate(series);
+    applyDefaults(series);
     if (isCreate.value) await router.push(`/series/${series.key}`);
   } catch (err) {
     pushToast(err instanceof Error ? err.message : "Save failed");
@@ -565,6 +624,74 @@ async function onSubmit(ev: Event): Promise<void> {
             Sort
             <input v-model="sort" type="number" name="sort" step="1" />
           </label>
+          <div class="editor-form-span editor-generate">
+            <p class="editor-generate-label">Defaults for new items</p>
+            <p class="editor-muted">
+              Starting values for a brand-new bubble, page, or layout region in this series — a designer can still
+              change any of these afterward. Leave blank to keep the studio's own defaults.
+            </p>
+            <label>
+              Bubble opacity (%)
+              <input
+                v-model="defaultBubbleOpacityPct"
+                type="number"
+                name="default-bubble-opacity"
+                min="0"
+                max="100"
+                step="1"
+                placeholder="75"
+              />
+            </label>
+            <label>
+              Page background
+              <EditorColorField
+                v-model="defaultPageBgColor"
+                :swatch="defaultPageBgColorSwatch"
+                name="default-page-bg-color"
+                swatch-name="default-page-bg-color-swatch"
+                :ariaLabel="'Default page background color'"
+                @picker="onDefaultPageBgColorPicker"
+                @blur="onDefaultPageBgColorBlur"
+              />
+            </label>
+            <label>
+              Region border color
+              <EditorColorField
+                v-model="defaultRegionBorderColor"
+                :swatch="defaultRegionBorderColorSwatch"
+                name="default-region-border-color"
+                swatch-name="default-region-border-color-swatch"
+                :ariaLabel="'Default region border color'"
+                @picker="onDefaultRegionBorderColorPicker"
+                @blur="onDefaultRegionBorderColorBlur"
+              />
+            </label>
+            <label>
+              Region border width
+              <input
+                v-model="defaultRegionBorderWidth"
+                type="number"
+                name="default-region-border-width"
+                min="0"
+                max="20"
+                step="0.5"
+                placeholder="0"
+              />
+            </label>
+            <label>
+              Region border style
+              <EditorSelect
+                v-model="defaultRegionBorderStyle"
+                name="default-region-border-style"
+                aria-label="Default region border style"
+              >
+                <EditorSelectItem value="">Studio default</EditorSelectItem>
+                <EditorSelectItem value="solid">Solid</EditorSelectItem>
+                <EditorSelectItem value="dashed">Dashed</EditorSelectItem>
+                <EditorSelectItem value="dotted">Dotted</EditorSelectItem>
+              </EditorSelect>
+            </label>
+          </div>
           <div v-if="isAdmin" class="editor-form-span editor-generate">
             <p class="editor-generate-label">Editors</p>
             <p class="editor-muted">Who can create/manage toons under this series (capped at draft/staging).</p>
