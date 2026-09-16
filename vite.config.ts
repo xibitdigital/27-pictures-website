@@ -135,6 +135,7 @@ export default defineConfig({
             "@jsquash/png/codec/pkg/squoosh_png_bg.wasm": path.resolve(srcDir, "test/wasmStub.ts"),
             "@jsquash/webp/codec/enc/webp_enc_simd.wasm": path.resolve(srcDir, "test/wasmStub.ts"),
             "@jsquash/webp/codec/dec/webp_dec.wasm": path.resolve(srcDir, "test/wasmStub.ts"),
+            "cloudflare:workers": path.resolve(srcDir, "test/cloudflareWorkersStub.ts"),
           }
         : {}),
     },

@@ -31,13 +31,15 @@ import { insertCreditEvent, loadUserCredits } from "./creditUsage";
 import { assignSlotFile, pollCharacterJob, startCharacterGenerate, type CharacterJobRow } from "./generateCharacter";
 import {
   generateCountFromJob,
+  jobClientFields,
+  phaseFromJob,
   pollPageJob,
   recordImageCredit,
   resolveSeriesWatermark,
   startPageGenerate,
   type GenerationJob,
 } from "./generatePage";
-import { comfyPhaseMessage } from "./comfyClient";
+import { generateWorkflowActive, launchGenerateWorkflow } from "./generateWorkflow";
 import { generateClip, parseGenerateAudioBody } from "./elevenlabs";
 import { replicateVerifyToken } from "./replicateClient";
 import { runComfyListModels } from "./runComfyClient";
@@ -1190,40 +1192,48 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
 
   const jobMatch = path.match(/^\/jobs\/([^/]+)$/);
   if (isMethod(method, "GET") && jobMatch) {
-    const job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?")
+    let job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?")
       .bind(jobMatch[1])
       .first<GenerationJob>();
     if (!job) return json({ error: "not found" }, 404, cors);
     const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(job.toon_id).first<ToonRow>();
     if (!toon) return json({ error: "not found" }, 404, cors);
-    const polled =
-      job.status === "running"
-        ? await pollPageJob(await effectiveEnv(env, job.created_by), job, toon)
-        : { ok: true as const, job, phase: job.status === "done" ? ("done" as const) : null };
-    if (!polled.ok) return json({ error: polled.error }, polled.status, cors);
-    if (polled.job.status === "done" && job.status !== "done" && session) {
-      try {
-        await recordImageCredit(env, session.id, generateCountFromJob(polled.job));
-      } catch {
-        /* credit row is secondary */
+    const workflowActive = job.status === "running" && (await generateWorkflowActive(env, job.id));
+    if (job.status === "running" && !workflowActive) {
+      const polled = await pollPageJob(await effectiveEnv(env, job.created_by), job, toon);
+      if (!polled.ok) return json({ error: polled.error }, polled.status, cors);
+      if (polled.job.status === "done" && session) {
+        try {
+          await recordImageCredit(env, session.id, generateCountFromJob(polled.job));
+        } catch {
+          /* credit row is secondary */
+        }
       }
+      job = polled.job;
+      const fields = jobClientFields(job, polled.phase);
+      const body: JsonRecord = {
+        ...job,
+        id: job.id,
+        status: job.status,
+        error: job.error,
+        resultPageId: job.result_page_id,
+        comfyStatus: fields.comfyStatus,
+        message: fields.message,
+      };
+      if (job.status === "done") body.toon = await loadToon(env, request, toon.id);
+      return json(body, 200, cors);
     }
-    const count = generateCountFromJob(polled.job);
-    let message = comfyPhaseMessage(polled.phase);
-    if (count > 1 && polled.phase === "queued") message = `Waiting in the Comfy queue (${count} plates)…`;
-    if (count > 1 && polled.phase === "running") message = `Generating ${count} plates…`;
+    const fields = jobClientFields(job, phaseFromJob(job));
     const body: JsonRecord = {
-      ...polled.job,
-      id: polled.job.id,
-      status: polled.job.status,
-      error: polled.job.error,
-      resultPageId: polled.job.result_page_id,
-      comfyStatus: polled.phase,
-      message,
+      ...job,
+      id: job.id,
+      status: job.status,
+      error: job.error,
+      resultPageId: job.result_page_id,
+      comfyStatus: fields.comfyStatus,
+      message: fields.message,
     };
-    if (polled.job.status === "done") {
-      body.toon = await loadToon(env, request, toon.id);
-    }
+    if (job.status === "done") body.toon = await loadToon(env, request, toon.id);
     return json(body, 200, cors);
   }
 
@@ -2267,6 +2277,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       createdBy: session?.id || null,
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
+    await launchGenerateWorkflow(env, started.job.id);
     return json(
       {
         id: started.job.id,
@@ -2695,6 +2706,7 @@ async function handle(request: Request, env: Env, cors: CorsHeaders, session: Ed
       createdBy: session?.id || null,
     });
     if (!started.ok) return json({ error: started.error }, started.status, cors);
+    await launchGenerateWorkflow(env, started.job.id);
     return json(
       { id: started.job.id, status: started.job.status, comfyPromptId: started.job.comfy_prompt_id },
       202,
@@ -2904,4 +2916,5 @@ const worker: ExportedHandler<Env> = {
   },
 };
 
+export { GeneratePageWorkflow } from "./generateWorkflow";
 export default worker;

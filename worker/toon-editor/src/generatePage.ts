@@ -1,6 +1,7 @@
 import {
   comfyBase,
   comfyHistory,
+  comfyPhaseMessage,
   comfySubmitPrompt,
   comfyUploadImage,
   comfyView,
@@ -29,6 +30,7 @@ import { runComfyDownload, runComfyResult, runComfySubmit } from "./runComfyClie
 import { runwareDownload, runwareResult, runwareSubmit } from "./runwareClient";
 import { recordToonAsset, type ToonAssetSource } from "./toonAssets";
 import type { Env, SeriesRow, ToonRow } from "./types";
+import { effectiveEnv } from "./userKeys";
 
 export type GenerationJob = {
   id: string;
@@ -651,6 +653,86 @@ function promptIdsFromJob(job: GenerationJob): string[] {
   return job.comfy_prompt_id ? [job.comfy_prompt_id] : [];
 }
 
+function parseJobPayload(job: GenerationJob): Record<string, unknown> {
+  try {
+    const parsed = JSON.parse(job.payload_json || "{}") as unknown;
+    if (parsed && typeof parsed === "object") return parsed as Record<string, unknown>;
+  } catch {
+    /* fall through */
+  }
+  return {};
+}
+
+export function phaseFromJob(job: GenerationJob): ComfyPhase | null {
+  if (job.status === "done") return "done";
+  if (job.status === "error") return "error";
+  const phase = parseJobPayload(job).phase;
+  if (phase === "queued" || phase === "running" || phase === "done" || phase === "error") return phase;
+  return job.status === "running" ? "running" : null;
+}
+
+async function persistJobPhase(env: Env, job: GenerationJob, phase: ComfyPhase | null): Promise<void> {
+  if (!phase || job.status !== "running") return;
+  const payload = parseJobPayload(job);
+  if (payload.phase === phase) return;
+  payload.phase = phase;
+  await env.DB.prepare(`UPDATE generation_jobs SET payload_json = ?, updated_at = ? WHERE id = ?`)
+    .bind(JSON.stringify(payload), nowIso(), job.id)
+    .run();
+}
+
+export function jobClientFields(
+  job: GenerationJob,
+  phase: ComfyPhase | null
+): { message: string; comfyStatus: ComfyPhase | null } {
+  const count = generateCountFromJob(job);
+  let message = comfyPhaseMessage(phase);
+  if (count > 1 && phase === "queued") message = `Waiting in the Comfy queue (${count} plates)…`;
+  if (count > 1 && phase === "running") message = `Generating ${count} plates…`;
+  return { message, comfyStatus: phase };
+}
+
+/** One provider poll + encode if ready. Used by the generate Workflow and as GET /jobs fallback. */
+export async function tickGenerateJob(
+  env: Env,
+  jobId: string
+): Promise<{ done: boolean; status: string; createdBy: string | null; count: number }> {
+  const job = await env.DB.prepare("SELECT * FROM generation_jobs WHERE id = ?").bind(jobId).first<GenerationJob>();
+  if (!job) return { done: true, status: "error", createdBy: null, count: 1 };
+  if (job.status !== "running") {
+    return {
+      done: true,
+      status: job.status,
+      createdBy: job.created_by,
+      count: generateCountFromJob(job),
+    };
+  }
+  const toon = await env.DB.prepare("SELECT * FROM toons WHERE id = ?").bind(job.toon_id).first<ToonRow>();
+  if (!toon) {
+    await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
+      .bind("toon not found", nowIso(), job.id)
+      .run();
+    return { done: true, status: "error", createdBy: job.created_by, count: 1 };
+  }
+  const polled = await pollPageJob(await effectiveEnv(env, job.created_by), job, toon);
+  if (!polled.ok) {
+    await env.DB.prepare(`UPDATE generation_jobs SET status = 'error', error = ?, updated_at = ? WHERE id = ?`)
+      .bind(polled.error, nowIso(), job.id)
+      .run();
+    return { done: true, status: "error", createdBy: job.created_by, count: 1 };
+  }
+  const count = generateCountFromJob(polled.job);
+  if (polled.job.status === "running") {
+    return { done: false, status: "running", createdBy: job.created_by, count };
+  }
+  return {
+    done: true,
+    status: polled.job.status,
+    createdBy: job.created_by,
+    count,
+  };
+}
+
 export function generateCountFromJob(job: GenerationJob): number {
   try {
     return parseGenerateCount((JSON.parse(job.payload_json) as { count?: unknown }).count);
@@ -777,7 +859,10 @@ export async function pollPageJob(
           phase: "error",
         };
       }
-      if (!result.imageUrl) return { ok: true, job, phase: result.phase };
+      if (!result.imageUrl) {
+        await persistJobPhase(env, job, result.phase);
+        return { ok: true, job, phase: result.phase };
+      }
       outputs.push(result.imageUrl);
       phase = result.phase;
       continue;
@@ -791,6 +876,7 @@ export async function pollPageJob(
     }
     if (hist.pending || !hist.images.length) {
       const waiting = hist.phase === "queued" || phase === "queued" ? "queued" : hist.phase;
+      await persistJobPhase(env, job, waiting);
       return { ok: true, job, phase: waiting };
     }
     outputs.push(pickOutputImage(hist.images));

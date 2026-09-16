@@ -45,9 +45,20 @@ export interface AiBinding {
   ): Promise<{ translated_text?: string }>;
 }
 
+export interface WorkflowInstance {
+  id: string;
+  status(): Promise<{ status: string }>;
+}
+
+export interface WorkflowBinding<P = unknown> {
+  create(options?: { id?: string; params?: P }): Promise<WorkflowInstance>;
+  get(id: string): Promise<WorkflowInstance>;
+}
+
 export interface Env {
   DB: D1Database;
   ASSETS: R2Bucket;
+  GENERATE_PAGE?: WorkflowBinding<{ jobId: string }>;
   AI?: AiBinding;
   ALLOWED_ORIGINS?: string;
   ASSET_BASE?: string;
