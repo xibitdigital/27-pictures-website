@@ -9,8 +9,9 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
   <EditorDialog :open="open" title="Image protection" @update:open="(value) => emit('update:open', value)">
     <div class="editor-protection-doc">
       <p class="editor-muted">
-        A quick guide to what stops our art from being scraped into someone else's AI training set — no code, just
-        what's switched on and why.
+        If you're worried about your art ending up training someone else's AI model — that's a reasonable thing to worry
+        about right now, and worth a straight answer rather than a reassuring one. Here's exactly what's switched on,
+        what it actually stops, and where we're honest that a promise can't be made.
       </p>
 
       <section>
@@ -64,6 +65,47 @@ const emit = defineEmits<{ "update:open": [value: boolean] }>();
           new plate and deliberately attach a reference — a character sheet, or the previous page, so the art stays
           consistent. That's a one-off request you started: the reference goes out for that single generation only, the
           same way pasting a photo into an AI chat to ask "draw this next" would.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="editor-list-heading">5. Work in progress isn't published, indexed, or announced</h2>
+        <p>
+          A draft toon, an unfinished page, a character sheet you just uploaded — none of that is linked from anywhere
+          public. It's not in the sitemap, not in <code>/llms.txt</code>, not on any catalog card, until someone here
+          deliberately flips it to Public. Search engines and citation crawlers only ever see what's actually shipped.
+        </p>
+        <p class="editor-muted">
+          One honest caveat: the studio itself isn't behind a second wall of secrecy — a direct link to a file, if
+          someone had it, would open. Nothing indexes or lists those links, but treat one the way you'd treat a private
+          cloud-storage link: don't paste it somewhere public.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="editor-list-heading">Questions people actually have</h2>
+        <p>
+          <strong>Will [insert big AI company] train on my drawing?</strong> Not if they follow the rule they've
+          published for themselves — GPTBot, Google's training crawler, Apple's and Anthropic's all say they honour
+          exactly this signal. That's a real, working "no." It is not the same as a lock: it relies on a company keeping
+          its own word, the way robots.txt has relied on that for every website since 1994. We can't force a bad actor
+          to comply — no site can — which is exactly why the watermark exists as a second, independent line.
+        </p>
+        <p>
+          <strong
+            >When I generate a new plate, does the reference image I attach get kept by that AI tool to train
+            on?</strong
+          >
+          Straight answer: we don't control what happens on a generation provider's own servers after they receive a
+          request — that's between us and their published terms, same as any tool built on someone else's API. What we
+          do control, and can promise: a reference only leaves this platform when a person here deliberately attaches it
+          to a specific generation. Nothing is sent automatically, in bulk, or without someone choosing to send it.
+        </p>
+        <p>
+          <strong>So is my work actually safe?</strong> It's protected the way a locked front door protects a house —
+          real, and worth having, and not a claim that nothing bad can ever happen. If that's not enough reassurance for
+          a specific piece, say so — that's a conversation worth having case by case, not a box this page can tick for
+          you.
         </p>
       </section>
 
