@@ -88,6 +88,15 @@ async function onOpenChange(open: boolean): Promise<void> {
           Settings
         </DropdownMenuItem>
         <DropdownMenuItem
+          as="button"
+          class="editor-btn editor-btn--ghost"
+          type="button"
+          name="image-protection"
+          @select="router.push('/image-protection')"
+        >
+          Image protection
+        </DropdownMenuItem>
+        <DropdownMenuItem
           v-if="signOut"
           as="button"
           class="editor-btn editor-btn--ghost"
