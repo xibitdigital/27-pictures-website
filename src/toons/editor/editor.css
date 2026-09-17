@@ -68,15 +68,6 @@ a:focus-visible {
   overflow: auto;
 }
 
-/* .editor-page-body is the page's own scrollport (Episodes list below the form
-   scrolls with it). Without a bound, .editor-form's `overflow: auto` above never
-   actually scrolls — it just grows with its content, so the sticky right column
-   ends up tracking the whole page's scroll, including the Episodes list under it.
-   Capping the form to the viewport gives it a real, independent inner scrollport. */
-.editor-page > .editor-form {
-  max-height: calc(100dvh - 5.5rem);
-}
-
 .editor-form,
 .editor-list-body {
   width: 100%;
