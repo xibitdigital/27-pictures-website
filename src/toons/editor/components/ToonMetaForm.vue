@@ -264,6 +264,35 @@ async function onSubmit(ev: Event): Promise<void> {
     </EditorBar>
     <form id="toon-meta" class="editor-form" novalidate @submit="onSubmit">
       <div class="editor-form-main">
+        <div class="editor-pair-row editor-form-span">
+          <label>
+            Visibility
+            <EditorSelect v-model="visibility" name="visibility">
+              <EditorSelectItem v-for="opt in visibilityOptions" :key="opt.value" :value="opt.value">{{
+                opt.label
+              }}</EditorSelectItem>
+            </EditorSelect>
+          </label>
+          <label>
+            Publish on
+            <EditorSelect
+              :model-value="publishSite"
+              name="publish-site"
+              :disabled="!canSetPublishSite"
+              @update:model-value="onPublishSite"
+            >
+              <EditorSelectItem v-for="opt in PUBLISH_SITE_OPTIONS" :key="opt.value" :value="opt.value">{{
+                opt.label
+              }}</EditorSelectItem>
+            </EditorSelect>
+          </label>
+        </div>
+        <p class="editor-muted editor-form-span">{{ visibilityHint }}</p>
+        <p class="editor-muted editor-form-span">{{ publishSiteHint }}</p>
+        <p v-if="!isAdmin" class="editor-muted editor-form-span">
+          Editors are capped at Draft/Staging — only an admin can publish.
+        </p>
+
         <label v-if="isCreate" class="editor-form-span">
           Slug
           <input v-model="slug" name="slug" required autocomplete="off" @input="slugTouched = true" />
@@ -324,32 +353,6 @@ async function onSubmit(ev: Event): Promise<void> {
             />
           </label>
         </div>
-        <div class="editor-pair-row editor-form-span">
-          <label>
-            Visibility
-            <EditorSelect v-model="visibility" name="visibility">
-              <EditorSelectItem v-for="opt in visibilityOptions" :key="opt.value" :value="opt.value">{{
-                opt.label
-              }}</EditorSelectItem>
-            </EditorSelect>
-          </label>
-          <label>
-            Publish on
-            <EditorSelect
-              :model-value="publishSite"
-              name="publish-site"
-              :disabled="!canSetPublishSite"
-              @update:model-value="onPublishSite"
-            >
-              <EditorSelectItem v-for="opt in PUBLISH_SITE_OPTIONS" :key="opt.value" :value="opt.value">{{
-                opt.label
-              }}</EditorSelectItem>
-            </EditorSelect>
-          </label>
-        </div>
-        <p class="editor-muted">{{ visibilityHint }}</p>
-        <p class="editor-muted">{{ publishSiteHint }}</p>
-        <p v-if="!isAdmin" class="editor-muted">Editors are capped at Draft/Staging — only an admin can publish.</p>
       </div>
       <aside class="editor-form-preview">
         <label>
