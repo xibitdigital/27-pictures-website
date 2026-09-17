@@ -632,10 +632,6 @@ async function onSubmit(ev: Event): Promise<void> {
                 : "Public episodes appear on the 27 Pictures catalog at /toons/."
             }}
           </p>
-          <label>
-            Sort
-            <input v-model="sort" type="number" name="sort" step="1" />
-          </label>
           <div v-if="isAdmin" class="editor-form-span editor-generate">
             <p class="editor-generate-label">Editors</p>
             <p class="editor-muted">Who can create/manage toons under this series (capped at draft/staging).</p>
