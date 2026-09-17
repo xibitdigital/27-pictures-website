@@ -636,7 +636,7 @@ async function onSubmit(ev: Event): Promise<void> {
                 : "Public episodes appear on the 27 Pictures catalog at /toons/."
             }}
           </p>
-          <label>
+          <label class="editor-form-span">
             Sort
             <input v-model="sort" type="number" name="sort" step="1" />
           </label>
@@ -657,41 +657,43 @@ async function onSubmit(ev: Event): Promise<void> {
             Plate height
             <input v-model="plateHeight" type="number" name="plate-height" min="1" step="1" />
           </label>
-          <label v-if="provider === 'runware'" class="editor-form-span">
-            Runware model
-            <EditorSelect v-model="model" name="generate-model" aria-label="Runware model">
-              <EditorSelectItem v-for="m in RUNWARE_MODELS" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
-            </EditorSelect>
-          </label>
-          <label v-else-if="provider === 'runcomfy' && runComfyModels.length" class="editor-form-span">
-            RunComfy model
-            <EditorSelect v-model="model" name="generate-model" aria-label="RunComfy model">
-              <EditorSelectItem v-for="m in runComfyModels" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
-            </EditorSelect>
-          </label>
-          <label v-else-if="provider === 'runcomfy'" class="editor-form-span">
-            RunComfy model
-            <input v-model="model" name="generate-model" placeholder="bytedance/seedream-5.0-pro" />
-            <p v-if="runComfyModelsLoading" class="editor-muted">Loading RunComfy's model catalog…</p>
-            <p v-else-if="runComfyModelsError" class="editor-error">
-              {{ runComfyModelsError }} — type the model id (org/model) by hand instead.
-            </p>
-          </label>
-          <label v-else class="editor-form-span">
-            Model
-            <input v-model="model" name="generate-model" placeholder="seedream 5.0 pro" />
-          </label>
-          <label class="editor-form-span">
-            Generation provider
-            <EditorSelect v-model="provider" name="generate-provider" aria-label="Generation provider">
-              <EditorSelectItem value="comfy">ComfyUI</EditorSelectItem>
-              <EditorSelectItem value="flux">Flux (flux-2-pro, direct via BFL)</EditorSelectItem>
-              <EditorSelectItem value="replicate-flux">Flux Kontext (via Replicate, max 2 refs)</EditorSelectItem>
-              <EditorSelectItem value="replicate-seedream">Seedream (via Replicate)</EditorSelectItem>
-              <EditorSelectItem value="runware">Runware (pick model above)</EditorSelectItem>
-              <EditorSelectItem value="runcomfy">RunComfy (org/model above, max 10 refs)</EditorSelectItem>
-            </EditorSelect>
-          </label>
+          <div class="editor-pair-row editor-form-span">
+            <label v-if="provider === 'runware'">
+              Runware model
+              <EditorSelect v-model="model" name="generate-model" aria-label="Runware model">
+                <EditorSelectItem v-for="m in RUNWARE_MODELS" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
+              </EditorSelect>
+            </label>
+            <label v-else-if="provider === 'runcomfy' && runComfyModels.length">
+              RunComfy model
+              <EditorSelect v-model="model" name="generate-model" aria-label="RunComfy model">
+                <EditorSelectItem v-for="m in runComfyModels" :key="m.id" :value="m.id">{{ m.label }}</EditorSelectItem>
+              </EditorSelect>
+            </label>
+            <label v-else-if="provider === 'runcomfy'">
+              RunComfy model
+              <input v-model="model" name="generate-model" placeholder="bytedance/seedream-5.0-pro" />
+              <p v-if="runComfyModelsLoading" class="editor-muted">Loading RunComfy's model catalog…</p>
+              <p v-else-if="runComfyModelsError" class="editor-error">
+                {{ runComfyModelsError }} — type the model id (org/model) by hand instead.
+              </p>
+            </label>
+            <label v-else>
+              Model
+              <input v-model="model" name="generate-model" placeholder="seedream 5.0 pro" />
+            </label>
+            <label>
+              Generation provider
+              <EditorSelect v-model="provider" name="generate-provider" aria-label="Generation provider">
+                <EditorSelectItem value="comfy">ComfyUI</EditorSelectItem>
+                <EditorSelectItem value="flux">Flux (flux-2-pro, direct via BFL)</EditorSelectItem>
+                <EditorSelectItem value="replicate-flux">Flux Kontext (via Replicate, max 2 refs)</EditorSelectItem>
+                <EditorSelectItem value="replicate-seedream">Seedream (via Replicate)</EditorSelectItem>
+                <EditorSelectItem value="runware">Runware (pick model above)</EditorSelectItem>
+                <EditorSelectItem value="runcomfy">RunComfy (org/model above, max 10 refs)</EditorSelectItem>
+              </EditorSelect>
+            </label>
+          </div>
           <p v-if="provider !== 'comfy'" class="editor-muted editor-form-span">{{ providerHint }}</p>
           <div class="editor-form-span editor-generate">
             <p class="editor-generate-label">Watermark</p>
@@ -856,24 +858,47 @@ async function onSubmit(ev: Event): Promise<void> {
             </ol>
             <EditorButton variant="ghost" name="add-slot" @click="addSlot"> Add slot </EditorButton>
           </div>
-          <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
-            Description ({{ lang.label }})
-            <TranslateField v-if="lang.code === 'en'" :source="descriptions.en" @translated="applyTranslations">
+          <div class="editor-form-span editor-descriptions-grid">
+            <label v-for="lang in CAPTION_LANGS" :key="lang.code">
+              Description ({{ lang.label }})
+              <TranslateField v-if="lang.code === 'en'" :source="descriptions.en" @translated="applyTranslations">
+                <textarea
+                  v-model="descriptions[lang.code]"
+                  :name="`description-${lang.code}`"
+                  :lang="lang.code"
+                  rows="4"
+                />
+              </TranslateField>
               <textarea
+                v-else
                 v-model="descriptions[lang.code]"
                 :name="`description-${lang.code}`"
                 :lang="lang.code"
                 rows="4"
               />
-            </TranslateField>
-            <textarea
-              v-else
-              v-model="descriptions[lang.code]"
-              :name="`description-${lang.code}`"
-              :lang="lang.code"
-              rows="4"
-            />
-          </label>
+            </label>
+          </div>
+          <div v-if="!isCreate" class="editor-list-body">
+            <h2 class="editor-list-heading">Episodes</h2>
+            <ul class="editor-card-list editor-card-list--compact">
+              <li v-for="toon in members" :key="toon.id">
+                <ToonCard
+                  compact
+                  :to="`/${toon.id}`"
+                  :title="toon.title || toon.slug"
+                  :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
+                  :cue="toon.pageCount ? `${toon.pageCount} pages` : toon.slug"
+                  :cover-url="toon.coverUrl"
+                  :badge="visibilityLabel(toon.status)"
+                  :visibility="visibilityFromStatus(toon.status)"
+                  :share-href="toon.readerUrl || `/toons/${toon.slug}/`"
+                />
+              </li>
+              <li>
+                <ToonCard compact add :to="addEpisodeTo" title="Add episode" meta="New" cue="Create" />
+              </li>
+            </ul>
+          </div>
         </div>
         <aside class="editor-form-preview">
           <label>
@@ -983,26 +1008,6 @@ async function onSubmit(ev: Event): Promise<void> {
           </div>
         </aside>
       </form>
-      <div v-if="!isCreate" class="editor-list-body">
-        <h2 class="editor-list-heading">Episodes</h2>
-        <ul class="editor-card-list">
-          <li v-for="toon in members" :key="toon.id">
-            <ToonCard
-              :to="`/${toon.id}`"
-              :title="toon.title || toon.slug"
-              :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
-              :cue="toon.pageCount ? `${toon.pageCount} pages` : toon.slug"
-              :cover-url="toon.coverUrl"
-              :badge="visibilityLabel(toon.status)"
-              :visibility="visibilityFromStatus(toon.status)"
-              :share-href="toon.readerUrl || `/toons/${toon.slug}/`"
-            />
-          </li>
-          <li>
-            <ToonCard add :to="addEpisodeTo" title="Add episode" meta="New" cue="Create" />
-          </li>
-        </ul>
-      </div>
     </div>
     <EditorDialog
       :open="Boolean(previewSlot?.fileUrl)"

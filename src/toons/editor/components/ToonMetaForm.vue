@@ -304,19 +304,26 @@ async function onSubmit(ev: Event): Promise<void> {
             />
           </label>
         </div>
-        <label v-for="lang in CAPTION_LANGS" :key="lang.code" class="editor-form-span">
-          Description ({{ lang.label }})
-          <TranslateField v-if="lang.code === 'en'" :source="descriptions.en" @translated="applyTranslations">
-            <textarea v-model="descriptions[lang.code]" :name="`description-${lang.code}`" :lang="lang.code" rows="4" />
-          </TranslateField>
-          <textarea
-            v-else
-            v-model="descriptions[lang.code]"
-            :name="`description-${lang.code}`"
-            :lang="lang.code"
-            rows="4"
-          />
-        </label>
+        <div class="editor-form-span editor-descriptions-grid">
+          <label v-for="lang in CAPTION_LANGS" :key="lang.code">
+            Description ({{ lang.label }})
+            <TranslateField v-if="lang.code === 'en'" :source="descriptions.en" @translated="applyTranslations">
+              <textarea
+                v-model="descriptions[lang.code]"
+                :name="`description-${lang.code}`"
+                :lang="lang.code"
+                rows="4"
+              />
+            </TranslateField>
+            <textarea
+              v-else
+              v-model="descriptions[lang.code]"
+              :name="`description-${lang.code}`"
+              :lang="lang.code"
+              rows="4"
+            />
+          </label>
+        </div>
         <div class="editor-pair-row editor-form-span">
           <label>
             Visibility

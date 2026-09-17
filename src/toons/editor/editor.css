@@ -11,6 +11,16 @@ body {
   overflow: hidden;
 }
 
+/* public/styles.css sets a site-wide Playfair Display on h1-h5 for the public pages'
+   editorial look — the studio is a tool, not a page, so its headings stay on the
+   system font stack instead. */
+#app h1,
+#app h2,
+#app h3,
+#app h4 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 /* Default link color for the studio — was unset, so a plain <a> fell back to --silver-ish muted
    text (see .editor-field-link below) and read as disabled rather than clickable. */
 a {
@@ -1243,8 +1253,27 @@ a:focus-visible {
 
 .editor-form-main > .editor-muted,
 .editor-form-main > .editor-error,
-.editor-form-main > .editor-form-span {
+.editor-form-main > .editor-form-span,
+.editor-form-main > .editor-list-body {
   grid-column: 1 / -1;
+}
+
+/* The 4 per-language descriptions as their own 2-col x 2-row grid, independent of
+   however many columns .editor-form-main itself has. */
+.editor-descriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, auto);
+  column-gap: 1.5rem;
+  row-gap: 1rem;
+}
+
+/* Episodes now lives inside the left pane (.editor-form-main), which is already
+   padded by its .editor-form ancestor — the shared .editor-form, .editor-list-body
+   padding rule below would otherwise double it up here. */
+.editor-form-main > .editor-list-body {
+  width: auto;
+  padding: 1.5rem 0 0;
 }
 
 .editor-generate {
