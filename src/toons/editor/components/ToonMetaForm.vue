@@ -270,15 +270,15 @@ async function onSubmit(ev: Event): Promise<void> {
         </label>
         <p v-else class="editor-muted">Slug: {{ slug }}</p>
 
-        <label>
-          Title
-          <input v-model="title" name="title" required />
-        </label>
-        <label>
-          Subtitle
-          <input v-model="subtitle" name="subtitle" />
-        </label>
-        <div class="editor-pair-row editor-form-span">
+        <div class="editor-form-span editor-quad-row">
+          <label>
+            Title
+            <input v-model="title" name="title" required />
+          </label>
+          <label>
+            Subtitle
+            <input v-model="subtitle" name="subtitle" />
+          </label>
           <label>
             <span class="editor-label-row">
               Series

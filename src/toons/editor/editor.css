@@ -1107,6 +1107,29 @@ a:focus-visible {
   }
 }
 
+.editor-quad-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.editor-quad-row > label {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .editor-quad-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .editor-quad-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .editor-slider-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 4.25rem;
@@ -1483,19 +1506,30 @@ a:focus-visible {
    both panes scroll on their own. Without :has() scoping this here, every plain form
    (Settings, …) would also get pinned to viewport height instead of growing with its
    content and scrolling as part of the page. */
+/* display: flex, not grid — a grid row's "auto" track sizes to each item's own content
+   height *before* that item's own overflow: auto can kick in, so a grid item never
+   actually clips to the container's max-height; it was rendering (and clipping the whole
+   form to) its full, un-scrolled content. Flex's single-line cross-size resolves against
+   the container's own (max-height-clamped) height first, so min-height: 0 + overflow-y:
+   auto on each pane then correctly scrolls inside that shared height — while a form
+   shorter than the cap just shrinks to fit, no dead space below it. */
 .editor-form:has(> .editor-form-preview) {
-  grid-template-columns: minmax(0, 1fr) 22rem;
+  display: flex;
   align-items: stretch;
-  height: calc(100dvh - 5.5rem);
+  column-gap: 1.75rem;
+  max-height: calc(100dvh - 5.5rem);
   overflow: hidden;
 }
 
 .editor-form:has(> .editor-form-preview) > .editor-form-main {
+  flex: 1;
+  min-width: 0;
   min-height: 0;
   overflow-y: auto;
 }
 
 .editor-form-preview {
+  flex: 0 0 22rem;
   min-height: 0;
   overflow-y: auto;
 }
@@ -1509,10 +1543,13 @@ a:focus-visible {
 }
 
 @media (max-width: 900px) {
-  .editor-form,
-  .editor-form:has(> .editor-form-preview) {
+  .editor-form {
     grid-template-columns: 1fr;
-    height: auto;
+  }
+
+  .editor-form:has(> .editor-form-preview) {
+    display: block;
+    max-height: none;
     overflow: visible;
   }
 
