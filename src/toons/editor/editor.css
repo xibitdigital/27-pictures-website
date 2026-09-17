@@ -60,27 +60,21 @@ a:focus-visible {
   overflow: hidden;
 }
 
-.editor-page-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  /* Was `overflow: auto` — with no other height constraint, .editor-form and
-     .editor-list-body below it just stacked and grew, so this never actually
-     scrolled and the two sections scrolled together as one. Hidden here plus
-     flex:1/min-height:0/overflow:auto on each child (below) gives the series
-     form and its Episodes list their own scrollports, so the form's sticky
-     right column stays contained to the form instead of tracking a scroll
-     that also runs through the episode list underneath it. */
-  overflow: hidden;
-}
-
+.editor-page-body,
 .editor-list > .editor-list-body,
-.editor-page > .editor-form,
-.editor-page-body > .editor-list-body {
+.editor-page > .editor-form {
   flex: 1;
   min-height: 0;
   overflow: auto;
+}
+
+/* .editor-page-body is the page's own scrollport (Episodes list below the form
+   scrolls with it). Without a bound, .editor-form's `overflow: auto` above never
+   actually scrolls — it just grows with its content, so the sticky right column
+   ends up tracking the whole page's scroll, including the Episodes list under it.
+   Capping the form to the viewport gives it a real, independent inner scrollport. */
+.editor-page > .editor-form {
+  max-height: calc(100dvh - 5.5rem);
 }
 
 .editor-form,
