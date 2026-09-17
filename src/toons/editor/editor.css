@@ -1284,6 +1284,11 @@ a:focus-visible {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   column-gap: 1.5rem;
   align-items: start;
+  /* Grid's default align-content is "normal", which behaves as "stretch": once this pane
+     is itself stretched taller than its own content (to match a taller .editor-form-preview
+     next to it), every auto row grows to fill that extra height instead of just the last one
+     — showing up as a huge gap after every row. Pin rows to their own content height instead. */
+  align-content: start;
   /* Without this, a grid item's automatic minimum size defaults to its
      content's, so a form with no `.editor-form-preview` sibling (its
      `.editor-form` parent still reserves that 22rem column) can blow the
