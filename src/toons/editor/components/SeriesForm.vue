@@ -609,22 +609,24 @@ async function onSubmit(ev: Event): Promise<void> {
           </label>
           <p v-else class="editor-muted">Key: {{ key }}</p>
 
-          <label>
-            Title
-            <input v-model="title" name="title" required />
-          </label>
-          <label>
-            Tagline
-            <input v-model="tagline" name="tagline" />
-          </label>
-          <label>
-            Publish on
-            <EditorSelect v-model="publishSite" name="publish-site">
-              <EditorSelectItem v-for="opt in PUBLISH_SITE_OPTIONS" :key="opt.value" :value="opt.value">{{
-                opt.label
-              }}</EditorSelectItem>
-            </EditorSelect>
-          </label>
+          <div class="editor-form-span editor-triple-row">
+            <label>
+              Title
+              <input v-model="title" name="title" required />
+            </label>
+            <label>
+              Tagline
+              <input v-model="tagline" name="tagline" />
+            </label>
+            <label>
+              Publish on
+              <EditorSelect v-model="publishSite" name="publish-site">
+                <EditorSelectItem v-for="opt in PUBLISH_SITE_OPTIONS" :key="opt.value" :value="opt.value">{{
+                  opt.label
+                }}</EditorSelectItem>
+              </EditorSelect>
+            </label>
+          </div>
           <p class="editor-muted editor-form-span">
             {{
               publishSite === "community"
