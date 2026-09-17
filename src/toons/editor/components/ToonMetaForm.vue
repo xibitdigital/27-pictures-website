@@ -70,33 +70,6 @@ const selectedSeries = computed(() => seriesList.value.find((item) => item.key =
 
 const canSetPublishSite = computed(() => isAdmin.value || !seriesKey.value.trim());
 
-const VISIBILITY_HINT: Record<ToonVisibility, string> = {
-  public: "Public toons appear on their catalog and the reader loads from the database.",
-  staging: "Staging toons appear on staging.twentyseven.pictures and local preview. They stay hidden on production.",
-  draft: "Draft toons stay in the editor. They are hidden from the website.",
-};
-
-const visibilityHint = computed(() => VISIBILITY_HINT[visibility.value]);
-
-const publishSiteHint = computed(() => {
-  if (selectedSeries.value && !isAdmin.value) {
-    if (publishSite.value === "community") {
-      return "Episodes follow the series. This one will appear on the creator site when Public.";
-    }
-    return "Episodes follow the series. This one will appear on the 27 Pictures catalog when Public.";
-  }
-  if (selectedSeries.value && isAdmin.value) {
-    if (publishSite.value === "community") {
-      return "The whole series appears on the creator site when Public.";
-    }
-    return "The whole series appears on the 27 Pictures catalog when Public.";
-  }
-  if (publishSite.value === "community") {
-    return "Public toons appear on the creator site, not on twentyseven.pictures/toons/.";
-  }
-  return "Public toons appear on the 27 Pictures catalog at /toons/.";
-});
-
 function onPublishSite(value: string): void {
   if (!canSetPublishSite.value) return;
   publishSite.value = parsePublishSite(value);
@@ -287,8 +260,6 @@ async function onSubmit(ev: Event): Promise<void> {
             </EditorSelect>
           </label>
         </div>
-        <p class="editor-muted editor-form-span">{{ visibilityHint }}</p>
-        <p class="editor-muted editor-form-span">{{ publishSiteHint }}</p>
         <p v-if="!isAdmin" class="editor-muted editor-form-span">
           Editors are capped at Draft/Staging — only an admin can publish.
         </p>
@@ -297,7 +268,6 @@ async function onSubmit(ev: Event): Promise<void> {
           Slug
           <input v-model="slug" name="slug" required autocomplete="off" @input="slugTouched = true" />
         </label>
-        <p v-else class="editor-muted">Slug: {{ slug }}</p>
 
         <div class="editor-form-span editor-quad-row">
           <label>

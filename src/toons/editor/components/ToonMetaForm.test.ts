@@ -186,7 +186,6 @@ describe("ToonMetaForm visibility", () => {
     });
     expect(wrapper.get('button[name="publish-site"]').text()).toBe("Creator site");
     expect(wrapper.get('button[name="publish-site"]').attributes("disabled")).toBeDefined();
-    expect(wrapper.text()).toContain("Episodes follow the series");
     wrapper.unmount();
   });
 
@@ -255,7 +254,6 @@ describe("ToonMetaForm visibility", () => {
     await wrapper.get('input[name="slug"]').setValue("demo");
     await wrapper.get('input[name="title"]').setValue("Demo");
     await pickOption("visibility", "Staging");
-    expect(wrapper.text()).toContain("staging.twentyseven.pictures");
     await wrapper.get("form").trigger("submit");
     expect(create.mock.calls[0][0].status).toBe("staging");
     expect(push).toHaveBeenCalledWith("/t1/pages");
