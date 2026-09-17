@@ -1432,13 +1432,25 @@ a:focus-visible {
   column-gap: 1.75rem;
 }
 
+/* A form with a right-hand preview column (SeriesForm, ToonMetaForm, UsersView invite
+   form) becomes a fixed-height two-pane grid: the right column is a fixed 22rem, and
+   both panes scroll on their own. Without :has() scoping this here, every plain form
+   (Settings, …) would also get pinned to viewport height instead of growing with its
+   content and scrolling as part of the page. */
+.editor-form:has(> .editor-form-preview) {
+  grid-template-columns: minmax(0, 1fr) 22rem;
+  align-items: stretch;
+  height: calc(100dvh - 5.5rem);
+  overflow: hidden;
+}
+
+.editor-form:has(> .editor-form-preview) > .editor-form-main {
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .editor-form-preview {
-  position: sticky;
-  top: 1rem;
-  /* Cover card + Defaults form can get taller than the viewport (long series) — without a bound
-     this column just grew past it and scrolled along with the left column instead of on its own.
-     5.5rem ≈ the bar's own height + this column's top/bottom breathing room. */
-  max-height: calc(100dvh - 5.5rem);
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -1451,15 +1463,20 @@ a:focus-visible {
 }
 
 @media (max-width: 900px) {
-  .editor-form {
+  .editor-form,
+  .editor-form:has(> .editor-form-preview) {
     grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .editor-form:has(> .editor-form-preview) > .editor-form-main,
+  .editor-form-preview {
+    overflow-y: visible;
   }
 
   .editor-form-preview {
-    position: static;
     max-width: 22rem;
-    max-height: none;
-    overflow-y: visible;
   }
 }
 
