@@ -618,10 +618,6 @@ async function onSubmit(ev: Event): Promise<void> {
             <input v-model="tagline" name="tagline" />
           </label>
           <label>
-            Hub URL
-            <input v-model="hubUrl" name="hub-url" placeholder="/toons/erin-and-the-goblins/" />
-          </label>
-          <label>
             Publish on
             <EditorSelect v-model="publishSite" name="publish-site">
               <EditorSelectItem v-for="opt in PUBLISH_SITE_OPTIONS" :key="opt.value" :value="opt.value">{{
@@ -636,7 +632,7 @@ async function onSubmit(ev: Event): Promise<void> {
                 : "Public episodes appear on the 27 Pictures catalog at /toons/."
             }}
           </p>
-          <label class="editor-form-span">
+          <label>
             Sort
             <input v-model="sort" type="number" name="sort" step="1" />
           </label>
@@ -649,14 +645,16 @@ async function onSubmit(ev: Event): Promise<void> {
               <RouterLink class="editor-field-link" to="/users">invite one first</RouterLink>.
             </p>
           </div>
-          <label>
-            Plate width
-            <input v-model="plateWidth" type="number" name="plate-width" min="1" step="1" />
-          </label>
-          <label>
-            Plate height
-            <input v-model="plateHeight" type="number" name="plate-height" min="1" step="1" />
-          </label>
+          <div class="editor-pair-row editor-form-span">
+            <label>
+              Plate width
+              <input v-model="plateWidth" type="number" name="plate-width" min="1" step="1" />
+            </label>
+            <label>
+              Plate height
+              <input v-model="plateHeight" type="number" name="plate-height" min="1" step="1" />
+            </label>
+          </div>
           <div class="editor-pair-row editor-form-span">
             <label v-if="provider === 'runware'">
               Runware model
@@ -880,10 +878,9 @@ async function onSubmit(ev: Event): Promise<void> {
           </div>
           <div v-if="!isCreate" class="editor-list-body">
             <h2 class="editor-list-heading">Episodes</h2>
-            <ul class="editor-card-list editor-card-list--compact">
+            <ul class="editor-card-list">
               <li v-for="toon in members" :key="toon.id">
                 <ToonCard
-                  compact
                   :to="`/${toon.id}`"
                   :title="toon.title || toon.slug"
                   :meta="toon.episodeN != null ? `Episode ${toon.episodeN}` : toon.subtitle || ''"
@@ -895,7 +892,7 @@ async function onSubmit(ev: Event): Promise<void> {
                 />
               </li>
               <li>
-                <ToonCard compact add :to="addEpisodeTo" title="Add episode" meta="New" cue="Create" />
+                <ToonCard add :to="addEpisodeTo" title="Add episode" meta="New" cue="Create" />
               </li>
             </ul>
           </div>
