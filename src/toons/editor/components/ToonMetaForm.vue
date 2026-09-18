@@ -340,6 +340,10 @@ async function onSubmit(ev: Event): Promise<void> {
             :visibility="visibility"
           />
         </div>
+        <EditorButton v-if="existing" size="large" :to="`/${existing.id}/pages`" class="editor-form-preview-cta">
+          <Images :size="18" :stroke-width="1.4" aria-hidden="true" />
+          {{ previewPages ? "Edit pages" : "Add pages" }}
+        </EditorButton>
       </aside>
     </form>
   </div>

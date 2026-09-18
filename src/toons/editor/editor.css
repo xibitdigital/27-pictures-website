@@ -1550,6 +1550,12 @@ a:focus-visible {
   margin-top: 0.75rem;
 }
 
+.editor-form-preview-cta {
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
 .editor-form > .editor-error {
   grid-column: 1 / -1;
 }
