@@ -386,6 +386,11 @@ a:focus-visible {
 .editor-btn:focus-visible {
   background: var(--editor-primary-hover);
   border-color: var(--editor-primary-hover);
+  /* Without this, the global `a:hover { color: var(--editor-primary-hover) }` further down
+     wins on any EditorButton rendered as a RouterLink (an <a>) — text and icon then match
+     the hover background exactly and vanish. Ghost/danger variants already set their own
+     hover color; this covers the plain primary button they don't. */
+  color: var(--text);
 }
 
 .editor-btn:disabled {
