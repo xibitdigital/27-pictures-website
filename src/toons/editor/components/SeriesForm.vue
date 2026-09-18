@@ -643,7 +643,7 @@ async function onSubmit(ev: Event): Promise<void> {
               <RouterLink class="editor-field-link" to="/users">invite one first</RouterLink>.
             </p>
           </div>
-          <div class="editor-pair-row editor-form-span">
+          <div v-if="isAdmin" class="editor-pair-row editor-form-span">
             <label>
               Plate width
               <input v-model="plateWidth" type="number" name="plate-width" min="1" step="1" />
