@@ -76,6 +76,8 @@ describe("UsersView", () => {
       global: { stubs: { EditorBar: true }, provide: provideUser("admin") },
     });
     await flushPromises();
+    expect(wrapper.get(".editor-form-main").find(".editor-user-roster").exists()).toBe(true);
+    expect(wrapper.get(".editor-form-preview").text()).toMatch(/Invite a new user/);
     const rows = wrapper.findAll(".editor-user-row");
     expect(rows).toHaveLength(2);
     expect(rows[0].text()).toContain("u1@example.com");

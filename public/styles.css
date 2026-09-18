@@ -133,8 +133,6 @@ body > header nav,
 .nav-logo-img {
   height: var(--nav-logo-h, 40px);
   width: auto;
-  border: 1px solid var(--red-smile);
-  padding: 6px;
 }
 
 .nav-links {
@@ -525,8 +523,6 @@ footer {
   width: 180px;
   height: auto;
   margin-bottom: 40px;
-  border: 1px solid var(--red-smile);
-  padding: 20px;
 }
 
 /* --- HERO --- */
@@ -1039,9 +1035,7 @@ button:focus-visible {
     padding: 0.9rem 1.25rem;
     --nav-logo-h: 2.5rem;
   }
-  .nav-logo-img {
-    padding: 6px;
-  }
+
   .burger-btn {
     display: flex;
   }
@@ -1166,7 +1160,6 @@ button:focus-visible {
   .footer-logo-img {
     width: 120px;
     height: auto;
-    padding: 15px;
   }
   .footer-text {
     letter-spacing: 2px;
@@ -3525,9 +3518,6 @@ button:focus-visible {
   height: 56px;
   width: 56px;
   object-fit: contain;
-  border: 1px solid var(--red-smile);
-  padding: 6px;
-  background: var(--bg-dark);
   margin-bottom: 2.5rem;
 }
 

@@ -139,7 +139,7 @@ const visibilityChipOptions = computed(() =>
 
 <template>
   <section class="editor-list">
-    <EditorBar title="Toon editor" :home="false">
+    <EditorBar title="FlipFrame Studio" :home="false">
       <template #after-title>
         <div class="editor-list-catalog" role="tablist" aria-label="Catalog">
           <EditorButton

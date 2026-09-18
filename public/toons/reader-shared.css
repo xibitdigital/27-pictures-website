@@ -85,10 +85,6 @@ body.toons-reader {
   height: var(--nav-logo-h, 40px);
   width: var(--nav-logo-h, 40px);
   object-fit: contain;
-  border: 1px solid var(--red-smile);
-  padding: 4px;
-  box-sizing: border-box;
-  background: var(--bg-dark);
 }
 
 .title-bar {

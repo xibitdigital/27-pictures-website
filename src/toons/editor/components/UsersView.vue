@@ -140,7 +140,7 @@ function onSubmit(ev: Event): void {
     </EditorBar>
     <div class="editor-page-body">
       <div class="editor-form">
-        <section>
+        <section class="editor-form-main">
           <h2 class="editor-list-heading">Users</h2>
           <p v-if="loadingUsers" class="editor-muted">Loading…</p>
           <p v-else-if="!users.length" class="editor-muted">No accounts yet.</p>
